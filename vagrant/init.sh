@@ -177,9 +177,11 @@ cp -a /vagrant/config/xfce4/panel/* /etc/skel/.config/xfce4/panel
 chmod +rwx /vagrant/share
 sudo ln -s /vagrant/share /etc/skel/Share
 
-# create users
-adduser user1 --disabled-login --gecos "GIS LAB User"
-echo "user1:gislab" | chpasswd
-
+# create 24 lab user accounts (login: gislab[1-24] password: gislab)
+for i in {1..24}
+do
+	adduser gislab$i --disabled-login --gecos "GIS LAB User"
+	echo "gislab$i:gislab" | chpasswd
+done
 
 # vim: set ts=4 sts=4 sw=4 noet:
