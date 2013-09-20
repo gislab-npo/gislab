@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Desktop GIS Editor
+Comment=Desktop GIS Editor
+Exec=/usr/bin/qgis
+Icon=qgis-icon
+Path=
+Terminal=false
+StartupNotify=false

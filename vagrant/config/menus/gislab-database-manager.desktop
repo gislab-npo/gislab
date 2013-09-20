@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Database Manager
+Comment=Database Manager
+Exec=/usr/bin/pgadmin3
+Icon=pgadmin3
+Path=
+Terminal=false
+StartupNotify=false

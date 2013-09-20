@@ -1,0 +1,84 @@
+<!DOCTYPE Menu
+  PUBLIC '-//freedesktop//DTD Menu 1.0//EN'
+  'http://standards.freedesktop.org/menu-spec/menu-1.0.dtd'>
+<Menu>
+	<Name>Xfce</Name>
+	<MergeFile type="parent">/etc/xdg/xdg-xubuntu/menus/xfce-applications.menu</MergeFile>
+	<Menu>
+		<Name>Games</Name>
+		<Exclude>
+			<Filename>gnome-sudoku.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>gnomine.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>mahjongg.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>freecell.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>sol.desktop</Filename>
+		</Exclude>
+	</Menu>
+	<Exclude>
+		<Filename>xfce4-about.desktop</Filename>
+	</Exclude>
+	<Exclude>
+		<Filename>xfhelp4.desktop</Filename>
+	</Exclude>
+	<Menu>
+		<Name>System</Name>
+		<Exclude>
+			<Filename>gigolo.desktop</Filename>
+		</Exclude>
+	</Menu>
+	<DefaultLayout inline="false"/>
+	<Menu>
+		<Name>gislab</Name>
+		<Directory>gislab.directory</Directory>
+		<Include>
+			<Filename>gislab-desktop-gis-editor.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>gislab-database-manager.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>gislab-version.desktop</Filename>
+		</Include>
+		<Layout>
+			<Merge type="menus"/>
+			<Filename>gislab-desktop-gis-editor.desktop</Filename>
+			<Filename>gislab-database-manager.desktop</Filename>
+			<Filename>gislab-version.desktop</Filename>
+			<Merge type="files"/>
+		</Layout>
+	</Menu>
+	<Layout>
+		<Merge type="menus"/>
+		<Filename>exo-web-browser.desktop</Filename>
+		<Filename>exo-mail-reader.desktop</Filename>
+		<Menuname>gislab</Menuname>
+		<Separator/>
+		<Menuname>Settings</Menuname>
+		<Separator/>
+		<Menuname>Accessories</Menuname>
+		<Menuname>Development</Menuname>
+		<Menuname>Education</Menuname>
+		<Menuname>Games</Menuname>
+		<Menuname>Graphics</Menuname>
+		<Menuname>Network</Menuname>
+		<Menuname>Multimedia</Menuname>
+		<Menuname>Office</Menuname>
+		<Menuname>Other</Menuname>
+		<Menuname>System</Menuname>
+		<Separator/>
+		<Filename>ubuntu-software-center.desktop</Filename>
+		<Separator/>
+		<Filename>xfhelp4.desktop</Filename>
+		<Filename>xfce4-about.desktop</Filename>
+		<Filename>xfce4-session-logout.desktop</Filename>
+		<Merge type="files"/>
+	</Layout>
+</Menu>

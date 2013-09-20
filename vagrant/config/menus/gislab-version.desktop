@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Version
+Comment=GIS LAB build info and version
+Exec=leafpad /etc/gislab_version
+Icon=
+Path=
+Terminal=false
+StartupNotify=false
