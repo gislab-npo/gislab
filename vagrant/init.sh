@@ -92,7 +92,7 @@ cat << EOF > /var/lib/tftpboot/ltsp/i386/lts.conf
 [default]
 LDM_SESSION=/usr/bin/startxubuntu
 LOCAL_APPS=True
-LOCAL_APPS_EXTRAMOUNTS=/vagrant
+LOCAL_APPS_EXTRAMOUNTS=/vagrant/share
 SCREEN_02=shell					# get local root prompt when pressing Ctrl+Alt+F2 
 SCREEN_07=ldm
 EOF
@@ -172,6 +172,10 @@ cp /vagrant/config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml /etc/skel/.c
 
 mkdir -p /etc/skel/.config/xfce4/panel
 cp -a /vagrant/config/xfce4/panel/* /etc/skel/.config/xfce4/panel
+
+# symlink shared directory
+chmod +rwx /vagrant/share
+sudo ln -s /vagrant/share /etc/skel/Share
 
 # create users
 adduser user1 --disabled-login --gecos "GIS LAB User"
