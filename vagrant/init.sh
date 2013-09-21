@@ -69,6 +69,8 @@ service isc-dhcp-server restart
 ### LTSP ###
 #
 # LTSP installation
+echo "deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main" >> /etc/apt/sources.list # add extra GIS repository
+
 cat << EOF > /etc/ltsp/ltsp-build-client.conf
 ARCH=i386
 FAT_CLIENT_DESKTOPS="xubuntu-desktop"
@@ -76,12 +78,39 @@ LATE_PACKAGES="
 	vim
 	htop
 	mc
+	rst2pdf
+	libreoffice
+	libreoffice-gtk
+	libreoffice-calc
+	libreoffice-writer
+	gimp
+	flashplugin-installer
+	postgresql
+	postgis
+	postgresql-9.1-postgis
+	pgadmin3
+	qgis
+	python-qgis
+	qgis-plugin-grass
+	grass
+	gdal-bin
+	libgdal1h
+	python-gdal
+	sqlite3
+	spatialite-bin
+	spatialite-gui
+	git
+	vim-gnome
+	ipython
 "
 EOF
+#TODO: remove thunderbird-globalmenu abiword abiword-common abiword-plugin-grammar abiword-plugin-mathview libabiword-2.9 gnumeric gnumeric-common gnumeric-doc
 
-ltsp-build-client --arch i386 # TODO: use --mirror http://<URL>:3142/sk.archive.ubuntu.com/ubuntu
+ltsp-build-client --arch i386 --copy-sourceslist --accept-unsigned-packages # TODO: use --mirror http://<URL>:3142/sk.archive.ubuntu.com/ubuntu
 ltsp-update-sshkeys
 ltsp-update-kernels
+
+service nbd-server restart
 
 # LTSP image configuration
 echo -e "VERSION: $GISLAB_VERSION\nBUILD: $(date) ($USER)" > /opt/ltsp/i386/etc/gislab_version
@@ -120,32 +149,6 @@ cp /vagrant/config/xfce4/greybird/*.* /opt/ltsp/i386/usr/share/themes/Greybird/x
 
 # add desktop wallpaper
 cp /vagrant/config/gislab-wallpaper.png /opt/ltsp/i386/usr/share/xfce4/backdrops
-
-# install extra packages
-export LTSP_HANDLE_DAEMONS=false
-mount --bind /dev /opt/ltsp/i386/dev
-ltsp-chroot
-mount -t proc proc /proc
-
-apt-add-repository --yes ppa:imincik/gis && apt-get update # adding my GIS stack PPA
-
-apt-get --assume-yes install rst2pdf
-apt-get --assume-yes install libreoffice libreoffice-gtk libreoffice-calc libreoffice-writer gimp flashplugin-installer # office packages
-apt-get --assume-yes remove thunderbird-globalmenu abiword abiword-common abiword-plugin-grammar abiword-plugin-mathview \
-	libabiword-2.9 gnumeric gnumeric-common gnumeric-doc
-
-apt-get --assume-yes install postgresql postgis postgresql-9.1-postgis pgadmin3 qgis python-qgis qgis-plugin-grass grass \ # GIS user packages
-	gdal-bin libgdal1h python-gdal sqlite3 spatialite-bin spatialite-gui
-
-apt-get --assume-yes install git vim-gnome ipython # GIS developer packages
-
-exit
-umount /opt/ltsp/i386/proc
-umount /opt/ltsp/i386/dev
-
-# finally update image
-ltsp-update-image --arch i386
-service nbd-server restart
 
 
 
