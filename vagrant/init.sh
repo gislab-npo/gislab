@@ -72,6 +72,23 @@ service isc-dhcp-server restart
 echo "deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main" >> /etc/apt/sources.list # add extra GIS repository
 echo "deb http://ppa.launchpad.net/imincik/qgis2/ubuntu precise main" >> /etc/apt/sources.list # add extra QGIS 2 repository
 
+# ltsp-build-client plugin to remove some unwanted packages from final installation
+cat << EOF > /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/031-remove-packages
+case "$MODE" in
+    commandline)
+        add_option "remove-packages" "`eval_gettext "remove packages from final installation"`" "advanced" "true"
+        ;;
+    configure)
+        if [ -n "$option_remove_packages_value" ]; then
+            REMOVE_PACKAGES="$(echo $option_remove_packages_value | tr ',' ' ')"
+        fi
+        ;;
+    finalization)
+        chroot $ROOT apt-get --assume-yes remove $REMOVE_PACKAGES
+        ;;
+esac
+EOF
+
 cat << EOF > /etc/ltsp/ltsp-build-client.conf
 ARCH=i386
 FAT_CLIENT_DESKTOPS="xubuntu-desktop"
@@ -104,8 +121,18 @@ LATE_PACKAGES="
 	vim-gnome
 	ipython
 "
+REMOVE_PACKAGES="
+	thunderbird-globalmenu
+	abiword
+	abiword-common
+	abiword-plugin-grammar
+	abiword-plugin-mathview
+	libabiword-2.9
+	gnumeric
+	gnumeric-common
+	gnumeric-doc
+"
 EOF
-#TODO: remove thunderbird-globalmenu abiword abiword-common abiword-plugin-grammar abiword-plugin-mathview libabiword-2.9 gnumeric gnumeric-common gnumeric-doc
 
 ltsp-build-client --arch i386 --copy-sourceslist --accept-unsigned-packages # TODO: use --mirror http://<URL>:3142/sk.archive.ubuntu.com/ubuntu
 ltsp-update-sshkeys
