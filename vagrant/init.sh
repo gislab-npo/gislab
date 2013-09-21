@@ -70,6 +70,7 @@ service isc-dhcp-server restart
 #
 # LTSP installation
 echo "deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main" >> /etc/apt/sources.list # add extra GIS repository
+echo "deb http://ppa.launchpad.net/imincik/qgis2/ubuntu precise main" >> /etc/apt/sources.list # add extra QGIS 2 repository
 
 cat << EOF > /etc/ltsp/ltsp-build-client.conf
 ARCH=i386
