@@ -1,4 +1,5 @@
 #!/bin/bash
+# Vagrant shell provisioner script. DO NOT RUN BY HAND.
 # Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
 # LTSP troubleshooting https://help.ubuntu.com/community/UbuntuLTSP/ClientTroubleshooting

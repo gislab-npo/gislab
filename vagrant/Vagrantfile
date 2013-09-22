@@ -131,6 +131,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 #   v.gui = true
   end
 
-  config.vm.provision "shell", path: "init.sh"
+  config.vm.provision "shell", path: "install.sh"
   config.vm.network "public_network"
 end
