@@ -32,6 +32,17 @@ $ vagrant up
 Connect client computers to LAN (PXE), configure them to boot from LAN and enjoy.
 
 
+LTSP Client in Virtualbox
+-------------------------
+For development purposes you can configure Virtualbox machine to act as LTSP client.
+Important configurations are:
+ * you do not need to create any boot hard disk
+ * configure boot order to boot only from network (and enable IO APIC)
+ * configure network adapter in brigged mode; make sure you select the PCnet-FAST III (Am79C973)
+ as the adaptor type; allow promiscuous mode for all
+  
+
+
 WARNING: Currently, this project is in early stage of development. Be patient please.
 
 1 - https://www.virtualbox.org/
