@@ -132,6 +132,7 @@ ltsp-update-kernels
 cat << EOF > /var/lib/tftpboot/ltsp/i386/lts.conf
 [default]
 LDM_SESSION=/usr/bin/startxfce4
+CLIENT_ENV="DESKTOP_SESSION=xubuntu"
 LDM_THEME=gislab 
 LOCAL_APPS=True
 LOCAL_APPS_EXTRAMOUNTS=/vagrant/share
