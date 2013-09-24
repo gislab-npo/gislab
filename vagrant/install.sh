@@ -183,8 +183,8 @@ echo "/storage/share /export/share none bind 0 0" >> /etc/fstab
 mount /export/share
 
 cat << EOF > /etc/exports
-/export                     192.168.50.0/24(fsid=0,insecure,no_subtree_check,async,all_squash)
-/export/share               192.168.50.0/24(rw,nohide,insecure,no_subtree_check,async,all_squash)
+/export                     *(fsid=0,insecure,no_subtree_check,async,all_squash)
+/export/share               *(rw,nohide,insecure,no_subtree_check,async,all_squash)
 EOF
 
 service nfs-kernel-server restart
