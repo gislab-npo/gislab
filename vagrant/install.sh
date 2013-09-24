@@ -29,6 +29,7 @@ echo "grub-pc hold" | dpkg --set-selections # hold also grub because of some iss
 
 apt-get update
 apt-get --assume-yes upgrade
+apt-get --assume-yes install htop vim mc --no-install-recommends
 apt-get --assume-yes install ltsp-server-standalone openssh-server isc-dhcp-server tftpd-hpa --no-install-recommends
 
 
