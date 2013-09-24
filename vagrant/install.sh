@@ -101,6 +101,7 @@ ARCH=i386
 FAT_CLIENT_DESKTOPS="xubuntu-desktop"
 LATE_PACKAGES="
     nfs-common
+    aptitude
     htop
     mc
     rst2pdf
