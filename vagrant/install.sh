@@ -30,6 +30,8 @@ echo "grub-pc hold" | dpkg --set-selections # hold also grub because of some iss
 apt-get update
 apt-get --assume-yes upgrade
 apt-get --assume-yes install htop vim mc --no-install-recommends
+apt-get --assume-yes install postgresql postgis postgresql-9.1-postgis nfs-kernel-server
+
 apt-get --assume-yes install ltsp-server-standalone openssh-server isc-dhcp-server tftpd-hpa --no-install-recommends
 
 
@@ -83,6 +85,7 @@ GISLAB_VERSION=$GISLAB_VERSION
 ARCH=i386
 FAT_CLIENT_DESKTOPS="xubuntu-desktop"
 LATE_PACKAGES="
+    nfs-common
     htop
     mc
     rst2pdf
@@ -92,9 +95,6 @@ LATE_PACKAGES="
     libreoffice-writer
     gimp
     flashplugin-installer
-    postgresql
-    postgis
-    postgresql-9.1-postgis
     pgadmin3
     qgis
     python-qgis
@@ -143,6 +143,23 @@ service nbd-server restart
 
 # disable plymouth screen for better client troubleshooting on boot
 # sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/ltsp/i386/pxelinux.cfg/default
+
+
+
+
+#
+### NFS Share ###
+#
+mkdir -p /storage/share
+
+cat << EOF > /etc/exports
+/storage                     192.168.50.0/24(fsid=0,insecure,no_subtree_check,async,all_squash)
+/storage/share               192.168.50.0/24(rw,nohide,insecure,no_subtree_check,async,all_squash)
+EOF
+
+chown nobody:nogroup /storage/share
+
+service nfs-kernel-server restart
 
 
 
