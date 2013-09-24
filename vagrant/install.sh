@@ -40,16 +40,15 @@ apt-get --assume-yes install ltsp-server-standalone openssh-server isc-dhcp-serv
 #
 ### DHCP ###
 #
-# TODO: set some more exotic network range to avoid conflicts
 cat << EOF > /etc/ltsp/dhcpd.conf
 authoritative;
 
-subnet 192.168.1.0 netmask 255.255.255.0 {
-	range 192.168.1.200 192.168.1.250;
-    option domain-name "osgis-lab.lan";
-    option domain-name-servers 192.168.1.1, 8.8.8.8;
-    option broadcast-address 192.168.1.255;
-    option routers 192.168.1.1;
+subnet 192.168.50.0 netmask 255.255.255.0 {
+    range 192.168.50.100 192.168.50.250;
+    option domain-name "gislab.lan";
+    option domain-name-servers 8.8.8.8;
+    option broadcast-address 192.168.50.255;
+    option routers 192.168.50.1;
     option subnet-mask 255.255.255.0;
     option root-path "/opt/ltsp/i386";
     if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {

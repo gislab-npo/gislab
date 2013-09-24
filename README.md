@@ -16,7 +16,7 @@ Installation
 Sofware requirements:
  * Linux (in our case XUBUNTU 12.04)
  * Virtualbox [1]
- * Vagrant [2]
+ * Vagrant >= 1.3.3 [2]
  * Git
 
 Download a Vagrant box
