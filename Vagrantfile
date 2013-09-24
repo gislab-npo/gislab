@@ -136,4 +136,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.network :forwarded_port, guest: 111, host: 1111, auto_correct: true
   config.vm.network :forwarded_port, guest: 2049, host: 2049, auto_correct: true
+  config.vm.network :forwarded_port, guest: 5432, host: 5432, auto_correct: true
 end
