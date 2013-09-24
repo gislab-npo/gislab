@@ -83,7 +83,6 @@ GISLAB_VERSION=$GISLAB_VERSION
 ARCH=i386
 FAT_CLIENT_DESKTOPS="xubuntu-desktop"
 LATE_PACKAGES="
-    vim
     htop
     mc
     rst2pdf
