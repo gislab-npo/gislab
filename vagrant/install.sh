@@ -12,6 +12,12 @@ GISLAB_VERSION=0.1~dev
 #
 ### SERVER UPGRADE ###
 #
+export LANGUAGE=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
+locale-gen en_US.UTF-8
+
 export DEBIAN_FRONTEND=noninteractive
 echo "PATH="$PATH:/vagrant/bin"" >> /etc/profile
 
