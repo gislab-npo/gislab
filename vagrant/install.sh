@@ -170,7 +170,7 @@ mkdir -p /storage/share
 mkdir -p /storage/share/data	# writable only for superuser
 mkdir -p /storage/share/pub		# writable for NFS users
 chown nobody:nogroup /storage/share/pub
-chmod +rwx /storage/share/pub
+chmod ugo+rwx /storage/share/pub
 
 mkdir -p /export/share
 echo "/storage/share /export/share none bind 0 0" >> /etc/fstab
