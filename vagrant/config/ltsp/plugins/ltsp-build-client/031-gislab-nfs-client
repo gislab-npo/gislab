@@ -1,0 +1,6 @@
+case "$MODE" in
+    finalization)
+	mkdir -p $ROOT/media/gislab.lan
+	echo "192.168.50.5:/  /media/gislab.lan  nfs4  user,bg,exec  0  0" >> $ROOT/etc/fstab
+    ;;
+esac
