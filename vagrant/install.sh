@@ -150,7 +150,6 @@ LDM_SESSION=/usr/bin/startxfce4
 CLIENT_ENV="DESKTOP_SESSION=xubuntu"
 LDM_THEME=gislab 
 LOCAL_APPS=True
-LOCAL_APPS_EXTRAMOUNTS=/vagrant/share
 SCREEN_02=shell                          # get local root prompt when pressing Ctrl+Alt+F2 
 SCREEN_07=ldm
 EOF
