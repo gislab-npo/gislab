@@ -130,7 +130,7 @@ ltsp-update-kernels
 # LTSP configuration
 cat << EOF > /var/lib/tftpboot/ltsp/i386/lts.conf
 [default]
-LDM_SESSION=/usr/bin/startxubuntu        # launch XUBUNTU session script (LDM apparently has some problems to load it correctly)
+LDM_SESSION=/usr/bin/startxfce4
 LDM_THEME=gislab 
 LOCAL_APPS=True
 LOCAL_APPS_EXTRAMOUNTS=/vagrant/share
