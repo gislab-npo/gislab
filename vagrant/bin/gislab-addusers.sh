@@ -36,7 +36,7 @@ cp -a /vagrant/config/xfce4/panel/* /etc/skel/.config/xfce4/panel
 
 # add shared directory
 chmod +rwx /vagrant/share
-sudo ln -s /vagrant/share /etc/skel/Share
+ln -s /vagrant/share /etc/skel/Share
 
 
 # create 24 user accounts (login: gislab[1-24] password: gislab)
