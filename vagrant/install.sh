@@ -74,6 +74,7 @@ echo "deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main" >> /etc/apt/
 echo "deb http://ppa.launchpad.net/imincik/qgis2/ubuntu precise main" >> /etc/apt/sources.list # add extra QGIS 2 repository
 
 # add some ltsp-build-client plugins which takes care about our image customizations
+rm -vf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/*gislab*
 cp -av /vagrant/config/ltsp/plugins/ltsp-build-client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
 # client image configuration

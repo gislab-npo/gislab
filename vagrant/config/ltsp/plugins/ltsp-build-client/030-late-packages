@@ -1,0 +1,14 @@
+case "$MODE" in
+    commandline)
+        add_option "late-packages" "`eval_gettext "list of packages to install as part of the final installation"`" "advanced" "true"
+        ;;
+    configure)
+        if [ -n "$option_late_packages_value" ]; then
+            LATE_PACKAGES="$(echo $option_late_packages_value | tr ',' ' ')"
+        fi
+        ;;
+    finalization)
+        # force '--no-install-recommends' option because it is switched off in '030-fat-client'
+        chroot $ROOT apt-get --no-install-recommends --assume-yes --force-yes install $LATE_PACKAGES
+        ;;
+esac
