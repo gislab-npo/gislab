@@ -193,6 +193,37 @@ service nfs-kernel-server restart
 
 
 #
+#### PostgreSQL ###
+#
+# allow network connections and local connection without password
+sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/9.1/main/postgresql.conf
+sed -i "s/local.*all.*all.*peer/local  all  all  trust/" /etc/postgresql/9.1/main/pg_hba.conf
+service postgresql reload
+
+# create users
+sudo -u postgres createuser --superuser labadmin
+sudo -u postgres createuser --no-superuser --no-createdb --no-createrole lab
+sudo -u postgres psql -c "ALTER ROLE lab WITH PASSWORD 'lab'"
+
+# create template database
+createdb -U labadmin -E UTF8 -T template0 template_postgis
+psql -U labadmin -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
+psql -U labadmin -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
+psql -U labadmin -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;"
+psql -U labadmin -d template_postgis -c "GRANT ALL ON geography_columns TO PUBLIC;"
+psql -U labadmin -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
+psql -U labadmin -d template_postgis -c "VACUUM FULL;"
+psql -U labadmin -d template_postgis -c "VACUUM FREEZE;"
+psql -U labadmin -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
+psql -U labadmin -d postgres -c "UPDATE pg_database SET datallowconn='false' WHERE datname='template_postgis';"
+
+# create gislab database
+createdb -U labadmin -O labadmin -T template_postgis gislab
+
+
+
+
+#
 ### USERS ###
 #
 /vagrant/bin/gislab-addusers.sh # call script to create user accounts
