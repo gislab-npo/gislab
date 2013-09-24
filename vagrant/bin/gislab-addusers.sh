@@ -43,8 +43,8 @@ ln -s /media/storage.gislab.lan/share /etc/skel/Share
 # create 24 user accounts (login: gislab[1-24] password: gislab)
 for i in {1..24}
 do
-	adduser gislab$i --disabled-login --gecos "GIS LAB User"
-	echo "gislab$i:gislab" | chpasswd
+	adduser lab$i --disabled-login --gecos "GIS LAB User"
+	echo "lab$i:lab" | chpasswd
 done
 
 

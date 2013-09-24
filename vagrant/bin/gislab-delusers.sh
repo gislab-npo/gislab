@@ -7,7 +7,7 @@ echo "I: Removing GIS LAB users accounts"
 # remove lab users accounts
 for i in {1..24}
 do
-	deluser --remove-home gislab$i
+	deluser --remove-home lab$i
 done
 
 
