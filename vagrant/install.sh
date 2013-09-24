@@ -48,7 +48,7 @@ subnet 192.168.50.0 netmask 255.255.255.0 {
     option domain-name "gislab.lan";
     option domain-name-servers 8.8.8.8;
     option broadcast-address 192.168.50.255;
-    option routers 192.168.50.1;
+    option routers 192.168.50.5;
     option subnet-mask 255.255.255.0;
     option root-path "/opt/ltsp/i386";
     if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
