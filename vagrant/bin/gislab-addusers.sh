@@ -9,6 +9,7 @@ mkdir /etc/skel/.config
 rm -rf /etc/skel/.local
 mkdir /etc/skel/.local
 
+rm -rf /etc/skel/Share
 
 # configure menu
 mkdir -p /etc/skel/.config/menus
