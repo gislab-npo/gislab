@@ -63,6 +63,22 @@ cat << EOF > /etc/default/isc-dhcp-server
 INTERFACES="eth1"
 EOF
 
+
+# set IP forwarding for LTSP clients and call it from rc.local to run it after server restart
+cat << EOF > /usr/local/bin/enable-ip-forward
+#!/bin/bash
+
+sysctl -w net.ipv4.ip_forward=1
+iptables --table nat --append POSTROUTING --jump MASQUERADE --source 192.168.50.0/24
+EOF
+
+chmod +x /usr/local/bin/enable-ip-forward
+/usr/local/bin/enable-ip-forward
+
+sed -i "s/exit 0//" /etc/rc.local
+echo "/usr/local/bin/enable-ip-forward" >> /etc/rc.local
+echo "exit 0" >> /etc/rc.local
+
 service isc-dhcp-server restart
 
 
