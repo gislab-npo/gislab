@@ -2,6 +2,8 @@
 # Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
 
+echo "I: Removing GIS LAB users accounts"
+
 # remove lab users accounts
 for i in {1..24}
 do

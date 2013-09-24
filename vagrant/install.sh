@@ -13,6 +13,8 @@ GISLAB_VERSION=0.1~dev
 ### SERVER UPGRADE ###
 #
 export DEBIAN_FRONTEND=noninteractive
+echo "PATH="$PATH:/vagrant/bin"" >> /etc/profile
+
 
 # hold kernel packages from upgrade to avoid a need to restart server after
 # installation (Vagrant box could provide up-to-date kernel image)
@@ -20,12 +22,10 @@ echo "linux-image-$(uname -r) hold" | dpkg --set-selections
 echo "linux-generic-pae hold" | dpkg --set-selections
 echo "linux-image-generic-pae hold" | dpkg --set-selections
 
-echo "grub-pc hold" | dpkg --set-selections # hold also grub because some issue
+echo "grub-pc hold" | dpkg --set-selections # hold also grub because of some issue
 
-# add APT proxy if available
-#cat << EOF > /etc/apt/apt.conf.d/02proxy
-#Acquire::http { Proxy "http://<URL>:3142"; };
-#EOF
+# set apt-cacher if available
+#sed -i "s/deb http:\/\//deb http:\/\/<APT-CACHER IP>:3142\//" /etc/apt/sources.list
 
 apt-get update
 apt-get --assume-yes upgrade
@@ -37,7 +37,7 @@ apt-get --assume-yes install ltsp-server-standalone openssh-server isc-dhcp-serv
 #
 ### DHCP ###
 #
-# TODO: set some more suitable network range
+# TODO: set some more exotic network range to avoid conflicts
 cat << EOF > /etc/ltsp/dhcpd.conf
 authoritative;
 
@@ -69,115 +69,79 @@ service isc-dhcp-server restart
 #
 ### LTSP ###
 #
-# LTSP installation
 echo "deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main" >> /etc/apt/sources.list # add extra GIS repository
 echo "deb http://ppa.launchpad.net/imincik/qgis2/ubuntu precise main" >> /etc/apt/sources.list # add extra QGIS 2 repository
 
-# ltsp-build-client plugin to remove some unwanted packages from final installation
-cat << EOF > /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/031-remove-packages
-case "$MODE" in
-    commandline)
-        add_option "remove-packages" "`eval_gettext "remove packages from final installation"`" "advanced" "true"
-        ;;
-    configure)
-        if [ -n "$option_remove_packages_value" ]; then
-            REMOVE_PACKAGES="$(echo $option_remove_packages_value | tr ',' ' ')"
-        fi
-        ;;
-    finalization)
-        chroot $ROOT apt-get --assume-yes remove $REMOVE_PACKAGES
-        ;;
-esac
-EOF
+# add some ltsp-build-client plugins which takes care about our image customizations
+cp -av /vagrant/config/ltsp/plugins/ltsp-build-client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
+# client image configuration
 cat << EOF > /etc/ltsp/ltsp-build-client.conf
+GISLAB_VERSION=$GISLAB_VERSION
 ARCH=i386
 FAT_CLIENT_DESKTOPS="xubuntu-desktop"
 LATE_PACKAGES="
-	vim
-	htop
-	mc
-	rst2pdf
-	libreoffice
-	libreoffice-gtk
-	libreoffice-calc
-	libreoffice-writer
-	gimp
-	flashplugin-installer
-	postgresql
-	postgis
-	postgresql-9.1-postgis
-	pgadmin3
-	qgis
-	python-qgis
-	qgis-plugin-grass
-	grass
-	gdal-bin
-	libgdal1h
-	python-gdal
-	sqlite3
-	spatialite-bin
-	spatialite-gui
-	git
-	vim-gnome
-	ipython
+    vim
+    htop
+    mc
+    rst2pdf
+    libreoffice
+    libreoffice-gtk
+    libreoffice-calc
+    libreoffice-writer
+    gimp
+    flashplugin-installer
+    postgresql
+    postgis
+    postgresql-9.1-postgis
+    pgadmin3
+    qgis
+    python-qgis
+    qgis-plugin-grass
+    grass
+    gdal-bin
+    libgdal1h
+    python-gdal
+    sqlite3
+    spatialite-bin
+    spatialite-gui
+    git
+    vim-gnome
+    ipython
 "
 REMOVE_PACKAGES="
-	thunderbird-globalmenu
-	abiword
-	abiword-common
-	abiword-plugin-grammar
-	abiword-plugin-mathview
-	libabiword-2.9
-	gnumeric
-	gnumeric-common
-	gnumeric-doc
+    thunderbird-globalmenu
+    abiword
+    abiword-common
+    abiword-plugin-grammar
+    abiword-plugin-mathview
+    libabiword-2.9
+    gnumeric
+    gnumeric-common
+    gnumeric-doc
 "
 EOF
 
-ltsp-build-client --arch i386 --copy-sourceslist --accept-unsigned-packages # TODO: use --mirror http://<URL>:3142/sk.archive.ubuntu.com/ubuntu
+ltsp-build-client --purge-chroot --copy-sourceslist --accept-unsigned-packages  # use --mirror http://<URL>:3142/sk.archive.ubuntu.com/ubuntu
+																			    # or use --mount-package-cache --keep-packages to use local cache
 ltsp-update-sshkeys
 ltsp-update-kernels
 
-service nbd-server restart
-
-# LTSP image configuration
-echo -e "VERSION: $GISLAB_VERSION\nBUILD: $(date) ($USER)" > /opt/ltsp/i386/etc/gislab_version
-
-# we must load XUBUNTU session with custom script because LightDM apparently has some problems to load
-# it correctly in LTSP environment
+# LTSP configuration
 cat << EOF > /var/lib/tftpboot/ltsp/i386/lts.conf
 [default]
-LDM_SESSION=/usr/bin/startxubuntu
+LDM_SESSION=/usr/bin/startxubuntu        # launch XUBUNTU session script (LDM apparently has some problems to load it correctly)
+LDM_THEME=gislab 
 LOCAL_APPS=True
 LOCAL_APPS_EXTRAMOUNTS=/vagrant/share
-SCREEN_02=shell					# get local root prompt when pressing Ctrl+Alt+F2 
+SCREEN_02=shell                          # get local root prompt when pressing Ctrl+Alt+F2 
 SCREEN_07=ldm
 EOF
 
+service nbd-server restart
+
 # disable plymouth screen for better client troubleshooting on boot
 # sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/ltsp/i386/pxelinux.cfg/default
-
-# this script sets necessary XUBUNTU session variables and starts XFCE session
-cat << EOF > /opt/ltsp/i386/usr/bin/startxubuntu
-#!/bin/bash
-
-export DEFAULTS_PATH=/usr/share/gconf/xubuntu.default.path
-export MANDATORY_PATH=/usr/share/gconf/xubuntu.mandatory.path
-export GDMSESSION=xubuntu
-
-export DESKTOP_SESSION=xubuntu
-export XDG_CONFIG_DIRS=/etc/xdg/xdg-xubuntu:/etc/xdg:/etc/xdg
-export XDG_DATA_DIRS=/usr/share/xubuntu:/usr/local/share/:/usr/share/:/usr/share
-
-exec /usr/bin/startxfce4
-EOF
-chmod +x /opt/ltsp/i386/usr/bin/startxubuntu
-
-cp /vagrant/config/xfce4/greybird/*.* /opt/ltsp/i386/usr/share/themes/Greybird/xfwm4/ # fix Greybird windows resizing problem
-
-# add desktop wallpaper
-cp /vagrant/config/gislab-wallpaper.png /opt/ltsp/i386/usr/share/xfce4/backdrops
 
 
 
@@ -185,9 +149,7 @@ cp /vagrant/config/gislab-wallpaper.png /opt/ltsp/i386/usr/share/xfce4/backdrops
 #
 ### USERS ###
 #
-echo "PATH="$PATH:/vagrant/bin"" >> /etc/profile
-
-/vagrant/bin/gislab-addusers.sh
+/vagrant/bin/gislab-addusers.sh # call script to create user accounts
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

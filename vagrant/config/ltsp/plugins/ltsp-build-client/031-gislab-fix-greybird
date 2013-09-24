@@ -1,0 +1,5 @@
+case "$MODE" in
+    finalization)
+	cp /vagrant/config/xfce4/greybird/*.* $ROOT/usr/share/themes/Greybird/xfwm4/
+    ;;
+esac

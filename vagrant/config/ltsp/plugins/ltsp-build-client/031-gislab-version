@@ -1,0 +1,13 @@
+case "$MODE" in
+    commandline)
+        add_option "gislab-version" "`eval_gettext "set GIS LAB version"`" "advanced" "true"
+        ;;
+    configure)
+        if [ -n "$option_gislab_version_value" ]; then
+            GISLAB_VERSION="$(echo $option_gislab_version_value | tr ',' ' ')"
+        fi
+        ;;
+    finalization)
+        echo -e "VERSION: $GISLAB_VERSION\nCLIENT_BUILD: $(date)" > $ROOT/etc/gislab_version
+        ;;
+esac

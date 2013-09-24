@@ -1,0 +1,6 @@
+case "$MODE" in
+    finalization)
+	cp /vagrant/config/ltsp/startxubuntu $ROOT/usr/bin/
+	chmod +x $ROOT/usr/bin/startxubuntu
+    ;;
+esac

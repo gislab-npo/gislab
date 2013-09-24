@@ -1,0 +1,7 @@
+case "$MODE" in
+    finalization)
+	cp /vagrant/config/gislab-wallpaper.png $ROOT/usr/share/xfce4/backdrops
+	cp -a /vagrant/config/ldm/themes/gislab $ROOT/usr/share/ldm/themes/
+	cp /vagrant/config/gislab-logo.png $ROOT/usr/share/ldm/themes/gislab/logo.png
+    ;;
+esac
