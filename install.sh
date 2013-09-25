@@ -199,7 +199,8 @@ service nfs-kernel-server restart
 # allow network connections and local connection without password
 sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/9.1/main/postgresql.conf
 sed -i "s/local.*all.*all.*peer/local  all  all  trust/" /etc/postgresql/9.1/main/pg_hba.conf
-service postgresql reload
+sed -i "s/host.*all.*all.*127.0.0.1\/32.*md5/host  all  all  0.0.0.0\/0  md5/" /etc/postgresql/9.1/main/pg_hba.conf
+service postgresql restart
 
 # create users
 sudo -u postgres createuser --superuser labadmin
