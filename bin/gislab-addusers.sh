@@ -22,13 +22,11 @@ mkdir -p /etc/skel/.local/share/desktop-directories
 cp /vagrant/config/menus/*.directory /etc/skel/.local/share/desktop-directories/
 
 
+# configure GIS LAB desktop and panel
+mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
 # copy XUBUNTU settings to fix uncomplete session loading (for unknown reason) - seems not required
 # after setting CLIENT_ENV="DESKTOP_SESSION=xubuntu" in lts.conf
-#mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
 #cp -a /opt/ltsp/i386/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/* /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/
-
-
-# configure GIS LAB desktop and panel
 cp /vagrant/config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 cp /vagrant/config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
 
