@@ -131,6 +131,7 @@ LATE_PACKAGES="
     git
     vim-gnome
     ipython
+    postgresql-client
 "
 REMOVE_PACKAGES="
     thunderbird-globalmenu
