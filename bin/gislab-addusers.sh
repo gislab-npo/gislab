@@ -43,6 +43,11 @@ cp /vagrant/config/postgresql/pgpass /etc/skel/.pgpass
 cp /vagrant/config/postgresql/pgadmin3 /etc/skel/.pgadmin3
 
 
+# QGIS
+mkdir -p /etc/skel/.config/QGIS
+cp /vagrant/config/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
+
+
 # create 24 user accounts (login: gislab[1-24] password: gislab)
 for i in {1..24}
 do
