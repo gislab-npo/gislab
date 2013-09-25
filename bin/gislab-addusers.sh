@@ -38,6 +38,11 @@ cp -a /vagrant/config/xfce4/panel/* /etc/skel/.config/xfce4/panel
 ln -s /media/storage.gislab.lan/share /etc/skel/Share
 
 
+# PostgreSQL
+cp /vagrant/config/postgresql/pgpass /etc/skel/.pgpass
+cp /vagrant/config/postgresql/pgadmin3 /etc/skel/.pgadmin3
+
+
 # create 24 user accounts (login: gislab[1-24] password: gislab)
 for i in {1..24}
 do
