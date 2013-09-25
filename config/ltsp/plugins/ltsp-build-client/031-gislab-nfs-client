@@ -1,6 +1,10 @@
 case "$MODE" in
     finalization)
 	mkdir -p $ROOT/media/storage.gislab.lan
-	echo "192.168.50.5:/  /media/storage.gislab.lan  nfs4  user,bg,exec  0  0" >> $ROOT/etc/fstab
+
+	# can't mount in /etc/fstab because it is dynamically written by LTSP
+	sed -i "s/exit 0//" $ROOT/etc/rc.local
+	echo "mount -t nfs4 192.168.50.5:/ /media/storage.gislab.lan" >> $ROOT/etc/rc.local
+	echo "exit 0" >> $ROOT/etc/rc.local
     ;;
 esac
