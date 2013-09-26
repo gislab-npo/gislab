@@ -1,6 +1,8 @@
 Open Source GIS Laboratory
 ==========================
-A purpose of this project is to create easy-to-use, pre-configured, centrally managed and portable GIS laboratory LAN platform based on open source software. All software works out-of-box, without any need of configuration or other behind a scene knowledge, allowing user to keep high focus on his GIS task.
+Super easy deployment of fully equipped and unbreakable GIS LAN with one hundred workstations in a few moments.
+
+A purpose of this project is to create  fully equipped, easy-to-use, pre-configured, centrally managed and portable GIS laboratory LAN platform based on open source software. All software works out-of-box, without any need of configuration or other behind a scene knowledge, allowing users to keep high focus on their GIS task.
 
 This platform consists from one Linux server instance running LTSP server inside automatically provisioned Virtualbox machine and many diskless client computers running LTSP Fat client. This setup allows to use all client's computer power and it is very friendly to server resources.
 
