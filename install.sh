@@ -167,7 +167,7 @@ EOF
 service nbd-server restart
 
 # disable plymouth screen for better client troubleshooting on boot
-# sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/ltsp/i386/pxelinux.cfg/default
+sed -i "s/splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/ltsp/i386/pxelinux.cfg/default
 
 
 
