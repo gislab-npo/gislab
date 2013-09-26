@@ -160,6 +160,8 @@ LDM_THEME=gislab
 LOCAL_APPS=True
 SCREEN_02=shell                          # get local root prompt when pressing Ctrl+Alt+F2 
 SCREEN_07=ldm
+FSTAB_0="server:/home /home nfs defaults 0 0"
+FSTAB_1="server:/storage /mnt nfs defaults 0 0"
 EOF
 
 service nbd-server restart
@@ -179,13 +181,9 @@ mkdir -p /storage/share/pub		# writable for NFS users
 chown nobody:nogroup /storage/share/pub
 chmod ugo+rwx /storage/share/pub
 
-mkdir -p /export/share
-echo "/storage/share /export/share none bind 0 0" >> /etc/fstab
-mount /export/share
-
 cat << EOF > /etc/exports
-/export                     *(fsid=0,insecure,no_subtree_check,async,all_squash)
-/export/share               *(rw,nohide,insecure,no_subtree_check,async,all_squash)
+/home                       *(rw,sync,no_subtree_check)
+/storage                    *(rw,sync,no_subtree_check,all_squash,insecure)
 EOF
 
 service nfs-kernel-server restart

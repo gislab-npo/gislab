@@ -35,7 +35,7 @@ cp -a /vagrant/config/xfce4/panel/* /etc/skel/.config/xfce4/panel
 
 
 # add shared directory
-ln -s /media/storage.gislab.lan/share /etc/skel/Share
+ln -s /mnt/share /etc/skel/Share
 
 
 # PostgreSQL
@@ -52,6 +52,7 @@ cp /vagrant/config/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
 for i in {1..24}
 do
 	adduser lab$i --disabled-login --gecos "GIS LAB User"
+	chmod go-rwx /home/lab$1
 	echo "lab$i:lab" | chpasswd
 done
 
