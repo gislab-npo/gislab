@@ -1,0 +1,14 @@
+[Desktop Entry]
+Categories=PackageManager;GTK;System;Settings;
+Comment=Lets you choose from thousands of applications available for Ubuntu
+Exec=/usr/bin/software-center %u
+GenericName=Software Center
+Hidden=true
+Icon=softwarecenter
+Keywords=Sources;PPA;Install;Uninstall;Remove;Purchase;Catalogue;Store;
+MimeType=application/x-deb;application/x-debian-package;x-scheme-handler/apt;
+Name=Ubuntu Software Center
+StartupNotify=true
+Terminal=false
+Type=Application
+X-Ubuntu-Gettext-Domain=software-center

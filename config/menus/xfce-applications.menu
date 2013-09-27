@@ -21,6 +21,7 @@
 		<Exclude>
 			<Filename>sol.desktop</Filename>
 		</Exclude>
+		<Deleted/>
 	</Menu>
 	<Exclude>
 		<Filename>xfce4-about.desktop</Filename>
@@ -32,6 +33,51 @@
 		<Name>System</Name>
 		<Exclude>
 			<Filename>gigolo.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>Thunar-bulk-rename.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>htop.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>ibus.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>ltsp-restart.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>ltsp-shutdown.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>usb-creator-gtk.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>synaptic.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>xfce4-taskmanager.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>xfce4-terminal.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>Thunar.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>time.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>users.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>debian-uxterm.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>debian-xterm.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>update-manager.desktop</Filename>
 		</Exclude>
 	</Menu>
 	<DefaultLayout inline="false"/>
@@ -74,11 +120,36 @@
 		<Menuname>Other</Menuname>
 		<Menuname>System</Menuname>
 		<Separator/>
-		<Filename>ubuntu-software-center.desktop</Filename>
-		<Separator/>
 		<Filename>xfhelp4.desktop</Filename>
 		<Filename>xfce4-about.desktop</Filename>
 		<Filename>xfce4-session-logout.desktop</Filename>
 		<Merge type="files"/>
 	</Layout>
+	<Menu>
+		<Name>Accessories</Name>
+		<Exclude>
+			<Filename>catfish.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>onboard.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>globaltime.desktop</Filename>
+		</Exclude>
+	</Menu>
+	<Menu>
+		<Name>Network</Name>
+		<Exclude>
+			<Filename>transmission-gtk.desktop</Filename>
+		</Exclude>
+	</Menu>
+	<Menu>
+		<Name>Office</Name>
+		<Exclude>
+			<Filename>globaltime.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>xfcalendar.desktop</Filename>
+		</Exclude>
+	</Menu>
 </Menu>
