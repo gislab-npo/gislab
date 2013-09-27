@@ -49,6 +49,21 @@ $ vagrant up
 Connect client computers to LAN (PXE), configure them to boot from LAN and enjoy.
 
 
+Upgrade
+-------
+Currently, in this phase of development we provide only hard upgrade process where whole system including data
+is going to be replaced. Later we will add much more sophisticated approach. Please backup your data !
+
+Update GIS LAB sources
+$ git pull
+
+Shutdown all client machines and destroy server
+$ vagrant destroy
+
+Install new version
+$ vagrant up
+
+
 IP addresses
 ------------
 LTSP server: 192.168.50.5
