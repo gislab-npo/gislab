@@ -6,17 +6,26 @@ A purpose of this project is to create  fully equipped, easy-to-use, pre-configu
 
 This platform consists from one Linux server instance running LTSP server inside automatically provisioned Virtualbox machine and many diskless client computers running LTSP Fat client. This setup allows to use all client's computer power and it is very friendly to server resources.
 
-Server instance contains:
- * file sharing service (NFS)
- * database server (PostgreSQL/PostGIS)
-
-Every client workstation should contain:
- * complete office desktop suite for internet browsing, email, chat, images and video, word, spreadsheet
+Key features of this platform:
+ * super easy fully automatic deployment and maintenance - all operation are encapsulated in easy to use commands
+ * nearly zero requirements for client computers - no operating system or software needed, no hard disk needed
+ * no limit of number of client computers
+ * 100 percent real computer user experience - no thin client glitches
+ * central management of all client OS images, user accounts and user data
+ * every user can log in from any client computer to get his working environment
+ * unbreakable client OS images - after every client reload you always get fresh OS environment
+ * rich software equipment of client computers for internet browsing, email, chat, images and video, word, spreadsheet
  and presentation editing and more
- * set of software equipment for data editing, analysis and database storage and management
- * set of software equipment for GIS development
- * set of high quality free data
- * step by step manuals for the most common tasks
+ * Linux system security
+ * out of box internet sharing from server computer to all client computers
+ * out of box working file sharing service (NFS)
+ * out of box database server (PostgreSQL/PostGIS)
+
+Key features of GIS implementation on this platform:
+ * best tuned set of software equipment for data editing, analysis and database storage and management [PARTIALY IMPLEMENTED]
+ * set of software equipment for GIS development [TODO]
+ * set of high quality free data [TODO]
+ * step by step manuals and how-to documents for the most common tasks [TODO]
 
 
 Installation
