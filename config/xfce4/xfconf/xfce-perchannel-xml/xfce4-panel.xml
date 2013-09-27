@@ -30,7 +30,7 @@
       <property name="background-style" type="uint" value="0"/>
       <property name="horizontal" type="bool" value="true"/>
       <property name="background-alpha" type="uint" value="100"/>
-      <property name="size" type="uint" value="32"/>
+      <property name="size" type="uint" value="38"/>
       <property name="autohide" type="bool" value="false"/>
       <property name="length-adjust" type="bool" value="true"/>
       <property name="span-monitors" type="bool" value="false"/>
