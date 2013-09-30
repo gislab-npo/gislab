@@ -16,10 +16,11 @@ Key features of this platform:
  * unbreakable client OS images - after every client reload you always get fresh OS environment
  * rich software equipment of client computers for internet browsing, email, chat, images and video, word, spreadsheet
  and presentation editing and more
- * Linux system security
  * out of box internet sharing from server computer to all client computers
  * out of box working file sharing service (NFS)
  * out of box database server (PostgreSQL/PostGIS)
+ * Linux system security
+ * great platform for studying open source technologies beginning from Linux OS, various system services and end user software
 
 Key features of GIS implementation on this platform:
  * best tuned set of software equipment for data editing, analysis and database storage and management [PARTIALY IMPLEMENTED]
