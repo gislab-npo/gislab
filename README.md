@@ -31,6 +31,11 @@ Key features of GIS implementation on this platform:
 
 Installation
 ------------
+BIG FAT WARNING: Server installed to virtual machine by these steps contains its own DHCP server. If You do not know what does it means
+DO NOT install it on computer connected to Your corporate LAN or consult it with Your sysadmin. You are absolutely safe to install
+it on computer without ethernet connection to any existing LAN.
+Installation will NOT modify anything on Your computer (everything is done inside of virtual machine), no need to worry in this case.
+
 Sofware requirements:
  * Linux (in our case XUBUNTU 12.04)
  * Virtualbox [1]
