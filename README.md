@@ -101,8 +101,10 @@ Important configurations are:
  as the adaptor type; allow promiscuous mode for all
   
 
+Authors
+-------
+* Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
-WARNING: Currently, this project is in early stage of development. Be patient please.
 
 1 - https://www.virtualbox.org/
 2 - http://docs.vagrantup.com/v2/getting-started/index.html
