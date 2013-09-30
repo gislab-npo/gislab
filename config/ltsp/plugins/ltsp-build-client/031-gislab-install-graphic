@@ -1,3 +1,5 @@
+# Install GIS LAB graphic
+
 case "$MODE" in
     finalization)
 	cp /vagrant/config/gislab-wallpaper.png $ROOT/usr/share/xfce4/backdrops

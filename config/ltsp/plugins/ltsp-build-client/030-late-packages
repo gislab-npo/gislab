@@ -1,3 +1,6 @@
+# Force late packages installation with '--no-install-recommends' option (it is switched off
+# in '030-fat-client')
+
 case "$MODE" in
     commandline)
         add_option "late-packages" "`eval_gettext "list of packages to install as part of the final installation"`" "advanced" "true"
@@ -8,7 +11,6 @@ case "$MODE" in
         fi
         ;;
     finalization)
-        # force '--no-install-recommends' option because it is switched off in '030-fat-client'
         chroot $ROOT apt-get --no-install-recommends --assume-yes --force-yes install $LATE_PACKAGES
         ;;
 esac

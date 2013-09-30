@@ -1,3 +1,5 @@
+# Implements possibility to remove not needed packages installed to a client image by previous commands.
+
 case "$MODE" in
     commandline)
         add_option "remove-packages" "`eval_gettext "remove packages from final installation"`" "advanced" "true"
