@@ -1,6 +1,6 @@
 Open Source GIS Laboratory
 ==========================
-Super easy deployment of fully equipped and unbreakable GIS LAN with one hundred workstations in a few moments.
+Super easy deployment of fully equipped and unbreakable GIS LAN with tens of workstations in a few moments.
 
 A purpose of this project is to create  fully equipped, easy-to-use, pre-configured, centrally managed and portable GIS laboratory LAN platform based on open source software. All software works out-of-box, without any need of configuration or other behind a scene knowledge, allowing users to keep high focus on their GIS task.
 
@@ -43,14 +43,20 @@ Sofware requirements:
  * Git
 
 Download a Vagrant box
+```
 $ vagrant box add precise32 http://files.vagrantup.com/precise32.box
+```
 
 Download a GIS LAB sources
+```
 $ git clone https://github.com/imincik/gis-lab.git
+```
 
 Fire up a Vagrant provisioner
+```
 $ cd gis-lab
 $ vagrant up
+```
 
 Connect client computers to LAN (PXE), configure them to boot from LAN and enjoy.
 
@@ -61,13 +67,19 @@ Currently, in this phase of development we provide only hard upgrade process whe
 is going to be replaced. Later we will add much more sophisticated approach. Please backup your data !
 
 Update GIS LAB sources
+```
 $ git pull
+```
 
 Shutdown all client machines and destroy server
+```
 $ vagrant destroy
+```
 
 Install new version
+```
 $ vagrant up
+```
 
 
 IP addresses
