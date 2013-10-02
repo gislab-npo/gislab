@@ -38,8 +38,8 @@ Installation will NOT modify anything on Your computer (everything is done insid
 
 Sofware requirements:
  * Linux (in our case XUBUNTU 12.04)
- * Virtualbox [1]
- * Vagrant >= 1.3.3 [2]
+ * Virtualbox
+ * Vagrant >= 1.3.3
  * Git
 
 Download a Vagrant box
@@ -131,8 +131,21 @@ $ ip addr del 192.168.50.2/24 dev eth0
 
 Authors
 -------
-* Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
+ * Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
 
-1 - https://www.virtualbox.org/
-2 - http://docs.vagrantup.com/v2/getting-started/index.html
+Most important technologies and credits
+---------------------------------------
+ * VirtualBox - https://www.virtualbox.org/
+ * XUBUNTU Linux - http://xubuntu.org/
+ * Vagrant - http://docs.vagrantup.com/
+ * LTSP - http://www.ltsp.org/
+ * GDAL - http://www.gdal.org/
+ * GEOS - http://geos.osgeo.org/
+ * PostgreSQL - http://www.postgresql.org/
+ * PgAdmin - http://www.pgadmin.org/
+ * PostGIS - http://postgis.net/
+ * SpatiaLite - http://www.gaia-gis.it/gaia-sins/
+ * QGIS - http://www.qgis.org/
+ * GRASS GIS - http://grass.osgeo.org/
+ * and many more nice open source projects
