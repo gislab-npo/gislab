@@ -47,7 +47,11 @@ Download a Vagrant box
 $ vagrant box add precise32 http://files.vagrantup.com/precise32.box
 ```
 
-Download a GIS LAB sources
+Download latest GIS LAB package from https://github.com/imincik/gis-lab/releases
+
+or
+
+clone GIS LAB sources if You are developer or familiar with Git
 ```
 $ git clone https://github.com/imincik/gis-lab.git
 ```
