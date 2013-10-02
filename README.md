@@ -117,6 +117,18 @@ Important configurations are:
  as the adaptor type; allow promiscuous mode for all
   
 
+Tips
+----
+Add secondary IP address to host machine to enable connection from host machine to client machines
+```
+$ ip addr add 192.168.50.2/24 dev eth0
+```
+remove it with
+```
+$ ip addr del 192.168.50.2/24 dev eth0
+```
+
+
 Authors
 -------
 * Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
