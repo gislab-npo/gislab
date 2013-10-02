@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # Vagrant shell provisioner script. DO NOT RUN BY HAND.
 # Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
@@ -6,8 +6,9 @@
 
 set -e
 
+source /vagrant/config.cfg
 
-GISLAB_VERSION=0.1~dev
+GISLAB_VERSION=dev
 
 #
 ### SERVER UPGRADE ###
@@ -26,6 +27,14 @@ EOF
 export DEBIAN_FRONTEND=noninteractive
 echo "PATH="$PATH:/vagrant/bin"" >> /etc/profile
 
+# use APT proxy on server if configured
+if [ -n "${GISLAB_APT_HTTP_PROXY}" ]; then
+	cat << EOF > /etc/apt/apt.conf.d/02proxy
+Acquire::http { Proxy "$GISLAB_APT_HTTP_PROXY"; };
+EOF
+else
+	rm -f /etc/apt/apt.conf.d/02proxy
+fi
 
 # hold kernel packages from upgrade to avoid a need to restart server after
 # installation (Vagrant box could provide up-to-date kernel image)
@@ -35,15 +44,12 @@ echo "linux-image-generic-pae hold" | dpkg --set-selections
 
 echo "grub-pc hold" | dpkg --set-selections # hold also grub because of some issue
 
-# set apt-cacher if available
-#sed -i "s/deb http:\/\//deb http:\/\/<APT-CACHER IP>:3142\//" /etc/apt/sources.list
-
 apt-get update
-apt-get --assume-yes upgrade
-apt-get --assume-yes install htop vim mc --no-install-recommends
-apt-get --assume-yes install postgresql postgis postgresql-9.1-postgis nfs-kernel-server
+apt-get --assume-yes --force-yes upgrade
+apt-get --assume-yes --force-yes --no-install-recommends install htop vim mc
+apt-get --assume-yes --force-yes install postgresql postgis postgresql-9.1-postgis nfs-kernel-server
 
-apt-get --assume-yes install ltsp-server-standalone openssh-server isc-dhcp-server tftpd-hpa --no-install-recommends
+apt-get --assume-yes --force-yes --no-install-recommends install ltsp-server-standalone openssh-server isc-dhcp-server tftpd-hpa
 
 
 
@@ -110,34 +116,7 @@ cat << EOF > /etc/ltsp/ltsp-build-client.conf
 GISLAB_VERSION=$GISLAB_VERSION
 ARCH=i386
 FAT_CLIENT_DESKTOPS="xubuntu-desktop"
-LATE_PACKAGES="
-    nfs-common
-    aptitude
-    htop
-    mc
-    rst2pdf
-    libreoffice
-    libreoffice-gtk
-    libreoffice-calc
-    libreoffice-writer
-    gimp
-    flashplugin-installer
-    pgadmin3
-    qgis
-    python-qgis
-    qgis-plugin-grass
-    grass
-    gdal-bin
-    libgdal1h
-    python-gdal
-    sqlite3
-    spatialite-bin
-    spatialite-gui
-    git
-    vim-gnome
-    ipython
-    postgresql-client
-"
+LATE_PACKAGES="$GISLAB_CLIENT_INSTALL_PACKAGES"
 REMOVE_PACKAGES="
     thunderbird-globalmenu
     abiword
@@ -151,8 +130,13 @@ REMOVE_PACKAGES="
 "
 EOF
 
-ltsp-build-client --purge-chroot --copy-sourceslist --accept-unsigned-packages  # use --mirror http://<URL>:3142/sk.archive.ubuntu.com/ubuntu
-																			    # or use --mount-package-cache --keep-packages to use local cache
+# use APT proxy for client image creation if configured
+GISLAB_LTSP_BUILD_CLIENT_OPTS="--purge-chroot --copy-sourceslist --accept-unsigned-packages"
+if [ -n "${GISLAB_APT_HTTP_PROXY}" ]; then
+	GISLAB_LTSP_BUILD_CLIENT_OPTS="$GISLAB_LTSP_BUILD_CLIENT_OPTS --http-proxy $GISLAB_APT_HTTP_PROXY"
+fi
+ltsp-build-client $GISLAB_LTSP_BUILD_CLIENT_OPTS
+
 ltsp-update-sshkeys
 ltsp-update-kernels
 

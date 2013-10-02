@@ -1,13 +1,14 @@
 #!/bin/bash
 # Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
+source /vagrant/config.cfg
 
 echo "I: Removing GIS LAB users accounts"
 
 # remove lab users accounts
-for i in {1..24}
+for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
-	deluser --remove-home lab$i
+	deluser --remove-home $account
 done
 
 

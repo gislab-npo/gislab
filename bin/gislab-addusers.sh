@@ -1,6 +1,9 @@
 #!/bin/bash
 # Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
+
+source /vagrant/config.cfg
+
 echo "I: Creating GIS LAB users accounts"
 
 rm -rf /etc/skel/.config
@@ -48,12 +51,12 @@ mkdir -p /etc/skel/.config/QGIS
 cp /vagrant/config/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
 
 
-# create 24 user accounts (login: gislab[1-24] password: gislab)
-for i in {1..24}
+# create user accounts (password: gislab)
+for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
-	adduser lab$i --disabled-login --gecos "GIS LAB User"
-	chmod go-rwx /home/lab$i
-	echo "lab$i:lab" | chpasswd
+	adduser $account --disabled-login --gecos "GIS LAB user"
+	chmod go-rwx /home/$account
+	echo "$account:lab" | chpasswd
 done
 
 
