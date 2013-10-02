@@ -44,6 +44,9 @@ echo "linux-image-generic-pae hold" | dpkg --set-selections
 
 echo "grub-pc hold" | dpkg --set-selections # hold also grub because of some issue
 
+echo "deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main" >> /etc/apt/sources.list # add extra GIS repository
+echo "deb http://ppa.launchpad.net/imincik/qgis2/ubuntu precise main" >> /etc/apt/sources.list # add extra QGIS 2 repository
+
 apt-get update
 apt-get --assume-yes --force-yes upgrade
 apt-get --assume-yes --force-yes --no-install-recommends install htop vim mc
@@ -104,9 +107,6 @@ service isc-dhcp-server restart
 #
 ### LTSP ###
 #
-echo "deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main" >> /etc/apt/sources.list # add extra GIS repository
-echo "deb http://ppa.launchpad.net/imincik/qgis2/ubuntu precise main" >> /etc/apt/sources.list # add extra QGIS 2 repository
-
 # add some ltsp-build-client plugins which takes care about our image customizations
 rm -vf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/*gislab*
 cp -av /vagrant/config/ltsp/plugins/ltsp-build-client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
