@@ -60,23 +60,35 @@ apt-get --assume-yes --force-yes --no-install-recommends install ltsp-server-sta
 #
 ### DHCP ###
 #
+# adding Apparmor profile to enable including DHCP configuration from /vagrant/allowed-clients.cfg
+cat << EOF > /etc/apparmor.d/local/usr.sbin.dhcpd
+/vagrant/allowed-clients.cfg lrw,
+EOF
+service apparmor restart
+
 cat << EOF > /etc/ltsp/dhcpd.conf
 authoritative;
 
 subnet 192.168.50.0 netmask 255.255.255.0 {
-    range 192.168.50.100 192.168.50.250;
-    option domain-name "gislab.lan";
-    option domain-name-servers 8.8.8.8;
-    option broadcast-address 192.168.50.255;
     option routers 192.168.50.5;
-    option subnet-mask 255.255.255.0;
-    option root-path "/opt/ltsp/i386";
-    if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
-        filename "/ltsp/i386/pxelinux.0";
-    } else {
-        filename "/ltsp/i386/nbi.img";
+
+	pool {
+        $GISLAB_UNKNOWN_MAC_POLICY unknown clients;
+        range 192.168.50.100 192.168.50.250;
+        option domain-name "gislab.lan";
+        option domain-name-servers 8.8.8.8;
+        option broadcast-address 192.168.50.255;
+        option subnet-mask 255.255.255.0;
+        option root-path "/opt/ltsp/i386";
+        if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
+            filename "/ltsp/i386/pxelinux.0";
+        } else {
+            filename "/ltsp/i386/nbi.img";
+        }
     }
 }
+
+include "/vagrant/allowed-clients.cfg";
 EOF
 
 cat << EOF > /etc/default/isc-dhcp-server
