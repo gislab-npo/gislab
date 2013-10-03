@@ -72,6 +72,11 @@ Connect host machine to client machines via gigabit switch and cable (CAT 5e or 
 
 Configure client machines BIOS to boot from LAN (PXE) or use boot manager (usually activated by F12 early on start) and enjoy
 
+Do not forget to shut down GIS LAB server before shutting down host machine
+```
+$ vagrant halt
+```
+
 
 Upgrade
 -------
