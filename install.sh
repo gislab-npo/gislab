@@ -19,7 +19,7 @@ export LC_ALL=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 locale-gen en_US.UTF-8
 
-cat << EOF >> /etc/default/locale
+cat << EOF > /etc/default/locale
 LANG="en_US.UTF-8"
 LANGUAGE="en_US:en"
 EOF
