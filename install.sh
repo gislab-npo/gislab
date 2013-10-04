@@ -27,6 +27,44 @@ EOF
 export DEBIAN_FRONTEND=noninteractive
 echo "PATH="$PATH:/vagrant/bin"" >> /etc/profile
 
+cat << EOF > /etc/apt/sources.list
+#############################################################
+################### OFFICIAL UBUNTU REPOS ###################
+#############################################################
+
+###### Ubuntu Main Repos
+deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse 
+deb-src http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse 
+
+###### Ubuntu Update Repos
+deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse 
+deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse 
+deb-src http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse 
+deb-src http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse 
+
+###### Ubuntu Partner Repo
+deb http://archive.canonical.com/ubuntu precise partner
+deb-src http://archive.canonical.com/ubuntu precise partner
+
+##############################################################
+##################### UNOFFICIAL  REPOS ######################
+##############################################################
+
+###### 3rd Party Binary Repos
+
+#### Custom GIS repositories
+deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main
+deb http://ppa.launchpad.net/imincik/qgis2/ubuntu precise main
+
+#### Google Chrome Browser - http://www.google.com/linuxrepositories/
+deb http://dl.google.com/linux/chrome/deb/ stable main
+
+#### Google Earth - http://www.google.com/linuxrepositories/
+deb http://dl.google.com/linux/earth/deb/ stable main
+EOF
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6CD44B55 # add imincik PPA key
+wget -q https://dl-ssl.google.com/linux/linux_signing_key.pub -O- | sudo apt-key add - # add Google repositories key
+
 # use APT proxy on server if configured
 if [ -n "${GISLAB_APT_HTTP_PROXY}" ]; then
 	cat << EOF > /etc/apt/apt.conf.d/02proxy
@@ -43,9 +81,6 @@ echo "linux-generic-pae hold" | dpkg --set-selections
 echo "linux-image-generic-pae hold" | dpkg --set-selections
 
 echo "grub-pc hold" | dpkg --set-selections # hold also grub because of some issue
-
-echo "deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main" >> /etc/apt/sources.list # add extra GIS repository
-echo "deb http://ppa.launchpad.net/imincik/qgis2/ubuntu precise main" >> /etc/apt/sources.list # add extra QGIS 2 repository
 
 apt-get update
 apt-get --assume-yes --force-yes upgrade
