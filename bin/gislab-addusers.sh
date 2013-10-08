@@ -61,6 +61,9 @@ do
 	adduser $account --disabled-login --gecos "GIS LAB user"
 	chmod go-rwx /home/$account
 	echo "$account:lab" | chpasswd
+
+	mkdir -p /storage/share/$account
+	chown $account:$account /storage/share/$account
 done
 
 
