@@ -126,7 +126,7 @@ For development purposes you can configure Virtualbox machine to act as LTSP cli
 Important configurations are:
  * you do not need to create any boot hard disk
  * configure boot order to boot only from network (and enable IO APIC)
- * configure network adapter in brigged mode; make sure you select the PCnet-FAST III (Am79C973)
+ * configure network adapter in bridged mode; make sure you select the PCnet-FAST III (Am79C973)
  as the adaptor type; allow promiscuous mode for all
   
 
@@ -140,6 +140,57 @@ remove it with
 ```
 $ ip addr del 192.168.50.2/24 dev eth0
 ```
+
+
+Working in GIS LAB
+------------------
+### File sharing
+GIS LAB offers out-of-box file sharing solution inside its LAN. All client users can find three different shared
+directories in their home directory, each one with different access policy:
+ * Repository: directory with read-only permissions for users
+ * Share: directory with read permissions for anybody and write permissions for file owner
+ * Barrel: directory with read and write permissions for all files for all users
+
+
+### Built-in automatic WebGIS viewer
+One of the nice features of GIS LAB is WebGIS viewer application which is automatically generated for
+each user's QGIS project.
+Simply save a QGIS project to one of the shared directories (~/Share or ~/Barrel) with setting these required configuration:
+ * use relative paths (File > Project Properties > General > Save paths). The safest way is to save Your data and project
+   file to same directory
+ * on-the-fly CRS transformation must be enabled (File > Project Properties > CRS) and target projection
+   must be chosen (if You are not sure chose EPSG:3857)
+ * OWS advertised extent must be enabled (File > Project Properties > OWS server)
+
+and launch following URL in a web browser:
+```
+format:
+http://webgis.gislab.lan/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>
+
+* PATH-TO-QGIS-PROJECT-FILE must start from share name in lowercase (share or barrel)
+
+
+example for user 'lab1' which saved a project file 'myproject.qgs' to Share directory in his home:
+http://webgis.gislab.lan/?PROJECT=share/myproject.qgs
+
+example for user 'lab1' which saved a project file 'myproject.qgs' to Barrel directory in his home:
+http://webgis.gislab.lan/?PROJECT=barrel/myproject.qgs
+```
+
+Additionally, it is possible to configure behavior of WebGIS app via GET parameters in URL.
+```
+format:
+http://webgis.gislab.lan/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>&<PARAMETER>=<value>&<PARAMETER>=<value>...
+
+```
+
+Supported GET parameters:
+ * DPI: DPI resolution of map layers. Example: 120. Default: 96. 
+ * SCALES: available list of scales of map. Example: 10000,5000,2500. Default: 1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500
+ * ZOOM: zoom level to use on start. Example: 2. Default: 0
+ * CENTER: coordinates of map center on start. Example: 1234.12,5678.56. Default is center of auto-detected extent from project.
+ * BLAYERS: determines if base layers (OSM) will be added to map. Example: false. Default is true.
+ * LAYERS: list of layers to display in map. Example: border,lakes,rivers. Default is auto-detected list of layers from project.
 
 
 Authors
