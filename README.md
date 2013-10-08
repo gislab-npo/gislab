@@ -155,7 +155,7 @@ directories in their home directory, each one with different access policy:
 ### Built-in automatic WebGIS viewer
 One of the nice features of GIS LAB is WebGIS viewer application which is automatically generated for
 each user's QGIS project.
-Simply save a QGIS project to one of the shared directories (~/Share or ~/Barrel) with setting these required configuration:
+Simply save a QGIS project and all file data to '~/Share/<USERNAME>' directory with setting these required configuration:
  * use relative paths (File > Project Properties > General > Save paths). The safest way is to save Your data and project
    file to same directory
  * on-the-fly CRS transformation must be enabled (File > Project Properties > CRS) and target projection
@@ -167,14 +167,11 @@ and launch following URL in a web browser:
 format:
 http://webgis.gislab.lan/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>
 
-* PATH-TO-QGIS-PROJECT-FILE must start from share name in lowercase (share or barrel)
+* PATH-TO-QGIS-PROJECT-FILE must be relative to '~/Share' directory
 
+example for user 'lab1' which saved a project file 'myproject.qgs' to ~/Share/lab1/projects directory:
+http://webgis.gislab.lan/?PROJECT=lab1/projects/myproject.qgs
 
-example for user 'lab1' which saved a project file 'myproject.qgs' to Share directory in his home:
-http://webgis.gislab.lan/?PROJECT=share/myproject.qgs
-
-example for user 'lab1' which saved a project file 'myproject.qgs' to Barrel directory in his home:
-http://webgis.gislab.lan/?PROJECT=barrel/myproject.qgs
 ```
 
 Additionally, it is possible to configure behavior of WebGIS app via GET parameters in URL.
