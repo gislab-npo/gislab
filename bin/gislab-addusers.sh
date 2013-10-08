@@ -12,7 +12,9 @@ mkdir /etc/skel/.config
 rm -rf /etc/skel/.local
 mkdir /etc/skel/.local
 
+rm -rf /etc/skel/Repository
 rm -rf /etc/skel/Share
+rm -rf /etc/skel/Barrel
 
 # configure menu
 mkdir -p /etc/skel/.config/menus
@@ -38,7 +40,9 @@ cp -a /vagrant/config/xfce4/panel/* /etc/skel/.config/xfce4/panel
 
 
 # add shared directory
+ln -s /mnt/repository /etc/skel/Repository
 ln -s /mnt/share /etc/skel/Share
+ln -s /mnt/barrel /etc/skel/Barrel
 
 
 # PostgreSQL

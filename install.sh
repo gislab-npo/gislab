@@ -197,7 +197,9 @@ LOCAL_APPS=True
 SCREEN_02=shell                          # get local root prompt when pressing Ctrl+Alt+F2 
 SCREEN_07=ldm
 FSTAB_0="server:/home /home nfs defaults 0 0"
-FSTAB_1="server:/storage /mnt nfs defaults 0 0"
+FSTAB_1="server:/storage/repository /mnt/repository nfs defaults 0 0"
+FSTAB_2="server:/storage/share /mnt/share nfs defaults 0 0"
+FSTAB_3="server:/storage/barrel /mnt/barrel nfs defaults 0 0"
 EOF
 
 service nbd-server restart
@@ -211,15 +213,18 @@ sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/l
 #
 ### NFS Share ###
 #
-mkdir -p /storage/share
-mkdir -p /storage/share/data	# writable only for superuser
-mkdir -p /storage/share/pub		# writable for NFS users
-chown nobody:nogroup /storage/share/pub
-chmod ugo+rwx /storage/share/pub
+mkdir -p /storage/repository    # readable for all, writable only for server superuser
+mkdir -p /storage/share         # readable for all, writable for file owners
+mkdir -p /storage/barrel        # readable and writable for all NFS users
+
+chmod ugo+rwx /storage/share
+chmod ugo+rwx /storage/barrel
 
 cat << EOF > /etc/exports
 /home                       *(rw,sync,no_subtree_check)
-/storage                    *(rw,sync,no_subtree_check,all_squash,insecure)
+/storage/repository         *(ro,sync,no_subtree_check)
+/storage/share              *(rw,sync,no_subtree_check)
+/storage/barrel             *(rw,sync,no_subtree_check,all_squash,insecure)
 EOF
 
 service nfs-kernel-server restart
