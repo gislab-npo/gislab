@@ -86,7 +86,8 @@ apt-get update
 apt-get --assume-yes --force-yes upgrade
 apt-get --assume-yes --force-yes --no-install-recommends install htop vim mc
 apt-get --assume-yes --force-yes install postgresql postgis postgresql-9.1-postgis nfs-kernel-server
-
+apt-get --assume-yes --force-yes --no-install-recommends install apache2 apache2-mpm-worker libapache2-mod-fcgid libapache2-mod-wsgi \
+	python-virtualenv python-dateutil qgis-mapserver
 apt-get --assume-yes --force-yes --no-install-recommends install ltsp-server-standalone openssh-server isc-dhcp-server tftpd-hpa
 
 
@@ -260,6 +261,59 @@ psql -U labadmin -d postgres -c "UPDATE pg_database SET datallowconn='false' WHE
 
 # create gislab database
 createdb -U labadmin -O labadmin -T template_postgis gislab
+
+
+
+
+#
+### QGIS MAPSERVER AND WMS VIEWER ###
+#
+mkdir -p /usr/local/python-virtualenvs
+virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/wms-viewer
+source /usr/local/python-virtualenvs/wms-viewer/bin/activate
+pip install OWSLib
+deactivate
+
+cp -a /vagrant/config/wms-viewer /var/www
+
+cat << EOF > /etc/apache2/sites-available/wms-viewer
+<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  ServerName webgis.gislab.lan
+
+  DocumentRoot /var/www/
+  <Directory />
+    Options FollowSymLinks
+    AllowOverride None
+  </Directory>
+  <Directory /var/www/wms-viewer/>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+  </Directory>
+
+  Alias /static/ /var/www/wms-viewer/static/
+
+  <Directory /var/www/wms-viewer/static/>
+    Order deny,allow
+    Allow from all
+  </Directory>
+
+  AddHandler wsgi-script .py
+  WSGIDaemonProcess wms-viewer python-path=/var/www/wms-viewer:/usr/local/python-virtualenvs/wms-viewer/lib/python2.7/site-packages
+  WSGIProcessGroup wms-viewer
+  WSGIScriptAlias / /var/www/wms-viewer/wms-viewer.py
+
+  ErrorLog /var/log/apache2/wms-viewer-error.log
+  CustomLog /var/log/apache2/wms-viewer-access.log combined
+</VirtualHost>
+EOF
+
+a2enmod wsgi
+a2enmod rewrite
+a2ensite wms-viewer
+service apache2 reload
 
 
 

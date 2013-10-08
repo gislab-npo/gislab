@@ -1,0 +1,10 @@
+# '/etc/hosts' file on client machine is overridden on boot by LTSP scripts.
+# This script adds our custom entries at the end of boot.
+
+case "$MODE" in
+    finalization)
+	sed -i "s/exit 0//" $ROOT/etc/rc.local
+	echo "echo '192.168.50.5  webgis.gislab.lan' >> /etc/hosts" >> $ROOT/etc/rc.local
+	echo "exit 0" >> $ROOT/etc/rc.local
+    ;;
+esac
