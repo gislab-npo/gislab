@@ -218,7 +218,6 @@ mkdir -p /storage/repository    # readable for all, writable only for server sup
 mkdir -p /storage/share         # readable for all, writable for file owners
 mkdir -p /storage/barrel        # readable and writable for all NFS users
 
-chmod ugo+rwx /storage/share
 chmod ugo+rwx /storage/barrel
 
 cat << EOF > /etc/exports
