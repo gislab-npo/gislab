@@ -131,7 +131,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 #   v.gui = true
   end
 
-  config.vm.provision "shell", path: "install.sh"
+  config.vm.provision "shell", path: "system/install.sh"
   config.vm.network "public_network", ip: "192.168.50.5"
 
   config.vm.network :forwarded_port, guest: 111, host: 1111, auto_correct: true
