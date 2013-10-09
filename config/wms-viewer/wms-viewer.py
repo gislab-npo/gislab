@@ -294,7 +294,7 @@ def application(environ, start_response):
 	else:
 		c['units'] = 'm'
 
-	if qs.get('BLAYERS') in (None, 'true', 'TRUE') and c['projection'] == 'EPSG:3857':
+	if qs.get('BLAYERS') in ('true', 'TRUE', 'True') and c['projection'] == 'EPSG:3857':
 		c['blayers'] = True
 	else:
 		c['blayers'] = False
