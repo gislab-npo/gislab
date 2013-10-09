@@ -18,13 +18,13 @@ rm -rf /etc/skel/Barrel
 
 # configure menu
 mkdir -p /etc/skel/.config/menus
-cp /vagrant/config/menus/xfce-applications.menu /etc/skel/.config/menus/
+cp /vagrant/config/desktop-session/menus/xfce-applications.menu /etc/skel/.config/menus/
 
 mkdir -p /etc/skel/.local/share/applications
-cp /vagrant/config/menus/*.desktop /etc/skel/.local/share/applications/
+cp /vagrant/config/desktop-session/menus/*.desktop /etc/skel/.local/share/applications/
 
 mkdir -p /etc/skel/.local/share/desktop-directories
-cp /vagrant/config/menus/*.directory /etc/skel/.local/share/desktop-directories/
+cp /vagrant/config/desktop-session/menus/*.directory /etc/skel/.local/share/desktop-directories/
 
 
 # configure GIS LAB desktop and panel
@@ -32,11 +32,11 @@ mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
 # copy XUBUNTU settings to fix uncomplete session loading (for unknown reason) - seems not required
 # after setting CLIENT_ENV="DESKTOP_SESSION=xubuntu" in lts.conf
 #cp -a /opt/ltsp/i386/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/* /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/
-cp /vagrant/config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-cp /vagrant/config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+cp /vagrant/config/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+cp /vagrant/config/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
 
 mkdir -p /etc/skel/.config/xfce4/panel
-cp -a /vagrant/config/xfce4/panel/* /etc/skel/.config/xfce4/panel
+cp -a /vagrant/config/desktop-session/xfce4/panel/* /etc/skel/.config/xfce4/panel
 
 
 # add shared directory

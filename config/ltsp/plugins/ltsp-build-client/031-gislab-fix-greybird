@@ -3,6 +3,6 @@
 
 case "$MODE" in
     finalization)
-	cp /vagrant/config/xfce4/greybird/*.* $ROOT/usr/share/themes/Greybird/xfwm4/
+	cp /vagrant/config/desktop-session/greybird-theme/*.* $ROOT/usr/share/themes/Greybird/xfwm4/
     ;;
 esac
