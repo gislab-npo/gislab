@@ -157,7 +157,7 @@ service isc-dhcp-server restart
 #
 # add some ltsp-build-client plugins which takes care about our image customizations
 rm -vf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/*gislab*
-cp -av /vagrant/config/ltsp/plugins/ltsp-build-client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
+cp -av /vagrant/system/ltsp/plugins/ltsp-build-client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
 # client image configuration
 cat << EOF > /etc/ltsp/ltsp-build-client.conf
@@ -273,7 +273,7 @@ source /usr/local/python-virtualenvs/wms-viewer/bin/activate
 pip install OWSLib
 deactivate
 
-cp -a /vagrant/config/wms-viewer /var/www
+cp -a /vagrant/system/wms-viewer /var/www
 
 cat << EOF > /etc/apache2/sites-available/wms-viewer
 <VirtualHost *:80>
