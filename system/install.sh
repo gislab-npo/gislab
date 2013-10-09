@@ -25,7 +25,7 @@ LANGUAGE="en_US:en"
 EOF
 
 export DEBIAN_FRONTEND=noninteractive
-echo "PATH="$PATH:/vagrant/bin"" >> /etc/profile
+echo "PATH="$PATH:/vagrant/system/bin"" >> /etc/profile
 
 cat << EOF > /etc/apt/sources.list
 #############################################################
@@ -320,7 +320,7 @@ service apache2 reload
 #
 ### USERS ###
 #
-/vagrant/bin/gislab-addusers.sh # call script to create user accounts
+/vagrant/system/bin/gislab-addusers.sh # call script to create user accounts
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
