@@ -53,11 +53,11 @@ def page(c):
 
         <title id="page-title">%(root_title)s</title>
         <script type="text/javascript">
-		Ext.BLANK_IMAGE_URL = "static/images/s.gif";
 	""" % c
 
-	# configuration object
+	# configuration
 	html += """
+		Ext.BLANK_IMAGE_URL = "static/images/s.gif";
 		OpenLayers.DOTS_PER_INCH = %(resolution)s;
 		var config = {
 			projection: "%(projection)s",
@@ -75,7 +75,7 @@ def page(c):
 
 	if DEBUG: html += """console.log("CONFIG: %s");""" % c
 
-	# layer objects
+	# layers
 	html += "var maplayers = ["
 	for lay in c['layers']:
 		html += """
@@ -96,13 +96,13 @@ def page(c):
 		}
 	),
 	""" % (lay, c['ows_url'], lay, 'image/png')
-	
+
 	if c['osm']:
 		html += "new OpenLayers.Layer.OSM(),"
 
 	html += "];"
 
-	# GeoExt map GUI
+	# map panel
 	if c['osm']:
 		c['allOverlays'] = 'false'
 	else:
@@ -112,6 +112,7 @@ def page(c):
 			region: 'center',
 			xtype: 'gx_mappanel',
 			title: '%(root_title)s',
+			collapsible: false,
 			zoom: 3,
 			map: {
 				allOverlays: %(allOverlays)s,
@@ -124,15 +125,19 @@ def page(c):
 			},
 			layers: maplayers
 		});
+	""" % c
 
+	# tree node
+	html += """
 		function main() {
 			var layers_root = new Ext.tree.TreeNode({
 				text: 'Layers',
 				expanded: true,
 				draggable: false
 			});
-	""" % c
+	"""
 
+	# base layers tree
 	if c['osm']:
 		html += """
 			layers_root.appendChild(new GeoExt.tree.BaseLayerContainer({
@@ -146,6 +151,7 @@ def page(c):
 			}));
 		"""
 
+	# overlay layers tree
 	html += """
 			layers_root.appendChild(new GeoExt.tree.OverlayLayerContainer({
 				text: 'Overlays',
@@ -155,48 +161,50 @@ def page(c):
 				draggable: false,
 				autoScroll: true,
 			}));
+	"""
+
+	# layers panel
+	html += """
 			var layer_treepanel = new Ext.tree.TreePanel({
-				region: 'center',
+				region: 'west',
+				xtype: 'panel',
 				title: 'Content',
 				enableDD: true,
 				root: layers_root,
-				collapsible: false,
-				border: false,
-			});
-		/*	var layer_legend = new GeoExt.LegendPanel({
-				title: "Layer Legend",
-				contentEl: 'layerlegend',
-				border: false,
-				region: 'south',
-				height: 200,
-				collapsible: true,
+				width: 200,
 				split: true,
-				autoScroll: true,
-				ascending: false,
-				map: mappanel.map,
-				defaults: {cls: 'legend-item'}
-			}); */
+				border: true,
+				collapsible: true,
+				cmargins: '0 0 0 0',
+
+			});
+	"""
+
+#	# legend
+#	html += """
+#			var layer_legend = new GeoExt.LegendPanel({
+#				title: "Legend",
+#				contentEl: 'layerlegend',
+#				border: false,
+#				region: 'south',
+#				height: 200,
+#				autoScroll: true,
+#				ascending: false,
+#				map: mappanel.map,
+#				defaults: {cls: 'legend-item'}
+#			});
+#	"""
+
+	# viewport
+	html += """
 			var webgis = new Ext.Viewport({
 				layout: "border",
 				items: [
-				/*	{
-						region: 'north',
-						contentEl: 'header',
-						height: 54
-					}, */
 					mappanel,
-					{
-						region: 'west',
-						xtype: 'panel',
-						width: 200,
-						split: true,
-						border: false,
-						layout: 'border',
-						items: [layer_treepanel,]
-					}
+					layer_treepanel,
 				]
 			});
-	""" % c
+	"""
 
 	# controls
 	html += """
@@ -216,7 +224,7 @@ def page(c):
 				</script>
 			</head>
 			<body>
-				<div id="mappanel">Loading</div>
+				<div id="mappanel"></div>
 				<div id="layertree"></div>
 				<div id="layerlegend"></div>
 				<div id="overviewLegend" style="margin-left:10px"></div>
