@@ -238,10 +238,10 @@ def application(environ, start_response):
 	qs = dict(parse_qsl(environ['QUERY_STRING'])) # collect GET parameters
 	qs = dict((k.upper(), v) for k, v in qs.iteritems()) # change GET parameters names to uppercase
 
-	projectfile = '/storage/share/' + qs.get('PROJECT') # TODO: use Apache rewrite
-	getcapabilities_url = "{0}/?map={1}&REQUEST=GetCapabilities".format(OWS_URL, projectfile)
-
 	try:
+		projectfile = '/storage/share/' + qs.get('PROJECT') # TODO: use Apache rewrite
+		getcapabilities_url = "{0}/?map={1}&REQUEST=GetCapabilities".format(OWS_URL, projectfile)
+
 		wms_service = WebMapService(getcapabilities_url, version="1.1.1") # read WMS GetCapabilities
 	except:
 		start_response('404 NOT FOUND', [('content-type', 'text/plain')])
