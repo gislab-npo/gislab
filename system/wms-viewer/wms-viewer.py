@@ -97,13 +97,13 @@ def page(c):
 	),
 	""" % (lay, c['ows_url'], lay, 'image/png')
 	
-	if c['blayers']:
+	if c['osm']:
 		html += "new OpenLayers.Layer.OSM(),"
 
 	html += "];"
 
 	# GeoExt map GUI
-	if c['blayers']:
+	if c['osm']:
 		c['allOverlays'] = 'false'
 	else:
 		c['allOverlays'] = 'true'
@@ -133,7 +133,7 @@ def page(c):
 			});
 	""" % c
 
-	if c['blayers']:
+	if c['osm']:
 		html += """
 			layers_root.appendChild(new GeoExt.tree.BaseLayerContainer({
 				text: 'Base Layers',
@@ -294,10 +294,10 @@ def application(environ, start_response):
 	else:
 		c['units'] = 'm'
 
-	if qs.get('BLAYERS') in ('true', 'TRUE', 'True') and c['projection'] == 'EPSG:3857':
-		c['blayers'] = True
+	if qs.get('OSM') in ('true', 'TRUE', 'True') and c['projection'] == 'EPSG:3857':
+		c['osm'] = True
 	else:
-		c['blayers'] = False
+		c['osm'] = False
 	
 	c['resolution'] = resolution
 	c['extent'] = ",".join(map(str, extent))
