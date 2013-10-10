@@ -1,6 +1,7 @@
 #!/bin/bash
 # Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
+
 source /vagrant/config.cfg
 
 echo "I: Removing GIS LAB users accounts"
