@@ -1,8 +1,10 @@
 #!/bin/bash
 # Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
+set -e
 
 source /vagrant/config.cfg
+echo -e "\n[GISLAB]: Building client image ...\n"
 
 # add some ltsp-build-client plugins which takes care about our image customizations
 rm -vf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/*gislab*
@@ -57,5 +59,7 @@ service nbd-server restart
 # disable plymouth screen for better client troubleshooting on boot
 sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/ltsp/i386/pxelinux.cfg/default
 
+
+echo -e "\n[GISLAB]: Done."
 
 # vim: set ts=4 sts=4 sw=4 noet:

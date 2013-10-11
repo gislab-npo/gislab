@@ -272,6 +272,6 @@ service apache2 reload
 /vagrant/system/bin/gislab-build-client-image.sh # build LTSP client image
 
 
-echo -e "\nDONE: GIS LAB is installed and ready to use!"
+echo -e "\n[GISLAB]: Done. GIS LAB is installed and ready to use!"
 
 # vim: set ts=4 sts=4 sw=4 noet:

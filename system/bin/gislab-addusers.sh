@@ -1,10 +1,10 @@
 #!/bin/bash
 # Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
+set -e
 
 source /vagrant/config.cfg
-
-echo "I: Creating GIS LAB users accounts"
+echo -e "\n[GISLAB]: Creating GIS LAB users accounts ...\n"
 
 rm -rf /etc/skel/.config
 mkdir /etc/skel/.config
@@ -65,6 +65,8 @@ do
 	mkdir -p /storage/share/$account
 	chown $account:$account /storage/share/$account
 done
+
+echo -e "\n[GISLAB]: Done."
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
