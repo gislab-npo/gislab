@@ -98,7 +98,7 @@ apt-get --assume-yes --force-yes --no-install-recommends install ltsp-server-sta
 #
 # adding Apparmor profile to enable including DHCP configuration from /vagrant/allowed-clients.cfg
 cat << EOF > /etc/apparmor.d/local/usr.sbin.dhcpd
-/vagrant/allowed-clients.cfg lrw,
+/etc/ltsp/dhcpd-clients-allowed.conf lrw,
 EOF
 service apparmor restart
 
@@ -108,7 +108,7 @@ authoritative;
 subnet 192.168.50.0 netmask 255.255.255.0 {
     option routers 192.168.50.5;
 
-	pool {
+    pool {
         $GISLAB_UNKNOWN_MAC_POLICY unknown clients;
         range 192.168.50.100 192.168.50.250;
         option domain-name "gislab.lan";
@@ -124,7 +124,7 @@ subnet 192.168.50.0 netmask 255.255.255.0 {
     }
 }
 
-include "/vagrant/allowed-clients.cfg";
+include "/etc/ltsp/dhcpd-clients-allowed.conf";
 EOF
 
 cat << EOF > /etc/default/isc-dhcp-server
