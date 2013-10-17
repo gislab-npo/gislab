@@ -1,3 +1,4 @@
 .vagrant/*
-storage
+barrel
 install.log
+config-user.cfg

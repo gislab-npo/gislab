@@ -4,6 +4,11 @@
 set -e
 
 source /vagrant/config.cfg
+if [ -f /vagrant/config-user.cfg ]
+then
+	source /vagrant/config-user.cfg
+fi
+
 echo -e "\n[GISLAB]: Removing GIS LAB users accounts ...\n"
 
 # remove lab users accounts

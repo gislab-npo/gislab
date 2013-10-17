@@ -4,6 +4,11 @@
 set -e
 
 source /vagrant/config.cfg
+if [ -f /vagrant/config-user.cfg ]
+then
+	source /vagrant/config-user.cfg
+fi
+
 echo -e "\n[GISLAB]: Building client image ...\n"
 
 # add some ltsp-build-client plugins which takes care about our image customizations

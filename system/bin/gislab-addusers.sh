@@ -4,6 +4,11 @@
 set -e
 
 source /vagrant/config.cfg
+if [ -f /vagrant/config-user.cfg ]
+then
+	source /vagrant/config-user.cfg
+fi
+
 echo -e "\n[GISLAB]: Creating GIS LAB users accounts ...\n"
 
 rm -rf /etc/skel/.config
