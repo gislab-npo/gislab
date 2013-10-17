@@ -96,12 +96,19 @@ apt-get --assume-yes --force-yes --no-install-recommends install ltsp-server-sta
 #
 ### DHCP ###
 #
-# adding Apparmor profile to enable including DHCP configuration from /vagrant/allowed-clients.cfg
+# adding Apparmor profile to enable including allowed MACs from /etc/ltsp/dhcpd-clients-allowed.conf
 cat << EOF > /etc/apparmor.d/local/usr.sbin.dhcpd
 /etc/ltsp/dhcpd-clients-allowed.conf lrw,
 EOF
 service apparmor restart
 
+# creating empty MACs file
+cat << EOF > /etc/ltsp/dhcpd-clients-allowed.conf
+group {
+}
+EOF
+
+# DHCP server configuration
 cat << EOF > /etc/ltsp/dhcpd.conf
 authoritative;
 
