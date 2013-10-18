@@ -15,8 +15,17 @@ fi
 GISLAB_VERSION=dev
 
 #
-### SERVER UPGRADE ###
+### BASIC SERVER SETTINGS
 #
+# timezone
+cat << EOF > /etc/timezone
+$GISLAB_TIMEZONE
+EOF
+
+dpkg-reconfigure --frontend noninteractive tzdata
+
+
+# locales
 export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
@@ -28,6 +37,12 @@ LANG="en_US.UTF-8"
 LANGUAGE="en_US:en"
 EOF
 
+
+
+
+#
+### SERVER UPGRADE ###
+#
 export DEBIAN_FRONTEND=noninteractive
 echo "PATH="$PATH:/vagrant/system/bin"" >> /etc/profile
 
