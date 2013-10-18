@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # Vagrant shell provisioner script. DO NOT RUN BY HAND.
 # Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
 
@@ -13,6 +13,11 @@ then
 fi
 
 GISLAB_VERSION=dev
+
+if [ "$GISLAB_DEBUG" == "yes" ];
+then
+	set -x
+fi
 
 #
 ### BASIC SERVER SETTINGS
