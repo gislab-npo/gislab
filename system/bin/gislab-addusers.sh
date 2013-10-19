@@ -9,7 +9,7 @@ then
 	source /vagrant/config-user.cfg
 fi
 
-echo -e "\n[GISLAB]: Creating GIS LAB users accounts ...\n"
+echo -e "\n[GISLAB]: Updating user accounts template ...\n"
 
 rm -rf /etc/skel/.config
 mkdir /etc/skel/.config
@@ -51,7 +51,6 @@ ln -s /mnt/barrel /etc/skel/Barrel
 
 
 # PostgreSQL
-cp /vagrant/system/postgresql/pgpass /etc/skel/.pgpass
 cp /vagrant/system/postgresql/pgadmin3 /etc/skel/.pgadmin3
 
 
@@ -60,13 +59,22 @@ mkdir -p /etc/skel/.config/QGIS
 cp /vagrant/system/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
 
 
+echo -e "\n[GISLAB]: Creating GIS LAB users accounts ...\n"
 # create user accounts (password: gislab)
 for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
+	# Linux account
 	adduser $account --disabled-login --gecos "GIS LAB user"
 	chmod go-rwx /home/$account
 	echo "$account:lab" | chpasswd
 
+	# PostgreSQL account
+	sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $account"
+	sudo su - postgres -c "psql -c \"ALTER ROLE $account WITH PASSWORD 'lab';\""
+	sudo su - postgres -c "psql -c \"GRANT labusers TO $account;\""
+	sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $account;\""
+
+	# NFS directory
 	mkdir -p /storage/share/$account
 	chown $account:$account /storage/share/$account
 done

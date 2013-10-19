@@ -109,15 +109,14 @@ Authentication
 --------------
 By default all user accounts and their password are made as simple as they can.
 
-LTSP server accounts (SSH)
+Server accounts (SSH)
  * vagrant:vagrant
 
-LTSP client accounts
- * lab[1-24]:lab
-
 PostgreSQL
- * labadmin:labadmin
- * lab:lab
+ * lab[1-12]:lab
+
+Default client accounts
+ * lab[1-12]:lab
 
 
 LTSP Client in Virtualbox

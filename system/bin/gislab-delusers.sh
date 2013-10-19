@@ -14,7 +14,16 @@ echo -e "\n[GISLAB]: Removing GIS LAB users accounts ...\n"
 # remove lab users accounts
 for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
+	# Linux account
 	deluser --remove-home $account
+
+	# PostgreSQL account
+	sudo su - postgres -c "psql -d gislab -c \"DROP SCHEMA $account CASCADE\""
+	sudo su - postgres -c "psql -d gislab -c \"DROP OWNED BY $account CASCADE\""
+	sudo su - postgres -c "dropuser $account"
+
+	# NFS directory
+	rm -rf /storage/share/$account
 done
 
 echo -e "\n[GISLAB]: Done."
