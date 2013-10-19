@@ -141,7 +141,7 @@ $ ip addr del 192.168.50.2/24 dev eth0
 ```
 
 
-Working in GIS LAB
+Working with GIS LAB
 ------------------
 ### User accounts
 By default, user accounts specified in GISLAB_USER_ACCOUNTS_AUTO are created automatically after installation.
