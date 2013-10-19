@@ -3,14 +3,22 @@
 
 set -e
 
+# test if account name given as parameter
+if [ $# -eq 0 ]
+then
+	echo "Account name is required!"
+	exit 0
+fi
+
+# source configuration files
 source /vagrant/config.cfg
 if [ -f /vagrant/config-user.cfg ]
 then
 	source /vagrant/config-user.cfg
 fi
 
-echo -e "\n[GISLAB]: Updating user accounts template ...\n"
-
+# /etc/skel update
+echo -e "\n[GISLAB]: Updating user accounts template ..."
 rm -rf /etc/skel/.config
 mkdir /etc/skel/.config
 
@@ -20,6 +28,7 @@ mkdir /etc/skel/.local
 rm -rf /etc/skel/Repository
 rm -rf /etc/skel/Share
 rm -rf /etc/skel/Barrel
+
 
 # configure menu
 mkdir -p /etc/skel/.config/menus
@@ -59,27 +68,21 @@ mkdir -p /etc/skel/.config/QGIS
 cp /vagrant/system/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
 
 
-echo -e "\n[GISLAB]: Creating GIS LAB users accounts ...\n"
-# create user accounts (password: gislab)
-for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
-do
-	# Linux account
-	adduser $account --disabled-login --gecos "GIS LAB user"
-	chmod go-rwx /home/$account
-	echo "$account:lab" | chpasswd
+# create account
+echo -e "\n[GISLAB]: Creating user account ..."
+adduser $1 --disabled-login --gecos "GIS LAB user" # Linux account
+chmod go-rwx /home/$1
+echo "$1:lab" | chpasswd
 
-	# PostgreSQL account
-	sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $account"
-	sudo su - postgres -c "psql -c \"ALTER ROLE $account WITH PASSWORD 'lab';\""
-	sudo su - postgres -c "psql -c \"GRANT labusers TO $account;\""
-	sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $account;\""
+sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $1" # PostgreSQL account
+sudo su - postgres -c "psql -c \"ALTER ROLE $1 WITH PASSWORD 'lab';\""
+sudo su - postgres -c "psql -c \"GRANT labusers TO $1;\""
+sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $1;\""
 
-	# NFS directory
-	mkdir -p /storage/share/$account
-	chown $account:$account /storage/share/$account
-done
+mkdir -p /storage/share/$1 # NFS directory
+chown $1:$1 /storage/share/$1
+
 
 echo -e "\n[GISLAB]: Done."
-
 
 # vim: set ts=4 sts=4 sw=4 noet:

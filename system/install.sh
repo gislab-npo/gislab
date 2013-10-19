@@ -295,7 +295,11 @@ service apache2 reload
 #
 ### USERS ###
 #
-/vagrant/system/bin/gislab-addusers.sh # create user accounts
+echo -e "\n[GISLAB]: Creating GIS LAB users accounts ...\n"
+for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
+do
+	/vagrant/system/bin/gislab-adduser.sh $account
+done
 
 
 

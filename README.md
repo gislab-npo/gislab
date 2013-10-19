@@ -143,6 +143,13 @@ $ ip addr del 192.168.50.2/24 dev eth0
 
 Working in GIS LAB
 ------------------
+### User accounts
+By default, user accounts specified in GISLAB_USER_ACCOUNTS_AUTO are created automatically after installation.
+You can also create or delete additional accounts manually:
+ * '$ vagrant ssh -c "sudo gislab-adduser.sh <username>"' - create account
+ * '$ vagrant ssh -c "sudo gislab-deluser.sh <username>"' - delete account
+
+
 ### File sharing
 GIS LAB offers out-of-box file sharing solution inside its LAN. All client users can find three different shared
 directories in their home directory, each one with different access policy:
