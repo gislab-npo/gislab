@@ -308,6 +308,7 @@ done
 ### LTSP ###
 #
 /vagrant/system/bin/gislab-build-client-image.sh # build LTSP client image
+/vagrant/system/bin/gislab-clients-allowed.sh    # allow LTSP clients
 
 
 echo -e "\n[GISLAB]: Done. GIS LAB is installed and ready to use!"
