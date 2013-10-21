@@ -1,0 +1,7 @@
+# Start Gnome Keyring also in XFCE session
+
+case "$MODE" in
+    finalization)
+	sed -i "s/OnlyShowIn=GNOME;Unity;/OnlyShowIn=GNOME;Unity;XFCE/" $ROOT/etc/xdg/autostart/gnome-keyring-pkcs11.desktop
+    ;;
+esac
