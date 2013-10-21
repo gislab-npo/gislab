@@ -157,6 +157,9 @@ directories in their home directory, each one with different access policy:
  * Share: directory with read permissions for anybody and write permissions for file owner
  * Barrel: directory with read and write permissions for all files for all users
 
+It is possible to mount 'Barrel' shared directory from host machine using 'utils/mount-barrel.sh' script. It is
+always good idea to umount it before shutting down gis.lab server. If forgotten try to umount it with '-fl' options.
+
 
 ### Built-in automatic WebGIS viewer
 One of the nice features of GIS LAB is WebGIS viewer application which is automatically generated for
