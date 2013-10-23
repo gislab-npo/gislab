@@ -4,8 +4,8 @@
 case "$MODE" in
     finalization)
 	sed -i "s/exit 0//" $ROOT/etc/rc.local
-	echo "echo '192.168.50.5  server.gislab.lan' >> /etc/hosts" >> $ROOT/etc/rc.local
-	echo "echo '192.168.50.5  webgis.gislab.lan' >> /etc/hosts" >> $ROOT/etc/rc.local
+	echo "echo '192.168.50.5  server.gis.lab' >> /etc/hosts" >> $ROOT/etc/rc.local
+	echo "echo '192.168.50.5  webgis.gis.lab' >> /etc/hosts" >> $ROOT/etc/rc.local
 	echo "exit 0" >> $ROOT/etc/rc.local
     ;;
 esac

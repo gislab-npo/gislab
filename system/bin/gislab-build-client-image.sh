@@ -9,7 +9,7 @@ then
 	source /vagrant/config-user.cfg
 fi
 
-echo -e "\n[GISLAB]: Building client image ...\n"
+echo -e "\n[gis.lab]: Building client image ...\n"
 
 # add some ltsp-build-client plugins which takes care about our image customizations
 rm -vf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/*gislab*
@@ -65,6 +65,6 @@ service nbd-server restart
 sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/ltsp/i386/pxelinux.cfg/default
 
 
-echo -e "\n[GISLAB]: Done."
+echo -e "\n[gis.lab]: Done."
 
 # vim: set ts=4 sts=4 sw=4 noet:

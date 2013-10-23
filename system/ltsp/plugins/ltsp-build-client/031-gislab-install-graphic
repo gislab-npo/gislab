@@ -1,4 +1,4 @@
-# Install GIS LAB graphic
+# Install gis.lab graphic
 
 case "$MODE" in
     finalization)

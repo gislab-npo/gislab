@@ -142,7 +142,7 @@ subnet 192.168.50.0 netmask 255.255.255.0 {
     pool {
         $GISLAB_UNKNOWN_MAC_POLICY unknown clients;
         range 192.168.50.100 192.168.50.250;
-        option domain-name "gislab.lan";
+        option domain-name "gis.lab";
         option domain-name-servers 8.8.8.8;
         option broadcast-address 192.168.50.255;
         option subnet-mask 255.255.255.0;
@@ -253,7 +253,7 @@ cp -a /vagrant/system/wms-viewer /var/www
 cat << EOF > /etc/apache2/sites-available/wms-viewer
 <VirtualHost *:80>
   ServerAdmin webmaster@localhost
-  ServerName webgis.gislab.lan
+  ServerName webgis.gis.lab
 
   DocumentRoot /var/www/
   <Directory />
@@ -295,7 +295,7 @@ service apache2 reload
 #
 ### USERS ###
 #
-echo -e "\n[GISLAB]: Creating GIS LAB users accounts ...\n"
+echo -e "\n[gis.lab]: Creating gis.lab users accounts ...\n"
 for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
 	/vagrant/system/bin/gislab-adduser.sh $account
@@ -311,6 +311,6 @@ done
 /vagrant/system/bin/gislab-clients-allowed.sh    # allow LTSP clients
 
 
-echo -e "\n[GISLAB]: Done. GIS LAB is installed and ready to use!"
+echo -e "\n[gis.lab]: Done. gis.lab is installed and ready to use!"
 
 # vim: set ts=4 sts=4 sw=4 noet:

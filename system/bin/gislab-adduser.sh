@@ -18,7 +18,7 @@ then
 fi
 
 # /etc/skel update
-echo -e "\n[GISLAB]: Updating user accounts template ..."
+echo -e "\n[gis.lab]: Updating user accounts template ..."
 rm -rf /etc/skel/.config
 mkdir /etc/skel/.config
 
@@ -41,7 +41,7 @@ mkdir -p /etc/skel/.local/share/desktop-directories
 cp /vagrant/system/desktop-session/menus/*.directory /etc/skel/.local/share/desktop-directories/
 
 
-# configure GIS LAB desktop and panel
+# configure gis.lab desktop and panel
 mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
 # copy XUBUNTU settings to fix uncomplete session loading (for unknown reason) - seems not required
 # after setting CLIENT_ENV="DESKTOP_SESSION=xubuntu" in lts.conf
@@ -69,8 +69,8 @@ cp /vagrant/system/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
 
 
 # create account
-echo -e "\n[GISLAB]: Creating user account ..."
-adduser $1 --disabled-login --gecos "GIS LAB user" # Linux account
+echo -e "\n[gis.lab]: Creating user account ..."
+adduser $1 --disabled-login --gecos "gis.lab user" # Linux account
 chmod go-rwx /home/$1
 echo "$1:lab" | chpasswd
 
@@ -83,6 +83,6 @@ mkdir -p /storage/share/$1 # NFS directory
 chown $1:$1 /storage/share/$1
 
 
-echo -e "\n[GISLAB]: Done."
+echo -e "\n[gis.lab]: Done."
 
 # vim: set ts=4 sts=4 sw=4 noet:

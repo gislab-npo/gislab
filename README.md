@@ -49,11 +49,11 @@ Download a Vagrant box
 $ vagrant box add precise32 http://files.vagrantup.com/precise32.box
 ```
 
-Download latest GIS LAB package from https://github.com/imincik/gis-lab/releases
+Download latest gis.lab package from https://github.com/imincik/gis-lab/releases
 
 or
 
-clone GIS LAB sources if You are developer or familiar with Git
+clone gis.lab sources if You are developer or familiar with Git
 ```
 $ git clone https://github.com/imincik/gis-lab.git
 ```
@@ -72,7 +72,7 @@ Connect host machine to client machines via gigabit switch and cable (CAT 5e or 
 
 Configure client machines BIOS to boot from LAN (PXE) or use boot manager (usually activated by F12 early on start) and enjoy
 
-Do not forget to shut down GIS LAB server before shutting down host machine
+Do not forget to shut down gis.lab server before shutting down host machine
 ```
 $ vagrant halt
 ```
@@ -83,7 +83,7 @@ Upgrade
 Currently, in this phase of development we provide only hard upgrade process where whole system including data
 is going to be replaced. Later we will add much more sophisticated approach. Please backup your data !
 
-Update GIS LAB sources
+Update gis.lab sources
 ```
 $ git pull
 ```
@@ -141,8 +141,8 @@ $ ip addr del 192.168.50.2/24 dev eth0
 ```
 
 
-Working with GIS LAB
-------------------
+Working with gis.lab
+--------------------
 ### User accounts
 By default, user accounts specified in GISLAB_USER_ACCOUNTS_AUTO are created automatically after installation.
 You can also create or delete additional accounts manually:
@@ -151,7 +151,7 @@ You can also create or delete additional accounts manually:
 
 
 ### File sharing
-GIS LAB offers out-of-box file sharing solution inside its LAN. All client users can find three different shared
+gis.lab offers out-of-box file sharing solution inside its LAN. All client users can find three different shared
 directories in their home directory, each one with different access policy:
  * Repository: directory with read-only permissions for users
  * Share: directory with read permissions for anybody and write permissions for file owner
@@ -162,7 +162,7 @@ always good idea to umount it before shutting down gis.lab server. If forgotten 
 
 
 ### Built-in automatic WebGIS viewer
-One of the nice features of GIS LAB is WebGIS viewer application which is automatically generated for
+One of the nice features of gis.lab is WebGIS viewer application which is automatically generated for
 each user's QGIS project.
 Simply save a QGIS project and all file data to '~/Share/<USERNAME>' directory with setting these required configuration:
  * use relative paths (File > Project Properties > General > Save paths). The safest way is to save Your data and project
@@ -174,19 +174,19 @@ Simply save a QGIS project and all file data to '~/Share/<USERNAME>' directory w
 and launch following URL in a web browser:
 ```
 format:
-http://webgis.gislab.lan/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>
+http://webgis.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>
 
 * PATH-TO-QGIS-PROJECT-FILE must be relative to '~/Share' directory
 
 example for user 'lab1' which saved a project file 'myproject.qgs' to ~/Share/lab1/projects directory:
-http://webgis.gislab.lan/?PROJECT=lab1/projects/myproject.qgs
+http://webgis.gis.lab/?PROJECT=lab1/projects/myproject.qgs
 
 ```
 
 Additionally, it is possible to configure behavior of WebGIS app via GET parameters in URL.
 ```
 format:
-http://webgis.gislab.lan/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>&<PARAMETER>=<value>&<PARAMETER>=<value>...
+http://webgis.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>&<PARAMETER>=<value>&<PARAMETER>=<value>...
 
 ```
 

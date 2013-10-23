@@ -3,8 +3,8 @@
 Version=1.0
 Type=Application
 Name=Version
-Comment=GIS LAB build info and version
-Exec=zenity --title="GIS LAB" --text-info --filename=/etc/gislab_version
+Comment=gis.lab build info and version
+Exec=zenity --title="gis.lab" --text-info --filename=/etc/gislab_version
 Icon=
 Path=
 Terminal=false

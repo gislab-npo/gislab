@@ -1,8 +1,8 @@
-# Add GIS LAB version and client build information.
+# Add gis.lab version and client build information.
 
 case "$MODE" in
     commandline)
-        add_option "gislab-version" "`eval_gettext "set GIS LAB version"`" "advanced" "true"
+        add_option "gislab-version" "`eval_gettext "set gis.lab version"`" "advanced" "true"
         ;;
     configure)
         if [ -n "$option_gislab_version_value" ]; then
