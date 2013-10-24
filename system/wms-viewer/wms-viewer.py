@@ -6,10 +6,12 @@ Author: Ivan Mincik, ivan.mincik@gmail.com
 
 import sys
 from cgi import parse_qsl
+from optparse import OptionParser
 from owslib.wms import WebMapService
 
 
 DEBUG=True
+COMMAND_LINE_MODE=False
 
 def _get_resolutions(scales, units, resolution=96):
 	"""Helper function to compute OpenLayers resolutions."""
@@ -32,19 +34,33 @@ def page(c):
 
 	html = ''
 
+	c['static_url_prefix'] = 'https://rawgithub.com/imincik/gis-lab/master/system/wms-viewer/' if COMMAND_LINE_MODE else ''
+
 	# head and javascript start
 	html += """
 	<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-        <link rel="stylesheet" type="text/css" href="static/ext-3.4.1/resources/css/ext-all.css"/>
+        <link rel="stylesheet" type="text/css" href="%(static_url_prefix)sstatic/ext-3.4.1/resources/css/ext-all.css"/>
+        <style type="text/css">
+        .x-panel-header {
+            color: #15428B;
+            font-family: tahoma,arial,verdana,sans-serif;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .x-panel-body-text {
+            font-family: tahoma,arial,verdana,sans-serif;
+            font-size: 11px;
+        }
+        </style>
 
-        <script type="text/javascript" src="static/ext-3.4.1/adapter/ext/ext-base.js"></script>
-        <script type="text/javascript" src="static/ext-3.4.1/ext-all.js"></script>
+        <script type="text/javascript" src="%(static_url_prefix)sstatic/ext-3.4.1/adapter/ext/ext-base.js"></script>
+        <script type="text/javascript" src="%(static_url_prefix)sstatic/ext-3.4.1/ext-all.js"></script>
 
-        <script type="text/javascript" src="static/OpenLayers-2.13/OpenLayers.js"></script>
-        <script type="text/javascript" src="static/GeoExt-1.1/GeoExt.js"></script>
+        <script type="text/javascript" src="%(static_url_prefix)sstatic/OpenLayers-2.13/OpenLayers.js"></script>
+        <script type="text/javascript" src="%(static_url_prefix)sstatic/GeoExt-1.1/GeoExt.js"></script>
 
         <style type="text/css">
              .olControlNoSelect {background-color:rgba(200, 200, 200, 0.3)}
@@ -56,8 +72,8 @@ def page(c):
 	""" % c
 
 	# configuration
-	html += """
-		Ext.BLANK_IMAGE_URL = "static/images/s.gif";
+	html += """function main() {
+		Ext.BLANK_IMAGE_URL = "%(static_url_prefix)sstatic/images/s.gif";
 		OpenLayers.DOTS_PER_INCH = %(resolution)s;
 		var config = {
 			projection: "%(projection)s",
@@ -110,7 +126,6 @@ def page(c):
 	html += """
 		var mappanel = new GeoExt.MapPanel({
 			region: 'center',
-			xtype: 'gx_mappanel',
 			title: '%(root_title)s',
 			collapsible: false,
 			zoom: 3,
@@ -129,7 +144,6 @@ def page(c):
 
 	# tree node
 	html += """
-		function main() {
 			var layers_root = new Ext.tree.TreeNode({
 				text: 'Layers',
 				expanded: true,
@@ -163,37 +177,83 @@ def page(c):
 			}));
 	"""
 
-	# layers panel
+	# layers tree
 	html += """
 			var layer_treepanel = new Ext.tree.TreePanel({
-				region: 'west',
-				xtype: 'panel',
 				title: 'Content',
 				enableDD: true,
 				root: layers_root,
-				width: 200,
 				split: true,
 				border: true,
-				collapsible: true,
+				collapsible: false,
 				cmargins: '0 0 0 0',
-
 			});
 	"""
 
-#	# legend
-#	html += """
-#			var layer_legend = new GeoExt.LegendPanel({
-#				title: "Legend",
-#				contentEl: 'layerlegend',
-#				border: false,
-#				region: 'south',
-#				height: 200,
-#				autoScroll: true,
-#				ascending: false,
-#				map: mappanel.map,
-#				defaults: {cls: 'legend-item'}
-#			});
-#	"""
+	# legend
+	html += """
+		var layer_legend = new GeoExt.LegendPanel({
+			title: 'Legend',
+			map: mappanel.map,
+			border: false,
+			ascending: false,
+			defaults: {
+				cls: 'legend-item',
+				baseParams: {
+					FORMAT: 'image/png',
+					LEGEND_OPTIONS: 'forceLabels:on'
+				}
+			}
+		});
+	"""
+
+	# properties
+	html += """
+			var properties = new Ext.Panel({
+				title: 'Properties',
+				html: '<div class="x-panel-body-text"><p><b>Author: </b>%(author)s</p><p><b>E-mail: </b>%(email)s</p><p><b>Organization: </b>%(organization)s</p><b>Abstract: </b>%(abstract)s</p></div>'
+			});
+	""" % c
+
+	# legend and properties accordion panel
+	html += """
+			var accordion = new Ext.Panel({
+				layout: {
+					type: 'accordion',
+					titleCollapse: true,
+					animate: false,
+					activeOnTop: false
+				},
+				items: [
+					layer_legend,
+					properties
+				]
+			});
+	"""
+
+	# left panel
+	html += """
+			var left_panel = new Ext.Panel({
+				region: 'west',
+				width: 200,
+				defaults: {
+					width: '100%',
+					flex: 1,
+					autoScroll: true,
+				},
+				layout: 'vbox',
+				collapsible: true,
+				//split: true,
+				layoutConfig: {
+					align: 'stretch',
+					pack: 'start'
+				},
+				items: [
+					layer_treepanel,
+					accordion
+				]
+			});
+	"""
 
 	# viewport
 	html += """
@@ -201,7 +261,7 @@ def page(c):
 				layout: "border",
 				items: [
 					mappanel,
-					layer_treepanel,
+					left_panel
 				]
 			});
 	"""
@@ -224,9 +284,6 @@ def page(c):
 				</script>
 			</head>
 			<body>
-				<div id="mappanel"></div>
-				<div id="layertree"></div>
-				<div id="layerlegend"></div>
 				<div id="overviewLegend" style="margin-left:10px"></div>
 				<div id="dpiDetection"></div>
 			</body>
@@ -314,9 +371,10 @@ def application(environ, start_response):
 	c['scales'] = scales
 	c['zoom'] = zoom
 	c['resolutions'] = ', '.join(str(r) for r in _get_resolutions(c['scales'], c['units'], c['resolution']))
-#	c['author'] = wms_service.provider.contact.name.encode('UTF-8')
-#	c['email'] = wms_service.provider.contact.email.encode('UTF-8')
-#	c['organization'] = wms_service.provider.contact.organization.encode('UTF-8')
+	c['author'] = wms_service.provider.contact.name.encode('UTF-8')
+	c['email'] = wms_service.provider.contact.email.encode('UTF-8')
+	c['organization'] = wms_service.provider.contact.organization.encode('UTF-8')
+	c['abstract'] = wms_service.identification.abstract.encode('UTF-8')
 
 	c['root_layer'] = root_layer.name.encode('UTF-8')
 	c['root_title'] = wms_service.identification.title.encode('UTF-8')
@@ -326,6 +384,31 @@ def application(environ, start_response):
 
 	start_response('200 OK', [('Content-type','text/html')])
 	return page(c)
+
+
+def run(port=9997):
+	"""Start WSGI server."""
+
+	from wsgiref import simple_server
+	httpd = simple_server.WSGIServer(('', port), simple_server.WSGIRequestHandler,)
+	httpd.set_app(application)
+	try:
+		print "Starting server. Point your web browser to 'http://127.0.0.1:%s'." % port
+		httpd.serve_forever()
+	except KeyboardInterrupt:
+		print "Shutting down server."
+		sys.exit(0)
+
+
+if __name__ == "__main__":
+	parser = OptionParser()
+
+	parser.add_option("-p", "--port", help="port to run server on [optional]",
+		dest="port", action='store', type="int", default=9991)
+
+	options, args = parser.parse_args()
+	COMMAND_LINE_MODE = True
+	run(options.port)
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
