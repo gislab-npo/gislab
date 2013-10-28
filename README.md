@@ -49,11 +49,11 @@ Download a Vagrant box
 $ vagrant box add precise32 http://files.vagrantup.com/precise32.box
 ```
 
-Download latest gis.lab package from https://github.com/imincik/gis-lab/releases
+Download latest GIS.lab package from https://github.com/imincik/gis-lab/releases
 
 or
 
-clone gis.lab sources if You are developer or familiar with Git
+clone GIS.lab sources if You are developer or familiar with Git
 ```
 $ git clone https://github.com/imincik/gis-lab.git
 ```
@@ -72,7 +72,7 @@ Connect host machine to client machines via gigabit switch and cable (CAT 5e or 
 
 Configure client machines BIOS to boot from LAN (PXE) or use boot manager (usually activated by F12 early on start) and enjoy
 
-Do not forget to shut down gis.lab server before shutting down host machine
+Do not forget to shut down GIS.lab server before shutting down host machine
 ```
 $ vagrant halt
 ```
@@ -83,7 +83,7 @@ Upgrade
 Currently, in this phase of development we provide only hard upgrade process where whole system including data
 is going to be replaced. Later we will add much more sophisticated approach. Please backup your data !
 
-Update gis.lab sources
+Update GIS.lab sources
 ```
 $ git pull
 ```
@@ -141,7 +141,7 @@ $ ip addr del 192.168.50.2/24 dev eth0
 ```
 
 
-Working with gis.lab
+Working with GIS.lab
 --------------------
 ### User accounts
 By default, user accounts specified in GISLAB_USER_ACCOUNTS_AUTO are created automatically after installation.
@@ -151,18 +151,18 @@ You can also create or delete additional accounts manually:
 
 
 ### File sharing
-gis.lab offers out-of-box file sharing solution inside its LAN. All client users can find three different shared
+GIS.lab offers out-of-box file sharing solution inside its LAN. All client users can find three different shared
 directories in their home directory, each one with different access policy:
  * Repository: directory with read-only permissions for users
  * Share: directory with read permissions for anybody and write permissions for file owner
  * Barrel: directory with read and write permissions for all files for all users
 
 It is possible to mount 'Barrel' shared directory from host machine using 'utils/mount-barrel.sh' script. It is
-always good idea to umount it before shutting down gis.lab server. If forgotten try to umount it with '-fl' options.
+always good idea to umount it before shutting down GIS.lab server. If forgotten try to umount it with '-fl' options.
 
 
-### Built-in automatic WebGIS viewer
-One of the nice features of gis.lab is WebGIS viewer application which is automatically generated for
+### Built-in automatic WMS Viewer viewer
+One of the nice features of GIS.lab is WMS Viewer application which is automatically generated for
 each user's QGIS project.
 Simply save a QGIS project and all file data to '~/Share/<USERNAME>' directory with setting these required configuration:
  * use relative paths (File > Project Properties > General > Save paths). The safest way is to save Your data and project

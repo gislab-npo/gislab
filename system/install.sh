@@ -295,7 +295,7 @@ service apache2 reload
 #
 ### USERS ###
 #
-echo -e "\n[gis.lab]: Creating gis.lab users accounts ...\n"
+echo -e "\n[GIS.lab]: Creating GIS.lab users accounts ...\n"
 for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
 	/vagrant/system/bin/gislab-adduser.sh $account
@@ -311,6 +311,6 @@ done
 /vagrant/system/bin/gislab-clients-allowed.sh    # allow LTSP clients
 
 
-echo -e "\n[gis.lab]: Done. gis.lab is installed and ready to use!"
+echo -e "\n[GIS.lab]: Done. GIS.lab is installed and ready to use!"
 
 # vim: set ts=4 sts=4 sw=4 noet:
