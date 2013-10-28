@@ -53,6 +53,12 @@ mkdir -p /etc/skel/.config/xfce4/panel
 cp -a /vagrant/system/desktop-session/xfce4/panel/* /etc/skel/.config/xfce4/panel
 
 
+# Conky
+mkdir -p /etc/skel/.config/autostart
+cp /vagrant/system/desktop-session/conky/conkyrc /etc/skel/.conkyrc
+cp /vagrant/system/desktop-session/conky/conky.desktop /etc/skel/.config/autostart/conky.desktop
+
+
 # add shared directory
 ln -s /mnt/repository /etc/skel/Repository
 ln -s /mnt/share /etc/skel/Share

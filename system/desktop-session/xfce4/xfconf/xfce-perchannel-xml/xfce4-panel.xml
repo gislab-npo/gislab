@@ -64,19 +64,12 @@
       <property name="style" type="uint" value="0"/>
     </property>
     <property name="plugin-7" type="string" value="datetime"/>
-    <property name="plugin-8" type="string" value="separator">
-      <property name="style" type="uint" value="0"/>
-    </property>
     <property name="plugin-26" type="string" value="pager">
       <property name="rows" type="uint" value="1"/>
       <property name="show-names" type="bool" value="false"/>
       <property name="workspace-scrolling" type="bool" value="false"/>
       <property name="miniature-view" type="bool" value="true"/>
     </property>
-    <property name="plugin-27" type="string" value="separator">
-      <property name="style" type="uint" value="0"/>
-    </property>
-    <property name="plugin-9" type="string" value="xfsm-logout-plugin"/>
     <property name="plugin-10" type="string" value="launcher">
       <property name="items" type="array">
         <value type="string" value="13793389951.desktop"/>
@@ -92,6 +85,5 @@
     <property name="plugin-15" type="string" value="separator"/>
     <property name="plugin-16" type="string" value="separator"/>
     <property name="plugin-14" type="string" value="xkb-plugin"/>
-    <property name="plugin-17" type="string" value="separator"/>
   </property>
 </channel>

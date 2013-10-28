@@ -1,0 +1,131 @@
+# set to yes if you want Conky to be forked in the background
+background yes
+
+# X font when Xft is disabled, you can pick one with program xfontsel
+#font -*-proggyopti-bold-r-normal-*-*-80-*-*-*-*-iso8859-1
+
+# Use Xft?
+use_xft yes
+
+# Xft font when Xft is enabled
+xftfont Ubuntu:size=8
+
+# Text alpha when using Xft
+# xftalpha 0.8
+
+# Print everything to console?
+# out_to_console no
+
+# mail spool
+# mail_spool $MAIL
+
+# Update interval in seconds
+update_interval 4
+
+# This is the number of times Conky will update before quitting.
+# Set to zero to run forever.
+total_run_times 0
+
+# Create own window instead of using desktop (required in nautilus)
+own_window yes
+
+# If own_window is yes, you may use type normal, desktop or override
+own_window_type override
+
+# Use pseudo transparency with own_window?
+own_window_transparent no
+
+# If own_window_transparent is set to no, you can set the background colour here
+own_window_colour 1E1C1C
+
+# If own_window is yes, these window manager hints may be used
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+
+# Use double buffering (reduces flicker, may not work for everyone)
+double_buffer yes
+
+# Minimum size of text area
+#minimum_size 1280 12
+
+# Draw shades?
+draw_shades yes
+
+# Draw outlines?
+draw_outline no
+
+# Draw borders around text
+draw_borders no
+
+# Draw borders around graphs
+draw_graph_borders no
+
+# Stippled borders?
+stippled_borders 0
+
+# border width
+border_width 1
+
+# Default colors and also border colors
+# default_color red
+# default_shade_color black
+# default_outline_color red
+# color0 ff6000
+# color1 white
+default_color 4DCC33
+default_shade_color black
+default_outline_color 4DCC33
+color0 8C8C8C
+color1 white
+
+# Text alignment, other possible values are commented
+alignment top_middle
+
+# Gap between borders of screen and text
+# same thing as passing -x at command line
+#gap_x 0
+gap_y 10
+
+# Subtract file system buffers from used memory?
+no_buffers yes
+
+# set to yes if you want all text to be in uppercase
+uppercase no
+
+# number of cpu samples to average
+# set to 1 to disable averaging
+cpu_avg_samples 2
+
+# number of net samples to average
+# set to 1 to disable averaging
+net_avg_samples 4
+
+# Force UTF8? note that UTF8 support required XFT
+override_utf8_locale no
+
+# Add spaces to keep things from moving about?  This only affects certain objects.
+use_spacer none
+
+# Allow each port monitor to track at most this many connections (if 0 or not set, default is 256)
+#max_port_monitor_connections 256
+
+# Maximum number of special things, e.g. fonts, offsets, aligns, etc.
+#max_specials 512
+
+# Maximum size of buffer for user text, i.e. below TEXT line.
+#max_user_text 16384
+
+# variable is given either in format $variable or in ${variable}. Latter
+# allows characters right after the variable and must be used in network
+# stuff because of an argument
+
+# stuff after 'TEXT' will be formatted on screen
+TEXT
+$alignc \
+${color1}${exec whoami}@${nodename} | \
+${color0}UP ${color1}$uptime_short | \
+${color0}LOAD ${color1}$loadavg | \
+${color0}CPU ${color1}$cpu% ${cpubar 5,50} ${freq 1}MHz ${acpitemp}C | \
+${color0}RAM ${color1}$mem ${membar 5,50} | \
+${color0}SWAP ${color1}$swap ${swapbar 5,50} | \
+${color0}ETH0 ${color1}${downspeed eth0}:${upspeed eth0}| \
+${color0}WIFI ${color1}${downspeed wlan0}:${upspeed wlan0}
