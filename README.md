@@ -58,9 +58,9 @@ clone GIS.lab sources if You are developer or familiar with Git
 $ git clone https://github.com/imincik/gis-lab.git
 ```
 
-Adjust configuration in config.cfg (not required, all default values works)
-
-Add client machines MAC addresses in allowed-clients.cfg (only required if GISLAB_UNKNOWN_MAC_POLICY=deny)
+Allow client MAC addresses in config.cfg:
+ * add your MACs to GISLAB_CLIENTS_ALLOWED (recommended)
+ * or set GISLAB_UNKNOWN_MAC_POLICY=allow
 
 Fire up a Vagrant provisioner
 ```
