@@ -43,18 +43,6 @@ def page(c):
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
         <link rel="stylesheet" type="text/css" href="%(static_url_prefix)sstatic/ext-3.4.1/resources/css/ext-all.css"/>
-        <style type="text/css">
-        .x-panel-header {
-            color: #15428B;
-            font-family: tahoma,arial,verdana,sans-serif;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .x-panel-body-text {
-            font-family: tahoma,arial,verdana,sans-serif;
-            font-size: 11px;
-        }
-        </style>
 
         <script type="text/javascript" src="%(static_url_prefix)sstatic/ext-3.4.1/adapter/ext/ext-base.js"></script>
         <script type="text/javascript" src="%(static_url_prefix)sstatic/ext-3.4.1/ext-all.js"></script>
@@ -64,12 +52,60 @@ def page(c):
 
         <style type="text/css">
              .olControlNoSelect {background-color:rgba(200, 200, 200, 0.3)}
-			 #dpiDetection {height: 1in; left: -100%%; position: absolute; top: -100%%; width: 1in;}
+              #dpiDetection {height: 1in; left: -100%%; position: absolute; top: -100%%; width: 1in;}
+
+            .x-panel-header {
+                color: #15428B;
+                font-family: tahoma,arial,verdana,sans-serif;
+                font-size: 11px;
+                font-weight: bold;
+            }
+            .x-panel-body-text {
+                font-family: tahoma,arial,verdana,sans-serif;
+                font-size: 11px;
+            }
+            .home-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/home.png')!important;
+                background: no-repeat;
+            }
+            .pan-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/pan.png')!important;
+                background: no-repeat;
+            }
+            .zoom-in-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/zoom_in.png')!important;
+                background: no-repeat;
+            }
+            .zoom-out-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/zoom_out.png')!important;
+                background: no-repeat;
+            }
+            .zoom-max-extent-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/arrow_out.png')!important;
+                background: no-repeat;
+            }
+            .previous-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/arrow_left.png')!important;
+                background: no-repeat;
+            }
+            .next-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/arrow_right.png')!important;
+                background: no-repeat;
+            }
+            .length-measure-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/ruler.png')!important;
+                background: no-repeat;
+            }
+            .area-measure-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/ruler_square.png')!important;
+                background: no-repeat;
+            }
         </style>
 
         <title id="page-title">%(root_title)s</title>
         <script type="text/javascript">
 	""" % c
+
 
 	# configuration
 	html += """function main() {
@@ -124,6 +160,7 @@ def page(c):
 	else:
 		c['allOverlays'] = 'true'
 	html += """
+		var ctrl, action;
 		var mappanel = new GeoExt.MapPanel({
 			region: 'center',
 			title: '%(root_title)s',
@@ -143,7 +180,143 @@ def page(c):
 			bbar: []
 		});
 
+		//Home Action
+		action = new GeoExt.Action({
+			handler: function() {window.location.reload();},
+			map: mappanel.map,
+			cls: 'x-btn-icon',
+			iconCls: 'home-icon',
+			tooltip: 'Home'
 		});
+		mappanel.getTopToolbar().add('-', action);
+
+		//Pan Map Action
+		action = new GeoExt.Action({
+			control: new OpenLayers.Control.MousePosition({formatOutput: function(lonLat) {return '';}}),
+			map: mappanel.map,
+			toggleGroup: 'tools',
+			group: 'tools',
+			cls: 'x-btn-icon',
+			iconCls: 'pan-icon',
+			tooltip: 'Pan'
+		});
+		mappanel.getTopToolbar().add(action);
+
+		//Zoom In Action
+		action = new GeoExt.Action({
+			control: new OpenLayers.Control.ZoomBox({alwaysZoom:true}),
+			map: mappanel.map,
+			toggleGroup: 'tools',
+			group: 'tools',
+			cls: 'x-btn-icon',
+			iconCls: 'zoom-in-icon',
+			tooltip: 'Zoom In'
+		});
+		mappanel.getTopToolbar().add(action);
+
+		//Zoom Out Action
+		action = new GeoExt.Action({
+			control: new OpenLayers.Control.ZoomBox({alwaysZoom:true, out:true}),
+			map: mappanel.map,
+			toggleGroup: 'tools',
+			group: 'tools',
+			cls: 'x-btn-icon',
+			iconCls: 'zoom-out-icon',
+			tooltip: 'Zoom Out',
+		});
+		mappanel.getTopToolbar().add(action);
+
+		// ZoomToMaxExtent control, a 'button' control
+		action = new GeoExt.Action({
+			control: new OpenLayers.Control.ZoomToMaxExtent(),
+			map: mappanel.map,
+			cls: 'x-btn-icon',
+			iconCls: 'zoom-max-extent-icon',
+			tooltip: 'Zoom to max extent'
+		});
+		mappanel.getTopToolbar().add(action, '-');
+
+		// Navigation history - two 'button' controls
+		ctrl = new OpenLayers.Control.NavigationHistory();
+		mappanel.map.addControl(ctrl);
+
+		action = new GeoExt.Action({
+			control: ctrl.previous,
+			disabled: true,
+			cls: 'x-btn-icon',
+			iconCls: 'previous-icon',
+			tooltip: 'Previous in history',
+		});
+		mappanel.getTopToolbar().add(action);
+
+		action = new GeoExt.Action({
+			control: ctrl.next,
+			disabled: true,
+			cls: 'x-btn-icon',
+			iconCls: 'next-icon',
+			tooltip: 'Next in history',
+		});
+		mappanel.getTopToolbar().add(action, '-');
+
+		var length = new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
+			immediate: true,
+			persist: true,
+			geodesic: true, //only for projected projections
+			eventListeners: {
+				measurepartial: function(evt) {
+					Ext.getCmp('measurement-info').setText('Length: ' + evt.measure.toFixed(2) + evt.units);
+				},
+				measure: function(evt) {
+					Ext.getCmp('measurement-info').setText('Length: ' + evt.measure.toFixed(2) + evt.units);
+				}
+			}
+		});
+
+		var area = new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
+			immediate: true,
+			persist: true,
+			geodesic: true, //only for projected projections
+			eventListeners: {
+				measurepartial: function(evt) {
+					Ext.getCmp('measurement-info').setText('Area: ' + evt.measure.toFixed(2) + evt.units + '<sup>2</sup>');
+				},
+				measure: function(evt) {
+					Ext.getCmp('measurement-info').setText('Area: ' + evt.measure.toFixed(2) + evt.units + '<sup>2</sup>');
+				}
+			}
+		});
+
+		mappanel.map.addControl(length);
+		mappanel.map.addControl(area);
+
+		var length_button = new Ext.Button({
+			enableToggle: true,
+			toggleGroup: 'tools',
+			iconCls: 'length-measure-icon',
+			toggleHandler: function(button, toggled) {
+				if (toggled) {
+					length.activate();
+				} else {
+					length.deactivate();
+					Ext.getCmp('measurement-info').setText('');
+				}
+			}
+		});
+
+		var area_button = new Ext.Button({
+			enableToggle: true,
+			toggleGroup: 'tools',
+			iconCls: 'area-measure-icon',
+			toggleHandler: function(button, toggled) {
+				if (toggled) {
+					area.activate();
+				} else {
+					area.deactivate();
+					Ext.getCmp('measurement-info').setText('');
+				}
+			}
+		});
+		mappanel.getTopToolbar().add(length_button, area_button);
 	""" % c
 
 	# tree node
@@ -260,12 +433,32 @@ def page(c):
 			});
 	"""
 
+	#featureinfo panel
+	html += """
+			var featureinfo_panel = new Ext.Panel({
+				title: 'Feature Info',
+				collapsible: true,
+				region: 'south'
+			});
+	"""
+
+	html += """
+			var mappanel_container = new Ext.Panel({
+				layout: 'border',
+				region: 'center',
+				items: [
+					mappanel,
+					featureinfo_panel
+				]
+			});
+	"""
+
 	# viewport
 	html += """
 			var webgis = new Ext.Viewport({
 				layout: "border",
 				items: [
-					mappanel,
+					mappanel_container,
 					left_panel
 				]
 			});
@@ -296,6 +489,11 @@ def page(c):
 			mappanel.getBottomToolbar().add(new Ext.Toolbar.TextItem({text: config.projection}));
 			mappanel.getBottomToolbar().add(' ', '-', '');
 			mappanel.getBottomToolbar().add(coords);
+			var measurement_output = new Ext.Toolbar.TextItem({
+				id:'measurement-info',
+				text: ''
+			});
+			mappanel.getBottomToolbar().add(' ', '-', ' ', measurement_output);
 
 			mappanel.map.setCenter(new OpenLayers.LonLat(%(center_coord1)s, %(center_coord2)s), %(zoom)s);
 			mappanel.map.addControl(new OpenLayers.Control.Scale());
