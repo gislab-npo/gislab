@@ -138,7 +138,11 @@ def page(c):
 					config.maxExtent[2], config.maxExtent[3]),
 				controls: []
 			},
-			layers: maplayers
+			layers: maplayers,
+			tbar: [],
+			bbar: []
+		});
+
 		});
 	""" % c
 
@@ -187,6 +191,7 @@ def page(c):
 				border: true,
 				collapsible: false,
 				cmargins: '0 0 0 0',
+				autoScroll: true
 			});
 	"""
 
@@ -197,6 +202,7 @@ def page(c):
 			map: mappanel.map,
 			border: false,
 			ascending: false,
+			autoScroll: true,
 			defaults: {
 				cls: 'legend-item',
 				baseParams: {
@@ -211,6 +217,7 @@ def page(c):
 	html += """
 			var properties = new Ext.Panel({
 				title: 'Properties',
+				autoScroll: true,
 				html: '<div class="x-panel-body-text"><p><b>Author: </b>%(author)s</p><p><b>E-mail: </b>%(email)s</p><p><b>Organization: </b>%(organization)s</p><b>Abstract: </b>%(abstract)s</p></div>'
 			});
 	""" % c
@@ -238,12 +245,10 @@ def page(c):
 				width: 200,
 				defaults: {
 					width: '100%',
-					flex: 1,
-					autoScroll: true,
+					flex: 1
 				},
 				layout: 'vbox',
 				collapsible: true,
-				//split: true,
 				layoutConfig: {
 					align: 'stretch',
 					pack: 'start'
@@ -268,10 +273,33 @@ def page(c):
 
 	# controls
 	html += """
+			Ext.namespace("GeoExt.Toolbar");
+
+			GeoExt.Toolbar.ControlDisplay = Ext.extend(Ext.Toolbar.TextItem, {
+
+				control: null,
+				map: null,
+
+				onRender: function(ct, position) {
+					this.text = this.text ? this.text : '&nbsp;';
+
+					GeoExt.Toolbar.ControlDisplay.superclass.onRender.call(this, ct, position);
+					this.control.div = this.el.dom;
+
+					if (!this.control.map && this.map) {
+						this.map.addControl(this.control);
+					}
+				}
+			});
+			var coords = new GeoExt.Toolbar.ControlDisplay({control: new OpenLayers.Control.MousePosition({separator: ' , '}), map: mappanel.map});
+
+			mappanel.getBottomToolbar().add(new Ext.Toolbar.TextItem({text: config.projection}));
+			mappanel.getBottomToolbar().add(' ', '-', '');
+			mappanel.getBottomToolbar().add(coords);
+
 			mappanel.map.setCenter(new OpenLayers.LonLat(%(center_coord1)s, %(center_coord2)s), %(zoom)s);
 			mappanel.map.addControl(new OpenLayers.Control.Scale());
 			mappanel.map.addControl(new OpenLayers.Control.ScaleLine());
-			mappanel.map.addControl(new OpenLayers.Control.MousePosition());
 			mappanel.map.addControl(new OpenLayers.Control.PanZoomBar());
 			mappanel.map.addControl(new OpenLayers.Control.Navigation());
 			mappanel.map.addControl(new OpenLayers.Control.Attribution());
