@@ -54,8 +54,11 @@ def page(c):
         <script type="text/javascript" src="%(static_url_prefix)sstatic/GeoExt-1.1/GeoExt.js"></script>
 
         <style type="text/css">
-             .olControlNoSelect {background-color:rgba(200, 200, 200, 0.3)}
-              #dpiDetection {height: 1in; left: -100%%; position: absolute; top: -100%%; width: 1in;}
+            .olControlNoSelect {background-color:rgba(200, 200, 200, 0.3)}
+            #dpiDetection {height: 1in; left: -100%%; position: absolute; top: -100%%; width: 1in;}
+            .legend-item {
+            }
+            .x-form-item {display:none}
 
             .x-panel-header {
                 color: #15428B;
@@ -468,6 +471,12 @@ def page(c):
 			border: false,
 			ascending: false,
 			autoScroll: true,
+			filter: function(record){
+				if (record.data.title == 'POINTS') {
+					return false;
+				}
+				return true;
+			},
 			defaults: {
 				cls: 'legend-item',
 				baseParams: {
@@ -605,9 +614,46 @@ def page(c):
 			mappanel.map.addControl(new OpenLayers.Control.PanZoomBar());
 			mappanel.map.addControl(new OpenLayers.Control.Navigation());
 			mappanel.map.addControl(new OpenLayers.Control.Attribution());
-		};
 	""" % c
 
+	# POI markers
+	if 'pois' in c:
+		html += """
+			var markers = new OpenLayers.Layer.Vector('POINTS', {
+				styleMap: new OpenLayers.StyleMap({
+					'default':{
+						label: '${label}',
+						fontSize: '12px',
+						fontWeight: 'bold',
+						labelAlign: 'lb',
+						strokeColor: '#000000',
+						strokeOpacity: 1,
+						strokeWidth: 0.5,
+						fillColor: '#FF0000',
+						fillOpacity: 0.8,
+						pointRadius: 6,
+						labelYOffset: '6',
+						labelXOffset: '6',
+						fontColor: 'red',
+					}
+				})
+			});
+			mappanel.map.addLayer(markers);
+		"""
+		for coord1, coord2, text in c['pois']:
+			html += """
+				// create a point feature
+				var point = new OpenLayers.Geometry.Point({0}, {1});
+				var poi_feature = new OpenLayers.Feature.Vector(point);
+				poi_feature.attributes = {{
+					label: "{2}"
+				}};
+				markers.addFeatures(poi_feature);
+			""".format(coord1, coord2, text)
+
+	html += """
+		}; // end of main function
+	"""
 	html += """
 		Ext.QuickTips.init();
 		Ext.onReady(main);
@@ -701,7 +747,15 @@ def application(environ, start_response):
 		c['osm'] = True
 	else:
 		c['osm'] = False
-	
+
+	if qs.get('POINTS'):
+		points_data = qs.get('POINTS')
+		c['pois'] = []
+		print points_data
+		for point_data in points_data.split("|"):
+			coord1, coord2, text = point_data.split(",")
+			c['pois'].append((coord1, coord2, text))
+
 	c['resolution'] = resolution
 	c['extent'] = ",".join(map(str, extent))
 	c['center_coord1'] = center_coord1
