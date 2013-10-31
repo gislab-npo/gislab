@@ -6,6 +6,6 @@ never_modify_config=false
 model=pc105
 layouts=sk,us
 variants=qwerty,
-toggle_option=
+toggle_option=grp:ctrl_shift_toggle
 compose_key_position=
 
