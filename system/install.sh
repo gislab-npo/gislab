@@ -154,9 +154,14 @@ subnet 192.168.50.0 netmask 255.255.255.0 {
         }
     }
 }
+EOF
 
+if [ "$GISLAB_UNKNOWN_MAC_POLICY" == "deny" ]; # if unknown MACs are denied load known ones from included file
+then
+    cat << EOF >> /etc/ltsp/dhcpd.conf
 include "/etc/ltsp/dhcpd-clients-allowed.conf";
 EOF
+fi
 
 cat << EOF > /etc/default/isc-dhcp-server
 INTERFACES="eth1"
