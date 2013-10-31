@@ -5,9 +5,12 @@ Author: Ivan Mincik, ivan.mincik@gmail.com
 """
 
 import sys
+import webob
+import urllib
 from cgi import parse_qsl
 from optparse import OptionParser
 from owslib.wms import WebMapService
+from wsgiproxy.app import WSGIProxyApp
 
 
 DEBUG=True
@@ -64,6 +67,10 @@ def page(c):
                 font-family: tahoma,arial,verdana,sans-serif;
                 font-size: 11px;
             }
+            .featureinfo-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/information.png')!important;
+                background: no-repeat;
+            }
             .home-icon {
                 background-image: url('%(static_url_prefix)sstatic/images/toolbar/home.png')!important;
                 background: no-repeat;
@@ -111,6 +118,7 @@ def page(c):
 	html += """function main() {
 		Ext.BLANK_IMAGE_URL = "%(static_url_prefix)sstatic/images/s.gif";
 		OpenLayers.DOTS_PER_INCH = %(resolution)s;
+		OpenLayers.ProxyHost = "/proxy/url=";
 		var config = {
 			projection: "%(projection)s",
 			units: "%(units)s",
@@ -160,7 +168,6 @@ def page(c):
 	else:
 		c['allOverlays'] = 'true'
 	html += """
-		var ctrl, action;
 		var mappanel = new GeoExt.MapPanel({
 			region: 'center',
 			title: '%(root_title)s',
@@ -179,6 +186,91 @@ def page(c):
 			tbar: [],
 			bbar: []
 		});
+
+		var ctrl, action;
+		// Featureinfo Action
+		ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
+			autoActivate: false,
+			infoFormat: 'application/vnd.ogc.gml',
+			maxFeatures: 10,
+			queryVisible: true,
+			eventListeners: {
+				"getfeatureinfo": function(e) {
+					var featureinfo_tabpanel = Ext.getCmp('featureinfo-tabpanel');
+					featureinfo_tabpanel.removeAll();
+					var featureinfo_data = {};
+					if (e.features.length > 0) {
+						// split features by layer name
+						Ext.each(e.features, function(feature) {
+							var layer_name = feature.fid.split(".")[0];
+							if (!featureinfo_data.hasOwnProperty(layer_name)) {
+								featureinfo_data[layer_name] = [];
+							}
+							featureinfo_data[layer_name].push(feature);
+						});
+
+						// prepare feature attributes data for GridPanel separately for each layer
+						for (var layer_name in featureinfo_data) {
+							var features = featureinfo_data[layer_name];
+
+							// create header info of features attributes (of the same layer)
+							var fields = [], columns = [], data = [];
+							var feature_attrib_names = [];
+							for (var attr_name in features[0].attributes) {
+								if (attr_name == 'geometry' || attr_name == 'boundedBy') {continue;}
+								feature_attrib_names.push(attr_name);
+								fields.push({ name: attr_name, type: 'string' });
+								columns.push({id: attr_name, header: attr_name, dataIndex: attr_name});
+							}
+
+							// collect values of features attributes (of the same layer)
+							Ext.each(features, function(feature) {
+								var feature_data = [];
+								for (var i = 0; i < feature_attrib_names.length; i++) {
+									feature_data.push(feature.data[feature_attrib_names[i]]);
+								}
+								data.push(feature_data);
+							});
+
+							var store = new Ext.data.ArrayStore({
+								fields: fields,
+								data: data
+							});
+							var grid_panel = new Ext.grid.GridPanel({
+								title: layer_name,
+								store: store,
+								autoHeight: true,
+								viewConfig: {
+									forceFit:true,
+								},
+								cm: new Ext.grid.ColumnModel({
+									defaults: {
+										sortable: false
+									},
+									columns: columns
+								})
+							});
+							featureinfo_tabpanel.add(grid_panel);
+						}
+						Ext.getCmp('featureinfo-panel').expand(false);
+						featureinfo_tabpanel.setActiveTab(0);
+						featureinfo_tabpanel.doLayout();
+					}
+				}
+			}
+		})
+
+		action = new GeoExt.Action({
+			control: ctrl,
+			map: mappanel.map,
+			cls: 'x-btn-icon',
+			iconCls: 'featureinfo-icon',
+			enableToggle: true,
+			toggleGroup: 'tools',
+			group: 'tools',
+			tooltip: 'Feature info'
+		})
+		mappanel.getTopToolbar().add('-', action);
 
 		//Home Action
 		action = new GeoExt.Action({
@@ -436,9 +528,21 @@ def page(c):
 	#featureinfo panel
 	html += """
 			var featureinfo_panel = new Ext.Panel({
+				id: 'featureinfo-panel',
 				title: 'Feature Info',
+				layout: 'fit',
 				collapsible: true,
-				region: 'south'
+				collapsed: true,
+				height: 120,
+				split: true,
+				region: 'south',
+				animate: false,
+				items: [
+					new Ext.TabPanel({
+						id: 'featureinfo-tabpanel',
+						items: []
+					})
+				]
 			});
 	"""
 
@@ -522,6 +626,14 @@ def page(c):
 def application(environ, start_response):
 	"""Return server response."""
 
+	if environ["PATH_INFO"].startswith("/proxy/"):
+		url = environ["PATH_INFO"].replace("/proxy/url=", "")
+		url = urllib.unquote(url)
+		req = webob.Request.blank(url)
+		req.environ["REMOTE_ADDR"] = ""
+		resp = req.get_response(WSGIProxyApp(req.host_url))
+		return resp(req.environ, start_response)
+
 	OWS_URL="http://192.168.50.5/cgi-bin/qgis_mapserv.fcgi" #  TODO: do not hardcode this
 	DEFAULT_SCALES="1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500"
 	PROJECTION_UNITS_DD=('EPSG:4326',)
@@ -597,10 +709,10 @@ def application(environ, start_response):
 	c['scales'] = scales
 	c['zoom'] = zoom
 	c['resolutions'] = ', '.join(str(r) for r in _get_resolutions(c['scales'], c['units'], c['resolution']))
-	c['author'] = wms_service.provider.contact.name.encode('UTF-8')
-	c['email'] = wms_service.provider.contact.email.encode('UTF-8')
-	c['organization'] = wms_service.provider.contact.organization.encode('UTF-8')
-	c['abstract'] = wms_service.identification.abstract.encode('UTF-8')
+	c['author'] = wms_service.provider.contact.name.encode('UTF-8') if wms_service.provider.contact.name else ''
+	c['email'] = wms_service.provider.contact.email.encode('UTF-8') if wms_service.provider.contact.email else ''
+	c['organization'] = wms_service.provider.contact.organization.encode('UTF-8') if wms_service.provider.contact.organization else ''
+	c['abstract'] = wms_service.identification.abstract.encode('UTF-8') if wms_service.identification.abstract else ''
 
 	c['root_layer'] = root_layer.name.encode('UTF-8')
 	c['root_title'] = wms_service.identification.title.encode('UTF-8')
