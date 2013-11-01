@@ -1,0 +1,15 @@
+# Customize projections
+
+case "$MODE" in
+    finalization)
+	mkdir -p $ROOT/tmp/gislab-customize-projections
+	cp -a /vagrant/system/projections/*-libs.sh $ROOT/tmp/gislab-customize-projections/
+	chmod +x $ROOT/tmp/gislab-customize-projections/*.sh
+
+	for file in $ROOT/tmp/gislab-customize-projections/*; do
+		chroot $ROOT /tmp/gislab-customize-projections/$(basename $file)
+	done
+
+	rm -r $ROOT/tmp/gislab-customize-projections
+    ;;
+esac

@@ -210,6 +210,15 @@ service nfs-kernel-server restart
 
 
 #
+#### PROJECTIONS ###
+#
+# customize projections support
+/bin/bash /vagrant/system/projections/*-libs.sh
+
+
+
+
+#
 #### PostgreSQL ###
 #
 # allow network connections and local connection without password
@@ -232,6 +241,10 @@ sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/con
 sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON geometry_columns TO PUBLIC;\""
 sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON geography_columns TO PUBLIC;\""
 sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON spatial_ref_sys TO PUBLIC;\""
+
+# adding additional projections support
+sudo su - postgres -c "psql -d template_postgis -f /vagrant/system/projections/*-postgis.sql"
+
 sudo su - postgres -c "psql -d template_postgis -c \"VACUUM FULL;\""
 sudo su - postgres -c "psql -d template_postgis -c \"VACUUM FREEZE;\""
 sudo su - postgres -c "psql -d postgres -c \"UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';\""
