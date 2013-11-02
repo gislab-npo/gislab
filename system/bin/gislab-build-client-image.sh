@@ -9,10 +9,17 @@ then
 	source /vagrant/config-user.cfg
 fi
 
-echo -e "\n[GIS.lab]: Building client image ...\n"
+echo -e "\n[GIS.lab]: Building client image ..."
 
 # add some ltsp-build-client plugins which takes care about our image customizations
 rm -vf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/*gislab*
+
+cp -v /vagrant/config.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/000-gislab-config # load config
+if [ -f /vagrant/config-user.cfg ] # load user config
+then
+	cp -v /vagrant/config-user.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/001-gislab-config-user
+fi
+
 cp -av /vagrant/system/ltsp/plugins/ltsp-build-client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
 # client image configuration
