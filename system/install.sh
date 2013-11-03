@@ -313,7 +313,7 @@ service apache2 reload
 #
 ### USERS ###
 #
-echo -e "\n[GIS.lab]: Creating GIS.lab users accounts ...\n"
+echo -e "\n[GIS.lab]: Creating GIS.lab users accounts ..."
 for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
 	/vagrant/system/bin/gislab-adduser.sh $account
