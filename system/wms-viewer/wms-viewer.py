@@ -54,12 +54,59 @@ def page(c):
         <script type="text/javascript" src="%(static_url_prefix)sstatic/GeoExt-1.1/GeoExt.js"></script>
 
         <style type="text/css">
-            .olControlNoSelect {background-color:rgba(200, 200, 200, 0.3)}
-            #dpiDetection {height: 1in; left: -100%%; position: absolute; top: -100%%; width: 1in;}
-            .legend-item {
+            #dpiDetection {
+                height: 1in; left: -100%%; position: absolute; top: -100%%; width: 1in;
             }
-            .x-form-item {display:none}
-
+            .olControlNoSelect {
+                background-color:rgba(200, 200, 200, 0.3);
+            }
+            .legend-item .x-form-item {
+                display:none;
+            }
+            .olControlPanPanel div {
+                background-image: url("%(static_url_prefix)sstatic/images/tool-sprites.gif") !important;
+                font-size: 0 !important;
+                height: 15px !important;
+                width: 15px !important;
+            }
+            .olControlZoomToMaxExtentItemInactive {
+                display:none;
+            }
+            .olControlPanPanel .olControlPanNorthItemInactive {
+                background-position: 15px -60px !important;
+                left: 16px !important;
+            }
+            .olControlPanPanel .olControlPanSouthItemInactive {
+                background-position: 15px -75px !important;
+                left: 16px !important;
+                top: 32px !important;
+            }
+            .olControlPanPanel .olControlPanWestItemInactive {
+                background-position: 15px -105px !important;
+                left: 2px !important;
+                top: 16px !important;
+            }
+            .olControlPanPanel .olControlPanEastItemInactive {
+                background-position: 15px -120px !important;
+                left: 30px !important;
+                top: 16px !important;
+            }
+            .olControlZoomPanel div {
+                background-image: url("%(static_url_prefix)sstatic/images/tool-sprites.gif") !important;
+                font-size: 0 !important;
+                height: 15px !important;
+                width: 15px !important;
+            }
+            .olControlZoomPanel .olControlZoomInItemInactive {
+                background-position: 15px -240px !important;
+                left: 7px !important;
+                top: -5px !important;
+            }
+            .olControlZoomPanel .olControlZoomOutItemInactive {
+                background-position: 15px -255px !important;
+                left: 7px !important;
+                top: 168px !important;
+            }
             .x-panel-header {
                 color: #15428B;
                 font-family: tahoma,arial,verdana,sans-serif;
@@ -186,6 +233,15 @@ def page(c):
 				controls: []
 			},
 			layers: maplayers,
+			items: [{
+				xtype: "gx_zoomslider",
+				aggressive: true,
+				vertical: true,
+				height: 150,
+				x: 17,
+				y: 85,
+				plugins: new GeoExt.ZoomSliderTip()
+			}],
 			tbar: [],
 			bbar: []
 		});
@@ -611,7 +667,8 @@ def page(c):
 			mappanel.map.setCenter(new OpenLayers.LonLat(%(center_coord1)s, %(center_coord2)s), %(zoom)s);
 			mappanel.map.addControl(new OpenLayers.Control.Scale());
 			mappanel.map.addControl(new OpenLayers.Control.ScaleLine());
-			mappanel.map.addControl(new OpenLayers.Control.PanZoomBar());
+			mappanel.map.addControl(new OpenLayers.Control.PanPanel());
+			mappanel.map.addControl(new OpenLayers.Control.ZoomPanel());
 			mappanel.map.addControl(new OpenLayers.Control.Navigation());
 			mappanel.map.addControl(new OpenLayers.Control.Attribution());
 	""" % c
@@ -751,7 +808,6 @@ def application(environ, start_response):
 	if qs.get('POINTS'):
 		points_data = qs.get('POINTS')
 		c['pois'] = []
-		print points_data
 		for point_data in points_data.split("|"):
 			coord1, coord2, text = point_data.split(",")
 			c['pois'].append((coord1, coord2, text))
