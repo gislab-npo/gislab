@@ -263,7 +263,7 @@ sudo su - postgres -c "psql -c \"GRANT CONNECT ON DATABASE gislab TO labusers;\"
 mkdir -p /usr/local/python-virtualenvs
 virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/wms-viewer
 source /usr/local/python-virtualenvs/wms-viewer/bin/activate
-pip install OWSLib
+pip install OWSLib==0.8.2
 deactivate
 
 cp -a /vagrant/system/wms-viewer /var/www
