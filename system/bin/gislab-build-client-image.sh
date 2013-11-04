@@ -38,6 +38,8 @@ REMOVE_PACKAGES="
     gnumeric
     gnumeric-common
     gnumeric-doc
+    ristretto
+    gigolo
 "
 EOF
 
