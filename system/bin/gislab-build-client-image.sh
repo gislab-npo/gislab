@@ -28,19 +28,7 @@ GISLAB_VERSION=$GISLAB_VERSION
 ARCH=i386
 FAT_CLIENT_DESKTOPS="xubuntu-desktop"
 LATE_PACKAGES="$GISLAB_CLIENT_INSTALL_PACKAGES"
-REMOVE_PACKAGES="
-    thunderbird-globalmenu
-    abiword
-    abiword-common
-    abiword-plugin-grammar
-    abiword-plugin-mathview
-    libabiword-2.9
-    gnumeric
-    gnumeric-common
-    gnumeric-doc
-    ristretto
-    gigolo
-"
+REMOVE_PACKAGES="$GISLAB_CLIENT_REMOVE_PACKAGES"
 EOF
 
 # use APT proxy for client image creation if configured
