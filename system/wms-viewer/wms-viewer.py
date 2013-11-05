@@ -245,8 +245,44 @@ def page(c):
 			tbar: [],
 			bbar: []
 		});
+		var mappanel_container = mappanel;
 
 		var ctrl, action;
+	""" % c
+
+	if c['has_featureinfo']:
+		#featureinfo panel
+		html += """
+			var featureinfo_panel = new Ext.Panel({
+				id: 'featureinfo-panel',
+				title: 'Feature Info',
+				layout: 'fit',
+				collapsible: true,
+				collapsed: true,
+				height: 120,
+				split: true,
+				region: 'south',
+				animate: false,
+				items: [
+					new Ext.TabPanel({
+						id: 'featureinfo-tabpanel',
+						items: []
+					})
+				]
+			});
+		"""
+		html += """
+			var mappanel_container = new Ext.Panel({
+				layout: 'border',
+				region: 'center',
+				items: [
+					mappanel,
+					featureinfo_panel
+				]
+			});
+		"""
+
+		html+= """
 		// Featureinfo Action
 		ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
 			autoActivate: false,
@@ -318,7 +354,6 @@ def page(c):
 				}
 			}
 		})
-
 		action = new GeoExt.Action({
 			control: ctrl,
 			map: mappanel.map,
@@ -330,6 +365,9 @@ def page(c):
 			tooltip: 'Feature info'
 		})
 		mappanel.getTopToolbar().add('-', action);
+		""" % c
+
+	html += """
 
 		//Home Action
 		action = new GeoExt.Action({
@@ -537,7 +575,8 @@ def page(c):
 				cls: 'legend-item',
 				baseParams: {
 					FORMAT: 'image/png',
-					LEGEND_OPTIONS: 'forceLabels:on'
+					SYMBOLHEIGHT: '5',
+					SYMBOLWIDTH: '10'
 				}
 			}
 		});
@@ -586,38 +625,6 @@ def page(c):
 				items: [
 					layer_treepanel,
 					accordion
-				]
-			});
-	"""
-
-	#featureinfo panel
-	html += """
-			var featureinfo_panel = new Ext.Panel({
-				id: 'featureinfo-panel',
-				title: 'Feature Info',
-				layout: 'fit',
-				collapsible: true,
-				collapsed: true,
-				height: 120,
-				split: true,
-				region: 'south',
-				animate: false,
-				items: [
-					new Ext.TabPanel({
-						id: 'featureinfo-tabpanel',
-						items: []
-					})
-				]
-			});
-	"""
-
-	html += """
-			var mappanel_container = new Ext.Panel({
-				layout: 'border',
-				region: 'center',
-				items: [
-					mappanel,
-					featureinfo_panel
 				]
 			});
 	"""
@@ -829,6 +836,13 @@ def application(environ, start_response):
 	c['layers'] = layers_names
 	c['ows_url'] = '{0}/?map={1}&DPI={2}'.format(OWS_URL, projectfile, resolution)
 	c['ows_get_capabilities_url'] = getcapabilities_url
+
+	has_featureinfo = False
+	for operation in wms_service.operations:
+		if operation.name == 'GetFeatureInfo':
+			has_featureinfo = 'application/vnd.ogc.gml' in operation.formatOptions
+			break
+	c['has_featureinfo'] = has_featureinfo
 
 	start_response('200 OK', [('Content-type','text/html')])
 	return page(c)
