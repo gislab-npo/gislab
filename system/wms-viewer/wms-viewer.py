@@ -489,7 +489,8 @@ def page(c):
 					length.deactivate();
 					Ext.getCmp('measurement-info').setText('');
 				}
-			}
+			},
+			tooltip: 'Measure length'
 		});
 
 		var area_button = new Ext.Button({
@@ -503,7 +504,8 @@ def page(c):
 					area.deactivate();
 					Ext.getCmp('measurement-info').setText('');
 				}
-			}
+			},
+			tooltip: 'Measure area'
 		});
 		mappanel.getTopToolbar().add(length_button, area_button);
 	""" % c
