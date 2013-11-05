@@ -168,7 +168,7 @@ def page(c):
 	html += """function main() {
 		Ext.BLANK_IMAGE_URL = "%(static_url_prefix)sstatic/images/s.gif";
 		OpenLayers.DOTS_PER_INCH = %(resolution)s;
-		OpenLayers.ProxyHost = "/proxy/url=";
+		OpenLayers.ProxyHost = "/proxy/?url=";
 		var config = {
 			projection: "%(projection)s",
 			units: "%(units)s",
@@ -737,7 +737,7 @@ def application(environ, start_response):
 	"""Return server response."""
 
 	if environ["PATH_INFO"].startswith("/proxy/"):
-		url = environ["PATH_INFO"].replace("/proxy/url=", "")
+		url = environ['QUERY_STRING'].replace("url=", "")
 		url = urllib.unquote(url)
 		req = webob.Request.blank(url)
 		req.environ["REMOTE_ADDR"] = ""
