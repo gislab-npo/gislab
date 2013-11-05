@@ -371,7 +371,7 @@ def page(c):
 
 		//Home Action
 		action = new GeoExt.Action({
-			handler: function() {window.location.reload();},
+			handler: function() { mappanel.map.setCenter(new OpenLayers.LonLat(%(center_coord1)s, %(center_coord2)s), %(zoom)s); },
 			map: mappanel.map,
 			cls: 'x-btn-icon',
 			iconCls: 'home-icon',
