@@ -264,6 +264,8 @@ mkdir -p /usr/local/python-virtualenvs
 virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/wms-viewer
 source /usr/local/python-virtualenvs/wms-viewer/bin/activate
 pip install OWSLib==0.8.2
+pip install WebOb==1.2.3
+pip install WSGIProxy==0.2.2
 deactivate
 
 cp -a /vagrant/system/wms-viewer /var/www
