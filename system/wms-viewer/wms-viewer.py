@@ -168,7 +168,7 @@ def page(c):
 	html += """function main() {
 		Ext.BLANK_IMAGE_URL = "%(static_url_prefix)sstatic/images/s.gif";
 		OpenLayers.DOTS_PER_INCH = %(resolution)s;
-		OpenLayers.ProxyHost = "/proxy/url=";
+		OpenLayers.ProxyHost = "/proxy/?url=";
 		var config = {
 			projection: "%(projection)s",
 			units: "%(units)s",
@@ -371,7 +371,7 @@ def page(c):
 
 		//Home Action
 		action = new GeoExt.Action({
-			handler: function() {window.location.reload();},
+			handler: function() { mappanel.map.setCenter(new OpenLayers.LonLat(%(center_coord1)s, %(center_coord2)s), %(zoom)s); },
 			map: mappanel.map,
 			cls: 'x-btn-icon',
 			iconCls: 'home-icon',
@@ -489,7 +489,8 @@ def page(c):
 					length.deactivate();
 					Ext.getCmp('measurement-info').setText('');
 				}
-			}
+			},
+			tooltip: 'Measure length'
 		});
 
 		var area_button = new Ext.Button({
@@ -503,7 +504,8 @@ def page(c):
 					area.deactivate();
 					Ext.getCmp('measurement-info').setText('');
 				}
-			}
+			},
+			tooltip: 'Measure area'
 		});
 		mappanel.getTopToolbar().add(length_button, area_button);
 	""" % c
@@ -737,7 +739,7 @@ def application(environ, start_response):
 	"""Return server response."""
 
 	if environ["PATH_INFO"].startswith("/proxy/"):
-		url = environ["PATH_INFO"].replace("/proxy/url=", "")
+		url = environ['QUERY_STRING'].replace("url=", "")
 		url = urllib.unquote(url)
 		req = webob.Request.blank(url)
 		req.environ["REMOTE_ADDR"] = ""
