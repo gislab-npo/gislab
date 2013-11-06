@@ -183,34 +183,33 @@ def page(c):
 
 	""" % c
 
-	if DEBUG: html += """console.log("CONFIG: %s");""" % c
+	if DEBUG: html += """\tconsole.log("CONFIG: %s");\n""" % c
 
 	# layers
-	html += "var maplayers = ["
-	for lay in c['layers']:
-		html += """
-		new OpenLayers.Layer.WMS(
-		"%s",
-		["%s&TRANSPARENT=TRUE"],
-		{
-			layers: "%s",
-			format: "%s",
-		},
-		{
-			gutter: 0,
-			isBaseLayer: false,
-			buffer: 0,
-			visibility: true,
-			singleTile: true,
-			// attribution: "",
-		}
-	),
-	""" % (lay, c['ows_url'], lay, 'image/png')
-
+	html += "\t\tvar maplayers = [];\n"
 	if c['osm']:
-		html += "new OpenLayers.Layer.OSM(),"
+		html += "\t\tmaplayers.push(new OpenLayers.Layer.OSM());\n"
 
-	html += "];"
+	html += """
+		var overlays_group_layer = new OpenLayers.Layer.WMS(
+			"OverlaysGroup",
+			["%s&TRANSPARENT=TRUE"],
+			{
+				layers: ["%s"],
+				transparent: true,
+				format: "%s",
+			},
+			{
+				gutter: 0,
+				isBaseLayer: false,
+				buffer: 0,
+				visibility: true,
+				singleTile: true,
+				// attribution: "",
+			}
+		);
+	""" % (c['ows_url'], '", "'.join(c['layers']), 'image/png')
+	html += "\tmaplayers.push(overlays_group_layer);\n"
 
 	# map panel
 	if c['osm']:
@@ -591,13 +590,14 @@ def page(c):
 
 	# overlay layers tree
 	html += """
-			layers_root.appendChild(new GeoExt.tree.OverlayLayerContainer({
+			layers_root.appendChild(new GeoExt.tree.LayerNode({
 				text: 'Overlays',
-				map: mappanel.map,
+				layer: overlays_group_layer,
 				leaf: false,
 				expanded: true,
-				draggable: false,
-				autoScroll: true,
+				loader: {
+					param: "LAYERS"
+				}
 			}));
 	"""
 
