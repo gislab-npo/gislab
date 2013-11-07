@@ -183,34 +183,33 @@ def page(c):
 
 	""" % c
 
-	if DEBUG: html += """console.log("CONFIG: %s");""" % c
+	if DEBUG: html += """\tconsole.log("CONFIG: %s");\n""" % c
 
 	# layers
-	html += "var maplayers = ["
-	for lay in c['layers']:
-		html += """
-		new OpenLayers.Layer.WMS(
-		"%s",
-		["%s&TRANSPARENT=TRUE"],
-		{
-			layers: "%s",
-			format: "%s",
-		},
-		{
-			gutter: 0,
-			isBaseLayer: false,
-			buffer: 0,
-			visibility: true,
-			singleTile: true,
-			// attribution: "",
-		}
-	),
-	""" % (lay, c['ows_url'], lay, 'image/png')
-
+	html += "\t\tvar maplayers = [];\n"
 	if c['osm']:
-		html += "new OpenLayers.Layer.OSM(),"
+		html += "\t\tmaplayers.push(new OpenLayers.Layer.OSM());\n"
 
-	html += "];"
+	html += """
+		var overlays_group_layer = new OpenLayers.Layer.WMS(
+			"OverlaysGroup",
+			["%s&TRANSPARENT=TRUE"],
+			{
+				layers: ["%s"],
+				transparent: true,
+				format: "%s",
+			},
+			{
+				gutter: 0,
+				isBaseLayer: false,
+				buffer: 0,
+				visibility: true,
+				singleTile: true,
+				// attribution: "",
+			}
+		);
+	""" % (c['ows_url'], '", "'.join(c['layers']), 'image/png')
+	html += "\tmaplayers.push(overlays_group_layer);\n"
 
 	# map panel
 	if c['osm']:
@@ -253,6 +252,25 @@ def page(c):
 	if c['has_featureinfo']:
 		#featureinfo panel
 		html += """
+			var featureinfo_tabpanel = new Ext.TabPanel({
+				id: 'featureinfo-tabpanel',
+				items: [],
+				listeners: {
+					'tabchange': function (tabPanel, tab) {
+						if (!tab) {
+							return;
+						}
+						// deactivate features selection control on map
+						//tab.selModel.selectControl.deactivate();
+
+						var tab_layer_name = '_featureinfolayer_' + tab.title;
+						Ext.each(mappanel.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
+							layer.setVisibility(layer.name == tab_layer_name);
+						});
+					}
+				}
+			});
+
 			var featureinfo_panel = new Ext.Panel({
 				id: 'featureinfo-panel',
 				title: 'Feature Info',
@@ -263,12 +281,7 @@ def page(c):
 				split: true,
 				region: 'south',
 				animate: false,
-				items: [
-					new Ext.TabPanel({
-						id: 'featureinfo-tabpanel',
-						items: []
-					})
-				]
+				items: [featureinfo_tabpanel]
 			});
 		"""
 		html += """
@@ -289,10 +302,16 @@ def page(c):
 			infoFormat: 'application/vnd.ogc.gml',
 			maxFeatures: 10,
 			queryVisible: true,
+			clearFeaturesLayers: function() {
+				featureinfo_tabpanel.removeAll(true);
+				Ext.each(mappanel.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
+					layer.destroyFeatures();
+					layer.setVisibility(false);
+				});
+			},
 			eventListeners: {
 				"getfeatureinfo": function(e) {
-					var featureinfo_tabpanel = Ext.getCmp('featureinfo-tabpanel');
-					featureinfo_tabpanel.removeAll();
+					this.clearFeaturesLayers();
 					var featureinfo_data = {};
 					if (e.features.length > 0) {
 						// split features by layer name
@@ -306,33 +325,55 @@ def page(c):
 
 						// prepare feature attributes data for GridPanel separately for each layer
 						for (var layer_name in featureinfo_data) {
-							var features = featureinfo_data[layer_name];
+							var layer_features = featureinfo_data[layer_name];
+
+							// create vector layer for layer features if it does not already exist
+							var features_layername = '_featureinfolayer_'+layer_name;
+							var flayer = mappanel.map.getLayer(features_layername);
+							if (flayer == null) {
+								flayer = new OpenLayers.Layer.Vector(features_layername, {
+									eventListeners: {},
+									styleMap: new OpenLayers.StyleMap({
+										'default':{
+											strokeColor: '#FFCC00',
+											strokeOpacity: 0.6,
+											strokeWidth: 2,
+											fillColor: '#FFCC00',
+											fillOpacity: 0.2,
+											pointRadius: 6,
+										},
+										'select': {
+											strokeColor: '#FF0000',
+											strokeOpacity: 0.8,
+											strokeWidth: 2,
+											fillColor: '#FF0000',
+											fillOpacity: 0.7,
+											pointRadius: 6,
+										}
+									})
+								});
+								flayer.id = features_layername;
+								flayer.displayInLayerSwitcher = false;
+							}
+							mappanel.map.addLayer(flayer);
 
 							// create header info of features attributes (of the same layer)
 							var fields = [], columns = [], data = [];
-							var feature_attrib_names = [];
-							for (var attr_name in features[0].attributes) {
+							for (var attr_name in layer_features[0].attributes) {
 								if (attr_name == 'geometry' || attr_name == 'boundedBy') {continue;}
-								feature_attrib_names.push(attr_name);
 								fields.push({ name: attr_name, type: 'string' });
 								columns.push({id: attr_name, header: attr_name, dataIndex: attr_name});
 							}
 
-							// collect values of features attributes (of the same layer)
-							Ext.each(features, function(feature) {
-								var feature_data = [];
-								for (var i = 0; i < feature_attrib_names.length; i++) {
-									feature_data.push(feature.data[feature_attrib_names[i]]);
-								}
-								data.push(feature_data);
-							});
-
-							var store = new Ext.data.ArrayStore({
+							var store = new GeoExt.data.FeatureStore({
+								layer: flayer,
 								fields: fields,
-								data: data
+								features: layer_features,
+								autoLoad: true
 							});
 							var grid_panel = new Ext.grid.GridPanel({
 								title: layer_name,
+								autoDestroy: true,
 								store: store,
 								autoHeight: true,
 								viewConfig: {
@@ -343,11 +384,19 @@ def page(c):
 										sortable: false
 									},
 									columns: columns
-								})
+								}),
+								sm: new GeoExt.grid.FeatureSelectionModel({
+									//autoPanMapOnSelection: true
+								}),
+								listeners: {
+									'removed': function (grid, ownerCt ) {
+										grid.selModel.unbind();
+									}
+								}
 							});
 							featureinfo_tabpanel.add(grid_panel);
 						}
-						Ext.getCmp('featureinfo-panel').expand(false);
+						featureinfo_panel.expand(false);
 						featureinfo_tabpanel.setActiveTab(0);
 						featureinfo_tabpanel.doLayout();
 					}
@@ -360,8 +409,14 @@ def page(c):
 			cls: 'x-btn-icon',
 			iconCls: 'featureinfo-icon',
 			enableToggle: true,
-			toggleGroup: 'tools',
-			group: 'tools',
+			toggleGroup: 'featureinfo-tools',
+			group: 'featureinfo-tools',
+			toggleHandler: function(button, toggled) {
+				if (!toggled) {
+					button.baseAction.control.clearFeaturesLayers();
+					featureinfo_panel.collapse(false);
+				}
+			},
 			tooltip: 'Feature info'
 		})
 		mappanel.getTopToolbar().add('-', action);
@@ -535,13 +590,14 @@ def page(c):
 
 	# overlay layers tree
 	html += """
-			layers_root.appendChild(new GeoExt.tree.OverlayLayerContainer({
+			layers_root.appendChild(new GeoExt.tree.LayerNode({
 				text: 'Overlays',
-				map: mappanel.map,
+				layer: overlays_group_layer,
 				leaf: false,
 				expanded: true,
-				draggable: false,
-				autoScroll: true,
+				loader: {
+					param: "LAYERS"
+				}
 			}));
 	"""
 
