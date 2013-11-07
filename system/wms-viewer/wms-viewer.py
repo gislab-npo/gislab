@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Author: Ivan Mincik, ivan.mincik@gmail.com
+Author: Marcel Dancak, marcel.dancak@gista.sk
 """
 
 import sys
@@ -261,7 +262,9 @@ def page(c):
 							return;
 						}
 						// deactivate features selection control on map
-						//tab.selModel.selectControl.deactivate();
+						if (tab.selModel.selectControl) {
+							tab.selModel.selectControl.deactivate();
+						}
 
 						var tab_layer_name = '_featureinfolayer_' + tab.title;
 						Ext.each(mappanel.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
@@ -281,41 +284,22 @@ def page(c):
 				split: true,
 				region: 'south',
 				animate: false,
-				items: [featureinfo_tabpanel]
-			});
-		"""
-		html += """
-			var mappanel_container = new Ext.Panel({
-				layout: 'border',
-				region: 'center',
-				items: [
-					mappanel,
-					featureinfo_panel
-				]
-			});
-		"""
+				items: [featureinfo_tabpanel],
 
-		html+= """
-		// Featureinfo Action
-		ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
-			autoActivate: false,
-			infoFormat: 'application/vnd.ogc.gml',
-			maxFeatures: 10,
-			queryVisible: true,
-			clearFeaturesLayers: function() {
-				featureinfo_tabpanel.removeAll(true);
-				Ext.each(mappanel.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
-					layer.destroyFeatures();
-					layer.setVisibility(false);
-				});
-			},
-			eventListeners: {
-				"getfeatureinfo": function(e) {
+				clearFeaturesLayers: function() {
+					featureinfo_tabpanel.removeAll(true);
+					Ext.each(mappanel.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
+						layer.destroyFeatures();
+						layer.setVisibility(false);
+					});
+				},
+
+				showFeatures: function(features) {
 					this.clearFeaturesLayers();
 					var featureinfo_data = {};
-					if (e.features.length > 0) {
+					if (features.length > 0) {
 						// split features by layer name
-						Ext.each(e.features, function(feature) {
+						Ext.each(features, function(feature) {
 							var layer_name = feature.fid.split(".")[0];
 							if (!featureinfo_data.hasOwnProperty(layer_name)) {
 								featureinfo_data[layer_name] = [];
@@ -386,7 +370,7 @@ def page(c):
 									columns: columns
 								}),
 								sm: new GeoExt.grid.FeatureSelectionModel({
-									//autoPanMapOnSelection: true
+									autoPanMapOnSelection: true
 								}),
 								listeners: {
 									'removed': function (grid, ownerCt ) {
@@ -396,10 +380,40 @@ def page(c):
 							});
 							featureinfo_tabpanel.add(grid_panel);
 						}
-						featureinfo_panel.expand(false);
+						this.expand(false);
 						featureinfo_tabpanel.setActiveTab(0);
 						featureinfo_tabpanel.doLayout();
 					}
+				},
+
+				listeners: {
+					collapse: function(panel) {
+						this.clearFeaturesLayers();
+					}
+				},
+			});
+		"""
+		html += """
+			var mappanel_container = new Ext.Panel({
+				layout: 'border',
+				region: 'center',
+				items: [
+					mappanel,
+					featureinfo_panel
+				]
+			});
+		"""
+
+		html+= """
+		// Featureinfo Action
+		ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
+			autoActivate: false,
+			infoFormat: 'application/vnd.ogc.gml',
+			maxFeatures: 10,
+			queryVisible: true,
+			eventListeners: {
+				"getfeatureinfo": function(e) {
+					featureinfo_panel.showFeatures(e.features);
 				}
 			}
 		})
@@ -409,14 +423,8 @@ def page(c):
 			cls: 'x-btn-icon',
 			iconCls: 'featureinfo-icon',
 			enableToggle: true,
-			toggleGroup: 'featureinfo-tools',
-			group: 'featureinfo-tools',
-			toggleHandler: function(button, toggled) {
-				if (!toggled) {
-					button.baseAction.control.clearFeaturesLayers();
-					featureinfo_panel.collapse(false);
-				}
-			},
+			toggleGroup: 'tools',
+			group: 'tools',
 			tooltip: 'Feature info'
 		})
 		mappanel.getTopToolbar().add('-', action);
@@ -595,6 +603,7 @@ def page(c):
 				layer: overlays_group_layer,
 				leaf: false,
 				expanded: true,
+				allowDrag: false,
 				loader: {
 					param: "LAYERS"
 				}
@@ -605,7 +614,7 @@ def page(c):
 	html += """
 			var layer_treepanel = new Ext.tree.TreePanel({
 				title: 'Content',
-				enableDD: true,
+				enableDD: false,
 				root: layers_root,
 				split: true,
 				border: true,
