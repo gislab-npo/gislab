@@ -623,8 +623,8 @@ def page(c):
 				cls: 'legend-item',
 				baseParams: {
 					FORMAT: 'image/png',
-					SYMBOLHEIGHT: '5',
-					SYMBOLWIDTH: '10'
+					SYMBOLHEIGHT: '2',
+					SYMBOLWIDTH: '4'
 				}
 			}
 		});
