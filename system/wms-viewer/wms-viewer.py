@@ -273,7 +273,7 @@ def page(c):
 
 			var featureinfo_panel = new Ext.Panel({
 				id: 'featureinfo-panel',
-				title: 'Feature Info',
+				title: 'Attributes',
 				layout: 'fit',
 				collapsible: true,
 				collapsed: true,
@@ -637,7 +637,7 @@ def page(c):
 	# properties
 	html += """
 			var properties = new Ext.Panel({
-				title: 'Properties',
+				title: 'Project',
 				autoScroll: true,
 				html: '<div class="x-panel-body-text"><p><b>Author: </b>%(author)s</p><p><b>E-mail: </b>%(email)s</p><p><b>Organization: </b>%(organization)s</p><b>Abstract: </b>%(abstract)s</p></div>'
 			});
