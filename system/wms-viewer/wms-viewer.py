@@ -276,7 +276,7 @@ def page(c):
 
 			var featureinfo_panel = new Ext.Panel({
 				id: 'featureinfo-panel',
-				title: 'Feature Info',
+				title: 'Attributes',
 				layout: 'fit',
 				collapsible: true,
 				collapsed: true,
@@ -478,16 +478,6 @@ def page(c):
 		});
 		mappanel.getTopToolbar().add(action);
 
-		// ZoomToMaxExtent control, a 'button' control
-		action = new GeoExt.Action({
-			control: new OpenLayers.Control.ZoomToMaxExtent(),
-			map: mappanel.map,
-			cls: 'x-btn-icon',
-			iconCls: 'zoom-max-extent-icon',
-			tooltip: 'Zoom to max extent'
-		});
-		mappanel.getTopToolbar().add(action, '-');
-
 		// Navigation history - two 'button' controls
 		ctrl = new OpenLayers.Control.NavigationHistory();
 		mappanel.map.addControl(ctrl);
@@ -642,8 +632,12 @@ def page(c):
 				cls: 'legend-item',
 				baseParams: {
 					FORMAT: 'image/png',
-					SYMBOLHEIGHT: '5',
-					SYMBOLWIDTH: '10'
+					SYMBOLHEIGHT: '2',
+					SYMBOLWIDTH: '4',
+					LAYERFONTSIZE: '8',
+					LAYERFONTBOLD: 'true',
+					ITEMFONTSIZE: '8',
+					ICONLABELSPACE: '15'
 				}
 			}
 		});
@@ -652,7 +646,7 @@ def page(c):
 	# properties
 	html += """
 			var properties = new Ext.Panel({
-				title: 'Properties',
+				title: 'Project',
 				autoScroll: true,
 				html: '<div class="x-panel-body-text"><p><b>Author: </b>%(author)s</p><p><b>E-mail: </b>%(email)s</p><p><b>Organization: </b>%(organization)s</p><b>Abstract: </b>%(abstract)s</p></div>'
 			});
