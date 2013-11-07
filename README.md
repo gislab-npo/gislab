@@ -170,6 +170,7 @@ Simply save a QGIS project and all file data to '~/Share/<USERNAME>' directory w
  * on-the-fly CRS transformation must be enabled (File > Project Properties > CRS) and target projection
    must be chosen (if You are not sure chose EPSG:3857)
  * OWS advertised extent must be enabled (File > Project Properties > OWS server)
+ * for better performance limit number of supported CRSs ((File > Project Properties > OWS server > CRS restrictions)
 
 and launch following URL in a web browser:
 ```
