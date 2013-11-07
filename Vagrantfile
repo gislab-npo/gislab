@@ -131,6 +131,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 #   v.gui = true
   end
 
+  config.vm.hostname = "server.gis.lab"
   config.vm.provision "shell", path: "system/install.sh"
   config.vm.network "public_network", ip: "192.168.50.5"
 
