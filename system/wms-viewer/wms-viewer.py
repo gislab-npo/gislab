@@ -470,16 +470,6 @@ def page(c):
 		});
 		mappanel.getTopToolbar().add(action);
 
-		// ZoomToMaxExtent control, a 'button' control
-		action = new GeoExt.Action({
-			control: new OpenLayers.Control.ZoomToMaxExtent(),
-			map: mappanel.map,
-			cls: 'x-btn-icon',
-			iconCls: 'zoom-max-extent-icon',
-			tooltip: 'Zoom to max extent'
-		});
-		mappanel.getTopToolbar().add(action, '-');
-
 		// Navigation history - two 'button' controls
 		ctrl = new OpenLayers.Control.NavigationHistory();
 		mappanel.map.addControl(ctrl);
