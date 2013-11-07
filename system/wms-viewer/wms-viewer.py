@@ -624,7 +624,11 @@ def page(c):
 				baseParams: {
 					FORMAT: 'image/png',
 					SYMBOLHEIGHT: '2',
-					SYMBOLWIDTH: '4'
+					SYMBOLWIDTH: '4',
+					LAYERFONTSIZE: '8',
+					LAYERFONTBOLD: 'true',
+					ITEMFONTSIZE: '8',
+					ICONLABELSPACE: '15'
 				}
 			}
 		});
