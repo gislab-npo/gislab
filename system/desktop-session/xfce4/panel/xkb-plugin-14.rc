@@ -4,8 +4,8 @@ group_policy=0
 default_group=0
 never_modify_config=false
 model=pc105
-layouts=sk,us
-variants=qwerty,
+layouts=us,sk
+variants=,qwerty
 toggle_option=grp:ctrl_shift_toggle
 compose_key_position=
 
