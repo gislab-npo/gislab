@@ -1,6 +1,6 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="World Boundaries" version="2.0.1-Dufour">
-    <title>World Boundaries</title>
+<qgis projectname="Countries of Central Europe" version="2.0.1-Dufour">
+    <title>Countries of Central Europe</title>
     <mapcanvas>
         <units>meters</units>
         <extent>
@@ -823,7 +823,7 @@
         </maplayer>
     </projectlayers>
     <properties>
-        <WMSContactPerson type="QString">Ivan Mincik</WMSContactPerson>
+        <WMSContactPerson type="QString">Ivan Minčík</WMSContactPerson>
         <WMSOnlineResource type="QString"></WMSOnlineResource>
         <WMSContactOrganization type="QString">GIS.lab</WMSContactOrganization>
         <WMSExtent type="QStringList">
@@ -839,7 +839,7 @@
         <Paths>
             <Absolute type="bool">false</Absolute>
         </Paths>
-        <WMSServiceTitle type="QString">World Boundaries</WMSServiceTitle>
+        <WMSServiceTitle type="QString">Countries of Central Europe</WMSServiceTitle>
         <WFSLayers type="QStringList"/>
         <WMSContactMail type="QString">ivan.mincik@gmail.com</WMSContactMail>
         <PositionPrecision>
@@ -847,8 +847,8 @@
             <Automatic type="bool">true</Automatic>
             <DegreeFormat type="QString">D</DegreeFormat>
         </PositionPrecision>
-        <WMSContactPhone type="QString"></WMSContactPhone>
         <WMSServiceCapabilities type="bool">true</WMSServiceCapabilities>
+        <WMSContactPhone type="QString"></WMSContactPhone>
         <WMSServiceAbstract type="QString">GIS.lab demonstration project</WMSServiceAbstract>
         <WMSAddWktGeometry type="bool">false</WMSAddWktGeometry>
         <Measure>
