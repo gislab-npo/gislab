@@ -179,8 +179,8 @@ http://webgis.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>
 
 * PATH-TO-QGIS-PROJECT-FILE must be relative to '~/Share' directory
 
-example for user 'lab1' which saved a project file 'myproject.qgs' to ~/Share/lab1/projects directory:
-http://webgis.gis.lab/?PROJECT=lab1/projects/myproject.qgs
+example of user 'lab1' who saved 'Central Europe' project file packaged with GIS.lab to ~/Share directory ($ cp -a ~/Repository/data/natural-earth ~/Share/):
+http://webgis.gis.lab/?PROJECT=lab1/natural-earth/central-europe.qgs
 
 ```
 

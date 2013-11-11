@@ -258,6 +258,13 @@ sudo su - postgres -c "psql -c \"GRANT CONNECT ON DATABASE gislab TO labusers;\"
 
 
 #
+### DATA ###
+#
+cp -a /vagrant/data /storage/repository/
+
+
+
+#
 ### QGIS MAPSERVER AND WMS VIEWER ###
 #
 mkdir -p /usr/local/python-virtualenvs
