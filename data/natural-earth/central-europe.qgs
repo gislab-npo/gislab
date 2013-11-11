@@ -4,10 +4,10 @@
     <mapcanvas>
         <units>meters</units>
         <extent>
-            <xmin>-404840.2468500048853457</xmin>
-            <ymin>4825689.87472663260996342</ymin>
-            <xmax>4824450.35921858251094818</xmax>
-            <ymax>8366486.64654656685888767</ymax>
+            <xmin>362227.38120885426178575</xmin>
+            <ymin>5646310.47887173667550087</ymin>
+            <xmax>2976872.68424314167350531</xmax>
+            <ymax>7416708.8647817000746727</ymax>
         </extent>
         <projections>1</projections>
         <destinationsrs>
@@ -302,7 +302,7 @@
             <excludeAttributesWFS/>
             <attributeactions/>
         </maplayer>
-        <maplayer minimumScale="-4.65661e-10" maximumScale="1e+07" minLabelScale="0" maxLabelScale="1e+08" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="1" scaleBasedLabelVisibilityFlag="0">
+        <maplayer minimumScale="0" maximumScale="1e+07" minLabelScale="0" maxLabelScale="1e+08" geometry="Point" type="vector" hasScaleBasedVisibilityFlag="1" scaleBasedLabelVisibilityFlag="0">
             <id>places20131111135858795</id>
             <datasource>dbname='./natural-earth.sqlite' table="places" (geom) sql=</datasource>
             <title></title>
@@ -357,7 +357,7 @@
                 <property key="labeling/bufferColorB" value="255"/>
                 <property key="labeling/bufferColorG" value="255"/>
                 <property key="labeling/bufferColorR" value="255"/>
-                <property key="labeling/bufferDraw" value="true"/>
+                <property key="labeling/bufferDraw" value="false"/>
                 <property key="labeling/bufferJoinStyle" value="64"/>
                 <property key="labeling/bufferNoFill" value="false"/>
                 <property key="labeling/bufferSize" value="1"/>
@@ -386,7 +386,7 @@
                 <property key="labeling/fontWordSpacing" value="0"/>
                 <property key="labeling/formatNumbers" value="false"/>
                 <property key="labeling/isExpression" value="false"/>
-                <property key="labeling/labelOffsetInMapUnits" value="true"/>
+                <property key="labeling/labelOffsetInMapUnits" value="false"/>
                 <property key="labeling/labelPerPart" value="false"/>
                 <property key="labeling/leftDirectionSymbol" value="&lt;"/>
                 <property key="labeling/limitNumLabels" value="false"/>
@@ -400,13 +400,13 @@
                 <property key="labeling/namedStyle" value="Bold Italic"/>
                 <property key="labeling/obstacle" value="true"/>
                 <property key="labeling/placeDirectionSymbol" value="0"/>
-                <property key="labeling/placement" value="0"/>
+                <property key="labeling/placement" value="1"/>
                 <property key="labeling/placementFlags" value="0"/>
                 <property key="labeling/plussign" value="false"/>
                 <property key="labeling/preserveRotation" value="true"/>
                 <property key="labeling/previewBkgrdColor" value="#ffffff"/>
                 <property key="labeling/priority" value="5"/>
-                <property key="labeling/quadOffset" value="4"/>
+                <property key="labeling/quadOffset" value="5"/>
                 <property key="labeling/reverseDirectionSymbol" value="false"/>
                 <property key="labeling/rightDirectionSymbol" value=">"/>
                 <property key="labeling/scaleMax" value="5000000"/>
@@ -462,7 +462,7 @@
                 <property key="labeling/textTransp" value="0"/>
                 <property key="labeling/upsidedownLabels" value="0"/>
                 <property key="labeling/wrapChar" value=""/>
-                <property key="labeling/xOffset" value="0"/>
+                <property key="labeling/xOffset" value="1.5"/>
                 <property key="labeling/yOffset" value="0"/>
             </customproperties>
             <blendMode>0</blendMode>
