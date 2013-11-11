@@ -806,7 +806,7 @@ def application(environ, start_response):
 		return resp(req.environ, start_response)
 
 	OWS_URL="http://192.168.50.5/cgi-bin/qgis_mapserv.fcgi" #  TODO: do not hardcode this
-	DEFAULT_SCALES="1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500"
+	DEFAULT_SCALES="10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500"
 	PROJECTION_UNITS_DD=('EPSG:4326',)
 
 	qs = dict(parse_qsl(environ['QUERY_STRING'])) # collect GET parameters
