@@ -1,12 +1,12 @@
-Open Source GIS Laboratory
-==========================
-Super easy deployment of fully equipped and unbreakable GIS LAN with unlimited number of workstations in a few moments.
+GIS.lab - Open Source GIS office
+================================
+Super easy deployment of fully equipped GIS office with unlimited number of workstations in a few moments.
 
-A purpose of this project is to create fully equipped, easy-to-use, pre-configured, centrally managed and portable GIS laboratory LAN platform from one host machine running central server and unlimited number of diskless client machines. All software is configured to work out-of-box, without any need of configuration or other behind a scene knowledge, allowing users to keep high focus on their GIS task.
+GIS.lab provides possibility to create fully equipped, easy-to-use, pre-configured, centrally managed, portable and unbreakable GIS office platform from one host machine running central server and unlimited number of diskless client machines. All software works out-of-box, without any need of configuration or other behind a scene knowledge, allowing users to keep high focus on their GIS task.
 
 The platform consists from one Linux server instance running LTSP server inside automatically provisioned Virtualbox machine and unlimited diskless client machines running LTSP Fat client. This setup allows to use all client machine power and it is very friendly to server resources.
 
-Key features of this platform:
+Key features:
  * super easy fully automatic deployment and maintenance - all operation are encapsulated in easy to use commands
  * nearly zero requirements for client machines - no operating system or software needed, no hard disk needed
  * no limit of number of client machines
@@ -19,13 +19,12 @@ Key features of this platform:
  * out of box internet sharing from host machine to all client machines
  * out of box working file sharing service (NFS)
  * out of box database server (PostgreSQL/PostGIS)
+ * out of box working backup service [TODO]
  * Linux system security
  * great platform for studying open source technologies beginning from Linux OS, various system services and end user software
-
-Key features of GIS implementation on this platform:
  * best tuned set of software equipment for data editing, analysis and database storage and management [PARTIALY IMPLEMENTED]
- * set of software equipment for GIS development [TODO]
- * set of high quality free data [TODO]
+ * set of software equipment for scripting and GIS software development [TODO]
+ * out of box working web GIS publishing solution
  * step by step manuals and how-to documents for the most common tasks [TODO]
 
 
