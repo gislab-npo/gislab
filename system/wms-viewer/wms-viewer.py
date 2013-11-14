@@ -268,6 +268,7 @@ def page(c):
 		c['allOverlays'] = 'false'
 	else:
 		c['allOverlays'] = 'true'
+
 	html += """
 		var mappanel = new GeoExt.MapPanel({
 			region: 'center',
@@ -294,7 +295,8 @@ def page(c):
 				plugins: new GeoExt.ZoomSliderTip()
 			}],
 			tbar: [],
-			bbar: []
+			bbar: [],
+			stateId: 'map',
 		});
 		var mappanel_container = mappanel;
 
@@ -685,7 +687,6 @@ def page(c):
 							text: 'Delete selected',
 							tooltip: 'Delete selected points',
 							handler: function() {
-								console.log(store.layer);
 								var selected_features = store.layer.selectedFeatures;
 								if (selected_features.length > 0) {
 									store.layer.destroyFeatures(selected_features[0]);
@@ -718,7 +719,6 @@ def page(c):
 				if (toggled) {
 					action.showAttributesTable();
 				} else {
-					console.log(action);
 					if (action.baseAction.control.layer.selectedFeatures.length > 0) {
 						new OpenLayers.Control.SelectFeature(action.baseAction.control.layer).unselectAll();
 					}
@@ -942,6 +942,71 @@ def page(c):
 			mappanel.map.addControl(new OpenLayers.Control.Attribution());
 	""" % c
 
+	# Permalink
+	html += """
+		// create permalink provider
+		var permalink_provider = new GeoExt.state.PermalinkProvider({encodeType: false});
+
+		// set it in the state manager
+		Ext.state.Manager.setProvider(permalink_provider);
+
+		var permalink = new Ext.Toolbar.TextItem({text: '<a href="/">Permalink</a>'});
+		mappanel.getBottomToolbar().add('->', permalink);
+
+		// Register listeners for custom map state changes and generate events for permalink update
+		var fire_map_state_changed_event = function(obj) {
+			permalink_provider.fireEvent('statechange', permalink_provider, "map", {});
+		};
+		var overlays_node = layers_root.findChild('text', 'Overlays');
+		overlays_node.eachChild(function(node) {
+			node.on({
+				checkchange: fire_map_state_changed_event
+			});
+		});
+		points_layer.events.register('featureadded', points_layer, fire_map_state_changed_event);
+		points_layer.events.register('featureremoved', points_layer, fire_map_state_changed_event);
+		points_layer.events.register('featuresremoved', points_layer, fire_map_state_changed_event);
+		points_layer.events.register('featuremodified', points_layer, fire_map_state_changed_event);
+
+		permalink_provider.on({
+			statechange: function(provider, name, value) {
+				var map = mappanel.map;
+				var parameters = {
+					project: '%(project)s',
+					zoom: map.getZoom(),
+					center: map.getCenter().toShortString(), //.replace(' ', '')
+				};
+				var osm_layer = map.getLayersByClass('OpenLayers.Layer.OSM')[0];
+				if (osm_layer && osm_layer.visibility) {
+					parameters.osm = 'true';
+				}
+				var visible_layers = [];
+				overlays_node.eachChild(function(node) {
+					if (node.attributes.checked) {
+						visible_layers.push(node.attributes.text);
+					}
+				});
+				if (visible_layers.length < overlays_node.childNodes.length) {
+					parameters.visible = visible_layers.join(',');
+				}
+				if (points_layer.features.length > 0) {
+					var points_data = [];
+					Ext.each(points_layer.features, function(f) {
+						points_data.push([f.geometry.x,f.geometry.y, f.attributes.label].join(','));
+					});
+					parameters.points = points_data.join('|');
+				}
+				var link = [location.protocol, '//', location.host, location.pathname, '?'].join('');
+				var qs = [];
+				for (var param_name in parameters) {
+					qs.push(encodeURIComponent(param_name) + "=" + encodeURIComponent(parameters[param_name]));
+				}
+				link += qs.join("&");
+				permalink.setText('<a href="' + link + '">Permalink</a>');
+			}
+		});
+	""" % c
+
 	# Insert points from GET parameter
 	if 'pois' in c:
 		for coord1, coord2, text in c['pois']:
@@ -1039,6 +1104,7 @@ def application(environ, start_response):
 		layers_names = [layer.name.encode('UTF-8') for layer in root_layer.layers][::-1]
 
 	c = {} # configuration dictionary which will be used in HTML template
+	c['project'] = qs.get('PROJECT')
 	c['projectfile'] = projectfile
 	c['projection'] = root_layer.boundingBox[-1]
 
