@@ -12,8 +12,6 @@ then
 	source /vagrant/config-user.cfg
 fi
 
-GISLAB_VERSION=dev
-
 if [ "$GISLAB_DEBUG" == "yes" ];
 then
 	set -x
