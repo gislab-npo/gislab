@@ -100,6 +100,7 @@ fi
 
 # hold kernel packages from upgrade to avoid a need to restart server after
 # installation (Vagrant box could provide up-to-date kernel image)
+# TODO: use more recent way of holding packages (apt-mark hold)
 echo "linux-image-$(uname -r) hold" | dpkg --set-selections
 echo "linux-generic-pae hold" | dpkg --set-selections
 echo "linux-image-generic-pae hold" | dpkg --set-selections
