@@ -107,6 +107,12 @@ echo "linux-image-generic-pae hold" | dpkg --set-selections
 
 echo "grub-pc hold" | dpkg --set-selections # hold also grub because of some issue
 
+# prevent Grub from waiting for manual input after a unsuccessful boot
+cat << EOF >> /etc/default/grub
+GRUB_RECORDFAIL_TIMEOUT=0
+EOF
+update-grub
+
 apt-get update
 apt-get --assume-yes --force-yes upgrade
 apt-get --assume-yes --force-yes --no-install-recommends install htop vim mc
