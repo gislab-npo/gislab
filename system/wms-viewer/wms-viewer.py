@@ -950,7 +950,7 @@ def page(c):
 		// set it in the state manager
 		Ext.state.Manager.setProvider(permalink_provider);
 
-		var permalink = new Ext.Toolbar.TextItem({text: '<a href="/">Permalink</a>'});
+		var permalink = new Ext.Toolbar.TextItem({text: '<a target="_blank" href="#">Permalink</a>'});
 		mappanel.getBottomToolbar().add('->', permalink);
 
 		// Register listeners for custom map state changes and generate events for permalink update
@@ -1002,7 +1002,7 @@ def page(c):
 					qs.push(encodeURIComponent(param_name) + "=" + encodeURIComponent(parameters[param_name]));
 				}
 				link += qs.join("&");
-				permalink.setText('<a href="' + link + '">Permalink</a>');
+				permalink.setText('<a target="_blank" href="' + link + '">Permalink</a>');
 			}
 		});
 	""" % c
