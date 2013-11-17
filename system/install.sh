@@ -113,11 +113,7 @@ update-grub
 
 apt-get update
 apt-get --assume-yes --force-yes upgrade
-apt-get --assume-yes --force-yes --no-install-recommends install htop vim mc
-apt-get --assume-yes --force-yes install postgresql postgis postgresql-9.1-postgis nfs-kernel-server
-apt-get --assume-yes --force-yes --no-install-recommends install apache2 apache2-mpm-worker libapache2-mod-fcgid libapache2-mod-wsgi \
-	python-virtualenv python-dateutil qgis-mapserver
-apt-get --assume-yes --force-yes --no-install-recommends install ltsp-server-standalone openssh-server isc-dhcp-server tftpd-hpa
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
 
 
 
