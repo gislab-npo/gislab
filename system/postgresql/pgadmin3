@@ -41,7 +41,7 @@ pgsql-Versions=9.1
 [Servers]
 Count=1
 [Servers/1]
-Server=192.168.50.5
+Server=server.gis.lab
 HostAddr=
 Description=gislab@server.gis.lab
 Service=
