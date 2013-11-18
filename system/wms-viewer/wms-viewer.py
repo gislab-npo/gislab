@@ -739,6 +739,12 @@ def page(c):
 			handler: function() {
 				var features_layer = mappanel.map.getLayersByName("POINTS")[0];
 				var geojson = new OpenLayers.Format.GeoJSON().write(features_layer.features, true);
+				// add projection info
+				if (features_layer.features.length > 0 && features_layer.projection) {
+					var geojson_obj = JSON.parse(geojson);
+					geojson_obj.crs = new OpenLayers.Format.GeoJSON().createCRSObject(features_layer.features[0]);
+					geojson = JSON.stringify(geojson_obj, null, '    ');
+				}
 				var window = new Ext.Window({
 					title: 'GeoJSON',
 					width: 500,
