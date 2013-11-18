@@ -42,7 +42,7 @@ def page(c):
 
 	# head and javascript start
 	html += """
-	<html>
+    <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
@@ -158,11 +158,19 @@ def page(c):
                 background-image: url('%(static_url_prefix)sstatic/images/toolbar/ruler_square.png')!important;
                 background: no-repeat;
             }
+            .draw-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/draw.png')!important;
+                background: no-repeat;
+            }
+            .export-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/export.png')!important;
+                background: no-repeat;
+            }
         </style>
 
         <title id="page-title">%(root_title)s</title>
         <script type="text/javascript">
-	""" % c
+    """ % c
 
 
 	# configuration
@@ -212,11 +220,55 @@ def page(c):
 	""" % (c['ows_url'], '", "'.join(c['layers']), 'image/png')
 	html += "\tmaplayers.push(overlays_group_layer);\n"
 
+	html += """
+		var points_layer = new OpenLayers.Layer.Vector('POINTS', {
+			styleMap: new OpenLayers.StyleMap({
+				'default':{
+					label: '${label}',
+					fontSize: '12px',
+					fontWeight: 'bold',
+					labelAlign: 'lb',
+					strokeColor: '#000000',
+					strokeOpacity: 1,
+					strokeWidth: 0.5,
+					fillColor: '#FF0000',
+					fillOpacity: 0.8,
+					pointRadius: 6,
+					labelYOffset: '6',
+					labelXOffset: '6',
+					fontColor: 'red',
+					labelOutlineColor: 'white',
+					labelOutlineWidth: 2,
+					labelOutlineOpacity: 0.4,
+				},
+				'select': {
+					label: '${label}',
+					fontSize: '12px',
+					fontWeight: 'bold',
+					labelAlign: 'lb',
+					strokeColor: '#0000FF',
+					strokeOpacity: 1,
+					strokeWidth: 0.5,
+					fillColor: '#0000FF',
+					fillOpacity: 0.6,
+					pointRadius: 6,
+					labelYOffset: '6',
+					labelXOffset: '6',
+					fontColor: 'blue',
+					labelOutlineColor: 'white',
+					labelOutlineWidth: 2,
+					labelOutlineOpacity: 0.4,
+				}
+			})
+		});
+		maplayers.push(points_layer);
+	"""
 	# map panel
 	if c['osm']:
 		c['allOverlays'] = 'false'
 	else:
 		c['allOverlays'] = 'true'
+
 	html += """
 		var mappanel = new GeoExt.MapPanel({
 			region: 'center',
@@ -243,7 +295,8 @@ def page(c):
 				plugins: new GeoExt.ZoomSliderTip()
 			}],
 			tbar: [],
-			bbar: []
+			bbar: [],
+			stateId: 'map',
 		});
 		var mappanel_container = mappanel;
 
@@ -563,6 +616,147 @@ def page(c):
 		mappanel.getTopToolbar().add(length_button, area_button);
 	""" % c
 
+	# Draw points action
+	html += """
+		ctrl = new OpenLayers.Control.DrawFeature(
+			points_layer,
+			OpenLayers.Handler.Point,
+			{
+				type: OpenLayers.Control.TYPE_TOOL,
+				featureAdded: function(feature) {
+					feature.attributes = {
+						label: ''
+					};
+					// update feature on map
+					points_layer.drawFeature(feature);
+				}
+			}
+		);
+		action = new GeoExt.Action({
+			control: ctrl,
+			map: mappanel.map,
+			cls: 'x-btn-icon',
+			iconCls: 'draw-icon',
+			enableToggle: true,
+			toggleGroup: 'tools',
+			tooltip: 'Draw points',
+
+			attributes_window: null,
+			showAttributesTable: function() {
+				var store = new GeoExt.data.FeatureStore({
+					layer: points_layer,
+					fields: [{name: 'label', type: 'string'}],
+				});
+				var cm = new Ext.grid.ColumnModel({
+					columns: [{
+						header: 'Label',
+						dataIndex: 'label',
+						editor: new Ext.form.TextField({
+							allowBlank: true,
+							maxLength: 50,
+							autoCreate : { //restricts user to 20 chars max
+								tag: 'input',
+								maxlength : 50,
+								type: 'text',
+								autocomplete: 'off'
+							},
+						})
+					}]
+				})
+				var features_editor = new Ext.grid.EditorGridPanel({
+					autoScroll: true,
+					viewConfig: {
+						forceFit:true,
+					},
+					store: store,
+					cm: cm,
+					sm: new GeoExt.grid.FeatureSelectionModel({
+						singleSelect: true,
+						multiple: false,
+						layerFromStore: true
+					}),
+					listeners: {
+						'removed': function (grid, ownerCt) {
+							grid.selModel.unbind();
+						}
+					},
+					bbar:[
+						'->',
+						{
+							xtype: 'tbbutton',
+							text: 'Delete selected',
+							tooltip: 'Delete selected points',
+							handler: function() {
+								var selected_features = store.layer.selectedFeatures;
+								if (selected_features.length > 0) {
+									store.layer.destroyFeatures(selected_features[0]);
+								}
+							}
+						},
+						'-',
+						 {
+							xtype: 'tbbutton',
+							text: 'Delete all',
+							tooltip: 'Delete selected points',
+							handler: function() {
+								store.layer.destroyFeatures();
+							}
+						}
+					]
+				});
+				this.attribs_window = new Ext.Window({
+					title: 'Points',
+					width: 300,
+					height: 400,
+					layout: 'fit',
+					items: [features_editor]
+				});
+				this.attribs_window.show();
+				this.attribs_window.alignTo(Ext.getBody(), 'r-r', [-100, 0]);
+			},
+
+			toggleHandler: function(action, toggled) {
+				if (toggled) {
+					action.showAttributesTable();
+				} else {
+					if (action.baseAction.control.layer.selectedFeatures.length > 0) {
+						new OpenLayers.Control.SelectFeature(action.baseAction.control.layer).unselectAll();
+					}
+					action.attribs_window.destroy();
+					action.attribs_window = null;
+				}
+			},
+		});
+		mappanel.getTopToolbar().add('-', action);
+	"""
+
+	# Export to GeoJSON action
+	html += """
+		var action = new Ext.Action({
+			cls: 'x-btn-icon',
+			iconCls: 'export-icon',
+			tooltip: 'Export to GeoJSON',
+			handler: function() {
+				var features_layer = mappanel.map.getLayersByName("POINTS")[0];
+				var geojson = new OpenLayers.Format.GeoJSON().write(features_layer.features, true);
+				var window = new Ext.Window({
+					title: 'GeoJSON',
+					width: 500,
+					height: 500,
+					layout: 'fit',
+					items: [{
+						xtype: 'textarea',
+						readOnly: true,
+						autoScroll: true,
+						value: geojson
+					}],
+				});
+				window.show();
+			}
+		});
+		mappanel.getTopToolbar().add(action);
+	"""
+
 	# tree node
 	html += """
 			var layers_root = new Ext.tree.TreeNode({
@@ -701,6 +895,13 @@ def page(c):
 			});
 	"""
 
+	# set visible layers if provided
+	if 'visible_layers' in c:
+		hidden_layers = [layer_name for layer_name in c['layers'] if layer_name not in c['visible_layers']]
+		html += "\n"
+		for hidden_layer in hidden_layers:
+			html += "\t\t\tlayers_root.findChild('text', '%s', true).ui.toggleCheck(false);\n" % hidden_layer
+
 	# controls
 	html += """
 			Ext.namespace("GeoExt.Toolbar");
@@ -741,30 +942,73 @@ def page(c):
 			mappanel.map.addControl(new OpenLayers.Control.Attribution());
 	""" % c
 
-	# POI markers
-	if 'pois' in c:
-		html += """
-			var markers = new OpenLayers.Layer.Vector('POINTS', {
-				styleMap: new OpenLayers.StyleMap({
-					'default':{
-						label: '${label}',
-						fontSize: '12px',
-						fontWeight: 'bold',
-						labelAlign: 'lb',
-						strokeColor: '#000000',
-						strokeOpacity: 1,
-						strokeWidth: 0.5,
-						fillColor: '#FF0000',
-						fillOpacity: 0.8,
-						pointRadius: 6,
-						labelYOffset: '6',
-						labelXOffset: '6',
-						fontColor: 'red',
-					}
-				})
+	# Permalink
+	html += """
+		// create permalink provider
+		var permalink_provider = new GeoExt.state.PermalinkProvider({encodeType: false});
+
+		// set it in the state manager
+		Ext.state.Manager.setProvider(permalink_provider);
+
+		var permalink = new Ext.Toolbar.TextItem({text: '<a target="_blank" href="#">Permalink</a>'});
+		mappanel.getBottomToolbar().add('->', permalink);
+
+		// Register listeners for custom map state changes and generate events for permalink update
+		var fire_map_state_changed_event = function(obj) {
+			permalink_provider.fireEvent('statechange', permalink_provider, "map", {});
+		};
+		var overlays_node = layers_root.findChild('text', 'Overlays');
+		overlays_node.eachChild(function(node) {
+			node.on({
+				checkchange: fire_map_state_changed_event
 			});
-			mappanel.map.addLayer(markers);
-		"""
+		});
+		points_layer.events.register('featureadded', points_layer, fire_map_state_changed_event);
+		points_layer.events.register('featureremoved', points_layer, fire_map_state_changed_event);
+		points_layer.events.register('featuresremoved', points_layer, fire_map_state_changed_event);
+		points_layer.events.register('featuremodified', points_layer, fire_map_state_changed_event);
+
+		permalink_provider.on({
+			statechange: function(provider, name, value) {
+				var map = mappanel.map;
+				var parameters = {
+					project: '%(project)s',
+					zoom: map.getZoom(),
+					center: map.getCenter().toShortString(), //.replace(' ', '')
+				};
+				var osm_layer = map.getLayersByClass('OpenLayers.Layer.OSM')[0];
+				if (osm_layer && osm_layer.visibility) {
+					parameters.osm = 'true';
+				}
+				var visible_layers = [];
+				overlays_node.eachChild(function(node) {
+					if (node.attributes.checked) {
+						visible_layers.push(node.attributes.text);
+					}
+				});
+				if (visible_layers.length < overlays_node.childNodes.length) {
+					parameters.visible = visible_layers.join(',');
+				}
+				if (points_layer.features.length > 0) {
+					var points_data = [];
+					Ext.each(points_layer.features, function(f) {
+						points_data.push([f.geometry.x,f.geometry.y, f.attributes.label].join(','));
+					});
+					parameters.points = points_data.join('|');
+				}
+				var link = [location.protocol, '//', location.host, location.pathname, '?'].join('');
+				var qs = [];
+				for (var param_name in parameters) {
+					qs.push(encodeURIComponent(param_name) + "=" + encodeURIComponent(parameters[param_name]));
+				}
+				link += qs.join("&");
+				permalink.setText('<a target="_blank" href="' + link + '">Permalink</a>');
+			}
+		});
+	""" % c
+
+	# Insert points from GET parameter
+	if 'pois' in c:
 		for coord1, coord2, text in c['pois']:
 			html += """
 				// create a point feature
@@ -773,7 +1017,7 @@ def page(c):
 				poi_feature.attributes = {{
 					label: "{2}"
 				}};
-				markers.addFeatures(poi_feature);
+				points_layer.addFeatures(poi_feature);
 			""".format(coord1, coord2, text)
 
 	html += """
@@ -860,6 +1104,7 @@ def application(environ, start_response):
 		layers_names = [layer.name.encode('UTF-8') for layer in root_layer.layers][::-1]
 
 	c = {} # configuration dictionary which will be used in HTML template
+	c['project'] = qs.get('PROJECT')
 	c['projectfile'] = projectfile
 	c['projection'] = root_layer.boundingBox[-1]
 
@@ -879,6 +1124,9 @@ def application(environ, start_response):
 		for point_data in points_data.split("|"):
 			coord1, coord2, text = point_data.split(",")
 			c['pois'].append((coord1, coord2, text))
+
+	if qs.get('VISIBLE'):
+		c['visible_layers'] = [layer_name.strip() for layer_name in qs.get('VISIBLE').split(",")]
 
 	c['resolution'] = resolution
 	c['extent'] = ",".join(map(str, extent))
