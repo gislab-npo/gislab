@@ -197,7 +197,8 @@ Supported GET parameters:
  * CENTER: coordinates of map center on start. Example: 1234.12,5678.56. Default is center of auto-detected extent from project.
  * OSM: determines if OpenStreetMap base layer will be added to map. Works only in projection EPSG:3857. Example: true. Default is false.
  * LAYERS: list of layers to display in map. Example: border,lakes,rivers. Default is auto-detected list of layers from project.
-
+ * VISIBLE: list of layers to set as visible on application start. Example: border. Default: all layers
+ * POINTS: list of vector points to draw on map. Format: <coordinate1>,<coordinate2>,<label>|<coordinate1>,<coordinate2>,<label>|... Example: 1234,5678,nice place|2345,6789,another nice place
 
 Authors
 -------
