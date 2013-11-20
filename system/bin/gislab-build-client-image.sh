@@ -20,7 +20,7 @@ then
 	cp -v /vagrant/config-user.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/001-gislab-config-user
 fi
 
-cp -av /vagrant/system/ltsp/plugins/ltsp-build-client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
+cp -av /vagrant/system/server/ltsp/plugins/ltsp-build-client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
 # client image configuration
 cat << EOF > /etc/ltsp/ltsp-build-client.conf
