@@ -281,7 +281,7 @@ pip install WebOb==1.2.3
 pip install WSGIProxy==0.2.2
 deactivate
 
-cp -a /vagrant/system/wms-viewer /var/www
+cp -a /vagrant/system/server/wms-viewer /var/www
 
 cat << EOF > /etc/apache2/sites-available/wms-viewer
 <VirtualHost *:80>

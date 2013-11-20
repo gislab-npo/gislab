@@ -38,7 +38,7 @@ def page(c):
 
 	html = ''
 
-	c['static_url_prefix'] = 'https://rawgithub.com/imincik/gis-lab/master/system/wms-viewer/' if COMMAND_LINE_MODE else ''
+	c['static_url_prefix'] = 'https://rawgithub.com/imincik/gis-lab/master/system/server/wms-viewer/' if COMMAND_LINE_MODE else ''
 
 	# head and javascript start
 	html += """
