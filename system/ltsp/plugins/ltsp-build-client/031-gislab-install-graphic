@@ -2,7 +2,7 @@
 
 case "$MODE" in
     finalization)
-	cp -a /vagrant/system/ldm/themes/gislab $ROOT/usr/share/ldm/themes/
+	cp -a /vagrant/system/server/ldm/themes/gislab $ROOT/usr/share/ldm/themes/
 	cp /vagrant/$GISLAB_LOGO $ROOT/usr/share/ldm/themes/gislab/logo.png
 
 	cp /vagrant/$GISLAB_WALLPAPER $ROOT/usr/share/xfce4/backdrops/gislab-wallpaper.png
