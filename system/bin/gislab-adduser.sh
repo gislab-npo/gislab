@@ -71,7 +71,7 @@ cp /vagrant/system/client/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
 
 # QGIS
 mkdir -p /etc/skel/.config/QGIS
-cp /vagrant/system/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
+cp /vagrant/system/client/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
 
 
 # create account
