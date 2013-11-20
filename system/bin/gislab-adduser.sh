@@ -66,7 +66,7 @@ ln -s /mnt/barrel /etc/skel/Barrel
 
 
 # PostgreSQL
-cp /vagrant/system/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
+cp /vagrant/system/client/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
 
 
 # QGIS
