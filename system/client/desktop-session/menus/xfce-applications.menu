@@ -85,18 +85,22 @@
 		<Name>gislab</Name>
 		<Directory>gislab.directory</Directory>
 		<Include>
-			<Filename>gislab-desktop-gis-editor.desktop</Filename>
+			<Filename>gislab-project-data-processing.desktop</Filename>
 		</Include>
 		<Include>
-			<Filename>gislab-database-manager.desktop</Filename>
+			<Filename>gislab-postgresql.desktop</Filename>
 		</Include>
 		<Include>
 			<Filename>gislab-version.desktop</Filename>
 		</Include>
+		<Include>
+			<Filename>gislab-spatialite.desktop</Filename>
+		</Include>
 		<Layout>
 			<Merge type="menus"/>
-			<Filename>gislab-desktop-gis-editor.desktop</Filename>
-			<Filename>gislab-database-manager.desktop</Filename>
+			<Filename>gislab-project-data-processing.desktop</Filename>
+			<Filename>gislab-postgresql.desktop</Filename>
+			<Filename>gislab-spatialite.desktop</Filename>
 			<Filename>gislab-version.desktop</Filename>
 			<Merge type="files"/>
 		</Layout>

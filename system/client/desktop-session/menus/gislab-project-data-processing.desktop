@@ -2,8 +2,8 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Desktop GIS Editor
-Comment=Desktop GIS Editor
+Name=GIS Project and Data Processing
+Comment=GIS project creation, data processing and analysis
 Exec=/usr/bin/qgis
 Icon=qgis-icon
 Path=

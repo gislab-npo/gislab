@@ -2,8 +2,8 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Database Manager
-Comment=Database Manager
+Name=PostgreSQL/PostGIS Database
+Comment=PostgreSQL/PostGIS database management
 Exec=/usr/bin/pgadmin3
 Icon=pgadmin3
 Path=
