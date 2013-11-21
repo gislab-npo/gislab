@@ -13,18 +13,16 @@
         <value type="int" value="13"/>
         <value type="int" value="10"/>
         <value type="int" value="12"/>
+        <value type="int" value="8"/>
+        <value type="int" value="9"/>
         <value type="int" value="15"/>
         <value type="int" value="26"/>
         <value type="int" value="2"/>
         <value type="int" value="14"/>
-        <value type="int" value="17"/>
         <value type="int" value="4"/>
         <value type="int" value="5"/>
         <value type="int" value="6"/>
         <value type="int" value="7"/>
-        <value type="int" value="8"/>
-        <value type="int" value="27"/>
-        <value type="int" value="9"/>
         <value type="int" value="16"/>
       </property>
       <property name="background-style" type="uint" value="0"/>
@@ -85,5 +83,11 @@
     <property name="plugin-15" type="string" value="separator"/>
     <property name="plugin-16" type="string" value="separator"/>
     <property name="plugin-14" type="string" value="xkb-plugin"/>
+    <property name="plugin-9" type="string" value="launcher">
+      <property name="items" type="array">
+        <value type="string" value="13850411261.desktop"/>
+      </property>
+    </property>
+    <property name="plugin-8" type="string" value="separator"/>
   </property>
 </channel>
