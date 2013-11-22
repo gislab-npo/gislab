@@ -1,5 +1,5 @@
 # Force late packages installation with '--no-install-recommends' option (it is switched off
-# in '030-fat-client')
+# in '030-fat-client'). This script overrides one provided by LTSP.
 
 case "$MODE" in
     commandline)
