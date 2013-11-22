@@ -1,0 +1,11 @@
+# Set GIS.lab server as DNS resolver. This overrides script provided by LTSP.
+
+case "$MODE" in
+    after-install)
+        echo -e "nameserver 192.168.50.5" > $ROOT/etc/resolv.conf
+
+	# fix the issue with appending original nameserver values (resolvconf/link-tail-to-original: true) 
+	rm -f $ROOT/etc/resolvconf/resolv.conf.d/tail
+	chroot $ROOT ln -s /dev/null /etc/resolvconf/resolv.conf.d/tail
+        ;;
+esac

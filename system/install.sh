@@ -119,6 +119,62 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 
 
 #
+### BIND ###
+#
+cat << EOF > /etc/bind/named.conf.local
+zone "gis.lab" {
+    type master;
+    file "/etc/bind/db.gis.lab";
+};
+
+zone "50.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.192";
+};
+EOF
+
+cat << EOF > /etc/bind/db.gis.lab
+\$TTL    604800
+\$ORIGIN gis.lab.
+@  3600  IN    SOA       ns.gis.lab. root.gis.lab. (
+               2013112203     ; Serial
+               604800         ; Refresh
+               86400          ; Retry
+               2419200        ; Expire
+               604800         ; Negative Cache TTL
+               )
+
+         IN    NS       ns.gis.lab.
+
+ns       IN    A        192.168.50.5
+ns1      IN    A        192.168.50.5
+ns1      IN    AAAA     ::1
+
+server   IN    A        192.168.50.5
+webgis   IN    CNAME    server
+EOF
+
+cat << EOF > /etc/bind/db.192
+\$TTL    604800
+\$ORIGIN 50.168.192.IN-ADDR.ARPA.
+@  3600  IN    SOA       ns.gis.lab. root.gis.lab. (
+               2013112103     ; Serial
+               604800         ; Refresh
+               86400          ; Retry
+               2419200        ; Expire
+               604800         ; Negative Cache TTL
+               )
+
+         NS              ns.gis.lab.
+5        IN    PTR       server.gis.lab.
+EOF
+
+service bind9 restart
+
+
+
+
+#
 ### DHCP ###
 #
 # adding Apparmor profile to enable including allowed MACs from /etc/ltsp/dhcpd-clients-allowed.conf
