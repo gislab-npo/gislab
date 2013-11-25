@@ -948,6 +948,19 @@ def page(c):
 			mappanel.map.addControl(new OpenLayers.Control.Attribution());
 	""" % c
 
+	# Insert points from GET parameter
+	if 'pois' in c:
+		for coord1, coord2, text in c['pois']:
+			html += """
+				// create a point feature
+				var point = new OpenLayers.Geometry.Point({0}, {1});
+				var poi_feature = new OpenLayers.Feature.Vector(point);
+				poi_feature.attributes = {{
+					label: "{2}"
+				}};
+				points_layer.addFeatures(poi_feature);
+			""".format(coord1, coord2, text)
+
 	# Permalink
 	html += """
 		// create permalink provider
@@ -986,24 +999,26 @@ def page(c):
 					}
 				});
 				var parameters = {
-					project: '%(project)s',
-					zoom: map.getZoom(),
-					center: map.getCenter().toShortString(), //.replace(' ', ''),
-					layers: all_layers.join(',')
+					PROJECT: '%(project)s',
+					DPI: '%(resolution)s',
+					SCALES: %(scales)s.join(','),
+					ZOOM: map.getZoom(),
+					CENTER: map.getCenter().toShortString(), //.replace(' ', ''),
+					LAYERS: all_layers.join(',')
 				};
 				var osm_layer = map.getLayersByClass('OpenLayers.Layer.OSM')[0];
 				if (osm_layer && osm_layer.visibility) {
-					parameters.osm = 'true';
+					parameters.OSM = 'true';
 				}
 				if (visible_layers.length < overlays_node.childNodes.length) {
-					parameters.visible = visible_layers.join(',');
+					parameters.VISIBLE = visible_layers.join(',');
 				}
 				if (points_layer.features.length > 0) {
 					var points_data = [];
 					Ext.each(points_layer.features, function(f) {
 						points_data.push([f.geometry.x,f.geometry.y, f.attributes.label].join(','));
 					});
-					parameters.points = points_data.join('|');
+					parameters.POINTS = points_data.join('|');
 				}
 				var link = [location.protocol, '//', location.host, location.pathname, '?'].join('');
 				var qs = [];
@@ -1015,19 +1030,6 @@ def page(c):
 			}
 		});
 	""" % c
-
-	# Insert points from GET parameter
-	if 'pois' in c:
-		for coord1, coord2, text in c['pois']:
-			html += """
-				// create a point feature
-				var point = new OpenLayers.Geometry.Point({0}, {1});
-				var poi_feature = new OpenLayers.Feature.Vector(point);
-				poi_feature.attributes = {{
-					label: "{2}"
-				}};
-				points_layer.addFeatures(poi_feature);
-			""".format(coord1, coord2, text)
 
 	html += """
 		}; // end of main function
