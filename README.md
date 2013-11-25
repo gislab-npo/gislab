@@ -174,19 +174,19 @@ Simply save a QGIS project and all file data to '~/Share/<USERNAME>' directory w
 and launch following URL in a web browser:
 ```
 format:
-http://webgis.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>
+http://web.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>
 
 * PATH-TO-QGIS-PROJECT-FILE must be relative to '~/Share' directory
 
 example of user 'lab1' who saved 'Central Europe' project file packaged with GIS.lab to ~/Share directory ($ cp -a ~/Repository/data/natural-earth ~/Share/$USER):
-http://webgis.gis.lab/?PROJECT=lab1/natural-earth/central-europe.qgs
+http://web.gis.lab/?PROJECT=lab1/natural-earth/central-europe.qgs
 
 ```
 
 Additionally, it is possible to configure behavior of WebGIS app via GET parameters in URL.
 ```
 format:
-http://webgis.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>&<PARAMETER>=<value>&<PARAMETER>=<value>...
+http://web.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>&<PARAMETER>=<value>&<PARAMETER>=<value>...
 
 ```
 

@@ -151,6 +151,7 @@ ns1      IN    A        192.168.50.5
 ns1      IN    AAAA     ::1
 
 server   IN    A        192.168.50.5
+web      IN    CNAME    server
 webgis   IN    CNAME    server
 EOF
 
@@ -342,7 +343,8 @@ cp -a /vagrant/system/server/wms-viewer /var/www
 cat << EOF > /etc/apache2/sites-available/wms-viewer
 <VirtualHost *:80>
   ServerAdmin webmaster@localhost
-  ServerName webgis.gis.lab
+  ServerName web.gis.lab
+  ServerAlias webgis.gis.lab
 
   DocumentRoot /var/www/
   <Directory />
