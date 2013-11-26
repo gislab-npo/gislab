@@ -56,6 +56,12 @@ FSTAB_2="server:/storage/share /mnt/share nfs defaults 0 0"
 FSTAB_3="server:/storage/barrel /mnt/barrel nfs defaults 0 0"
 EOF
 
+if [ -n "${GISLAB_CLIENT_NETWORK_STORAGE}" ]; then # mount additional shared dir if configured
+cat << EOF >> /var/lib/tftpboot/ltsp/i386/lts.conf
+FSTAB_4="$GISLAB_CLIENT_NETWORK_STORAGE"
+EOF
+fi
+
 service nbd-server restart
 
 # disable plymouth screen for better client troubleshooting on boot
