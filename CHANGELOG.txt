@@ -9,8 +9,8 @@ Changes
  * adding possibility to mount external network storage on client machines
  * adding example data and QGIS project file 
  * adding 'Conky' widget to client desktop, removing session manager from panel
- * adding support for custom projections configuration (addrd S-JTSK Krovak East/North).
- * adding application for automatic QGIS project publication on web (WMS Viewer)
+ * adding support for custom projections configuration (added S-JTSK Krovak East/North).
+ * adding WebGIS application for automatic QGIS project publication on web (formerly known as WMS Viewer)
  * adding additional software like Gimp, Inkscape, Google Earth ...
  * documentation update
 

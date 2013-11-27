@@ -328,17 +328,17 @@ cp -a /vagrant/data /storage/repository/
 
 
 #
-### WMS VIEWER ###
+### WEBGIS ###
 #
-cp -a /vagrant/system/server/wms-viewer /var/www
+cp -a /vagrant/system/server/webgis /var/www
 
 mkdir -p /usr/local/python-virtualenvs
-virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/wms-viewer
-source /usr/local/python-virtualenvs/wms-viewer/bin/activate
-pip install -r /var/www/wms-viewer/requirements.txt
+virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/webgis
+source /usr/local/python-virtualenvs/webgis/bin/activate
+pip install -r /var/www/webgis/requirements.txt
 deactivate
 
-cat << EOF > /etc/apache2/sites-available/wms-viewer
+cat << EOF > /etc/apache2/sites-available/webgis
 <VirtualHost *:80>
   ServerAdmin webmaster@localhost
   ServerName web.gis.lab
@@ -349,33 +349,33 @@ cat << EOF > /etc/apache2/sites-available/wms-viewer
     Options FollowSymLinks
     AllowOverride None
   </Directory>
-  <Directory /var/www/wms-viewer/>
+  <Directory /var/www/webgis/>
     Options Indexes FollowSymLinks MultiViews
     AllowOverride None
     Order allow,deny
     Allow from all
   </Directory>
 
-  Alias /static/ /var/www/wms-viewer/static/
+  Alias /static/ /var/www/webgis/static/
 
-  <Directory /var/www/wms-viewer/static/>
+  <Directory /var/www/webgis/static/>
     Order deny,allow
     Allow from all
   </Directory>
 
   AddHandler wsgi-script .py
-  WSGIDaemonProcess wms-viewer python-path=/var/www/wms-viewer:/usr/local/python-virtualenvs/wms-viewer/lib/python2.7/site-packages
-  WSGIProcessGroup wms-viewer
-  WSGIScriptAlias / /var/www/wms-viewer/wms-viewer.py
+  WSGIDaemonProcess webgis python-path=/var/www/webgis:/usr/local/python-virtualenvs/webgis/lib/python2.7/site-packages
+  WSGIProcessGroup webgis
+  WSGIScriptAlias / /var/www/webgis/webgis.py
 
-  ErrorLog /var/log/apache2/wms-viewer-error.log
-  CustomLog /var/log/apache2/wms-viewer-access.log combined
+  ErrorLog /var/log/apache2/webgis-error.log
+  CustomLog /var/log/apache2/webgis-access.log combined
 </VirtualHost>
 EOF
 
 a2enmod wsgi
 a2enmod rewrite
-a2ensite wms-viewer
+a2ensite webgis
 service apache2 reload
 
 

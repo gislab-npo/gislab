@@ -34,11 +34,11 @@ def _get_resolutions(scales, units, resolution=96):
 
 
 def page(c):
-	"""Return viewer application HTML code."""
+	"""Return WebGIS application HTML code."""
 
 	html = ''
 
-	c['static_url_prefix'] = 'https://rawgithub.com/imincik/gis-lab/master/system/server/wms-viewer/' if COMMAND_LINE_MODE else ''
+	c['static_url_prefix'] = 'https://rawgithub.com/imincik/gis-lab/master/system/server/webgis/' if COMMAND_LINE_MODE else ''
 
 	# head and javascript start
 	html += """

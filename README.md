@@ -160,8 +160,8 @@ It is possible to mount 'Barrel' shared directory from host machine using 'utils
 always good idea to umount it before shutting down GIS.lab server. If forgotten try to umount it with '-fl' options.
 
 
-### Built-in automatic WMS Viewer viewer
-One of the nice features of GIS.lab is WMS Viewer application which is automatically generated for
+### Built-in WebGIS application
+One of the nice features of GIS.lab is a build-in WebGIS application which is automatically generated for
 each user's QGIS project.
 Simply save a QGIS project and all file data to '~/Share/<USERNAME>' directory with setting these required configuration:
  * use relative paths (File > Project Properties > General > Save paths). The safest way is to save Your data and project
