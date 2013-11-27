@@ -328,17 +328,15 @@ cp -a /vagrant/data /storage/repository/
 
 
 #
-### QGIS MAPSERVER AND WMS VIEWER ###
+### WMS VIEWER ###
 #
+cp -a /vagrant/system/server/wms-viewer /var/www
+
 mkdir -p /usr/local/python-virtualenvs
 virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/wms-viewer
 source /usr/local/python-virtualenvs/wms-viewer/bin/activate
-pip install OWSLib==0.8.2
-pip install WebOb==1.2.3
-pip install WSGIProxy==0.2.2
+pip install -r /var/www/wms-viewer/requirements.txt
 deactivate
-
-cp -a /vagrant/system/server/wms-viewer /var/www
 
 cat << EOF > /etc/apache2/sites-available/wms-viewer
 <VirtualHost *:80>
