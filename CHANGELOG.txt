@@ -1,0 +1,23 @@
+Version 0.2.0
+=============
+Changes
+-------
+ * renaming project to 'GIS.lab'
+ * adding possibility to configure GIS.lab via configuration files (config.cfg, config-user.cfg)
+ * adding possibility to restrict client machines by MAC address
+ * refactoring of file sharing directory structure
+ * adding possibility to mount external network storage on client machines
+ * adding example data and QGIS project file 
+ * adding 'Conky' widget to client desktop, removing session manager from panel
+ * adding support for custom projections configuration (addrd S-JTSK Krovak East/North).
+ * adding application for automatic QGIS project publication on web (WMS Viewer)
+ * adding additional software like Gimp, Inkscape, Google Earth ...
+ * documentation update
+
+Release notes
+-------------
+ Sometimes after shutting down GIS.lab server ($ vagrant halt) it is not possible to launch it
+ again ($ vagrant up). The reason is that GRUB boot loader is endlessly waiting for manual input.
+ To solve this problem shut down server machine using VirtualBox Manager GUI and uncomment
+ line 'v.gui = true' in 'Vagrantfile' file. Start GIS.lab server again ($ vagrant up) and press
+ ENTER in server's GUI console to boot. 
