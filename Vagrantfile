@@ -1,6 +1,22 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+
+# Load GIS.lab configuration file
+CONFIG = Hash.new
+File.readlines("config.cfg").each do |line|
+  values = line.split("=")
+  CONFIG[values[0]] = values[1]
+end
+
+if File.exist?('config-user.cfg')
+  File.readlines("config-user.cfg").each do |line|
+    values = line.split("=")
+    CONFIG[values[0]] = values[1]
+  end
+end
+
+
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
@@ -125,7 +141,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   # VM config
   config.vm.provider "virtualbox" do |v|
-    v.customize ["modifyvm", :id, "--memory", "1024"]
+    v.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY'].strip]
     v.customize ["modifyvm", :id, "--nictype1", "virtio"]
     v.customize ["modifyvm", :id, "--nictype2", "virtio"]
     v.gui = true
