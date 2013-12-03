@@ -415,8 +415,8 @@ service apache2 reload
 #
 ### LTSP ###
 #
-/vagrant/system/bin/gislab-build-client-image.sh # build LTSP client image
-/vagrant/system/bin/gislab-clients-allowed.sh    # allow LTSP clients
+/vagrant/system/bin/gislab-build-client-image # build LTSP client image
+/vagrant/system/bin/gislab-clients-allowed    # allow LTSP clients
 
 
 
@@ -427,7 +427,7 @@ service apache2 reload
 echo -e "\n[GIS.lab]: Creating GIS.lab users accounts ..."
 for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
-	/vagrant/system/bin/gislab-adduser.sh $account
+	/vagrant/system/bin/gislab-adduser $account
 done
 
 

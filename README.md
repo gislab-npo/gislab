@@ -145,8 +145,8 @@ Working with GIS.lab
 ### User accounts
 By default, user accounts specified in GISLAB_USER_ACCOUNTS_AUTO are created automatically after installation.
 You can also create or delete additional accounts manually:
- * '$ vagrant ssh -c "sudo gislab-adduser.sh <username>"' - create account
- * '$ vagrant ssh -c "sudo gislab-deluser.sh <username>"' - delete account
+ * '$ vagrant ssh -c "sudo gislab-adduser <username>"' - create account
+ * '$ vagrant ssh -c "sudo gislab-deluser <username>"' - delete account
 
 
 ### File sharing
