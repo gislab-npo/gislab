@@ -153,6 +153,7 @@ ns1      IN    AAAA     ::1
 server   IN    A        192.168.50.5
 web      IN    CNAME    server
 webgis   IN    CNAME    server
+irc      IN    CNAME    server
 EOF
 
 cat << EOF > /etc/bind/db.192
@@ -268,6 +269,36 @@ EOF
 mount /mnt  # bind mount to keep the same paths on server as on client
 
 service nfs-kernel-server restart
+
+
+
+#
+### IRC ###
+#
+cat << EOF > /etc/ircd-hybrid/ircd.conf
+serverinfo {
+    name = "irc.gis.lab";
+    description = "GIS.lab IRC server";
+    network_name = "GIS.lab";
+    network_desc = "GIS.lab";
+    hub = yes;
+    max_clients = 512;
+};
+
+admin {
+    name = "GIS.lab Administrator";
+    description = "GIS.lab Administrator";
+    email = "root@server.gis.lab";
+};
+EOF
+
+cat /vagrant/system/server/ircd/ircd.conf >> /etc/ircd-hybrid/ircd.conf # append rest of config
+
+cat << EOF > /etc/ircd-hybrid/ircd.motd
+Welcome to GIS.lab IRC server !
+EOF
+
+service ircd-hybrid restart
 
 
 

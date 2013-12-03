@@ -25,6 +25,8 @@ mkdir /etc/skel/.config
 rm -rf /etc/skel/.local
 mkdir /etc/skel/.local
 
+rm -rf /etc/skel/.purple
+
 rm -rf /etc/skel/Repository
 rm -rf /etc/skel/Share
 rm -rf /etc/skel/Barrel
@@ -65,6 +67,12 @@ ln -s /mnt/share /etc/skel/Share
 ln -s /mnt/barrel /etc/skel/Barrel
 
 
+# Pidgin
+mkdir -p /etc/skel/.purple
+cp -a /vagrant/system/client/pidgin/*.xml /etc/skel/.purple
+#cp /vagrant/system/client/pidgin/pidgin.desktop /etc/skel/.config/autostart/pidgin.desktop
+
+
 # PostgreSQL
 cp /vagrant/system/client/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
 
@@ -79,6 +87,8 @@ echo -e "\n[GIS.lab]: Creating user account ..."
 adduser $1 --disabled-login --gecos "GIS.lab user" # Linux account
 chmod go-rwx /home/$1
 echo "$1:lab" | chpasswd
+find /home/$1 -type f -exec sed -i "s/##USER##/$1/g" "{}" \;	# Replace ##USER## placeholder with
+																# current user name
 
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $1" # PostgreSQL account
 sudo su - postgres -c "psql -c \"ALTER ROLE $1 WITH PASSWORD 'lab';\""
