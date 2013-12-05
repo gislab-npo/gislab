@@ -354,7 +354,7 @@ sudo su - postgres -c "psql -c \"GRANT CONNECT ON DATABASE gislab TO labusers;\"
 #
 ### DATA ###
 #
-cp -a /vagrant/data /storage/repository/
+cp -a /vagrant/user/data /storage/repository/
 
 
 
