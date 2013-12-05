@@ -307,7 +307,7 @@ service ircd-hybrid restart
 #### PROJECTIONS ###
 #
 # customize projections support
-/bin/bash /vagrant/system/projections/*-libs.sh
+/bin/bash /vagrant/user/projections/*-libs.sh
 
 
 
@@ -337,7 +337,7 @@ sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON geography_colu
 sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON spatial_ref_sys TO PUBLIC;\""
 
 # adding additional projections support
-sudo su - postgres -c "psql -d template_postgis -f /vagrant/system/projections/*-postgis.sql"
+sudo su - postgres -c "psql -d template_postgis -f /vagrant/user/projections/*-postgis.sql"
 
 sudo su - postgres -c "psql -d template_postgis -c \"VACUUM FULL;\""
 sudo su - postgres -c "psql -d template_postgis -c \"VACUUM FREEZE;\""
