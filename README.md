@@ -100,8 +100,8 @@ $ vagrant up
 
 IP addresses
 ------------
-LTSP server: 192.168.50.5
-LTSP clients: 192.168.50.100-250
+LTSP server: $GISLAB_NETWORK.5
+LTSP clients: $GISLAB_NETWORK.100-250
 
 
 Authentication
@@ -132,11 +132,11 @@ Tips
 ----
 Add secondary IP address to host machine to enable connection from host machine to client machines
 ```
-$ ip addr add 192.168.50.2/24 dev eth0
+$ ip addr add $GISLAB_NETWORK.2/24 dev eth0
 ```
 remove it with
 ```
-$ ip addr del 192.168.50.2/24 dev eth0
+$ ip addr del $GISLAB_NETWORK.2/24 dev eth0
 ```
 
 

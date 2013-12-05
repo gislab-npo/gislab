@@ -149,7 +149,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.hostname = "server.gis.lab"
   config.vm.provision "shell", path: "system/install.sh"
-  config.vm.network "public_network", ip: "192.168.50.5"
+  config.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'].strip + ".5"
 
   config.vm.network :forwarded_port, guest: 111, host: 1111, auto_correct: true
   config.vm.network :forwarded_port, guest: 2049, host: 2049, auto_correct: true

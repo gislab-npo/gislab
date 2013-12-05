@@ -146,11 +146,11 @@ cat << EOF > /etc/bind/db.gis.lab
 
          IN    NS       ns.gis.lab.
 
-ns       IN    A        192.168.50.5
-ns1      IN    A        192.168.50.5
+ns       IN    A        $GISLAB_NETWORK.5
+ns1      IN    A        $GISLAB_NETWORK.5
 ns1      IN    AAAA     ::1
 
-server   IN    A        192.168.50.5
+server   IN    A        $GISLAB_NETWORK.5
 web      IN    CNAME    server
 webgis   IN    CNAME    server
 irc      IN    CNAME    server
@@ -195,15 +195,15 @@ EOF
 cat << EOF > /etc/ltsp/dhcpd.conf
 authoritative;
 
-subnet 192.168.50.0 netmask 255.255.255.0 {
-    option routers 192.168.50.5;
+subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
+    option routers $GISLAB_NETWORK.5;
 
     pool {
         $GISLAB_UNKNOWN_MAC_POLICY unknown clients;
-        range 192.168.50.100 192.168.50.250;
+        range $GISLAB_NETWORK.100 $GISLAB_NETWORK.250;
         option domain-name "gis.lab";
-        option domain-name-servers $GISLAB_DNS_SERVERS;
-        option broadcast-address 192.168.50.255;
+        option domain-name-servers $GISLAB_NETWORK.5, $GISLAB_DNS_SERVERS;
+        option broadcast-address $GISLAB_NETWORK.255;
         option subnet-mask 255.255.255.0;
         option root-path "/opt/ltsp/i386";
         if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
@@ -232,7 +232,7 @@ cat << EOF > /usr/local/bin/enable-ip-forward
 #!/bin/bash
 
 sysctl -w net.ipv4.ip_forward=1
-iptables --table nat --append POSTROUTING --jump MASQUERADE --source 192.168.50.0/24
+iptables --table nat --append POSTROUTING --jump MASQUERADE --source $GISLAB_NETWORK.0/24
 EOF
 
 chmod +x /usr/local/bin/enable-ip-forward
