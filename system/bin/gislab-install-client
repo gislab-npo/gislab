@@ -46,6 +46,7 @@ cat << EOF > /var/lib/tftpboot/ltsp/i386/lts.conf
 [default]
 LDM_SESSION=/usr/bin/startxfce4
 CLIENT_ENV="DESKTOP_SESSION=xubuntu"
+HOSTNAME_BASE=c
 LDM_THEME=gislab 
 LOCAL_APPS=True
 SCREEN_02=shell                          # get local root prompt when pressing Ctrl+Alt+F2 
