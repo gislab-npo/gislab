@@ -3,6 +3,8 @@
 
 set -e
 
+DATETIME=$(date +"%Y-%m-%d-%T")
+
 source /vagrant/config.cfg
 if [ -f /vagrant/config-user.cfg ]
 then
@@ -10,6 +12,13 @@ then
 fi
 
 echo -e "\n[GIS.lab]: Installing client image ..."
+
+# backup existing client image
+if [ -f /opt/ltsp/images/i386.img ]
+then
+	echo -e "\n[GIS.lab]: Creating backup of existing image (/opt/ltsp/images/i386-$DATETIME.img)."
+	cp /opt/ltsp/images/i386.img /opt/ltsp/images/i386-$DATETIME.img
+fi
 
 # add some ltsp-build-client plugins which takes care about our image customizations
 rm -vf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/*gislab*
