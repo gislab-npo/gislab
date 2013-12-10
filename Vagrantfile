@@ -137,7 +137,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   chef.validation_client_name = "ORGNAME-validator"
 
 
-  config.vm.box = "precise32"
+  config.vm.box = "precise32-canonical"
   
   # VM config
   config.vm.provider "virtualbox" do |v|

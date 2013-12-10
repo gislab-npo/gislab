@@ -1,0 +1,14 @@
+# Install VirtualBox client support (VirtualBox guest additions).
+
+case "$MODE" in
+    finalization)
+	if [ "$GISLAB_CLIENT_VIRTUALBOX_SUPPORT" == "yes" ]; then
+		chroot $ROOT dpkg-query -W -f='${Package}\n' linux-image-* | xargs  apt-get --assume-yes --force-yes purge # purge all installed kernel packages
+
+		chroot $ROOT apt-get --assume-yes --force-yes --no-install-recommends install linux-image-$(uname -r) linux-headers-$(uname -r) # install kernel package
+																		# matching version on server
+		chroot $ROOT apt-get --assume-yes --force-yes --no-install-recommends install virtualbox-guest-dkms \
+			virtualbox-guest-x11 virtualbox-guest-utils
+	fi
+    ;;
+esac
