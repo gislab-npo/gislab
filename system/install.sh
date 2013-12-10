@@ -263,12 +263,15 @@ cat << EOF > /etc/exports
 /storage/barrel             *(rw,sync,no_subtree_check,all_squash,insecure)
 EOF
 
+sed -i "s/^# Domain.*/Domain = gis.lab/" /etc/idmapd.conf
+
 cat << EOF > /etc/fstab
 /storage  /mnt  none  bind  0  0
 EOF
 mount /mnt  # bind mount to keep the same paths on server as on client
 
 service nfs-kernel-server restart
+service idmapd restart
 
 
 

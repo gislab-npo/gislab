@@ -1,9 +1,0 @@
-# This script creates mount points for shared dirs.
-
-case "$MODE" in
-    finalization)
-	mkdir -p $ROOT/mnt/repository
-	mkdir -p $ROOT/mnt/share
-	mkdir -p $ROOT/mnt/barrel
-    ;;
-esac
