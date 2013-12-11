@@ -130,7 +130,7 @@ Important configurations are:
 
 Plugins
 -------
-There is a possibility customize GIS.lab installation using plugin files placed in 'user/plugins/client'
+There is a possibility customize GIS.lab installation using plugin scripts placed in 'user/plugins/client'
 and 'user/plugins/server' directories. This files are automatically loaded at installation process.
 
 Server plugin can be whatever script with assigned executable permissions. It is executed after GIS.lab server
