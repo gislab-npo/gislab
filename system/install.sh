@@ -427,7 +427,7 @@ service apache2 reload
 #
 ### SERVER PLUGINS ###
 #
-for plugin in /vagrant/user/plugins/server/*; do
+for plugin in /vagrant/user/plugins/server/*.*; do
 	$plugin
 done
 
