@@ -45,7 +45,7 @@ Sofware requirements:
 
 Download a Vagrant box
 ```
-$ vagrant box add precise32 http://files.vagrantup.com/precise32.box
+$ vagrant box precise32-canonical http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box
 ```
 
 Download latest GIS.lab package from https://github.com/imincik/gis-lab/releases
