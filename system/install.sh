@@ -48,6 +48,8 @@ EOF
 #
 export DEBIAN_FRONTEND=noninteractive
 echo "PATH="$PATH:/vagrant/system/bin"" >> /etc/profile
+sed -i 's/secure_path.*/secure_path="\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin:\/vagrant\/system\/bin"/g' /etc/sudoers
+
 
 cat << EOF > /etc/apt/sources.list
 #############################################################
