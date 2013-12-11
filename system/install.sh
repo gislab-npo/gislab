@@ -419,7 +419,17 @@ service apache2 reload
 ### LTSP ###
 #
 /vagrant/system/bin/gislab-install-client # install client image
-/vagrant/system/bin/gislab-clients-allowed    # allow LTSP clients
+/vagrant/system/bin/gislab-clients-allowed # allow LTSP clients
+
+
+
+
+#
+### SERVER PLUGINS ###
+#
+for plugin in /vagrant/user/plugins/server/*; do
+	$plugin
+done
 
 
 
@@ -432,14 +442,6 @@ for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
 	/vagrant/system/bin/gislab-adduser $account
 done
-
-
-
-
-#
-### CUSTOM INSTALL SCRIPT ###
-#
-/vagrant/$GISLAB_SERVER_USER_INSTALL_SCRIPT
 
 
 echo -e "\n[GIS.lab]: Done. GIS.lab is installed and ready to use!"

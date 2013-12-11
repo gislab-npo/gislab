@@ -126,7 +126,41 @@ Important configurations are:
  * configure boot order to boot only from network (and enable IO APIC)
  * configure network adapter in bridged mode; make sure you select the PCnet-FAST III (Am79C973)
  as the adaptor type; allow promiscuous mode for all
-  
+
+
+Plugins
+-------
+There is a possibility customize GIS.lab installation using plugin files placed in 'user/plugins/client'
+and 'user/plugins/server' directories. This files are automatically loaded at installation process.
+
+Server plugin can be whatever script with assigned executable permissions. It is executed after GIS.lab server
+installation, before user accounts creation (which means that You can modify /etc/skel directory here).
+
+Client plugin is evaluated as LTSP plugin script (see https://wiki.edubuntu.org/HowtoWriteLTSP5Plugins).
+Plugins are "sourced" not "executed", so be careful to avoid such things as "exit" in your plugin scripts.
+Files must not have executable permissions set.
+
+There are several modes in which client plugins are called:
+ * commandline: builds the list of commandline arguments supported by the loaded plugins 
+
+ * configure: sets variables for commandline options that are set 
+
+ * before-install: before the initial chroot is built 
+
+ * install: where the initial chroot is built (debootstrap, on debian systems) 
+
+ * after-install: additional package installation(ltsp-client), tweaks, etc. 
+
+ * finalization: the last steps needed, such as installing kernels, copying the kernels and network bootable images into the tftp dir, installing the server's ssh keys into the chroot, etc.
+
+Several variables can be used in client plugins:
+ * $ARCH - the servers architecture
+ * $BASE - the basic directory used for ltsp chroots (defaults to /opt/ltsp)
+ * $CHROOT - the name of the chroot we create in the $BASE dir (by default substituted with $ARCH)
+ * $ROOT - will always point to the client dir (/opt/ltsp/$CHROOT), use it where appropriate
+
+To execute a command in client chroot start it with 'chroot $ROOT' command.   
+
 
 Tips
 ----

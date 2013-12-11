@@ -1,0 +1,7 @@
+# Example plugin
+
+case "$MODE" in
+    finalization)
+	echo "This is an output of example plugin." > $ROOT/tmp/example-plugin.txt
+    ;;
+esac
