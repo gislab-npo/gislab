@@ -27,6 +27,7 @@ mkdir /etc/skel/.local
 
 rm -rf /etc/skel/.purple
 
+rm -rf /etc/skel/Projects
 rm -rf /etc/skel/Repository
 rm -rf /etc/skel/Share
 rm -rf /etc/skel/Barrel
@@ -58,7 +59,11 @@ cp /vagrant/system/client/desktop-session/conky/conkyrc /etc/skel/.conkyrc
 cp /vagrant/system/client/desktop-session/conky/conky.desktop /etc/skel/.config/autostart/conky.desktop
 
 
-# add shared directory
+# add projects directory
+mkdir -p /etc/skel/Projects
+
+
+# add shared directories
 ln -s /mnt/repository /etc/skel/Repository
 ln -s /mnt/share /etc/skel/Share
 ln -s /mnt/barrel /etc/skel/Barrel
