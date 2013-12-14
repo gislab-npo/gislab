@@ -145,7 +145,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY'].strip]
     v.customize ["modifyvm", :id, "--nictype1", "virtio"]
     v.customize ["modifyvm", :id, "--nictype2", "virtio"]
-    v.gui = true
+#   v.gui = true
   end
 
   config.vm.hostname = "server.gis.lab"
