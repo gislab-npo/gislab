@@ -1,13 +1,14 @@
 ### Built-in WebGIS application
 One of the nice features of GIS.lab is a build-in WebGIS application which is automatically generated for
 each user's QGIS project.
+
 Simply save a QGIS project and all file data to '~/Share/<USERNAME>' directory with setting these required configuration:
  * use relative paths (File > Project Properties > General > Save paths). The safest way is to save Your data and project
    file to same directory
  * on-the-fly CRS transformation must be enabled (File > Project Properties > CRS) and target projection
    must be chosen (if You are not sure chose EPSG:3857)
  * OWS advertised extent must be enabled (File > Project Properties > OWS server)
- * for better performance limit number of supported CRSs ((File > Project Properties > OWS server > CRS restrictions)
+ * for better performance limit number of supported CRSs (File > Project Properties > OWS server > CRS restrictions)
 
 and launch following URL in a web browser:
 ```
