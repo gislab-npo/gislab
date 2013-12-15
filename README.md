@@ -118,10 +118,10 @@ Default client accounts
  * lab[1-12]:lab
 
 
-LTSP Client in Virtualbox
--------------------------
-For development purposes you can configure Virtualbox machine to act as LTSP client.
-Important configurations are:
+VirtualBox client
+-----------------
+Since GIS.lab 0.3 there is a full support for launching GIS.lab client in VirtualBox.
+Important notes are:
  * you do not need to create any boot hard disk
  * configure boot order to boot only from network (and enable IO APIC)
  * configure network adapter in bridged mode; make sure you select the PCnet-FAST III (Am79C973)
