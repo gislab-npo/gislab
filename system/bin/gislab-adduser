@@ -17,22 +17,19 @@ then
 	source /vagrant/config-user.cfg
 fi
 
+
 # /etc/skel update
-echo -e "\n[GIS.lab]: Updating user accounts template ..."
-rm -rf /etc/skel/.config
+if [ ! -d "/etc/skel.clean" ]; then # create clean 'skel' backup at first run
+	cp -a /etc/skel /etc/skel.clean
+fi
+
+rm -rf /etc/skel
+cp -a /etc/skel.clean /etc/skel
+
+cp -a /vagrant/user/plugins/account/. /etc/skel # copy files from plugins
+
 mkdir /etc/skel/.config
-
-rm -rf /etc/skel/.local
 mkdir /etc/skel/.local
-
-rm -rf /etc/skel/.purple
-
-rm -rf /etc/skel/Projects
-rm -rf /etc/skel/Repository
-rm -rf /etc/skel/Share
-rm -rf /etc/skel/Barrel
-
-rm -rf /etc/skel/bin
 
 
 # configure menu
@@ -90,6 +87,10 @@ if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
 	cp /vagrant/system/client/qgis/bin/gislab-dev-* /etc/skel/bin
 	chmod 755 /etc/skel/bin/*
 fi
+
+
+chown -R root:root /etc/skel
+
 
 # create account
 echo -e "\n[GIS.lab]: Creating user account ..."

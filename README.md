@@ -130,11 +130,12 @@ Important notes are:
 
 Plugins
 -------
-There is a possibility customize GIS.lab installation using plugin scripts placed in 'user/plugins/client'
-and 'user/plugins/server' directories. This files are automatically loaded at installation process.
+There is a possibility customize GIS.lab installation using plugin scripts placed in 'user/plugins/client',
+'user/plugins/server' and 'user/plugins/account' directories. This files are automatically loaded at
+installation process.
 
 Server plugin can be whatever script with assigned executable permissions. It is executed after GIS.lab server
-installation, before user accounts creation (which means that You can modify /etc/skel directory here).
+installation, before user accounts creation.
 
 Client plugin is evaluated as LTSP plugin script (see https://wiki.edubuntu.org/HowtoWriteLTSP5Plugins).
 Plugins are "sourced" not "executed", so be careful to avoid such things as "exit" in your plugin scripts.
@@ -160,6 +161,9 @@ Several variables can be used in client plugins:
  * $ROOT - will always point to the client dir (/opt/ltsp/$CHROOT), use it where appropriate
 
 To execute a command in client chroot start it with 'chroot $ROOT' command.   
+
+Account plugin can be whatever directory and files structure which will be copied to user home directory
+when creating user account. It is possible to add custom configuration files or override default ones here.
 
 
 Tips
