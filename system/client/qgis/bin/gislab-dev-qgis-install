@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+mkdir -p ~/apps
+
+if [ ! -d "/home/$USER/Projects/qgis-dev" ]; then
+	git clone https://github.com/qgis/QGIS.git ~/Projects/qgis-dev
+	mkdir -p ~/Projects/qgis-dev/build-master
+	cd ~/Projects/qgis-dev/build-master
+	cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=${HOME}/apps .. 
+else
+	cd ~/Projects/qgis-dev
+	git pull
+fi
+
+make && make install
+
+echo -e "\n[GIS.lab]: Done. Run command '$ gislab-dev-qgis' to start QGIS."
+
+
+# vim: set ts=4 sts=4 sw=4 noet:

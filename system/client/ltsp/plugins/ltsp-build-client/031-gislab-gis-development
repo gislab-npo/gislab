@@ -1,0 +1,15 @@
+# Install GIS development software
+
+case "$MODE" in
+    finalization)
+	if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
+		chroot $ROOT apt-get --assume-yes --force-yes --no-install-recommends install build-essential bison cmake doxygen flex \
+		git qgit graphviz grass-dev libexpat1-dev libfcgi-dev libgdal1-dev libgeos-dev libgsl0-dev libpq-dev libproj-dev libqt4-dev \
+		libqt4-opengl-dev libqtwebkit-dev libqwt5-qt4-dev libspatialindex-dev libspatialite-dev libsqlite3-dev pkg-config \
+		pyqt4-dev-tools python python-dev python-qt4 python-qt4-dev python-sip python-sip-dev txt2tags xauth xfonts-base xvfb \
+		python-qscintilla2 python-gdal qgit qt4-dev-tools
+
+		chroot $ROOT apt-get --assume-yes --force-yes install qtcreator
+	fi
+    ;;
+esac

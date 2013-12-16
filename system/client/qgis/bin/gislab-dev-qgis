@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+if [ -f "/home/$USER/apps/bin/qgis" ]; then
+	export LD_LIBRARY_PATH=~/apps/lib/
+	~/apps/bin/qgis
+else
+	echo -e "\n[GIS.lab]: Development version of QGIS is not installed. Run '$ gislab-dev-qgis-install'."
+fi
+
+
+# vim: set ts=4 sts=4 sw=4 noet:

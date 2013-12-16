@@ -32,6 +32,8 @@ rm -rf /etc/skel/Repository
 rm -rf /etc/skel/Share
 rm -rf /etc/skel/Barrel
 
+rm -rf /etc/skel/bin
+
 
 # configure menu
 mkdir -p /etc/skel/.config/menus
@@ -83,6 +85,11 @@ cp /vagrant/system/client/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
 mkdir -p /etc/skel/.config/QGIS
 cp /vagrant/system/client/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
 
+if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
+	mkdir -p /etc/skel/bin
+	cp /vagrant/system/client/qgis/bin/gislab-dev-* /etc/skel/bin
+	chmod 755 /etc/skel/bin/*
+fi
 
 # create account
 echo -e "\n[GIS.lab]: Creating user account ..."
