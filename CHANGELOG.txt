@@ -21,3 +21,11 @@ Release notes
  To solve this problem shut down server machine using VirtualBox Manager GUI and uncomment
  line 'v.gui = true' in 'Vagrantfile' file. Start GIS.lab server again ($ vagrant up) and press
  ENTER in server's GUI console to boot. 
+
+
+Version 0.2.1
+=============
+Changes
+-------
+ * fixed NFS share user id mapping
+ * enabling server GUI console by default as workaround to GRUB problem
