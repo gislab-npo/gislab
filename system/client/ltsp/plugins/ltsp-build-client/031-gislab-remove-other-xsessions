@@ -1,0 +1,7 @@
+# Remove plain XFCE session from LDM menu.
+
+case "$MODE" in
+    finalization)
+	rm $ROOT/usr/share/xsessions/xfce.desktop
+    ;;
+esac
