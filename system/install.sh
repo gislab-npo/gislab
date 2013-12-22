@@ -229,7 +229,7 @@ INTERFACES="eth1"
 EOF
 
 
-# set IP forwarding for LTSP clients and call it from rc.local to run it after server restart
+# set IP forwarding for client machines and call it from rc.local to run it after server restart
 cat << EOF > /usr/local/bin/enable-ip-forward
 #!/bin/bash
 
@@ -418,10 +418,10 @@ service apache2 reload
 
 
 #
-### LTSP ###
+### CLIENT INSTALLATION ###
 #
 /vagrant/system/bin/gislab-install-client # install client image
-/vagrant/system/bin/gislab-clients-allowed # allow LTSP clients
+/vagrant/system/bin/gislab-clients-allowed # allow client MACs
 
 
 
