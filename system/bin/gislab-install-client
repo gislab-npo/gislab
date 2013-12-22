@@ -34,7 +34,6 @@ cp -av /vagrant/user/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/
 
 # client image configuration
 cat << EOF > /etc/ltsp/ltsp-build-client.conf
-GISLAB_VERSION=$GISLAB_VERSION
 ARCH=i386
 FAT_CLIENT_DESKTOPS="xubuntu-desktop"
 LATE_PACKAGES="$GISLAB_CLIENT_INSTALL_PACKAGES"
