@@ -3,12 +3,6 @@
 
 set -e
 
-# test if account name given as parameter
-if [ $# -eq 0 ]
-then
-	echo "Account name is required!"
-	exit 0
-fi
 
 # source configuration files
 source /vagrant/config.cfg
@@ -16,6 +10,25 @@ if [ -f /vagrant/config-user.cfg ]
 then
 	source /vagrant/config-user.cfg
 fi
+
+
+PASSWORD=$(pwgen -1 -n 8) # generate password, can be overriden by --password option 
+
+TEMP=`getopt --options p: --longoptions password: \
+	-n 'gislab-adduser' -- "$@"`
+
+if [ $? != 0 ] ; then echo "Terminating..." >&2 ; exit 1 ; fi
+eval set -- "$TEMP"
+
+while true ; do
+        case "$1" in
+				-p|--password) PASSWORD=$2 ; shift 2 ;;
+                --) shift ; break ;;
+                *) echo "Internal error!" ; exit 1 ;;
+        esac
+done
+if [ $# -eq 0 ]; then echo "User name is required!"; exit 0; fi # test if user name given
+USER=$1
 
 
 # /etc/skel update
@@ -93,22 +106,23 @@ chown -R root:root /etc/skel
 
 
 # create account
-echo -e "\n[GIS.lab]: Creating user account ..."
-adduser $1 --disabled-login --gecos "GIS.lab user" # Linux account
-chmod go-rwx /home/$1
-echo "$1:lab" | chpasswd
-find /home/$1 -type f -exec sed -i "s/##USER##/$1/g" "{}" \;	# Replace ##USER## placeholder with
-																# current user name
+echo -e "[GIS.lab]: Creating user account '$USER'..."
+adduser $USER --disabled-login --gecos "GIS.lab user" # Linux account
+chmod go-rwx /home/$USER
+echo "$USER:$PASSWORD" | chpasswd
+find /home/$USER -type f -exec sed -i "s/##USER##/$USER/g" "{}" \;	# Replace ##USER## placeholder with
+																	# current user name
 
-sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $1" # PostgreSQL account
-sudo su - postgres -c "psql -c \"ALTER ROLE $1 WITH PASSWORD 'lab';\""
-sudo su - postgres -c "psql -c \"GRANT labusers TO $1;\""
-sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $1;\""
+sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $USER" # PostgreSQL account
+sudo su - postgres -c "psql -c \"ALTER ROLE $USER WITH PASSWORD '$PASSWORD';\""
+sudo su - postgres -c "psql -c \"GRANT labusers TO $USER;\""
+sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $USER;\""
 
-mkdir -p /storage/share/$1 # NFS directory
-chown $1:$1 /storage/share/$1
+mkdir -p /storage/share/$USER # NFS directory
+chown $USER:$USER /storage/share/$USER
 
 
-echo -e "\n[GIS.lab]: Done."
+echo -e "\n[GIS.lab]: Created account '$USER' with password '$PASSWORD'."
+
 
 # vim: set ts=4 sts=4 sw=4 noet:
