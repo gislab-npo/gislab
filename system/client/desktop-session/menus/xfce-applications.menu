@@ -96,12 +96,21 @@
 		<Include>
 			<Filename>gislab-spatialite.desktop</Filename>
 		</Include>
+		<DefaultLayout inline="false"/>
+		<Menu>
+			<Name>gislab-documentation</Name>
+			<Directory>gislab-documentation.directory</Directory>
+			<Include>
+				<Filename>gislab-documentation-quickstart.desktop</Filename>
+			</Include>
+		</Menu>
 		<Layout>
 			<Merge type="menus"/>
 			<Filename>gislab-project-data-processing.desktop</Filename>
 			<Filename>gislab-postgresql.desktop</Filename>
 			<Filename>gislab-spatialite.desktop</Filename>
 			<Filename>gislab-version.desktop</Filename>
+			<Menuname>gislab-documentation</Menuname>
 			<Merge type="files"/>
 		</Layout>
 	</Menu>
