@@ -45,6 +45,12 @@ GISLAB_LTSP_BUILD_CLIENT_OPTS="--purge-chroot --copy-sourceslist --accept-unsign
 if [ -n "${GISLAB_APT_HTTP_PROXY}" ]; then
 	GISLAB_LTSP_BUILD_CLIENT_OPTS="$GISLAB_LTSP_BUILD_CLIENT_OPTS --http-proxy $GISLAB_APT_HTTP_PROXY"
 fi
+
+# enable debug if requested
+if [ "$GISLAB_DEBUG" == "yes" ]; then
+	GISLAB_LTSP_BUILD_CLIENT_OPTS="$GISLAB_LTSP_BUILD_CLIENT_OPTS --debug"
+fi
+
 ltsp-build-client $GISLAB_LTSP_BUILD_CLIENT_OPTS
 
 ltsp-update-sshkeys
