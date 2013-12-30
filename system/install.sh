@@ -439,6 +439,12 @@ done
 #
 ### USERS ###
 #
+# remove default 'ubuntu' user account if exists
+if id -u ubuntu > /dev/null 2>&1; then deluser ubuntu --remove-home ; fi
+
+echo "vagrant:$(pwgen -1 -n 12)" | chpasswd # set strong password for vagrant user
+
+
 echo -e "\n[GIS.lab]: Creating GIS.lab users accounts ..."
 for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
