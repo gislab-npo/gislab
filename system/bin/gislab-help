@@ -1,0 +1,17 @@
+#!/bin/bash
+# Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
+
+set -e
+
+echo "This is a list of available GIS.lab administrator commands.
+To get detailed usage help run command with '-h' option.
+"
+for file in /vagrant/system/bin/gislab-*; do
+	if [ $file != "$0" ]; then
+		echo -e "* $(basename $file)"
+	fi
+done
+echo
+
+
+# vim: set ts=4 sts=4 sw=4 noet:
