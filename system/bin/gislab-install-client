@@ -3,13 +3,42 @@
 
 set -e
 
-DATETIME=$(date +"%Y-%m-%d-%T")
 
 source /vagrant/config.cfg
 if [ -f /vagrant/config-user.cfg ]
 then
 	source /vagrant/config-user.cfg
 fi
+
+
+# usage
+function usage() {
+	echo "USAGE: $(basename $0) [OPTIONS]"
+	echo "Install GIS.lab client image."
+	echo -e "\nOPTIONS
+	-h, --help      display this help
+	"
+	exit 0
+}
+
+
+# options
+TEMP=`getopt --options hp: --longoptions password: \
+	-n $(basename $0) -- "$@"`
+
+if [ $? != 0 ] ; then echo "Terminating..." >&2 ; fi
+eval set -- "$TEMP"
+
+while true ; do
+        case "$1" in
+				-h|--help) usage ; exit 1 ; shift 2 ;;
+                --) shift ; break ;;
+                *) echo "Internal error!" ; exit 1 ;;
+        esac
+done
+
+
+DATETIME=$(date +"%Y-%m-%d-%T")
 
 echo -e "\n[GIS.lab]: Installing client image ..."
 
