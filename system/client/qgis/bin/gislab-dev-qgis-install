@@ -2,8 +2,8 @@
 
 set -e
 
-echo -e "\nThis script will download latest QGIS source code and make install."
-echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
+echo "[GIS.lab]: This script will download latest QGIS source code and make install."
+echo "[GIS.lab]: Continue ? [ENTER to continue, CTRL-C to cancel]"
 read
 
 mkdir -p ~/apps
