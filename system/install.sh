@@ -448,7 +448,7 @@ echo "vagrant:$(pwgen -1 -n 12)" | chpasswd # set strong password for vagrant us
 echo -e "\n[GIS.lab]: Creating GIS.lab users accounts ..."
 for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
-	/vagrant/system/bin/gislab-adduser --password lab $account
+	/vagrant/system/bin/gislab-adduser -p lab $account
 done
 
 

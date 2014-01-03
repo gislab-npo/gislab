@@ -16,14 +16,14 @@ function usage() {
 	echo "USAGE: $(basename $0) [OPTIONS] username"
 	echo "Delete GIS.lab user account."
 	echo -e "\nOPTIONS
-	-h, --help      display this help
+	-h  display this help
 	"
 	exit 0
 }
 
 
 # options
-TEMP=`getopt --options hp: --longoptions password: \
+TEMP=`getopt --options h \
 	-n $(basename $0) -- "$@"`
 
 if [ $? != 0 ] ; then echo "Terminating..." >&2 ; fi
@@ -31,7 +31,7 @@ eval set -- "$TEMP"
 
 while true ; do
         case "$1" in
-				-h|--help) usage ; exit 1 ; shift 2 ;;
+				-h) usage ; exit 1 ; shift 2 ;;
                 --) shift ; break ;;
                 *) echo "Internal error!" ; exit 1 ;;
         esac
