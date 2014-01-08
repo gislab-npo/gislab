@@ -155,6 +155,7 @@ ns1      IN    AAAA     ::1
 server   IN    A        $GISLAB_NETWORK.5
 web      IN    CNAME    server
 webgis   IN    CNAME    server
+balls    IN    CNAME    server
 irc      IN    CNAME    server
 EOF
 
@@ -415,7 +416,43 @@ a2ensite webgis
 service apache2 reload
 
 
+#
+### balls ###
+#
 
+BALLS_PASSWORD=$(pwgen -1 -n 8)
+sudo su - postgres -c "createdb -E UTF8 -T template0 balls"
+sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole balls" # PostgreSQL account
+sudo su - postgres -c "psql -c \"ALTER ROLE balls WITH PASSWORD '${BALLS_PASSWORD}';\""
+
+virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/balls
+source /usr/local/python-virtualenvs/balls/bin/activate
+pip install -r /vagrant/system/server/balls/requirements.txt
+pip install -e /vagrant/system/server/balls/
+
+mkdir -p /var/www/balls
+django-admin.py startproject --template=/vagrant/system/server/balls/balls/conf/project_template/ djproject /var/www/balls
+
+cat << EOF >> /var/www/balls/djproject/settings.py
+DATABASES = {
+	'default': {
+		'ENGINE': 'django.db.backends.postgresql_psycopg2',
+		'NAME': 'balls',
+		'USER': 'balls',
+		'PASSWORD': '$BALLS_PASSWORD',
+		'HOST': '',
+		'PORT': '',
+	}
+}
+EOF
+
+python /var/www/balls/manage.py syncdb --noinput
+deactivate
+
+cp -a /vagrant/system/server/balls/conf/balls.apache/balls /etc/apache2/sites-available/
+
+a2ensite balls
+service apache2 reload
 
 #
 ### CLIENT INSTALLATION ###

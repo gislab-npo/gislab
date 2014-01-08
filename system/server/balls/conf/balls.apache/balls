@@ -1,0 +1,24 @@
+<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  ServerName balls.gis.lab
+
+  DocumentRoot /var/www/
+  <Directory />
+    Options FollowSymLinks
+    AllowOverride None
+  </Directory>
+  <Directory /var/www/balls/djproject/>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+  </Directory>
+
+  AddHandler wsgi-script .py
+  WSGIDaemonProcess balls python-path=/var/www/balls/:/usr/local/python-virtualenvs/balls/lib/python2.7/site-packages
+  WSGIProcessGroup balls
+  WSGIScriptAlias / /var/www/balls/djproject/wsgi.py
+
+  ErrorLog /var/log/apache2/balls-error.log
+  CustomLog /var/log/apache2/balls-access.log combined
+</VirtualHost>

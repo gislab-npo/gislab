@@ -1,0 +1,8 @@
+Install balls Python module:
+===================================
+$ python setup.py install
+
+
+Create Django project:
+======================
+$ django-admin.py startproject --template=balls/conf/project_template/ <project name> [<project directory>]

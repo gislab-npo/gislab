@@ -1,0 +1,6 @@
+Balls is Django application for storing and retrieving text data.
+
+Requests:
+=========
+* POST: / - Saves raw text data of the POST request and returns ID of created ball. MIME type is taken from request's CONTENT_TYPE header.
+* GET:/?ID=(ball ID) - Returns text of requested ball.
