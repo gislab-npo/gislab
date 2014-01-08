@@ -642,6 +642,30 @@ def page(c):
 				DrawAction.superclass.constructor.apply(this, arguments);
 			},
 			attributes_window: null,
+			snap_control: null,
+
+			enableSnapping: function() {
+				this.disableSnapping();
+				// configure the snapping agent
+				this.snap_control = new OpenLayers.Control.Snapping({
+					layer: this.control.layer,
+					defaults: {
+						edge: false
+					},
+					targets: [points_layer, lines_layer, polygons_layer],
+					greedy: false
+				});
+				this.snap_control.activate();
+			},
+
+			disableSnapping: function() {
+				if (this.snap_control) {
+					this.snap_control.deactivate();
+					this.snap_control.destroy()
+					this.snap_control = null;
+				}
+			},
+
 			showAttributesTable: function() {
 				var store = new GeoExt.data.FeatureStore({
 					layer: this.control.layer,
@@ -717,8 +741,10 @@ def page(c):
 
 			toggleHandler: function(action, toggled) {
 				if (toggled) {
+					this.enableSnapping();
 					this.showAttributesTable();
 				} else {
+					this.disableSnapping();
 					if (this.control.layer.selectedFeatures.length > 0) {
 						new OpenLayers.Control.SelectFeature(this.control.layer).unselectAll();
 					}
