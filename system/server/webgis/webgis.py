@@ -13,6 +13,9 @@ from optparse import OptionParser
 from owslib.wms import WebMapService
 from wsgiproxy.app import WSGIProxyApp
 
+# otherwise handling proxy requests containing unicode characters fails
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 DEBUG=True
 COMMAND_LINE_MODE=False
@@ -158,8 +161,16 @@ def page(c):
                 background-image: url('%(static_url_prefix)sstatic/images/toolbar/ruler_square.png')!important;
                 background: no-repeat;
             }
-            .draw-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/draw.png')!important;
+            .draw-point-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/point.png')!important;
+                background: no-repeat;
+            }
+            .draw-line-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/line.png')!important;
+                background: no-repeat;
+            }
+            .draw-polygon-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/polygon.png')!important;
                 background: no-repeat;
             }
             .export-icon {
@@ -189,6 +200,7 @@ def page(c):
 		var y = %(center_coord2)s;
 		var zoom = %(zoom)s;
 		var layer = null;
+		var vector_data_balls = null;
 
 	""" % c
 
@@ -221,47 +233,52 @@ def page(c):
 	html += "\tmaplayers.push(overlays_group_layer);\n"
 
 	html += """
-		var points_layer = new OpenLayers.Layer.Vector('POINTS', {
+		var vector_style = {
 			styleMap: new OpenLayers.StyleMap({
 				'default':{
 					label: '${label}',
 					fontSize: '12px',
 					fontWeight: 'bold',
 					labelAlign: 'lb',
-					strokeColor: '#000000',
+					strokeColor: '#AA0000',
 					strokeOpacity: 1,
-					strokeWidth: 0.5,
+					strokeWidth: 1.5,
 					fillColor: '#FF0000',
-					fillOpacity: 0.8,
+					fillOpacity: 0.60,
 					pointRadius: 6,
 					labelYOffset: '6',
 					labelXOffset: '6',
-					fontColor: 'red',
+					fontColor: '#AA0000',
 					labelOutlineColor: 'white',
-					labelOutlineWidth: 2,
-					labelOutlineOpacity: 0.4,
+					labelOutlineWidth: 2.5,
+					labelOutlineOpacity: 0.5,
 				},
 				'select': {
 					label: '${label}',
 					fontSize: '12px',
 					fontWeight: 'bold',
 					labelAlign: 'lb',
-					strokeColor: '#0000FF',
+					strokeColor: '#0000AA',
 					strokeOpacity: 1,
-					strokeWidth: 0.5,
+					strokeWidth: 1.5,
 					fillColor: '#0000FF',
 					fillOpacity: 0.6,
 					pointRadius: 6,
 					labelYOffset: '6',
 					labelXOffset: '6',
-					fontColor: 'blue',
+					fontColor: '#0000AA',
 					labelOutlineColor: 'white',
-					labelOutlineWidth: 2,
-					labelOutlineOpacity: 0.4,
+					labelOutlineWidth: 2.5,
+					labelOutlineOpacity: 0.5,
 				}
 			})
-		});
+		};
+		var points_layer = new OpenLayers.Layer.Vector('POINTS', vector_style)
+		var lines_layer = new OpenLayers.Layer.Vector('LINES', vector_style)
+		var polygons_layer = new OpenLayers.Layer.Vector('POLYGON', vector_style)
 		maplayers.push(points_layer);
+		maplayers.push(lines_layer);
+		maplayers.push(polygons_layer);
 	"""
 	# map panel
 	if c['osm']:
@@ -616,35 +633,18 @@ def page(c):
 		mappanel.getTopToolbar().add(length_button, area_button);
 	""" % c
 
-	# Draw points action
+	# Base class for drawing actions
 	html += """
-		ctrl = new OpenLayers.Control.DrawFeature(
-			points_layer,
-			OpenLayers.Handler.Point,
-			{
-				type: OpenLayers.Control.TYPE_TOOL,
-				featureAdded: function(feature) {
-					feature.attributes = {
-						label: ''
-					};
-					// update feature on map
-					points_layer.drawFeature(feature);
-				}
-			}
-		);
-		action = new GeoExt.Action({
-			control: ctrl,
-			map: mappanel.map,
-			cls: 'x-btn-icon',
-			iconCls: 'draw-icon',
-			enableToggle: true,
-			toggleGroup: 'tools',
-			tooltip: 'Draw points',
-
+		DrawAction = Ext.extend(GeoExt.Action, {
+			dialogTitle: '',
+			constructor: function(config) {
+				this.dialogTitle = config.dialogTitle;
+				DrawAction.superclass.constructor.apply(this, arguments);
+			},
 			attributes_window: null,
 			showAttributesTable: function() {
 				var store = new GeoExt.data.FeatureStore({
-					layer: points_layer,
+					layer: this.control.layer,
 					fields: [{name: 'label', type: 'string'}],
 				});
 				var cm = new Ext.grid.ColumnModel({
@@ -685,7 +685,7 @@ def page(c):
 						{
 							xtype: 'tbbutton',
 							text: 'Delete selected',
-							tooltip: 'Delete selected points',
+							tooltip: 'Delete selected',
 							handler: function() {
 								var selected_features = store.layer.selectedFeatures;
 								if (selected_features.length > 0) {
@@ -697,7 +697,7 @@ def page(c):
 						 {
 							xtype: 'tbbutton',
 							text: 'Delete all',
-							tooltip: 'Delete selected points',
+							tooltip: 'Delete selected',
 							handler: function() {
 								store.layer.destroyFeatures();
 							}
@@ -705,7 +705,7 @@ def page(c):
 					]
 				});
 				this.attribs_window = new Ext.Window({
-					title: 'Points',
+					title: this.dialogTitle,
 					width: 300,
 					height: 400,
 					layout: 'fit',
@@ -717,15 +717,110 @@ def page(c):
 
 			toggleHandler: function(action, toggled) {
 				if (toggled) {
-					action.showAttributesTable();
+					this.showAttributesTable();
 				} else {
-					if (action.baseAction.control.layer.selectedFeatures.length > 0) {
-						new OpenLayers.Control.SelectFeature(action.baseAction.control.layer).unselectAll();
+					if (this.control.layer.selectedFeatures.length > 0) {
+						new OpenLayers.Control.SelectFeature(this.control.layer).unselectAll();
 					}
-					action.attribs_window.destroy();
-					action.attribs_window = null;
+					this.attribs_window.destroy();
+					this.attribs_window = null;
 				}
 			},
+		});
+	"""
+	# Draw points action
+	html += """
+		ctrl = new OpenLayers.Control.DrawFeature(
+			points_layer,
+			OpenLayers.Handler.Point,
+			{
+				type: OpenLayers.Control.TYPE_TOOL,
+				featureAdded: function(feature) {
+					feature.attributes = {
+						label: ''
+					};
+					// update feature on map
+					points_layer.drawFeature(feature);
+				}
+			}
+		);
+		action = new DrawAction({
+			control: ctrl,
+			map: mappanel.map,
+			dialogTitle: 'Points',
+			cls: 'x-btn-icon',
+			iconCls: 'draw-point-icon',
+			enableToggle: true,
+			toggleGroup: 'tools',
+			tooltip: 'Draw points',
+			scope: this,
+			toggleHandler: function(action, toggled) {
+				action.baseAction.toggleHandler(action, toggled);
+			}
+		});
+		mappanel.getTopToolbar().add('-', action);
+	"""
+	# Draw lines action
+	html += """
+		ctrl = new OpenLayers.Control.DrawFeature(
+			lines_layer,
+			OpenLayers.Handler.Path,
+			{
+				type: OpenLayers.Control.TYPE_TOOL,
+				featureAdded: function(feature) {
+					feature.attributes = {
+						label: ''
+					};
+					// update feature on map
+					lines_layer.drawFeature(feature);
+				}
+			}
+		);
+		action = new DrawAction({
+			control: ctrl,
+			map: mappanel.map,
+			dialogTitle: 'Lines',
+			cls: 'x-btn-icon',
+			iconCls: 'draw-line-icon',
+			enableToggle: true,
+			toggleGroup: 'tools',
+			tooltip: 'Draw lines',
+			scope: this,
+			toggleHandler: function(action, toggled) {
+				action.baseAction.toggleHandler(action, toggled);
+			}
+		});
+		mappanel.getTopToolbar().add('-', action);
+	"""
+	# Draw polygons action
+	html += """
+		ctrl = new OpenLayers.Control.DrawFeature(
+			polygons_layer,
+			OpenLayers.Handler.Polygon,
+			{
+				type: OpenLayers.Control.TYPE_TOOL,
+				featureAdded: function(feature) {
+					feature.attributes = {
+						label: ''
+					};
+					// update feature on map
+					polygons_layer.drawFeature(feature);
+				}
+			}
+		);
+		action = new DrawAction({
+			control: ctrl,
+			map: mappanel.map,
+			dialogTitle: 'Polygons',
+			cls: 'x-btn-icon',
+			iconCls: 'draw-polygon-icon',
+			enableToggle: true,
+			toggleGroup: 'tools',
+			tooltip: 'Draw polygons',
+			scope: this,
+			toggleHandler: function(action, toggled) {
+				action.baseAction.toggleHandler(action, toggled);
+			}
 		});
 		mappanel.getTopToolbar().add('-', action);
 	"""
@@ -737,27 +832,36 @@ def page(c):
 			iconCls: 'export-icon',
 			tooltip: 'Export to GeoJSON',
 			handler: function() {
-				var features_layer = mappanel.map.getLayersByName("POINTS")[0];
-				var geojson = new OpenLayers.Format.GeoJSON().write(features_layer.features, true);
-				// add projection info
-				if (features_layer.features.length > 0 && features_layer.projection) {
-					var geojson_obj = JSON.parse(geojson);
-					geojson_obj.crs = new OpenLayers.Format.GeoJSON().createCRSObject(features_layer.features[0]);
-					geojson = JSON.stringify(geojson_obj, null, '    ');
-				}
-				var window = new Ext.Window({
-					title: 'GeoJSON',
-					width: 500,
-					height: 500,
-					layout: 'fit',
-					items: [{
-						xtype: 'textarea',
-						readOnly: true,
-						autoScroll: true,
-						value: geojson
-					}],
+				var features_layers = [points_layer, lines_layer, polygons_layer]; //mappanel.map.getLayersByName(points_layer.name)[0];
+				var features = [];
+				Ext.each(features_layers, function(layer) {
+					features = features.concat(layer.features);
 				});
-				window.show();
+				if (features.length > 0) {
+					var geojson = new OpenLayers.Format.GeoJSON().write(features, true);
+					// add projection info
+					if (mappanel.map.projection) {
+						var geojson_obj = JSON.parse(geojson);
+						geojson_obj.crs = new OpenLayers.Format.GeoJSON().createCRSObject(features[0]);
+						geojson = JSON.stringify(geojson_obj, null, '    ');
+					}
+					Ext.Ajax.request({
+						method: 'POST',
+						url: '/proxy/?url=' + encodeURIComponent('http://balls.gis.lab/'),
+						jsonData: geojson,
+						headers: { 'Content-Type': 'application/json; charset=utf-8' },
+						success: function(response) {
+							vector_data_balls = response.responseText;
+							fire_map_state_changed_event();
+							window.location.assign('http://balls.gis.lab/?ID='+response.responseText);
+						},
+						failure: function(response, opts) {
+							Ext.MessageBox.alert("Error", "Failed to export geometry data.");
+						}
+					});
+				} else {
+					Ext.MessageBox.alert("Warning", "There is no geometry data to be exported.");
+				}
 			}
 		});
 		mappanel.getTopToolbar().add(action);
@@ -822,8 +926,9 @@ def page(c):
 			border: false,
 			ascending: false,
 			autoScroll: true,
-			filter: function(record){
-				if (record.data.title == 'POINTS') {
+			filter: function(record) {
+				var title = record.data.title;
+				if (title == points_layer.name || title == lines_layer.name || title == polygons_layer.name) {
 					return false;
 				}
 				return true;
@@ -949,17 +1054,37 @@ def page(c):
 	""" % c
 
 	# Insert points from GET parameter
-	if 'pois' in c:
-		for coord1, coord2, text in c['pois']:
+	if 'balls' in c:
+		html += """
+			vector_data_balls = '{0}';
+		""".format(','.join(c['balls']))
+		for ball in c['balls']:
 			html += """
-				// create a point feature
-				var point = new OpenLayers.Geometry.Point({0}, {1});
-				var poi_feature = new OpenLayers.Feature.Vector(point);
-				poi_feature.attributes = {{
-					label: "{2}"
-				}};
-				points_layer.addFeatures(poi_feature);
-			""".format(coord1, coord2, text)
+				Ext.Ajax.request({{
+					method: 'GET',
+					url: '/proxy/?url=' + encodeURIComponent('http://balls.gis.lab/?ID={0}'),
+					success: function(response) {{
+						var features = new OpenLayers.Format.GeoJSON().read(response.responseText);
+						var points = [];
+						var lines = [];
+						var polygons = [];
+						Ext.each(features, function(f) {{
+							if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point')
+								points.push(f);
+							if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.LineString')
+								lines.push(f);
+							if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.Polygon')
+								polygons.push(f);
+						}});
+						points_layer.addFeatures(points);
+						lines_layer.addFeatures(lines);
+						polygons_layer.addFeatures(polygons);
+					}},
+					failure: function(response, opts) {{
+						Ext.MessageBox.alert("Error", "Failed to fetch vector data (ball: {0})");
+					}}
+				}});
+			""".format(ball)
 
 	# Permalink
 	html += """
@@ -982,10 +1107,6 @@ def page(c):
 				checkchange: fire_map_state_changed_event
 			});
 		});
-		points_layer.events.register('featureadded', points_layer, fire_map_state_changed_event);
-		points_layer.events.register('featureremoved', points_layer, fire_map_state_changed_event);
-		points_layer.events.register('featuresremoved', points_layer, fire_map_state_changed_event);
-		points_layer.events.register('featuremodified', points_layer, fire_map_state_changed_event);
 
 		permalink_provider.on({
 			statechange: function(provider, name, value) {
@@ -1013,12 +1134,8 @@ def page(c):
 				if (visible_layers.length < overlays_node.childNodes.length) {
 					parameters.VISIBLE = visible_layers.join(',');
 				}
-				if (points_layer.features.length > 0) {
-					var points_data = [];
-					Ext.each(points_layer.features, function(f) {
-						points_data.push([f.geometry.x,f.geometry.y, f.attributes.label].join(','));
-					});
-					parameters.POINTS = points_data.join('|');
+				if (vector_data_balls) {
+					parameters.BALLS = vector_data_balls;
 				}
 				var link = [location.protocol, '//', location.host, location.pathname, '?'].join('');
 				var qs = [];
@@ -1053,12 +1170,23 @@ def application(environ, start_response):
 	"""Return server response."""
 
 	if environ["PATH_INFO"].startswith("/proxy/"):
-		url = environ['QUERY_STRING'].replace("url=", "")
-		url = urllib.unquote(url)
+		url = None
+		#extra_query_params = []
+		for name, value in parse_qsl(environ['QUERY_STRING']):
+			if name.lower() == "url":
+				url = urllib.unquote(value)
+				break
+		#	else:
+		#		extra_query_params.append((name, value))
+		if url is None:
+			raise Exception("Invalid proxy request: missing URL parameter")
 		req = webob.Request.blank(url)
-		req.environ["REMOTE_ADDR"] = ""
-		resp = req.get_response(WSGIProxyApp(req.host_url))
-		return resp(req.environ, start_response)
+		environ['QUERY_STRING'] = req.query_string #urllib.urlencode(extra_query_params)
+		environ['PATH_INFO'] = req.path_info
+		host_url = req.host_url
+		proxy_req = webob.request.Request(environ)
+		resp = proxy_req.get_response(WSGIProxyApp(host_url))
+		return resp(environ, start_response)
 
 	OWS_URL="http://server.gis.lab/cgi-bin/qgis_mapserv.fcgi" #  TODO: do not hardcode this
 	DEFAULT_SCALES="10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500"
@@ -1130,12 +1258,9 @@ def application(environ, start_response):
 	else:
 		c['osm'] = False
 
-	if qs.get('POINTS'):
-		points_data = qs.get('POINTS')
-		c['pois'] = []
-		for point_data in points_data.split("|"):
-			coord1, coord2, text = point_data.split(",")
-			c['pois'].append((coord1, coord2, text))
+	if qs.get('BALLS'):
+		points_data = qs.get('BALLS')
+		c['balls'] = qs.get('BALLS').split(',')
 
 	if qs.get('VISIBLE'):
 		c['visible_layers'] = [layer_name.strip() for layer_name in qs.get('VISIBLE').split(",")]

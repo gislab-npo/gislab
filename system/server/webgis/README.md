@@ -37,4 +37,4 @@ Supported GET parameters:
  * OSM: determines if OpenStreetMap base layer will be added to map. Works only in projection EPSG:3857. Example: true. Default is false.
  * LAYERS: list of layers to display in map. Example: border,lakes,rivers. Default is auto-detected list of layers from project.
  * VISIBLE: list of layers to set as visible on application start. Example: border. Default: all layers
- * POINTS: list of vector points to draw on map. Format: <coordinate1>,<coordinate2>,<label>|<coordinate1>,<coordinate2>,<label>|... Example: 1234,5678,nice place|2345,6789,another nice place
+ * BALLS: list of balls identifiers containing geometry data in GeoJSON format. Format: <BALL_ID>,<BALL_ID>,...
