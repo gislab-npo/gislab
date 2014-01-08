@@ -879,7 +879,9 @@ def page(c):
 						success: function(response) {
 							vector_data_balls = response.responseText;
 							fire_map_state_changed_event();
-							window.location.assign('http://balls.gis.lab/?ID='+response.responseText);
+							Ext.get('geojson-link').dom.href = 'http://balls.gis.lab/?ID='+response.responseText;
+							Ext.get('geojson-link').update('Download #'+response.responseText);
+							//window.location.assign('http://balls.gis.lab/?ID='+response.responseText);
 						},
 						failure: function(response, opts) {
 							Ext.MessageBox.alert("Error", "Failed to export geometry data.");
@@ -891,6 +893,12 @@ def page(c):
 			}
 		});
 		mappanel.getTopToolbar().add(action);
+		var geojson_link = {
+			id: 'geojson-link',
+			xtype: 'box',
+			autoEl: {tag: 'a', href: '#', html: ''}
+		}
+		mappanel.getTopToolbar().add(geojson_link);
 	"""
 
 	# tree node
