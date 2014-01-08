@@ -816,7 +816,7 @@ def page(c):
 				action.baseAction.toggleHandler(action, toggled);
 			}
 		});
-		mappanel.getTopToolbar().add('-', action);
+		mappanel.getTopToolbar().add(action);
 	"""
 	# Draw polygons action
 	html += """
@@ -848,7 +848,7 @@ def page(c):
 				action.baseAction.toggleHandler(action, toggled);
 			}
 		});
-		mappanel.getTopToolbar().add('-', action);
+		mappanel.getTopToolbar().add(action);
 	"""
 
 	# Export to GeoJSON action
@@ -858,7 +858,7 @@ def page(c):
 			iconCls: 'export-icon',
 			tooltip: 'Export to GeoJSON',
 			handler: function() {
-				var features_layers = [points_layer, lines_layer, polygons_layer]; //mappanel.map.getLayersByName(points_layer.name)[0];
+				var features_layers = [points_layer, lines_layer, polygons_layer];
 				var features = [];
 				Ext.each(features_layers, function(layer) {
 					features = features.concat(layer.features);
@@ -892,13 +892,12 @@ def page(c):
 				}
 			}
 		});
-		mappanel.getTopToolbar().add(action);
 		var geojson_link = {
 			id: 'geojson-link',
 			xtype: 'box',
 			autoEl: {tag: 'a', href: '#', html: ''}
 		}
-		mappanel.getTopToolbar().add(geojson_link);
+		mappanel.getTopToolbar().add('-', action, geojson_link);
 	"""
 
 	# tree node
