@@ -241,7 +241,7 @@ service isc-dhcp-server restart
 
 
 #
-### IP forwarding ###
+### IP FORWARDING ###
 #
 # set IP forwarding for client machines and call it from rc.local to run it after server restart
 cat << EOF > /usr/local/bin/enable-ip-forward
@@ -262,7 +262,7 @@ echo "exit 0" >> /etc/rc.local
 
 
 #
-### NFS Share ###
+### NFS SHARE ###
 #
 mkdir -p /storage/repository    # readable for all, writable only for server superuser
 mkdir -p /storage/share         # readable for all, writable for file owners
@@ -286,6 +286,7 @@ mount /mnt  # bind mount to keep the same paths on server as on client
 
 service nfs-kernel-server restart
 service idmapd restart
+
 
 
 
@@ -330,7 +331,7 @@ service ircd-hybrid restart
 
 
 #
-#### PostgreSQL ###
+#### POSTGRESQL ###
 #
 # allow network connections and local connection without password
 sed -i "s/^#listen_addresses.*/listen_addresses = '*'/" /etc/postgresql/9.1/main/postgresql.conf
@@ -372,6 +373,7 @@ sudo su - postgres -c "psql -c \"GRANT CONNECT ON DATABASE gislab TO labusers;\"
 ### DATA ###
 #
 cp -a /vagrant/user/data /storage/repository/
+
 
 
 
@@ -427,8 +429,10 @@ a2ensite webgis
 service apache2 reload
 
 
+
+
 #
-### balls ###
+### BALLS ###
 #
 
 BALLS_PASSWORD=$(pwgen -1 -n 8)
@@ -464,6 +468,9 @@ cp -a /vagrant/system/server/gislab-balls/conf/balls.apache /etc/apache2/sites-a
 
 a2ensite balls.apache
 service apache2 reload
+
+
+
 
 #
 ### CLIENT INSTALLATION ###
