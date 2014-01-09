@@ -443,7 +443,7 @@ sudo su - postgres -c "psql -c \"ALTER ROLE balls WITH PASSWORD '${BALLS_PASSWOR
 virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/balls
 source /usr/local/python-virtualenvs/balls/bin/activate
 pip install -r /vagrant/system/server/gislab-balls/requirements.txt
-sudo python /vagrant/system/server/gislab-balls/setup.py install
+python /vagrant/system/server/gislab-balls/setup.py install
 
 mkdir -p /var/www/balls
 django-admin.py startproject --template=/vagrant/system/server/gislab-balls/balls/conf/project_template/ djproject /var/www/balls
@@ -464,9 +464,9 @@ EOF
 python /var/www/balls/manage.py syncdb --noinput
 deactivate
 
-cp -a /vagrant/system/server/gislab-balls/conf/balls.apache /etc/apache2/sites-available/
+cp -a /vagrant/system/server/gislab-balls/conf/balls.apache /etc/apache2/sites-available/balls
 
-a2ensite balls.apache
+a2ensite balls
 service apache2 reload
 
 
