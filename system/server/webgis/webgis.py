@@ -856,7 +856,7 @@ def page(c):
 		var action = new Ext.Action({
 			cls: 'x-btn-icon',
 			iconCls: 'export-icon',
-			tooltip: 'Save',
+			tooltip: 'Save drawing',
 			handler: function() {
 				var features_layers = [points_layer, lines_layer, polygons_layer];
 				var features = [];
