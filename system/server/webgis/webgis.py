@@ -851,12 +851,12 @@ def page(c):
 		mappanel.getTopToolbar().add(action);
 	"""
 
-	# Export to GeoJSON action
+	# Save ball
 	html += """
 		var action = new Ext.Action({
 			cls: 'x-btn-icon',
 			iconCls: 'export-icon',
-			tooltip: 'Export to GeoJSON',
+			tooltip: 'Save',
 			handler: function() {
 				var features_layers = [points_layer, lines_layer, polygons_layer];
 				var features = [];
@@ -884,11 +884,11 @@ def page(c):
 							//window.location.assign('http://balls.gis.lab/?ID='+response.responseText);
 						},
 						failure: function(response, opts) {
-							Ext.MessageBox.alert("Error", "Failed to export geometry data.");
+							Ext.MessageBox.alert("Error", "Failed to save data.");
 						}
 					});
 				} else {
-					Ext.MessageBox.alert("Warning", "There is no geometry data to be exported.");
+					Ext.MessageBox.alert("Warning", "There is no data to be saved.");
 				}
 			}
 		});
