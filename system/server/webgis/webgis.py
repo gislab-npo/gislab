@@ -1233,9 +1233,9 @@ def application(environ, start_response):
 		getcapabilities_url = "{0}/?map={1}&REQUEST=GetCapabilities".format(OWS_URL, projectfile)
 
 		wms_service = WebMapService(getcapabilities_url, version="1.1.1") # read WMS GetCapabilities
-	except:
+	except Exception, e:
 		start_response('404 NOT FOUND', [('content-type', 'text/plain')])
-		return ('Project file does not exist or it is not accessible.',)
+		return ("Can't load project. Error: {0}".format(str(e)),)
 
 	root_layer = None
 	for layer in wms_service.contents.itervalues():
