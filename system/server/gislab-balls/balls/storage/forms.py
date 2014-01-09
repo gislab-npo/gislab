@@ -1,6 +1,6 @@
 from django import forms
 
-from balls.balls.models import Ball
+from balls.storage.models import Ball
 
 
 class GetBallForm(forms.Form):

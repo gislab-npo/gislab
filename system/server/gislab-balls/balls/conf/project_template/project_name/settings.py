@@ -114,7 +114,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-	'balls.balls',
+	'balls.storage',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'

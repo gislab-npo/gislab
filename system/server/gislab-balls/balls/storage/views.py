@@ -2,8 +2,8 @@ from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 
-from balls.balls import forms
-from balls.balls.models import Ball
+from balls.storage import forms
+from balls.storage.models import Ball
 
 
 def _get_file_extension(mime_type):
