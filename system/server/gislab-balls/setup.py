@@ -38,13 +38,14 @@ for dirpath, dirnames, filenames in os.walk(package_root_dir):
 			data_files.append(os.path.join(prefix, f))
 
 # setup
-setup(name='balls',
+setup(name='gislab-balls',
 	version=".".join(map(str, __import__('balls').VERSION)),
 	description='storege place for text data',
 	author='Marcel Dancak',
 	author_email='marcel.dancak@gista.sk',
 	url='http://gista.sk/',
 	long_description=file('README','rb').read(),
+	package_dir={'gislab-balls': '.'},
 	packages=packages,
 	package_data={'balls': data_files},
 	classifiers=classifiers
