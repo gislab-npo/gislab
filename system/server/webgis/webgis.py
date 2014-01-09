@@ -875,7 +875,7 @@ def page(c):
 						method: 'POST',
 						url: '/proxy/?url=' + encodeURIComponent('http://balls.gis.lab/'),
 						jsonData: geojson,
-						headers: { 'Content-Type': 'application/json; charset=utf-8' },
+						headers: { 'Content-Type': 'application/geojson; charset=utf-8' },
 						success: function(response) {
 							vector_data_balls = response.responseText;
 							fire_map_state_changed_event();
