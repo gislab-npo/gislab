@@ -176,6 +176,12 @@ EOF
 
 service bind9 restart
 
+# use our DNS server
+cat << EOF >> /etc/resolvconf/resolv.conf.d/head
+nameserver 127.0.0.1
+EOF
+resolvconf -u
+
 
 
 
@@ -229,7 +235,14 @@ cat << EOF > /etc/default/isc-dhcp-server
 INTERFACES="eth1"
 EOF
 
+service isc-dhcp-server restart
 
+
+
+
+#
+### IP forwarding ###
+#
 # set IP forwarding for client machines and call it from rc.local to run it after server restart
 cat << EOF > /usr/local/bin/enable-ip-forward
 #!/bin/bash
@@ -244,8 +257,6 @@ chmod +x /usr/local/bin/enable-ip-forward
 sed -i "s/exit 0//" /etc/rc.local
 echo "/usr/local/bin/enable-ip-forward" >> /etc/rc.local
 echo "exit 0" >> /etc/rc.local
-
-service isc-dhcp-server restart
 
 
 
