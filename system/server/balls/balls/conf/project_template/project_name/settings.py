@@ -20,6 +20,13 @@ DATABASES = {
 	}
 }
 
+# Dictionary of <MIME Type>: <File extension> pairs
+FILE_EXTENSIONS_TABLE = {
+	"application/json": "json",
+	"application/geojson": "geojson",
+}
+
+
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
@@ -93,12 +100,6 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
 	'django.middleware.common.CommonMiddleware',
-	'django.contrib.sessions.middleware.SessionMiddleware',
-	'django.middleware.csrf.CsrfViewMiddleware',
-	'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'django.contrib.messages.middleware.MessageMiddleware',
-	# Uncomment the next line for simple clickjacking protection:
-	# 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = '{{ project_name }}.urls'
@@ -113,13 +114,6 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-	'django.contrib.auth',
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.sites',
-	'django.contrib.messages',
-	'django.contrib.staticfiles',
-
 	'balls.balls',
 )
 
