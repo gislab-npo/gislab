@@ -428,7 +428,8 @@ sudo su - postgres -c "psql -c \"ALTER ROLE balls WITH PASSWORD '${BALLS_PASSWOR
 virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/balls
 source /usr/local/python-virtualenvs/balls/bin/activate
 pip install -r /vagrant/system/server/balls/requirements.txt
-pip install -e /vagrant/system/server/balls/
+#pip install -e /vagrant/system/server/balls/
+sudo python /vagrant/system/server/balls/setup.py install
 
 mkdir -p /var/www/balls
 django-admin.py startproject --template=/vagrant/system/server/balls/balls/conf/project_template/ djproject /var/www/balls
@@ -449,9 +450,9 @@ EOF
 python /var/www/balls/manage.py syncdb --noinput
 deactivate
 
-cp -a /vagrant/system/server/balls/conf/balls.apache/balls /etc/apache2/sites-available/
+cp -a /vagrant/system/server/balls/conf/balls.apache /etc/apache2/sites-available/
 
-a2ensite balls
+a2ensite balls.apache
 service apache2 reload
 
 #
