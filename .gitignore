@@ -2,3 +2,4 @@
 barrel
 install.log
 config-user.cfg
+*.pyc
