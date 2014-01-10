@@ -5,7 +5,7 @@ Author: Ivan Mincik, ivan.mincik@gmail.com
 Author: Marcel Dancak, marcel.dancak@gista.sk
 """
 
-import sys
+import os, sys
 import webob
 import urllib
 from cgi import parse_qsl
@@ -1221,7 +1221,8 @@ def application(environ, start_response):
 		resp = proxy_req.get_response(WSGIProxyApp(host_url))
 		return resp(environ, start_response)
 
-	OWS_URL="http://server.gis.lab/cgi-bin/qgis_mapserv.fcgi" #  TODO: do not hardcode this
+	OWS_URL=environ['WEBGIS_OWS_URL']
+	PROJECT_ROOT=environ['WEBGIS_PROJECT_ROOT']
 	DEFAULT_SCALES="10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500"
 	PROJECTION_UNITS_DD=('EPSG:4326',)
 
@@ -1229,7 +1230,7 @@ def application(environ, start_response):
 	qs = dict((k.upper(), v) for k, v in qs.iteritems()) # change GET parameters names to uppercase
 
 	try:
-		projectfile = '/storage/share/' + qs.get('PROJECT') # TODO: use Apache rewrite
+		projectfile = os.path.join(PROJECT_ROOT, qs.get('PROJECT'))
 		getcapabilities_url = "{0}/?map={1}&REQUEST=GetCapabilities".format(OWS_URL, projectfile)
 
 		wms_service = WebMapService(getcapabilities_url, version="1.1.1") # read WMS GetCapabilities

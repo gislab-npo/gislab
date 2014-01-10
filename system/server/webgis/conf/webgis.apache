@@ -27,6 +27,9 @@
   WSGIProcessGroup webgis
   WSGIScriptAlias / /var/www/webgis/webgis.py
 
+  SetEnv WEBGIS_OWS_URL http://server.gis.lab/cgi-bin/qgis_mapserv.fcgi
+  Setenv WEBGIS_PROJECT_ROOT /storage/share
+
   ErrorLog /var/log/apache2/webgis-error.log
   CustomLog /var/log/apache2/webgis-access.log combined
 </VirtualHost>
