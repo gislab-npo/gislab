@@ -244,7 +244,7 @@ def page(c):
 					strokeOpacity: 1,
 					strokeWidth: 1.5,
 					fillColor: '#FF0000',
-					fillOpacity: 0.60,
+					fillOpacity: 0.5,
 					pointRadius: 6,
 					labelYOffset: '6',
 					labelXOffset: '6',
@@ -258,24 +258,32 @@ def page(c):
 					fontSize: '12px',
 					fontWeight: 'bold',
 					labelAlign: 'lb',
-					strokeColor: '#0000AA',
+					strokeColor: '#66CCCC',
 					strokeOpacity: 1,
 					strokeWidth: 1.5,
-					fillColor: '#0000FF',
-					fillOpacity: 0.6,
+					fillColor: '#66CCCC',
+					fillOpacity: 0.3,
 					pointRadius: 6,
 					labelYOffset: '6',
 					labelXOffset: '6',
-					fontColor: '#0000AA',
+					fontColor: '#306060',
 					labelOutlineColor: 'white',
 					labelOutlineWidth: 2.5,
 					labelOutlineOpacity: 0.5,
+				},
+				'modify': {
+					label: '',
+					fillColor: '#66CCCC',
+					fillOpacity: 0.3,
+					strokeColor: '#66CCCC',
+					strokeOpacity: 1,
+					strokeWidth: 2,
 				}
 			})
 		};
-		var points_layer = new OpenLayers.Layer.Vector('POINTS', vector_style)
-		var lines_layer = new OpenLayers.Layer.Vector('LINES', vector_style)
-		var polygons_layer = new OpenLayers.Layer.Vector('POLYGON', vector_style)
+		var points_layer = new OpenLayers.Layer.Vector('POINTS', vector_style);
+		var lines_layer = new OpenLayers.Layer.Vector('LINES', vector_style);
+		var polygons_layer = new OpenLayers.Layer.Vector('POLYGON', vector_style);
 		maplayers.push(points_layer);
 		maplayers.push(lines_layer);
 		maplayers.push(polygons_layer);
@@ -643,6 +651,26 @@ def page(c):
 			},
 			attributes_window: null,
 			snap_control: null,
+			modify_control: null,
+
+			enableFeatureModify: function() {
+				function onFeatureSelected(evt) {
+					var feature = evt.feature;
+					if (this.modify_control) {
+						this.modify_control.deactivate();
+						this.modify_control.destroy();
+					}
+					this.modify_control = new OpenLayers.Control.ModifyFeature(this.control.layer, {
+						standalone: true,
+						vertexRenderIntent: 'modify',
+						mode: OpenLayers.Control.ModifyFeature.RESHAPE
+					});
+					this.modify_control.setMap(this.control.map);
+					this.modify_control.activate();
+					this.modify_control.selectFeature(feature);
+				}
+				this.control.layer.events.register("featureselected", this, onFeatureSelected);
+			},
 
 			enableSnapping: function() {
 				this.disableSnapping();
@@ -742,9 +770,14 @@ def page(c):
 			toggleHandler: function(action, toggled) {
 				if (toggled) {
 					this.enableSnapping();
+					this.enableFeatureModify();
 					this.showAttributesTable();
 				} else {
 					this.disableSnapping();
+					if (this.modify_control) {
+						this.modify_control.deactivate();
+						this.modify_control.destroy();
+					}
 					if (this.control.layer.selectedFeatures.length > 0) {
 						new OpenLayers.Control.SelectFeature(this.control.layer).unselectAll();
 					}
@@ -856,6 +889,7 @@ def page(c):
 		var action = new Ext.Action({
 			cls: 'x-btn-icon',
 			iconCls: 'export-icon',
+			toggleGroup: 'tools',
 			tooltip: 'Save drawing',
 			handler: function() {
 				var features_layers = [points_layer, lines_layer, polygons_layer];
