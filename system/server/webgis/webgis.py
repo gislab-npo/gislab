@@ -914,7 +914,7 @@ def page(c):
 							vector_data_balls = response.responseText;
 							fire_map_state_changed_event();
 							Ext.get('geojson-link').dom.href = 'http://balls.gis.lab/?ID='+response.responseText;
-							Ext.get('geojson-link').update('Download #'+response.responseText);
+							Ext.get('geojson-link').update(response.responseText);
 							//window.location.assign('http://balls.gis.lab/?ID='+response.responseText);
 						},
 						failure: function(response, opts) {
