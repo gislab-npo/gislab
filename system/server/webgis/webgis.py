@@ -56,7 +56,13 @@ def page(c):
 
         <script type="text/javascript" src="%(static_url_prefix)sstatic/OpenLayers-2.13/OpenLayers.js"></script>
         <script type="text/javascript" src="%(static_url_prefix)sstatic/GeoExt-1.1/GeoExt.js"></script>
+	""" % c
 
+	if c['google']:
+		html += """<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>"""
+
+	# css
+	html += """
         <style type="text/css">
             #dpiDetection {
                 height: 1in; left: -100%%; position: absolute; top: -100%%; width: 1in;
@@ -208,9 +214,18 @@ def page(c):
 
 	# layers
 	html += "\t\tvar maplayers = [];\n"
-	if c['osm']:
+
+	# base layers
+	if c['google']:
+		html += """\t\tmaplayers.push(new OpenLayers.Layer.Google('Google %s',
+							{type: google.maps.MapTypeId.%s,
+							mapTypeId: '%s'}));\n
+		""" % (c['google'].title(), c['google'], c['google'])
+
+	if c['osm']: # seems that must be loaded after google layer
 		html += "\t\tmaplayers.push(new OpenLayers.Layer.OSM());\n"
 
+	# overlay layers
 	html += """
 		var overlays_group_layer = new OpenLayers.Layer.WMS(
 			"OverlaysGroup",
@@ -232,6 +247,7 @@ def page(c):
 	""" % (c['ows_url'], '", "'.join(c['layers']), 'image/png')
 	html += "\tmaplayers.push(overlays_group_layer);\n"
 
+	# drawing layers
 	html += """
 		var vector_style = {
 			styleMap: new OpenLayers.StyleMap({
@@ -288,8 +304,9 @@ def page(c):
 		maplayers.push(lines_layer);
 		maplayers.push(polygons_layer);
 	"""
+
 	# map panel
-	if c['osm']:
+	if c['osm'] or c['google']:
 		c['allOverlays'] = 'false'
 	else:
 		c['allOverlays'] = 'true'
@@ -944,7 +961,7 @@ def page(c):
 	"""
 
 	# base layers tree
-	if c['osm']:
+	if c['osm'] or c['google']:
 		html += """
 			layers_root.appendChild(new GeoExt.tree.BaseLayerContainer({
 				text: 'Base Layers',
@@ -1195,8 +1212,12 @@ def page(c):
 					LAYERS: all_layers.join(',')
 				};
 				var osm_layer = map.getLayersByClass('OpenLayers.Layer.OSM')[0];
-				if (osm_layer && osm_layer.visibility) {
+				if (osm_layer) {
 					parameters.OSM = 'true';
+				}
+				var google_layer = map.getLayersByClass('OpenLayers.Layer.Google')[0];
+				if (google_layer) {
+					parameters.GOOGLE = google_layer.mapTypeId;
 				}
 				if (visible_layers.length < overlays_node.childNodes.length) {
 					parameters.VISIBLE = visible_layers.join(',');
@@ -1325,6 +1346,11 @@ def application(environ, start_response):
 		c['osm'] = True
 	else:
 		c['osm'] = False
+
+	if qs.get('GOOGLE') and c['projection'] == 'EPSG:3857':
+		c['google'] = qs.get('GOOGLE').upper()
+	else:
+		c['google'] = False
 
 	if qs.get('BALLS'):
 		points_data = qs.get('BALLS')
