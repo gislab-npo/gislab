@@ -1316,7 +1316,8 @@ def application(environ, start_response):
 
 	if qs.get('LAYERS'):
 		layers_names = qs.get('LAYERS').split(',')
-		c['layers'] = layers_names.reverse()
+		layers_names.reverse()
+		c['layers'] = layers_names
 	else:
 		c['layers'] = [layer.name.encode('UTF-8') for layer in root_layer.layers][::-1]
 
