@@ -20,14 +20,14 @@ sys.setdefaultencoding("utf-8")
 DEBUG=True
 COMMAND_LINE_MODE=False
 
-def _get_resolutions(scales, units, resolution=96):
-	"""Helper function to compute OpenLayers resolutions."""
+def _get_tile_resolutions(scales, units, dpi=96):
+	"""Helper function to compute OpenLayers tile resolutions."""
 
-	resolution = float(resolution)
+	dpi = float(dpi)
 	factor = {'in': 1.0, 'ft': 12.0, 'mi': 63360.0,
 			'm': 39.3701, 'km': 39370.1, 'dd': 4374754.0}
 	
-	inches = 1.0 / resolution
+	inches = 1.0 / dpi
 	monitor_l = inches / factor[units]
 	
 	resolutions = []
@@ -193,12 +193,12 @@ def page(c):
 	# configuration
 	html += """function main() {
 		Ext.BLANK_IMAGE_URL = "%(static_url_prefix)sstatic/images/s.gif";
-		OpenLayers.DOTS_PER_INCH = %(resolution)s;
+		OpenLayers.DOTS_PER_INCH = %(dpi)s;
 		OpenLayers.ProxyHost = "/proxy/?url=";
 		var config = {
 			projection: "%(projection)s",
 			units: "%(units)s",
-			resolutions: [%(resolutions)s],
+			tile_resolutions: [%(tile_resolutions)s],
 			maxExtent: [%(extent)s],
 		};
 
@@ -229,7 +229,7 @@ def page(c):
 	html += """
 		var overlays_group_layer = new OpenLayers.Layer.WMS(
 			"OverlaysGroup",
-			["%s&TRANSPARENT=TRUE"],
+			["%s&DPI=%s&TRANSPARENT=TRUE"],
 			{
 				layers: ["%s"],
 				transparent: true,
@@ -244,7 +244,7 @@ def page(c):
 				// attribution: "",
 			}
 		);
-	""" % (c['ows_url'], '", "'.join(c['layers']), 'image/png')
+	""" % (c['ows_url'], c['dpi'], '", "'.join(c['layers']), 'image/png')
 	html += "\tmaplayers.push(overlays_group_layer);\n"
 
 	# drawing layers
@@ -321,7 +321,7 @@ def page(c):
 				allOverlays: %(allOverlays)s,
 				units: config.units,
 				projection: new OpenLayers.Projection(config.projection),
-				resolutions: config.resolutions,
+				resolutions: config.tile_resolutions,
 				maxExtent: new OpenLayers.Bounds(config.maxExtent[0], config.maxExtent[1],
 					config.maxExtent[2], config.maxExtent[3]),
 				controls: []
@@ -1204,7 +1204,7 @@ def page(c):
 				});
 				var parameters = {
 					PROJECT: '%(project)s',
-					DPI: '%(resolution)s',
+					DPI: '%(dpi)s',
 					SCALES: %(scales)s.join(','),
 					ZOOM: map.getZoom(),
 					CENTER: map.getCenter().toShortString(), //.replace(' ', ''),
@@ -1283,11 +1283,15 @@ def application(environ, start_response):
 	qs = dict(parse_qsl(environ['QUERY_STRING'])) # collect GET parameters
 	qs = dict((k.upper(), v) for k, v in qs.iteritems()) # change GET parameters names to uppercase
 
-	try:
-		projectfile = os.path.join(PROJECT_ROOT, qs.get('PROJECT'))
-		getcapabilities_url = "{0}/?map={1}&REQUEST=GetCapabilities".format(OWS_URL, projectfile)
+	c = {} # configuration
 
-		wms_service = WebMapService(getcapabilities_url, version="1.1.1") # read WMS GetCapabilities
+	try:
+		c['project'] = qs.get('PROJECT')
+		c['projectfile'] = os.path.join(PROJECT_ROOT, c['project'])
+		c['ows_url'] = '{0}/?map={1}'.format(OWS_URL, c['projectfile'])
+		c['ows_getcapabilities_url'] = "{0}&REQUEST=GetCapabilities".format(c['ows_url'])
+
+		wms_service = WebMapService(c['ows_getcapabilities_url'], version="1.1.1") # read WMS GetCapabilities
 	except Exception, e:
 		start_response('404 NOT FOUND', [('content-type', 'text/plain')])
 		return ("Can't load project. Error: {0}".format(str(e)),)
@@ -1301,80 +1305,68 @@ def application(environ, start_response):
 
 	extent = root_layer.boundingBox[:-1]
 
-	# set some parameters from GET request (can override parameters from WMS GetCapabilities)
-	if qs.get('DPI'):
-		resolution = qs.get('DPI')
-	else:
-		resolution = 96
+	c['osm'] = False
+	if qs.get('OSM'):
+		if qs.get('OSM').upper() == 'TRUE': c['osm'] = True
 
-	if qs.get('SCALES'):
-		scales = map(int, qs.get('SCALES').split(","))
+	if qs.get('GOOGLE'):
+		c['google'] = qs.get('GOOGLE').upper()
 	else:
-		scales = map(int, SCALES.split(","))
-
-	if qs.get('ZOOM'):
-		zoom = qs.get('ZOOM')
-	else:
-		zoom = 0
-
-	if qs.get('CENTER'):
-		center_coord1 = qs.get('CENTER').split(',')[0]
-		center_coord2 = qs.get('CENTER').split(',')[1]
-	else:
-		center_coord1 = (extent[0]+extent[2])/2.0
-		center_coord2 = (extent[1]+extent[3])/2.0
-
+		c['google'] = False
 
 	if qs.get('LAYERS'):
 		layers_names = qs.get('LAYERS').split(',')
-		layers_names.reverse()
+		c['layers'] = layers_names.reverse()
 	else:
-		layers_names = [layer.name.encode('UTF-8') for layer in root_layer.layers][::-1]
+		c['layers'] = [layer.name.encode('UTF-8') for layer in root_layer.layers][::-1]
 
-	c = {} # configuration dictionary which will be used in HTML template
-	c['project'] = qs.get('PROJECT')
-	c['projectfile'] = projectfile
-	c['projection'] = root_layer.boundingBox[-1]
+	if qs.get('VISIBLE'):
+		c['visible_layers'] = [layer_name.strip() for layer_name in qs.get('VISIBLE').split(",")]
+
+	if c['osm'] or c['google']:
+		c['projection'] = 'EPSG:3857'
+	else:
+		c['projection'] = root_layer.boundingBox[-1]
+
+	c['extent'] = ",".join(map(str, extent))
+
+	if qs.get('DPI'):
+		c['dpi'] = qs.get('DPI')
+	else:
+		c['dpi'] = 96
+
+	if qs.get('SCALES'):
+		c['scales'] = map(int, qs.get('SCALES').split(","))
+	else:
+		c['scales'] = map(int, SCALES.split(","))
+
+	if qs.get('ZOOM'):
+		c['zoom'] = qs.get('ZOOM')
+	else:
+		c['zoom'] = 0
+
+	if qs.get('CENTER'):
+		c['center_coord1'] = qs.get('CENTER').split(',')[0]
+		c['center_coord2'] = qs.get('CENTER').split(',')[1]
+	else:
+		c['center_coord1'] = (extent[0]+extent[2])/2.0
+		c['center_coord2'] = (extent[1]+extent[3])/2.0
 
 	if c['projection'] in PROJECTION_UNITS_DD: # TODO: this is very naive
 		c['units'] = 'dd'
 	else:
 		c['units'] = 'm'
 
-	if qs.get('OSM') in ('true', 'TRUE', 'True') and c['projection'] == 'EPSG:3857':
-		c['osm'] = True
-	else:
-		c['osm'] = False
-
-	if qs.get('GOOGLE') and c['projection'] == 'EPSG:3857':
-		c['google'] = qs.get('GOOGLE').upper()
-	else:
-		c['google'] = False
-
 	if qs.get('BALLS'):
 		points_data = qs.get('BALLS')
 		c['balls'] = qs.get('BALLS').split(',')
 
-	if qs.get('VISIBLE'):
-		c['visible_layers'] = [layer_name.strip() for layer_name in qs.get('VISIBLE').split(",")]
-
-	c['resolution'] = resolution
-	c['extent'] = ",".join(map(str, extent))
-	c['center_coord1'] = center_coord1
-	c['center_coord2'] = center_coord2
-	c['scales'] = scales
-	c['zoom'] = zoom
-	c['resolutions'] = ', '.join(str(r) for r in _get_resolutions(c['scales'], c['units'], c['resolution']))
+	c['tile_resolutions'] = ', '.join(str(r) for r in _get_tile_resolutions(c['scales'], c['units'], c['dpi']))
+	c['root_title'] = wms_service.identification.title.encode('UTF-8')
 	c['author'] = wms_service.provider.contact.name.encode('UTF-8') if wms_service.provider.contact.name else ''
 	c['email'] = wms_service.provider.contact.email.encode('UTF-8') if wms_service.provider.contact.email else ''
 	c['organization'] = wms_service.provider.contact.organization.encode('UTF-8') if wms_service.provider.contact.organization else ''
 	c['abstract'] = wms_service.identification.abstract.encode('UTF-8') if wms_service.identification.abstract else ''
-
-	c['root_layer'] = root_layer.name.encode('UTF-8')
-	c['root_title'] = wms_service.identification.title.encode('UTF-8')
-	c['layers'] = layers_names
-	c['ows_url'] = '{0}/?map={1}&DPI={2}'.format(OWS_URL, projectfile, resolution)
-	c['ows_get_capabilities_url'] = getcapabilities_url
 
 	has_featureinfo = False
 	for operation in wms_service.operations:
