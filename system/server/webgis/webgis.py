@@ -179,8 +179,8 @@ def page(c):
                 background-image: url('%(static_url_prefix)sstatic/images/toolbar/polygon.png')!important;
                 background: no-repeat;
             }
-            .export-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/export.png')!important;
+            .save-icon {
+                background-image: url('%(static_url_prefix)sstatic/images/toolbar/save.png')!important;
                 background: no-repeat;
             }
         </style>
@@ -905,7 +905,7 @@ def page(c):
 	html += """
 		var action = new Ext.Action({
 			cls: 'x-btn-icon',
-			iconCls: 'export-icon',
+			iconCls: 'save-icon',
 			toggleGroup: 'tools',
 			tooltip: 'Save drawing',
 			handler: function() {
