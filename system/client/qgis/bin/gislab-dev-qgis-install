@@ -14,7 +14,7 @@ if [ ! -d "/home/$USER/Projects/qgis-dev" ]; then
 	cd ~/Projects/qgis-dev/build-master
 	cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=${HOME}/apps .. 
 else
-	cd ~/Projects/qgis-dev
+	cd ~/Projects/qgis-dev/build-master
 	git pull
 fi
 
