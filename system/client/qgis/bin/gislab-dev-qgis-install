@@ -8,6 +8,11 @@ read
 
 mkdir -p ~/apps
 
+if [ ! -f ~/bin/gcc ]; then
+	ln -s /usr/bin/ccache ~/bin/gcc
+	ln -s /usr/bin/ccache ~/bin/g++
+fi
+
 if [ ! -d "/home/$USER/Projects/qgis-dev" ]; then
 	git clone https://github.com/qgis/QGIS.git ~/Projects/qgis-dev
 	mkdir -p ~/Projects/qgis-dev/build-master
