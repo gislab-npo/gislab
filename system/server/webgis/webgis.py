@@ -1277,7 +1277,7 @@ def application(environ, start_response):
 
 	OWS_URL=environ['WEBGIS_OWS_URL']
 	PROJECT_ROOT=environ['WEBGIS_PROJECT_ROOT']
-	DEFAULT_SCALES="10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500"
+	SCALES=environ['WEBGIS_SCALES']
 	PROJECTION_UNITS_DD=('EPSG:4326',)
 
 	qs = dict(parse_qsl(environ['QUERY_STRING'])) # collect GET parameters
@@ -1310,7 +1310,7 @@ def application(environ, start_response):
 	if qs.get('SCALES'):
 		scales = map(int, qs.get('SCALES').split(","))
 	else:
-		scales = map(int, DEFAULT_SCALES.split(","))
+		scales = map(int, SCALES.split(","))
 
 	if qs.get('ZOOM'):
 		zoom = qs.get('ZOOM')
