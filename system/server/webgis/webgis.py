@@ -199,7 +199,7 @@ def page(c):
 			projection: "%(projection)s",
 			units: "%(units)s",
 			tile_resolutions: [%(tile_resolutions)s],
-			maxExtent: [%(extent)s],
+			maxExtent: [%(project_extent)s],
 		};
 
 		var x = %(center_coord1)s;
@@ -1205,7 +1205,7 @@ def page(c):
 				var parameters = {
 					PROJECT: '%(project)s',
 					DPI: '%(dpi)s',
-					SCALES: %(scales)s.join(','),
+					SCALES: '%(scales)s',
 					ZOOM: map.getZoom(),
 					CENTER: map.getCenter().toShortString(), //.replace(' ', ''),
 					LAYERS: all_layers.join(',')
@@ -1303,7 +1303,6 @@ def application(environ, start_response):
 			break
 	if not root_layer: raise Exception("Root layer not found.")
 
-	extent = root_layer.boundingBox[:-1]
 
 	c['osm'] = False
 	if qs.get('OSM'):
@@ -1329,7 +1328,8 @@ def application(environ, start_response):
 	else:
 		c['projection'] = root_layer.boundingBox[-1]
 
-	c['extent'] = ",".join(map(str, extent))
+	project_extent = root_layer.boundingBox[:-1]
+	c['project_extent'] = ",".join(map(str, project_extent))
 
 	if qs.get('DPI'):
 		c['dpi'] = qs.get('DPI')
@@ -1337,9 +1337,9 @@ def application(environ, start_response):
 		c['dpi'] = 96
 
 	if qs.get('SCALES'):
-		c['scales'] = map(int, qs.get('SCALES').split(","))
+		c['scales'] = qs.get('SCALES')
 	else:
-		c['scales'] = map(int, SCALES.split(","))
+		c['scales'] = SCALES
 
 	if qs.get('ZOOM'):
 		c['zoom'] = qs.get('ZOOM')
@@ -1350,8 +1350,8 @@ def application(environ, start_response):
 		c['center_coord1'] = qs.get('CENTER').split(',')[0]
 		c['center_coord2'] = qs.get('CENTER').split(',')[1]
 	else:
-		c['center_coord1'] = (extent[0]+extent[2])/2.0
-		c['center_coord2'] = (extent[1]+extent[3])/2.0
+		c['center_coord1'] = (project_extent[0]+project_extent[2])/2.0
+		c['center_coord2'] = (project_extent[1]+project_extent[3])/2.0
 
 	if c['projection'] in PROJECTION_UNITS_DD: # TODO: this is very naive
 		c['units'] = 'dd'
@@ -1362,7 +1362,7 @@ def application(environ, start_response):
 		points_data = qs.get('BALLS')
 		c['balls'] = qs.get('BALLS').split(',')
 
-	c['tile_resolutions'] = ', '.join(str(r) for r in _get_tile_resolutions(c['scales'], c['units'], c['dpi']))
+	c['tile_resolutions'] = ', '.join(str(r) for r in _get_tile_resolutions(map(int, c['scales'].split(",")), c['units'], c['dpi']))
 	c['root_title'] = wms_service.identification.title.encode('UTF-8')
 	c['author'] = wms_service.provider.contact.name.encode('UTF-8') if wms_service.provider.contact.name else ''
 	c['email'] = wms_service.provider.contact.email.encode('UTF-8') if wms_service.provider.contact.email else ''
