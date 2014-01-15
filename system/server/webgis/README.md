@@ -30,13 +30,14 @@ http://web.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>&<PARAMETER>=<value>&<PAR
 ```
 
 Supported GET parameters:
+ * PROJECT: path to QGIS project file relative to '~/Share' directory. Example: lab1/natural-earth/central-europe.qgs
+ * OSM: determines if OpenStreetMap base layer will be added to map. Works only in projection EPSG:3857. Example: true. Default is false.
+ * GOOGLE: determines if Google base layer will be added to map. Works only in projection EPSG:3857. Possible values 
+ * LAYERS: list of layers to display in map. Example: border,lakes,rivers. Default is auto-detected list of layers from project.
+ * VISIBLE: list of layers to set as visible on application start. Example: border. Default: all layers
  * DPI: DPI resolution of map layers. Example: 120. Default: 96. 
  * SCALES: available list of scales of map. Example: 10000,5000,2500. Default: 1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500
  * ZOOM: zoom level to use on start. Example: 2. Default: 0
  * CENTER: coordinates of map center on start. Example: 1234.12,5678.56. Default is center of auto-detected extent from project.
- * OSM: determines if OpenStreetMap base layer will be added to map. Works only in projection EPSG:3857. Example: true. Default is false.
- * GOOGLE: determines if Google base layer will be added to map. Works only in projection EPSG:3857. Possible values 
    are: streets, hybrid, satellite, terrain, Example: streets.
- * LAYERS: list of layers to display in map. Example: border,lakes,rivers. Default is auto-detected list of layers from project.
- * VISIBLE: list of layers to set as visible on application start. Example: border. Default: all layers
  * BALLS: list of balls identifiers containing geometry data in GeoJSON format. Format: <BALL_ID>,<BALL_ID>,...

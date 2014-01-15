@@ -72,7 +72,6 @@ def page(c):
 			var config = {
 				projection: "%(projection)s",
 				units: "%(units)s",
-				tile_resolutions: [%(tile_resolutions)s],
 				maxExtent: [%(project_extent)s],
 		};
 
@@ -81,8 +80,8 @@ def page(c):
 		var zoom = %(zoom)s;
 		var layer = null;
 		var vector_data_balls = null;
-
 	""" % c
+	if c['tile_resolutions']: html += """config.tile_resolutions = [%(tile_resolutions)s];""" % c
 
 	if c['debug']: html += """\tconsole.log("CONFIG: %s");\n""" % c
 
@@ -100,25 +99,29 @@ def page(c):
 		html += "\t\tmaplayers.push(new OpenLayers.Layer.OSM());\n"
 
 	# overlay layers
-	html += """
-		var overlays_group_layer = new OpenLayers.Layer.WMS(
-			"OverlaysGroup",
-			["%s&DPI=%s&TRANSPARENT=TRUE"],
-			{
-				layers: ["%s"],
-				transparent: true,
-				format: "%s",
-			},
-			{
-				gutter: 0,
-				isBaseLayer: false,
-				buffer: 0,
-				visibility: true,
-				singleTile: true,
-				// attribution: "",
-			}
-		);
-	""" % (c['ows_url'], c['dpi'], '", "'.join(c['layers']), 'image/png')
+	if c['layers']:
+		html += """
+			var overlays_group_layer = new OpenLayers.Layer.WMS(
+				"OverlaysGroup",
+				["%s&DPI=%s&TRANSPARENT=TRUE"],
+				{
+					layers: ["%s"],
+					transparent: true,
+					format: "%s",
+				},
+				{
+					gutter: 0,
+					isBaseLayer: false,
+					buffer: 0,
+					visibility: true,
+					singleTile: true,
+					// attribution: "",
+				}
+			);
+		""" % (c['ows_url'], c['dpi'], '", "'.join(c['layers']), 'image/png')
+	else:
+		html += "var overlays_group_layer = new OpenLayers.Layer('Empty');"
+
 	html += "\tmaplayers.push(overlays_group_layer);\n"
 
 	# drawing layers
@@ -219,7 +222,7 @@ def page(c):
 		var ctrl, action;
 	""" % c
 
-	if c['has_featureinfo']:
+	if c['featureinfo']:
 		#featureinfo panel
 		html += """
 			var featureinfo_tabpanel = new Ext.TabPanel({
@@ -1076,14 +1079,10 @@ def page(c):
 						visible_layers.push(node.attributes.text);
 					}
 				});
-				var parameters = {
-					PROJECT: '%(project)s',
-					DPI: '%(dpi)s',
-					SCALES: '%(scales)s',
-					ZOOM: map.getZoom(),
-					CENTER: map.getCenter().toShortString(), //.replace(' ', ''),
-					LAYERS: all_layers.join(',')
-				};
+				var parameters = {};
+				if ('%(project)s' != 'None') {
+					parameters.PROJECT = '%(project)s';
+				}
 				var osm_layer = map.getLayersByClass('OpenLayers.Layer.OSM')[0];
 				if (osm_layer) {
 					parameters.OSM = 'true';
@@ -1092,9 +1091,16 @@ def page(c):
 				if (google_layer) {
 					parameters.GOOGLE = google_layer.mapTypeId;
 				}
+				parameters.LAYERS = all_layers.join(',');
 				if (visible_layers.length < overlays_node.childNodes.length) {
 					parameters.VISIBLE = visible_layers.join(',');
 				}
+				parameters.DPI = OpenLayers.DOTS_PER_INCH;
+				if ('%(scales)s' != 'None') {
+					parameters.SCALES = '%(scales)s';
+				}
+				parameters.ZOOM = map.getZoom();
+				parameters.CENTER = map.getCenter().toShortString().replace(' ', '');
 				if (vector_data_balls) {
 					parameters.BALLS = vector_data_balls;
 				}
@@ -1160,61 +1166,75 @@ def application(environ, start_response):
 	if 'WEBGIS_DEBUG' in environ:
 		if environ['WEBGIS_DEBUG'].upper() == 'TRUE': c['debug'] = True
 
-	try:
-		c['project'] = qs.get('PROJECT')
-		c['projectfile'] = os.path.join(environ['WEBGIS_PROJECT_ROOT'], c['project'])
-		c['ows_url'] = '{0}/?map={1}'.format(environ['WEBGIS_OWS_URL'], c['projectfile'])
-		c['ows_getcapabilities_url'] = "{0}&REQUEST=GetCapabilities".format(c['ows_url'])
+	if 'PROJECT' in qs:
+		try:
+			c['project'] = qs.get('PROJECT')
+			c['projectfile'] = os.path.join(environ['WEBGIS_PROJECT_ROOT'], c['project'])
+			c['ows_url'] = '{0}/?map={1}'.format(environ['WEBGIS_OWS_URL'], c['projectfile'])
+			c['ows_getcapabilities_url'] = "{0}&REQUEST=GetCapabilities".format(c['ows_url'])
 
-		wms_service = WebMapService(c['ows_getcapabilities_url'], version="1.1.1") # read WMS GetCapabilities
-	except Exception, e:
-		start_response('404 NOT FOUND', [('content-type', 'text/plain')])
-		return ("Can't load project. Error: {0}".format(str(e)),)
+			wms_service = WebMapService(c['ows_getcapabilities_url'], version="1.1.1") # read WMS GetCapabilities
+		except Exception, e:
+			start_response('404 NOT FOUND', [('content-type', 'text/plain')])
+			return ("Can't load project. Error: {0}".format(str(e)),)
 
-	root_layer = None
-	for layer in wms_service.contents.itervalues():
-		if not layer.parent:
-			root_layer = layer
-			break
-	if not root_layer: raise Exception("Root layer not found.")
+		root_layer = None
+		for layer in wms_service.contents.itervalues():
+			if not layer.parent:
+				root_layer = layer
+				break
+		if not root_layer: raise Exception("Root layer not found.")
+
+	else:
+		c['project'] = None
 
 
 	c['osm'] = False
 	if qs.get('OSM'):
-		if qs.get('OSM').upper() == 'TRUE': c['osm'] = True
+		if qs.get('OSM').upper() == 'TRUE':
+			c['osm'] = True
+	if c['project'] is None: c['osm'] = True
 
+	c['google'] = False
 	if qs.get('GOOGLE'):
 		c['google'] = qs.get('GOOGLE').upper()
-	else:
-		c['google'] = False
+	if c['project'] is None:
+		c['google'] = 'STREETS'
 
+	c['layers'] = None
 	if qs.get('LAYERS'):
 		layers_names = qs.get('LAYERS').split(',')
 		layers_names.reverse()
 		c['layers'] = layers_names
 	else:
-		c['layers'] = [layer.name.encode('UTF-8') for layer in root_layer.layers][::-1]
+		if c['project']:
+			c['layers'] = [layer.name.encode('UTF-8') for layer in root_layer.layers][::-1]
 
-	if qs.get('VISIBLE'):
-		c['visible_layers'] = [layer_name.strip() for layer_name in qs.get('VISIBLE').split(",")]
+	if c['layers']:
+		if qs.get('VISIBLE'):
+			c['visible_layers'] = [layer_name.strip() for layer_name in qs.get('VISIBLE').split(",")]
 
 	if c['osm'] or c['google']:
 		c['projection'] = 'EPSG:3857'
 	else:
 		c['projection'] = root_layer.boundingBox[-1]
 
-	project_extent = root_layer.boundingBox[:-1]
-	c['project_extent'] = ",".join(map(str, project_extent))
+	if c['project']:
+		c['project_extent'] = ",".join(map(str, root_layer.boundingBox[:-1]))
+	else:
+		c['project_extent'] = "-20037508.34,-20037508.34,20037508.34,20037508.34"
 
 	if qs.get('DPI'):
 		c['dpi'] = qs.get('DPI')
 	else:
 		c['dpi'] = 96
 
+	c['scales'] = None
 	if qs.get('SCALES'):
 		c['scales'] = qs.get('SCALES')
 	else:
-		c['scales'] = environ['WEBGIS_SCALES']
+		if not c['osm'] and not c['google']:
+			c['scales'] = environ['WEBGIS_SCALES']
 
 	if qs.get('ZOOM'):
 		c['zoom'] = qs.get('ZOOM')
@@ -1225,31 +1245,43 @@ def application(environ, start_response):
 		c['center_coord1'] = qs.get('CENTER').split(',')[0]
 		c['center_coord2'] = qs.get('CENTER').split(',')[1]
 	else:
-		c['center_coord1'] = (project_extent[0]+project_extent[2])/2.0
-		c['center_coord2'] = (project_extent[1]+project_extent[3])/2.0
+		project_extent = c['project_extent'].split(',')
+		c['center_coord1'] = (float(project_extent[0])+float(project_extent[2]))/2.0
+		c['center_coord2'] = (float(project_extent[1])+float(project_extent[3]))/2.0
 
 	if c['projection'] in PROJECTION_UNITS_DD: # TODO: this is very naive
 		c['units'] = 'dd'
 	else:
 		c['units'] = 'm'
 
+	if not c['osm'] and not c['google']:
+		c['tile_resolutions'] = ', '.join(str(r) for r in _get_tile_resolutions(map(int, c['scales'].split(",")), c['units'], c['dpi']))
+	else:
+		c['tile_resolutions'] = None
+
+	if c['project']:
+		c['root_title'] = wms_service.identification.title.encode('UTF-8')
+		c['author'] = wms_service.provider.contact.name.encode('UTF-8') if wms_service.provider.contact.name else ''
+		c['email'] = wms_service.provider.contact.email.encode('UTF-8') if wms_service.provider.contact.email else ''
+		c['organization'] = wms_service.provider.contact.organization.encode('UTF-8') if wms_service.provider.contact.organization else ''
+		c['abstract'] = wms_service.identification.abstract.encode('UTF-8') if wms_service.identification.abstract else ''
+	else:
+		c['root_title'] = 'Empty Map'
+		c['author'] = ''
+		c['email'] = ''
+		c['organization'] = ''
+		c['abstract'] = ''
+
+	c['featureinfo'] = False
+	if c['project']:
+		for operation in wms_service.operations:
+			if operation.name == 'GetFeatureInfo':
+				c['featureinfo'] = 'application/vnd.ogc.gml' in operation.formatOptions
+				break
+
 	if qs.get('BALLS'):
 		points_data = qs.get('BALLS')
 		c['balls'] = qs.get('BALLS').split(',')
-
-	c['tile_resolutions'] = ', '.join(str(r) for r in _get_tile_resolutions(map(int, c['scales'].split(",")), c['units'], c['dpi']))
-	c['root_title'] = wms_service.identification.title.encode('UTF-8')
-	c['author'] = wms_service.provider.contact.name.encode('UTF-8') if wms_service.provider.contact.name else ''
-	c['email'] = wms_service.provider.contact.email.encode('UTF-8') if wms_service.provider.contact.email else ''
-	c['organization'] = wms_service.provider.contact.organization.encode('UTF-8') if wms_service.provider.contact.organization else ''
-	c['abstract'] = wms_service.identification.abstract.encode('UTF-8') if wms_service.identification.abstract else ''
-
-	has_featureinfo = False
-	for operation in wms_service.operations:
-		if operation.name == 'GetFeatureInfo':
-			has_featureinfo = 'application/vnd.ogc.gml' in operation.formatOptions
-			break
-	c['has_featureinfo'] = has_featureinfo
 
 	start_response('200 OK', [('Content-type','text/html')])
 	return page(c)
