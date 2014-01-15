@@ -18,7 +18,6 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 DEBUG=True
-COMMAND_LINE_MODE=False
 
 def _get_tile_resolutions(scales, units, dpi=96):
 	"""Helper function to compute OpenLayers tile resolutions."""
@@ -41,21 +40,19 @@ def page(c):
 
 	html = ''
 
-	c['static_url_prefix'] = 'https://rawgithub.com/imincik/gis-lab/master/system/server/webgis/' if COMMAND_LINE_MODE else ''
-
 	# head and javascript start
 	html += """
     <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-        <link rel="stylesheet" type="text/css" href="%(static_url_prefix)sstatic/ext-3.4.1/resources/css/ext-all.css"/>
+        <link rel="stylesheet" type="text/css" href="static/ext-3.4.1/resources/css/ext-all.css"/>
 
-        <script type="text/javascript" src="%(static_url_prefix)sstatic/ext-3.4.1/adapter/ext/ext-base.js"></script>
-        <script type="text/javascript" src="%(static_url_prefix)sstatic/ext-3.4.1/ext-all.js"></script>
+        <script type="text/javascript" src="static/ext-3.4.1/adapter/ext/ext-base.js"></script>
+        <script type="text/javascript" src="static/ext-3.4.1/ext-all.js"></script>
 
-        <script type="text/javascript" src="%(static_url_prefix)sstatic/OpenLayers-2.13/OpenLayers.js"></script>
-        <script type="text/javascript" src="%(static_url_prefix)sstatic/GeoExt-1.1/GeoExt.js"></script>
+        <script type="text/javascript" src="static/OpenLayers-2.13/OpenLayers.js"></script>
+        <script type="text/javascript" src="static/GeoExt-1.1/GeoExt.js"></script>
 	""" % c
 
 	if c['google']:
@@ -74,7 +71,7 @@ def page(c):
                 display:none;
             }
             .olControlPanPanel div {
-                background-image: url("%(static_url_prefix)sstatic/images/tool-sprites.gif") !important;
+                background-image: url("static/images/tool-sprites.gif") !important;
                 font-size: 0 !important;
                 height: 15px !important;
                 width: 15px !important;
@@ -102,7 +99,7 @@ def page(c):
                 top: 16px !important;
             }
             .olControlZoomPanel div {
-                background-image: url("%(static_url_prefix)sstatic/images/tool-sprites.gif") !important;
+                background-image: url("static/images/tool-sprites.gif") !important;
                 font-size: 0 !important;
                 height: 15px !important;
                 width: 15px !important;
@@ -128,59 +125,59 @@ def page(c):
                 font-size: 11px;
             }
             .featureinfo-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/information.png')!important;
+                background-image: url('static/images/toolbar/information.png')!important;
                 background: no-repeat;
             }
             .home-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/home.png')!important;
+                background-image: url('static/images/toolbar/home.png')!important;
                 background: no-repeat;
             }
             .pan-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/pan.png')!important;
+                background-image: url('static/images/toolbar/pan.png')!important;
                 background: no-repeat;
             }
             .zoom-in-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/zoom_in.png')!important;
+                background-image: url('static/images/toolbar/zoom_in.png')!important;
                 background: no-repeat;
             }
             .zoom-out-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/zoom_out.png')!important;
+                background-image: url('static/images/toolbar/zoom_out.png')!important;
                 background: no-repeat;
             }
             .zoom-max-extent-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/arrow_out.png')!important;
+                background-image: url('static/images/toolbar/arrow_out.png')!important;
                 background: no-repeat;
             }
             .previous-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/arrow_left.png')!important;
+                background-image: url('static/images/toolbar/arrow_left.png')!important;
                 background: no-repeat;
             }
             .next-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/arrow_right.png')!important;
+                background-image: url('static/images/toolbar/arrow_right.png')!important;
                 background: no-repeat;
             }
             .length-measure-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/ruler.png')!important;
+                background-image: url('static/images/toolbar/ruler.png')!important;
                 background: no-repeat;
             }
             .area-measure-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/ruler_square.png')!important;
+                background-image: url('static/images/toolbar/ruler_square.png')!important;
                 background: no-repeat;
             }
             .draw-point-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/point.png')!important;
+                background-image: url('static/images/toolbar/point.png')!important;
                 background: no-repeat;
             }
             .draw-line-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/line.png')!important;
+                background-image: url('static/images/toolbar/line.png')!important;
                 background: no-repeat;
             }
             .draw-polygon-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/polygon.png')!important;
+                background-image: url('static/images/toolbar/polygon.png')!important;
                 background: no-repeat;
             }
             .save-icon {
-                background-image: url('%(static_url_prefix)sstatic/images/toolbar/save.png')!important;
+                background-image: url('static/images/toolbar/save.png')!important;
                 background: no-repeat;
             }
         </style>
@@ -192,7 +189,7 @@ def page(c):
 
 	# configuration
 	html += """function main() {
-		Ext.BLANK_IMAGE_URL = "%(static_url_prefix)sstatic/images/s.gif";
+		Ext.BLANK_IMAGE_URL = "static/images/s.gif";
 		OpenLayers.DOTS_PER_INCH = %(dpi)s;
 		OpenLayers.ProxyHost = "/proxy/?url=";
 		var config = {
@@ -1378,31 +1375,6 @@ def application(environ, start_response):
 
 	start_response('200 OK', [('Content-type','text/html')])
 	return page(c)
-
-
-def run(port=9997):
-	"""Start WSGI server."""
-
-	from wsgiref import simple_server
-	httpd = simple_server.WSGIServer(('', port), simple_server.WSGIRequestHandler,)
-	httpd.set_app(application)
-	try:
-		print "Starting server. Point your web browser to 'http://127.0.0.1:%s'." % port
-		httpd.serve_forever()
-	except KeyboardInterrupt:
-		print "Shutting down server."
-		sys.exit(0)
-
-
-if __name__ == "__main__":
-	parser = OptionParser()
-
-	parser.add_option("-p", "--port", help="port to run server on [optional]",
-		dest="port", action='store', type="int", default=9991)
-
-	options, args = parser.parse_args()
-	COMMAND_LINE_MODE = True
-	run(options.port)
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
