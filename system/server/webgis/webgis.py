@@ -47,6 +47,7 @@ def page(c):
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
         <link rel="stylesheet" type="text/css" href="static/ext-3.4.1/resources/css/ext-all.css"/>
+        <link rel="stylesheet" type="text/css" href="static/webgis/webgis.css"/>
 
         <script type="text/javascript" src="static/ext-3.4.1/adapter/ext/ext-base.js"></script>
         <script type="text/javascript" src="static/ext-3.4.1/ext-all.js"></script>
@@ -58,145 +59,23 @@ def page(c):
 	if c['google']:
 		html += """<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>"""
 
-	# css
 	html += """
-        <style type="text/css">
-            #dpiDetection {
-                height: 1in; left: -100%%; position: absolute; top: -100%%; width: 1in;
-            }
-            .olControlNoSelect {
-                background-color:rgba(200, 200, 200, 0.3);
-            }
-            .legend-item .x-form-item {
-                display:none;
-            }
-            .olControlPanPanel div {
-                background-image: url("static/images/tool-sprites.gif") !important;
-                font-size: 0 !important;
-                height: 15px !important;
-                width: 15px !important;
-            }
-            .olControlZoomToMaxExtentItemInactive {
-                display:none;
-            }
-            .olControlPanPanel .olControlPanNorthItemInactive {
-                background-position: 15px -60px !important;
-                left: 16px !important;
-            }
-            .olControlPanPanel .olControlPanSouthItemInactive {
-                background-position: 15px -75px !important;
-                left: 16px !important;
-                top: 32px !important;
-            }
-            .olControlPanPanel .olControlPanWestItemInactive {
-                background-position: 15px -105px !important;
-                left: 2px !important;
-                top: 16px !important;
-            }
-            .olControlPanPanel .olControlPanEastItemInactive {
-                background-position: 15px -120px !important;
-                left: 30px !important;
-                top: 16px !important;
-            }
-            .olControlZoomPanel div {
-                background-image: url("static/images/tool-sprites.gif") !important;
-                font-size: 0 !important;
-                height: 15px !important;
-                width: 15px !important;
-            }
-            .olControlZoomPanel .olControlZoomInItemInactive {
-                background-position: 15px -240px !important;
-                left: 7px !important;
-                top: -5px !important;
-            }
-            .olControlZoomPanel .olControlZoomOutItemInactive {
-                background-position: 15px -255px !important;
-                left: 7px !important;
-                top: 168px !important;
-            }
-            .x-panel-header {
-                color: #15428B;
-                font-family: tahoma,arial,verdana,sans-serif;
-                font-size: 11px;
-                font-weight: bold;
-            }
-            .x-panel-body-text {
-                font-family: tahoma,arial,verdana,sans-serif;
-                font-size: 11px;
-            }
-            .featureinfo-icon {
-                background-image: url('static/images/toolbar/information.png')!important;
-                background: no-repeat;
-            }
-            .home-icon {
-                background-image: url('static/images/toolbar/home.png')!important;
-                background: no-repeat;
-            }
-            .pan-icon {
-                background-image: url('static/images/toolbar/pan.png')!important;
-                background: no-repeat;
-            }
-            .zoom-in-icon {
-                background-image: url('static/images/toolbar/zoom_in.png')!important;
-                background: no-repeat;
-            }
-            .zoom-out-icon {
-                background-image: url('static/images/toolbar/zoom_out.png')!important;
-                background: no-repeat;
-            }
-            .zoom-max-extent-icon {
-                background-image: url('static/images/toolbar/arrow_out.png')!important;
-                background: no-repeat;
-            }
-            .previous-icon {
-                background-image: url('static/images/toolbar/arrow_left.png')!important;
-                background: no-repeat;
-            }
-            .next-icon {
-                background-image: url('static/images/toolbar/arrow_right.png')!important;
-                background: no-repeat;
-            }
-            .length-measure-icon {
-                background-image: url('static/images/toolbar/ruler.png')!important;
-                background: no-repeat;
-            }
-            .area-measure-icon {
-                background-image: url('static/images/toolbar/ruler_square.png')!important;
-                background: no-repeat;
-            }
-            .draw-point-icon {
-                background-image: url('static/images/toolbar/point.png')!important;
-                background: no-repeat;
-            }
-            .draw-line-icon {
-                background-image: url('static/images/toolbar/line.png')!important;
-                background: no-repeat;
-            }
-            .draw-polygon-icon {
-                background-image: url('static/images/toolbar/polygon.png')!important;
-                background: no-repeat;
-            }
-            .save-icon {
-                background-image: url('static/images/toolbar/save.png')!important;
-                background: no-repeat;
-            }
-        </style>
-
         <title id="page-title">%(root_title)s</title>
-        <script type="text/javascript">
     """ % c
 
-
 	# configuration
-	html += """function main() {
-		Ext.BLANK_IMAGE_URL = "static/images/s.gif";
-		OpenLayers.DOTS_PER_INCH = %(dpi)s;
-		OpenLayers.ProxyHost = "/proxy/?url=";
-		var config = {
-			projection: "%(projection)s",
-			units: "%(units)s",
-			tile_resolutions: [%(tile_resolutions)s],
-			maxExtent: [%(project_extent)s],
+	html += """
+        <script type="text/javascript">
+		function main() {
+
+			Ext.BLANK_IMAGE_URL = "static/webgis/images/s.gif";
+			OpenLayers.DOTS_PER_INCH = %(dpi)s;
+			OpenLayers.ProxyHost = "/proxy/?url=";
+			var config = {
+				projection: "%(projection)s",
+				units: "%(units)s",
+				tile_resolutions: [%(tile_resolutions)s],
+				maxExtent: [%(project_extent)s],
 		};
 
 		var x = %(center_coord1)s;
