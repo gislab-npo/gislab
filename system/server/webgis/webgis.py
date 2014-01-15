@@ -9,7 +9,6 @@ import os, sys
 import webob
 import urllib
 from cgi import parse_qsl
-from optparse import OptionParser
 from owslib.wms import WebMapService
 from wsgiproxy.app import WSGIProxyApp
 
