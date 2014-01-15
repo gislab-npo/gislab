@@ -17,7 +17,6 @@ from wsgiproxy.app import WSGIProxyApp
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-DEBUG=True
 
 def _get_tile_resolutions(scales, units, dpi=96):
 	"""Helper function to compute OpenLayers tile resolutions."""
@@ -86,7 +85,7 @@ def page(c):
 
 	""" % c
 
-	if DEBUG: html += """\tconsole.log("CONFIG: %s");\n""" % c
+	if c['debug']: html += """\tconsole.log("CONFIG: %s");\n""" % c
 
 	# layers
 	html += "\t\tvar maplayers = [];\n"
@@ -777,7 +776,7 @@ def page(c):
 		mappanel.getTopToolbar().add(action);
 	"""
 
-	# Save ball
+	# save ball
 	html += """
 		var action = new Ext.Action({
 			cls: 'x-btn-icon',
@@ -1012,7 +1011,7 @@ def page(c):
 			mappanel.map.addControl(new OpenLayers.Control.Attribution());
 	""" % c
 
-	# Insert points from GET parameter
+	# insert points from GET parameter
 	if 'balls' in c:
 		html += """
 			vector_data_balls = '{0}';
@@ -1045,7 +1044,7 @@ def page(c):
 				}});
 			""".format(ball)
 
-	# Permalink
+	# permalink
 	html += """
 		// create permalink provider
 		var permalink_provider = new GeoExt.state.PermalinkProvider({encodeType: false});
@@ -1151,9 +1150,6 @@ def application(environ, start_response):
 		resp = proxy_req.get_response(WSGIProxyApp(host_url))
 		return resp(environ, start_response)
 
-	OWS_URL=environ['WEBGIS_OWS_URL']
-	PROJECT_ROOT=environ['WEBGIS_PROJECT_ROOT']
-	SCALES=environ['WEBGIS_SCALES']
 	PROJECTION_UNITS_DD=('EPSG:4326',)
 
 	qs = dict(parse_qsl(environ['QUERY_STRING'])) # collect GET parameters
@@ -1161,10 +1157,14 @@ def application(environ, start_response):
 
 	c = {} # configuration
 
+	c['debug'] = False
+	if 'WEBGIS_DEBUG' in environ:
+		if environ['WEBGIS_DEBUG'].upper() == 'TRUE': c['debug'] = True
+
 	try:
 		c['project'] = qs.get('PROJECT')
-		c['projectfile'] = os.path.join(PROJECT_ROOT, c['project'])
-		c['ows_url'] = '{0}/?map={1}'.format(OWS_URL, c['projectfile'])
+		c['projectfile'] = os.path.join(environ['WEBGIS_PROJECT_ROOT'], c['project'])
+		c['ows_url'] = '{0}/?map={1}'.format(environ['WEBGIS_OWS_URL'], c['projectfile'])
 		c['ows_getcapabilities_url'] = "{0}&REQUEST=GetCapabilities".format(c['ows_url'])
 
 		wms_service = WebMapService(c['ows_getcapabilities_url'], version="1.1.1") # read WMS GetCapabilities
@@ -1215,7 +1215,7 @@ def application(environ, start_response):
 	if qs.get('SCALES'):
 		c['scales'] = qs.get('SCALES')
 	else:
-		c['scales'] = SCALES
+		c['scales'] = environ['WEBGIS_SCALES']
 
 	if qs.get('ZOOM'):
 		c['zoom'] = qs.get('ZOOM')
