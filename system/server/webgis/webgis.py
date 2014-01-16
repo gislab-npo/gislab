@@ -1266,7 +1266,7 @@ def application(environ, start_response):
 		c['organization'] = wms_service.provider.contact.organization.encode('UTF-8') if wms_service.provider.contact.organization else ''
 		c['abstract'] = wms_service.identification.abstract.encode('UTF-8') if wms_service.identification.abstract else ''
 	else:
-		c['root_title'] = 'Empty Map'
+		c['root_title'] = 'Empty Project'
 		c['author'] = ''
 		c['email'] = ''
 		c['organization'] = ''
