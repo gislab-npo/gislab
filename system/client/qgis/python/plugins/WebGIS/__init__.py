@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- WebGisPlugin
+ WebGIS plugin
                                  A QGIS plugin
  Publish your projects into WebGis application
                              -------------------
         begin                : 2014-01-09
-        copyright            : (C) 2014 by GISTA s.r.o.
-        email                : info@gista.sk
+        copyright            : (C) 2014 by Marcel Dancak, GISTA s.r.o.
+        email                : marcel.dancak@gista.sk
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,6 +21,5 @@
 """
 
 def classFactory(iface):
-    # load WebGisPlugin class from file WebGisPlugin
-    from webgisplugin import WebGisPlugin
-    return WebGisPlugin(iface)
+	from webgisplugin import WebGisPlugin
+	return WebGisPlugin(iface)

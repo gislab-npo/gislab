@@ -1,11 +1,11 @@
 #/***************************************************************************
-# WebGisPlugin
+# WebGIS plugin
 #
 # Publish your projects into WebGis application
 #                             -------------------
 #        begin                : 2014-01-09
-#        copyright            : (C) 2014 by GISTA s.r.o.
-#        email                : info@gista.sk
+#        copyright            : (C) 2014 by Marcel Dancak, GISTA s.r.o.
+#        email                : marcel.dancak@gista.sk
 # ***************************************************************************/
 #
 #/***************************************************************************
@@ -24,13 +24,13 @@ QGISDIR=.qgis2
 # Makefile for a PyQGIS plugin
 
 # translation
-SOURCES = webgisplugin.py ui_webgisplugin.py __init__.py webgisplugindialog.py
+SOURCES = webgisplugin.py __init__.py
 #TRANSLATIONS = i18n/webgisplugin_en.ts
 TRANSLATIONS =
 
 # global
 
-PLUGINNAME = WebGisPlugin
+PLUGINNAME = WebGIS
 
 PY_FILES = webgisplugin.py __init__.py
 
