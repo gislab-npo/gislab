@@ -53,3 +53,8 @@ Supported GET parameters:
  * CENTER: coordinates of map center on start. Example: 1234.12,5678.56. Default is center of auto-detected extent from project.
    are: streets, hybrid, satellite, terrain, Example: streets.
  * BALLS: list of balls identifiers containing geometry data in GeoJSON format. Format: <BALL_ID>,<BALL_ID>,...
+
+
+#### Credits
+ * icons used taken from Heron Mapping Client (http://heron-mc.org/)
+ * icons taken from QGIS (http://www.qgis.org)
