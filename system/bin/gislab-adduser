@@ -105,7 +105,9 @@ cp /vagrant/system/client/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
 
 # QGIS
 mkdir -p /etc/skel/.config/QGIS
+mkdir -p /etc/skel/.qgis2
 cp /vagrant/system/client/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
+cp -a /vagrant/system/client/qgis/plugins /etc/skel/.qgis2/
 
 if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
 	mkdir -p /etc/skel/bin
