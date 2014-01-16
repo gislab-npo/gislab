@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'webgisplugin'
-copyright = u'2013, GISTA s.r.o.'
+copyright = u'2014, Marcel Dancak, GISTA s.r.o.'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

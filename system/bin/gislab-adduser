@@ -115,7 +115,7 @@ fi
 
 # WebGIS plugin
 mkdir -p /etc/skel/.qgis2/python/plugins/
-cp -a /vagrant/system/client/qgis/python/plugins/WebGisPlugin/ /etc/skel/.qgis2/python/plugins/
+cp -a /vagrant/system/client/qgis/plugins/WebGIS/ /etc/skel/.qgis2/python/plugins/
 
 chown -R root:root /etc/skel
 

@@ -6,8 +6,8 @@
  Publish your projects into WebGIS application
                               -------------------
         begin                : 2014-01-09
-        copyright            : (C) 2014 by GISTA s.r.o.
-        email                : info@gista.sk
+        copyright            : (C) 2014 by Marcel Dancak, GISTA s.r.o.
+        email                : marcel.dancak@gista.sk
  ***************************************************************************/
 
 /***************************************************************************
