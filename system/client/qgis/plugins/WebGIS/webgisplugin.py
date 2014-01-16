@@ -62,7 +62,7 @@ class WebGisPlugin:
 		# Create action that will start plugin configuration
 		self.action = QAction(
 			QIcon(":/plugins/webgisplugin/icon.png"),
-			u"Publish project in WebGIS", self.iface.mainWindow())
+			u"Publish as WebGIS project", self.iface.mainWindow())
 		# connect the action to the run method
 		self.action.triggered.connect(self.run)
 

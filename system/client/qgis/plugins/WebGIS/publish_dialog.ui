@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Publish project in WebGIS</string>
+   <string>Publish as WebGIS project</string>
   </property>
   <property name="modal">
    <bool>true</bool>
