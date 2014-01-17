@@ -73,20 +73,20 @@ def page(c):
 				projection: "%(projection)s",
 				units: "%(units)s",
 				maxExtent: [%(project_extent)s],
-		};
+			};
 
-		var x = %(center_coord1)s;
-		var y = %(center_coord2)s;
-		var zoom = %(zoom)s;
-		var layer = null;
-		var vector_data_balls = null;
+			var layer = null;
+			var vector_data_balls = null;
 	""" % c
-	if c['tile_resolutions']: html += """config.tile_resolutions = [%(tile_resolutions)s];""" % c
+	zoom_extent = c['zoom_extent'] or c['project_extent']
+	html += """\t\tvar zoom_extent = OpenLayers.Bounds.fromString('{0}');\n""".format(zoom_extent)
+
+	if c['tile_resolutions']: html += """\t\t\tconfig.tile_resolutions = [%(tile_resolutions)s];\n""" % c
 
 	if c['debug']: html += """\tconsole.log("CONFIG: %s");\n""" % c
 
 	# layers
-	html += "\t\tvar maplayers = [];\n"
+	html += "\t\t\tvar maplayers = [];\n"
 
 	# base layers
 	if c['google']:
@@ -406,7 +406,7 @@ def page(c):
 
 		//Home Action
 		action = new GeoExt.Action({
-			handler: function() { mappanel.map.setCenter(new OpenLayers.LonLat(%(center_coord1)s, %(center_coord2)s), %(zoom)s); },
+			handler: function() { mappanel.map.zoomToExtent(zoom_extent, true); },
 			map: mappanel.map,
 			cls: 'x-btn-icon',
 			iconCls: 'home-icon',
@@ -1004,7 +1004,7 @@ def page(c):
 			});
 			mappanel.getBottomToolbar().add(' ', '-', ' ', measurement_output);
 
-			mappanel.map.setCenter(new OpenLayers.LonLat(%(center_coord1)s, %(center_coord2)s), %(zoom)s);
+			mappanel.map.zoomToExtent(zoom_extent, true);
 			mappanel.map.addControl(new OpenLayers.Control.Scale());
 			mappanel.map.addControl(new OpenLayers.Control.ScaleLine());
 			mappanel.map.addControl(new OpenLayers.Control.PanPanel());
@@ -1099,8 +1099,11 @@ def page(c):
 				if ('%(scales)s' != 'None') {
 					parameters.SCALES = '%(scales)s';
 				}
-				parameters.ZOOM = map.getZoom();
-				parameters.CENTER = map.getCenter().toShortString().replace(' ', '');
+				var extent_array = map.getExtent().toArray();
+				for (var i = 0; i < 4; i++) {
+					extent_array[i] = extent_array[i].toFixed(1);
+				}
+				parameters.EXTENT = extent_array.join(',');
 				if (vector_data_balls) {
 					parameters.BALLS = vector_data_balls;
 				}
@@ -1236,18 +1239,8 @@ def application(environ, start_response):
 		if not c['osm'] and not c['google']:
 			c['scales'] = environ['WEBGIS_SCALES']
 
-	if qs.get('ZOOM'):
-		c['zoom'] = qs.get('ZOOM')
-	else:
-		c['zoom'] = 0
-
-	if qs.get('CENTER'):
-		c['center_coord1'] = qs.get('CENTER').split(',')[0]
-		c['center_coord2'] = qs.get('CENTER').split(',')[1]
-	else:
-		project_extent = c['project_extent'].split(',')
-		c['center_coord1'] = (float(project_extent[0])+float(project_extent[2]))/2.0
-		c['center_coord2'] = (float(project_extent[1])+float(project_extent[3]))/2.0
+	if qs.get('EXTENT'):
+		c['zoom_extent'] = qs.get('EXTENT')
 
 	if c['projection'] in PROJECTION_UNITS_DD: # TODO: this is very naive
 		c['units'] = 'dd'
