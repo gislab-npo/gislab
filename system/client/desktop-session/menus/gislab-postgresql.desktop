@@ -2,7 +2,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=PostgreSQL/PostGIS Database
+Name=Shared Geo Database
 Comment=PostgreSQL/PostGIS database management
 Exec=/usr/bin/pgadmin3
 Icon=pgadmin3

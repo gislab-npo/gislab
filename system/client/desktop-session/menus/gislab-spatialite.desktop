@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=SpatiaLite Database
+Name=Personal Geo Database
 Comment=SpatiaLite database management
 Exec=/usr/bin/spatialite-gui
 Path=
