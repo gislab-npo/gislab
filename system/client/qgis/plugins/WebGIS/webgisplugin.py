@@ -184,3 +184,5 @@ class WebGisPlugin:
 		self.dialog.show()
 		self.dialog.exec_()
 
+
+# vim: set ts=4 sts=4 sw=4 noet:
