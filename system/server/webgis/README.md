@@ -13,7 +13,7 @@ To publish existing project created in QGIS
 
 set following project configurations:
 
- * use relative paths (File > Project Properties > General > Save paths). The safest way is to save Your data and project
+ * use relative paths (Project > Project Properties > General > Save paths). The safest way is to save Your data and project
    file to same directory
  * on-the-fly CRS transformation must be enabled (File > Project Properties > CRS) and target projection
    must be chosen (if You are not sure chose EPSG:3857)

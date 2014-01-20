@@ -110,15 +110,15 @@ class WebGisPlugin:
 		messages = []
 		#messages = [(MSG_ERROR, "Err1"), (MSG_WARNING, "Brr2"), (MSG_WARNING, "Brr1 fshfjh sjfs jgdhj erssejr hesuseuthrjfghdj jdj dj sdu bnbbnbnbb rtr4r45 iioopoppoqqwases")]
 		if self.project.isDirty():
-			messages.append((MSG_ERROR, u"Project has been modified, please save it and try again."))
+			messages.append((MSG_ERROR, u"Project has been modified. Save it (Project > Save)."))
 
 		project_basename = os.path.splitext(os.path.basename(self.project.fileName()))[0]
 		if project_basename in all_layers:
-			messages.append((MSG_ERROR, u"Project's filename cannot match any layer name, please rename it."))
+			messages.append((MSG_ERROR, u"File name of project can't match any layer name. Save project with another name (Project > Save as)"))
 
 		crs_transformation, ok = self.project.readEntry("SpatialRefSys", "/ProjectionsEnabled")
 		if not ok or not crs_transformation:
-			messages.append((MSG_ERROR, u"'On the fly' CRS transformation not enabled."))
+			messages.append((MSG_ERROR, u"'On the fly' CRS transformation not enabled ('Project > Project Properties > CRS')."))
 		self._show_messages(messages)
 		for msg_type, msg_text in messages:
 			if msg_type == MSG_ERROR:
