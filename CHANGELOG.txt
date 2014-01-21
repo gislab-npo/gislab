@@ -1,3 +1,39 @@
+Version 0.3.0
+=============
+Changes
+-------
+ * fixed problem with GRUB boot loader endlessly waiting for manual input (by switching to Canonical boxes)
+ * adding multiple new configuration options to config.cfg file
+ * adding software on server: IRC server
+ * adding point, line and polygon features capture possibilities in WebGIS
+ * adding possibility to load empty WebGIS map
+ * adding support for Google base maps in WebGIS
+ * adding software on client: KeepassX, SSHFS, FreeRDP, GTK-RecordMyDesktop, VLC
+ * adding QGIS plugin for project publishing in WebGIS
+ * removing software from client: Parole, IPTux, XChat
+ * adding simple plugins system
+ * adding VirtualBox client support (including VirtualBox guest additions)
+ * adding support for GIS software development on client
+ * creating user accounts with strong password by default
+ * documentation update
+
+Release notes
+-------------
+ Vagrant box provided by Canonical is used since version 0.3.0. You have to add this
+ box by running following command to manage successful upgrade:
+
+ $ vagrant box add precise32-canonical \
+ http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box
+
+
+Version 0.2.1
+=============
+Changes
+-------
+ * fixed NFS share user id mapping
+ * enabling server GUI console by default as workaround to GRUB problem
+
+
 Version 0.2.0
 =============
 Changes
