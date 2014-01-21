@@ -78,8 +78,7 @@ def page(c):
 			var layer = null;
 			var vector_data_balls = null;
 	""" % c
-	zoom_extent = c['zoom_extent'] or c['project_extent']
-	html += """\t\tvar zoom_extent = OpenLayers.Bounds.fromString('{0}');\n""".format(zoom_extent)
+	html += """\t\tvar zoom_extent = OpenLayers.Bounds.fromString('{0}');\n""".format(c['zoom_extent'])
 
 	if c['tile_resolutions']: html += """\t\t\tconfig.tile_resolutions = [%(tile_resolutions)s];\n""" % c
 
@@ -1241,6 +1240,8 @@ def application(environ, start_response):
 
 	if qs.get('EXTENT'):
 		c['zoom_extent'] = qs.get('EXTENT')
+	else:
+		c['zoom_extent'] = c['project_extent']
 
 	if c['projection'] in PROJECTION_UNITS_DD: # TODO: this is very naive
 		c['units'] = 'dd'
