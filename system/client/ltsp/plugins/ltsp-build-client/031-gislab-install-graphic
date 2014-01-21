@@ -6,5 +6,7 @@ case "$MODE" in
 	cp /vagrant/$GISLAB_LOGO $ROOT/usr/share/ldm/themes/gislab/logo.png
 
 	cp /vagrant/$GISLAB_WALLPAPER $ROOT/usr/share/xfce4/backdrops/gislab-wallpaper.png
+
+	cp /vagrant/system/server/webgis/static/webgis/images/webgis.xpm $ROOT/usr/share/pixmaps/webgis.xpm
     ;;
 esac

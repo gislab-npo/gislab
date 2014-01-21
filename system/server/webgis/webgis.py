@@ -44,6 +44,7 @@ def page(c):
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
+		<link rel="icon" type="image/png" href="static/webgis/images/webgis16.png"/>
         <link rel="stylesheet" type="text/css" href="static/ext-3.4.1/resources/css/ext-all.css"/>
         <link rel="stylesheet" type="text/css" href="static/webgis/webgis.css"/>
 
