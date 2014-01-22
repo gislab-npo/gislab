@@ -1202,7 +1202,7 @@ def application(environ, start_response):
 	if qs.get('GOOGLE'):
 		c['google'] = qs.get('GOOGLE').upper()
 	if c['project'] is None:
-		c['google'] = 'STREETS'
+		c['google'] = 'HYBRID'
 
 	c['layers'] = None
 	if qs.get('LAYERS'):
