@@ -127,13 +127,16 @@ class WebGisPlugin:
 		self.dialog.publish_btn.setEnabled(True)
 		return True
 
+	def _is_layer_for_publish(self, layer):
+		return layer.type() == QgsMapLayer.VectorLayer or (layer.type() == QgsMapLayer.RasterLayer and layer.providerType() != "wms")
+
 	def _publish_project(self):
 		if not self._check_publish_constrains():
 			return
 		dialog = self.dialog
 		project = self.project.fileName().split("/Share/")[1]
 		map_canvas = self.iface.mapCanvas()
-		all_layers = [layer.name() for layer in self.iface.legendInterface().layers()]
+		all_layers = [layer.name() for layer in self.iface.legendInterface().layers() if self._is_layer_for_publish(layer)]
 		extent = [round(coord, 3) for coord in map_canvas.extent().toRectF().getCoords()]
 		get_params = {
 			'PROJECT': project,
@@ -152,8 +155,9 @@ class WebGisPlugin:
 		if balls:
 			get_params['BALLS'] = balls.replace(" ", "")
 
-		if map_canvas.layerCount() < len(all_layers):
-			get_params['VISIBLE'] = ','.join([layer.name() for layer in map_canvas.layers()])
+		visible_layers = [layer for layer in map_canvas.layers() if self._is_layer_for_publish(layer)]
+		if len(visible_layers) < len(all_layers):
+			get_params['VISIBLE'] = ','.join([layer.name() for layer in visible_layers])
 		link = 'http://web.gis.lab/?{0}'.format("&".join(["{0}={1}".format(name, value) for name, value in get_params.iteritems()]))
 		#print "Starting firefox ...", link
 		subprocess.Popen([r'firefox', '-new-tab', link])
