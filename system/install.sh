@@ -174,6 +174,9 @@ cat << EOF > /etc/bind/db.192
 5        IN    PTR       server.gis.lab.
 EOF
 
+# use IPv4 only
+sed -i 's/^OPTIONS=.*/OPTIONS="-4 -u bind"/' /etc/default/bind9
+
 service bind9 restart
 
 # use our DNS server
