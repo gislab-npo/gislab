@@ -4,14 +4,14 @@ Changes
 -------
  * fixed problem with GRUB boot loader endlessly waiting for manual input (by switching to Canonical boxes)
  * adding multiple new configuration options to config.cfg file
- * adding software on server: IRC server
- * adding point, line and polygon features capture possibilities in WebGIS
- * adding possibility to load empty WebGIS map
- * adding support for Google base maps in WebGIS
- * adding software on client: KeepassX, SSHFS, FreeRDP, GTK-RecordMyDesktop, VLC
- * adding QGIS plugin for project publishing in WebGIS
- * removing software from client: Parole, IPTux, XChat
  * adding simple plugins system
+ * adding software on server: IRC server
+ * adding possibility to load empty WebGIS map
+ * adding point, line and polygon features capture possibilities in WebGIS
+ * adding support for Google base maps in WebGIS
+ * adding QGIS plugin for project publishing in WebGIS
+ * adding software on client: KeepassX, SSHFS, FreeRDP, GTK-RecordMyDesktop, VLC
+ * removing software from client: Parole, IPTux, XChat
  * adding VirtualBox client support (including VirtualBox guest additions)
  * adding support for GIS software development on client
  * creating user accounts with strong password by default
