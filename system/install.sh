@@ -350,8 +350,8 @@ sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole -
 
 # create template database
 sudo su - postgres -c "createdb -E UTF8 -T template0 template_postgis"
-sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql"
-sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql"
+sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql" &> /dev/null
+sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql" &> /dev/null
 sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON geometry_columns TO PUBLIC;\""
 sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON geography_columns TO PUBLIC;\""
 sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON spatial_ref_sys TO PUBLIC;\""
