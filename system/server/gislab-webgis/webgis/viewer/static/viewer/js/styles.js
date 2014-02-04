@@ -1,0 +1,48 @@
+var WebgisStyles = {
+	drawing_style: new OpenLayers.StyleMap({
+		'default':{
+			label: '${label}',
+			fontSize: '12px',
+			fontWeight: 'bold',
+			labelAlign: 'lb',
+			strokeColor: '#AA0000',
+			strokeOpacity: 1,
+			strokeWidth: 1.5,
+			fillColor: '#FF0000',
+			fillOpacity: 0.5,
+			pointRadius: 6,
+			labelYOffset: '6',
+			labelXOffset: '6',
+			fontColor: '#AA0000',
+			labelOutlineColor: 'white',
+			labelOutlineWidth: 2.5,
+			labelOutlineOpacity: 0.5,
+		},
+		'select': {
+			label: '${label}',
+			fontSize: '12px',
+			fontWeight: 'bold',
+			labelAlign: 'lb',
+			strokeColor: '#66CCCC',
+			strokeOpacity: 1,
+			strokeWidth: 1.5,
+			fillColor: '#66CCCC',
+			fillOpacity: 0.3,
+			pointRadius: 6,
+			labelYOffset: '6',
+			labelXOffset: '6',
+			fontColor: '#306060',
+			labelOutlineColor: 'white',
+			labelOutlineWidth: 2.5,
+			labelOutlineOpacity: 0.5,
+		},
+		'modify': {
+			label: '',
+			fillColor: '#66CCCC',
+			fillOpacity: 0.3,
+			strokeColor: '#66CCCC',
+			strokeOpacity: 1,
+			strokeWidth: 2,
+		}
+	})
+}

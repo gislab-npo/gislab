@@ -155,7 +155,6 @@ ns1      IN    AAAA     ::1
 server   IN    A        $GISLAB_NETWORK.5
 web      IN    CNAME    server
 webgis   IN    CNAME    server
-balls    IN    CNAME    server
 irc      IN    CNAME    server
 EOF
 
@@ -378,68 +377,47 @@ sudo su - postgres -c "psql -c \"GRANT CONNECT ON DATABASE gislab TO labusers;\"
 cp -a /vagrant/user/data /storage/repository/
 
 
-
-
 #
 ### WEBGIS ###
 #
-cp -a /vagrant/system/server/webgis /var/www
+WEBGIS_DB_PASSWORD=$(pwgen -1 -n 8)
+sudo su - postgres -c "createdb -E UTF8 -T template0 webgis"
+sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole webgis" # PostgreSQL account
+sudo su - postgres -c "psql -c \"ALTER ROLE webgis WITH PASSWORD '${WEBGIS_DB_PASSWORD}';\""
 
 mkdir -p /usr/local/python-virtualenvs
 virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/webgis
 source /usr/local/python-virtualenvs/webgis/bin/activate
-pip install -r /var/www/webgis/requirements.txt
-deactivate
+pip install -r /vagrant/system/server/gislab-webgis/requirements.txt
+#pip install -e /vagrant/system/server/gislab-webgis/
+python /vagrant/system/server/gislab-webgis/setup.py install
 
-cp -a /vagrant/system/server/webgis/conf/webgis.apache /etc/apache2/sites-available/webgis
+mkdir -p /var/www/webgis
+django-admin.py startproject --template=/vagrant/system/server/gislab-webgis/webgis/conf/project_template/ djproject /var/www/webgis
 
-a2enmod wsgi
-a2enmod rewrite
-a2ensite webgis
-service apache2 reload
-
-
-
-
-#
-### BALLS ###
-#
-
-BALLS_PASSWORD=$(pwgen -1 -n 8)
-sudo su - postgres -c "createdb -E UTF8 -T template0 balls"
-sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole balls" # PostgreSQL account
-sudo su - postgres -c "psql -c \"ALTER ROLE balls WITH PASSWORD '${BALLS_PASSWORD}';\""
-
-virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/balls
-source /usr/local/python-virtualenvs/balls/bin/activate
-pip install -r /vagrant/system/server/gislab-balls/requirements.txt
-python /vagrant/system/server/gislab-balls/setup.py install
-
-mkdir -p /var/www/balls
-django-admin.py startproject --template=/vagrant/system/server/gislab-balls/balls/conf/project_template/ djproject /var/www/balls
-
-cat << EOF >> /var/www/balls/djproject/settings.py
+cat << EOF >> /var/www/webgis/djproject/settings.py
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql_psycopg2',
-		'NAME': 'balls',
-		'USER': 'balls',
-		'PASSWORD': '$BALLS_PASSWORD',
+		'NAME': 'webgis',
+		'USER': 'webgis',
+		'PASSWORD': '$WEBGIS_DB_PASSWORD',
 		'HOST': '',
 		'PORT': '',
 	}
 }
 EOF
 
-python /var/www/balls/manage.py syncdb --noinput
+python /var/www/webgis/manage.py syncdb --noinput
+python /var/www/webgis/manage.py collectstatic --noinput
 deactivate
 
-cp -a /vagrant/system/server/gislab-balls/conf/balls.apache /etc/apache2/sites-available/balls
+cp -a /vagrant/system/server/gislab-webgis/conf/webgis.apache /etc/apache2/sites-available/webgis
 
-a2ensite balls
+a2enmod wsgi
+a2enmod rewrite
+a2ensite webgis
 service apache2 reload
-
-
 
 
 #
