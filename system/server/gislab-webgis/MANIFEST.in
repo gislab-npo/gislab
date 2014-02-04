@@ -1,0 +1,8 @@
+include AUTHORS
+include INSTALL
+include LICENSE
+include README.md
+include requirements.txt
+recursive-include webgis/viewer/static
+recursive-include webgis/conf/project_template/static
+recursive-include webgis/viewer/templates
