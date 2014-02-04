@@ -389,8 +389,10 @@ mkdir -p /usr/local/python-virtualenvs
 virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/webgis
 source /usr/local/python-virtualenvs/webgis/bin/activate
 pip install -r /vagrant/system/server/gislab-webgis/requirements.txt
-#pip install -e /vagrant/system/server/gislab-webgis/
-python /vagrant/system/server/gislab-webgis/setup.py install
+
+cp -a /vagrant/system/server/gislab-webgis /tmp/gislab-webgis
+python /tmp/gislab-webgis/setup.py install
+rm -r /tmp/gislab-webgis
 
 mkdir -p /var/www/webgis
 django-admin.py startproject --template=/vagrant/system/server/gislab-webgis/webgis/conf/project_template/ djproject /var/www/webgis
