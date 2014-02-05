@@ -96,7 +96,7 @@ def page(request):
 		})
 
 	context['osm'] = form.cleaned_data['osm'].upper() == "TRUE" or not project
-	context['google'] = form.cleaned_data.get('google', 'hybrid' if not project else '').upper() or False
+	context['google'] = form.cleaned_data['google'].upper() or 'HYBRID' if not project else False
 	osm_or_google = context['osm'] or context['google']
 	if osm_or_google:
 		context['projection'] = 'EPSG:3857'
