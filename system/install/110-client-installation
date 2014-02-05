@@ -1,0 +1,9 @@
+#
+### CLIENT INSTALLATION ###
+#
+
+/vagrant/system/bin/gislab-install-client # install client image
+/vagrant/system/bin/gislab-clients-allowed # allow client MACs
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

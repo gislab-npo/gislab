@@ -1,0 +1,67 @@
+#
+### DNS SERVER - BIND ###
+#
+
+cat << EOF > /etc/bind/named.conf.local
+zone "gis.lab" {
+    type master;
+    file "/etc/bind/db.gis.lab";
+};
+
+zone "50.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.192";
+};
+EOF
+
+cat << EOF > /etc/bind/db.gis.lab
+\$TTL    604800
+\$ORIGIN gis.lab.
+@  3600  IN    SOA       ns.gis.lab. root.gis.lab. (
+               2013112203     ; Serial
+               604800         ; Refresh
+               86400          ; Retry
+               2419200        ; Expire
+               604800         ; Negative Cache TTL
+               )
+
+         IN    NS       ns.gis.lab.
+
+ns       IN    A        $GISLAB_NETWORK.5
+ns1      IN    A        $GISLAB_NETWORK.5
+ns1      IN    AAAA     ::1
+
+server   IN    A        $GISLAB_NETWORK.5
+web      IN    CNAME    server
+webgis   IN    CNAME    server
+irc      IN    CNAME    server
+EOF
+
+cat << EOF > /etc/bind/db.192
+\$TTL    604800
+\$ORIGIN 50.168.192.IN-ADDR.ARPA.
+@  3600  IN    SOA       ns.gis.lab. root.gis.lab. (
+               2013112103     ; Serial
+               604800         ; Refresh
+               86400          ; Retry
+               2419200        ; Expire
+               604800         ; Negative Cache TTL
+               )
+
+         NS              ns.gis.lab.
+5        IN    PTR       server.gis.lab.
+EOF
+
+# use IPv4 only
+sed -i 's/^OPTIONS=.*/OPTIONS="-4 -u bind"/' /etc/default/bind9
+
+service bind9 restart
+
+# use our DNS server
+cat << EOF >> /etc/resolvconf/resolv.conf.d/head
+nameserver 127.0.0.1
+EOF
+resolvconf -u
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

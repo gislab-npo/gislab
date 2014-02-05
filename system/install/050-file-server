@@ -1,0 +1,29 @@
+#
+### FILE SERVER - NFS ###
+#
+
+mkdir -p /storage/repository    # readable for all, writable only for server superuser
+mkdir -p /storage/share         # readable for all, writable for file owners
+mkdir -p /storage/barrel        # readable and writable for all NFS users
+
+chmod ugo+rwx /storage/barrel
+
+cat << EOF > /etc/exports
+/home                       *(rw,sync,no_subtree_check)
+/storage/repository         *(ro,sync,no_subtree_check)
+/storage/share              *(rw,sync,no_subtree_check)
+/storage/barrel             *(rw,sync,no_subtree_check,all_squash,insecure)
+EOF
+
+sed -i "s/^# Domain.*/Domain = gis.lab/" /etc/idmapd.conf
+
+cat << EOF > /etc/fstab
+/storage  /mnt  none  bind  0  0
+EOF
+mount /mnt  # bind mount to keep the same paths on server as on client
+
+service nfs-kernel-server restart
+service idmapd restart
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

@@ -1,0 +1,55 @@
+#
+### DHCP SERVER ###
+#
+
+# adding Apparmor profile to enable including allowed MACs from /etc/ltsp/dhcpd-clients-allowed.conf
+cat << EOF > /etc/apparmor.d/local/usr.sbin.dhcpd
+/etc/ltsp/dhcpd-clients-allowed.conf lrw,
+EOF
+service apparmor restart
+
+# creating empty MACs file
+cat << EOF > /etc/ltsp/dhcpd-clients-allowed.conf
+group {
+}
+EOF
+
+# DHCP server configuration
+cat << EOF > /etc/ltsp/dhcpd.conf
+authoritative;
+
+subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
+    option routers $GISLAB_NETWORK.5;
+
+    pool {
+        $GISLAB_UNKNOWN_MAC_POLICY unknown clients;
+        range $GISLAB_NETWORK.100 $GISLAB_NETWORK.250;
+        option domain-name "gis.lab";
+        option domain-name-servers $GISLAB_NETWORK.5, $GISLAB_DNS_SERVERS;
+        option broadcast-address $GISLAB_NETWORK.255;
+        option subnet-mask 255.255.255.0;
+        option root-path "/opt/ltsp/i386";
+        if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
+            filename "/ltsp/i386/pxelinux.0";
+        } else {
+            filename "/ltsp/i386/nbi.img";
+        }
+    }
+}
+EOF
+
+if [ "$GISLAB_UNKNOWN_MAC_POLICY" == "deny" ]; # if unknown MACs are denied load known ones from included file
+then
+    cat << EOF >> /etc/ltsp/dhcpd.conf
+include "/etc/ltsp/dhcpd-clients-allowed.conf";
+EOF
+fi
+
+cat << EOF > /etc/default/isc-dhcp-server
+INTERFACES="eth1"
+EOF
+
+service isc-dhcp-server restart
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

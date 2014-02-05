@@ -1,0 +1,48 @@
+#
+### WEBGIS ###
+#
+
+WEBGIS_DB_PASSWORD=$(pwgen -1 -n 8)
+sudo su - postgres -c "createdb -E UTF8 -T template0 webgis"
+sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole webgis" # PostgreSQL account
+sudo su - postgres -c "psql -c \"ALTER ROLE webgis WITH PASSWORD '${WEBGIS_DB_PASSWORD}';\""
+
+mkdir -p /usr/local/python-virtualenvs
+virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/webgis
+source /usr/local/python-virtualenvs/webgis/bin/activate
+
+GISLAB_INSTALL_WEBGIS_DIR=/tmp/gislab-install-webgis-$(date +%s)
+cp -a /vagrant/system/server/gislab-webgis $GISLAB_INSTALL_WEBGIS_DIR
+pip install -r $GISLAB_INSTALL_WEBGIS_DIR/requirements.txt
+python $GISLAB_INSTALL_WEBGIS_DIR/setup.py install
+rm -r $GISLAB_INSTALL_WEBGIS_DIR
+
+mkdir -p /var/www/webgis
+django-admin.py startproject --template=/vagrant/system/server/gislab-webgis/webgis/conf/project_template/ djproject /var/www/webgis
+
+cat << EOF >> /var/www/webgis/djproject/settings.py
+DATABASES = {
+	'default': {
+		'ENGINE': 'django.db.backends.postgresql_psycopg2',
+		'NAME': 'webgis',
+		'USER': 'webgis',
+		'PASSWORD': '$WEBGIS_DB_PASSWORD',
+		'HOST': '',
+		'PORT': '',
+	}
+}
+EOF
+
+python /var/www/webgis/manage.py syncdb --noinput
+python /var/www/webgis/manage.py collectstatic --noinput
+deactivate
+
+cp -a /vagrant/system/server/gislab-webgis/conf/webgis.apache /etc/apache2/sites-available/webgis
+
+a2enmod wsgi
+a2enmod rewrite
+a2ensite webgis
+service apache2 reload
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

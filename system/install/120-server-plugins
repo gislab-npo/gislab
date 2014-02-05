@@ -1,0 +1,10 @@
+#
+### SERVER PLUGINS ###
+#
+
+for plugin in /vagrant/user/plugins/server/*.*; do
+	$plugin
+done
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

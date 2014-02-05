@@ -1,0 +1,39 @@
+#
+### DATABASE SERVER - POSTGRESQL/POSTGIS ###
+#
+
+# allow network connections and local connection without password
+sed -i "s/^#listen_addresses.*/listen_addresses = '*'/" /etc/postgresql/9.1/main/postgresql.conf
+sed -i "s/local.*all.*all.*peer/local  all  all  trust/" /etc/postgresql/9.1/main/pg_hba.conf
+sed -i "s/host.*all.*all.*127.0.0.1\/32.*md5/host  all  all  0.0.0.0\/0  md5/" /etc/postgresql/9.1/main/pg_hba.conf
+
+# set search path
+sed -i "s/^#search_path.*/search_path = '\"\$user\",public'/" /etc/postgresql/9.1/main/postgresql.conf
+
+service postgresql restart
+
+# create labusers group
+sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole --no-login labusers"
+
+# create template database
+sudo su - postgres -c "createdb -E UTF8 -T template0 template_postgis"
+sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql" &> /dev/null
+sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql" &> /dev/null
+sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON geometry_columns TO PUBLIC;\""
+sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON geography_columns TO PUBLIC;\""
+sudo su - postgres -c "psql -d template_postgis -c \"GRANT ALL ON spatial_ref_sys TO PUBLIC;\""
+
+# adding additional projections support
+sudo su - postgres -c "psql -d template_postgis -f /vagrant/user/projections/*-postgis.sql"
+
+sudo su - postgres -c "psql -d template_postgis -c \"VACUUM FULL;\""
+sudo su - postgres -c "psql -d template_postgis -c \"VACUUM FREEZE;\""
+sudo su - postgres -c "psql -d postgres -c \"UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';\""
+sudo su - postgres -c "psql -d postgres -c \"UPDATE pg_database SET datallowconn='false' WHERE datname='template_postgis';\""
+
+# create gislab database
+sudo su - postgres -c "createdb -T template_postgis gislab"
+sudo su - postgres -c "psql -c \"GRANT CONNECT ON DATABASE gislab TO labusers;\""
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

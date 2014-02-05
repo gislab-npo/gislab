@@ -1,0 +1,8 @@
+#
+### DATA ###
+#
+
+cp -a /vagrant/user/data /storage/repository/
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

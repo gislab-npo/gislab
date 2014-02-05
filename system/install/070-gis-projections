@@ -1,0 +1,9 @@
+#
+### GIS PROJECTIONS ###
+#
+
+# customize projections support
+/bin/bash /vagrant/user/projections/*-libs.sh
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

@@ -1,0 +1,31 @@
+#
+### IRC SERVER ###
+#
+
+cat << EOF > /etc/ircd-hybrid/ircd.conf
+serverinfo {
+    name = "irc.gis.lab";
+    description = "GIS.lab IRC server";
+    network_name = "GIS.lab";
+    network_desc = "GIS.lab";
+    hub = yes;
+    max_clients = 512;
+};
+
+admin {
+    name = "GIS.lab Administrator";
+    description = "GIS.lab Administrator";
+    email = "root@server.gis.lab";
+};
+EOF
+
+cat /vagrant/system/server/ircd/ircd.conf >> /etc/ircd-hybrid/ircd.conf # append rest of config
+
+cat << EOF > /etc/ircd-hybrid/ircd.motd
+Welcome to GIS.lab IRC server !
+EOF
+
+service ircd-hybrid restart
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:
