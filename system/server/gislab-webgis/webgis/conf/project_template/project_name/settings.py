@@ -74,7 +74,7 @@ FILE_EXTENSIONS_TABLE = {
 
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['web.gis.lab']
 
 MIDDLEWARE_CLASSES = (
 	'django.middleware.common.CommonMiddleware',
