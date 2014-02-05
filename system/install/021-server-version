@@ -1,0 +1,17 @@
+#
+### SERVER VERSION ###
+#
+
+# version
+# set version from Git if we are running from sources
+if [[ "$GISLAB_VERSION" == "dev" && -d "/vagrant/.git" ]]
+then
+	GISLAB_VERSION_BRANCH=$(git --git-dir=/vagrant/.git --work-tree=/vagrant rev-parse --abbrev-ref HEAD)
+	GISLAB_VERSION_CHANGESET=$(git --git-dir=/vagrant/.git --work-tree=/vagrant rev-parse --short HEAD)
+	GISLAB_VERSION=git:$GISLAB_VERSION_BRANCH~$GISLAB_VERSION_CHANGESET
+fi
+
+echo -e "GISLAB_VERSION=$GISLAB_VERSION\nGISLAB_SERVER_BUILD_TIME=$(date)" > /etc/gislab_version
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:
