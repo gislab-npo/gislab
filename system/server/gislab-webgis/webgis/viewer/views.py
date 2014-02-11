@@ -6,6 +6,7 @@ Author: Marcel Dancak, marcel.dancak@gista.sk
 
 import os.path
 import urllib2
+import xml.etree.ElementTree as etree
 
 from django.conf import settings
 from django.shortcuts import render
@@ -42,6 +43,15 @@ def featureinfo(request):
 	resp.close()
 	return HttpResponse(resp_content, content_type=content_type)
 
+def getprint(request):
+	url = "{0}/?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
+	resp = urllib2.urlopen(url)
+	resp_content = resp.read()
+	content_type = resp.info().getheader("Content-Type")
+	resp.close()
+	return HttpResponse(resp_content, content_type=content_type)
+
+
 def page(request):
 	# make GET parameters not case sensitive
 	params = dict((k.lower(), v) for k, v in request.GET.iteritems()) # change GET parameters names to uppercase
@@ -54,8 +64,10 @@ def page(request):
 	if project:
 		projectfile = os.path.join(settings.WEBGIS_PROJECT_ROOT, project)
 		ows_url = '{0}/?map={1}'.format(settings.WEBGIS_OWS_URL, projectfile)
+		# OWSLib set REQUEST parameter regardless of given url
 		ows_getcapabilities_url = "{0}&REQUEST=GetCapabilities".format(ows_url)
 		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('webgis.viewer.views.featureinfo'), projectfile)
+		getprint_url = "{0}?map={1}&REQUEST=GetPrint".format(reverse('webgis.viewer.views.getprint'), projectfile)
 		try:
 			wms_service = WebMapService(ows_getcapabilities_url, version="1.1.1") # read WMS GetCapabilities
 		except Exception, e:
@@ -73,15 +85,38 @@ def page(request):
 			if operation.name == 'GetFeatureInfo':
 				featureinfo = 'application/vnd.ogc.gml' in operation.formatOptions
 				break
+
+		# print templates
+		print_composers = []
+		root = etree.fromstring(wms_service.getServiceXML())
+		for composer_template in root.find("Capability").find("ComposerTemplates"):
+			#for composer_map in composer_template.findall("ComposerMap"):
+			#	print "\t", composer_map.attrib
+			# take only map0
+			composer_map = composer_template.find("ComposerMap[@name='map0']")
+			if composer_map is not None:
+				print_composer = composer_template.attrib
+				maps = [composer_map.attrib]
+				labels = [composer_label.attrib['name'] for composer_label in composer_template.findall("ComposerLabel")]
+
+				print_composer = {
+					'maps': maps,
+					'labels': labels
+				}
+				print_composer.update(composer_template.attrib)
+				print_composers.append(print_composer)
+
 		context.update({
 			'project': project,
 			'projectfile': projectfile,
 			'ows_url': ows_url,
 			'ows_getcapabilities_url': ows_getcapabilities_url,
 			'getfeatureinfo_url': getfeatureinfo_url,
+			'getprint_url': getprint_url,
 			'project_extent': ",".join(map(str, root_layer.boundingBox[:-1])),
 			'projection': root_layer.boundingBox[-1],
 			'featureinfo': featureinfo,
+			'print_composers': print_composers,
 
 			'root_title': wms_service.identification.title.encode('UTF-8'),
 			'author': wms_service.provider.contact.name.encode('UTF-8') if wms_service.provider.contact.name else '',

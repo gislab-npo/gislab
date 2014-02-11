@@ -25,14 +25,10 @@ overlays_node.eachChild(function(node) {
 permalink_provider.on({
 	statechange: function(provider, name, value) {
 		var map = mappanel.map;
-		var all_layers = [];
-		var visible_layers = [];
-		overlays_node.eachChild(function(node) {
-			all_layers.push(node.attributes.text);
-			if (node.attributes.checked) {
-				visible_layers.push(node.attributes.text);
-			}
-		});
+		var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
+		var all_layers = overlays_root.getAllLayers();
+		var visible_layers = overlays_root.getVisibleLayers();;
+
 		var parameters = {
 			DPI: OpenLayers.DOTS_PER_INCH,
 			{% if project %}PROJECT: '{{ project }}',{% endif %}
@@ -48,7 +44,7 @@ permalink_provider.on({
 			parameters.GOOGLE = google_layer.mapTypeId;
 		}
 		parameters.LAYERS = all_layers.join(',');
-		if (visible_layers.length < overlays_node.childNodes.length) {
+		if (visible_layers.length < all_layers.length) {
 			parameters.VISIBLE = visible_layers.join(',');
 		}
 		var extent_array = map.getExtent().toArray();
