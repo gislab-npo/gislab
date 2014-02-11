@@ -50,6 +50,7 @@ then
 	cp /opt/ltsp/images/i386.img /opt/ltsp/images/i386-$DATETIME.img
 fi
 
+
 # add some ltsp-build-client plugins which takes care about our image customizations
 rm -vf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/*gislab*
 
@@ -62,29 +63,31 @@ fi
 cp -av /vagrant/system/client/ltsp/plugins/ltsp-build-client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 cp -av /vagrant/user/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
-# client image configuration
-cat << EOF > /etc/ltsp/ltsp-build-client.conf
-ARCH=i386
-FAT_CLIENT_DESKTOPS="xubuntu-desktop"
-LATE_PACKAGES="$GISLAB_CLIENT_INSTALL_PACKAGES"
-REMOVE_PACKAGES="$GISLAB_CLIENT_REMOVE_PACKAGES"
-EOF
+
+# build client options
+# default options
+GISLAB_BUILD_CLIENT_OPTS="--fat-client-desktop xubuntu-desktop --arch i386 "
+GISLAB_BUILD_CLIENT_OPTS+="--purge-chroot --copy-sourceslist --accept-unsigned-packages "
 
 # use APT proxy for client image creation if configured
-GISLAB_LTSP_BUILD_CLIENT_OPTS="--purge-chroot --copy-sourceslist --accept-unsigned-packages"
 if [ -n "${GISLAB_APT_HTTP_PROXY}" ]; then
-	GISLAB_LTSP_BUILD_CLIENT_OPTS="$GISLAB_LTSP_BUILD_CLIENT_OPTS --http-proxy $GISLAB_APT_HTTP_PROXY"
+	GISLAB_BUILD_CLIENT_OPTS+="--http-proxy $GISLAB_APT_HTTP_PROXY "
 fi
+
+# install and remove packages
+GISLAB_BUILD_CLIENT_OPTS+='--late-packages "$GISLAB_CLIENT_INSTALL_PACKAGES" '
+GISLAB_BUILD_CLIENT_OPTS+='--remove-packages "$GISLAB_CLIENT_REMOVE_PACKAGES" '
 
 # enable debug if requested
 if [ "$GISLAB_DEBUG" == "yes" ]; then
-	GISLAB_LTSP_BUILD_CLIENT_OPTS="$GISLAB_LTSP_BUILD_CLIENT_OPTS --debug"
+	GISLAB_BUILD_CLIENT_OPTS+="--debug "
 fi
 
-ltsp-build-client $GISLAB_LTSP_BUILD_CLIENT_OPTS
+ltsp-build-client $GISLAB_BUILD_CLIENT_OPTS
 
 ltsp-update-sshkeys
 ltsp-update-kernels
+
 
 # LTSP configuration
 cat << EOF > /var/lib/tftpboot/ltsp/i386/lts.conf
@@ -109,6 +112,7 @@ EOF
 fi
 
 service nbd-server restart
+
 
 # disable plymouth screen for better client troubleshooting on boot
 sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/ltsp/i386/pxelinux.cfg/default
