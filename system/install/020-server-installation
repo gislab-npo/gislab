@@ -4,11 +4,8 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
+# Ubuntu repositories
 cat << EOF > /etc/apt/sources.list
-#############################################################
-################### OFFICIAL UBUNTU REPOS ###################
-#############################################################
-
 ###### Ubuntu Main Repos
 deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse 
 deb-src http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse 
@@ -23,24 +20,27 @@ deb-src http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ 
 deb http://archive.canonical.com/ubuntu precise partner
 deb-src http://archive.canonical.com/ubuntu precise partner
 
-##############################################################
-##################### UNOFFICIAL  REPOS ######################
-##############################################################
+EOF
 
-###### 3rd Party Binary Repos
-
+# custom GIS repositories
+cat << EOF >> /etc/apt/sources.list
 #### Custom GIS repositories
 deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main
-deb http://ppa.launchpad.net/imincik/qgis2/ubuntu precise main
+deb http://ppa.launchpad.net/imincik/$GISLAB_QGIS_VERSION/ubuntu precise main
 
+EOF
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6CD44B55 # add imincik PPA key
+
+# Google repositories
+cat << EOF >> /etc/apt/sources.list
 #### Google Chrome Browser - http://www.google.com/linuxrepositories/
 deb http://dl.google.com/linux/chrome/deb/ stable main
 
 #### Google Earth - http://www.google.com/linuxrepositories/
 deb http://dl.google.com/linux/earth/deb/ stable main
 EOF
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6CD44B55 # add imincik PPA key
 wget -q https://dl-ssl.google.com/linux/linux_signing_key.pub -O- | sudo apt-key add - # add Google repositories key
+
 
 # use APT proxy on server if configured
 if [ -n "${GISLAB_APT_HTTP_PROXY}" ]; then
