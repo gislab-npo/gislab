@@ -28,11 +28,12 @@ var action = new Ext.Action({
 				success: function(response) {
 					vector_data_balls = response.responseText;
 					Ext.state.Manager.set("map", {balls: [response.responseText]});
-					Ext.get('geojson-link').dom.href = '{% url "webgis.storage.views.ball" %}?ID='+response.responseText;
-					Ext.get('geojson-link').update(response.responseText);
+					Ext.getCmp('geojson-links').setLinks([{
+						text: response.responseText,
+						href: Ext.urlAppend('{% url "webgis.storage.views.ball" %}', Ext.urlEncode({ID: response.responseText})),
+					}]);
 					// to make it work like non-toggle button
 					save_action.toggle(false);
-					//window.location.assign('{% url "webgis.storage.views.ball" %}?ID='+response.responseText);
 				},
 				failure: function(response, opts) {
 					Ext.MessageBox.alert("Error", "Failed to save data.");
@@ -43,10 +44,4 @@ var action = new Ext.Action({
 		}
 	}
 });
-var geojson_link = {
-	id: 'geojson-link',
-	xtype: 'box',
-	autoEl: {tag: 'a', href: '#', html: ''}
-}
-mappanel.getTopToolbar().add('-', action, geojson_link);
-
+mappanel.getTopToolbar().add('-', action);

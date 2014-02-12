@@ -27,6 +27,7 @@
 		<script type="text/javascript" src="{% static 'viewer/js/featureinfo_panel.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/draw_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/control_display.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer/js/link_list.js' %}"></script>
 		{% if google %}<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>{% endif %}
 
 		<title id="page-title">{{ root_title }}</title>
@@ -372,6 +373,12 @@
 				});
 				mappanel.getBottomToolbar().add(' ', '-', ' ', measurement_output);
 
+				var geojson_links = new WebGIS.Toolbar.LinkList({
+					id: 'geojson-links',
+					textBefore: 'Drawings',
+				});
+				mappanel.getBottomToolbar().add('->', geojson_links);
+
 				mappanel.map.zoomToExtent(zoom_extent, true);
 				mappanel.map.addControl(new OpenLayers.Control.Scale());
 				mappanel.map.addControl(new OpenLayers.Control.ScaleLine());
@@ -383,8 +390,13 @@
 
 				// insert points from GET parameter
 				{% if balls %}
+				var balls_links = [];
 				vector_data_balls = '{{ balls|join:"," }}';
 					{% for ball in balls %}
+				balls_links.push({
+					text: '{{ ball }}',
+					href: Ext.urlAppend('{% url "webgis.storage.views.ball" %}', Ext.urlEncode({ID: '{{ ball }}'})),
+				});
 				Ext.Ajax.request({
 					method: 'GET',
 					url: '{% url "webgis.storage.views.ball" %}',//'/proxy/?url=' + encodeURIComponent('http://balls.gis.lab/?ID={{ ball }}'),
@@ -413,6 +425,7 @@
 					}
 				});
 					{% endfor %}
+				geojson_links.setLinks(balls_links);
 				{% endif %}
 
 				{% include "viewer/permalink.js" %}

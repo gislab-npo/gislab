@@ -9,7 +9,7 @@ var permalink = new Ext.Toolbar.TextItem({
 	id: 'permalink',
 	text: '<a target="_blank" href="#">Permalink</a>'
 });
-mappanel.getBottomToolbar().add('->', permalink);
+mappanel.getBottomToolbar().add(' ', '-', ' ', permalink);
 
 // Register listeners for custom map state changes and generate events for permalink update
 var fire_map_state_changed_event = function(obj) {
