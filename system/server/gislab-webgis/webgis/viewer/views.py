@@ -67,7 +67,7 @@ def page(request):
 		# OWSLib set REQUEST parameter regardless of given url
 		ows_getcapabilities_url = "{0}&REQUEST=GetCapabilities".format(ows_url)
 		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('webgis.viewer.views.featureinfo'), projectfile)
-		getprint_url = "{0}?map={1}&REQUEST=GetPrint".format(reverse('webgis.viewer.views.getprint'), projectfile)
+		getprint_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetPrint".format(reverse('webgis.viewer.views.getprint'), projectfile)
 		try:
 			wms_service = WebMapService(ows_getcapabilities_url, version="1.1.1") # read WMS GetCapabilities
 		except Exception, e:
