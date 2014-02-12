@@ -25,19 +25,15 @@ function usage() {
 
 
 # options
-TEMP=`getopt --options h \
-	-n $(basename $0) -- "$@"`
-
-if [ $? != 0 ] ; then echo "Terminating..." >&2 ; fi
-eval set -- "$TEMP"
-
-while true ; do
-        case "$1" in
-				-h) usage ; exit 1 ; shift 2 ;;
-                --) shift ; break ;;
-                *) echo "Internal error!" ; exit 1 ;;
+while getopts "h" OPTION
+do
+        case "$OPTION" in
+			h) usage ; exit 0 ;;
+			\?) exit 1;;
         esac
 done
+shift $(($OPTIND - 1))
+
 
 DATETIME=$(date +"%Y-%m-%d-%T")
 
