@@ -195,14 +195,15 @@
 
 				// Toolbar Actions
 
+				{% include "viewer/actions/basic.js" %}
+				{% include "viewer/actions/measurement.js" %}
 				{% if featureinfo %}
 				{% include "viewer/actions/featureinfo.js" %}
 				{% endif %}
-
-				{% include "viewer/actions/basic.js" %}
-				{% include "viewer/actions/measurement.js" %}
 				{% include "viewer/actions/draw.js" %}
 				{% include "viewer/actions/save.js" %}
+				{% include "viewer/actions/save_history.js" %}
+
 				{% if print_composers %}
 				{% include "viewer/actions/print.js" %}
 				{% endif %}
