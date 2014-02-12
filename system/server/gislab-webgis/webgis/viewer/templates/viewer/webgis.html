@@ -119,7 +119,7 @@
 								'height': {{ print_composer.maps.0.height }}*mmToPt
 							},
 							rotation: true,
-							labels: {% if print_composer.labels %}['{{ print_composer.labels |join:"','"}} '],{% else %}[],{% endif %}
+							labels: {% if print_composer.labels %}['{{ print_composer.labels |join:"','"}}'],{% else %}[],{% endif %}
 						},
 					{% endfor %}
 					],

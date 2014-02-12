@@ -67,7 +67,7 @@ def page(request):
 		# OWSLib set REQUEST parameter regardless of given url
 		ows_getcapabilities_url = "{0}&REQUEST=GetCapabilities".format(ows_url)
 		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('webgis.viewer.views.featureinfo'), projectfile)
-		getprint_url = "{0}?map={1}&REQUEST=GetPrint".format(reverse('webgis.viewer.views.getprint'), projectfile)
+		getprint_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetPrint".format(reverse('webgis.viewer.views.getprint'), projectfile)
 		try:
 			wms_service = WebMapService(ows_getcapabilities_url, version="1.1.1") # read WMS GetCapabilities
 		except Exception, e:
@@ -89,22 +89,22 @@ def page(request):
 		# print templates
 		print_composers = []
 		root = etree.fromstring(wms_service.getServiceXML())
-		for composer_template in root.find("Capability").find("ComposerTemplates"):
-			#for composer_map in composer_template.findall("ComposerMap"):
-			#	print "\t", composer_map.attrib
-			# take only map0
-			composer_map = composer_template.find("ComposerMap[@name='map0']")
-			if composer_map is not None:
-				print_composer = composer_template.attrib
-				maps = [composer_map.attrib]
-				labels = [composer_label.attrib['name'] for composer_label in composer_template.findall("ComposerLabel")]
+		composer_templates_elem = root.find("Capability").find("ComposerTemplates")
+		if composer_templates_elem is not None:
+			for composer_template in composer_templates_elem:
+				# take only map0
+				composer_map = composer_template.find("ComposerMap[@name='map0']")
+				if composer_map is not None:
+					print_composer = composer_template.attrib
+					maps = [composer_map.attrib]
+					labels = [composer_label.attrib['name'] for composer_label in composer_template.findall("ComposerLabel")]
 
-				print_composer = {
-					'maps': maps,
-					'labels': labels
-				}
-				print_composer.update(composer_template.attrib)
-				print_composers.append(print_composer)
+					print_composer = {
+						'maps': maps,
+						'labels': labels
+					}
+					print_composer.update(composer_template.attrib)
+					print_composers.append(print_composer)
 
 		context.update({
 			'project': project,
