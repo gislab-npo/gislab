@@ -151,9 +151,9 @@ class WebGisPlugin:
 			get_params['SCALES'] = ','.join(scales)
 		if dialog.google.currentIndex() > 0:
 			get_params['GOOGLE'] = dialog.google.currentText().upper()
-		balls = dialog.balls.text()
-		if balls:
-			get_params['BALLS'] = balls.replace(" ", "")
+		drawings = dialog.drawings.text()
+		if drawings:
+			get_params['DRAWINGS'] = drawings.replace(" ", "")
 
 		visible_layers = [layer for layer in map_canvas.layers() if self._is_layer_for_publish(layer)]
 		if len(visible_layers) < len(all_layers):
