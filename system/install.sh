@@ -123,13 +123,15 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 #
 ### BIND ###
 #
+GISLAB_NETWORK_REVERSE=$(echo $GISLAB_NETWORK | awk -F "." '{ print $3 "." $2 "." $1 }')
+
 cat << EOF > /etc/bind/named.conf.local
 zone "gis.lab" {
     type master;
     file "/etc/bind/db.gis.lab";
 };
 
-zone "50.168.192.in-addr.arpa" {
+zone "$GISLAB_NETWORK_REVERSE.in-addr.arpa" {
     type master;
     file "/etc/bind/db.192";
 };
@@ -161,7 +163,7 @@ EOF
 
 cat << EOF > /etc/bind/db.192
 \$TTL    604800
-\$ORIGIN 50.168.192.IN-ADDR.ARPA.
+\$ORIGIN $GISLAB_NETWORK_REVERSE.IN-ADDR.ARPA.
 @  3600  IN    SOA       ns.gis.lab. root.gis.lab. (
                2013112103     ; Serial
                604800         ; Refresh
