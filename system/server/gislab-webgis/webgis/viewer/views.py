@@ -158,7 +158,7 @@ def page(request):
 	if not osm_or_google:
 		context['tile_resolutions'] = ', '.join(str(r) for r in _get_tile_resolutions(context['scales'], context['units'], context['dpi']))
 
-	context['balls'] = form.cleaned_data['balls']
+	context['drawings'] = form.cleaned_data['drawings']
 
 	if settings.DEBUG:
 		context['debug'] = True

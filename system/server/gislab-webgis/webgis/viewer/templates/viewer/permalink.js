@@ -52,8 +52,8 @@ permalink_provider.on({
 			extent_array[i] = extent_array[i].toFixed(1);
 		}
 		parameters.EXTENT = extent_array.join(',');
-		if (vector_data_balls) {
-			parameters.BALLS = vector_data_balls;
+		if (drawings_param) {
+			parameters.DRAWINGS = drawings_param;
 		}
 		var link = [location.protocol, '//', location.host, location.pathname, '?'].join('');
 		var qs = [];

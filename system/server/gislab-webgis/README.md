@@ -51,7 +51,7 @@ Supported GET parameters:
  * DPI: DPI resolution of map layers. Example: 120. Default: 96. 
  * SCALES: available list of scales of map. Example: 10000,5000,2500. Default: 1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500
  * EXTENT: desired extent of the map on start. Example 1234.1,5678.5,2345.2,6789.6. Default is extent of the project.
- * BALLS: list of balls identifiers containing geometry data in GeoJSON format. Format: <BALL_ID>,<BALL_ID>,...
+ * DRAWINGS: list of drawings identifiers containing geometry data in GeoJSON format. Format: <DRAWING_ID>,<DRAWING_ID>,...
 
 
 #### Credits

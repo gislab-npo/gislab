@@ -47,7 +47,7 @@
 
 				var mappanel_plugins = [];
 				var layer = null;
-				var vector_data_balls = null;
+				var drawings_param = null;
 				var zoom_extent = OpenLayers.Bounds.fromString('{{ zoom_extent }}');
 				{% if tile_resolutions %}config.tile_resolutions = [{{ tile_resolutions }}];{% endif %}
 
@@ -390,19 +390,19 @@
 				map = mappanel.map;
 
 				// insert points from GET parameter
-				{% if balls %}
-				var balls_links = [];
-				vector_data_balls = '{{ balls|join:"," }}';
-					{% for ball in balls %}
-				balls_links.push({
-					text: '{{ ball }}',
-					href: Ext.urlAppend('{% url "webgis.storage.views.ball" %}', Ext.urlEncode({ID: '{{ ball }}'})),
+				{% if drawings %}
+				var drawings_links = [];
+				drawings_param = '{{ drawings|join:"," }}';
+					{% for drawing_id in drawings %}
+				drawings_links.push({
+					text: '{{ drawing_id }}',
+					href: Ext.urlAppend('{% url "webgis.storage.views.ball" %}', Ext.urlEncode({ID: '{{ drawing_id }}'})),
 				});
 				Ext.Ajax.request({
 					method: 'GET',
-					url: '{% url "webgis.storage.views.ball" %}',//'/proxy/?url=' + encodeURIComponent('http://balls.gis.lab/?ID={{ ball }}'),
+					url: '{% url "webgis.storage.views.ball" %}',
 					params: {
-						ID: '{{ ball }}'
+						ID: '{{ drawing_id }}'
 					},
 					success: function(response) {
 						var features = new OpenLayers.Format.GeoJSON().read(response.responseText);
@@ -422,11 +422,11 @@
 						polygons_layer.addFeatures(polygons);
 					},
 					failure: function(response, opts) {
-						Ext.MessageBox.alert("Error", "Failed to fetch vector data (ball: {{ ball }})");
+						Ext.MessageBox.alert("Error", "Failed to fetch vector data (drawing: {{ drawing_id }})");
 					}
 				});
 					{% endfor %}
-				geojson_links.setLinks(balls_links);
+				geojson_links.setLinks(drawings_links);
 				{% endif %}
 
 				{% include "viewer/permalink.js" %}

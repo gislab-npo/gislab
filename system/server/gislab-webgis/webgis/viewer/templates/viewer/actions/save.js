@@ -1,5 +1,5 @@
 
-// save ball
+// save drawings
 var action = new Ext.Action({
 	id: 'save-action',
 	cls: 'x-btn-icon',
@@ -26,8 +26,8 @@ var action = new Ext.Action({
 				jsonData: geojson,
 				headers: { 'Content-Type': 'application/geojson; charset=utf-8' },
 				success: function(response) {
-					vector_data_balls = response.responseText;
-					Ext.state.Manager.set("map", {balls: [response.responseText]});
+					drawings_param = response.responseText;
+					Ext.state.Manager.set("map", {drawings: [response.responseText]});
 					Ext.getCmp('geojson-links').setLinks([{
 						text: response.responseText,
 						href: Ext.urlAppend('{% url "webgis.storage.views.ball" %}', Ext.urlEncode({ID: response.responseText})),

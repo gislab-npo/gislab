@@ -34,4 +34,4 @@ class ViewerForm(forms.Form):
 	dpi = forms.IntegerField(required=False)
 	scales = MultipleIntegersField(required=False)
 	extent = forms.CharField(required=False)
-	balls = MultipleStringsField(required=False)
+	drawings = MultipleStringsField(required=False)
