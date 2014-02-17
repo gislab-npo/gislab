@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 AUTHOR = u'Ivan Minčík'
 SITENAME = u'GIS.lab'
 SITESUBTITLE = u'... rapid GIS office deployment'
-SITEURL = ''
+SITEURL = 'http://imincik.github.io/testpelican'
 
 TIMEZONE = 'Europe/Bratislava'
 
@@ -41,4 +41,4 @@ FILES_TO_COPY = (
 )
 
 # Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
+RELATIVE_URLS = True
