@@ -21,14 +21,14 @@ Preferred method of launching __GIS.lab client__ machine is a __physical client 
 
 <div style="text-align:center;padding:10px" markdown="1">
 ![GIS.lab physical client]({filename}/images/schema-physical-client.png)  
-Fig. 2: GIS.lab physical client
+Fig. 2: Empty machine or machine running Windows turning to GIS.lab physical client and back
 </div>
 
 In case user can't offer loosing access to a system physically installed on client machine, there is a possibility to launch __GIS.lab client__ inside of any Windows, Linux or Mac OS X operating system in __virtual client mode__. This mode will boot the same client environment from GIS.lab server network service inside of VirtualBox machine and will allow to run both systems side-by-side. It is possible use GIS.lab virtual client in a windowed mode, similar as it would be a standard application or in a fullscreen mode for best user experience.
 
 <div style="text-align:center;padding:10px" markdown="1">
 ![GIS.lab virtual client]({filename}/images/schema-virtual-client.png)  
-Fig. 3: GIS.lab virtual client
+Fig. 3: Machine running Windows launching GIS.lab virtual client
 </div>
 
 
