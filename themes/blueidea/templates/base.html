@@ -28,11 +28,13 @@
                 {% if not PAGES_SORT_ATTRIBUTE -%}
                     {% set PAGES_SORT_ATTRIBUTE = 'title' %}
                 {% endif %}
-                {% for pg in PAGES | sort(attribute=PAGES_SORT_ATTRIBUTE) %}
-                    {% if 'http://' in pg.url -%}
-                        <li><a href="{{ pg.url }}">{{ pg.title }}</a></li>
-                    {% else %}    
-                        <li{% if pg == page %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ pg.url }}">{{ pg.title }}</a></li>
+		{% for pg in PAGES | sort(attribute=PAGES_SORT_ATTRIBUTE) %}
+                    {% if not pg.submenu -%}
+                        {% if 'http://' in pg.url -%}
+                            <li><a href="{{ pg.url }}">{{ pg.title }}</a></li>
+                        {% else %}    
+                            <li{% if pg == page %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ pg.url }}">{{ pg.title }}</a></li>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
                 {% endif %}
@@ -48,15 +50,15 @@
                     </form>
                 {% endif %}
                 </nav>
-                {% if DISPLAY_CATEGORIES_ON_SUBMENU -%}
                 <div id="submenu">
                     <ul>
-                        {% for cat, null in categories %}
-                            <li{% if cat == category %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
+                        {% for pg in PAGES | sort(attribute=PAGES_SORT_ATTRIBUTE) %}
+                            {% if pg.submenu == 'yes'-%}
+                                <li{% if pg == page %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ pg.url }}">{{ pg.title }}</a></li>
+                            {% endif %}
                         {% endfor %}
                     </ul>
                 <div>
-                {% endif %}
         </header><!-- /#banner -->
         {% block content %}
         {% endblock %}
