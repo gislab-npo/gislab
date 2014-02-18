@@ -9,4 +9,14 @@ Slug: services-gis
 * Print composer
 * GIS data storage and sharing (geo-database)
 * OWS services (WMS, WFS)
-* Instant export to WebGIS application from all GIS projects
+* Instant web publishing from all desktop GIS projects
+
+<div style="text-align:center;padding:10px" markdown="1">
+![GIS project QGIS]({filename}/images/gis-project-qgis.png)  
+Fig. 1: GIS project in desktop processing software
+</div>
+
+<div style="text-align:center;padding:10px" markdown="1">
+![GIS project Web]({filename}/images/gis-project-web.png)  
+Fig. 2: Automatically published GIS project on web
+</div>

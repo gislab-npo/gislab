@@ -1,4 +1,4 @@
-Title: New Web Site
+Title: New web site
 Date: 2014-02-18
 Category: News
 Tags: news
