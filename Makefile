@@ -77,10 +77,12 @@ endif
 
 stopserver1:
 	kill -9 `cat pelican.pid`
+	rm -f pelican.pid
 	@echo 'Stopped Pelican and SimpleHTTPServer processes running in background.'
 
 stopserver2:
 	kill -9 `cat srv.pid`
+	rm -f srv.pid
 	@echo 'Stopped Pelican and SimpleHTTPServer processes running in background.'
 
 publish:
