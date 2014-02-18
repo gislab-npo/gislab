@@ -38,6 +38,7 @@ GITHUB_URL = 'https://github.com/imincik/gis-lab'
 
 STATIC_PATHS = [
 	'robots.txt',
+	'images',
 ]
 
 # Uncomment following line if you want document-relative URLs when developing
