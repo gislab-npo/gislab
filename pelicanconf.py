@@ -36,9 +36,9 @@ DISPLAY_CATEGORIES_ON_MENU = False
 PAGES_SORT_ATTRIBUTE = 'order'
 GITHUB_URL = 'https://github.com/imincik/gis-lab'
 
-FILES_TO_COPY = (
-   ('robots.txt', 'robots.txt'),
-)
+STATIC_PATHS = [
+	'robots.txt',
+]
 
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = True
