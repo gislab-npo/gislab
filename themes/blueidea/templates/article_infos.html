@@ -1,0 +1,12 @@
+<footer class="post-info">
+        <span>{{ article.locale_date }}</span>
+        {% if article.author and DISPLAY_AUTHOR_ON_POSTINFO %}
+        	<span>| by <a class="url fn" href="{{ SITEURL }}/{{ article.author.url }}">{{ article.author }}</a></span>
+        {% endif %}
+        {% if DISPLAY_CATEGORIES_ON_POSTINFO %}
+	        <span>| in <a href="{{ SITEURL }}/{{ article.category.url }}">{{ article.category }}</a></span>
+        {% endif %}
+{% include 'taglist.html' %}
+{% import 'translations.html' as translations with context %}
+{{ translations.translations_for(article) }}
+</footer><!-- /.post-info -->
