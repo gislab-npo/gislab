@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 AUTHOR = u'Ivan Minčík'
 SITENAME = u'GIS.lab'
 SITESUBTITLE = u'... rapid GIS office deployment'
-SITEURL = 'http://imincik.github.io/testpelican'
+SITEURL = ''
 
 TIMEZONE = 'Europe/Bratislava'
 
@@ -17,10 +17,9 @@ CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 
 # Blogroll
-#LINKS =  (
-#	('GISTA s.r.o.', 'http://www.gista.sk'),
-#	('GISTA s.r.o.', 'http://www.gista.sk'),
-#)
+LINKS =  (
+	('Project is sponsored by GISTA s.r.o.', 'http://www.gista.sk'),
+)
 
 # Social widget
 #SOCIAL = (('You can add links in your config file', '#'),
@@ -32,7 +31,7 @@ DEFAULT_PAGINATION = 10
 MD_EXTENSIONS = ['codehilite(css_class=highlight)', 'extra']
 
 THEME = "themes/blueidea"
-DISPLAY_CATEGORIES_ON_MENU = False
+DISPLAY_CATEGORIES_ON_MENU = True
 PAGES_SORT_ATTRIBUTE = 'order'
 GITHUB_URL = 'https://github.com/imincik/gis-lab'
 
@@ -42,4 +41,4 @@ STATIC_PATHS = [
 ]
 
 # Uncomment following line if you want document-relative URLs when developing
-RELATIVE_URLS = False
+RELATIVE_URLS = True
