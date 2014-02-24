@@ -78,7 +78,7 @@ deb-src http://archive.canonical.com/ubuntu precise partner
 
 #### Custom GIS repositories
 deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main
-deb http://ppa.launchpad.net/imincik/qgis2/ubuntu precise main
+deb http://ppa.launchpad.net/imincik/qgis2.0/ubuntu precise main
 
 #### Google Chrome Browser - http://www.google.com/linuxrepositories/
 deb http://dl.google.com/linux/chrome/deb/ stable main
