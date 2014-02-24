@@ -1,3 +1,11 @@
+Version 0.3.1
+=============
+Changes
+-------
+ * fixed reverse network record value detection in DNS server (closes #61)
+ * updating QGIS repository configuration after PPA infrastructure change
+
+
 Version 0.3.0
 =============
 Changes
