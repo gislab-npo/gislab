@@ -6,16 +6,16 @@ Author: Marcel Dancak, marcel.dancak@gista.sk
 
 import os.path
 import urllib2
+import contextlib
 import xml.etree.ElementTree as etree
 
 from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
-from owslib.wms import WebMapService
 
 from webgis.viewer import forms
-
+from webgis.viewer.qgis_wms import QgisGetProjectSettingsService
 
 PROJECTION_UNITS_DD=('EPSG:4326',)
 
@@ -64,65 +64,50 @@ def page(request):
 	if project:
 		projectfile = os.path.join(settings.WEBGIS_PROJECT_ROOT, project)
 		ows_url = '{0}/?map={1}'.format(settings.WEBGIS_OWS_URL, projectfile)
-		# OWSLib set REQUEST parameter regardless of given url
-		ows_getcapabilities_url = "{0}&REQUEST=GetCapabilities".format(ows_url)
+		ows_getprojectsettings_url = "{0}&SERVICE=WMS&REQUEST=GetProjectSettings".format(ows_url)
 		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('webgis.viewer.views.featureinfo'), projectfile)
 		getprint_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetPrint".format(reverse('webgis.viewer.views.getprint'), projectfile)
+
 		try:
-			wms_service = WebMapService(ows_getcapabilities_url, version="1.1.1") # read WMS GetCapabilities
+			project_settings = QgisGetProjectSettingsService(ows_getprojectsettings_url)
 		except Exception, e:
 			return HttpResponse("Can't load project. Error: {0}".format(str(e)), content_type='text/plain', status=404);
 
-		root_layer = None
-		for layer in wms_service.contents.itervalues():
-			if not layer.parent:
-				root_layer = layer
-				break
+		root_layer = project_settings.root_layer
 		if not root_layer: raise Exception("Root layer not found.")
 
-		featureinfo = False
-		for operation in wms_service.operations:
-			if operation.name == 'GetFeatureInfo':
-				featureinfo = 'application/vnd.ogc.gml' in operation.formatOptions
-				break
+		layers = form.cleaned_data['layers']
+		if layers:
+			filtered_layers = []
+			for layer_name in layers:
+				for layer in project_settings.layers:
+					if layer.name == layer_name:
+						filtered_layers.append(layer)
+			context['layers'] = filtered_layers
+		else:
+			context['layers'] = project_settings.layers
 
-		# print templates
-		print_composers = []
-		root = etree.fromstring(wms_service.getServiceXML())
-		composer_templates_elem = root.find("Capability").find("ComposerTemplates")
-		if composer_templates_elem is not None:
-			for composer_template in composer_templates_elem:
-				# take only map0
-				composer_map = composer_template.find("ComposerMap[@name='map0']")
-				if composer_map is not None:
-					print_composer = composer_template.attrib
-					maps = [composer_map.attrib]
-					labels = [composer_label.attrib['name'] for composer_label in composer_template.findall("ComposerLabel")]
-
-					print_composer = {
-						'maps': maps,
-						'labels': labels
-					}
-					print_composer.update(composer_template.attrib)
-					print_composers.append(print_composer)
+		visile_layers = form.cleaned_data["visible"]
+		if visile_layers:
+			context['visible_layers'] = visile_layers
 
 		context.update({
 			'project': project,
 			'projectfile': projectfile,
 			'ows_url': ows_url,
-			'ows_getcapabilities_url': ows_getcapabilities_url,
+			'ows_getprojectsettings_url': ows_getprojectsettings_url,
 			'getfeatureinfo_url': getfeatureinfo_url,
 			'getprint_url': getprint_url,
-			'project_extent': ",".join(map(str, root_layer.boundingBox[:-1])),
-			'projection': root_layer.boundingBox[-1],
-			'featureinfo': featureinfo,
-			'print_composers': print_composers,
+			'project_extent': ",".join(map(str, root_layer.extent)),
+			'projection': root_layer.projection,
+			'featureinfo': 'application/vnd.ogc.gml' in project_settings.featureinfo_formats,
+			'print_composers': project_settings.print_composers,
 
-			'root_title': wms_service.identification.title.encode('UTF-8'),
-			'author': wms_service.provider.contact.name.encode('UTF-8') if wms_service.provider.contact.name else '',
-			'email': wms_service.provider.contact.email.encode('UTF-8') if wms_service.provider.contact.email else '',
-			'organization': wms_service.provider.contact.organization.encode('UTF-8') if wms_service.provider.contact.organization else '',
-			'abstract': wms_service.identification.abstract.encode('UTF-8') if wms_service.identification.abstract else ''
+			'root_title': project_settings.title,
+			'author': project_settings.author,
+			'email': project_settings.email,
+			'organization': project_settings.organization,
+			'abstract': project_settings.abstract
 		})
 	else:
 		context.update({
@@ -135,17 +120,6 @@ def page(request):
 	osm_or_google = context['osm'] or context['google']
 	if osm_or_google:
 		context['projection'] = 'EPSG:3857'
-
-
-	layers = form.cleaned_data['layers']
-	layers.reverse()
-	if not layers and project:
-		layers = [layer.name.encode('UTF-8') for layer in root_layer.layers][::-1]
-	if layers:
-		context['layers'] = layers
-		visile_layers = form.cleaned_data["visible"]
-		if visile_layers:
-			context['visible_layers'] = visile_layers
 
 	context['dpi'] = form.cleaned_data['dpi'] or 96
 

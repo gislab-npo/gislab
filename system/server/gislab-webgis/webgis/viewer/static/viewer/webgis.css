@@ -159,3 +159,8 @@
 	background: no-repeat;
 }
 
+.search-icon {
+	background-image: url('images/toolbar/search.png')!important;
+	background: no-repeat;
+}
+
