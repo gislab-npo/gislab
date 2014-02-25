@@ -246,7 +246,6 @@ var printWindow = new Ext.Window({
 
 action = new Ext.Action({
 	id: 'print-action',
-	handler: function() { mappanel.map.zoomToExtent(zoom_extent, true); },
 	map: mappanel.map,
 	cls: 'x-btn-icon',
 	iconCls: 'print-icon',
