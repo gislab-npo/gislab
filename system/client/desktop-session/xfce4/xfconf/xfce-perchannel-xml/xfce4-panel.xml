@@ -13,6 +13,7 @@
         <value type="int" value="13"/>
         <value type="int" value="10"/>
         <value type="int" value="12"/>
+        <value type="int" value="18"/>
         <value type="int" value="8"/>
         <value type="int" value="9"/>
         <value type="int" value="15"/>
@@ -89,5 +90,10 @@
       </property>
     </property>
     <property name="plugin-8" type="string" value="separator"/>
+    <property name="plugin-18" type="string" value="launcher">
+      <property name="items" type="array">
+        <value type="string" value="13934188152.desktop"/>
+      </property>
+    </property>
   </property>
 </channel>
