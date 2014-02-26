@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=GIS.lab client informations
+Comment=GIS.lab client system informations
+Exec=zenity --title="GIS.lab client system informations" --text-info --height=300 --width=400 --filename=/etc/gislab_version
+Icon=
+Path=
+Terminal=false
+StartupNotify=false
