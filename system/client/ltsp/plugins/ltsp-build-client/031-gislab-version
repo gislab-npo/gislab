@@ -18,6 +18,6 @@ case "$MODE" in
 		GISLAB_VERSION=git:$GISLAB_VERSION_BRANCH~$GISLAB_VERSION_CHANGESET
 	fi
 
-        echo -e "GISLAB_VERSION=$GISLAB_VERSION\nGISLAB_CLIENT_BUILD_TIME=$(date)" > $ROOT/etc/gislab_version
+        echo -e "GISLAB_VERSION='$GISLAB_VERSION'\nGISLAB_CLIENT_BUILD_TIME='$(date)'" > $ROOT/etc/gislab_version
         ;;
 esac
