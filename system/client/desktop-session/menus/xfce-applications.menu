@@ -79,6 +79,13 @@
 		<Exclude>
 			<Filename>update-manager.desktop</Filename>
 		</Exclude>
+		<Exclude>
+			<Filename>system-config-printer.desktop</Filename>
+		</Exclude>
+		<AppDir>/home/manu1/.local/share/applications</AppDir>
+		<Exclude>
+			<Filename>ltsp-cluster-info.desktop</Filename>
+		</Exclude>
 	</Menu>
 	<DefaultLayout inline="false"/>
 	<Menu>
@@ -168,5 +175,55 @@
 		<Exclude>
 			<Filename>xfcalendar.desktop</Filename>
 		</Exclude>
+	</Menu>
+	<Menu>
+		<Name>Settings</Name>
+		<Exclude>
+			<Filename>jockey-gtk.desktop</Filename>
+		</Exclude>
+		<AppDir>/home/manu1/.local/share/applications</AppDir>
+		<Exclude>
+			<Filename>blueman-manager.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>ibus-setup.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>language-selector.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>im-switch.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>alacarte.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>nm-connection-editor.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>onboard-settings.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>openjdk-6-policytool.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>xfce4-settings-editor.desktop</Filename>
+		</Exclude>
+		<Layout>
+			<Merge type="menus"/>
+			<Filename>xfce-settings-manager.desktop</Filename>
+			<Filename>jockey-gtk.desktop</Filename>
+			<Filename>blueman-manager.desktop</Filename>
+			<Filename>im-switch.desktop</Filename>
+			<Filename>ibus-setup.desktop</Filename>
+			<Filename>language-selector.desktop</Filename>
+			<Filename>alacarte.desktop</Filename>
+			<Filename>nm-connection-editor.desktop</Filename>
+			<Filename>onboard-settings.desktop</Filename>
+			<Filename>openjdk-6-policytool.desktop</Filename>
+			<Filename>xfce4-settings-editor.desktop</Filename>
+			<Filename>software-properties-gtk.desktop</Filename>
+			<Merge type="files"/>
+		</Layout>
 	</Menu>
 </Menu>
