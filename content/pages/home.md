@@ -36,6 +36,10 @@ Fig. 3: Machine running Windows launching GIS.lab virtual client
 In a both modes, client machine runs fully featured operating system capable to use client's hardware potential when minimizing server load on the other side.
 
 
+# Third party clients
+Any third-party computers can be connected to GIS.lab network without requirement to launch GIS.lab client environment (in physical or virtual mode) and use some set of network services like Internet sharing, file sharing, geo-database services or access to GIS projects via GIS.lab WebGIS web application. 
+
+
 # Utilization
 * Desktop environment for small GIS businesses
 * Education
