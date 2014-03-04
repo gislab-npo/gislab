@@ -41,8 +41,7 @@ Any third-party computers can be connected to GIS.lab network without requiremen
 
 
 # Utilization
-* Desktop environment for small GIS businesses
+* Virtual desktop infrastructure deployment for GIS businesses
 * Education
-* Crisis Mapping
-* GIS software development environment
+* Crisis management
 * Parallel computing
