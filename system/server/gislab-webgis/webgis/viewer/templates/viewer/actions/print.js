@@ -16,7 +16,7 @@ var printWindow = new Ext.Window({
 			mappanel.map.events.register("zoomend", this, this.updatePrintScales);
 			printExtent.page.on('change', function(window, mods) {
 				if (mods.hasOwnProperty('rotation')) {
-					var spinner = Ext.getCmp('print-rotation-spinner');
+					var spinner = window.rotationSpinner;
 					if (spinner) {
 						spinner.setValue(mods.rotation);
 					}
@@ -155,7 +155,7 @@ var printWindow = new Ext.Window({
 			xtype: 'tbspacer'
 		}, {
 			xtype: 'combo',
-			id: 'print-format-combobox',
+			ref: '/formatCombobox',
 			width: 70,
 			mode: 'local',
 			triggerAction: 'all',
@@ -188,7 +188,7 @@ var printWindow = new Ext.Window({
 			xtype: 'tbspacer'
 		}, {
 			xtype: 'spinnerfield',
-			id: 'print-rotation-spinner',
+			ref: '/rotationSpinner',
 			width: 60,
 			value: 0,
 			allowNegative: true,
@@ -221,9 +221,10 @@ var printWindow = new Ext.Window({
 			flex: 1,
 			iconCls: '',
 			handler: function(action) {
+				var print_window = Ext.getCmp('print-toolbar-window');
 				var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
 				var params = {
-					FORMAT: Ext.getCmp('print-format-combobox').getValue(),
+					FORMAT: print_window.formatCombobox.getValue(),
 					DPI: printExtent.printProvider.dpi.get("value"),
 					TEMPLATE: printExtent.printProvider.layout.get("name"),
 					LAYERS: overlays_root.getVisibleLayers().reverse().join(','),
@@ -233,7 +234,6 @@ var printWindow = new Ext.Window({
 					'map0:scale': printExtent.page.scale.get("value")
 				}
 				// labels
-				var print_window = Ext.getCmp('print-toolbar-window');
 				if (print_window.items.length > 0) {
 					var labels_data = print_window.get(0).getForm().getValues();
 					for (label in labels_data) {
@@ -243,7 +243,7 @@ var printWindow = new Ext.Window({
 
 				var printUrl = Ext.urlAppend('{% autoescape off %}{{ getprint_url }}{% endautoescape %}', Ext.urlEncode(params))
 				window.open(printUrl, '_blank');
-				//Ext.getCmp('print-action').toggle(false);
+				//action.toggle(false);
 			}
 		})
 	],
