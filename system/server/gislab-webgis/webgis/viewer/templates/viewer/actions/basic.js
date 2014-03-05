@@ -21,30 +21,6 @@ action = new GeoExt.Action({
 });
 mappanel.getTopToolbar().add(action);
 
-//Zoom In Action
-action = new GeoExt.Action({
-	control: new OpenLayers.Control.ZoomBox({alwaysZoom:true}),
-	map: mappanel.map,
-	toggleGroup: 'tools',
-	group: 'tools',
-	cls: 'x-btn-icon',
-	iconCls: 'zoom-in-icon',
-	tooltip: 'Zoom In'
-});
-mappanel.getTopToolbar().add(action);
-
-//Zoom Out Action
-action = new GeoExt.Action({
-	control: new OpenLayers.Control.ZoomBox({alwaysZoom:true, out:true}),
-	map: mappanel.map,
-	toggleGroup: 'tools',
-	group: 'tools',
-	cls: 'x-btn-icon',
-	iconCls: 'zoom-out-icon',
-	tooltip: 'Zoom Out',
-});
-mappanel.getTopToolbar().add(action);
-
 // Navigation history - two 'button' controls
 ctrl = new OpenLayers.Control.NavigationHistory();
 mappanel.map.addControl(ctrl);
