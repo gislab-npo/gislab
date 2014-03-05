@@ -11,7 +11,7 @@ then
 	GISLAB_VERSION=git:$GISLAB_VERSION_BRANCH~$GISLAB_VERSION_CHANGESET
 fi
 
-echo -e "GISLAB_VERSION=$GISLAB_VERSION\nGISLAB_SERVER_BUILD_TIME=$(date)" > /etc/gislab_version
+echo -e "GISLAB_VERSION='$GISLAB_VERSION'\nGISLAB_SERVER_BUILD_TIME='$(date)'" > /etc/gislab_version
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

@@ -1,0 +1,7 @@
+# Install GIS.lab client tools
+
+case "$MODE" in
+    finalization)
+	cp -a /vagrant/system/client/bin/* $ROOT/usr/local/bin/
+    ;;
+esac

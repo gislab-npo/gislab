@@ -62,8 +62,7 @@ cp -av /vagrant/user/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/
 
 # build client options
 # default options
-GISLAB_BUILD_CLIENT_OPTS="--fat-client-desktop xubuntu-desktop --arch i386 "
-GISLAB_BUILD_CLIENT_OPTS+="--purge-chroot --copy-sourceslist --accept-unsigned-packages "
+GISLAB_BUILD_CLIENT_OPTS="--arch i386 --purge-chroot --copy-sourceslist --accept-unsigned-packages "
 
 # use APT proxy for client image creation if configured
 if [ -n "${GISLAB_APT_HTTP_PROXY}" ]; then

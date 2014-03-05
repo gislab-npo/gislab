@@ -1,0 +1,44 @@
+#!/bin/bash
+# Print informations about GIS.lab client
+
+source /etc/gislab_version
+
+UPTIME=$(uptime | awk '{print $3}' | sed "s/,//")
+VIRTUALCLIENT=$(lspci | grep "System peripheral" | sed "s/^.*://")
+
+CPU=$(cat /proc/cpuinfo | grep "^model name" | head -1 | sed "s/.*: //")
+RAM=$(free -m | grep "^Mem" | awk '{print $2}')
+VGA=$(lspci | grep "VGA compatible controller" | sed "s/^.*://")
+ETHERNET=$(lspci | grep "Ethernet controller" | sed "s/^.*://")
+
+INTERFACE=$(ip route | grep default | cut -d " " -f5)
+INTERFACE_MAC=$(/sbin/ifconfig | grep ${INTERFACE} | cut -f11 -d" ")
+INTERFACE_IP=$(/sbin/ifconfig ${INTERFACE} | grep inet | cut -f2 -d":" | cut -f1 -d" ")
+
+
+INFO="
+GIS.lab VERSION: $GISLAB_VERSION\n
+\n
+SESSION\n
++ USER: $USER\n
++ UPTIME: $UPTIME\n
++ VIRTUAL CLIENT: $VIRTUALCLIENT\n
++ CLIENT BUILD TIME: $GISLAB_CLIENT_BUILD_TIME\n
+\n
+HARDWARE\n
++ CPU: $CPU\n
++ RAM: $RAM MB\n
++ VGA: $VGA\n
++ ETHERNET: $ETHERNET\n
+\n
+NETWORK\n
++ INTERFACE: $INTERFACE\n
++ MAC: $INTERFACE_MAC\n
++ IP: $INTERFACE_IP\n
+\n
+This report was generated on $(date).
+"
+
+echo -e $INFO | zenity --title="GIS.lab client system informations" --text-info --height=300 --width=600
+
+# vim: set ts=4 sts=4 sw=4 noet:

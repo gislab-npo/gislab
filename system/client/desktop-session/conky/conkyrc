@@ -127,5 +127,4 @@ ${color0}LOAD ${color1}$loadavg | \
 ${color0}CPU ${color1}$cpu% ${cpubar 5,50} ${freq 1}MHz ${acpitemp}C | \
 ${color0}RAM ${color1}$mem ${membar 5,50} | \
 ${color0}SWAP ${color1}$swap ${swapbar 5,50} | \
-${color0}ETH0 ${color1}${downspeed eth0}:${upspeed eth0}| \
-${color0}WIFI ${color1}${downspeed wlan0}:${upspeed wlan0}
+${color0}ETH0 ${color1}${downspeed eth0}:${upspeed eth0}
