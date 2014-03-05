@@ -4,6 +4,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 	title: 'Feature Info',
 	split: true,
 	map: null,
+	layout: 'fit',
 	autoPanMapOnSelection: false,
 	styleMap: null,
 
@@ -110,13 +111,20 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 					title: layer_name,
 					autoDestroy: true,
 					store: store,
-					autoHeight: true,
+					autoExpandColumn: fields[fields.length-1].name,
+					autoExpandMax: 2000,
 					viewConfig: {
-						forceFit:true,
+						templates: {
+							cell: new Ext.Template(
+								'<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} x-selectable {css}" style="{style}" tabIndex="0" {cellAttr}>\
+									<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>\
+								</td>'
+							)
+						}
 					},
 					cm: new Ext.grid.ColumnModel({
 						defaults: {
-							sortable: false
+							sortable: true
 						},
 						columns: columns
 					}),
