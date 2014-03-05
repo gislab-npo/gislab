@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
         <meta charset="utf-8" />
-        <title>Other benefits</title>
+        <title>GIS.lab server</title>
         <link rel="stylesheet" href="http://imincik.github.io/gis-lab/theme/css/main.css" />
         <link href="http://imincik.github.io/gis-lab/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="GIS.lab Atom Feed" />
 
@@ -29,29 +29,29 @@
                 </nav>
                 <div id="submenu">
                     <ul>
-<li><a href="http://imincik.github.io/gis-lab/pages/services-server.html">Server services</a></li>
-<li><a href="http://imincik.github.io/gis-lab/pages/services-office.html">Office software</a></li>
-<li><a href="http://imincik.github.io/gis-lab/pages/services-gis.html">GIS software</a></li>
-<li class="active"><a href="http://imincik.github.io/gis-lab/pages/services-other.html">Other benefits</a></li>
+<li class="active"><a href="http://imincik.github.io/gis-lab/pages/gislab-server.html">GIS.lab server</a></li>
+<li><a href="http://imincik.github.io/gis-lab/pages/gislab-client.html">GIS.lab client</a></li>
 <li><a href="http://imincik.github.io/gis-lab/pages/gislab-unit.html">GIS.lab Unit</a></li>
                     </ul>
                 <div>
         </header><!-- /#banner -->
 <section id="content" class="body">
-    <h1 class="entry-title">Other benefits</h1>
     
-    <ul>
-<li>Open Source software (GNU GPL 3)</li>
-<li>No hard dependency on any other Internet service (with exception on OSM and Google maps)</li>
-<li>General usage platform (not limited to GIS)</li>
-<li>Extremely low maintenance costs<ul>
-<li>zero time to install new client machine</li>
-<li>central distribution of client systems with rollback</li>
-<li>rapid recovery from hardware failure</li>
-</ul>
-</li>
-<li>High performance client systems (opposite of thin client)</li>
-</ul>
+    <h1>GIS.lab client boot service</h1>
+<p>One of a core features of GIS.lab server is to provide a network boot service and runtime infrastructure for GIS.lab client systems. Any client machine connected to GIS.lab network can boot client environment (physical or virtual) from network. Users authentication credentials are centrally managed in LDAP database and they are not tight to particular client machine - any client machine can be used by any user as far as his authentication credentials exists in database.</p>
+<p>Implemented by: ISC DHCP, TFTP, NBD, BIND, OpenLDAP</p>
+<h1>GIS data storage, management and sharing</h1>
+<p>Spatial or non-spatial data can be stored, managed and shared in hierarchy of shared directories or in more sophisticated manner in dedicated geo-database storage. This service is accessible also for third party clients which do not run GIS.lab client environment. </p>
+<p>Implemented by: SFTP, SSHFS, NFS 4, PostgreSQL/PostGIS</p>
+<h1>OGC Web Services</h1>
+<p>Raster or vector spatial data managed by GIS.lab server can be shared with clients via standardized services such as Web Map Service (WMS) or Web Feature Server (WFS). This interface allows usage of GIS.lab provided data to all clients, including third party clients, via industry standard services.</p>
+<p>Implemented by: QGIS Mapserver</p>
+<h1>Web GIS publishing service</h1>
+<p>GIS.lab server provides powerful web GIS project publishing service (see more in <a href="gislab-client">GIS.lab client page</a>)</p>
+<p>Implemented by: QGIS Desktop and Mapserver, GIS.lab WebGIS</p>
+<h1>Central data backup and recovery</h1>
+<p>Data backup is implemented in form of user archive packages which contains all important user settings and data and can be easily restored on any GIS.lab system.</p>
+<p>Implemented by: GIS.lab management tools</p>
 </section>
         <section id="extras" class="body">
                 <div class="blogroll">
