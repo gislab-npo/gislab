@@ -164,6 +164,35 @@
 	background: no-repeat;
 }
 
+.add-icon {
+	background-image: url('images/tool-sprites.gif')!important;
+	background-position: -15px -240px !important;
+	width: 15px !important;
+	height: 15px !important;
+	background: no-repeat;
+}
+
+.remove-icon {
+	background-image: url('images/tool-sprites.gif')!important;
+	background-position: -15px 0px !important;
+	width: 15px !important;
+	height: 15px !important;
+	background: no-repeat;
+}
+
+.search-control-buttons .x-btn-tl, .search-control-buttons .x-btn-tr, .search-control-buttons .x-btn-tc, .search-control-buttons .x-btn-ml, .search-control-buttons .x-btn-mr, .search-control-buttons .x-btn-mc, .search-control-buttons .x-btn-bl, .search-control-buttons .x-btn-br, .search-control-buttons .x-btn-bc {
+	background-image: none;
+}
+
+.search-control-buttons .x-btn-mr, .search-control-buttons .x-btn-ml, .search-control-buttons .x-btn-tr, .search-control-buttons .x-btn-br, .search-control-buttons .x-btn-tl, .search-control-buttons .x-btn-bl {
+	background-image: none;
+	display: none;
+}
+
+.search-control-buttons {
+	padding: 2px;
+}
+
 .x-grid-cell-inner, .x-selectable {
 	-moz-user-select: text !important;
 	-khtml-user-select: text !important;
