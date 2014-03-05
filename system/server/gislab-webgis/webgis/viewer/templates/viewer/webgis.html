@@ -321,13 +321,8 @@
 				});
 
 				// legend and properties accordion panel
-				var accordion = new Ext.Panel({
-					layout: {
-						type: 'accordion',
-						titleCollapse: true,
-						animate: false,
-						activeOnTop: false
-					},
+				var accordion = new Ext.TabPanel({
+					activeTab: 0,
 					items: [
 						layer_legend,
 						properties
