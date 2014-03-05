@@ -37,11 +37,22 @@ In a both modes, client machine runs fully featured operating system capable to 
 
 
 # Third party clients
-Any third-party computers can be connected to GIS.lab network without requirement to launch GIS.lab client environment (in physical or virtual mode) and use some set of network services like Internet sharing, file sharing, geo-database services or access to GIS projects via GIS.lab WebGIS web application. 
+Any third-party computers can be connected to GIS.lab network without requirement to launch GIS.lab client environment (in physical or virtual mode) and use some set of network services like Internet sharing, file sharing, geo-database and OWS services or access to GIS projects via GIS.lab WebGIS web application. 
 
 
 # Utilization
-* Virtual desktop infrastructure deployment for GIS businesses
-* Education
-* Crisis management
+* Virtual desktop infrastructure deployment for GIS based businesses
+* Education and Open Source GIS software advocacy
+* Rapid deployment of crisis management command center network with GIS support
 * Parallel computing
+
+
+# Other benefits
+* Open Source software
+* No hard dependency on any other Internet service (with exception on OSM and Google maps)
+* General usage platform (not limited to GIS)
+* Extremely low maintenance costs
+    * zero time to install new client machine
+    * central distribution of client systems with rollback
+    * rapid recovery from hardware failure
+* High performance client systems (opposite of thin client)

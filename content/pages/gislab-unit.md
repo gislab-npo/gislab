@@ -1,6 +1,6 @@
 Title: GIS.lab Unit
 Submenu: yes
-Order: 50
+Order: 30
 Slug: gislab-unit
 
 GIS.lab Unit is a hardware solution containing pre-installed GIS.lab software with goal to provide
