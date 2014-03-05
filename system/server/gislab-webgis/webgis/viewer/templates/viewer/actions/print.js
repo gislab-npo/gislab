@@ -86,17 +86,33 @@ var printWindow = new Ext.Window({
 				select: function (combo, record, index) {
 					var layout = printExtent.printProvider.layouts.getAt(index); // record value doesn't work
 					printExtent.printProvider.setLayout(layout, true);
-					var labeld_grid = Ext.getCmp('print-composer-labels-grid');
-					var labels_source = {};
+
+					var window = combo.ownerCt.ownerCt;
+					window.removeAll();
 					if (layout.json.labels.length > 0) {
+						var form_fields = [];
 						Ext.each(layout.json.labels, function(label) {
-							labels_source[label] = '';
+							form_fields.push({
+								fieldLabel: label,
+								name: label,
+								allowBlank: true
+							});
 						});
-						labeld_grid.show();
-					} else {
-						labeld_grid.hide();
+						window.add({
+							xtype: 'form',
+							labelWidth: 100,
+							frame: true,
+							defaults: {
+								anchor: "100%",
+							},
+							autoHeight: true,
+							defaultType: 'textfield',
+							items: form_fields,
+						});
 					}
-					labeld_grid.setSource(labels_source);
+					if (window.isVisible()) {
+						window.doLayout();
+					}
 					printWindow.syncShadow();
 				}
 			}
@@ -217,29 +233,20 @@ var printWindow = new Ext.Window({
 					'map0:scale': printExtent.page.scale.get("value")
 				}
 				// labels
-				var labels_data = Ext.getCmp('print-composer-labels-grid').getSource();
-				for (label in labels_data) {
-					params[label] = labels_data[label];
+				var print_window = Ext.getCmp('print-toolbar-window');
+				if (print_window.items.length > 0) {
+					var labels_data = print_window.get(0).getForm().getValues();
+					for (label in labels_data) {
+						params[label] = labels_data[label];
+					}
 				}
+
 				var printUrl = Ext.urlAppend('{% autoescape off %}{{ getprint_url }}{% endautoescape %}', Ext.urlEncode(params))
 				window.open(printUrl, '_blank');
 				//Ext.getCmp('print-action').toggle(false);
 			}
 		})
 	],
-	items:[
-		new Ext.grid.PropertyGrid({
-			id: 'print-composer-labels-grid',
-			region: 'center',
-			hideHeaders: true,
-			autoHeight: true,
-			autoExpandColumn: 'Value',
-			viewConfig : {
-				forceFit: true,
-				scrollOffset: 0
-			}
-		})
-	]
 });
 
 action = new Ext.Action({
