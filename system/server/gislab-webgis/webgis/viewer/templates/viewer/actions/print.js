@@ -56,157 +56,155 @@ var printWindow = new Ext.Window({
 		}
 		printExtent.page.setScale(printExtent.printProvider.scales.getAt(0), 'm');
 	},
-	tbar: [{
-		xtype: 'combo',
-		id: 'print-layouts-combobox',
-		width: 100,
-		mode: 'local',
-		triggerAction: 'all',
-		readonly: true,
-		store: new Ext.data.JsonStore({
-			// store configs
-			data: printExtent.printProvider.capabilities,
-			storeId: 'print-layouts-store',
-			// reader configs
-			root: 'layouts',
-			fields: [{
-				name: 'name',
-				type: 'string'
-			}, ]
-		}),
-		valueField: 'name',
-		displayField: 'name',
-		listeners: {
-			afterrender: function(combo) {
-				var recordSelected = combo.getStore().getAt(0);
-				combo.setValue(recordSelected.get('name'));
-				combo.fireEvent('select', combo, recordSelected, 0);
-			},
-			select: function (combo, record, index) {
-				var layout = printExtent.printProvider.layouts.getAt(index); // record value doesn't work
-				printExtent.printProvider.setLayout(layout, true);
-				var labeld_grid = Ext.getCmp('print-composer-labels-grid');
-				var labels_source = {};
-				if (layout.json.labels.length > 0) {
-					Ext.each(layout.json.labels, function(label) {
-						labels_source[label] = '';
-					});
-					labeld_grid.show();
-				} else {
-					labeld_grid.hide();
+	tbar: [
+		{
+			xtype: 'combo',
+			id: 'print-layouts-combobox',
+			width: 100,
+			mode: 'local',
+			triggerAction: 'all',
+			readonly: true,
+			store: new Ext.data.JsonStore({
+				// store configs
+				data: printExtent.printProvider.capabilities,
+				storeId: 'print-layouts-store',
+				// reader configs
+				root: 'layouts',
+				fields: [{
+					name: 'name',
+					type: 'string'
+				}, ]
+			}),
+			valueField: 'name',
+			displayField: 'name',
+			listeners: {
+				afterrender: function(combo) {
+					var recordSelected = combo.getStore().getAt(0);
+					combo.setValue(recordSelected.get('name'));
+					combo.fireEvent('select', combo, recordSelected, 0);
+				},
+				select: function (combo, record, index) {
+					var layout = printExtent.printProvider.layouts.getAt(index); // record value doesn't work
+					printExtent.printProvider.setLayout(layout, true);
+					var labeld_grid = Ext.getCmp('print-composer-labels-grid');
+					var labels_source = {};
+					if (layout.json.labels.length > 0) {
+						Ext.each(layout.json.labels, function(label) {
+							labels_source[label] = '';
+						});
+						labeld_grid.show();
+					} else {
+						labeld_grid.hide();
+					}
+					labeld_grid.setSource(labels_source);
+					printWindow.syncShadow();
 				}
-				labeld_grid.setSource(labels_source);
-				printWindow.syncShadow();
 			}
-		}
-	}, {
-		xtype: 'tbspacer'
-	}, {
-		xtype: 'combo',
-		id: 'print-dpi-combobox',
-		width: 70,
-		mode: 'local',
-		triggerAction: 'all',
-		forceSelection: true,
-		store: new Ext.data.JsonStore({
-			// store configs
-			data: printExtent.printProvider.capabilities,
-			storeId: 'print-dpi-store',
-			// reader configs
-			root: 'dpis',
-			fields: [{
-				name: 'name',
-				type: 'string'
-			}, {
-				name: 'value',
-				type: 'int'
-			}]
-		}),
-		valueField: 'value',
-		displayField: 'name',
-		listeners: {
-			afterrender: function(combo) {
-				var recordSelected = combo.getStore().getAt(0);
-				combo.setValue(recordSelected.get('name'));
-				combo.fireEvent('select', combo, recordSelected, 0);
-			},
-			select: function (combo, record, index) {
-				printExtent.printProvider.setDpi(record);
+		}, {
+			xtype: 'tbspacer'
+		}, {
+			xtype: 'combo',
+			id: 'print-dpi-combobox',
+			width: 70,
+			mode: 'local',
+			triggerAction: 'all',
+			forceSelection: true,
+			store: new Ext.data.JsonStore({
+				// store configs
+				data: printExtent.printProvider.capabilities,
+				storeId: 'print-dpi-store',
+				// reader configs
+				root: 'dpis',
+				fields: [{
+					name: 'name',
+					type: 'string'
+				}, {
+					name: 'value',
+					type: 'int'
+				}]
+			}),
+			valueField: 'value',
+			displayField: 'name',
+			listeners: {
+				afterrender: function(combo) {
+					var recordSelected = combo.getStore().getAt(0);
+					combo.setValue(recordSelected.get('name'));
+					combo.fireEvent('select', combo, recordSelected, 0);
+				},
+				select: function (combo, record, index) {
+					printExtent.printProvider.setDpi(record);
+				}
 			}
-		}
-	}, {
-		xtype: 'tbspacer'
-	}, {
-		xtype: 'combo',
-		id: 'print-format-combobox',
-		width: 70,
-		mode: 'local',
-		triggerAction: 'all',
-		forceSelection: true,
-		store: new Ext.data.JsonStore({
-			// store configs
-			data: printExtent.printProvider.capabilities,
-			storeId: 'print-format-store',
-			// reader configs
-			root: 'outputFormats',
-			fields: [{
-				name: 'name',
-				type: 'string'
-			}]
-		}),
-		valueField: 'name',
-		displayField: 'name',
-		listeners: {
-			afterrender: function(combo) {
-				var recordSelected = combo.getStore().getAt(0);
-				combo.setValue(combo.getStore().getAt(0).get('name'));
+		}, {
+			xtype: 'tbspacer'
+		}, {
+			xtype: 'combo',
+			id: 'print-format-combobox',
+			width: 70,
+			mode: 'local',
+			triggerAction: 'all',
+			forceSelection: true,
+			store: new Ext.data.JsonStore({
+				// store configs
+				data: printExtent.printProvider.capabilities,
+				storeId: 'print-format-store',
+				// reader configs
+				root: 'outputFormats',
+				fields: [{
+					name: 'name',
+					type: 'string'
+				}]
+			}),
+			valueField: 'name',
+			displayField: 'name',
+			listeners: {
+				afterrender: function(combo) {
+					var recordSelected = combo.getStore().getAt(0);
+					combo.setValue(combo.getStore().getAt(0).get('name'));
+				}
 			}
-		}
-	}, {
-		xtype: 'tbspacer'
-	}, {
-		xtype: 'label',
-		text: 'Rotation'
-	}, {
-		xtype: 'tbspacer'
-	}, {
-		xtype: 'spinnerfield',
-		id: 'print-rotation-spinner',
-		width: 60,
-		value: 0,
-		allowNegative: true,
-		autoStripChars: true,
-		allowDecimals: false,
-		minValue: -360,
-		maxValue: 360,
-		enableKeyEvents: true,
-		listeners: {
-			spin: function () {
-				printExtent.page.setRotation(this.getValue(), true);
-			},
-			keyup: function (textField, event) {
-				printExtent.page.setRotation(this.getValue(), true);
-				event.stopPropagation();
-			},
-			keydown: function (textField, event) {
-				event.stopPropagation();
-			},
-			keypress: function (textField, event) {
-				event.stopPropagation();
+		}, {
+			xtype: 'tbspacer'
+		}, {
+			xtype: 'label',
+			text: 'Rotation'
+		}, {
+			xtype: 'tbspacer'
+		}, {
+			xtype: 'spinnerfield',
+			id: 'print-rotation-spinner',
+			width: 60,
+			value: 0,
+			allowNegative: true,
+			autoStripChars: true,
+			allowDecimals: false,
+			minValue: -360,
+			maxValue: 360,
+			enableKeyEvents: true,
+			listeners: {
+				spin: function () {
+					printExtent.page.setRotation(this.getValue(), true);
+				},
+				keyup: function (textField, event) {
+					printExtent.page.setRotation(this.getValue(), true);
+					event.stopPropagation();
+				},
+				keydown: function (textField, event) {
+					event.stopPropagation();
+				},
+				keypress: function (textField, event) {
+					event.stopPropagation();
+				}
 			}
-		}
-	}, {
-		xtype: 'tbspacer'
-	}, {
-		xtype: 'button',
-		flex: 1,
-		tooltip: 'Print',
-		text: 'Print',
-		tooltipType: 'qtip',
-		iconCls: '',
-		scale: 'medium',
-		listeners: {
-			click: function () {
+		}, {
+			xtype: 'tbspacer'
+		}, new Ext.Action({
+			text: 'Print',
+			tooltip: 'Print',
+			tooltipType: 'qtip',
+			flex: 1,
+			iconCls: '',
+			handler: function(action) {
 				var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
 				var params = {
 					FORMAT: Ext.getCmp('print-format-combobox').getValue(),
@@ -227,8 +225,8 @@ var printWindow = new Ext.Window({
 				window.open(printUrl, '_blank');
 				//Ext.getCmp('print-action').toggle(false);
 			}
-		}
-	}],
+		})
+	],
 	items:[
 		new Ext.grid.PropertyGrid({
 			id: 'print-composer-labels-grid',
