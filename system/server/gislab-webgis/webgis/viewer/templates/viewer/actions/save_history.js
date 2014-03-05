@@ -34,23 +34,23 @@ var action = new Ext.Action({
 			columns: [
 				{
 					id       : 'time',
-					header   : 'Time', 
+					header   : 'Time',
 					width    : 60, 
-					sortable : false, 
+					sortable : false,
 					dataIndex: 'time',
 					renderer : Ext.util.Format.dateRenderer('H:i:s'),
 				},
 				{
 					id       : 'link',
-					header   : 'GeoJSON', 
-					width    : 70, 
-					sortable : false, 
+					header   : 'GeoJSON',
+					width    : 75,
+					sortable : false,
 					dataIndex: 'link',
 				},
 				{
 					id       : 'info',
-					header   : 'Info', 
-					sortable : false, 
+					header   : 'Info',
+					sortable : false,
 					dataIndex: 'info'
 				},
 			],
