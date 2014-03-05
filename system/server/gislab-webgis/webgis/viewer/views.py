@@ -100,7 +100,7 @@ def page(request):
 			'getprint_url': getprint_url,
 			'project_extent': ",".join(map(str, root_layer.extent)),
 			'projection': root_layer.projection,
-			'featureinfo': 'application/vnd.ogc.gml' in project_settings.featureinfo_formats,
+			'featureinfo': 'application/vnd.ogc.gml' in project_settings.featureinfo_formats and projectfile,
 			'print_composers': project_settings.print_composers,
 
 			'root_title': project_settings.title,

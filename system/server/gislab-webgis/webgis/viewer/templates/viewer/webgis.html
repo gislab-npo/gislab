@@ -209,7 +209,9 @@
 				{% include "viewer/actions/print.js" %}
 				{% endif %}
 
+				{% if featureinfo %}
 				{% include "viewer/actions/search.js" %}
+				{% endif %}
 
 				// tree node
 				var layers_root = new Ext.tree.TreeNode({
