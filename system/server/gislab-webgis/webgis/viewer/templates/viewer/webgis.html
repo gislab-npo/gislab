@@ -1,5 +1,6 @@
 {% load staticfiles %}
 
+<!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -208,7 +209,9 @@
 				{% include "viewer/actions/print.js" %}
 				{% endif %}
 
+				{% if featureinfo %}
 				{% include "viewer/actions/search.js" %}
+				{% endif %}
 
 				// tree node
 				var layers_root = new Ext.tree.TreeNode({
@@ -307,19 +310,19 @@
 
 				// properties
 				var properties = new Ext.Panel({
-					title: 'Project',
+					title: 'Properties',
 					autoScroll: true,
-					html: '<div class="x-panel-body-text"><p><b>Author: </b>{{ author }}</p><p><b>E-mail: </b>{{ email }}</p><p><b>Organization: </b>{{ organization }}</p><b>Abstract: </b>{{ abstract }}</p></div>'
+					html: '<div class="x-panel-body-text"> \
+							<p><b>Author: </b>{{ author }}</p> \
+							<p><b>E-mail: </b>{{ email }}</p> \
+							<p><b>Organization: </b>{{ organization }}</p> \
+							<p><b>Abstract: </b>{{ abstract }}</p> \
+							<p><b>WMS URL: </b>{{ ows_url }}</p></div>'
 				});
 
 				// legend and properties accordion panel
-				var accordion = new Ext.Panel({
-					layout: {
-						type: 'accordion',
-						titleCollapse: true,
-						animate: false,
-						activeOnTop: false
-					},
+				var accordion = new Ext.TabPanel({
+					activeTab: 0,
 					items: [
 						layer_legend,
 						properties
@@ -329,7 +332,7 @@
 				// left panel
 				var left_panel = new Ext.Panel({
 					region: 'west',
-					width: 200,
+					width: 250,
 					defaults: {
 						width: '100%',
 						flex: 1
