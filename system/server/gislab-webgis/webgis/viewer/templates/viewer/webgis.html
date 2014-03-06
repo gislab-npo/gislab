@@ -239,7 +239,7 @@
 						this.eachChild(function(node) {
 							all_layers.push(node.attributes.text);
 						});
-						return all_layers;
+						return all_layers.reverse();
 					},
 					getVisibleLayers: function(obj) {
 						var visible_layers = [];
@@ -248,7 +248,7 @@
 								visible_layers.push(node.attributes.text);
 							}
 						});
-						return visible_layers;
+						return visible_layers.reverse();
 					}
 				});
 				layers_root.appendChild(new OverlaysNode({

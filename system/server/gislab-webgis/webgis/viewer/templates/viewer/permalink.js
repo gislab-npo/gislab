@@ -27,7 +27,7 @@ permalink_provider.on({
 		var map = mappanel.map;
 		var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
 		var all_layers = overlays_root.getAllLayers();
-		var visible_layers = overlays_root.getVisibleLayers();;
+		var visible_layers = overlays_root.getVisibleLayers();
 
 		var parameters = {
 			DPI: OpenLayers.DOTS_PER_INCH,

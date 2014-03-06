@@ -227,7 +227,7 @@ var printWindow = new Ext.Window({
 					FORMAT: print_window.formatCombobox.getValue(),
 					DPI: printExtent.printProvider.dpi.get("value"),
 					TEMPLATE: printExtent.printProvider.layout.get("name"),
-					LAYERS: overlays_root.getVisibleLayers().reverse().join(','),
+					LAYERS: overlays_root.getVisibleLayers().join(','),
 					SRS: mappanel.map.projection.getCode(),
 					'map0:extent': printExtent.page.getPrintExtent(mappanel.map).toBBOX(1, false),
 					'map0:rotation': -printExtent.page.rotation,
