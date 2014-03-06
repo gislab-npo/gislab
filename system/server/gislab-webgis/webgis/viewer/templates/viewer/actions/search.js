@@ -352,28 +352,15 @@ var searchWindow = new Ext.Window({
 		}, {
 			xtype: 'tbspacer'
 		}, {
-			xtype: 'combo',
+			xtype: 'spinnerfield',
 			ref: '/limit',
 			width: 50,
 			mode: 'local',
 			triggerAction: 'all',
-			forceSelection: true,
-			store: new Ext.data.ArrayStore({
-				data: [[5], [10], [20], [50]],
-				storeId: 'search-limit-store',
-				fields: [{
-					name: 'value',
-					type: 'int'
-				}]
-			}),
-			valueField: 'value',
-			displayField: 'value',
-			listeners: {
-				afterrender: function(combo) {
-					var recordSelected = combo.getStore().getAt(0);
-					combo.setValue(recordSelected.get('value'));
-				},
-			}
+			allowNegative: false,
+			minValue: 1,
+			maxValue: 1000,
+			value: 50
 		}, {
 			xtype: 'tbspacer'
 		}, new Ext.Action({
