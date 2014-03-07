@@ -87,9 +87,9 @@ def page(request):
 		else:
 			context['layers'] = project_settings.layers
 
-		visile_layers = form.cleaned_data["visible"]
-		if visile_layers:
-			context['visible_layers'] = visile_layers
+		visible_layers = form.cleaned_data["visible"]
+		if visible_layers:
+			context['visible_layers'] = visible_layers
 
 		context.update({
 			'project': project,
