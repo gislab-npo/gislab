@@ -61,7 +61,7 @@ Fig. 5: GIS project in desktop processing software
 Fig. 6: Automatically published GIS project on web
 </div>
 
-WebGIS application features
+__WebGIS application features__
 
 * map layers browsing
 * measuring of distances and areas
