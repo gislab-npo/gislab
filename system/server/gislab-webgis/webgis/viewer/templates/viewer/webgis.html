@@ -72,7 +72,7 @@
 					"OverlaysGroup",
 					["{{ ows_url }}&DPI={{ dpi }}&TRANSPARENT=TRUE"],
 					{
-						layers: ["{{ layers|join:'", "' }}"],
+						layers: ["{{ layers|join:'", "' }}"].reverse(),
 						transparent: true,
 						format: "image/png",
 					},
@@ -242,7 +242,7 @@
 						this.eachChild(function(node) {
 							all_layers.push(node.attributes.text);
 						});
-						return all_layers.reverse();
+						return all_layers;
 					},
 					getVisibleLayers: function(obj) {
 						var visible_layers = [];
@@ -251,7 +251,7 @@
 								visible_layers.push(node.attributes.text);
 							}
 						});
-						return visible_layers.reverse();
+						return visible_layers;
 					}
 				});
 				layers_root.appendChild(new OverlaysNode({

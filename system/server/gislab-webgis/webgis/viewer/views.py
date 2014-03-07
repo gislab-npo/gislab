@@ -85,6 +85,7 @@ def page(request):
 						filtered_layers.append(layer)
 			context['layers'] = filtered_layers
 		else:
+			project_settings.layers.reverse()
 			context['layers'] = project_settings.layers
 
 		visible_layers = form.cleaned_data["visible"]
