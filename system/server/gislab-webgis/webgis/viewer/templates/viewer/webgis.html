@@ -360,9 +360,9 @@
 
 				{% if visible_layers %}
 				// set visible layers
-					{% for layer_name in layers %}
-						{% if layer_name not in visible_layers %}
-				layers_root.findChild('text', '{{ layer_name }}', true).ui.toggleCheck(false);
+					{% for layer in layers %}
+						{% if layer.name not in visible_layers %}
+				layers_root.findChild('text', '{{ layer.name }}', true).ui.toggleCheck(false);
 						{% endif %}
 					{% endfor %}
 				{% endif %}
