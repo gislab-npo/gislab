@@ -14,7 +14,12 @@ WebGIS.Toolbar.LinkList = Ext.extend(Ext.Toolbar.Item, {
 	createHtml: function() {
 		var link_elements = [];
 		Ext.each(this.links, function(link) {
-			link_elements.push(String.format('<a href="{0}">{1}</a>', link.href, link.text));
+			if (link.name) {
+				link_elements.push(String.format('<label>{0}</label> <a href="{1}">{2}</a>', link.name, link.href, link.hyperlink_text));
+			}
+			else {
+				link_elements.push(String.format('<a href="{0}">{1}</a>', link.href, link.hyperlink_text));
+			}
 		});
 		if (this.textBefore && (link_elements.length > 0 || this.alwaysVisible)) {
 			return this.textBefore+' '+link_elements.join(this.separator);

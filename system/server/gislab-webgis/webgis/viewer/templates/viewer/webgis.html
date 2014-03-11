@@ -91,9 +91,9 @@
 				maplayers.push(overlays_group_layer);
 
 				// drawing layers
-				var points_layer = new OpenLayers.Layer.Vector('POINTS', {styleMap: WebgisStyles.drawing_style});
-				var lines_layer = new OpenLayers.Layer.Vector('LINES', {styleMap: WebgisStyles.drawing_style});
-				var polygons_layer = new OpenLayers.Layer.Vector('POLYGON', {styleMap: WebgisStyles.drawing_style});
+				var points_layer = new OpenLayers.Layer.Vector('Points', {styleMap: WebgisStyles.drawing_style});
+				var lines_layer = new OpenLayers.Layer.Vector('Lines', {styleMap: WebgisStyles.drawing_style});
+				var polygons_layer = new OpenLayers.Layer.Vector('Polygons', {styleMap: WebgisStyles.drawing_style});
 				maplayers.push(points_layer);
 				maplayers.push(lines_layer);
 				maplayers.push(polygons_layer);
@@ -202,7 +202,6 @@
 				{% include "viewer/actions/featureinfo.js" %}
 				{% endif %}
 				{% include "viewer/actions/draw.js" %}
-				{% include "viewer/actions/save.js" %}
 				{% include "viewer/actions/save_history.js" %}
 
 				{% if print_composers %}
@@ -288,8 +287,8 @@
 					ascending: false,
 					autoScroll: true,
 					filter: function(record) {
-						var title = record.data.title;
-						if (title == points_layer.name || title == lines_layer.name || title == polygons_layer.name) {
+						var layer = record.data.layer;
+						if (layer == points_layer || layer == lines_layer || layer == polygons_layer) {
 							return false;
 						}
 						return true;
@@ -400,7 +399,7 @@
 				drawings_param = '{{ drawings|join:"," }}';
 					{% for drawing_id in drawings %}
 				drawings_links.push({
-					text: '{{ drawing_id }}',
+					hyperlink_text: '{{ drawing_id }}',
 					href: Ext.urlAppend('{% url "webgis.storage.views.ball" %}', Ext.urlEncode({ID: '{{ drawing_id }}'})),
 				});
 				Ext.Ajax.request({
@@ -425,6 +424,15 @@
 						points_layer.addFeatures(points);
 						lines_layer.addFeatures(lines);
 						polygons_layer.addFeatures(polygons);
+
+						// parse metadata
+						var metadata = JSON.parse(response.responseText).metadata;
+						Ext.each(drawings_links, function(link) {
+							if (link.hyperlink_text == '{{ drawing_id }}') {
+								link.name = metadata.title;
+								geojson_links.setLinks(drawings_links);
+							}
+						})
 					},
 					failure: function(response, opts) {
 						Ext.MessageBox.alert("Error", "Failed to fetch vector data (drawing: {{ drawing_id }})");

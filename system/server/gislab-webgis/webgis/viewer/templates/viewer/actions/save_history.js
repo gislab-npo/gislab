@@ -5,9 +5,9 @@ var action = new Ext.Action({
 	cls: 'x-btn-icon',
 	iconCls: 'save-history-icon',
 	tooltip: 'History of saved drawings',
-	toggleGroup: 'tools', // to disable drawing tools that could cause to export control points of OpenLayers.Control.ModifyFeature tool
 	store: new Ext.data.ArrayStore({
 		fields: [
+			{name: 'title', type: 'string'},
 			{name: 'time', type: 'date'},
 			{name: 'link', type: 'string'},
 			{name: 'info', type: 'string'},
@@ -33,6 +33,12 @@ var action = new Ext.Action({
 			},
 			columns: [
 				{
+					id       : 'title',
+					header   : 'Title',
+					sortable : false,
+					dataIndex: 'title',
+				},
+				{
 					id       : 'time',
 					header   : 'Time',
 					width    : 60, 
@@ -50,12 +56,13 @@ var action = new Ext.Action({
 				{
 					id       : 'info',
 					header   : 'Info',
+					width    : 180,
 					sortable : false,
 					dataIndex: 'info'
 				},
 			],
 			//stripeRows: true,
-			autoExpandColumn: 'info',
+			autoExpandColumn: 'title',
 			// config options for stateful behavior
 			stateful: true,
 			stateId: 'grid'
@@ -63,7 +70,7 @@ var action = new Ext.Action({
 
 		var history_window = new Ext.Window({
 			title: 'History of saved drawings',
-			width: 350,
+			width: 500,
 			height: 400,
 			layout: 'fit',
 			items: [grid]
