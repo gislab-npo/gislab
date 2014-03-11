@@ -5,10 +5,10 @@
     <mapcanvas>
         <units>meters</units>
         <extent>
-            <xmin>424959.96743129391688854</xmin>
-            <ymin>5646310.47887173667550087</ymin>
-            <xmax>2914140.09802070260047913</xmax>
-            <ymax>7416708.8647817000746727</ymax>
+            <xmin>515250.28511269699083641</xmin>
+            <ymin>5646310.4788717357441783</ymin>
+            <xmax>2823849.78033929644152522</xmax>
+            <ymax>7416708.86478170473128557</ymax>
         </extent>
         <projections>1</projections>
         <destinationsrs>
@@ -46,8 +46,8 @@
             </filegroup>
         </legendlayer>
     </legend>
-    <Composer title="A4" visible="0">
-        <Composition snapGridTolerance="2" gridVisible="0" printResolution="300" paperWidth="297" snapGridOffsetX="0" guidesVisible="1" snapGridResolution="10" snapGridOffsetY="0" alignmentSnap="1" snapping="0" numPages="1" paperHeight="210" alignmentSnapTolerance="2" smartGuides="1" printAsRaster="0" generateWorldFile="0">
+    <Composer title="A4" visible="1">
+        <Composition snapGridTolerance="2" gridVisible="0" printResolution="300" paperWidth="297" snapGridOffsetX="0" guidesVisible="1" snapGridResolution="10" snapGridOffsetY="0" alignmentSnap="1" snapping="0" numPages="1" paperHeight="210" alignmentSnapTolerance="2" smartGuides="1" printAsRaster="1" generateWorldFile="0">
             <symbol alpha="1" type="fill" name="">
                 <layer pass="0" class="SimpleFill" locked="0">
                     <prop k="border_width_unit" v="MM"/>
@@ -60,36 +60,54 @@
                     <prop k="width_border" v="0.26"/>
                 </layer>
             </symbol>
-            <ComposerLabel valign="128" labelText="Central Europe" htmlState="0" halign="4" margin="1">
-                <LabelFont description="Droid Sans,24,-1,5,75,0,0,0,0,0"/>
+            <ComposerLabel valign="128" labelText="Created at: [% $now%]" htmlState="0" halign="1" margin="1">
+                <LabelFont description="Droid Sans,10,-1,5,50,0,0,0,0,0"/>
                 <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="281.892" x="2.79958" transparency="0" y="13.204" height="18.9036" positionMode="0" frame="true" outlineWidth="0.3" zValue="4" itemRotation="0" lastValidViewScaleFactor="1.52461" uuid="{d8ed4f3c-0f36-47e6-95a8-10aa748503d6}" id="" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="70.0068" x="7.24264" transparency="0" y="193.659" height="11.9" positionMode="0" frame="false" outlineWidth="0.3" zValue="5" itemRotation="0" lastValidViewScaleFactor="1.52404" uuid="{77f9adc3-b434-402c-a28e-0c8b7d0f6847}" id="" background="true" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerLabel>
-            <ComposerScaleBar penColor="#000000" style="Single Box" numMapUnitsPerScaleBarUnit="1000" alignment="0" brushColor="#000000" numSegments="4" segmentMillimeters="11.6579" fontColor="#000000" font="Droid Sans,12,-1,5,50,0,0,0,0,0" numUnitsPerSegment="100000" units="1" labelBarSpace="3" outlineWidth="1" numSegmentsLeft="2" height="3" mapId="0" boxContentSpace="1" unitLabel="km">
-                <ComposerItem width="76.1629" x="2.79958" transparency="0" y="195.627" height="11.9" positionMode="0" frame="false" outlineWidth="0.3" zValue="3" itemRotation="0" lastValidViewScaleFactor="1.84478" uuid="{b7fec8b4-6468-4bf4-82e3-251cc4bc5dcc}" id="" background="true" blendMode="0" positionLock="false">
-                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
-                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
-                </ComposerItem>
-            </ComposerScaleBar>
-            <ComposerLegend symbolWidth="7" title="Legend" boxSpace="2" splitLayer="0" equalColumnWidth="0" symbolHeight="4" wmsLegendHeight="25" wrapChar="" fontColor="#000000" columnSpace="2" wmsLegendWidth="50" columnCount="1">
+            <ComposerLegend symbolWidth="7" title="Legend" boxSpace="2" splitLayer="0" equalColumnWidth="0" map="0" symbolHeight="4" wmsLegendHeight="25" wrapChar="" fontColor="#000000" columnSpace="2" wmsLegendWidth="50" columnCount="1">
                 <styles>
-                    <style marginBottom="2" name="title" font="Droid Sans,16,-1,5,50,0,0,0,0,0"/>
+                    <style marginBottom="2" name="title" font="Droid Sans,16,-1,5,75,0,0,0,0,0"/>
                     <style marginTop="2" name="group" font="Droid Sans,14,-1,5,50,0,0,0,0,0"/>
                     <style marginTop="2" name="subgroup" font="Droid Sans,12,-1,5,50,0,0,0,0,0"/>
                     <style marginTop="2" name="symbol" font="Droid Sans,10,-1,5,50,0,0,0,0,0"/>
                     <style marginTop="2" marginLeft="2" name="symbolLabel" font="Droid Sans,12,-1,5,50,0,0,0,0,0"/>
                 </styles>
                 <Model autoUpdate="1">
-                    <LayerItem layerId="rivers20131101194850131" userText="" style="hidden" text="rivers" showFeatureCount="0">
-                        <VectorClassificationItemNg userText="" text="rivers">
+                    <LayerItem layerId="places20131111135858795" userText="" style="hidden" text="places" showFeatureCount="0">
+                        <VectorClassificationItemNg userText="" text="places">
+                            <symbols>
+                                <symbol alpha="1" type="marker" name="classificationSymbol">
+                                    <layer pass="0" class="SimpleMarker" locked="0">
+                                        <prop k="angle" v="0"/>
+                                        <prop k="color" v="170,0,127,255"/>
+                                        <prop k="color_border" v="0,0,0,255"/>
+                                        <prop k="horizontal_anchor_point" v="1"/>
+                                        <prop k="name" v="circle"/>
+                                        <prop k="offset" v="0,0"/>
+                                        <prop k="offset_unit" v="MM"/>
+                                        <prop k="outline_style" v="solid"/>
+                                        <prop k="outline_width" v="0"/>
+                                        <prop k="outline_width_unit" v="MM"/>
+                                        <prop k="scale_method" v="area"/>
+                                        <prop k="size" v="2"/>
+                                        <prop k="size_unit" v="MM"/>
+                                        <prop k="vertical_anchor_point" v="1"/>
+                                    </layer>
+                                </symbol>
+                            </symbols>
+                        </VectorClassificationItemNg>
+                    </LayerItem>
+                    <LayerItem layerId="roads20131111135915389" userText="" style="hidden" text="roads" showFeatureCount="0">
+                        <VectorClassificationItemNg userText="" text="roads">
                             <symbols>
                                 <symbol alpha="1" type="line" name="classificationSymbol">
                                     <layer pass="0" class="SimpleLine" locked="0">
                                         <prop k="capstyle" v="square"/>
-                                        <prop k="color" v="51,137,242,255"/>
+                                        <prop k="color" v="170,0,0,255"/>
                                         <prop k="customdash" v="5;2"/>
                                         <prop k="customdash_unit" v="MM"/>
                                         <prop k="draw_inside_polygon" v="0"/>
@@ -98,38 +116,51 @@
                                         <prop k="offset_unit" v="MM"/>
                                         <prop k="penstyle" v="solid"/>
                                         <prop k="use_custom_dash" v="0"/>
-                                        <prop k="width" v="0.5"/>
+                                        <prop k="width" v="0.26"/>
                                         <prop k="width_unit" v="MM"/>
                                     </layer>
                                 </symbol>
                             </symbols>
                         </VectorClassificationItemNg>
                     </LayerItem>
-                    <LayerItem layerId="districts20131101194849997" userText="" style="hidden" text="districts" showFeatureCount="0">
-                        <VectorClassificationItemNg userText="" text="districts">
+                    <LayerItem layerId="countries20131111135847187" userText="" style="hidden" text="countries" showFeatureCount="0">
+                        <VectorClassificationItemNg userText="" text="countries">
                             <symbols>
                                 <symbol alpha="1" type="fill" name="classificationSymbol">
                                     <layer pass="0" class="SimpleFill" locked="0">
                                         <prop k="border_width_unit" v="MM"/>
-                                        <prop k="color" v="70,249,73,255"/>
+                                        <prop k="color" v="149,145,154,255"/>
                                         <prop k="color_border" v="0,0,0,255"/>
                                         <prop k="offset" v="0,0"/>
                                         <prop k="offset_unit" v="MM"/>
-                                        <prop k="style" v="no"/>
+                                        <prop k="style" v="solid"/>
                                         <prop k="style_border" v="solid"/>
-                                        <prop k="width_border" v="0.4"/>
+                                        <prop k="width_border" v="0.26"/>
                                     </layer>
                                 </symbol>
                             </symbols>
                         </VectorClassificationItemNg>
                     </LayerItem>
-                    <LayerItem layerId="OpenLayers_plugin_layer20140307163728361" userText="" style="subgroup" text="OpenStreetMap" showFeatureCount="0"/>
                 </Model>
-                <ComposerItem width="40.7326" x="243.959" transparency="0" y="44.65" height="145.016" positionMode="0" frame="true" outlineWidth="0.3" zValue="2" itemRotation="0" lastValidViewScaleFactor="1.84478" uuid="{a38a7c66-795a-4297-ada4-f7960ec53da0}" id="" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="39.2916" x="245.4" transparency="0" y="35.4639" height="154.202" positionMode="0" frame="true" outlineWidth="0.3" zValue="4" itemRotation="0" lastValidViewScaleFactor="1.9118" uuid="{a6a9face-dde0-41ad-ab7e-7287c4855d3b}" id="" background="true" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerLegend>
+            <ComposerLabel valign="128" labelText="Central Europe" htmlState="0" halign="4" margin="1">
+                <LabelFont description="Droid Sans,24,-1,5,75,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="277.299" x="7.39264" transparency="0" y="13.204" height="18.9036" positionMode="0" frame="true" outlineWidth="0.3" zValue="3" itemRotation="0" lastValidViewScaleFactor="1.52404" uuid="{d8ed4f3c-0f36-47e6-95a8-10aa748503d6}" id="Title" background="true" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerScaleBar penColor="#000000" style="Numeric" numMapUnitsPerScaleBarUnit="1000" alignment="1" brushColor="#000000" numSegments="4" segmentMillimeters="11.4295" fontColor="#000000" font="Droid Sans,12,-1,5,75,0,0,0,0,0" numUnitsPerSegment="100000" units="1" labelBarSpace="3" outlineWidth="1" numSegmentsLeft="2" height="3" mapId="0" boxContentSpace="1" unitLabel="km">
+                <ComposerItem width="41.0326" x="243.809" transparency="0" y="193.659" height="11.9" positionMode="0" frame="false" outlineWidth="0.3" zValue="2" itemRotation="0" lastValidViewScaleFactor="1.52404" uuid="{b7fec8b4-6468-4bf4-82e3-251cc4bc5dcc}" id="" background="true" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerScaleBar>
             <ComposerMap mapRotation="0" keepLayerSet="false" overviewFrameMap="-1" id="0" previewMode="Render" drawCanvasItems="true">
                 <overviewFrame overviewBlendMode="0" overviewFrameMap="-1" overviewCentered="false" overviewInverted="false">
                     <symbol alpha="0.3" type="fill" name="">
@@ -145,7 +176,7 @@
                         </layer>
                     </symbol>
                 </overviewFrame>
-                <Extent ymin="5646310.47887173667550087" xmin="239911.20002208274672739" ymax="7416708.86478170938789845" xmax="3099188.86542991362512112"/>
+                <Extent ymin="5646310.45253756362944841" xmin="239911.16076776650152169" ymax="7564487.17400963697582483" xmax="3099188.9046842297539115"/>
                 <LayerSet/>
                 <Grid gridStyle="0" crossLength="3" gridFramePenThickness="0.5" intervalX="0" offsetX="0" intervalY="0" offsetY="0" gridFrameStyle="0" gridFrameWidth="2" gridBlendMode="0" show="0">
                     <framePenColor alpha="255" red="0" blue="0" green="0"/>
@@ -172,7 +203,7 @@
                     </Annotation>
                 </Grid>
                 <AtlasMap fixedScale="0" atlasDriven="0" margin="0.10000000000000001"/>
-                <ComposerItem width="234.45" x="2.79958" transparency="0" y="44.5" height="145.166" positionMode="0" frame="true" outlineWidth="0.3" zValue="1" itemRotation="0" lastValidViewScaleFactor="1.66616" uuid="{4c970761-c80a-4f3a-8c8f-18df45ee5323}" id="" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="229.857" x="7.39264" transparency="0" y="35.4639" height="154.202" positionMode="0" frame="true" outlineWidth="0.3" zValue="1" itemRotation="0" lastValidViewScaleFactor="1.9118" uuid="{4c970761-c80a-4f3a-8c8f-18df45ee5323}" id="" background="true" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
@@ -433,10 +464,10 @@
                 <edittype labelontop="0" editable="1" type="0" name="featurecla"/>
                 <edittype labelontop="0" editable="1" type="0" name="scalerank"/>
             </edittypes>
-            <editform>.</editform>
+            <editform>/mnt/share/lab1</editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform>/mnt/share/lab1</annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -728,10 +759,10 @@
                 <edittype labelontop="0" editable="1" type="0" name="UN_LONG"/>
                 <edittype labelontop="0" editable="1" type="0" name="WORLDCITY"/>
             </edittypes>
-            <editform>.</editform>
+            <editform>/mnt/share/lab1</editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform>/mnt/share/lab1</annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -958,10 +989,10 @@
                 <edittype labelontop="0" editable="1" type="0" name="type"/>
                 <edittype labelontop="0" editable="1" type="0" name="uident"/>
             </edittypes>
-            <editform>.</editform>
+            <editform>/mnt/share/lab1</editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform>/mnt/share/lab1</annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -993,10 +1024,11 @@
             <Automatic type="bool">true</Automatic>
             <DegreeFormat type="QString">D</DegreeFormat>
         </PositionPrecision>
+        <WCSUrl type="QString"></WCSUrl>
         <WMSContactPhone type="QString"></WMSContactPhone>
         <WMSServiceCapabilities type="bool">true</WMSServiceCapabilities>
         <WMSServiceAbstract type="QString">GIS.lab demonstration project</WMSServiceAbstract>
-        <WMSAddWktGeometry type="bool">false</WMSAddWktGeometry>
+        <WMSAddWktGeometry type="bool">true</WMSAddWktGeometry>
         <Measure>
             <Ellipsoid type="QString">WGS84</Ellipsoid>
         </Measure>
@@ -1025,6 +1057,7 @@
             <pythonCode type="QString"></pythonCode>
         </Macros>
         <WMSAccessConstraints type="QString"></WMSAccessConstraints>
+        <WCSLayers type="QStringList"/>
         <SpatialRefSys>
             <ProjectCRSProj4String type="QString">+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs</ProjectCRSProj4String>
             <ProjectCrs type="QString">EPSG:4326</ProjectCrs>
