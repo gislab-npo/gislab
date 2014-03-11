@@ -6,7 +6,7 @@ save_as: index.html
 
 __GIS.lab provides possibility to automatically deploy GIS server and unlimited number of client machines in a few moments.__
 
-GIS.lab network provides comprehensive set of services and the best collection of Open Source GIS software, seamlessly integrated to one easy to use, centrally managed, portable and unbreakable system. It is designed as standalone, independent system which works out-of-box without any need of configuration. GIS.lab lowers deployment barrier of complex GIS infrastructure to zero and allows users to keep high focus on their GIS tasks.
+GIS.lab network provides comprehensive set of services and the best collection of Open Source GIS software, seamlessly integrated to one easy to use, centrally managed, portable and unbreakable system. It is designed as standalone, independent system which works out-of-box without any need of configuration. GIS.lab lowers deployment and ownership barrier of complex GIS infrastructure to zero, while still keeping whole technology in house under full control.
 
 <div style="text-align:center;padding:10px" markdown="1">
 ![GIS.lab network architecture]({filename}/images/gislab-architecture.png)  
