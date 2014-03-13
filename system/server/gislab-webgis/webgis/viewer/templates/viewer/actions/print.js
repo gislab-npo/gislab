@@ -7,13 +7,14 @@ var printWindow = new Ext.Window({
 	closable: false,
 	listeners: {
 		hide: function(window) {
-			mappanel.map.events.unregister("zoomend", this, this.updatePrintScales);
+			printExtent.map.events.unregister("zoomend", this, this.updatePrintScales);
 			printExtent.hide();
 		},
 		show: function(window) {
 			this.updatePrintScales();
 			//printExtent.page.setRotation(0, true);
-			mappanel.map.events.register("zoomend", this, this.updatePrintScales);
+			printExtent.page.setCenter(printExtent.map.getCenter());
+			printExtent.map.events.register("zoomend", this, this.updatePrintScales);
 			printExtent.page.on('change', function(window, mods) {
 				if (mods.hasOwnProperty('rotation')) {
 					var spinner = window.rotationSpinner;
@@ -35,7 +36,7 @@ var printWindow = new Ext.Window({
 		}
 	},
 	updatePrintScales: function() {
-		var map_scale = Math.round(mappanel.map.getScale());
+		var map_scale = Math.round(printExtent.map.getScale());
 		{% if scales %}
 		// find exact scale value
 		var exact_scale;
@@ -227,9 +228,9 @@ var printWindow = new Ext.Window({
 					FORMAT: print_window.formatCombobox.getValue(),
 					DPI: printExtent.printProvider.dpi.get("value"),
 					TEMPLATE: printExtent.printProvider.layout.get("name"),
-					LAYERS: overlays_root.getVisibleLayers().join(','),
-					SRS: mappanel.map.projection.getCode(),
-					'map0:extent': printExtent.page.getPrintExtent(mappanel.map).toBBOX(1, false),
+					LAYERS: overlays_root.getVisibleLayers().reverse().join(','),
+					SRS: printExtent.map.projection.getCode(),
+					'map0:extent': printExtent.page.getPrintExtent(printExtent.map).toBBOX(1, false),
 					'map0:rotation': -printExtent.page.rotation,
 					'map0:scale': printExtent.page.scale.get("value")
 				}
