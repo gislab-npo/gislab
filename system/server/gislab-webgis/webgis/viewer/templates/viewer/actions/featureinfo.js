@@ -1,21 +1,14 @@
 
 // Featureinfo Action
-var layers_store_data = {
-	layers: [
-		{ name: 'All visible layers' },
-		{% for layer in layers %}
-		{ name: '{{ layer.name }}' },
-		{% endfor %}
-	]
-};
 
 var identify_layer_combobox = new Ext.form.ComboBox({
 	width: 150,
 	mode: 'local',
+	disabled: true,
 	triggerAction: 'all',
 	forceSelection: true,
 	store: new Ext.data.JsonStore({
-		data: layers_store_data,
+		data: {layers: []},
 		storeId: 'search-layer-store',
 		root: 'layers',
 		fields: [{
@@ -31,6 +24,18 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 				var recordSelected = combo.getStore().getAt(0);
 				combo.setValue(recordSelected.get('name'));
 			}
+			var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
+			overlays_root.on('layerchange', function(node, layer, visible_layers) {
+				var layers_options = ['All visible layers'].concat(visible_layers)
+				var store_data = [];
+				Ext.each(layers_options, function(layername) {
+					store_data.push({name: layername});
+				});
+				combo.store.loadData({layers: store_data});
+				if (layers_options.indexOf(combo.getValue()) == -1) {
+					combo.setValue(layers_options[0]);
+				}
+			});
 		}
 	}
 });
@@ -69,6 +74,9 @@ action = new GeoExt.Action({
 	enableToggle: true,
 	toggleGroup: 'tools',
 	group: 'tools',
-	tooltip: 'Feature info'
+	tooltip: 'Feature info',
+	toggleHandler: function(button, toggled) {
+		identify_layer_combobox.setDisabled(!toggled);
+	}
 })
-mappanel.getTopToolbar().add(identify_layer_combobox, '-', action);
+mappanel.getTopToolbar().add('-', action, identify_layer_combobox);

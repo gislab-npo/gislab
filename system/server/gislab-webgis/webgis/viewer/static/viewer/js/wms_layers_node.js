@@ -5,6 +5,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		config.checked = true;
 		config.expanded = true;
 		WebGIS.WmsLayersNode.superclass.constructor.apply(this, arguments);
+		this.addEvents('layerchange');
 		this.layer = config.layer;
 		this.layersTree = config.layersTree;
 		this.root = this;
@@ -21,7 +22,9 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 	},
 	updateLayersParam: function() {
 		if (this.layer.CLASS_NAME == 'OpenLayers.Layer.WMS') {
-			this.layer.mergeNewParams({LAYERS: this.getVisibleLayers().reverse()})
+			var visible_layers = this.getVisibleLayers();
+			this.layer.mergeNewParams({LAYERS: [].concat(visible_layers).reverse()})
+			this.fireEvent('layerchange', this, this.layer, visible_layers);
 		}
 		//console.log(this.root.checkchangeParamsStack);
 	},
