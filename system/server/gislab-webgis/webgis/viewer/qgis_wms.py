@@ -21,6 +21,7 @@ class Layer(object):
 	attributes = None
 	projection = None
 	extent = None
+	sublayers = None
 
 	def __init__(self, **kwargs):
 		for param, val in kwargs.iteritems():
@@ -45,7 +46,7 @@ class QgisGetProjectSettingsService(object):
 	featureinfo_formats = None
 	print_composers = None
 	root_layer = None
-	layers = None
+	layers_order = None
 
 	def __init__(self, getprojectsettings_url):
 		self.featureinfo_formats = []
@@ -64,6 +65,10 @@ class QgisGetProjectSettingsService(object):
 			title=layer_elem.find('{http://www.opengis.net/wms}Title').text,
 			name=layer_elem.find('{http://www.opengis.net/wms}Name').text
 		)
+		sublayers_elems = layer_elem.findall("{http://www.opengis.net/wms}Layer")
+		if sublayers_elems:
+			layer.sublayers = [self._parse_layer(sublayer_elem) for sublayer_elem in sublayers_elems]
+
 		bbox_elem = layer_elem.find("{http://www.opengis.net/wms}BoundingBox")
 		if bbox_elem is not None:
 			bbox = map(float, (bbox_elem.attrib['minx'], bbox_elem.attrib['miny'], bbox_elem.attrib['maxx'], bbox_elem.attrib['maxy']))
@@ -119,20 +124,10 @@ class QgisGetProjectSettingsService(object):
 			layers = []
 			root_layer_elem = capability_elem.find("{http://www.opengis.net/wms}Layer")
 			self.root_layer = self._parse_layer(root_layer_elem)
-			for layer_elem in root_layer_elem.findall("{http://www.opengis.net/wms}Layer"):
-				layers.append(self._parse_layer(layer_elem))
-			
+
 			layers_order = self._opt_text_elem(capability_elem, "{http://www.opengis.net/wms}LayerDrawingOrder")
 			if layers_order:
-				ordered_layers = []
-				for name in layers_order.split(","):
-					for layer in layers:
-						if layer.name == name:
-							ordered_layers.append(layer)
-							break
-				self.layers = ordered_layers
-			else:
-				self.layers = layers
+				self.layers_order = layers_order.split(",")
 
 			# Print Composers
 			composer_templates_elem = capability_elem.find(".//{http://www.opengis.net/wms}ComposerTemplates")

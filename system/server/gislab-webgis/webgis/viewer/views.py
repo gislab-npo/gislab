@@ -4,6 +4,7 @@ Author: Ivan Mincik, ivan.mincik@gmail.com
 Author: Marcel Dancak, marcel.dancak@gista.sk
 """
 
+import json
 import os.path
 import urllib2
 import contextlib
@@ -77,16 +78,27 @@ def page(request):
 		if not root_layer: raise Exception("Root layer not found.")
 
 		layers = form.cleaned_data['layers']
-		if layers:
-			filtered_layers = []
-			for layer_name in layers:
-				for layer in project_settings.layers:
-					if layer.name == layer_name:
-						filtered_layers.append(layer)
-			context['layers'] = filtered_layers
-		else:
-			project_settings.layers.reverse()
-			context['layers'] = project_settings.layers
+		layers_list = []
+		def process_layer_info(layer_info):
+			if layer_info.sublayers:
+				sublayers_tree = []
+				for sublayer_info in layer_info.sublayers:
+					sublayer_tree = process_layer_info(sublayer_info)
+					if sublayer_tree:
+						sublayers_tree.append(sublayer_tree)
+				if sublayers_tree:
+					return {
+						'name': layer_info.name,
+						'layers': sublayers_tree
+					}
+			else:
+				if not layers or layer_info.name in layers:
+					layers_list.append(layer_info)
+					return {'name': layer_info.name}
+
+		layers_tree = process_layer_info(project_settings.root_layer)
+		context['layers'] = layers_list
+		context['layers_tree'] = json.dumps(layers_tree[layers_tree.keys()[0]] if layers_tree else [])
 
 		visible_layers = form.cleaned_data["visible"]
 		if visible_layers:

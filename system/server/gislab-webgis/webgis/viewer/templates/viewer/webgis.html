@@ -25,6 +25,7 @@
 		<script type="text/javascript" src="{% static 'viewer/lib/GeoExt-1.1/GeoExt.js' %}"></script>
 
 		<script type="text/javascript" src="{% static 'viewer/js/styles.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer/js/wms_layers_node.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/featureinfo_panel.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/draw_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/control_display.js' %}"></script>
@@ -52,7 +53,7 @@
 				var zoom_extent = OpenLayers.Bounds.fromString('{{ zoom_extent }}');
 				{% if tile_resolutions %}config.tile_resolutions = [{{ tile_resolutions }}];{% endif %}
 
-				{% if debug %}{% autoescape off %}console.log("CONFIG: {{ config }}");{% endautoescape %}{% endif %}
+				{% if debug %}{% autoescape off %}console.log("CONFIG: {{ config|escapejs }}");{% endautoescape %}{% endif %}
 
 				// ###  LAYERS  ###
 				var maplayers = [];
@@ -198,9 +199,6 @@
 
 				{% include "viewer/actions/basic.js" %}
 				{% include "viewer/actions/measurement.js" %}
-				{% if featureinfo %}
-				{% include "viewer/actions/featureinfo.js" %}
-				{% endif %}
 				{% include "viewer/actions/draw.js" %}
 				{% include "viewer/actions/save_history.js" %}
 
@@ -210,7 +208,9 @@
 
 				{% if featureinfo %}
 				{% include "viewer/actions/search.js" %}
+				{% include "viewer/actions/featureinfo.js" %}
 				{% endif %}
+
 
 				// tree node
 				var layers_root = new Ext.tree.TreeNode({
@@ -234,35 +234,11 @@
 				}));
 				{% endif %}
 
-				// overlay layers tree
-				OverlaysNode = Ext.extend(GeoExt.tree.LayerNode, {
-					getAllLayers: function(obj) {
-						var all_layers = [];
-						this.eachChild(function(node) {
-							all_layers.push(node.attributes.text);
-						});
-						return all_layers;
-					},
-					getVisibleLayers: function(obj) {
-						var visible_layers = [];
-						this.eachChild(function(node) {
-							if (node.attributes.checked) {
-								visible_layers.push(node.attributes.text);
-							}
-						});
-						return visible_layers;
-					}
-				});
-				layers_root.appendChild(new OverlaysNode({
+				layers_root.appendChild(new WebGIS.WmsLayersNode({
 					id: 'overlays-root',
 					text: 'Overlays',
 					layer: overlays_group_layer,
-					leaf: false,
-					expanded: true,
-					allowDrag: false,
-					loader: {
-						param: "LAYERS"
-					},
+					layersTree: JSON.parse('{{ layers_tree|escapejs }}'),
 				}));
 
 				// layers tree
