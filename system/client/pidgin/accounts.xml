@@ -3,7 +3,7 @@
 <account version='1.0'>
 	<account>
 		<protocol>prpl-irc</protocol>
-		<name>##USER##@irc.gis.lab</name>
+		<name>##GISLAB_USER##@irc.gis.lab</name>
 		<statuses>
 			<status type='available' name='Available' active='true'>
 				<attributes/>
