@@ -267,4 +267,4 @@ action = new Ext.Action({
 		}
 	},
 });
-mappanel.getTopToolbar().add('-', action);
+mappanel.getTopToolbar().add(action);

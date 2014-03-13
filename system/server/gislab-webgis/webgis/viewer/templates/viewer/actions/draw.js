@@ -115,4 +115,4 @@ action = new WebGIS.DrawAction({
 		}
 	},
 });
-mappanel.getTopToolbar().add('-', action);
+mappanel.getTopToolbar().add(action);

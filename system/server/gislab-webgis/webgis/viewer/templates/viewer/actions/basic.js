@@ -7,7 +7,7 @@ action = new GeoExt.Action({
 	iconCls: 'home-icon',
 	tooltip: 'Home'
 });
-mappanel.getTopToolbar().add('-', action);
+mappanel.getTopToolbar().add(action);
 
 //Pan Map Action
 action = new GeoExt.Action({
@@ -41,4 +41,4 @@ action = new GeoExt.Action({
 	iconCls: 'next-icon',
 	tooltip: 'Next in history',
 });
-mappanel.getTopToolbar().add(action, '-');
+mappanel.getTopToolbar().add(action);
