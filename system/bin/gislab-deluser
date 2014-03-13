@@ -36,10 +36,10 @@ done
 shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; exit 0; fi
 
-USER=$1
+GISLAB_USER=$1
 
 if [ "$FORCE" != "yes" ]; then
-	echo "[GIS.lab]: You are going to delete user account '$USER'."
+	echo "[GIS.lab]: You are going to delete user account '$GISLAB_USER'."
 	echo "[GIS.lab]: This command will delete also all data belonging to this user. Continue ? [ENTER to continue, CTRL-C to cancel]"
 	read
 fi
@@ -47,13 +47,13 @@ fi
 
 # remove account
 echo -e "\n[GIS.lab]: Removing GIS.lab user account ..."
-deluser --remove-home $USER # Linux account
+deluser --remove-home $GISLAB_USER # Linux account
 
-sudo su - postgres -c "psql -d gislab -c \"DROP SCHEMA $USER CASCADE\"" # PostgreSQL account
-sudo su - postgres -c "psql -d gislab -c \"DROP OWNED BY $USER CASCADE\""
-sudo su - postgres -c "dropuser $USER"
+sudo su - postgres -c "psql -d gislab -c \"DROP SCHEMA $GISLAB_USER CASCADE\"" # PostgreSQL account
+sudo su - postgres -c "psql -d gislab -c \"DROP OWNED BY $GISLAB_USER CASCADE\""
+sudo su - postgres -c "dropuser $GISLAB_USER"
 
-rm -rf /storage/share/$USER # NFS directory
+rm -rf /storage/share/$GISLAB_USER # NFS directory
 
 
 echo -e "\n[GIS.lab]: Done."
