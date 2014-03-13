@@ -69,6 +69,7 @@ action = new WebGIS.DrawAction({
 	enableToggle: true,
 	toggleGroup: 'tools',
 	tooltip: 'Draw geometry',
+	snapping: true,
 	toggleHandler: function(action, toggled) {
 		action.baseAction.toggleHandler(action, toggled);
 	},

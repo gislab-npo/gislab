@@ -51,6 +51,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			if (this.modifyControl.layer) {
 				this.modifyControl.layer.events.unregister("featureselected", this, this.onFeatureSelected);
 			}
+			this.map.removeControl(this.modifyControl);
 			this.modifyControl.deactivate();
 			this.modifyControl.destroy();
 		}
@@ -63,9 +64,9 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			vertexRenderIntent: 'modify',
 			mode: OpenLayers.Control.ModifyFeature.RESHAPE
 		});
-		this.modifyControl.setMap(this.map);
+		this.map.addControl(this.modifyControl);
 		this.modifyControl.activate();
-		draw_control.layer.events.register("featureselected", this, this.onFeatureSelected);
+		this.modifyControl.layer.events.register("featureselected", this, this.onFeatureSelected);
 	},
 
 	enableSnapping: function(draw_control) {
@@ -194,7 +195,6 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					text: 'Save',
 					tooltip: 'Save drawing',
 					drawAction: this,
-					//toggleGroup: 'tools', // to disable drawing tools that could cause to export control points of OpenLayers.Control.ModifyFeature tool
 					handler: function(save_action) {
 						var title = this.drawAction.window.drawingTitle.getValue();
 						var features = [];
@@ -219,17 +219,18 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 								currentTab.control.deactivate();
 								this.drawAction.clearFeaturesSelection();
 							}
-							if (newTab) {
-								newTab.control.setMap(this.drawAction.map);
-								//this.drawAction.control = tab.control;
-								newTab.control.activate();
+						},
+						tabchange: function(tabPanel, tab) {
+							if (tab) {
+								tab.control.setMap(this.drawAction.map);
+								tab.control.activate();
 								if (this.drawAction.snapping) {
 									this.drawAction.disableSnapping();
-									this.drawAction.enableSnapping(newTab.control);
+									this.drawAction.enableSnapping(tab.control);
 								}
-								this.drawAction.enableFeatureModify(newTab.control);
+								this.drawAction.enableFeatureModify(tab.control);
 							}
-						},
+						}
 					}
 				}
 			],
@@ -244,7 +245,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			}
 		});
 		this.window.show();
-		this.window.alignTo(Ext.getBody(), 'r-r', [-100, 0]);
+		this.window.alignTo(Ext.getBody(), 'r-r', [-20, 0]);
 	},
 
 	toggleHandler: function(action, toggled) {
