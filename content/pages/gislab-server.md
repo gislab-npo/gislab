@@ -3,6 +3,9 @@ Submenu: yes
 Order: 10
 Slug: gislab-server
 
+
+GIS.lab server combines best features of platform as a service (PaaS) services like zero deployment and management costs or horizontal scaling and in house server benefits like no monthly charges and full control of whole technology.
+
 # GIS.lab client boot service
 One of a core features of GIS.lab server is to provide a network boot service and runtime infrastructure for GIS.lab client systems. Any client machine connected to GIS.lab network can boot client environment (physical or virtual) from network. Users authentication credentials are centrally managed in LDAP database and they are not tight to particular client machine - any client machine can be used by any user as far as his authentication credentials exists in database.
 

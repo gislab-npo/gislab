@@ -4,6 +4,9 @@ Order: 20
 Slug: gislab-client
 
 
+GIS.lab client combines best features of web applications like central software distribution and no software requirements on client with capabilities and performance of desktop computer. 
+
+
 # Office productivity suite
 GIS.lab client environment offers fully featured office productivity suite which contains tools such as _text documents, tables and presentations editor, Internet browser, Email and chat client, images and vector graphic editor and video viewer_ and more.
 
