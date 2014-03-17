@@ -18,24 +18,24 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 	}),
 	valueField: 'name',
 	displayField: 'name',
+	updateLayersList: function(layers_list) {
+		var layers_options = ['All visible layers'].concat(layers_list);
+		var store_data = [];
+		Ext.each(layers_options, function(layername) {
+			store_data.push({name: layername});
+		});
+		this.store.loadData({layers: store_data});
+		if (layers_options.indexOf(this.getValue()) == -1) {
+			this.setValue(layers_options[0]);
+		}
+	},
 	listeners: {
 		afterrender: function(combo) {
-			if (combo.getStore().getCount() > 0) {
-				var recordSelected = combo.getStore().getAt(0);
-				combo.setValue(recordSelected.get('name'));
-			}
 			var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
+			combo.updateLayersList(overlays_root.getVisibleLayers());
 			overlays_root.on('layerchange', function(node, layer, visible_layers) {
-				var layers_options = ['All visible layers'].concat(visible_layers)
-				var store_data = [];
-				Ext.each(layers_options, function(layername) {
-					store_data.push({name: layername});
-				});
-				combo.store.loadData({layers: store_data});
-				if (layers_options.indexOf(combo.getValue()) == -1) {
-					combo.setValue(layers_options[0]);
-				}
-			});
+				this.updateLayersList(visible_layers);
+			}, combo);
 		}
 	}
 });
