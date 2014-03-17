@@ -44,14 +44,17 @@ var searchWindow = new Ext.Window({
 		}
 	},
 	onLayerChanged: function(layer_record) {
+		var attribs_store_data;
+		if (layer_record) {
+			attribs_store_data = layer_record.json;
+		} else {
+			attribs_store_data = {attributes: []};
+		}
 		this.items.each(function(attrib_item) {
 			attributes_combo = attrib_item.attributeName;
-			attributes_combo.store.loadData(layer_record.json);
-			if (attributes_combo.getStore().getCount() > 0) {
-				var record = attributes_combo.getStore().getAt(0);
-				attributes_combo.setValue(record.get('name'));
-				attributes_combo.fireEvent('select', attributes_combo, record, 0);
-			}
+			attributes_combo.store.loadData(attribs_store_data);
+			attributes_combo.setValue('');
+			attributes_combo.fireEvent('select', attributes_combo, null, -1);
 		});
 	},
 	updateControlButtons: function() {
@@ -110,9 +113,19 @@ var searchWindow = new Ext.Window({
 					displayField: 'name',
 					listeners: {
 						select: function (combo, record, index) {
+							console.log('attrib selected');
+							console.log(record);
 							var operators_combo = combo.ownerCt.attributeOperator;
+							if (!record) {
+								console.log('empty');
+								operators_combo.store.loadData({operators: []});
+								operators_combo.setValue('');
+								operators_combo.fireEvent('select', operators_combo, null, -1);
+								return;
+							}
 							var attrib_type = record.json['type'];
-							if (combo.attrib_type == attrib_type) {
+							if (combo.attrib_type == attrib_type && operators_combo.store.getCount() > 0) {
+								// no need to update operators
 								return;
 							}
 							combo.attrib_type = attrib_type;
@@ -163,7 +176,14 @@ var searchWindow = new Ext.Window({
 					displayField: 'name',
 					listeners: {
 						select: function (combo, record, index) {
-							combo.ownerCt.valueField.setMultiMode(record.get('name') == 'IN');
+							var valueField = combo.ownerCt.valueField;
+							if (record) {
+								valueField.setMultiMode(record.get('name') == 'IN');
+								valueField.get(0).setDisabled(false);
+							} else {
+								valueField.get(0).reset();
+								valueField.get(0).setDisabled(true);
+							}
 						}
 					}
 				}, {
@@ -299,13 +319,33 @@ var searchWindow = new Ext.Window({
 			}),
 			valueField: 'value',
 			displayField: 'name',
+			updateLayersList: function(layers_list) {
+				var available_layers = [];
+				// filter available layers from layers_data
+				Ext.each(layers_data.layers, function(layer_data) {
+					if (layers_list.indexOf(layer_data.name) != -1) {
+						available_layers.push(layer_data);
+					}
+				});
+				this.store.loadData({layers: available_layers});
+				if (layers_list.indexOf(this.getValue()) == -1) {
+					if (this.getStore().getCount() > 0) {
+						var recordSelected = this.getStore().getAt(0);
+						this.setValue(recordSelected.get('name'));
+						this.fireEvent('select', this, recordSelected, 0);
+					} else {
+						this.setValue('');
+						this.fireEvent('select', this, null, -1);
+					}
+				}
+			},
 			listeners: {
 				afterrender: function(combo) {
-					if (combo.getStore().getCount() > 0) {
-						var recordSelected = combo.getStore().getAt(0);
-						combo.setValue(recordSelected.get('name'));
-						combo.fireEvent('select', combo, recordSelected, 0);
-					}
+					var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
+					combo.updateLayersList(overlays_root.getVisibleLayers());
+					overlays_root.on('layerchange', function(node, layer, visible_layers) {
+						this.updateLayersList(visible_layers);
+					}, combo);
 				},
 				select: function (combo, record, index) {
 					search_window = Ext.getCmp('search-toolbar-window');
