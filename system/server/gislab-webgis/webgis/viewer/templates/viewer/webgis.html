@@ -337,15 +337,6 @@
 					]
 				});
 
-				{% if visible_layers %}
-				// set visible layers
-					{% for layer in layers %}
-						{% if layer.name not in visible_layers %}
-				layers_root.findChild('text', '{{ layer.name }}', true).ui.toggleCheck(false);
-						{% endif %}
-					{% endfor %}
-				{% endif %}
-
 				// controls
 				var coords = new GeoExt.Toolbar.ControlDisplay({control: new OpenLayers.Control.MousePosition({separator: ' , '}), map: mappanel.map});
 

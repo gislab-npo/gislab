@@ -78,6 +78,8 @@ def page(request):
 		if not root_layer: raise Exception("Root layer not found.")
 
 		layers = form.cleaned_data['layers']
+		visible_layers = form.cleaned_data["visible"]
+
 		layers_list = []
 		def process_layer_info(layer_info):
 			if layer_info.sublayers:
@@ -94,15 +96,16 @@ def page(request):
 			else:
 				if not layers or layer_info.name in layers:
 					layers_list.append(layer_info)
-					return {'name': layer_info.name}
+					return {
+						'name': layer_info.name,
+						'visible': not visible_layers or layer_info.name in visible_layers,
+					}
 
 		layers_tree = process_layer_info(project_settings.root_layer)
 		context['layers'] = layers_list
 		context['layers_tree'] = json.dumps(layers_tree[layers_tree.keys()[0]] if layers_tree else [])
 
-		visible_layers = form.cleaned_data["visible"]
-		if visible_layers:
-			context['visible_layers'] = visible_layers
+
 
 		context.update({
 			'project': project,
