@@ -200,22 +200,20 @@
 				{% include "viewer/actions/basic.js" %}
 
 				{% if featureinfo %}
-				mappanel.getTopToolbar().add('-', {xtype: 'tbspacer', width: 25}, '-');
+				mappanel.getTopToolbar().add({xtype: 'tbspacer', width: 25});
 				{% include "viewer/actions/search.js" %}
 				{% include "viewer/actions/featureinfo.js" %}
 				{% endif %}
 
-				mappanel.getTopToolbar().add('-', {xtype: 'tbspacer', width: 25}, '-');
+				mappanel.getTopToolbar().add({xtype: 'tbspacer', width: 25});
 				{% include "viewer/actions/measurement.js" %}
 				{% include "viewer/actions/draw.js" %}
 				{% include "viewer/actions/save_history.js" %}
 
 				{% if print_composers %}
-				mappanel.getTopToolbar().add('-', {xtype: 'tbspacer', width: 25}, '-');
+				mappanel.getTopToolbar().add({xtype: 'tbspacer', width: 25});
 				{% include "viewer/actions/print.js" %}
 				{% endif %}
-
-
 
 
 				// tree node
