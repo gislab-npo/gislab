@@ -113,11 +113,8 @@ var searchWindow = new Ext.Window({
 					displayField: 'name',
 					listeners: {
 						select: function (combo, record, index) {
-							console.log('attrib selected');
-							console.log(record);
 							var operators_combo = combo.ownerCt.attributeOperator;
 							if (!record) {
-								console.log('empty');
 								operators_combo.store.loadData({operators: []});
 								operators_combo.setValue('');
 								operators_combo.fireEvent('select', operators_combo, null, -1);
