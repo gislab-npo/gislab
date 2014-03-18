@@ -113,12 +113,16 @@
 		<Include>
 			<Filename>gislab-webgis.desktop</Filename>
 		</Include>
+		<Include>
+			<Filename>gislab-josm.desktop</Filename>
+		</Include>
 		<Layout>
 			<Merge type="menus"/>
 			<Filename>gislab-project-data-processing.desktop</Filename>
 			<Filename>gislab-webgis.desktop</Filename>
 			<Filename>gislab-postgresql.desktop</Filename>
 			<Filename>gislab-spatialite.desktop</Filename>
+			<Filename>gislab-josm.desktop</Filename>
 			<Menuname>gislab-documentation</Menuname>
 			<Merge type="files"/>
 		</Layout>

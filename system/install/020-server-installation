@@ -31,6 +31,14 @@ deb http://ppa.launchpad.net/imincik/$GISLAB_QGIS_VERSION/ubuntu precise main
 EOF
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6CD44B55 # add imincik PPA key
 
+# JOSM repository
+cat << EOF >> /etc/apt/sources.list
+#### JOSM
+deb http://josm.openstreetmap.de/apt precise universe
+
+EOF
+wget -q http://josm.openstreetmap.de/josm-apt.key -O- | sudo apt-key add - # add JOSM repository key
+
 # Google repositories
 cat << EOF >> /etc/apt/sources.list
 #### Google Chrome Browser - http://www.google.com/linuxrepositories/
