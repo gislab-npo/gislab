@@ -15,6 +15,7 @@ INTERFACE=$(ip route | grep default | cut -d " " -f5)
 INTERFACE_MAC=$(/sbin/ifconfig | grep ${INTERFACE} | cut -f11 -d" ")
 INTERFACE_IP=$(/sbin/ifconfig ${INTERFACE} | grep inet | cut -f2 -d":" | cut -f1 -d" ")
 
+QGIS_VERSION=$(dpkg-query -W --showformat '${version}' qgis)
 
 INFO="
 GIS.lab VERSION: $GISLAB_VERSION\n
@@ -35,6 +36,9 @@ NETWORK\n
 + INTERFACE: $INTERFACE\n
 + MAC: $INTERFACE_MAC\n
 + IP: $INTERFACE_IP\n
+\n
+SOFTWARE\n
++ QGIS: $QGIS_VERSION\n
 \n
 This report was generated on $(date).
 "
