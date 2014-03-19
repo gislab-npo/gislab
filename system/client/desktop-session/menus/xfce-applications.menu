@@ -100,6 +100,9 @@
 		<Exclude>
 			<Filename>ltsp-cluster-info.desktop</Filename>
 		</Exclude>
+		<Exclude>
+			<Filename>ubuntu-software-center.desktop</Filename>
+		</Exclude>
 		<Include>
 			<Filename>gislab-client-info.desktop</Filename>
 		</Include>
@@ -161,8 +164,6 @@
 		<Menuname>Other</Menuname>
 		<Menuname>System</Menuname>
 		<Separator/>
-		<Filename>xfhelp4.desktop</Filename>
-		<Filename>xfce4-about.desktop</Filename>
 		<Filename>xfce4-session-logout.desktop</Filename>
 		<Merge type="files"/>
 	</Layout>
@@ -224,6 +225,9 @@
 		</Exclude>
 		<Exclude>
 			<Filename>xfce4-settings-editor.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>ubuntu-software-center.desktop</Filename>
 		</Exclude>
 		<Layout>
 			<Merge type="menus"/>
