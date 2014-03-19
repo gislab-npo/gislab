@@ -117,7 +117,9 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 	getAllLayers: function() {
 		var layers_names = [];
 		this.cascade(function(node) {
-			layers_names.push(node.attributes.text)
+			if (node.isLeaf()) {
+				layers_names.push(node.attributes.text)
+			}
 		}, this);
 		return layers_names;
 	}
