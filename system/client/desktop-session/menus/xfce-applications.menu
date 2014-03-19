@@ -5,6 +5,21 @@
 	<Name>Xfce</Name>
 	<MergeFile type="parent">/etc/xdg/xdg-xubuntu/menus/xfce-applications.menu</MergeFile>
 	<Menu>
+		<Name>Education</Name>
+		<Exclude>
+			<Filename>grass64.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>josm.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>qbrowser.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>qgis.desktop</Filename>
+		</Exclude>
+	</Menu>
+	<Menu>
 		<Name>Games</Name>
 		<Exclude>
 			<Filename>gnome-sudoku.desktop</Filename>
