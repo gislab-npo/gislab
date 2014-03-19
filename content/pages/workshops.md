@@ -8,7 +8,7 @@ Workshop explains essential principals of GIS.lab/GIS.lab Unit technology. It al
 
 ### Topics
 * Introduction to GIS.lab/GIS.lab Unit technology
-* Creating LAN with GIS.lab/GIS.lab
+* Creating LAN with GIS.lab/GIS.lab Unit  
 * Connecting client machines
 * Introduction to GIS.lab client environment
 * Basic principles of GIS project creation and publication on web
