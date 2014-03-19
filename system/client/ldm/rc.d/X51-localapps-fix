@@ -1,0 +1,10 @@
+# Login fail if LOCAL_APPS=False
+# This fix it
+
+if ! boolean_is_true "$LOCAL_APPS"; then
+    if [ -n "$LDM_LANGUAGE" ]; then
+        LC_ALL=$LDM_LANGUAGE LANGUAGE=$LDM_LANGUAGE LANG=$LDM_LANGUAGE ltsp-localappsd &
+    else
+        ltsp-localappsd &
+    fi
+fi

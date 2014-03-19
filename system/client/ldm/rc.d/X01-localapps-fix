@@ -1,0 +1,15 @@
+# Login fail if LOCAL_APPS=False
+# This fix it
+
+if ! boolean_is_true "$LOCAL_APPS"; then
+
+    # Get logged in username if not set
+    [ -z "$LDM_USERNAME" ] && LDM_USERNAME=$(ssh -S ${LDM_SOCKET} ${LDM_SERVER} 'echo ${USER}')
+
+    USER_UID=$(getent passwd $LDM_USERNAME | awk -F: '{ print $3 }')
+    USER_GID=$(getent passwd $LDM_USERNAME | awk -F: '{ print $4 }')
+
+    if [ -n "${XAUTHORITY_DIR}" ]; then
+        chown "$USER_UID":"$USER_GID" ${XAUTHORITY_DIR}
+    fi
+fi
