@@ -13,8 +13,9 @@ sed -i "s/^#search_path.*/search_path = '\"\$user\",public'/" /etc/postgresql/9.
 
 service postgresql restart
 
-# create labusers group
+# create labusers and labadmins group
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole --no-login labusers"
+sudo su - postgres -c "createuser --superuser --createdb --createrole --no-login labadmins"
 
 # create template database
 sudo su - postgres -c "createdb -E UTF8 -T template0 template_postgis"
