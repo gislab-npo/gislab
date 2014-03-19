@@ -1,3 +1,7 @@
+TODO.txt
+tmp
+.vagrant/*
+barrel
+install.log
+config-user.cfg
 *.pyc
-output
-*.pid
