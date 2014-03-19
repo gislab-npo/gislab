@@ -103,9 +103,7 @@ def page(request):
 
 		layers_tree = process_layer_info(project_settings.root_layer)
 		context['layers'] = layers_list
-		context['layers_tree'] = json.dumps(layers_tree[layers_tree.keys()[0]] if layers_tree else [])
-
-
+		context['layers_tree'] = json.dumps(layers_tree[layers_tree.keys()[0]]) if layers_tree else None
 
 		context.update({
 			'project': project,

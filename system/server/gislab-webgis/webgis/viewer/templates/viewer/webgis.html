@@ -238,12 +238,14 @@
 				}));
 				{% endif %}
 
+				{% if layers %}
 				layers_root.appendChild(new WebGIS.WmsLayersNode({
 					id: 'overlays-root',
 					text: 'Overlays',
 					layer: overlays_group_layer,
-					layersTree: JSON.parse('{{ layers_tree|escapejs }}'),
+					layersTree: JSON.parse('{{ layers_tree|default:"[]"|escapejs }}'),
 				}));
+				{% endif %}
 
 				// layers tree
 				var layer_treepanel = new Ext.tree.TreePanel({

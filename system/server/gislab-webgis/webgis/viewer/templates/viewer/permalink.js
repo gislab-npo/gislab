@@ -15,19 +15,16 @@ mappanel.getBottomToolbar().add(' ', '-', ' ', permalink);
 var fire_map_state_changed_event = function(obj) {
 	permalink_provider.fireEvent('statechange', permalink_provider, "map", {});
 };
+
 var overlays_node = layers_root.findChild('text', 'Overlays');
-overlays_node.eachChild(function(node) {
-	node.on({
-		checkchange: fire_map_state_changed_event
-	});
-});
+if (overlays_node) {
+	overlays_node.on('layerchange', fire_map_state_changed_event);
+}
 
 permalink_provider.on({
 	statechange: function(provider, name, value) {
 		var map = mappanel.map;
 		var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
-		var all_layers = overlays_root.getAllLayers();
-		var visible_layers = overlays_root.getVisibleLayers();
 
 		var parameters = {
 			DPI: OpenLayers.DOTS_PER_INCH,
@@ -43,9 +40,13 @@ permalink_provider.on({
 		if (google_layer) {
 			parameters.GOOGLE = google_layer.mapTypeId;
 		}
-		parameters.LAYERS = all_layers.join(',');
-		if (visible_layers.length < all_layers.length) {
-			parameters.VISIBLE = visible_layers.join(',');
+		if (overlays_root) {
+			var all_layers = overlays_root.getAllLayers();
+			var visible_layers = overlays_root.getVisibleLayers();
+			parameters.LAYERS = all_layers.join(',');
+			if (visible_layers.length < all_layers.length) {
+				parameters.VISIBLE = visible_layers.join(',');
+			}
 		}
 		var extent_array = map.getExtent().toArray();
 		for (var i = 0; i < 4; i++) {
