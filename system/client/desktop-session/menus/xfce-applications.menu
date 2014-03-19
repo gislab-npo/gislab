@@ -19,25 +19,6 @@
 			<Filename>qgis.desktop</Filename>
 		</Exclude>
 	</Menu>
-	<Menu>
-		<Name>Games</Name>
-		<Exclude>
-			<Filename>gnome-sudoku.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>gnomine.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>mahjongg.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>freecell.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>sol.desktop</Filename>
-		</Exclude>
-		<Deleted/>
-	</Menu>
 	<Exclude>
 		<Filename>xfce4-about.desktop</Filename>
 	</Exclude>
@@ -46,9 +27,6 @@
 	</Exclude>
 	<Menu>
 		<Name>System</Name>
-		<Exclude>
-			<Filename>gigolo.desktop</Filename>
-		</Exclude>
 		<Exclude>
 			<Filename>Thunar-bulk-rename.desktop</Filename>
 		</Exclude>
@@ -66,9 +44,6 @@
 		</Exclude>
 		<Exclude>
 			<Filename>usb-creator-gtk.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>synaptic.desktop</Filename>
 		</Exclude>
 		<Exclude>
 			<Filename>xfce4-taskmanager.desktop</Filename>
@@ -99,9 +74,6 @@
 		</Exclude>
 		<Exclude>
 			<Filename>ltsp-cluster-info.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>ubuntu-software-center.desktop</Filename>
 		</Exclude>
 		<Include>
 			<Filename>gislab-client-info.desktop</Filename>
@@ -172,27 +144,6 @@
 		<Exclude>
 			<Filename>catfish.desktop</Filename>
 		</Exclude>
-		<Exclude>
-			<Filename>onboard.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>globaltime.desktop</Filename>
-		</Exclude>
-	</Menu>
-	<Menu>
-		<Name>Network</Name>
-		<Exclude>
-			<Filename>transmission-gtk.desktop</Filename>
-		</Exclude>
-	</Menu>
-	<Menu>
-		<Name>Office</Name>
-		<Exclude>
-			<Filename>globaltime.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>xfcalendar.desktop</Filename>
-		</Exclude>
 	</Menu>
 	<Menu>
 		<Name>Settings</Name>
@@ -218,16 +169,10 @@
 			<Filename>nm-connection-editor.desktop</Filename>
 		</Exclude>
 		<Exclude>
-			<Filename>onboard-settings.desktop</Filename>
-		</Exclude>
-		<Exclude>
 			<Filename>openjdk-6-policytool.desktop</Filename>
 		</Exclude>
 		<Exclude>
 			<Filename>xfce4-settings-editor.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>ubuntu-software-center.desktop</Filename>
 		</Exclude>
 		<Layout>
 			<Merge type="menus"/>
