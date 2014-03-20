@@ -54,7 +54,7 @@ fi
 echo -e "\n[GIS.lab]: Removing GIS.lab user account ..."
 
 # delete home
-GISLAB_USER_HOME=$(ldapsearch -LLL -x -H ldapi:/// uid=$GISLAB_USER | grep homeDirectory | awk '{ print $2 }')
+GISLAB_USER_HOME=$(getent passwd $GISLAB_USER | awk -F: '{ print $6 }')
 
 if [ -d "$GISLAB_USER_HOME" ]; then
 	rm -rf $GISLAB_USER_HOME
