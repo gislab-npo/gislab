@@ -1,0 +1,114 @@
+#!/bin/bash
+#
+
+set -e
+
+source /vagrant/config.cfg
+if [ -f /vagrant/config-user.cfg ]
+then
+	source /vagrant/config-user.cfg
+fi
+
+# usage
+function usage() {
+	echo "USAGE: $(basename $0) [OPTIONS] username"
+	echo "Restore GIS.lab user data."
+	echo -e "\nOPTIONS
+	-b  restore data from given file (optional)
+	-f  force deleting account - do not ask before
+	-p  set password for user. If not given it will be automatically generated.
+	-s  add user do 'labadmins' group to allow 'sudo'
+	-h  display this help
+	"
+	exit 0
+}
+
+# options
+while getopts "b:fhp:s" OPTION
+do
+        case "$OPTION" in
+			b) BACKUP_FILE="$OPTARG" ;;
+			f) FORCE_FLAG="-f" ;;
+			p) GISLAB_USER_PASSWORD_FLAG="-p $OPTARG" ;;
+			s) SUDO_FLAG="-s" ;;
+			h) usage ; exit 0 ;;
+			\?) exit 1;;
+        esac
+done
+
+shift $(($OPTIND - 1))
+if [ $# -eq 0 ]; then usage; exit 0; fi
+
+GISLAB_USER=$1
+
+# create select menu of backup files if neither was given
+# and check if backup exists
+if [ -z "$BACKUP_FILE" ]; then
+	while true; do
+		i=0
+		for BACKUP in $(ls -tr $GISLAB_BACKUP_DIR/gislab-backup-$GISLAB_USER-* 2>/dev/null); do
+			echo " $(($i+1)): $BACKUP"
+			BACKUPS[$i]="$BACKUP"
+			let i=$i+1
+		done
+
+		if [ $i -eq 0 ]; then
+			echo "[GIS.lab]: Cannot find any previous backup. Exiting."
+			exit 1
+		fi
+
+		echo
+		read -p "[GIS.lab]: Select backup to restore data from: " SELECT
+
+		# check the selection
+		if ! echo $SELECT | grep -q '[0-9]' || [ $SELECT -lt 1 ] || [ $SELECT -gt $i ]; then
+			echo -e "\n[GIS.lab]: Wrong choice.\n"
+		else
+			SELECT=$(($SELECT-1))
+			BACKUP_FILE=${BACKUPS[$SELECT]}
+			break
+		fi
+	done
+fi
+
+if [ ! -f "$BACKUP_FILE" ]; then
+	echo -e "[GIS.lab]: Backup file does not exist. Exiting."
+	exit 1
+fi
+
+# delete user if exists
+if id $GISLAB_USER >/dev/null 2>&1; then
+	echo -e "[GIS.lab]: User '$GISLAB_USER' exists."
+	gislab-deluser $FORCE_FLAG $GISLAB_USER 
+else
+	echo -e "[GIS.lab]: User '$GISLAB_USER' does not exist."
+fi
+
+# add user
+gislab-adduser $GISLAB_USER_PASSWORD_FLAG $SUDO_FLAG $GISLAB_USER
+
+# untar backup file
+BACKUP_TEMP_DIR=/tmp/$GISLAB_USER.$$
+mkdir $BACKUP_TEMP_DIR
+tar -xf $BACKUP_FILE -C $BACKUP_TEMP_DIR
+cd $BACKUP_TEMP_DIR
+
+for file in *.bz2; do
+	tar -xjf $file
+done
+
+# restore home data
+cp -r home/$GISLAB_USER /home/
+chown -R $GISLAB_USER:labusers /home/$GISLAB_USER
+
+# restore share data
+cp -r storage/share/$GISLAB_USER /storage/share/
+chown -R $GISLAB_USER:labusers /storage/share/$GISLAB_USER
+
+# restore database
+sudo -u postgres pg_restore -n $GISLAB_USER -d gislab $GISLAB_USER-db.dump
+
+# clean up
+rm -rf $BACKUP_TEMP_DIR
+
+echo -e "[GIS.lab]: '$GISLAB_USER' user's data restored."

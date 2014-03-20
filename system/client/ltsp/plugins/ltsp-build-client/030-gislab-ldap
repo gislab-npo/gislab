@@ -1,0 +1,32 @@
+# Configure LDAP
+
+case "$MODE" in
+    after-install)
+	sed -i 's/#BASE.*/BASE "dc=gis,dc=lab"/' $ROOT/etc/ldap/ldap.conf
+	sed -i 's/#URI.*/URI ldap:\/\/server.gis.lab/' $ROOT/etc/ldap/ldap.conf
+	sed -i 's/^TLS_CACERT/#TLS_CACERT/' $ROOT/etc/ldap/ldap.conf
+	echo "SSL start_tls" >> $ROOT/etc/ldap/ldap.conf
+	echo "TLS_REQCERT never" >> $ROOT/etc/ldap/ldap.conf
+	echo >> $ROOT/etc/ldap/ldap.conf
+	echo "# sudo" >> $ROOT/etc/ldap/ldap.conf
+	echo "SUDOERS_BASE ou=SUDOers,dc=gis,dc=lab" >> $ROOT/etc/ldap/ldap.conf
+
+	sed -i 's/^base.*/base dc=gis,dc=lab/' $ROOT/etc/ldap.conf
+	sed -i 's/^uri.*/uri ldap:\/\/server.gis.lab/' $ROOT/etc/ldap.conf
+	sed -i 's/^rootbinddn/#rootbinddn/' $ROOT/etc/ldap.conf
+	sed -i 's/#ssl start_tls/ssl start_tls/' $ROOT/etc/ldap.conf
+	sed -i 's/^#tls_checkpeer yes/tls_checkpeer no/' $ROOT/etc/ldap.conf
+
+	chroot $ROOT pam-auth-update --force
+	chroot $ROOT auth-client-config -t nss -p lac_ldap
+	chroot $ROOT /bin/bash -c "export DEBIAN_FRONTEND=noninteractive; export SUDO_FORCE_REMOVE=yes; apt-get -y install sudo-ldap"
+
+	# need to fix LOCAL_APPS to remove this workaround
+	# install newer version of 'sudo-ldap' package - it fix "sudoers user cannot use sudo because LOCAL_APPS break it"
+#	wget -O $ROOT/tmp/sudo-ldap_1.8.9-6_i386.deb http://www.sudo.ws/sudo/dist/packages/Ubuntu/12.04/sudo-ldap_1.8.9-6_i386.deb
+#	chroot $ROOT /bin/bash -c "export DEBIAN_FRONTEND=noninteractive; dpkg -i /tmp/sudo-ldap_1.8.9-6_i386.deb"
+
+	echo "# sudo" >> $ROOT/etc/nsswitch.conf
+	echo "sudoers: ldap files" >> $ROOT/etc/nsswitch.conf
+    ;;
+esac

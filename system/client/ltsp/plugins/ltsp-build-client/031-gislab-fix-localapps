@@ -1,0 +1,9 @@
+# Login fail if LOCAL_APPS=False
+# This fix it
+
+case "$MODE" in
+    finalization)
+	cp -a /vagrant/system/client/ldm/rc.d/X01-localapps-fix $ROOT/usr/share/ldm/rc.d/
+	cp -a /vagrant/system/client/ldm/rc.d/X51-localapps-fix $ROOT/usr/share/ldm/rc.d/
+    ;;
+esac

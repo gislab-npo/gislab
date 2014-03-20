@@ -18,6 +18,7 @@ function usage() {
 	echo -e "\nOPTIONS
 	-h display this help
 	-p set password for user. If not given it will be automatically generated.
+	-s add user do 'labadmins' group to allow 'sudo'
 	"
 	exit 0
 }
@@ -26,11 +27,12 @@ function usage() {
 # options
 GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overriden by --password option 
 
-while getopts "hp:" OPTION
+while getopts "hp:s" OPTION
 do
         case "$OPTION" in
 			h) usage ; exit 0 ;;
 			p) GISLAB_USER_PASSWORD=$OPTARG ;;
+			s) SUDO=yes ;;
 			\?) exit 1;;
         esac
 done
@@ -38,6 +40,7 @@ shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; exit 0; fi
 
 GISLAB_USER=$1
+GISLAB_USER_PASSWORD_HASH=$(slappasswd -s $GISLAB_USER_PASSWORD -h {SSHA})
 
 
 # /etc/skel update
@@ -121,19 +124,29 @@ chown -R root:root /etc/skel
 
 # create account
 echo -e "[GIS.lab]: Creating user account '$GISLAB_USER'..."
-adduser $GISLAB_USER --disabled-login --gecos "GIS.lab user" # Linux account
+ldapadduser $GISLAB_USER labusers # LDAP account
 chmod go-rwx /home/$GISLAB_USER
-echo "$GISLAB_USER:$GISLAB_USER_PASSWORD" | chpasswd
+ldapsetpasswd $GISLAB_USER "$GISLAB_USER_PASSWORD_HASH"
+
+# add user to admin group to enable 'sudo'
+if [ "x$SUDO" != "x" ]; then
+	ldapaddusertogroup $GISLAB_USER labadmins
+fi
+
 find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER##/$GISLAB_USER/g" "{}" \;	# Replace ##GISLAB_USER## placeholder with
-																	# current user name
+																						# current user name
 
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $GISLAB_USER" # PostgreSQL account
-sudo su - postgres -c "psql -c \"ALTER ROLE $GISLAB_USER WITH PASSWORD '$GISLAB_USER_PASSWORD';\""
 sudo su - postgres -c "psql -c \"GRANT labusers TO $GISLAB_USER;\""
 sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $GISLAB_USER;\""
 
+# add user to the database superusers group
+if [ "x$SUDO" != "x" ]; then
+	sudo su - postgres -c "psql -c \"GRANT labadmins TO $GISLAB_USER;\""
+fi
+
 mkdir -p /storage/share/$GISLAB_USER # NFS directory
-chown $GISLAB_USER:$GISLAB_USER /storage/share/$GISLAB_USER
+chown $GISLAB_USER:labusers /storage/share/$GISLAB_USER
 
 
 echo -e "\n[GIS.lab]: Created account '$GISLAB_USER' with password '$GISLAB_USER_PASSWORD'."
