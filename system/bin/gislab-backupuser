@@ -1,0 +1,55 @@
+#!/bin/bash
+#
+
+set -e
+
+source /vagrant/config.cfg
+if [ -f /vagrant/config-user.cfg ]
+then
+	source /vagrant/config-user.cfg
+fi
+
+if [ $# -ne 1 ]; then
+        echo "USAGE: $(basename $0) username"
+        echo "Backup GIS.lab user data."
+		echo
+        exit 0
+fi
+
+GISLAB_USER=$1
+
+if ! id $GISLAB_USER >/dev/null 2>&1; then
+	echo "GIS.lab user '$GISLAB_USER' does not exist."
+	echo
+	exit 1
+fi
+
+DATE=$(date '+%Y-%m-%d:%H-%M-%S')
+BACKUP_FILE=$GISLAB_BACKUP_DIR/gislab-backup-$GISLAB_USER-$DATE.tar
+GISLAB_USER_HOME=/home/$GISLAB_USER
+TEMP_BACKUP_DIR=/tmp/$GISLAB_USER-$DATE
+HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar.bz2
+SHARE_BACKUP_FILE=$TEMP_BACKUP_DIR/share.tar.bz2
+DB_BACKUP_FILE=$TEMP_BACKUP_DIR/$GISLAB_USER-db.dump
+
+echo -e "[GIS.lab]: Backuping '$GISLAB_USER' user's data..."
+
+mkdir $TEMP_BACKUP_DIR
+
+# tar home dir
+tar -cjf $HOME_BACKUP_FILE --exclude="$GISLAB_USER_HOME/.*" $GISLAB_USER_HOME
+
+# tar share data
+tar -cjf $SHARE_BACKUP_FILE /storage/share/$GISLAB_USER
+
+# leave root's home dir before sudo to postgres
+cd $TEMP_BACKUP_DIR
+
+# dump and tar user's database data
+sudo -u postgres pg_dump -Fc -n $GISLAB_USER gislab > $DB_BACKUP_FILE
+
+# create backup file and clean up
+tar -cf $BACKUP_FILE *
+rm -rf $TEMP_BACKUP_DIR
+
+echo -e "\n[GIS.lab]: Backup created '$BACKUP_FILE'."
