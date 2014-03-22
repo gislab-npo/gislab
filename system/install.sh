@@ -21,7 +21,22 @@ fi
 GISLAB_INSTALL_DIR=/tmp/gislab-install-$(date +%s)
 mkdir -p ${GISLAB_INSTALL_DIR}
 cp -a /vagrant/system/install/* ${GISLAB_INSTALL_DIR}
-for f in ${GISLAB_INSTALL_DIR}/*; do source $f; done
+
+# GISLAB_SUITE="lab"
+if [ "$GISLAB_SUITE" == "lab" ]; then
+	for f in ${GISLAB_INSTALL_DIR}/*; do source $f; done
+fi
+
+# GISLAB_SUITE="server"
+if [ "$GISLAB_SUITE" == "server" ]; then
+	for f in ${GISLAB_INSTALL_DIR}/*; do
+		# exclude client installation
+		if [ "$(basename $f)" != "110-client-installation" ]; then
+			source $f
+		fi
+	done
+fi
+
 rm -r ${GISLAB_INSTALL_DIR}
 
 

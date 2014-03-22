@@ -2,6 +2,9 @@
 ### CLIENT INSTALLATION ###
 #
 
+# This file is excluded by name from installation if GISLAB_SUITE="server". Update 'system/install.sh'
+# if you have renamed this file.
+
 /vagrant/system/bin/gislab-install-client # install client image
 /vagrant/system/bin/gislab-clients-allowed # allow client MACs
 
