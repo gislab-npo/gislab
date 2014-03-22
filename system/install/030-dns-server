@@ -2,7 +2,7 @@
 ### DNS SERVER - BIND ###
 #
 
-GISLAB_NETWORK_REVERSE=$(echo $GISLAB_NETWORK | awk -F "." '{ print $3 "." $2 "." $1 }')
+GISLAB_NETWORK_REVERSE=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $3 "." $2 "." $1 }')
 
 cat << EOF > /etc/bind/named.conf.local
 zone "gis.lab" {
@@ -29,11 +29,11 @@ cat << EOF > /etc/bind/db.gis.lab
 
          IN    NS       ns.gis.lab.
 
-ns       IN    A        $GISLAB_NETWORK.5
-ns1      IN    A        $GISLAB_NETWORK.5
+ns       IN    A        $GISLAB_SERVER_IP
+ns1      IN    A        $GISLAB_SERVER_IP
 ns1      IN    AAAA     ::1
 
-server   IN    A        $GISLAB_NETWORK.5
+server   IN    A        $GISLAB_SERVER_IP
 web      IN    CNAME    server
 webgis   IN    CNAME    server
 irc      IN    CNAME    server
