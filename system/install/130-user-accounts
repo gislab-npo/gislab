@@ -2,10 +2,11 @@
 ### USER ACCOUNTS ###
 #
 
-# remove default 'ubuntu' user account if exists
-if id -u ubuntu > /dev/null 2>&1; then deluser ubuntu --remove-home ; fi
-
-echo "vagrant:$(pwgen -1 -n 12)" | chpasswd # set strong password for vagrant user
+# Some Vagrant boxes are using 'vagrant' account for provisioning, some of them are
+# using 'ubuntu' account. Set strong password for these accounts.
+# Test which account exists and set strong password.
+if id -u vagrant > /dev/null 2>&1; then echo "vagrant:$(pwgen -1 -n 24)" | chpasswd; fi
+if id -u ubuntu > /dev/null 2>&1; then echo "ubuntu:$(pwgen -1 -n 24)" | chpasswd; fi
 
 
 echo -e "\n[GIS.lab]: Creating GIS.lab users accounts ..."
@@ -13,9 +14,6 @@ for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
 	/vagrant/system/bin/gislab-adduser -p lab $account
 done
-
-
-echo -e "\n[GIS.lab]: Done. GIS.lab is installed and ready to use!"
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:
