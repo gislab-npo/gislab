@@ -2,7 +2,7 @@
 ### BASIC SERVER CONFIGURATION ###
 #
 
-# setup FQDN - it fix LDAP installation
+# set FQDN
 sed -i '/^127.0.0.1 localhost/a $GISLAB_NETWORK.5 server.gis.lab server' /etc/hosts
 
 # timezone
