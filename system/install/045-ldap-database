@@ -17,7 +17,7 @@ EOL
 
 
 # enable extended logging if requested
-if [ "$LDAP_DEBUG" == "yes" ]; then
+if [ "$GISLAB_DEBUG" == "yes" ]; then
 	ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
 dn: cn=config
 changetype: modify
