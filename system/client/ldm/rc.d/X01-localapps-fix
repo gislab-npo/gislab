@@ -1,5 +1,4 @@
-# Login fail if LOCAL_APPS=False
-# This fix it
+# Fix user login on client if LOCAL_APPS=False.
 
 if ! boolean_is_true "$LOCAL_APPS"; then
 
