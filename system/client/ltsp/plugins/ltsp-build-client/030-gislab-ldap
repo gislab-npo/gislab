@@ -21,11 +21,6 @@ case "$MODE" in
 	chroot $ROOT auth-client-config -t nss -p lac_ldap
 	chroot $ROOT /bin/bash -c "export DEBIAN_FRONTEND=noninteractive; export SUDO_FORCE_REMOVE=yes; apt-get -y install sudo-ldap"
 
-	# need to fix LOCAL_APPS to remove this workaround
-	# install newer version of 'sudo-ldap' package - it fix "sudoers user cannot use sudo because LOCAL_APPS break it"
-#	wget -O $ROOT/tmp/sudo-ldap_1.8.9-6_i386.deb http://www.sudo.ws/sudo/dist/packages/Ubuntu/12.04/sudo-ldap_1.8.9-6_i386.deb
-#	chroot $ROOT /bin/bash -c "export DEBIAN_FRONTEND=noninteractive; dpkg -i /tmp/sudo-ldap_1.8.9-6_i386.deb"
-
 	echo "# sudo" >> $ROOT/etc/nsswitch.conf
 	echo "sudoers: ldap files" >> $ROOT/etc/nsswitch.conf
     ;;
