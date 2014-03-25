@@ -34,11 +34,5 @@ EOF
 sed -i 's/secure_path.*/secure_path="\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin:\/vagrant\/system\/bin"/g' /etc/sudoers
 echo "PATH="$PATH:/vagrant/system/bin"" >> /etc/profile
 
-# prevent Grub from waiting for manual input after a unsuccessful boot
-cat << EOF >> /etc/default/grub
-GRUB_RECORDFAIL_TIMEOUT=3
-EOF
-update-grub
-
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:
