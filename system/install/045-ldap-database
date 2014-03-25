@@ -38,7 +38,7 @@ echo "TLS_REQCERT never" >> /etc/ldap/ldap.conf
 certtool --generate-privkey > /etc/ssl/private/cakey.pem
 
 cat << EOL > /etc/ssl/ca.info
-cn = Gis Lab
+cn = GIS.lab
 ca
 cert_signing_key
 EOL
