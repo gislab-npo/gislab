@@ -17,6 +17,8 @@ then
 	set -x
 fi
 
+# get provisioning provider name
+GISLAB_SERVER_PROVIDER=$1
 
 GISLAB_INSTALL_DIR=/tmp/gislab-install-$(date +%s)
 mkdir -p ${GISLAB_INSTALL_DIR}

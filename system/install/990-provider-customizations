@@ -1,0 +1,25 @@
+#
+### PROVIDER CUSTOMIZATIONS ###
+#
+
+if [ "$GISLAB_SERVER_PROVIDER" == "aws" ]; then
+
+	# detect AWS instance properties
+	aws_meta_url="http://169.254.169.254/latest/meta-data"
+	GISLAB_SERVER_AWS_INSTANCE_ID=$(curl $aws_meta_url/instance-id)
+	GISLAB_SERVER_AWS_LOCAL_IP=$(curl $aws_meta_url/local-ipv4)
+	GISLAB_SERVER_AWS_PUBLIC_IP=$(curl $aws_meta_url/public-ipv4)
+	GISLAB_SERVER_AWS_PUBLIC_HOSTNAME=$(curl $aws_meta_url/public-hostname)
+
+	# configure WebGIS with AWS instance values
+	sed -i "/ServerName/a \  ServerAlias $GISLAB_SERVER_AWS_PUBLIC_HOSTNAME" /etc/apache2/sites-available/webgis
+	sed -i "s/^WEBGIS_OWS_URL.*/WEBGIS_OWS_URL = 'http:\/\/$GISLAB_SERVER_AWS_PUBLIC_IP\/cgi-bin\/qgis_mapserv.fcgi'/" /var/www/webgis/djproject/settings.py
+	sed -i "s/^ALLOWED_HOSTS.*/ALLOWED_HOSTS = ['$GISLAB_SERVER_AWS_PUBLIC_HOSTNAME']/" /var/www/webgis/djproject/settings.py
+	service apache2 reload
+
+	# prevent further star of DHCP server which does not make sense in AWS (even target device eth1 does not exist)
+	echo "manual" >> /etc/init/isc-dhcp-server.override
+fi
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:
