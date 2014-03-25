@@ -2,10 +2,14 @@
 ### WEBGIS ###
 #
 
+# configure default virtualhost
+cp -a /vagrant/system/server/gislab-webgis/conf/default.apache /etc/apache2/sites-available/default
+
 # configure default web server page output
 cat << EOF > /var/www/index.html
 <html><body><h1>GIS.lab server</h1>
 EOF
+
 
 WEBGIS_DB_PASSWORD=$(pwgen -1 -n 8)
 sudo su - postgres -c "createdb -E UTF8 -T template0 webgis"
@@ -44,6 +48,7 @@ deactivate
 
 cp -a /vagrant/system/server/gislab-webgis/conf/webgis.apache /etc/apache2/sites-available/webgis
 
+a2enmod expires
 a2enmod wsgi
 a2enmod rewrite
 a2ensite webgis
