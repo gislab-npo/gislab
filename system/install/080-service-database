@@ -40,6 +40,11 @@ sudo su - postgres -c "psql -d template_postgis -c \"GRANT USAGE ON SCHEMA topol
 sudo su - postgres -c "psql -d template_postgis -c \"GRANT SELECT, UPDATE, INSERT, DELETE ON layer TO PUBLIC;\""
 sudo su - postgres -c "psql -d template_postgis -c \"GRANT SELECT, UPDATE, INSERT, DELETE ON topology TO PUBLIC;\""
 
+# add postgresql-comparator support
+sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/pgc_checksum.sql"
+sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/pgc_casts.sql"
+sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/xor_aggregate.sql"
+
 # adding additional projections support
 sudo su - postgres -c "psql -d template_postgis -f /vagrant/user/projections/*-postgis.sql"
 
