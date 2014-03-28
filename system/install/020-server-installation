@@ -22,13 +22,21 @@ deb-src http://archive.canonical.com/ubuntu precise partner
 
 EOF
 
-# custom GIS repositories
+# custom GIS repositories TODO: change repository to ppa:imincik/gis once dev packages will move there
 cat << EOF >> /etc/apt/sources.list
 #### Custom GIS repositories
-deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main
+deb http://ppa.launchpad.net/imincik/gis-dev/ubuntu precise main
+
+EOF
+
+# custom QGIS repository
+if [ -n "${GISLAB_QGIS_VERSION}" ]; then
+	cat << EOF >> /etc/apt/sources.list
 deb http://ppa.launchpad.net/imincik/$GISLAB_QGIS_VERSION/ubuntu precise main
 
 EOF
+fi
+
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6CD44B55 # add imincik PPA key
 
 # JOSM repository
