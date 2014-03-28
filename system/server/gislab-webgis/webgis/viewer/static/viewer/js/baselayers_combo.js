@@ -34,12 +34,6 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 		this.createLayersData(config.baselayers);
 		config.store = new Ext.data.JsonStore({
 			data: { baselayers: this.baselayersItems },
-			datax: {
-				baselayers: [
-					{name: 'Category', title: 'Worldwide', recordCls: 'category-header'}, {name: 'OSM', title: 'Open Street Maps', indent: 1}, {name: 'GROADMAP', title: 'Google Roadmap', indent: 1},
-					{name: 'Custom', title: 'Slovakia', recordCls: 'category-header'}, {name: 'East', title: 'East', recordCls: 'category-header', indent: 1}, {name: 'ortofoto', title: 'Ortofotomapa Presov 2012', indent: 2}
-				]
-			},
 			storeId: 'baselayers-store',
 			root: 'baselayers',
 			fields: [{
@@ -49,7 +43,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 					name: 'title',
 					type: 'string'
 				}, {
-					name: 'recordCls',
+					name: 'itemCls',
 					type: 'string'
 				}, {
 					name: 'indent',
@@ -62,7 +56,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 		config.mode = 'local';
 		config.triggerAction = 'all';
 		config.forceSelection = true;
-		config.tpl = '<tpl for="."><div class="x-combo-list-item {recordCls} list-item-indent-{indent}">{title}</div></tpl>';
+		config.tpl = '<tpl for="."><div class="x-combo-list-item {itemCls} list-item-indent-{indent}">{title}</div></tpl>';
 		WebGIS.BaseLayersComboBox.superclass.constructor.apply(this, arguments);
 		// select visible base layer
 		if (!this.selectedLayerRecordData) {
@@ -72,7 +66,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 					this.selectedLayerRecordData = node.attributes.layerRecordData;
 					return false;
 				}
-			});
+			}, this);
 		}
 		if (this.selectedLayerRecordData) {
 			this.setValue(this.selectedLayerRecordData.title);
@@ -82,7 +76,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 	listeners: {
 		beforeselect: function(combo, record, index) {
 			//return ("" != record.data.myId);
-			return !(record.get('recordCls') == 'category-header');
+			return !(record.get('itemCls') == 'layer-category-item' || record.get('itemCls') == 'layer-unavailable-item');
 		},
 		select: function (combo, record, index) {
 			var layer = record.json.layer;
@@ -166,7 +160,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 			indent: parentNode.attributes.layerRecordData? parentNode.attributes.layerRecordData.indent+1 : 0,
 		};
 		if (isGroup) {
-			layerRecordData.recordCls = 'category-header';
+			layerRecordData.itemCls = 'layer-category-item';
 			node = new Ext.tree.TreeNode({leaf: false});
 		} else {
 			node = new Ext.tree.TreeNode({leaf: true});
@@ -180,7 +174,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 				layer.setVisibility(visible);
 				layerRecordData.layer = layer;
 			} else {
-				layerRecordData.unavailable = true;
+				layerRecordData.itemCls = 'layer-unavailable-item';
 			}
 		}
 		node.attributes.layerRecordData = layerRecordData;

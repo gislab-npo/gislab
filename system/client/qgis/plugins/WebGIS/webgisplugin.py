@@ -35,6 +35,34 @@ import resources_rc
 MSG_ERROR = "Error"
 MSG_WARNING = "Warning"
 
+class Node(object):
+	name = None
+	layer = None
+	parent = None
+	children = None
+
+	def __init__(self, name, children=None):
+		self.name = name
+		self.children = []
+		if children:
+			self.append(*children)
+
+	def append(self, *nodes):
+		for node in nodes:
+			if not isinstance(node, Node):
+				node = Node(node)
+			node.parent = self
+			self.children.append(node)
+
+	def find(self, name):
+		if name == self.name:
+			return self
+		for child in self.children:
+			res = child.find(name)
+			if res:
+				return res
+
+
 class WebGisPlugin:
 
 	dialog = None
@@ -123,8 +151,11 @@ class WebGisPlugin:
 		self.dialog.publish_btn.setEnabled(True)
 		return True
 
-	def _is_layer_for_publish(self, layer):
+	def _is_overlay_layer_for_publish(self, layer):
 		return layer.type() == QgsMapLayer.VectorLayer or (layer.type() == QgsMapLayer.RasterLayer and layer.providerType() != "wms")
+
+	def _is_base_layer_for_publish(self, layer):
+		return layer.type() == QgsMapLayer.RasterLayer and layer.providerType() == "wms"
 
 	def _publish_project(self):
 		if not self._check_publish_constrains():
@@ -132,31 +163,82 @@ class WebGisPlugin:
 		dialog = self.dialog
 		project = self.project.fileName().split("/Share/")[1]
 		map_canvas = self.iface.mapCanvas()
-		all_layers = [layer.name() for layer in self.iface.legendInterface().layers() if self._is_layer_for_publish(layer)]
+		legend_iface = self.iface.legendInterface()
+
 		extent = [round(coord, 3) for coord in map_canvas.extent().toRectF().getCoords()]
 		get_params = {
 			'PROJECT': project,
-			'LAYERS': ','.join(all_layers),
 			'EXTENT': ','.join(map(str, extent)),
 		}
+
+		layers_reletionship = legend_iface.groupLayerRelationship()
+		layers_root = Node('')
+		for parent_name, child_names in layers_reletionship:
+			parent = layers_root.find(parent_name)
+			if not parent:
+				parent = Node(parent_name)
+				layers_root.append(parent)
+			parent.append(*child_names)
+
+		# filter base layers only
+		base_layers = [layer for layer in legend_iface.layers() if self._is_base_layer_for_publish(layer)]
+		# asign base layers to nodes
+		for layer in base_layers:
+			node = layers_root.find(layer.id())
+			node.layer = layer
+
+		# encode layers grouped by their parents
+		base_param_parts = []
+		def encode_layers_group(layers_nodes):
+			categories = []
+			node = layers_nodes[0]
+			while node.parent:
+				categories.insert(0, node.parent.name)
+				node = node.parent
+			location = "/".join(categories) if categories else "/"
+			encoded_layers = ["{0}:{1}".format(node.layer.name(), "1" if legend_iface.isLayerVisible(node.layer) else "0") for node in layers_nodes]
+			return "{0}/{1}".format(location, ";".join(encoded_layers))
+
+		base_group = []
+		def visit_node(node, base_group=base_group):
+			for child in node.children:
+				visit_node(child, base_group=base_group)
+			if not node.children:
+				if node.layer in base_layers:
+					base_group.append(node)
+			else:
+				if base_group:
+					base_param_parts.append(encode_layers_group(base_group))
+				del base_group[:]
+		visit_node(layers_root)
+		if base_group:
+			base_param_parts.append(encode_layers_group(base_group))
+
+		special_base_layers = []
 		if dialog.osm.isChecked():
-			get_params['OSM'] = 'true'
+			special_base_layers.append('OSM')
+		if dialog.google.currentIndex() > 0:
+			special_base_layers.append('G{0}'.format(dialog.google.currentText().upper()))
+		if special_base_layers:
+			base_param_parts.insert(0, "/{0}".format(";".join(special_base_layers)))
+
+		base_param = ";".join(base_param_parts)
+		if base_param:
+			get_params['BASE'] = base_param
+
 		scales, ok = self.project.readListEntry("Scales", "/ScalesList")
 		if ok and scales:
 			scales = [scale.split(":")[-1] for scale in scales]
 			get_params['SCALES'] = ','.join(scales)
-		if dialog.google.currentIndex() > 0:
-			get_params['GOOGLE'] = dialog.google.currentText().upper()
+
 		drawings = dialog.drawings.text()
 		if drawings:
 			get_params['DRAWINGS'] = drawings.replace(" ", "")
 
-		visible_layers = [layer for layer in map_canvas.layers() if self._is_layer_for_publish(layer)]
-		if len(visible_layers) < len(all_layers):
-			get_params['VISIBLE'] = ','.join([layer.name() for layer in visible_layers])
 		link = 'http://web.gis.lab/?{0}'.format("&".join(["{0}={1}".format(name, value) for name, value in get_params.iteritems()]))
 		#print "Starting firefox ...", link
 		subprocess.Popen([r'firefox', '-new-tab', link])
+		dialog.close()
 
 	def _table_size_hint(self):
 		table = self.dialog.info_table

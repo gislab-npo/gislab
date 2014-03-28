@@ -1,0 +1,16 @@
+#
+### INSTALLATION FINISHED ###
+#
+
+echo -e "\n[GIS.lab]: Done. GIS.lab is installed and ready to use!"
+
+echo -e "* Server IP: $(hostname  -I | awk -F" " '{print $NF}')"
+
+if [ "$GISLAB_SERVER_PROVIDER" == "aws" ]; then
+	echo -e "* AWS instance ID: $GISLAB_SERVER_AWS_INSTANCE_ID"
+	echo -e "* AWS public IP: $GISLAB_SERVER_AWS_PUBLIC_IP"
+	echo -e "* AWS public hostname: $GISLAB_SERVER_AWS_PUBLIC_HOSTNAME"
+fi
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

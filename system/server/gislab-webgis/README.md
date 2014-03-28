@@ -43,11 +43,8 @@ http://web.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>&<PARAMETER>=<value>&<PAR
 
 Supported GET parameters:
  * PROJECT: path to QGIS project file relative to '~/Share' directory. Example: lab1/natural-earth/central-europe.qgs
- * OSM: determines if OpenStreetMap base layer will be added to map. Works only in projection EPSG:3857. Example: true. Default is false.
- * GOOGLE: determines if Google base layer will be added to map. Works only in projection EPSG:3857. Possible values 
-   are: streets, hybrid, satellite, terrain, Example: streets.
- * LAYERS: list of layers to display in map. Example: border,lakes,rivers. Default is auto-detected list of layers from project.
- * VISIBLE: list of layers to set as visible on application start. Example: border. Default: all layers
+ * BASE: base layers encoded in following syntax: /[<category name>/.../]<layer name>[:<active (integer)>];<layer name>[:<active>];/[<category name>/.../]<layer name>[:<active>];... Example: /cat/subcat/subsubcat/layer1:0;layer2:1;/cat2/subcat2/subsubcat2/layer1:0;layer2:0 Default value is auto-detected from project. Reserved layer names are BLANK, OSM, GROADMAP, GSATELLITE, GHYBRID, GTERRAIN.
+ * OVERLAY: overlay layers encoded in following syntax: /[<category name>/.../]<layer name>[:<active (integer)>:<opacity (float)>];<layer name>[:<active>:<opacity>];/[<category name>/.../]<layer name>[:<active>:<opacity>];... Example: /cat/subcat/subsubcat/layer1:1:0.5;layer2:1:1;/cat2/subcat2/subsubcat2/layer1:0:0.75;layer2:1:0.85 Default value is auto-detected from project.
  * DPI: DPI resolution of map layers. Example: 120. Default: 96. 
  * SCALES: available list of scales of map. Example: 10000,5000,2500. Default: 1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500
  * EXTENT: desired extent of the map on start. Example 1234.1,5678.5,2345.2,6789.6. Default is extent of the project.

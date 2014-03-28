@@ -2,6 +2,15 @@
 ### WEBGIS ###
 #
 
+# configure default virtualhost
+cp -a /vagrant/system/server/gislab-webgis/conf/default.apache /etc/apache2/sites-available/default
+
+# configure default web server page output
+cat << EOF > /var/www/index.html
+<html><body><h1>GIS.lab server</h1>
+EOF
+
+
 WEBGIS_DB_PASSWORD=$(pwgen -1 -n 8)
 sudo su - postgres -c "createdb -E UTF8 -T template0 webgis"
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole webgis" # PostgreSQL account
@@ -14,7 +23,7 @@ source /usr/local/python-virtualenvs/webgis/bin/activate
 GISLAB_INSTALL_WEBGIS_DIR=/tmp/gislab-install-webgis-$(date +%s)
 cp -a /vagrant/system/server/gislab-webgis $GISLAB_INSTALL_WEBGIS_DIR
 pip install -r $GISLAB_INSTALL_WEBGIS_DIR/requirements.txt
-python $GISLAB_INSTALL_WEBGIS_DIR/setup.py install
+python $GISLAB_INSTALL_WEBGIS_DIR/setup.py install > /dev/null
 rm -r $GISLAB_INSTALL_WEBGIS_DIR
 
 mkdir -p /var/www/webgis
@@ -34,11 +43,12 @@ DATABASES = {
 EOF
 
 python /var/www/webgis/manage.py syncdb --noinput
-python /var/www/webgis/manage.py collectstatic --noinput
+python /var/www/webgis/manage.py collectstatic --noinput > /dev/null
 deactivate
 
 cp -a /vagrant/system/server/gislab-webgis/conf/webgis.apache /etc/apache2/sites-available/webgis
 
+a2enmod expires
 a2enmod wsgi
 a2enmod rewrite
 a2ensite webgis

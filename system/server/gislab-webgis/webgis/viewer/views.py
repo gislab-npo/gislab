@@ -84,7 +84,7 @@ def getprint(request):
 	return HttpResponse(resp_content, content_type=content_type)
 
 
-def parse_layers_param(layers_string, layers_capabilities):
+def parse_layers_param(layers_string, layers_capabilities, skip_layers=None):
 	tree = {
 		'name': '',
 		'layers': []
@@ -114,6 +114,8 @@ def parse_layers_param(layers_string, layers_capabilities):
 		for layer_string in layers_string.split(';'):
 			layer_info = layer_string.split(':')
 			layer_name = layer_info[0]
+			if skip_layers and layer_name in skip_layers:
+				continue
 			layer = layers_capabilities.get(layer_name)
 			if layer is None:
 				raise LookupError(layer_name)
@@ -207,7 +209,7 @@ def page(request):
 					return None, layer_data
 
 		baselayers_tree, layers_tree = process_layer_info(project_settings.root_layer)
-		layers = form.cleaned_data['layers']
+		layers = form.cleaned_data['overlay']
 		# override layers tree with LAYERS GET parameter if provided
 		if layers:
 			try:
@@ -215,14 +217,25 @@ def page(request):
 			except LookupError, e:
 				return HttpResponse("Unknown overlayer: {0}".format(str(e)), content_type='text/plain', status=400);
 
+		SPECIAL_BASE_LAYERS['BLANK']['resolutions'] = context['tile_resolutions']
+		baselayers_capabilities.update(SPECIAL_BASE_LAYERS)
 		base = form.cleaned_data['base']
 		if base:
-			SPECIAL_BASE_LAYERS['BLANK']['resolutions'] = context['tile_resolutions']
-			baselayers_capabilities.update(SPECIAL_BASE_LAYERS)
 			try:
-				baselayers_tree = parse_layers_param(base, baselayers_capabilities)
+				skip_layers = None
+				# ignore OSM and Google layers when project's projection is not EPSG:3857
+				if context['projection'] != 'EPSG:3857':
+					skip_layers = SPECIAL_BASE_LAYERS.keys()
+					skip_layers.remove('BLANK')
+				baselayers_tree = parse_layers_param(base, baselayers_capabilities, skip_layers=skip_layers)
 			except LookupError, e:
 				return HttpResponse("Unknown base layer: {0}".format(str(e)), content_type='text/plain', status=400);
+
+		# ensure that a blank base layer is always used
+		if not baselayers_tree:
+			baselayers_tree = {'name': '', 'layers': []}
+		if 'BLANK' not in [layer['name'] for layer in baselayers_tree['layers']]:
+			baselayers_tree['layers'].insert(0, baselayers_capabilities['BLANK'])
 
 		project_tile_resolutions = context['tile_resolutions']
 		base_layers_capabilities = {}
@@ -235,7 +248,6 @@ def page(request):
 			if wms_server_url not in base_layers_capabilities and wms_server_url not in unavailable_wms_servers:
 				try:
 					get_capabilities_url = set_query_parameters(wms_server_url, {'SERVICE': 'WMS', 'REQUEST': 'GetCapabilities'})
-					#raise Exception
 					capabilities = WmsGetCapabilitiesService(get_capabilities_url)
 					base_layers_capabilities[wms_server_url] = capabilities
 				except Exception, e:

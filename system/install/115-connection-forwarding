@@ -1,5 +1,5 @@
 #
-### INTERNET SHARING ###
+### CONNECTION FORWARDING ###
 #
 
 # set IP forwarding for client machines and call it from rc.local to run it after server restart

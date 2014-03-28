@@ -299,7 +299,6 @@ var searchWindow = new Ext.Window({
 			displayField: 'name',
 			collectLayersData: function() {
 				var layers_data = [];
-				console.log("Collect layers data");
 				Ext.getCmp('layers-tree-panel').root.cascade(function(node) {
 					if (node.isLeaf()) {
 						var layer_config = node.attributes.config;

@@ -46,8 +46,8 @@ class ExtentField(forms.CharField):
 
 class ViewerForm(forms.Form):
 	project = forms.CharField(required=False)
-	layers = forms.CharField(required=False)
 	base = forms.CharField(required=False)
+	overlay = forms.CharField(required=False)
 	dpi = forms.IntegerField(required=False)
 	scales = MultipleIntegersField(required=False)
 	extent = ExtentField(required=False)

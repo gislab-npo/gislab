@@ -2,6 +2,15 @@
 ### DATABASE SERVER - POSTGRESQL/POSTGIS ###
 #
 
+# set system shmmax value which must be something little bit higher than one fourth of
+# system memory size
+shmmax=$(echo $(free -b | awk '/^Mem:/{print $2}') / 3.9 | bc)
+echo $shmmax > /proc/sys/kernel/shmmax
+sysctl -w kernel.shmmax=$shmmax
+
+# tune database depending on current server configuration
+pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
+
 # allow network connections and local connection without password
 sed -i "s/^#listen_addresses.*/listen_addresses = '*'/" /etc/postgresql/9.1/main/postgresql.conf
 sed -i "s/local.*all.*all.*peer/local  all  all  trust/" /etc/postgresql/9.1/main/pg_hba.conf

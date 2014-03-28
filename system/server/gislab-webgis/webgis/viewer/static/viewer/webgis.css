@@ -207,9 +207,13 @@
 	font: 11px arial,tahoma,helvetica,sans-serif;
 }
 
-.category-header {
+.layer-category-item {
 	background-color: rgba(200, 200, 200, 0.3);
 	font-weight: bold;
+}
+
+.layer-unavailable-item {
+	color: gray;
 }
 
 .list-item-indent-1 {

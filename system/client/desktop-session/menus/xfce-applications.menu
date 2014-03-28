@@ -5,23 +5,19 @@
 	<Name>Xfce</Name>
 	<MergeFile type="parent">/etc/xdg/xdg-xubuntu/menus/xfce-applications.menu</MergeFile>
 	<Menu>
-		<Name>Games</Name>
+		<Name>Education</Name>
 		<Exclude>
-			<Filename>gnome-sudoku.desktop</Filename>
+			<Filename>grass64.desktop</Filename>
 		</Exclude>
 		<Exclude>
-			<Filename>gnomine.desktop</Filename>
+			<Filename>josm.desktop</Filename>
 		</Exclude>
 		<Exclude>
-			<Filename>mahjongg.desktop</Filename>
+			<Filename>qbrowser.desktop</Filename>
 		</Exclude>
 		<Exclude>
-			<Filename>freecell.desktop</Filename>
+			<Filename>qgis.desktop</Filename>
 		</Exclude>
-		<Exclude>
-			<Filename>sol.desktop</Filename>
-		</Exclude>
-		<Deleted/>
 	</Menu>
 	<Exclude>
 		<Filename>xfce4-about.desktop</Filename>
@@ -31,9 +27,6 @@
 	</Exclude>
 	<Menu>
 		<Name>System</Name>
-		<Exclude>
-			<Filename>gigolo.desktop</Filename>
-		</Exclude>
 		<Exclude>
 			<Filename>Thunar-bulk-rename.desktop</Filename>
 		</Exclude>
@@ -51,9 +44,6 @@
 		</Exclude>
 		<Exclude>
 			<Filename>usb-creator-gtk.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>synaptic.desktop</Filename>
 		</Exclude>
 		<Exclude>
 			<Filename>xfce4-taskmanager.desktop</Filename>
@@ -146,8 +136,6 @@
 		<Menuname>Other</Menuname>
 		<Menuname>System</Menuname>
 		<Separator/>
-		<Filename>xfhelp4.desktop</Filename>
-		<Filename>xfce4-about.desktop</Filename>
 		<Filename>xfce4-session-logout.desktop</Filename>
 		<Merge type="files"/>
 	</Layout>
@@ -155,27 +143,6 @@
 		<Name>Accessories</Name>
 		<Exclude>
 			<Filename>catfish.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>onboard.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>globaltime.desktop</Filename>
-		</Exclude>
-	</Menu>
-	<Menu>
-		<Name>Network</Name>
-		<Exclude>
-			<Filename>transmission-gtk.desktop</Filename>
-		</Exclude>
-	</Menu>
-	<Menu>
-		<Name>Office</Name>
-		<Exclude>
-			<Filename>globaltime.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>xfcalendar.desktop</Filename>
 		</Exclude>
 	</Menu>
 	<Menu>
@@ -200,9 +167,6 @@
 		</Exclude>
 		<Exclude>
 			<Filename>nm-connection-editor.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>onboard-settings.desktop</Filename>
 		</Exclude>
 		<Exclude>
 			<Filename>openjdk-6-policytool.desktop</Filename>

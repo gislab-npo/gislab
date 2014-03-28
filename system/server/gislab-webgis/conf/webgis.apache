@@ -1,7 +1,6 @@
 <VirtualHost *:80>
-  ServerAdmin webmaster@localhost
   ServerName web.gis.lab
-  ServerAlias webgis.gis.lab
+  ServerAdmin webmaster@localhost
 
   DocumentRoot /var/www/
   <Directory />

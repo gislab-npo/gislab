@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=OpenStreetMap Database
+Comment=OpenStreetMap database management
+Exec=josm
+Icon=josm.png
+StartupNotify=false
+Terminal=false
+Type=Application
+StartupWMClass=org-openstreetmap-josm-Main
