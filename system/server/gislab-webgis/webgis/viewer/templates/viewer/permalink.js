@@ -16,7 +16,7 @@ var fire_map_state_changed_event = function(obj) {
 	permalink_provider.fireEvent('statechange', permalink_provider, "map", {});
 };
 
-var overlays_node = layers_root.findChild('text', 'Overlays');
+var overlays_node = Ext.getCmp('layers-tree-panel').root;
 if (overlays_node) {
 	overlays_node.on('layerchange', fire_map_state_changed_event);
 }
@@ -24,7 +24,6 @@ if (overlays_node) {
 permalink_provider.on({
 	statechange: function(provider, name, value) {
 		var map = mappanel.map;
-		var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
 
 		var parameters = {
 			DPI: OpenLayers.DOTS_PER_INCH,
@@ -32,21 +31,13 @@ permalink_provider.on({
 			{% if scales %}SCALES: '{{ scales|join:"," }}',{% endif %}
 			
 		};
-		var osm_layer = map.getLayersByClass('OpenLayers.Layer.OSM')[0];
-		if (osm_layer) {
-			parameters.OSM = 'true';
+		var baselayers_combo = Ext.getCmp('base-layer-combo');
+		if (baselayers_combo) {
+			parameters.BASE = baselayers_combo.getEncodedLayersParam();
 		}
-		var google_layer = map.getLayersByClass('OpenLayers.Layer.Google')[0];
-		if (google_layer) {
-			parameters.GOOGLE = google_layer.mapTypeId;
-		}
+		var overlays_root = Ext.getCmp('layers-tree-panel').root;
 		if (overlays_root) {
-			var all_layers = overlays_root.getAllLayers();
-			var visible_layers = overlays_root.getVisibleLayers();
-			parameters.LAYERS = all_layers.join(',');
-			if (visible_layers.length < all_layers.length) {
-				parameters.VISIBLE = visible_layers.join(',');
-			}
+			parameters.LAYERS = overlays_root.getEncodedLayersParam();
 		}
 		var extent_array = map.getExtent().toArray();
 		for (var i = 0; i < 4; i++) {

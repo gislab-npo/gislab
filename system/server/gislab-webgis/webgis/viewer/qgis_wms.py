@@ -15,9 +15,10 @@ ATTRIBUTE_TYPE = {
 	'qlonglong': 'integer'
 }
 
-class Layer(object):
+class QgisLayer(object):
 	title = None
 	name = None
+	properties = None
 	attributes = None
 	projection = None
 	extent = None
@@ -51,7 +52,6 @@ class QgisGetProjectSettingsService(object):
 	def __init__(self, getprojectsettings_url):
 		self.featureinfo_formats = []
 		self.print_composers = []
-		self.layers = []
 		self._get_project_settings(getprojectsettings_url)
 
 	def _opt_text_elem(self, root, path, default=""):
@@ -61,10 +61,12 @@ class QgisGetProjectSettingsService(object):
 		return default
 
 	def _parse_layer(self, layer_elem):
-		layer = Layer(
-			title=layer_elem.find('{http://www.opengis.net/wms}Title').text,
-			name=layer_elem.find('{http://www.opengis.net/wms}Name').text
+		layer = QgisLayer(
+			title = layer_elem.find('{http://www.opengis.net/wms}Title').text,
+			name = layer_elem.find('{http://www.opengis.net/wms}Name').text,
 		)
+		layer.properties = layer_elem.attrib
+
 		sublayers_elems = layer_elem.findall("{http://www.opengis.net/wms}Layer")
 		if sublayers_elems:
 			layer.sublayers = [self._parse_layer(sublayer_elem) for sublayer_elem in sublayers_elems]

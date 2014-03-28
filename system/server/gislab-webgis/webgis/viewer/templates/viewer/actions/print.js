@@ -223,7 +223,7 @@ var printWindow = new Ext.Window({
 			iconCls: '',
 			handler: function(action) {
 				var print_window = Ext.getCmp('print-toolbar-window');
-				var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
+				var overlays_root = Ext.getCmp('layers-tree-panel').root;
 				var params = {
 					FORMAT: print_window.formatCombobox.getValue(),
 					DPI: printExtent.printProvider.dpi.get("value"),

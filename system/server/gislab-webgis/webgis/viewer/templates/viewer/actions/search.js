@@ -1,21 +1,5 @@
 //Search Action
 
-var layers_data = {
-	layers: [
-{% for layer in layers %}
-		{
-			name: '{{ layer.name }}',
-			value: '{{ layer.name }}',
-			attributes: [
-			{% for attrib in layer.attributes %}
-				{name: '{{ attrib.name }}', type: '{{ attrib.type }}'},
-			{% endfor %}
-			]
-		},
-{% endfor %}
-	]
-};
-
 var searchWindow = new Ext.Window({
 	id: 'search-toolbar-window',
 	flex: 1,
@@ -303,23 +287,38 @@ var searchWindow = new Ext.Window({
 			triggerAction: 'all',
 			forceSelection: true,
 			store: new Ext.data.JsonStore({
-				data: layers_data,
+				data: {layers: []},
 				storeId: 'search-layer-store',
 				root: 'layers',
 				fields: [{
 					name: 'name',
 					type: 'string'
-				}, {
-					name: 'value',
-					type: 'string'
 				}]
 			}),
-			valueField: 'value',
+			valueField: 'name',
 			displayField: 'name',
+			collectLayersData: function() {
+				var layers_data = [];
+				console.log("Collect layers data");
+				Ext.getCmp('layers-tree-panel').root.cascade(function(node) {
+					if (node.isLeaf()) {
+						var layer_config = node.attributes.config;
+						layers_data.push({
+							name: layer_config.name,
+							attributes: layer_config.attributes
+						});
+					}
+				});
+				this.layersData = layers_data;
+			},
 			updateLayersList: function(layers_list) {
+				if (!this.layersData) {
+					this.collectLayersData();
+				}
 				var available_layers = [];
-				// filter available layers from layers_data
-				Ext.each(layers_data.layers, function(layer_data) {
+				// filter available layers
+				Ext.each(this.layersData, function(layer_data) {
+					//console.log(layer_data);
 					if (layers_list.indexOf(layer_data.name) != -1) {
 						available_layers.push(layer_data);
 					}
@@ -338,7 +337,7 @@ var searchWindow = new Ext.Window({
 			},
 			listeners: {
 				afterrender: function(combo) {
-					var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
+					var overlays_root = Ext.getCmp('layers-tree-panel').root;
 					combo.updateLayersList(overlays_root.getVisibleLayers());
 					overlays_root.on('layerchange', function(node, layer, visible_layers) {
 						this.updateLayersList(visible_layers);

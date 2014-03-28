@@ -25,6 +25,7 @@
 		<script type="text/javascript" src="{% static 'viewer/lib/GeoExt-1.1/GeoExt.js' %}"></script>
 
 		<script type="text/javascript" src="{% static 'viewer/js/styles.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer/js/baselayers_combo.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/wms_layers_node.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/featureinfo_panel.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/draw_action.js' %}"></script>
@@ -44,14 +45,14 @@
 				var config = {
 					projection: "{{ projection }}",
 					units: "{{ units }}",
-					maxExtent: [{{ project_extent }}],
+					maxExtent: new OpenLayers.Bounds({{ project_extent|join:', '}}),
 				};
 
 				var mappanel_plugins = [];
 				var layer = null;
 				var drawings_param = null;
-				var zoom_extent = OpenLayers.Bounds.fromString('{{ zoom_extent }}');
-				{% if tile_resolutions %}config.tile_resolutions = [{{ tile_resolutions }}];{% endif %}
+				var zoom_extent = new OpenLayers.Bounds({{ zoom_extent|join:', '}});
+				{% if tile_resolutions %}config.tile_resolutions = {{ tile_resolutions }};{% endif %}
 
 				{% if debug %}{% autoescape off %}console.log("CONFIG: {{ config|escapejs }}");{% endautoescape %}{% endif %}
 
@@ -59,23 +60,17 @@
 				var maplayers = [];
 
 				// base layers
-				{% if google %}
-				maplayers.push(new OpenLayers.Layer.Google('Google {{ google.title }}',
-					{type: google.maps.MapTypeId.{{ google }},
-					mapTypeId: '{{ google }}'}));
-				{% endif %}
 				// seems that must be loaded after google layer
-				{% if osm %}maplayers.push(new OpenLayers.Layer.OSM());{% endif %}
 
 				// overlay layers
 				{% if layers %}
 				var overlays_group_layer = new OpenLayers.Layer.WMS(
 					"OverlaysGroup",
-					["{{ ows_url }}&DPI={{ dpi }}&TRANSPARENT=TRUE"],
+					["{{ ows_url }}"],
 					{
-						layers: ["{{ layers|join:'", "' }}"].reverse(),
 						transparent: true,
 						format: "image/png",
+						dpi: "{{ dpi }}",
 					},
 					{
 						gutter: 0,
@@ -143,12 +138,12 @@
 					collapsible: false,
 					zoom: 3,
 					map: {
-						allOverlays: {% if osm or google %}false{% else %}true{% endif %},
+						allOverlays: {% if base_layers %}false{% else %}true{% endif %},
 						units: config.units,
 						projection: new OpenLayers.Projection(config.projection),
 						resolutions: config.tile_resolutions,
-						maxExtent: new OpenLayers.Bounds(config.maxExtent[0], config.maxExtent[1],
-							config.maxExtent[2], config.maxExtent[3]),
+						restrictedExtent: config.maxExtent,
+						maxExtent: config.maxExtent,
 						controls: []
 					},
 					layers: maplayers,
@@ -216,48 +211,56 @@
 				{% endif %}
 
 
-				// tree node
-				var layers_root = new Ext.tree.TreeNode({
-					id: 'layers-tree',
-					text: 'Layers',
-					expanded: true,
-					draggable: false
+				var overlays_root;
+				overlays_root = new WebGIS.WmsLayersNode({
+					id: 'overlays-root',
+					text: 'Root',
+					expandable: false,
+					cls: 'overlays-root',
+					layer: overlays_group_layer,
+					layersTree: JSON.parse('{{ layers|default:"[]"|escapejs }}'),
 				});
 
-				//# base layers tree
-				{% if osm or google %}
-				layers_root.appendChild(new GeoExt.tree.BaseLayerContainer({
-					id: 'base-layers-root',
-					text: 'Base Layers',
-					map: mappanel.map,
-					leaf: false,
-					expanded: true,
-					draggable: false,
-					isTarget: false,
-					split: true
-				}));
-				{% endif %}
-
-				{% if layers %}
-				layers_root.appendChild(new WebGIS.WmsLayersNode({
-					id: 'overlays-root',
-					text: 'Overlays',
-					layer: overlays_group_layer,
-					layersTree: JSON.parse('{{ layers_tree|default:"[]"|escapejs }}'),
-				}));
-				{% endif %}
+				var baselayer_panel = new Ext.Panel({
+					title: 'Content',
+					layout: 'fit',
+					cls: 'layers-legend-toolbar',
+					{% if base_layers %}
+					height: 70,
+					tbar: [{
+						xtype: 'label',
+						text: 'Base Layers',
+						cls: 'layers-title',
+					}],
+					items: new WebGIS.BaseLayersComboBox({
+						id: 'base-layer-combo',
+						map: mappanel.map,
+						baselayers: JSON.parse('{{ base_layers|escapejs }}'),
+					}),
+					{% else %}
+					height: 26,
+					{% endif %}
+				})
 
 				// layers tree
 				var layer_treepanel = new Ext.tree.TreePanel({
 					id: 'layers-tree-panel',
-					title: 'Content',
-					enableDD: false,
-					root: layers_root,
+					cls: 'layers-legend-toolbar',
+					//title: 'Content',
+					enableDD: true,
+					root: overlays_root,
 					split: true,
 					border: true,
 					collapsible: false,
 					cmargins: '0 0 0 0',
-					autoScroll: true
+					autoScroll: true,
+					{% if layers %}
+					tbar: [{
+						xtype: 'label',
+						text: 'Overlay Layers',
+						cls: 'layers-title',
+					}],
+					{% endif %}
 				});
 
 				// legend
@@ -325,6 +328,7 @@
 						pack: 'start'
 					},
 					items: [
+						baselayer_panel,
 						layer_treepanel,
 						accordion
 					]
