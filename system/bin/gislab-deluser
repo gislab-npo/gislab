@@ -16,6 +16,7 @@ function usage() {
 	echo "USAGE: $(basename $0) [OPTIONS] username"
 	echo "Delete GIS.lab user account."
 	echo -e "\nOPTIONS
+	-b  backup user data
 	-f  force running this command - do not ask before deleting account
 	-h  display this help
 	"
@@ -25,9 +26,10 @@ function usage() {
 
 # options
 FORCE="no"
-while getopts "hf" OPTION
+while getopts "bhf" OPTION
 do
         case "$OPTION" in
+			b) BACKUP="yes" ;;
 			f) FORCE="yes" ;;
 			h) usage ; exit 0 ;;
 			\?) exit 1;;
@@ -44,6 +46,9 @@ if [ "$FORCE" != "yes" ]; then
 	read
 fi
 
+if [ "$BACKUP" == "yes" ]; then
+	gislab-backupuser $GISLAB_USER
+fi
 
 # remove account
 echo -e "\n[GIS.lab]: Removing GIS.lab user account ..."
