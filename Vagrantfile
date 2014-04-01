@@ -41,7 +41,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY'].strip]
     vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
     vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
-#   v.gui = true
+    # vb.gui = true
   end
 
   # AWS provider
