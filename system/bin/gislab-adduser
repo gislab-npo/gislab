@@ -73,6 +73,17 @@ cp /vagrant/system/client/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4
 mkdir -p /etc/skel/.config/xfce4/panel
 cp -a /vagrant/system/client/desktop-session/xfce4/panel/* /etc/skel/.config/xfce4/panel
 
+# confugure keyboard languages
+languages="us" # english is always active
+variants=""
+for lang in ${!GISLAB_CLIENT_LANGUAGES[*]}
+do
+	languages+=",${GISLAB_CLIENT_LANGUAGES[$lang]}"
+	variants+=","
+done
+sed -i "s/^layouts=/layouts=$languages/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
+sed -i "s/^variants=/variants=$variants/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
+
 
 # Conky
 mkdir -p /etc/skel/.config/autostart
