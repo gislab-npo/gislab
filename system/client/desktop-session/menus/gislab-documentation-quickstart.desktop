@@ -8,3 +8,5 @@ Icon=
 Path=
 Terminal=false
 StartupNotify=false
+Name[sk]=Rýchly štart
+Comment[sk]=Rýchly štart GIS.lab

@@ -5,3 +5,5 @@ Type=Directory
 Name=GIS.lab
 Comment=GIS.lab Applications
 Icon=epiphany
+Name[sk]=GIS.lab
+Comment[sk]=Aplikácie GIS.lab

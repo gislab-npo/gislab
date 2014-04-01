@@ -8,3 +8,5 @@ StartupNotify=false
 Terminal=false
 Type=Application
 StartupWMClass=org-openstreetmap-josm-Main
+Name[sk]=Databáza OpenStreetMap
+Comment[sk]=Správa databázy OpenStreetMap

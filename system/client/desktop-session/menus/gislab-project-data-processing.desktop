@@ -9,3 +9,5 @@ Icon=qgis-icon
 Path=
 Terminal=false
 StartupNotify=false
+Name[sk]=Tvorba projektov GIS a spracovanie dát
+Comment[sk]=Tvorba projektov GIS, spracovanie dát a analýzy

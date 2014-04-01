@@ -7,3 +7,5 @@ Exec=/usr/bin/spatialite-gui
 Path=
 Terminal=false
 StartupNotify=false
+Name[sk]=Osobná geodatabáza
+Comment[sk]=Správa databázy SpatiaLite

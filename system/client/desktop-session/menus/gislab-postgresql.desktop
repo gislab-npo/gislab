@@ -9,3 +9,5 @@ Icon=pgadmin3
 Path=
 Terminal=false
 StartupNotify=false
+Name[sk]=Zdieľaná geodatabáza
+Comment[sk]=Správa databázy PostgreSQL/PostGIS

@@ -4,3 +4,5 @@ Type=Directory
 Name=Documentation
 Comment=GIS.lab documentation
 Icon=help
+Name[sk]=Dokumentácia
+Comment[sk]=Dokumentácia GIS.lab
