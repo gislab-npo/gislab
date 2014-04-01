@@ -3,6 +3,8 @@
 
 source /etc/gislab_version
 
+GROUPS=$(groups)
+
 UPTIME=$(uptime | awk '{print $3}' | sed "s/,//")
 VIRTUALCLIENT=$(lspci | grep "System peripheral" | sed "s/^.*://")
 
@@ -22,6 +24,7 @@ GIS.lab VERSION: $GISLAB_VERSION\n
 \n
 SESSION\n
 + USER: $USER\n
++ GROUPS: $GROUPS\n
 + UPTIME: $UPTIME\n
 + VIRTUAL CLIENT: $VIRTUALCLIENT\n
 + CLIENT BUILD TIME: $GISLAB_CLIENT_BUILD_TIME\n
