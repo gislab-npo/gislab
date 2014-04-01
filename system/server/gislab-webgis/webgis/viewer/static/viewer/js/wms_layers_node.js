@@ -1,9 +1,17 @@
 Ext.namespace('WebGIS');
 
 WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
+	layersIconClsMap: {
+		POINT: 'draw-point-icon',
+		LINE: 'draw-line-icon',
+		POLYGON: 'draw-polygon-icon',
+	},
 	constructor: function(config) {
 		config.checked = true;
 		config.expanded = true;
+		config.expandedable = false;
+		config.allowDrag = false;
+		config.leaf = false;
 		WebGIS.WmsLayersNode.superclass.constructor.apply(this, arguments);
 		this.addEvents('layerchange');
 		this.layer = config.layer;
@@ -17,6 +25,9 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		//  3 - checkchange event generated programmatically on parent node - to check it but do not change checked state of its child nodes
 		this.checkchangeParamsStack = [0];
 		this.buildLayersTree();
+		if (!this.layersTree || this.layersTree.length == 0) {
+			//this.hidden = true;
+		}
 		this.updateLayersParam();
 		this.on('checkchange', this.onNodeCheckChanged);
 	},
@@ -26,13 +37,14 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			this.layer.mergeNewParams({LAYERS: [].concat(visible_layers).reverse()});
 			this.fireEvent('layerchange', this, this.layer, visible_layers);
 		}
+		//console.log(visible_layers);
 		//console.log(this.root.checkchangeParamsStack);
 	},
 	onNodeCheckChanged: function(node, checked) {
 		var param = this.root.checkchangeParamsStack.pop();
 
 		// check parent whether this is its first checked child
-		if (checked && !node.parentNode.attributes.checked && node.getDepth() > node.root.getDepth()) {
+		if (checked && node.getDepth() > node.root.getDepth()) {
 			this.root.checkchangeParamsStack.push(3);
 			node.parentNode.getUI().toggleCheck(true);
 		}
@@ -76,9 +88,32 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			text: layer_config.name,
 			checked: true,
 			leaf: !isGroup,
+			iconCls: this.layersIconClsMap[layer_config.geom_type],
+			allowDrop: isGroup,
 			expanded: true,
 			listeners: {
 				checkchange: this.onNodeCheckChanged,
+				move: function(tree, node, oldParent, newParent, index) {
+					if (node.attributes.checked) {
+						if (oldParent.attributes.checked) {
+							// uncheck old parent whether its every child is unchecked
+							var allSiblingsUnchecked = true;
+							Ext.each(oldParent.childNodes, function(n) {
+								if (n.attributes.checked) {
+									allSiblingsUnchecked = false;
+									return false;
+								}
+							});
+							if (allSiblingsUnchecked) {
+								node.root.checkchangeParamsStack.push(2);
+								oldParent.getUI().toggleCheck(false);
+							}
+						}
+
+						this.root.checkchangeParamsStack.push(0);
+						node.fireEvent('checkchange', node, true);
+					}
+				}
 			}
 		});
 		node.root = this;
@@ -90,8 +125,11 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 				groupChecked = groupChecked || childNode.attributes.checked;
 			}, this);
 			node.attributes.checked = groupChecked;
-		} else if (layer_config.visible == false) {
-			node.attributes.checked = false;
+		} else {
+			if (layer_config.visible == false) {
+				node.attributes.checked = false;
+			}
+			node.attributes.config = layer_config;
 		}
 		return node;
 	},
@@ -122,5 +160,37 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			}
 		}, this);
 		return layers_names;
+	},
+	getEncodedLayersParam: function() {
+		var encode_layers_set = function(layers_nodes) {
+			var n = layers_nodes[0];
+			var parents = [];
+			while (n.parentNode && n.parentNode != n.root) {
+				parents.push(n.parentNode.attributes.text);
+				n = n.parentNode;
+			}
+			var location = parents.length? '/'+parents.reverse().join('/')+'/' : '/';
+			var layers_params = [];
+			Ext.each(layers_nodes, function(node) {
+				layers_params.push(String.format('{0}:{1}:{2}', node.attributes.text, 1.0, node.attributes.checked? 1:0));
+			}, this);
+			return location+layers_params.join(';');
+		};
+		var param_parts = [];
+		var layers_nodes = [];
+		this.cascade(function(node) {
+			if (node.isLeaf()) {
+				layers_nodes.push(node);
+			} else {
+				if (layers_nodes.length > 0) {
+					param_parts.push(encode_layers_set(layers_nodes));
+				}
+				layers_nodes = [];
+			}
+		}, this);
+		if (layers_nodes.length > 0) {
+			param_parts.push(encode_layers_set(layers_nodes));
+		}
+		return param_parts.join(';');
 	}
 });

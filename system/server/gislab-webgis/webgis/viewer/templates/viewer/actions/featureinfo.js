@@ -31,7 +31,7 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 	},
 	listeners: {
 		afterrender: function(combo) {
-			var overlays_root = Ext.getCmp('layers-tree-panel').root.findChild('id', 'overlays-root');
+			var overlays_root = Ext.getCmp('layers-tree-panel').root;
 			combo.updateLayersList(overlays_root.getVisibleLayers());
 			overlays_root.on('layerchange', function(node, layer, visible_layers) {
 				this.updateLayersList(visible_layers);

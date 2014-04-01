@@ -95,7 +95,7 @@ QGroupBox::title {
         </item>
         <item>
          <property name="text">
-          <string>Streets</string>
+          <string>RoadMap</string>
          </property>
         </item>
         <item>
