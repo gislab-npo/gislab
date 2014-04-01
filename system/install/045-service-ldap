@@ -1,0 +1,253 @@
+#
+###  LDAP DATABASE ###
+#
+
+# generate and set LDAP admin password
+# generally we don't need to know it, but we can
+# find it in '/etc/ldapscripts/ldapscripts.passwd'
+LDAP_ADMIN_PASS=$(pwgen -s -N 1 10)
+LDAP_ADMIN_PASS_HASH=$(slappasswd -s $LDAP_ADMIN_PASS -h {SSHA})
+
+ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
+dn: olcDatabase={1}hdb,cn=config
+replace: olcRootPW
+olcRootPW: $LDAP_ADMIN_PASS_HASH
+
+EOL
+
+
+# enable extended logging if requested
+if [ "$GISLAB_DEBUG" == "yes" ]; then
+	ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
+dn: cn=config
+changetype: modify
+add: olcLogLevel
+olcLogLevel: stats
+EOL
+fi
+
+
+# configure base DN and URI and disable certificates verification
+sed -i 's/#BASE.*/BASE dc=gis,dc=lab/' /etc/ldap/ldap.conf
+sed -i 's/#URI.*/URI ldapi:\/\/\//' /etc/ldap/ldap.conf
+sed -i 's/^TLS_CACERT/#TLS_CACERT/' /etc/ldap/ldap.conf
+echo "TLS_REQCERT never" >> /etc/ldap/ldap.conf
+
+
+# secure LDAP with TLS
+certtool --generate-privkey > /etc/ssl/private/cakey.pem
+
+cat << EOL > /etc/ssl/ca.info
+cn = GIS.lab
+ca
+cert_signing_key
+EOL
+
+certtool --generate-self-signed \
+--load-privkey /etc/ssl/private/cakey.pem \
+--template /etc/ssl/ca.info \
+--outfile /etc/ssl/certs/cacert.pem
+
+certtool --generate-privkey \
+--bits 1024 \
+--outfile /etc/ssl/private/$(hostname)_slapd_key.pem
+
+cat << EOL > /etc/ssl/$(hostname).info
+organization = Gis Lab
+cn = $(hostname -f)
+tls_www_server
+encryption_key
+signing_key
+expiration_days = 3650
+EOL
+
+certtool --generate-certificate \
+--load-privkey /etc/ssl/private/$(hostname)_slapd_key.pem \
+--load-ca-certificate /etc/ssl/certs/cacert.pem \
+--load-ca-privkey /etc/ssl/private/cakey.pem \
+--template /etc/ssl/$(hostname).info \
+--outfile /etc/ssl/certs/$(hostname)_slapd_cert.pem
+
+ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
+dn: cn=config
+add: olcTLSCACertificateFile
+olcTLSCACertificateFile: /etc/ssl/certs/cacert.pem
+-
+add: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/ssl/certs/$(hostname)_slapd_cert.pem
+-
+add: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: /etc/ssl/private/$(hostname)_slapd_key.pem
+EOL
+
+adduser openldap ssl-cert
+chgrp ssl-cert /etc/ssl/private/$(hostname)_slapd_key.pem
+chmod g+r /etc/ssl/private/$(hostname)_slapd_key.pem
+chmod o-r /etc/ssl/private/$(hostname)_slapd_key.pem
+
+
+# allow only encrypted connection
+ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
+dn: cn=config
+changetype: modify
+add: olcSecurity
+olcSecurity: ssf=64
+EOL
+
+
+# add support for sudo
+export DEBIAN_FRONTEND=noninteractive
+export SUDO_FORCE_REMOVE=yes
+apt-get -y install sudo-ldap
+export SUDO_FORCE_REMOVE=no
+
+ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /vagrant/system/server/ldap/sudo.schema
+
+echo "# sudo" >> /etc/nsswitch.conf
+echo "sudoers: files ldap" >> /etc/nsswitch.conf
+
+echo >> /etc/ldap/ldap.conf
+echo "# sudo" >> /etc/ldap/ldap.conf
+echo "SUDOERS_BASE ou=SUDOers,dc=gis,dc=lab" >> /etc/ldap/ldap.conf
+
+
+# create indexes
+ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
+dn: olcDatabase={1}hdb,cn=config
+add: olcDbIndex
+olcDbIndex: default eq,sub
+-
+add: olcDbIndex
+olcDbIndex: cn,sn,uid,mail,gn pres,eq,sub,subany
+-
+add: olcDbIndex
+olcDbIndex: dc,ou eq
+-
+add: olcDbIndex
+olcDbIndex: uidNumber,gidNumber eq
+-
+add: olcDbIndex
+olcDbIndex: memberUid eq,pres,sub
+-
+add: olcDbIndex
+olcDbIndex: displayName pres,sub,eq
+-
+add: olcDbIndex
+olcDbIndex: uniqueMember pres,eq
+-
+add: olcDbIndex
+olcDbIndex: sudoUser eq,sub,subany
+EOL
+
+
+# configure ldapscripts
+sed -i 's/^#SERVER=.*/SERVER="ldapi:\/\/\/"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^#BINDDN=.*/BINDDN="cn=admin,dc=gis,dc=lab"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^#BINDPWDFILE=/BINDPWDFILE=/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^#SUFFIX=.*/SUFFIX="dc=gis,dc=lab"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^#GSUFFIX=.*/GSUFFIX="ou=groups"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^#USUFFIX=.*/USUFFIX="ou=people"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^GIDSTART=.*/GIDSTART="3000"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^UIDSTART=.*/UIDSTART="3000"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^MIDSTART=/#MIDSTART=/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^CREATEHOMES="no"/CREATEHOMES="yes"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^#HOMESKEL=.*/HOMESKEL="\/etc\/skel"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^#HOMEPERMS="755"/HOMEPERMS="700"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^GTEMPLATE=""/GTEMPLATE="\/etc\/ldapscripts\/addgroup.template"/' /etc/ldapscripts/ldapscripts.conf
+sed -i 's/^UTEMPLATE=""/UTEMPLATE="\/etc\/ldapscripts\/adduser.template"/' /etc/ldapscripts/ldapscripts.conf
+
+echo -n "$LDAP_ADMIN_PASS" > /etc/ldapscripts/ldapscripts.passwd
+chmod 0600 /etc/ldapscripts/ldapscripts.passwd
+
+# create templates for users and groups
+cat << EOL > /etc/ldapscripts/adduser.template
+dn: uid=<user>,<usuffix>,<suffix>
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: <user>
+cn: <user>
+sn: <user>
+uidNumber: <uid>
+gidNumber: <gid>
+homeDirectory: <home>
+loginShell: <shell>
+gecos: GIS.lab User <user>
+mail: <user>@gis.lab
+description: GIS.lab User
+EOL
+
+cat << EOL > /etc/ldapscripts/addgroup.template
+dn: cn=<group>,<gsuffix>,<suffix>
+objectClass: posixGroup
+cn: <group>
+gidNumber: <gid>
+description: GIS.lab Group
+EOL
+
+# fix ldapscripts runtime script (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=719295)
+sed -i "s/^\[ -z \"\$USER\" \] && end_die 'Could not guess current user'$/\[ -n \"\$USER\" \] || USER=\$\(id -un 2>\/dev\/null\)/" /usr/share/ldapscripts/runtime
+
+
+# configure PAM
+pam-auth-update --force
+auth-client-config -t nss -p lac_ldap
+
+sed -i 's/^base.*/base dc=gis,dc=lab/' /etc/ldap.conf
+sed -i 's/^rootbinddn/#rootbinddn/' /etc/ldap.conf
+sed -i 's/#ssl start_tls/ssl start_tls/' /etc/ldap.conf
+sed -i 's/^#tls_checkpeer yes/tls_checkpeer no/' /etc/ldap.conf
+
+
+# restart service
+service slapd restart
+
+
+# create base GIS.lab LDAP structure
+ldapadd -Z -w $LDAP_ADMIN_PASS -D "cn=admin,dc=gis,dc=lab" << EOL
+dn: ou=People,dc=gis,dc=lab
+objectClass: organizationalUnit
+ou: people
+
+dn: ou=Groups,dc=gis,dc=lab
+objectClass: organizationalUnit
+ou: groups
+
+dn: ou=SUDOers,dc=gis,dc=lab
+objectClass: top
+objectClass: organizationalUnit
+ou: SUDOers
+
+dn: cn=defaults,ou=SUDOers,dc=gis,dc=lab
+objectClass: top
+objectClass: sudoRole
+cn: defaults
+description: Default sudoOption's go here
+sudoOption: env_reset
+sudoOption: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/vagrant/system/bin"
+
+dn: cn=%labadmins,ou=SUDOers,dc=gis,dc=lab
+objectClass: top
+objectClass: sudoRole
+cn: %labadmins
+sudoUser: %labadmins
+sudoHost: ALL
+sudoCommand: ALL
+sudoOption: !authenticate
+
+dn: cn=labadmins,ou=Groups,dc=gis,dc=lab
+objectClass: posixGroup
+cn: labadmins
+gidNumber: 3000
+description: GIS.lab Admins Group
+
+dn: cn=labusers,ou=Groups,dc=gis,dc=lab
+objectClass: posixGroup
+cn: labusers
+gidNumber: 3001
+description: GIS.lab Users Group
+EOL
+
+unset LDAP_ADMIN_PASS
+
+### END OF SCRIPT ###
