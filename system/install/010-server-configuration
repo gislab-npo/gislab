@@ -8,8 +8,7 @@ GISLAB_SERVER_IP=$(hostname  -I | awk -F" " '{print $NF}')
 GISLAB_NETWORK=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $1 "." $2 "." $3 }')
 
 # set FQDN
-#sed -i "/^127.0.0.1 localhost/a $GISLAB_SERVER_IP $(hostname --fqdn) $(hostname)" /etc/hosts
-sed -i "/^127.0.0.1 localhost/a $GISLAB_SERVER_IP server.gis.lab server" /etc/hosts
+sed -i "/^127.0.0.1 localhost/a $GISLAB_SERVER_IP $(hostname --fqdn) $(hostname)" /etc/hosts
 
 # timezone
 cat << EOF > /etc/timezone
