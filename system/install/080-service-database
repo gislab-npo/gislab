@@ -14,15 +14,16 @@ pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9
 # allow network connections and local connection without password
 sed -i "s/^#listen_addresses.*/listen_addresses = '*'/" /etc/postgresql/9.1/main/postgresql.conf
 sed -i "s/local.*all.*all.*peer/local  all  all  trust/" /etc/postgresql/9.1/main/pg_hba.conf
-sed -i "s/host.*all.*all.*127.0.0.1\/32.*md5/host  all  all  0.0.0.0\/0  md5/" /etc/postgresql/9.1/main/pg_hba.conf
+sed -i "s/host.*all.*all.*127.0.0.1\/32.*md5/host  all  all  0.0.0.0\/0 ldap ldapserver=server.gis.lab ldaptls=1 ldapprefix=\"uid=\" ldapsuffix=\",ou=People,dc=gis,dc=lab\"/" /etc/postgresql/9.1/main/pg_hba.conf
 
 # set search path
 sed -i "s/^#search_path.*/search_path = '\"\$user\",public'/" /etc/postgresql/9.1/main/postgresql.conf
 
 service postgresql restart
 
-# create labusers group
+# create labusers and labadmins group
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole --no-login labusers"
+sudo su - postgres -c "createuser --superuser --createdb --createrole --no-login labadmins"
 
 # create template database
 sudo su - postgres -c "createdb -E UTF8 -T template0 template_postgis"
