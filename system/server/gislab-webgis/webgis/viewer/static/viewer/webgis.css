@@ -293,3 +293,7 @@ div.overlays-root {
 label.layers-title {
 	font-weight: bold;
 }
+
+.legend-item img {
+	display: block;
+}
