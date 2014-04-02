@@ -18,6 +18,11 @@ var action = new Ext.Action({
 	toggleHandler: function(action, toggled) {
 		if (toggled) {
 			// create the Grid
+			function renderTip(val, meta, record, rowIndex, colIndex, store) {
+				var info = record.get('info');
+				meta.attr = String.format('ext:qtip="{0}"',  info);
+				return val;
+			};
 			var grid = new Ext.grid.GridPanel({
 				id: 'save-history-grid',
 				store: this.store,
@@ -32,10 +37,18 @@ var action = new Ext.Action({
 				},
 				columns: [
 					{
+						id       : 'link',
+						header   : 'Drawing',
+						width    : 75,
+						sortable : false,
+						dataIndex: 'link',
+					},
+					{
 						id       : 'title',
 						header   : 'Title',
 						sortable : false,
 						dataIndex: 'title',
+						renderer:  renderTip
 					},
 					{
 						id       : 'time',
@@ -44,21 +57,7 @@ var action = new Ext.Action({
 						sortable : false,
 						dataIndex: 'time',
 						renderer : Ext.util.Format.dateRenderer('H:i:s'),
-					},
-					{
-						id       : 'link',
-						header   : 'GeoJSON',
-						width    : 75,
-						sortable : false,
-						dataIndex: 'link',
-					},
-					{
-						id       : 'info',
-						header   : 'Info',
-						width    : 180,
-						sortable : false,
-						dataIndex: 'info'
-					},
+					}
 				],
 				//stripeRows: true,
 				autoExpandColumn: 'title',
@@ -70,7 +69,7 @@ var action = new Ext.Action({
 			var history_window = new Ext.Window({
 				header: false,
 				closable: false,
-				width: 500,
+				width: 350,
 				height: 400,
 				layout: 'fit',
 				items: [grid]

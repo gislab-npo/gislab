@@ -102,7 +102,7 @@ action = new WebGIS.DrawAction({
 
 					// Add record into saving history
 					var permalink_url = Ext.get('permalink').dom.children[0].href;
-					var drawing_info = String.format('points: {0} lines: {1} polygons: {2}', points_layer.features.length, lines_layer.features.length, polygons_layer.features.length);
+					var drawing_info = String.format('Points: {0}<br />Lines: {1}<br />Polygons: {2}', points_layer.features.length, lines_layer.features.length, polygons_layer.features.length);
 					var data = [[title, new Date(), String.format('<a target="_blank" href="{0}">{1}</a>', permalink_url, response.responseText), drawing_info]]
 					Ext.getCmp('save-history-action').store.loadData(data, true);
 				},
