@@ -11,7 +11,7 @@ var draw_controls = [
 				type: OpenLayers.Control.TYPE_TOOL,
 				featureAdded: function(feature) {
 					feature.attributes = {
-						label: ''
+						title: ''
 					};
 					// update feature on map
 					points_layer.drawFeature(feature);
@@ -31,7 +31,7 @@ var draw_controls = [
 				type: OpenLayers.Control.TYPE_TOOL,
 				featureAdded: function(feature) {
 					feature.attributes = {
-						label: ''
+						title: ''
 					};
 					// update feature on map
 					lines_layer.drawFeature(feature);
@@ -51,7 +51,7 @@ var draw_controls = [
 				type: OpenLayers.Control.TYPE_TOOL,
 				featureAdded: function(feature) {
 					feature.attributes = {
-						label: ''
+						title: ''
 					};
 					// update feature on map
 					polygons_layer.drawFeature(feature);

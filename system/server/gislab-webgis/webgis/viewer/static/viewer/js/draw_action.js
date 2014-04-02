@@ -96,21 +96,38 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 		Ext.each(this.controls, function(control) {
 			var store = new GeoExt.data.FeatureStore({
 				layer: control.control.layer,
-				fields: [{name: 'label', type: 'string'}],
+				fields: [
+					{name: 'title', type: 'string'},
+					{name: 'description', type: 'string'},
+				],
 			});
 			var cm = new Ext.grid.ColumnModel({
 				columns: [
 					new Ext.grid.RowNumberer({
 						width: 25
 					}), {
-						header: 'Label',
-						dataIndex: 'label',
+						header: 'Title',
+						dataIndex: 'title',
+						width: 50,
 						editor: new Ext.form.TextField({
 							allowBlank: true,
-							maxLength: 50,
+							maxLength: 70,
 							autoCreate : { //restricts user to 20 chars max
 								tag: 'input',
 								maxlength : 50,
+								type: 'text',
+								autocomplete: 'off'
+							},
+						})
+					}, {
+						header: 'Description',
+						dataIndex: 'description',
+						editor: new Ext.form.TextField({
+							allowBlank: true,
+							maxLength: 200,
+							autoCreate : { //restricts user to 20 chars max
+								tag: 'input',
+								maxlength : 200,
 								type: 'text',
 								autocomplete: 'off'
 							},
@@ -125,6 +142,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				viewConfig: {
 					forceFit:true,
 				},
+				autoExpandColumn: 'description',
 				iconCls: control.iconCls,
 				control: control.control,
 				store: store,
@@ -176,7 +194,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			//title: this.dialogTitle,
 			closable: false,
 			minWidth: 300,
-			width: 300,
+			width: 350,
 			height: 400,
 			layout: 'fit',
 			tbar: [
@@ -188,7 +206,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					width: 10
 				}, {
 					xtype: 'textfield',
-					width: 200,
+					width: 185,
 					ref: '/drawingTitle',
 				}, '->', new Ext.Action({
 					cls: 'x-btn-text',
