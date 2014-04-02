@@ -13,12 +13,14 @@ class WmsLayer(object):
 	title = None
 	name = None
 	properties = None
-	projection = None
-	extent = None
+	projections = None
+	extents = None
 	parent = None
 	sublayers = None
 
 	def __init__(self, **kwargs):
+		self.projections = []
+		self.extents = {}
 		for param, val in kwargs.iteritems():
 			setattr(self, param, val)
 
@@ -89,21 +91,26 @@ class WmsGetCapabilitiesService(object):
 		)
 		layer.properties = layer_elem.attrib
 
-		bbox_elem = layer_elem.find(_('BoundingBox'))
+		crs_elems = layer_elem.findall(_('CRS'))
+		for crs_elem in crs_elems:
+			layer.projections.append(crs_elem.text)
+
+		# WGS84 bbox
+		bbox_elem = layer_elem.find(_('EX_GeographicBoundingBox'))
 		if bbox_elem is not None:
+			extent = (
+				float(bbox_elem.find(_('westBoundLongitude')).text),
+				float(bbox_elem.find(_('southBoundLatitude')).text),
+				float(bbox_elem.find(_('eastBoundLongitude')).text),
+				float(bbox_elem.find(_('northBoundLatitude')).text),
+			)
+			layer.extents["EPSG:4326"] = extent
+
+		bbox_elems = layer_elem.findall(_('BoundingBox'))
+		for bbox_elem in bbox_elems:
 			bbox = map(float, (bbox_elem.attrib['minx'], bbox_elem.attrib['miny'], bbox_elem.attrib['maxx'], bbox_elem.attrib['maxy']))
-			layer.projection = bbox_elem.attrib.get('CRS') or bbox_elem.attrib.get('SRS')
-			layer.extent = bbox
-		else:
-			layer.projection = "EPSG:4326"
-			bbox_elem = layer_elem.find(_('EX_GeographicBoundingBox'))
-			if bbox_elem is not None:
-				layer.extent = (
-					float(bbox_elem.find(_('westBoundLongitude')).text),
-					float(bbox_elem.find(_('southBoundLatitude')).text),
-					float(bbox_elem.find(_('eastBoundLongitude')).text),
-					float(bbox_elem.find(_('northBoundLatitude')).text),
-				)
+			bbox_projection = bbox_elem.attrib.get('CRS') or bbox_elem.attrib.get('SRS')
+			layer.extents[bbox_projection] = bbox
 
 		sublayers_elems = layer_elem.findall(_('Layer'))
 		if sublayers_elems:
@@ -161,6 +168,7 @@ class WmsGetCapabilitiesService(object):
 			root_layer_elem = capability_elem.find(_("Layer"))
 			if root_layer_elem is not None:
 				self.wms_root_layer = self._parse_layer(root_layer_elem)
+			self.wms_layers[self.wms_root_layer.name] = self.wms_root_layer
 
 			# WMS-C Layers
 			vendor_specific_elem = capability_elem.find(_("VendorSpecificCapabilities"))

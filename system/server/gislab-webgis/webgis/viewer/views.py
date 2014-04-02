@@ -238,6 +238,7 @@ def page(request):
 			baselayers_tree['layers'].insert(0, baselayers_capabilities['BLANK'])
 
 		project_tile_resolutions = context['tile_resolutions']
+		project_projection = context['projection']
 		base_layers_capabilities = {}
 		unavailable_wms_servers = []
 		# Fill additional properties of WMS layers from GetCapabilities response
@@ -266,9 +267,15 @@ def page(request):
 					base_layer['max_resolution'] = wmsc_layer.resolutions[0]
 				elif baselayer_name in capabilities.wms_layers:
 					wms_layer = capabilities.wms_layers[baselayer_name]
-					base_layer['type'] = 'WMS'
-					base_layer['extent'] = wms_layer.extent
-					base_layer['resolutions'] = project_tile_resolutions
+					if project_projection in wms_layer.projections:
+						base_layer['type'] = 'WMS'
+						base_layer['resolutions'] = project_tile_resolutions
+						layer = wms_layer
+						while project_projection not in layer.extents and layer.parent:
+							layer = layer.parent
+						base_layer['extent'] = layer.extents.get(project_projection)
+					else:
+						base_layer['type'] = 'UNAVAILABLE'
 				else:
 					base_layer['type'] = 'UNAVAILABLE'
 			else:
