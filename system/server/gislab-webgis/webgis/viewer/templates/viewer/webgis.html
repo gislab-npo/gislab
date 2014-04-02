@@ -171,13 +171,35 @@
 					id: 'featureinfo-panel',
 					title: 'Attributes',
 					map: mappanel.map,
+					collapseMode: 'mini',
 					autoPanMapOnSelection: false,
 					collapsible: true,
 					collapsed: true,
 					height: 200,
 					split: true,
 					region: 'south',
-					animate: false,
+					animCollapse: false,
+					bbar: [],
+					listeners: {
+						beforeexpand: function(panel) {
+							// move items from map-panel's bootom toolbar into featureinfo bootom toolbar
+							var bbar = panel.getBottomToolbar();
+							mappanel.getBottomToolbar().items.each(function(item) {
+								bbar.add(item);
+							});
+							bbar.doLayout();
+							mappanel.getBottomToolbar().hide();
+						},
+						beforecollapse: function(panel) {
+							// move items from featureinfo bootom toolbar into map-panel's bootom toolbar
+							var bbar = mappanel.getBottomToolbar();
+							panel.getBottomToolbar().items.each(function(item) {
+								bbar.add(item);
+							});
+							bbar.doLayout();
+							bbar.show();
+						},
+					}
 				});
 
 				var mappanel_container = new Ext.Panel({
@@ -222,11 +244,10 @@
 				});
 
 				var baselayer_panel = new Ext.Panel({
-					title: 'Content',
 					layout: 'fit',
 					cls: 'layers-legend-toolbar',
 					{% if base_layers %}
-					height: 70,
+					height: 45,
 					tbar: [{
 						xtype: 'label',
 						text: 'Base Layers',
@@ -317,6 +338,7 @@
 				var left_panel = new Ext.Panel({
 					region: 'west',
 					width: 250,
+					title: 'Content',
 					defaults: {
 						width: '100%',
 						flex: 1
