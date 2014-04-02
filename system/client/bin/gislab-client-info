@@ -20,6 +20,7 @@ INTERFACE_IP=$(/sbin/ifconfig ${INTERFACE} | grep inet | cut -f2 -d":" | cut -f1
 QGIS_VERSION=$(dpkg-query -W --showformat '${version}' qgis)
 
 INFO="
+GIS.lab ID: $GISLAB_UNIQUE_ID\n
 GIS.lab VERSION: $GISLAB_VERSION\n
 \n
 SESSION\n
