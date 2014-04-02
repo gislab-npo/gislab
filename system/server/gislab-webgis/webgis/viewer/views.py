@@ -68,7 +68,7 @@ def set_query_parameters(url, params_dict):
 
 
 def featureinfo(request):
-	url = "{0}/?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
+	url = "{0}?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
 	resp = urllib2.urlopen(url)
 	resp_content = resp.read()
 	content_type = resp.info().getheader("Content-Type")
@@ -76,7 +76,7 @@ def featureinfo(request):
 	return HttpResponse(resp_content, content_type=content_type)
 
 def getprint(request):
-	url = "{0}/?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
+	url = "{0}?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
 	resp = urllib2.urlopen(url)
 	resp_content = resp.read()
 	content_type = resp.info().getheader("Content-Type")
@@ -145,11 +145,10 @@ def page(request):
 	context['projection'] = 'EPSG:3857'
 
 	if project:
-		projectfile = os.path.join(settings.WEBGIS_PROJECT_ROOT, project)
-		ows_url = '{0}/?map={1}'.format(settings.WEBGIS_OWS_URL, projectfile)
+		ows_url = '{0}?map={1}'.format(settings.WEBGIS_OWS_URL, project)
 		ows_getprojectsettings_url = "{0}&SERVICE=WMS&REQUEST=GetProjectSettings".format(ows_url)
-		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('webgis.viewer.views.featureinfo'), projectfile)
-		getprint_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetPrint".format(reverse('webgis.viewer.views.getprint'), projectfile)
+		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('webgis.viewer.views.featureinfo'), project)
+		getprint_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetPrint".format(reverse('webgis.viewer.views.getprint'), project)
 
 		try:
 			project_settings = QgisGetProjectSettingsService(ows_getprojectsettings_url)
@@ -287,13 +286,12 @@ def page(request):
 
 		context.update({
 			'project': project,
-			'projectfile': projectfile,
 			'ows_url': ows_url,
 			'ows_getprojectsettings_url': ows_getprojectsettings_url,
 			'getfeatureinfo_url': getfeatureinfo_url,
 			'getprint_url': getprint_url,
 			'project_extent': root_layer.extent,
-			'featureinfo': 'application/vnd.ogc.gml' in project_settings.featureinfo_formats and projectfile,
+			'featureinfo': 'application/vnd.ogc.gml' in project_settings.featureinfo_formats and project,
 			'print_composers': project_settings.print_composers,
 
 			'root_title': project_settings.title,

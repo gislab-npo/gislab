@@ -62,8 +62,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 WEBGIS_OWS_URL = 'http://server.gis.lab/cgi-bin/qgis_mapserv.fcgi'
 
-WEBGIS_PROJECT_ROOT = '/storage/share'
-
 WEBGIS_SCALES = (10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500)
 
 # Dictionary of <MIME Type>: <File extension> pairs
