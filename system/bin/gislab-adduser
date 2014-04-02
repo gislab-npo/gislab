@@ -145,9 +145,6 @@ fi
 
 ldapsetpasswd $GISLAB_USER "$GISLAB_USER_PASSWORD_HASH"
 
-find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER##/$GISLAB_USER/g" "{}" \;	# Replace ##GISLAB_USER## placeholder with
-																	# current user name
-
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $GISLAB_USER" # PostgreSQL account
 sudo su - postgres -c "psql -c \"GRANT labusers TO $GISLAB_USER;\""
 sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $GISLAB_USER;\""
@@ -159,6 +156,11 @@ fi
 
 mkdir -p /storage/share/$GISLAB_USER # NFS directory
 chown $GISLAB_USER:labusers /storage/share/$GISLAB_USER
+
+
+# replace user name and password placeholders with real user values
+find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER##/$GISLAB_USER/g" "{}" \;
+find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER_PASSWORD##/$GISLAB_USER_PASSWORD/g" "{}" \;
 
 
 echo -e "\n[GIS.lab]: Created account '$GISLAB_USER' with password '$GISLAB_USER_PASSWORD'."
