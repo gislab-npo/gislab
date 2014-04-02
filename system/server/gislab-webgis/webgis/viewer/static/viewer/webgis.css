@@ -222,6 +222,24 @@
 .list-item-indent-2 {
 	padding-left: 16px;
 }
+.list-item-indent-3 {
+	padding-left: 24px;
+}
+.list-item-indent-4 {
+	padding-left: 32px;
+}
+.list-item-indent-5 {
+	padding-left: 40px;
+}
+.list-item-indent-6 {
+	padding-left: 48px;
+}
+.list-item-indent-7 {
+	padding-left: 56px;
+}
+.list-item-indent-8 {
+	padding-left: 64px;
+}
 
 .layers-legend-toolbar .x-toolbar {
 	background-image: none;

@@ -37,7 +37,7 @@ permalink_provider.on({
 		}
 		var overlays_root = Ext.getCmp('layers-tree-panel').root;
 		if (overlays_root) {
-			parameters.LAYERS = overlays_root.getEncodedLayersParam();
+			parameters.OVERLAY = overlays_root.getEncodedLayersParam();
 		}
 		var extent_array = map.getExtent().toArray();
 		for (var i = 0; i < 4; i++) {
