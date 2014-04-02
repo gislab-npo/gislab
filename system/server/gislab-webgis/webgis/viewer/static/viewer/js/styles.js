@@ -1,7 +1,7 @@
 var WebgisStyles = {
 	drawing_style: new OpenLayers.StyleMap({
 		'default':{
-			label: '${label}',
+			label: '${title}',
 			fontSize: '12px',
 			fontWeight: 'bold',
 			labelAlign: 'lb',
@@ -19,7 +19,7 @@ var WebgisStyles = {
 			labelOutlineOpacity: 0.5,
 		},
 		'select': {
-			label: '${label}',
+			label: '${title}',
 			fontSize: '12px',
 			fontWeight: 'bold',
 			labelAlign: 'lb',

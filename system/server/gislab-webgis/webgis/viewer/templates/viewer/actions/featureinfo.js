@@ -31,11 +31,28 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 	},
 	listeners: {
 		afterrender: function(combo) {
+			// get list of queryable layers
+			var queryable_layers = [];
+			Ext.getCmp('layers-tree-panel').root.cascade(function(node) {
+				if (node.isLeaf() && node.attributes.config.queryable) {
+					queryable_layers.push(node.attributes.text);
+				}
+			});
+			combo.queryableLayers = queryable_layers;
+
+			var on_visible_layers_changed = function(node, layer, visible_layers) {
+				var layers_list = [];
+				Ext.each(visible_layers, function(layer_name) {
+					if (this.queryableLayers.indexOf(layer_name) != -1) {
+						layers_list.push(layer_name);
+					}
+				}, this);
+				this.updateLayersList(layers_list);
+			}.bind(combo);
+
 			var overlays_root = Ext.getCmp('layers-tree-panel').root;
-			combo.updateLayersList(overlays_root.getVisibleLayers());
-			overlays_root.on('layerchange', function(node, layer, visible_layers) {
-				this.updateLayersList(visible_layers);
-			}, combo);
+			on_visible_layers_changed(overlays_root, overlays_root.layer, overlays_root.getVisibleLayers());
+			overlays_root.on('layerchange', on_visible_layers_changed, combo);
 		}
 	}
 });

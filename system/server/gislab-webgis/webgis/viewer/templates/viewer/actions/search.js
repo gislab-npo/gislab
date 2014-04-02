@@ -302,10 +302,12 @@ var searchWindow = new Ext.Window({
 				Ext.getCmp('layers-tree-panel').root.cascade(function(node) {
 					if (node.isLeaf()) {
 						var layer_config = node.attributes.config;
-						layers_data.push({
-							name: layer_config.name,
-							attributes: layer_config.attributes
-						});
+						if (layer_config.queryable) {
+							layers_data.push({
+								name: layer_config.name,
+								attributes: layer_config.attributes
+							});
+						}
 					}
 				});
 				this.layersData = layers_data;

@@ -202,6 +202,7 @@ def page(request):
 					layer_data = {
 						'name': layer_info.name,
 						'visible': layer_info.properties.get('visible') == '1',
+						'queryable': layer_info.properties.get('queryable') == '1',
 						'geom_type': layer_info.properties.get('geomType'),
 						'attributes': layer_info.attributes
 					}
