@@ -166,10 +166,7 @@ class WebGisPlugin:
 		legend_iface = self.iface.legendInterface()
 
 		extent = [round(coord, 3) for coord in map_canvas.extent().toRectF().getCoords()]
-		get_params = {
-			'PROJECT': project,
-			'EXTENT': ','.join(map(str, extent)),
-		}
+		get_params = [('PROJECT', project)]
 
 		layers_reletionship = legend_iface.groupLayerRelationship()
 		layers_root = Node('')
@@ -224,18 +221,19 @@ class WebGisPlugin:
 
 		base_param = ";".join(base_param_parts)
 		if base_param:
-			get_params['BASE'] = base_param
+			get_params.append(('BASE', base_param))
 
 		scales, ok = self.project.readListEntry("Scales", "/ScalesList")
 		if ok and scales:
 			scales = [scale.split(":")[-1] for scale in scales]
-			get_params['SCALES'] = ','.join(scales)
+			get_params.append(('SCALES', ','.join(scales)))
 
+		get_params.append(('EXTENT', ','.join(map(str, extent))))
 		drawings = dialog.drawings.text()
 		if drawings:
-			get_params['DRAWINGS'] = drawings.replace(" ", "")
+			get_params.append(('DRAWINGS', drawings.replace(" ", "")))
 
-		link = 'http://web.gis.lab/?{0}'.format("&".join(["{0}={1}".format(name, value) for name, value in get_params.iteritems()]))
+		link = 'http://web.gis.lab/?{0}'.format("&".join(["{0}={1}".format(name, value) for name, value in get_params]))
 		#print "Starting firefox ...", link
 		subprocess.Popen([r'firefox', '-new-tab', link])
 		dialog.close()

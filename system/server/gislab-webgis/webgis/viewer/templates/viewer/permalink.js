@@ -25,12 +25,8 @@ permalink_provider.on({
 	statechange: function(provider, name, value) {
 		var map = mappanel.map;
 
-		var parameters = {
-			DPI: OpenLayers.DOTS_PER_INCH,
-			{% if project %}PROJECT: '{{ project }}',{% endif %}
-			{% if scales %}SCALES: '{{ scales|join:"," }}',{% endif %}
-			
-		};
+		var parameters = { {% if project %}PROJECT: '{{ project }}'{% endif %} };
+
 		var baselayers_combo = Ext.getCmp('base-layer-combo');
 		if (baselayers_combo) {
 			parameters.BASE = baselayers_combo.getEncodedLayersParam();
@@ -39,6 +35,7 @@ permalink_provider.on({
 		if (overlays_root) {
 			parameters.OVERLAY = overlays_root.getEncodedLayersParam();
 		}
+		{% if scales %}parameters.SCALES = '{{ scales|join:"," }}';{% endif %}
 		var extent_array = map.getExtent().toArray();
 		for (var i = 0; i < 4; i++) {
 			extent_array[i] = extent_array[i].toFixed(1);
