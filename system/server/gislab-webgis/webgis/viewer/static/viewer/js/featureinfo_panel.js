@@ -94,7 +94,30 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 				this.map.addLayer(flayer);
 
 				// create header info of features attributes (of the same layer)
-				var fields = [], columns = [], data = [];
+				var fields = [];
+				var columns = [];
+				var data = [];
+				fields.push({ name: 'feature', type: 'auto' });
+				columns.push({
+					xtype : 'actioncolumn',
+					width: 26,
+					scope: this,
+					items : [{
+						tooltip : 'Zoom To',
+						getClass: function(v, meta, rec) {
+							return 'zoom-to-feature';
+						},
+						handler: function(grid, rowIndex, colIndex) {
+							var record = grid.getStore().getAt(rowIndex);
+							var feature = record.get('feature');
+							if (feature.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point') {
+								this.map.setCenter(feature.bounds.getCenterLonLat());
+							} else {
+								this.map.zoomToExtent(feature.bounds, true);
+							}
+						}
+					}]
+				});
 				for (var attr_name in layer_features[0].attributes) {
 					if (attr_name == 'geometry' || attr_name == 'boundedBy') {continue;}
 					fields.push({ name: attr_name, type: 'string' });
