@@ -1,6 +1,7 @@
 Ext.namespace('WebGIS');
 
 WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
+	id: 'featureinfo-panel',
 	title: 'Feature Info',
 	split: true,
 	map: null,
@@ -9,6 +10,10 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 	styleMap: null,
 
 	initComponent: function() {
+		this.on('render', function(panel) {
+			this.header.insertHtml('beforeEnd', '<span id="featureinfo-status"></span>');
+			this.statusElem = Ext.get("featureinfo-status");
+		});
 		this.featureinfo_tabpanel = new Ext.TabPanel({
 			id: 'featureinfo-tabpanel',
 			items: [],
@@ -55,16 +60,21 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 		WebGIS.FeatureInfoPanel.superclass.initComponent.call(this);
 	},
 
+	setStatusInfo: function(info) {
+		this.statusElem.update(info);
+	},
 	clearFeaturesLayers: function() {
 		this.featureinfo_tabpanel.removeAll(true);
 		Ext.each(this.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
 			layer.destroyFeatures();
 			layer.setVisibility(false);
 		});
+		this.setStatusInfo('');
 	},
 
 	showFeatures: function(features) {
 		this.clearFeaturesLayers();
+		this.setStatusInfo(String.format('Features: {0}', features.length));
 		var featureinfo_data = {};
 		if (features.length > 0) {
 			// split features by layer name
