@@ -24,7 +24,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box
   config.vm.box = "precise32-canonical"
   
-  config.vm.hostname = "server"
   config.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'].strip + ".5"
 
   config.vm.network :forwarded_port, guest: 111, host: 1111, auto_correct: true
