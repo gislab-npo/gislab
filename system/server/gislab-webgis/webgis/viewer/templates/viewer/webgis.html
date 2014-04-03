@@ -409,20 +409,7 @@
 					},
 					success: function(response) {
 						var features = new OpenLayers.Format.GeoJSON().read(response.responseText);
-						var points = [];
-						var lines = [];
-						var polygons = [];
-						Ext.each(features, function(f) {
-							if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point')
-								points.push(f);
-							if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.LineString')
-								lines.push(f);
-							if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.Polygon')
-								polygons.push(f);
-						});
-						points_layer.addFeatures(points);
-						lines_layer.addFeatures(lines);
-						polygons_layer.addFeatures(polygons);
+						Ext.getCmp('draw-action').importFeatures(features, false);
 
 						// parse metadata
 						var metadata = JSON.parse(response.responseText).metadata;

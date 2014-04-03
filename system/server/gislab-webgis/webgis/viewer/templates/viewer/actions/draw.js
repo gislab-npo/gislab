@@ -62,6 +62,7 @@ var draw_controls = [
 ];
 
 action = new WebGIS.DrawAction({
+	id: 'draw-action',
 	controls: draw_controls,
 	map: mappanel.map,
 	cls: 'x-btn-icon',
@@ -113,6 +114,39 @@ action = new WebGIS.DrawAction({
 		} else {
 			Ext.MessageBox.alert("Warning", "There is no data to be saved.");
 		}
+	},
+	importFeatures: function(features, makeCopy) {
+		var points = [];
+		var lines = [];
+		var polygons = [];
+		Ext.each(features, function(f) {
+			var converted_features = [];
+			// break feature with multipoint, multilinestrings or multipolygons geom type to multiple features
+			// with simple geometry type and copy/create only supported attributes
+			if (f.geometry.components || makeCopy) {
+				var geometries = f.geometry.CLASS_NAME.indexOf('Multi') != -1? f.geometry.components : [f.geometry];
+				Ext.each(geometries, function(geom) {
+					var attributes = {
+						title: f.attributes.title? f.attributes.title : '',
+						description: f.attributes.description? f.attributes.description : '',
+					};
+					converted_features.push(new OpenLayers.Feature.Vector(geom, attributes));
+				});
+			} else {
+				converted_features = [f];
+			}
+			Ext.each(converted_features, function(f) {
+				if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point')
+					points.push(f);
+				if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.LineString')
+					lines.push(f);
+				if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.Polygon')
+					polygons.push(f);
+			});
+		});
+		points_layer.addFeatures(points);
+		lines_layer.addFeatures(lines);
+		polygons_layer.addFeatures(polygons);
 	},
 });
 mappanel.getTopToolbar().add(action);

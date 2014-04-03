@@ -303,4 +303,13 @@ img.zoom-to-feature {
 	background: no-repeat;
 	width: 16px;
 	height: 16px;
+	margin-right: 4px;
+}
+
+img.export-feature {
+	background-image: url('images/toolbar/arrow_up.png')!important;
+	background: no-repeat;
+	width: 16px;
+	height: 16px;
+	margin-left: 4px;
 }

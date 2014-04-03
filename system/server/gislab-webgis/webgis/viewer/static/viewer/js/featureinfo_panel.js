@@ -100,10 +100,10 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 				fields.push({ name: 'feature', type: 'auto' });
 				columns.push({
 					xtype : 'actioncolumn',
-					width: 26,
+					width: 52,
 					scope: this,
 					items : [{
-						tooltip : 'Zoom To',
+						tooltip : 'Zoom to feature',
 						getClass: function(v, meta, rec) {
 							return 'zoom-to-feature';
 						},
@@ -115,6 +115,16 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 							} else {
 								this.map.zoomToExtent(feature.bounds, true);
 							}
+						}
+					}, {
+						tooltip : 'Export to drawings',
+						getClass: function(v, meta, rec) {
+							return 'export-feature';
+						},
+						handler: function(grid, rowIndex, colIndex) {
+							var record = grid.getStore().getAt(rowIndex);
+							var feature = record.get('feature');
+							Ext.getCmp('draw-action').importFeatures([feature], true);
 						}
 					}]
 				});
