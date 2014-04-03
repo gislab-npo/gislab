@@ -313,3 +313,18 @@ img.export-feature {
 	height: 16px;
 	margin-left: 4px;
 }
+
+span.x-panel-header-text {
+	display: table;
+	margin: 0 auto;
+}
+
+span#featureinfo-status {
+	position: absolute;
+	top: 6px;
+	left: 6px;
+}
+
+div.x-layout-split-south {
+	display: none!important;
+}
