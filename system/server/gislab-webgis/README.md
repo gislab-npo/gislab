@@ -1,6 +1,6 @@
-# GIS.lab WebGIS
+# GIS.lab Web
 ## Empty project
-To launch empty WebGIS project with OSM and Google base layers open following URL in web
+To launch empty GIS.lab Web project with OSM and Google base layers open following URL in web
 browser:
 
 ```
@@ -33,7 +33,7 @@ http://web.gis.lab/?PROJECT=lab1/natural-earth/central-europe.qgs
 
 ```
 
-Additionally, it is possible to configure behavior of WebGIS app via GET parameters in URL.
+Additionally, it is possible to configure behavior of GIS.lab Web via GET parameters in URL.
 ```
 format:
 http://web.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>&<PARAMETER>=<value>&<PARAMETER>=<value>...

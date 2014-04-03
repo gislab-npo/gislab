@@ -9,9 +9,9 @@
 
 
 [general]
-name=WebGIS plugin
+name=GIS.lab Web plugin
 qgisMinimumVersion=2.0
-description=Publish your projects into WebGis application
+description=Publish your projects in GIS.lab Web
 version=0.1
 author=Marcel Dancak, GISTA s.r.o.
 email=marcel.dancak@gista.sk

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- WebGIS plugin
+ GIS.lab Web plugin
                                  A QGIS plugin
- Publish your projects into WebGIS application
+ Publish your projects into GIS.lab Web application
                               -------------------
         begin                : 2014-01-09
         copyright            : (C) 2014 by Marcel Dancak, GISTA s.r.o.
@@ -90,13 +90,13 @@ class WebGisPlugin:
 		# Create action that will start plugin configuration
 		self.action = QAction(
 			QIcon(":/plugins/webgisplugin/icon.png"),
-			u"Publish as WebGIS project", self.iface.mainWindow())
+			u"Publish in GIS.lab Web", self.iface.mainWindow())
 		# connect the action to the run method
 		self.action.triggered.connect(self.run)
 
 		# Add toolbar button and menu item
 		self.iface.addToolBarIcon(self.action)
-		self.iface.addPluginToMenu(u"&WebGIS", self.action)
+		self.iface.addPluginToMenu(u"&GIS.lab Web", self.action)
 
 		self.project.readProject.connect(self._check_plugin_state)
 		self.project.projectSaved.connect(self._check_plugin_state)
@@ -105,7 +105,7 @@ class WebGisPlugin:
 
 	def unload(self):
 		# Remove the plugin menu item and icon
-		self.iface.removePluginMenu(u"&WebGIS", self.action)
+		self.iface.removePluginMenu(u"&GIS.lab Web", self.action)
 		self.iface.removeToolBarIcon(self.action)
 		
 		self.project.projectSaved.disconnect()

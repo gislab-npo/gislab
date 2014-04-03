@@ -40,7 +40,7 @@ for dirpath, dirnames, filenames in os.walk(package_root_dir):
 # setup
 setup(name='gislab-webgis',
 	version=".".join(map(str, __import__('webgis').VERSION)),
-	description='Built-in WebGIS application',
+	description='GIS.lab Web application',
 	author='Ivan Mincik, Marcel Dancak',
 	author_email='ivan.mincik@gmail.com, marcel.dancak@gista.sk',
 	url='https://github.com/imincik/gis-lab/',

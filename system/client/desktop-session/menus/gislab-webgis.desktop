@@ -1,12 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Empty WebGIS project
-Comment=Empty WebGIS project
+Name=Empty GIS.lab Web project
+Comment=Empty GIS.lab Web project
 Exec=firefox http://web.gis.lab
 Icon=webgis
 Path=
 Terminal=false
 StartupNotify=false
-Name[sk]=Prázdny projekt WebGIS
-Comment[sk]=Prázdny projekt WebGIS
+Name[sk]=Prázdny projekt GIS.lab Web
+Comment[sk]=Prázdny projekt GIS.lab Web
