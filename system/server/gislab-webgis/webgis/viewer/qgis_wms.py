@@ -23,6 +23,7 @@ class QgisLayer(object):
 	projection = None
 	extent = None
 	sublayers = None
+	attribution = None
 
 	def __init__(self, **kwargs):
 		for param, val in kwargs.iteritems():
@@ -97,6 +98,17 @@ class QgisGetProjectSettingsService(object):
 						'type': attrib_type
 					})
 		layer.attributes = attributes
+
+		attribution_elem = layer_elem.find("{http://www.opengis.net/wms}Attribution")
+		if attribution_elem is not None:
+			url = ''
+			url_elem = attribution_elem.find('{http://www.opengis.net/wms}OnlineResource')
+			if url_elem is not None:
+				url = url_elem.attrib.get('{http://www.w3.org/1999/xlink}href')
+			layer.attribution = {
+				'title': self._opt_text_elem(attribution_elem, "{http://www.opengis.net/wms}Title"),
+				'url': url
+			}
 		return layer
 
 	def _get_project_settings(self, getprojectsettings_url):

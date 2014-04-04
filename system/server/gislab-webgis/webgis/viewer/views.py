@@ -203,7 +203,8 @@ def page(request):
 						'visible': layer_info.properties.get('visible') == '1',
 						'queryable': layer_info.properties.get('queryable') == '1',
 						'geom_type': layer_info.properties.get('geomType'),
-						'attributes': layer_info.attributes
+						'attributes': layer_info.attributes,
+						'attribution': layer_info.attribution
 					}
 					overlays_capabilities[layer_info.name] = layer_data
 					return None, layer_data
