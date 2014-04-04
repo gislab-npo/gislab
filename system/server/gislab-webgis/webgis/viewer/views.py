@@ -135,7 +135,7 @@ def page(request):
 		raise Http404
 
 	context = {}
-	context['dpi'] = form.cleaned_data['dpi'] or 96
+	context['dpi'] = 96
 	project = form.cleaned_data['project']
 
 	scales = form.cleaned_data['scales'] or settings.WEBGIS_SCALES
