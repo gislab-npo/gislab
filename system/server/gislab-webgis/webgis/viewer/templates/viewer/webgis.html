@@ -78,7 +78,6 @@
 						buffer: 0,
 						visibility: true,
 						singleTile: true,
-						// attribution: "",
 					}
 				);
 				{% else %}
@@ -232,9 +231,7 @@
 				{% include "viewer/actions/print.js" %}
 				{% endif %}
 
-
-				var overlays_root;
-				overlays_root = new WebGIS.WmsLayersNode({
+				var overlays_root = new WebGIS.WmsLayersNode({
 					id: 'overlays-root',
 					text: 'Root',
 					expandable: false,
@@ -259,7 +256,7 @@
 						baselayers: JSON.parse('{{ base_layers|escapejs }}'),
 					}),
 					{% else %}
-					height: 26,
+					height: 1,
 					{% endif %}
 				})
 
@@ -389,7 +386,29 @@
 				mappanel.map.addControl(new OpenLayers.Control.PanPanel());
 				mappanel.map.addControl(new OpenLayers.Control.ZoomPanel());
 				mappanel.map.addControl(new OpenLayers.Control.Navigation());
-				mappanel.map.addControl(new OpenLayers.Control.Attribution());
+				var attribution_control = new OpenLayers.Control.Attribution();
+				{% if layers %}
+				var update_overlays_attribitions = function(root, layer, visible_layers) {
+					var attributions = [];
+					root.cascade(function(node) {
+						if (node.isLeaf() && node.attributes.checked) {
+							var attribution = node.attributes.config.attribution;
+							if (attribution && attribution.title) {
+								if (attribution.url) {
+									attributions.push(String.format('<a href="{0}">{1}</a>', attribution.url, attribution.title));
+								} else {
+									attributions.push(attribution.title);
+								}
+							}
+						}
+					});
+					layer.attribution = attributions.join(', ');
+					attribution_control.updateAttribution();
+				};
+				update_overlays_attribitions(overlays_root.root, overlays_root.root.layer);
+				overlays_root.root.on('layerchange', update_overlays_attribitions);
+				{% endif %}
+				mappanel.map.addControl(attribution_control);
 				map = mappanel.map;
 
 				// insert points from GET parameter

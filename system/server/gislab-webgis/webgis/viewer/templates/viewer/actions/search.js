@@ -438,7 +438,7 @@ var searchWindow = new Ext.Window({
 					params: {
 						SERVICE: 'WMS',
 						REQUEST: 'GetFeatureInfo',
-						FEATURE_COUNT: features_count,
+						FEATURE_COUNT: features_count+1,
 						INFO_FORMAT: 'application/vnd.ogc.gml',
 						SRS: '{{ projection }}',
 						LAYERS: layer,
@@ -446,13 +446,20 @@ var searchWindow = new Ext.Window({
 						FILTER: query_filter
 					},
 					scope: this,
-					success: function(response) {
+					success: function(response, options) {
 						var doc = response.responseXML;
 						if(!doc || !doc.documentElement) {
 							doc = response.responseText;
 						}
+						var features_panel = Ext.getCmp('featureinfo-panel');
 						var features = this.format.read(doc);
-						Ext.getCmp('featureinfo-panel').showFeatures(features);
+						if (features.length == options.params.FEATURE_COUNT) {
+							features.pop();
+							features_panel.showFeatures(features);
+							features_panel.setStatusInfo(String.format('Searching has reach limit of {0} results', features.length));
+						} else {
+							features_panel.showFeatures(features);
+						}
 					},
 					failure: function(response, opts) {
 						Ext.MessageBox.alert("Error", "Searching failed.");

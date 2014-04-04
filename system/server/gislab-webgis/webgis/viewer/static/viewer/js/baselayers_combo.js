@@ -62,7 +62,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 		if (!this.selectedLayerRecordData) {
 			// no visible base layer by default, so find the first suitable in the tree
 			this.baselayerRoot.cascade(function(node) {
-				if (node.isLeaf() && node.attributes.layerRecordData.layer) {
+				if (!this.selectedLayerRecordData && node.isLeaf() && node.attributes.layerRecordData.layer) {
 					this.selectedLayerRecordData = node.attributes.layerRecordData;
 					return false;
 				}
@@ -70,6 +70,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 		}
 		if (this.selectedLayerRecordData) {
 			this.setValue(this.selectedLayerRecordData.title);
+			this.selectedLayerRecordData.layer.setVisibility(true);
 			this.map.setBaseLayer(this.selectedLayerRecordData.layer);
 		}
 	},

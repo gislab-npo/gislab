@@ -172,7 +172,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			var location = parents.length? '/'+parents.reverse().join('/')+'/' : '/';
 			var layers_params = [];
 			Ext.each(layers_nodes, function(node) {
-				layers_params.push(String.format('{0}:{1}:{2}', node.attributes.text, node.attributes.checked? 1:0, 1.0));
+				layers_params.push(String.format('{0}:{1}:{2}', node.attributes.text, node.attributes.checked? 1:0, 0));
 			}, this);
 			return location+layers_params.join(';');
 		};
