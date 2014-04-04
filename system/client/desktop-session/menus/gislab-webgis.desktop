@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Empty GIS.lab Web project
+Name=Empty GIS.lab Web Project
 Comment=Empty GIS.lab Web project
 Exec=firefox http://web.gis.lab
 Icon=webgis
