@@ -234,9 +234,7 @@ def page(request):
 
 		# ensure that a blank base layer is always used
 		if not baselayers_tree:
-			baselayers_tree = {'name': '', 'layers': []}
-		if 'BLANK' not in [layer['name'] for layer in baselayers_tree['layers']]:
-			baselayers_tree['layers'].insert(0, baselayers_capabilities['BLANK'])
+			baselayers_tree = {'name': '', 'layers': [baselayers_capabilities['BLANK']]}
 
 		project_tile_resolutions = context['tile_resolutions']
 		project_projection = context['projection']
@@ -313,7 +311,7 @@ def page(request):
 			return HttpResponse("Unknown base layer: {0}".format(str(e)), content_type='text/plain', status=400);
 
 	google = False
-	if 'base_layers' in context:
+	if context.get('base_layers'):
 		for name, baselayer_info in SPECIAL_BASE_LAYERS.iteritems():
 			if baselayer_info.get('type') == 'google' and name in context['base_layers']:
 				google = True
