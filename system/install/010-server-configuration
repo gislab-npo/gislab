@@ -20,6 +20,7 @@ cat << EOF > /etc/hostname
 $hostname
 EOF
 service hostname start
+service rsyslog restart # restart syslog to read new hostname
 
 
 # timezone
