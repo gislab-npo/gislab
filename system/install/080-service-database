@@ -2,6 +2,12 @@
 ### DATABASE SERVER - POSTGRESQL/POSTGIS ###
 #
 
+# do not run on upgrade
+if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
+	return
+fi
+
+
 # set system shmmax value which must be something little bit higher than one fourth of
 # system memory size
 shmmax=$(echo $(free -b | awk '/^Mem:/{print $2}') / 3.9 | bc)

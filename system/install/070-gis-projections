@@ -2,6 +2,11 @@
 ### GIS PROJECTIONS ###
 #
 
+# do not run on upgrade
+if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
+	return
+fi
+
 # customize projections support
 /bin/bash /vagrant/user/projections/*-libs.sh
 

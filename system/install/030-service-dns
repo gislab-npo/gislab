@@ -60,7 +60,7 @@ sed -i 's/^OPTIONS=.*/OPTIONS="-4 -u bind"/' /etc/default/bind9
 service bind9 restart
 
 # use our DNS server
-cat << EOF >> /etc/resolvconf/resolv.conf.d/head
+cat << EOF > /etc/resolvconf/resolv.conf.d/head
 nameserver 127.0.0.1
 EOF
 resolvconf -u

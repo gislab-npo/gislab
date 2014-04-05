@@ -48,7 +48,8 @@ echo "}" >> /etc/ltsp/dhcpd-clients-allowed.conf
 
 service isc-dhcp-server restart
 
-echo -e "\n[GIS.lab]: Done."
+
+echo -e "\n[GIS.lab]: Allowed clients installation done."
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

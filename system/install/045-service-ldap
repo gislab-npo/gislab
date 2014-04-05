@@ -2,6 +2,11 @@
 ###  LDAP DATABASE ###
 #
 
+# do not run on upgrade
+if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
+	return
+fi
+
 # generate and set LDAP admin password
 # generally we don't need to know it, but we can
 # find it in '/etc/ldapscripts/ldapscripts.passwd'
@@ -250,4 +255,4 @@ EOL
 
 unset LDAP_ADMIN_PASS
 
-### END OF SCRIPT ###
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:
