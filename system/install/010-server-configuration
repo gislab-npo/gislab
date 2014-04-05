@@ -7,14 +7,13 @@
 GISLAB_SERVER_IP=$(hostname  -I | awk -F" " '{print $NF}')
 GISLAB_NETWORK=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $1 "." $2 "." $3 }')
 
-# set FQDN to 'server.gis.lab' if not already set. If server received FQDN from
-# provider, leave it as is.
-if [ "$(hostname --fqdn)" == "vagrant-ubuntu-precise-32" ]; then
-	hostname="server"
-	hostname_fqdn="server.gis.lab"
-else
+# set FQDN to 'server.gis.lab' if not given by cloud provider at start (AWS)
+if [ "$GISLAB_SERVER_PROVIDER" == "aws" ]; then
 	hostname=$(hostname)
 	hostname_fqdn=$(hostname --fqdn)
+else
+	hostname="server"
+	hostname_fqdn="server.gis.lab"
 fi
 sed -i "/^127.0.0.1 localhost/a $GISLAB_SERVER_IP $hostname_fqdn $hostname" /etc/hosts
 cat << EOF > /etc/hostname
