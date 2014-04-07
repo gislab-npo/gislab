@@ -67,7 +67,7 @@ def set_query_parameters(url, params_dict):
 	return urlunsplit(url_parts)
 
 
-def featureinfo(request):
+def getfeatureinfo(request):
 	url = "{0}?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
 	resp = urllib2.urlopen(url)
 	resp_content = resp.read()
@@ -147,7 +147,7 @@ def page(request):
 	if project:
 		ows_url = '{0}?map={1}'.format(settings.WEBGIS_OWS_URL, project)
 		ows_getprojectsettings_url = "{0}&SERVICE=WMS&REQUEST=GetProjectSettings".format(ows_url)
-		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('webgis.viewer.views.featureinfo'), project)
+		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('webgis.viewer.views.getfeatureinfo'), project)
 		getprint_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetPrint".format(reverse('webgis.viewer.views.getprint'), project)
 
 		try:
