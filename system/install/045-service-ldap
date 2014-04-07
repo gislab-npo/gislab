@@ -58,7 +58,7 @@ certtool --generate-privkey \
 --outfile /etc/ssl/private/$(hostname)_slapd_key.pem
 
 cat << EOL > /etc/ssl/$(hostname).info
-organization = Gis Lab
+organization = Gis.lab
 cn = $(hostname -f)
 tls_www_server
 encryption_key
