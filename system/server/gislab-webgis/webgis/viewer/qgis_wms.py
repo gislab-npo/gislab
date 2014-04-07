@@ -93,10 +93,13 @@ class QgisGetProjectSettingsService(object):
 			for attrib_elem in attributes_elem:
 				attrib_type = ATTRIBUTE_TYPE.get(attrib_elem.attrib['type'])
 				if attrib_type:
-					attributes.append({
+					attrib_info = {
 						'name': attrib_elem.attrib['name'],
 						'type': attrib_type
-					})
+					}
+					if 'alias' in attrib_elem.attrib:
+						attrib_info['alias'] = attrib_elem.attrib['alias']
+					attributes.append(attrib_info)
 		layer.attributes = attributes
 
 		attribution_elem = layer_elem.find("{http://www.opengis.net/wms}Attribution")

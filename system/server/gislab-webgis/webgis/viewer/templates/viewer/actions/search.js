@@ -86,6 +86,9 @@ var searchWindow = new Ext.Window({
 						storeId: 'search-attributes-store',
 						root: 'attributes',
 						fields: [{
+							name: 'alias',
+							type: 'string'
+						}, {
 							name: 'name',
 							type: 'string'
 						}, {
@@ -94,7 +97,7 @@ var searchWindow = new Ext.Window({
 						}]
 					}),
 					valueField: 'name',
-					displayField: 'name',
+					displayField: 'alias',
 					listeners: {
 						select: function (combo, record, index) {
 							var operators_combo = combo.ownerCt.attributeOperator;
@@ -303,9 +306,17 @@ var searchWindow = new Ext.Window({
 					if (node.isLeaf()) {
 						var layer_config = node.attributes.config;
 						if (layer_config.queryable) {
+							var attributes_data = [];
+							Ext.each(layer_config.attributes, function(attribute) {
+								attributes_data.push({
+									alias: attribute.alias? attribute.alias : attribute.name,
+									name: attribute.name,
+									type: attribute.type,
+								});
+							});
 							layers_data.push({
 								name: layer_config.name,
-								attributes: layer_config.attributes
+								attributes: attributes_data
 							});
 						}
 					}
