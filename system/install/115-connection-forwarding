@@ -2,6 +2,12 @@
 ### CONNECTION FORWARDING ###
 #
 
+# do not run on upgrade
+if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
+	return
+fi
+
+
 # set IP forwarding for client machines and call it from rc.local to run it after server restart
 cat << EOF > /usr/local/bin/enable-ip-forward
 #!/bin/bash

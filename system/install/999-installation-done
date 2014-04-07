@@ -2,6 +2,12 @@
 ### INSTALLATION FINISHED ###
 #
 
+# 'installation.done' file will be used to detect if we are running initial GIS.lab
+# installation or we are performing upgrade
+mkdir -p /etc/gislab
+touch /etc/gislab/installation.done
+
+
 echo -e "\n[GIS.lab]: Done. GIS.lab is installed and ready to use!"
 
 echo -e "* Server IP: $(hostname  -I | awk -F" " '{print $NF}')"

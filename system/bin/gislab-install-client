@@ -117,6 +117,7 @@ service nbd-server restart
 sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/ltsp/i386/pxelinux.cfg/default
 
 
-echo -e "\n[GIS.lab]: Done."
+echo -e "\n[GIS.lab]: Client installation done."
+
 
 # vim: set ts=4 sts=4 sw=4 noet:

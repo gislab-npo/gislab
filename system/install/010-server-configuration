@@ -7,20 +7,25 @@
 GISLAB_SERVER_IP=$(hostname  -I | awk -F" " '{print $NF}')
 GISLAB_NETWORK=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $1 "." $2 "." $3 }')
 
-# set FQDN to 'server.gis.lab' if not already set. If server received FQDN from
-# provider, leave it as is.
-if [ "$(hostname --fqdn)" == "vagrant-ubuntu-precise-32" ]; then
-	hostname="server"
-	hostname_fqdn="server.gis.lab"
-else
+# set FQDN to 'server.gis.lab' if not given by cloud provider at start (AWS)
+if [ "$GISLAB_SERVER_PROVIDER" == "aws" ]; then
 	hostname=$(hostname)
 	hostname_fqdn=$(hostname --fqdn)
+else
+	hostname="server"
+	hostname_fqdn="server.gis.lab"
 fi
-sed -i "/^127.0.0.1 localhost/a $GISLAB_SERVER_IP $hostname_fqdn $hostname" /etc/hosts
+
+cat << EOF > /etc/hosts
+127.0.0.1 localhost
+$GISLAB_SERVER_IP $hostname_fqdn $hostname
+EOF
+
 cat << EOF > /etc/hostname
 $hostname
 EOF
 service hostname start
+service rsyslog restart # restart syslog to read new hostname
 
 
 # timezone
@@ -43,9 +48,14 @@ LANG="en_US.UTF-8"
 LANGUAGE="en_US:en"
 EOF
 
-# sudoers
-sed -i 's/secure_path.*/secure_path="\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin:\/vagrant\/system\/bin"/g' /etc/sudoers
-echo "PATH="$PATH:/vagrant/system/bin"" >> /etc/profile
+# add path to management scripts for sudo users. Configuration in 'vagrant-secure-path' is losing
+# effect once sudo-ldap is installed
+cat << EOF > /etc/sudoers.d/vagrant-secure-path
+Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/vagrant/system/bin"
+EOF
+chmod 0440 /etc/sudoers.d/vagrant-secure-path
+
+echo "PATH="$PATH:/vagrant/system/bin"" >> /etc/profile #TODO: do not append path again on upgrade
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

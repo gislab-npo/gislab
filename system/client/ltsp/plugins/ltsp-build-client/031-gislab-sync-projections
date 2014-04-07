@@ -1,0 +1,13 @@
+# Sync projections configuration with server (for example in case they are modified by plugins)
+
+case "$MODE" in
+    finalization)
+	# sync proj files
+	rm -rf $ROOT/usr/share/proj
+	cp -a /usr/share/proj $ROOT/usr/share
+
+	# sync gdal files
+	rm -rf $ROOT/usr/share/gdal
+	cp -a /usr/share/gdal $ROOT/usr/share
+    ;;
+esac

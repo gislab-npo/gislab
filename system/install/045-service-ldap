@@ -2,6 +2,11 @@
 ###  LDAP DATABASE ###
 #
 
+# do not run on upgrade
+if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
+	return
+fi
+
 # generate and set LDAP admin password
 # generally we don't need to know it, but we can
 # find it in '/etc/ldapscripts/ldapscripts.passwd'
@@ -53,7 +58,7 @@ certtool --generate-privkey \
 --outfile /etc/ssl/private/$(hostname)_slapd_key.pem
 
 cat << EOL > /etc/ssl/$(hostname).info
-organization = Gis Lab
+organization = Gis.lab
 cn = $(hostname -f)
 tls_www_server
 encryption_key
@@ -224,7 +229,7 @@ objectClass: sudoRole
 cn: defaults
 description: Default sudoOption's go here
 sudoOption: env_reset
-sudoOption: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/vagrant/system/bin"
+sudoOption: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/vagrant/system/bin:"
 
 dn: cn=%labadmins,ou=SUDOers,dc=gis,dc=lab
 objectClass: top
@@ -250,4 +255,4 @@ EOL
 
 unset LDAP_ADMIN_PASS
 
-### END OF SCRIPT ###
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

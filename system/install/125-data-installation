@@ -2,6 +2,7 @@
 ### DATA ###
 #
 
+rm -rf /storage/repository/*
 cp -a /vagrant/user/data /storage/repository/
 
 

@@ -2,6 +2,12 @@
 ### DATABASE SERVER - POSTGRESQL/POSTGIS ###
 #
 
+# do not run on upgrade
+if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
+	return
+fi
+
+
 # set system shmmax value which must be something little bit higher than one fourth of
 # system memory size
 shmmax=$(echo $(free -b | awk '/^Mem:/{print $2}') / 3.9 | bc)
@@ -46,9 +52,7 @@ sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/con
 sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/pgc_casts.sql"
 sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/xor_aggregate.sql"
 
-# adding additional projections support
-sudo su - postgres -c "psql -d template_postgis -f /vagrant/user/projections/*-postgis.sql"
-
+# close template database
 sudo su - postgres -c "psql -d template_postgis -c \"VACUUM FULL;\""
 sudo su - postgres -c "psql -d template_postgis -c \"VACUUM FREEZE;\""
 sudo su - postgres -c "psql -d postgres -c \"UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';\""

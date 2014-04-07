@@ -2,6 +2,12 @@
 ### USER ACCOUNTS ###
 #
 
+# do not run on upgrade
+if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
+	return
+fi
+
+
 # Some Vagrant boxes are using 'vagrant' account for provisioning, some of them are
 # using 'ubuntu' account. Set strong password for these accounts.
 # Test which account exists and set strong password.
