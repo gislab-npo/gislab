@@ -16,8 +16,8 @@ then
 fi
 
 
-if [ ! -d "$GISLAB_BACKUP_DIR" ]; then
-	mkdir -p $GISLAB_BACKUP_DIR
+if [ ! -d "/storage/backup" ]; then
+	mkdir -p /storage/backup
 fi
 
 if [ $# -ne 1 ]; then
@@ -36,7 +36,7 @@ if ! id $GISLAB_USER >/dev/null 2>&1; then
 fi
 
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
-BACKUP_FILE=$GISLAB_BACKUP_DIR/gislab-backup-$GISLAB_USER-$DATE.tar
+BACKUP_FILE=/storage/backup/gislab-backup-$GISLAB_USER-$DATE.tar
 GISLAB_USER_HOME=/home/$GISLAB_USER
 TEMP_BACKUP_DIR=/tmp/$GISLAB_USER-$DATE
 HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar.bz2

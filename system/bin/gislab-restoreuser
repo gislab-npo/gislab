@@ -58,7 +58,7 @@ GISLAB_USER=$1
 if [ -z "$BACKUP_FILE" ]; then
 	while true; do
 		i=0
-		for BACKUP in $(ls -tr $GISLAB_BACKUP_DIR/gislab-backup-$GISLAB_USER-* 2>/dev/null); do
+		for BACKUP in $(ls -tr /storage/backup/gislab-backup-$GISLAB_USER-* 2>/dev/null); do
 			echo " $(($i+1)): $BACKUP"
 			BACKUPS[$i]="$BACKUP"
 			let i=$i+1
