@@ -4,21 +4,27 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Ubuntu repositories
+# use Ubuntu repositories provided by AWS if running in AWS
+if [ "$GISLAB_SERVER_PROVIDER" == "aws" ]; then
+	GISLAB_APT_REPOSITORY_COUNTRY_MIRROR_MAIN="${GISLAB_SERVER_AWS_REGION}.ec2"
+else
+	GISLAB_APT_REPOSITORY_COUNTRY_MIRROR_MAIN="$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR"
+fi
+
+# Main Ubuntu repositories
 cat << EOF > /etc/apt/sources.list
-###### Ubuntu Main Repos
-deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse 
-deb-src http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise main restricted universe multiverse 
+###### Main Ubuntu repositories
+deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR_MAIN.archive.ubuntu.com/ubuntu/ precise main universe multiverse 
+deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR_MAIN.archive.ubuntu.com/ubuntu/ precise-updates main universe multiverse 
 
-###### Ubuntu Update Repos
-deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse 
-deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse 
-deb-src http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise-security main restricted universe multiverse 
-deb-src http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise-updates main restricted universe multiverse 
+EOF
 
-###### Ubuntu Partner Repo
+cat << EOF >> /etc/apt/sources.list
+###### Ubuntu security updates
+deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR.archive.ubuntu.com/ubuntu/ precise-security main universe multiverse 
+
+###### Ubuntu partner repository
 deb http://archive.canonical.com/ubuntu precise partner
-deb-src http://archive.canonical.com/ubuntu precise partner
 
 EOF
 
@@ -32,6 +38,7 @@ EOF
 # custom QGIS repository
 if [ -n "${GISLAB_QGIS_VERSION}" ]; then
 	cat << EOF >> /etc/apt/sources.list
+#### $GISLAB_QGIS_VERSION
 deb http://ppa.launchpad.net/imincik/$GISLAB_QGIS_VERSION/ubuntu precise main
 
 EOF
