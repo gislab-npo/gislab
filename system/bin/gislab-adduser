@@ -16,7 +16,11 @@ function usage() {
 	echo "USAGE: $(basename $0) [OPTIONS] username"
 	echo "Create GIS.lab user account."
 	echo -e "\nOPTIONS
+	-d description
+	-g first name (required)
 	-h display this help
+	-l last name (required)
+	-m email (required)
 	-p set password for user. If not given it will be automatically generated.
 	-s add user do 'labadmins' group to allow 'sudo'
 	"
@@ -27,10 +31,14 @@ function usage() {
 # options
 GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overriden by --password option 
 
-while getopts "hp:s" OPTION
+while getopts "d:g:hl:m:p:s" OPTION
 do
         case "$OPTION" in
+			d) GISLAB_USER_DESC="$OPTARG" ;;
+			g) GISLAB_USER_GIVEN_NAME=$OPTARG ;;
 			h) usage ; exit 0 ;;
+			l) GISLAB_USER_SURNAME=$OPTARG ;;
+			m) GISLAB_USER_MAIL=$OPTARG ;;
 			p) GISLAB_USER_PASSWORD=$OPTARG ;;
 			s) SUDO=yes ;;
 			\?) exit 1;;
@@ -39,8 +47,15 @@ done
 shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; exit 0; fi
 
+if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_USER_MAIL" ]; then
+	usage
+	exit 1
+fi
+
+
 GISLAB_USER=$1
 GISLAB_USER_PASSWORD_HASH=$(slappasswd -s $GISLAB_USER_PASSWORD -h {SSHA})
+GISLAB_USER_COMMON_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
 
 
 # /etc/skel update
@@ -137,6 +152,33 @@ chown -R root:root /etc/skel
 echo -e "[GIS.lab]: Creating user account '$GISLAB_USER'..."
 ldapadduser $GISLAB_USER labusers # LDAP account
 chmod go-rwx /home/$GISLAB_USER
+
+# add LDAP user attributes
+ldapmodifyuser $GISLAB_USER > /dev/null << EOL
+changetype: modify
+replace: cn
+cn: $GISLAB_USER_COMMON_NAME
+-
+replace: sn
+sn: $GISLAB_USER_SURNAME
+-
+add: givenName
+givenName: $GISLAB_USER_GIVEN_NAME
+-
+add: mail
+mail: $GISLAB_USER_MAIL
+-
+add: gecos
+gecos: $GISLAB_USER_COMMON_NAME
+EOL
+
+if [ -n "$GISLAB_USER_DESC" ]; then
+	ldapmodifyuser $GISLAB_USER > /dev/null << EOL
+changetype: modify
+add: description
+description: $GISLAB_USER_DESC
+EOL
+fi
 
 # allow sudo for user if creating superuser account
 if [ "x$SUDO" != "x" ]; then
