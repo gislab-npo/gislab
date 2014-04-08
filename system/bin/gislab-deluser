@@ -3,6 +3,11 @@
 
 set -e
 
+if [[ $EUID -ne 0 ]]; then
+	echo "[GIS.lab]: This command can be run only with superuser privileges!"
+	exit 1
+fi
+
 # source configuration files
 source /vagrant/config.cfg
 if [ -f /vagrant/config-user.cfg ]
