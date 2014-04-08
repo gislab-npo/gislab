@@ -15,16 +15,18 @@ then
 	source /vagrant/config-user.cfg
 fi
 
+# usage
+function usage() {
+	echo "USAGE: $(basename $0) username"
+	echo "Backup GIS.lab user data.
+	"
+	exit 0
+}
+
+if [ $# -ne 1 ]; then usage; fi
 
 if [ ! -d "/storage/backup" ]; then
 	mkdir -p /storage/backup
-fi
-
-if [ $# -ne 1 ]; then
-        echo "USAGE: $(basename $0) username"
-        echo "Backup GIS.lab user data."
-		echo
-        exit 0
 fi
 
 GISLAB_USER=$1
