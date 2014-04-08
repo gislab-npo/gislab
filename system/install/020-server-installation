@@ -67,8 +67,9 @@ else
 	rm -f /etc/apt/apt.conf.d/02proxy
 fi
 
-# hold kernel packages from upgrade to avoid a need to restart server after
-# installation (Vagrant box could provide up-to-date kernel image)
+# Hold kernel packages from upgrade to avoid a need to restart server after
+# installation (Vagrant box could provide up-to-date kernel image).
+# If some package still triggers system restart check '/var/run/reboot-required.pkgs'.
 # TODO: use more recent way of holding packages (apt-mark hold)
 echo "linux-image-$(uname -r) hold" | dpkg --set-selections
 echo "linux-generic-pae hold" | dpkg --set-selections
