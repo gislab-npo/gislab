@@ -17,9 +17,13 @@ EOF
 
 sed -i "s/^# Domain.*/Domain = gis.lab/" /etc/idmapd.conf
 
-cat << EOF > /etc/fstab
+# add /mnt mount point to fstab
+if [ "$GISLAB_INSTALLATION_DONE" == "no" ]; then
+	cat << EOF >> /etc/fstab
 /storage  /mnt  none  bind  0  0
 EOF
+fi
+
 mount /mnt  # bind mount to keep the same paths on server as on client
 
 service nfs-kernel-server restart
