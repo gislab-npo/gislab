@@ -2,10 +2,8 @@
 ###  LDAP DATABASE ###
 #
 
-# do not run on upgrade
-if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
-	return
-fi
+# skip on upgrade
+if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then return; fi
 
 # generate and set LDAP admin password
 # generally we don't need to know it, but we can
