@@ -2,30 +2,51 @@
 ### DATABASE SERVER - POSTGRESQL/POSTGIS ###
 #
 
-# do not run on upgrade
-if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
-	return
-fi
-
-
 # set system shmmax value which must be something little bit higher than one fourth of
 # system memory size
 shmmax=$(echo $(free -b | awk '/^Mem:/{print $2}') / 3.5 | bc)
 sysctl -w kernel.shmmax=$shmmax
-sed -i "s/^#kernel.shmmax =.*/kernel.shmmax = $shmmax/" /etc/sysctl.d/30-postgresql-shm.conf
+cat << EOF > /etc/sysctl.d/30-postgresql-shm.conf
+kernel.shmmax = $shmmax
+EOF
+
+# allow network connections - listen_addresses = '*'
+# and set search path to user schema as first - search_path = '"$user",public' .
+# all other settings are default values taken from postgresql.conf.
+cat << EOF > /etc/postgresql/9.1/main/postgresql.conf
+data_directory = '/var/lib/postgresql/9.1/main'
+hba_file = '/etc/postgresql/9.1/main/pg_hba.conf'
+ident_file = '/etc/postgresql/9.1/main/pg_ident.conf'
+external_pid_file = '/var/run/postgresql/9.1-main.pid'
+listen_addresses = '*'
+port = 5432
+unix_socket_directory = '/var/run/postgresql'
+ssl = true
+log_line_prefix = '%t '
+search_path = '"\$user",public'
+datestyle = 'iso, mdy'
+lc_messages = 'en_US.UTF-8'
+lc_monetary = 'en_US.UTF-8'
+lc_numeric = 'en_US.UTF-8'
+lc_time = 'en_US.UTF-8'
+default_text_search_config = 'pg_catalog.english'
+EOF
 
 # tune database depending on current server configuration
 pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
 
-# allow network connections and local connection without password
-sed -i "s/^#listen_addresses.*/listen_addresses = '*'/" /etc/postgresql/9.1/main/postgresql.conf
-sed -i "s/local.*all.*all.*peer/local  all  all  trust/" /etc/postgresql/9.1/main/pg_hba.conf
-sed -i "s/host.*all.*all.*127.0.0.1\/32.*md5/host  all  all  0.0.0.0\/0 ldap ldapserver=server.gis.lab ldaptls=1 ldapprefix=\"uid=\" ldapsuffix=\",ou=People,dc=gis,dc=lab\"/" /etc/postgresql/9.1/main/pg_hba.conf
-
-# set search path
-sed -i "s/^#search_path.*/search_path = '\"\$user\",public'/" /etc/postgresql/9.1/main/postgresql.conf
+# configure access policy
+cat << EOF > /etc/postgresql/9.1/main/pg_hba.conf
+local  all  postgres  peer
+local  all  all  trust
+host   all  all  0.0.0.0/0 ldap ldapserver=server.gis.lab ldaptls=1 ldapprefix="uid=" ldapsuffix=",ou=People,dc=gis,dc=lab"
+EOF
 
 service postgresql restart
+
+
+# do not continue on upgrade
+if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then return; fi
 
 # create labusers and labadmins group
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole --no-login labusers"
