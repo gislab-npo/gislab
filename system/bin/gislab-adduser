@@ -21,13 +21,13 @@ function usage() {
 	echo "USAGE: $(basename $0) [OPTIONS] username"
 	echo "Create GIS.lab user account."
 	echo -e "\nOPTIONS
-	-d description
 	-g first name (required)
-	-h display this help
 	-l last name (required)
 	-m email (required)
+	-d description
 	-p set password for user. If not given it will be automatically generated.
 	-s add user do 'labadmins' group to allow 'sudo'
+	-h display this help
 	"
 	exit 0
 }
