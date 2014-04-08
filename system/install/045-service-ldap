@@ -175,9 +175,6 @@ uidNumber: <uid>
 gidNumber: <gid>
 homeDirectory: <home>
 loginShell: <shell>
-gecos: GIS.lab User <user>
-mail: <user>@gis.lab
-description: GIS.lab User
 EOL
 
 cat << EOL > /etc/ldapscripts/addgroup.template

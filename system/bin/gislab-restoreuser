@@ -21,23 +21,30 @@ function usage() {
 	echo "Restore GIS.lab user data."
 	echo -e "\nOPTIONS
 	-b  restore data from given file (optional)
-	-f  force deleting account - do not ask before
-	-p  set password for user. If not given it will be automatically generated.
-	-s  add user do 'labadmins' group to allow 'sudo'
+	-d  user description
+	-f  force deleting account - do not ask before deleting account
+	-g  first name (required)
 	-h  display this help
-	"
+	-l  last name (required)
+	-m  email (required)
+	-p  set password for user. If not given it will be automatically generated.
+	-s  add user do 'labadmins' group to allow 'sudo'	"
 	exit 0
 }
 
 # options
-while getopts "b:fhp:s" OPTION
+while getopts "b:d:fg:hl:m:p:s" OPTION
 do
         case "$OPTION" in
 			b) BACKUP_FILE="$OPTARG" ;;
+			d) GISLAB_USER_DESC_FLAG="-d $OPTARG" ;;
 			f) FORCE_FLAG="-f" ;;
+			g) GISLAB_USER_GIVEN_NAME_FLAG="-g $OPTARG" ;;
+			h) usage ; exit 0 ;;
+			l) GISLAB_USER_SURNAME_FLAG="-l $OPTARG" ;;
+			m) GISLAB_USER_MAIL_FLAG="-m $OPTARG" ;;
 			p) GISLAB_USER_PASSWORD_FLAG="-p $OPTARG" ;;
 			s) SUDO_FLAG="-s" ;;
-			h) usage ; exit 0 ;;
 			\?) exit 1;;
         esac
 done
@@ -90,7 +97,8 @@ else
 fi
 
 # add user
-gislab-adduser $GISLAB_USER_PASSWORD_FLAG $SUDO_FLAG $GISLAB_USER
+gislab-adduser $GISLAB_USER_DESC_FLAG $GISLAB_USER_GIVEN_NAME_FLAG $GISLAB_USER_SURNAME_FLAG \
+               $GISLAB_USER_MAIL_FLAG $GISLAB_USER_PASSWORD_FLAG $SUDO_FLAG $GISLAB_USER
 
 # untar backup file
 BACKUP_TEMP_DIR=/tmp/$GISLAB_USER.$$

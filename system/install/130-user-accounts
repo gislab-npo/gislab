@@ -15,7 +15,7 @@ if id -u ubuntu > /dev/null 2>&1; then echo "ubuntu:$(pwgen -1 -n 24)" | chpassw
 echo -e "\n[GIS.lab]: Creating GIS.lab users accounts ..."
 for account in "${GISLAB_USER_ACCOUNTS_AUTO[@]}"
 do
-	/vagrant/system/bin/gislab-adduser -p lab $account
+	/vagrant/system/bin/gislab-adduser -g User -l GIS.lab -m $account@gis.lab -p lab $account
 done
 
 
