@@ -24,8 +24,8 @@ function usage() {
 	-g first name (required)
 	-l last name (required)
 	-m email (required)
-	-d description
 	-p set password for user. If not given it will be automatically generated.
+	-d user description text
 	-s add user do 'labadmins' group to allow 'sudo'
 	-h display this help
 	"
@@ -57,8 +57,13 @@ if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_US
 	exit 1
 fi
 
-
 GISLAB_USER=$1
+if id -u $GISLAB_USER > /dev/null 2>&1; then
+	echo "[GIS.lab]: User '$GISLAB_USER' already exists!"
+	echo
+	exit 0
+fi
+
 GISLAB_USER_PASSWORD_HASH=$(slappasswd -s $GISLAB_USER_PASSWORD -h {SSHA})
 GISLAB_USER_COMMON_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
 

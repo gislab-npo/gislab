@@ -45,6 +45,12 @@ if [ $# -eq 0 ]; then usage; exit 0; fi
 
 GISLAB_USER=$1
 
+if ! id $GISLAB_USER >/dev/null 2>&1; then
+	echo "[GIS.lab]: GIS.lab user '$GISLAB_USER' does not exists."
+	echo
+	exit 1
+fi
+
 if [ "$FORCE" != "yes" ]; then
 	echo "[GIS.lab]: You are going to delete user account '$GISLAB_USER'."
 	echo "[GIS.lab]: This command will delete also all data belonging to this user. Continue ? [ENTER to continue, CTRL-C to cancel]"

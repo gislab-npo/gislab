@@ -30,7 +30,7 @@ fi
 GISLAB_USER=$1
 
 if ! id $GISLAB_USER >/dev/null 2>&1; then
-	echo "GIS.lab user '$GISLAB_USER' does not exist."
+	echo "[GIS.lab]: GIS.lab user '$GISLAB_USER' does not exists."
 	echo
 	exit 1
 fi
