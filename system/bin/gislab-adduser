@@ -50,7 +50,7 @@ do
         esac
 done
 shift $(($OPTIND - 1))
-if [ $# -eq 0 ]; then usage; exit 0; fi
+if [ $# -eq 0 ]; then usage; fi
 
 if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_USER_MAIL" ]; then
 	usage
