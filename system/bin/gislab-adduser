@@ -41,7 +41,7 @@ do
         case "$OPTION" in
 			d) GISLAB_USER_DESC="$OPTARG" ;;
 			g) GISLAB_USER_GIVEN_NAME=$OPTARG ;;
-			h) usage ; exit 0 ;;
+			h) usage ;;
 			l) GISLAB_USER_SURNAME=$OPTARG ;;
 			m) GISLAB_USER_MAIL=$OPTARG ;;
 			p) GISLAB_USER_PASSWORD=$OPTARG ;;
@@ -54,7 +54,6 @@ if [ $# -eq 0 ]; then usage; fi
 
 if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_USER_MAIL" ]; then
 	usage
-	exit 1
 fi
 
 GISLAB_USER=$1

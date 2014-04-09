@@ -36,7 +36,7 @@ do
         case "$OPTION" in
 			b) BACKUP="yes" ;;
 			f) FORCE="yes" ;;
-			h) usage ; exit 0 ;;
+			h) usage ;;
 			\?) exit 1;;
         esac
 done

@@ -40,7 +40,7 @@ do
 			d) GISLAB_USER_DESC_FLAG="-d $OPTARG" ;;
 			f) FORCE_FLAG="-f" ;;
 			g) GISLAB_USER_GIVEN_NAME_FLAG="-g $OPTARG" ;;
-			h) usage ; exit 0 ;;
+			h) usage ;;
 			l) GISLAB_USER_SURNAME_FLAG="-l $OPTARG" ;;
 			m) GISLAB_USER_MAIL_FLAG="-m $OPTARG" ;;
 			p) GISLAB_USER_PASSWORD_FLAG="-p $OPTARG" ;;
