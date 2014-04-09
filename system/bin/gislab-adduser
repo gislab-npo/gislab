@@ -206,6 +206,13 @@ if [ "x$SUDO" != "x" ]; then
 	sudo su - postgres -c "psql -c \"GRANT labadmins TO $GISLAB_USER;\""
 fi
 
+# forward system mails to user if creating superuser account
+if [ "$SUDO" == "yes" -a -n "$GISLAB_SERVER_EMAIL_RELAY_SERVER" \
+  -a -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" -a -n "$GISLAB_SERVER_EMAIL_RELAY_PASSWORD" ]; then
+	sed -i "s/\(.*\)/\1, $GISLAB_USER_MAIL/" /etc/postfix/virtual_regexp
+	service postfix reload
+fi
+
 mkdir -p /storage/share/$GISLAB_USER # NFS directory
 chown $GISLAB_USER:labusers /storage/share/$GISLAB_USER
 

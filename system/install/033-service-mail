@@ -1,0 +1,61 @@
+#
+### MAIL SERVER - POSTFIX ###
+#
+
+cat << EOL > /etc/postfix/main.cf
+smtpd_banner = \$myhostname ESMTP \$mail_name (Ubuntu)
+biff = no
+append_dot_mydomain = no
+readme_directory = no
+smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+smtpd_use_tls=yes
+smtpd_tls_session_cache_database = btree:\${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:\${data_directory}/smtp_scache
+myhostname = server.gis.lab
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+myorigin = /etc/mailname
+mydestination = server.gis.lab, localhost.gis.lab, localhost
+relayhost = 
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+inet_protocols = ipv4
+virtual_alias_maps = regexp:/etc/postfix/virtual_regexp
+message_size_limit = 52428800
+EOL
+
+if id vagrant >/dev/null 2>&1; then
+	default_admin_mail=vagrant
+elif id ubuntu >/dev/null 2>&1; then
+	default_admin_mail=ubuntu
+else
+	default_admin_mail=root
+fi
+
+echo "/.+@.+/ $default_admin_mail" > /etc/postfix/virtual_regexp
+
+rm -f /etc/postfix/sasl_passwd /etc/postfix/sasl_passwd.db
+
+if [ -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" -a -n "$GISLAB_SERVER_EMAIL_RELAY_PASSWORD" -a -n "$GISLAB_SERVER_EMAIL_RELAY_SERVER" ]; then
+	sed -i "s/^relayhost =.*/relayhost = [$GISLAB_SERVER_EMAIL_RELAY_SERVER]:587/" /etc/postfix/main.cf
+	echo "smtp_tls_security_level = encrypt" >>  /etc/postfix/main.cf
+	echo "smtp_sasl_security_options = noanonymous" >> /etc/postfix/main.cf
+	echo "smtp_sasl_auth_enable = yes" >>  /etc/postfix/main.cf
+	echo "smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd" >> /etc/postfix/main.cf
+	echo "[$GISLAB_SERVER_EMAIL_RELAY_SERVER]:587 $GISLAB_SERVER_EMAIL_RELAY_LOGIN:$GISLAB_SERVER_EMAIL_RELAY_PASSWORD" > /etc/postfix/sasl_passwd
+	chmod 0600 /etc/postfix/sasl_passwd
+	postmap /etc/postfix/sasl_passwd
+
+	# send system emails to all users in labadmins group
+	ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+	for user in $($ldapsearch_cmd -b "cn=labadmins,ou=Groups,dc=gis,dc=lab" memberUid | awk '/^memberUid:/ { print $2 }'); do
+		for mail in $($ldapsearch_cmd -b "ou=People,dc=gis,dc=lab" "uid=$user" mail | awk '/^mail: / { print $2 }'); do
+			sed -i "s/\(.*\)/\1, $mail/" /etc/postfix/virtual_regexp
+		done
+	done
+fi
+
+service postfix restart
