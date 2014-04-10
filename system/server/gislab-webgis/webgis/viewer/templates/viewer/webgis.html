@@ -9,7 +9,7 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'viewer/lib/ext-3.4.1/resources/css/ext-all.css' %}"/>
 		<link rel="stylesheet" type="text/css" href="{% static 'viewer/lib/ext-3.4.1/resources/css/xtheme-gray.css' %}"/>
 		<link rel="stylesheet" type="text/css" href="{% static 'viewer/lib/extensions/css/Spinner.css' %}" />
-		<link rel="stylesheet" type="text/css" href="{% static 'viewer/webgis.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'viewer/css/webgis.css' %}"/>
 
 		{% if debug %}
 		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/adapter/ext/ext-base-debug.js' %}"></script>
@@ -226,10 +226,32 @@
 				{% include "viewer/actions/draw.js" %}
 				{% include "viewer/actions/save_history.js" %}
 
-				{% if print_composers %}
+				{% if print_composers and not user.is_guest %}
 				mappanel.getTopToolbar().add({xtype: 'tbspacer', width: 25});
 				{% include "viewer/actions/print.js" %}
 				{% endif %}
+
+				mappanel.getTopToolbar().add('->',
+					{% if not user.is_guest %}{
+						xtype: 'label',
+						text: '{{ user.get_full_name }}'
+					}, new Ext.Action({
+						cls: 'x-btn-icon',
+						iconCls: 'logout-icon',
+						tooltip: 'Logout',
+						handler: function(action) {
+							window.location.href = Ext.urlAppend('{% url "viewer:logout" %}', Ext.urlEncode({next: window.location.href}));
+						}
+					}){% else %}new Ext.Action({
+						cls: 'x-btn-icon',
+						iconCls: 'login-icon',
+						tooltip: 'Login',
+						handler: function(action) {
+							window.location.href = Ext.urlAppend('{% url "viewer:login" %}', Ext.urlEncode({next: window.location.href}));
+						}
+					})
+				{% endif %}
+				);
 
 				var overlays_root = new WebGIS.WmsLayersNode({
 					id: 'overlays-root',
@@ -418,11 +440,11 @@
 					{% for drawing_id in drawings %}
 				drawings_links.push({
 					hyperlink_text: '{{ drawing_id }}',
-					href: Ext.urlAppend('{% url "webgis.storage.views.ball" %}', Ext.urlEncode({ID: '{{ drawing_id }}'})),
+					href: Ext.urlAppend('{% url "storage:ball" %}', Ext.urlEncode({ID: '{{ drawing_id }}'})),
 				});
 				Ext.Ajax.request({
 					method: 'GET',
-					url: '{% url "webgis.storage.views.ball" %}',
+					url: '{% url "storage:ball" %}',
 					params: {
 						ID: '{{ drawing_id }}'
 					},

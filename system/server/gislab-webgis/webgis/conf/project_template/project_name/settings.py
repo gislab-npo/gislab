@@ -20,8 +20,10 @@ TEMPLATE_DEBUG = False
 
 
 ### WebGIS SETTINGS ###
+WEBGIS_PROJECTS_ROOT = '/storage/share/'
 WEBGIS_OWS_URL = 'http://server.gis.lab/cgi-bin/qgis_mapserv.fcgi'
 WEBGIS_SCALES = (10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500)
+WEBGIS_GUEST_USERNAME = 'guest'
 
 # Dictionary of <MIME Type>: <File extension> pairs
 FILE_EXTENSIONS_TABLE = {
@@ -60,6 +62,9 @@ INSTALLED_APPS = (
 ROOT_URLCONF = '{{ project_name }}.urls'
 WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
 
+LOGIN_URL = '/login/'
+AUTH_USER_MODEL = 'viewer.GislabUser'
+
 
 #import secret settings
 try:
@@ -67,5 +72,6 @@ try:
 except ImportError:
 	pass
 
+from settings_ldap import *
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet

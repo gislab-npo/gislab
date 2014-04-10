@@ -80,92 +80,102 @@
 }
 
 .featureinfo-icon {
-	background-image: url('images/toolbar/information.png')!important;
+	background-image: url('../images/toolbar/information.png')!important;
 	background: no-repeat;
 }
 
 .home-icon {
-	background-image: url('images/toolbar/home.png')!important;
+	background-image: url('../images/toolbar/home.png')!important;
 	background: no-repeat;
 }
 
 .pan-icon {
-	background-image: url('images/toolbar/pan.png')!important;
+	background-image: url('../images/toolbar/pan.png')!important;
 	background: no-repeat;
 }
 
 .zoom-in-icon {
-	background-image: url('images/toolbar/zoom_in.png')!important;
+	background-image: url('../images/toolbar/zoom_in.png')!important;
 	background: no-repeat;
 }
 
 .zoom-out-icon {
-	background-image: url('images/toolbar/zoom_out.png')!important;
+	background-image: url('../images/toolbar/zoom_out.png')!important;
 	background: no-repeat;
 }
 
 .zoom-max-extent-icon {
-	background-image: url('images/toolbar/arrow_out.png')!important;
+	background-image: url('../images/toolbar/arrow_out.png')!important;
 	background: no-repeat;
 }
 
 .previous-icon {
-	background-image: url('images/toolbar/arrow_left.png')!important;
+	background-image: url('../images/toolbar/arrow_left.png')!important;
 	background: no-repeat;
 }
 
 .next-icon {
-	background-image: url('images/toolbar/arrow_right.png')!important;
+	background-image: url('../images/toolbar/arrow_right.png')!important;
 	background: no-repeat;
 }
 
 .length-measure-icon {
-	background-image: url('images/toolbar/ruler.png')!important;
+	background-image: url('../images/toolbar/ruler.png')!important;
 	background: no-repeat;
 }
 
 .area-measure-icon {
-	background-image: url('images/toolbar/ruler_square.png')!important;
+	background-image: url('../images/toolbar/ruler_square.png')!important;
 	background: no-repeat;
 }
 
 .draw-point-icon {
-	background-image: url('images/toolbar/point.png')!important;
+	background-image: url('../images/toolbar/point.png')!important;
 	background: no-repeat;
 }
 
 .draw-line-icon {
-	background-image: url('images/toolbar/line.png')!important;
+	background-image: url('../images/toolbar/line.png')!important;
 	background: no-repeat;
 }
 
 .draw-polygon-icon {
-	background-image: url('images/toolbar/polygon.png')!important;
+	background-image: url('../images/toolbar/polygon.png')!important;
 	background: no-repeat;
 }
 
 .save-icon {
-	background-image: url('images/toolbar/save.png')!important;
+	background-image: url('../images/toolbar/save.png')!important;
 	background: no-repeat;
 }
 
 .save-history-icon {
-	background-image: url('images/toolbar/save_history.png')!important;
+	background-image: url('../images/toolbar/save_history.png')!important;
 	background: no-repeat;
 }
 
 .print-icon {
-	background-image: url('images/toolbar/print.png')!important;
+	background-image: url('../images/toolbar/print.png')!important;
 	background: no-repeat;
 }
 
 .search-icon {
-	background-image: url('images/toolbar/search.png')!important;
+	background-image: url('../images/toolbar/search.png')!important;
+	background: no-repeat;
+}
+
+.logout-icon {
+	background-image: url('../images/toolbar/logout.png')!important;
+	background: no-repeat;
+}
+
+.login-icon {
+	background-image: url('../images/toolbar/login.png')!important;
 	background: no-repeat;
 }
 
 .add-icon {
-	background-image: url('images/tool-sprites.gif')!important;
+	background-image: url('../images/tool-sprites.gif')!important;
 	background-position: -15px -240px !important;
 	width: 15px !important;
 	height: 15px !important;
@@ -173,7 +183,7 @@
 }
 
 .remove-icon {
-	background-image: url('images/tool-sprites.gif')!important;
+	background-image: url('../images/tool-sprites.gif')!important;
 	background-position: -15px 0px !important;
 	width: 15px !important;
 	height: 15px !important;
@@ -299,7 +309,7 @@ label.layers-title {
 }
 
 img.zoom-to-feature {
-	background-image: url('images/toolbar/search.png')!important;
+	background-image: url('../images/toolbar/search.png')!important;
 	background: no-repeat;
 	width: 16px;
 	height: 16px;
@@ -307,7 +317,7 @@ img.zoom-to-feature {
 }
 
 img.export-feature {
-	background-image: url('images/toolbar/arrow_up.png')!important;
+	background-image: url('../images/toolbar/arrow_up.png')!important;
 	background: no-repeat;
 	width: 16px;
 	height: 16px;

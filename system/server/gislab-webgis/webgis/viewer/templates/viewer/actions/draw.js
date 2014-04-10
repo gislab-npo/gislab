@@ -89,7 +89,7 @@ action = new WebGIS.DrawAction({
 			}
 			Ext.Ajax.request({
 				method: 'POST',
-				url: '{% url "webgis.storage.views.ball" %}',
+				url: '{% url "storage:ball" %}',
 				jsonData: geojson,
 				headers: { 'Content-Type': 'application/geojson; charset=utf-8' },
 				success: function(response) {
@@ -98,7 +98,7 @@ action = new WebGIS.DrawAction({
 					Ext.getCmp('geojson-links').setLinks([{
 						name: title,
 						hyperlink_text: response.responseText,
-						href: Ext.urlAppend('{% url "webgis.storage.views.ball" %}', Ext.urlEncode({ID: response.responseText})),
+						href: Ext.urlAppend('{% url "storage:ball" %}', Ext.urlEncode({ID: response.responseText})),
 					}]);
 
 					// Add record into saving history

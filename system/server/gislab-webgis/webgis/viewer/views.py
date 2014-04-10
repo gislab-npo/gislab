@@ -14,12 +14,17 @@ import xml.etree.ElementTree as etree
 
 from django.conf import settings
 from django.shortcuts import render
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 
 from webgis.viewer import forms
+from webgis.viewer import models
+from webgis.viewer.metadata_parser import MetadataParser
 from webgis.viewer.wms import WmsGetCapabilitiesService
 from webgis.viewer.qgis_wms import QgisGetProjectSettingsService
+
 
 PROJECTION_UNITS_DD=('EPSG:4326',)
 SPECIAL_BASE_LAYERS = {
@@ -67,6 +72,7 @@ def set_query_parameters(url, params_dict):
 	return urlunsplit(url_parts)
 
 
+@login_required
 def getfeatureinfo(request):
 	url = "{0}?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
 	resp = urllib2.urlopen(url)
@@ -75,6 +81,7 @@ def getfeatureinfo(request):
 	resp.close()
 	return HttpResponse(resp_content, content_type=content_type)
 
+@login_required
 def getprint(request):
 	url = "{0}?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
 	resp = urllib2.urlopen(url)
@@ -127,6 +134,7 @@ def parse_layers_param(layers_string, layers_capabilities, skip_layers=None):
 			parent['layers'].append(layer)
 	return tree
 
+
 def page(request):
 	# make GET parameters not case sensitive
 	params = dict((k.lower(), v) for k, v in request.GET.iteritems()) # change GET parameters names to uppercase
@@ -134,8 +142,7 @@ def page(request):
 	if not form.is_valid():
 		raise Http404
 
-	context = {}
-	context['dpi'] = 96
+	context = {'dpi': 96}
 	project = form.cleaned_data['project']
 
 	scales = form.cleaned_data['scales'] or settings.WEBGIS_SCALES
@@ -145,10 +152,31 @@ def page(request):
 	context['projection'] = 'EPSG:3857'
 
 	if project:
+		project = os.path.join(settings.WEBGIS_PROJECTS_ROOT, project)
+		metadata_filename = project + '.meta'
+		try:
+			metadata = MetadataParser(metadata_filename)
+		except Exception, e:
+			return HttpResponse("Can't load project metadata. Error: {0}".format(str(e)), content_type='text/plain', status=404);
+		allow_anonymous = metadata.authentication['allow_anonymous']
+		require_superuser = metadata.authentication['require_superuser']
+		if not request.user.is_authenticated() and allow_anonymous:
+			# login as quest and continue
+			user = models.GislabUser.get_guest_user()
+			if user:
+				login(request, user)
+			else:
+				return HttpResponse("Anonymous user is not configured", content_type='text/plain', status=500)
+
+		if (not allow_anonymous and (not request.user.is_authenticated() or request.user.is_guest)) or (require_superuser and not request.user.is_superuser):
+			# redirect to login page
+			login_url = reverse('viewer:login')
+			return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
+
 		ows_url = '{0}?map={1}'.format(settings.WEBGIS_OWS_URL, project)
 		ows_getprojectsettings_url = "{0}&SERVICE=WMS&REQUEST=GetProjectSettings".format(ows_url)
-		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('webgis.viewer.views.getfeatureinfo'), project)
-		getprint_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetPrint".format(reverse('webgis.viewer.views.getprint'), project)
+		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('viewer:featureinfo'), project)
+		getprint_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetPrint".format(reverse('viewer:print'), project)
 
 		try:
 			project_settings = QgisGetProjectSettingsService(ows_getprojectsettings_url)
@@ -160,6 +188,7 @@ def page(request):
 
 		context['projection'] = root_layer.projection
 
+	context['user'] = request.user
 	context['units'] = 'dd' if context['projection'] in PROJECTION_UNITS_DD else 'm' # TODO: this is very naive
 	context['tile_resolutions'] = _get_tile_resolutions(context['scales'], context['units'], context['dpi'])
 
