@@ -2,26 +2,16 @@
 ### CONNECTION FORWARDING ###
 #
 
-# do not run on upgrade
-if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
-	return
-fi
-
-
-# set IP forwarding for client machines and call it from rc.local to run it after server restart
-cat << EOF > /usr/local/bin/enable-ip-forward
-#!/bin/bash
+# enable IP forwarding for client machines after each server start
+cat << EOF > /etc/rc.local
+#!/bin/sh -e
 
 sysctl -w net.ipv4.ip_forward=1
 iptables --table nat --append POSTROUTING --jump MASQUERADE --source $GISLAB_NETWORK.0/24
+exit 0
 EOF
 
-chmod +x /usr/local/bin/enable-ip-forward
-/usr/local/bin/enable-ip-forward
-
-sed -i "s/exit 0//" /etc/rc.local
-echo "/usr/local/bin/enable-ip-forward" >> /etc/rc.local
-echo "exit 0" >> /etc/rc.local
+sh /etc/rc.local
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

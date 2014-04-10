@@ -3,33 +3,52 @@
 
 set -e
 
+if [[ $EUID -ne 0 ]]; then
+	echo "[GIS.lab]: This command can be run only with superuser privileges!"
+	exit 1
+fi
+
+# source configuration files
 source /vagrant/config.cfg
 if [ -f /vagrant/config-user.cfg ]
 then
 	source /vagrant/config-user.cfg
 fi
 
-if [ ! -d "$GISLAB_BACKUP_DIR" ]; then
-	mkdir -p $GISLAB_BACKUP_DIR
-fi
+# usage
+function usage() {
+	echo "USAGE: $(basename $0) username"
+	echo "Backup GIS.lab user data."
+	echo -e "\nOPTIONS
+	-h display this help
+	"
+	exit 0
+}
 
-if [ $# -ne 1 ]; then
-        echo "USAGE: $(basename $0) username"
-        echo "Backup GIS.lab user data."
-		echo
-        exit 0
+while getopts "h" OPTION
+do
+	case "$OPTION" in
+					h) usage ;;
+					\?) exit 1 ;;
+	esac
+done
+
+if [ $# -ne 1 ]; then usage; fi
+
+if [ ! -d "/storage/backup" ]; then
+	mkdir -p /storage/backup
 fi
 
 GISLAB_USER=$1
 
 if ! id $GISLAB_USER >/dev/null 2>&1; then
-	echo "GIS.lab user '$GISLAB_USER' does not exist."
+	echo "[GIS.lab]: GIS.lab user '$GISLAB_USER' does not exists."
 	echo
 	exit 1
 fi
 
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
-BACKUP_FILE=$GISLAB_BACKUP_DIR/gislab-backup-$GISLAB_USER-$DATE.tar
+BACKUP_FILE=/storage/backup/gislab-backup-$GISLAB_USER-$DATE.tar
 GISLAB_USER_HOME=/home/$GISLAB_USER
 TEMP_BACKUP_DIR=/tmp/$GISLAB_USER-$DATE
 HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar.bz2
@@ -57,3 +76,6 @@ tar -cf $BACKUP_FILE *
 rm -rf $TEMP_BACKUP_DIR
 
 echo -e "\n[GIS.lab]: Backup created '$BACKUP_FILE'."
+
+
+# vim: set ts=4 sts=4 sw=4 noet:

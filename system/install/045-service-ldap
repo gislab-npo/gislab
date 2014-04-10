@@ -2,10 +2,8 @@
 ###  LDAP DATABASE ###
 #
 
-# do not run on upgrade
-if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then
-	return
-fi
+# skip on upgrade
+if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then return; fi
 
 # generate and set LDAP admin password
 # generally we don't need to know it, but we can
@@ -177,9 +175,6 @@ uidNumber: <uid>
 gidNumber: <gid>
 homeDirectory: <home>
 loginShell: <shell>
-gecos: GIS.lab User <user>
-mail: <user>@gis.lab
-description: GIS.lab User
 EOL
 
 cat << EOL > /etc/ldapscripts/addgroup.template

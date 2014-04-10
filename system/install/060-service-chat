@@ -25,7 +25,25 @@ cat << EOF > /etc/ircd-hybrid/ircd.motd
 Welcome to GIS.lab IRC server !
 EOF
 
-service ircd-hybrid restart
+# set correct file mode and ownerschip of irc daemon log file
+# after logrotate so logcheck can access it
+cat << EOL > /etc/logrotate.d/ircd-hybrid
+/var/log/ircd/ircd-hybrid.log {
+	rotate 3
+	weekly
+	compress
+	delaycompress
+	create 640 irc adm
+	postrotate
+		invoke-rc.d ircd-hybrid reload > /dev/null
+	endscript
+	missingok
+}
+EOL
 
+chmod 0640 /var/log/ircd/ircd-hybrid.log
+chgrp adm /var/log/ircd/ircd-hybrid.log
+
+service ircd-hybrid restart
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

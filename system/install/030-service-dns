@@ -55,7 +55,10 @@ cat << EOF > /etc/bind/db.192
 EOF
 
 # use IPv4 only
-sed -i 's/^OPTIONS=.*/OPTIONS="-4 -u bind"/' /etc/default/bind9
+cat << EOF > /etc/default/bind9
+RESOLVCONF=no
+OPTIONS="-4 -u bind"
+EOF
 
 service bind9 restart
 

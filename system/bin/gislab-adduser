@@ -3,6 +3,11 @@
 
 set -e
 
+if [[ $EUID -ne 0 ]]; then
+	echo "[GIS.lab]: This command can be run only with superuser privileges!"
+	exit 1
+fi
+
 # source configuration files
 source /vagrant/config.cfg
 if [ -f /vagrant/config-user.cfg ]
@@ -16,9 +21,13 @@ function usage() {
 	echo "USAGE: $(basename $0) [OPTIONS] username"
 	echo "Create GIS.lab user account."
 	echo -e "\nOPTIONS
-	-h display this help
+	-g first name (required)
+	-l last name (required)
+	-m email (required)
 	-p set password for user. If not given it will be automatically generated.
+	-d user description text
 	-s add user do 'labadmins' group to allow 'sudo'
+	-h display this help
 	"
 	exit 0
 }
@@ -27,20 +36,35 @@ function usage() {
 # options
 GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overriden by --password option 
 
-while getopts "hp:s" OPTION
+while getopts "d:g:hl:m:p:s" OPTION
 do
         case "$OPTION" in
-			h) usage ; exit 0 ;;
+			d) GISLAB_USER_DESC="$OPTARG" ;;
+			g) GISLAB_USER_GIVEN_NAME=$OPTARG ;;
+			h) usage ;;
+			l) GISLAB_USER_SURNAME=$OPTARG ;;
+			m) GISLAB_USER_MAIL=$OPTARG ;;
 			p) GISLAB_USER_PASSWORD=$OPTARG ;;
 			s) SUDO=yes ;;
 			\?) exit 1;;
         esac
 done
 shift $(($OPTIND - 1))
-if [ $# -eq 0 ]; then usage; exit 0; fi
+if [ $# -eq 0 ]; then usage; fi
+
+if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_USER_MAIL" ]; then
+	usage
+fi
 
 GISLAB_USER=$1
+if id -u $GISLAB_USER > /dev/null 2>&1; then
+	echo "[GIS.lab]: User '$GISLAB_USER' already exists!"
+	echo
+	exit 0
+fi
+
 GISLAB_USER_PASSWORD_HASH=$(slappasswd -s $GISLAB_USER_PASSWORD -h {SSHA})
+GISLAB_USER_COMMON_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
 
 
 # /etc/skel update
@@ -138,6 +162,33 @@ echo -e "[GIS.lab]: Creating user account '$GISLAB_USER'..."
 ldapadduser $GISLAB_USER labusers # LDAP account
 chmod go-rwx /home/$GISLAB_USER
 
+# add LDAP user attributes
+ldapmodifyuser $GISLAB_USER > /dev/null << EOL
+changetype: modify
+replace: cn
+cn: $GISLAB_USER_COMMON_NAME
+-
+replace: sn
+sn: $GISLAB_USER_SURNAME
+-
+add: givenName
+givenName: $GISLAB_USER_GIVEN_NAME
+-
+add: mail
+mail: $GISLAB_USER_MAIL
+-
+add: gecos
+gecos: $GISLAB_USER_COMMON_NAME
+EOL
+
+if [ -n "$GISLAB_USER_DESC" ]; then
+	ldapmodifyuser $GISLAB_USER > /dev/null << EOL
+changetype: modify
+add: description
+description: $GISLAB_USER_DESC
+EOL
+fi
+
 # allow sudo for user if creating superuser account
 if [ "x$SUDO" != "x" ]; then
 	ldapaddusertogroup $GISLAB_USER labadmins
@@ -152,6 +203,13 @@ sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $GISLAB_U
 # add user to the database superusers group if creating superuser account
 if [ "x$SUDO" != "x" ]; then
 	sudo su - postgres -c "psql -c \"GRANT labadmins TO $GISLAB_USER;\""
+fi
+
+# forward system mails to user if creating superuser account
+if [ "$SUDO" == "yes" -a -n "$GISLAB_SERVER_EMAIL_RELAY_SERVER" \
+  -a -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" -a -n "$GISLAB_SERVER_EMAIL_RELAY_PASSWORD" ]; then
+	sed -i "s/\(.*\)/\1, $GISLAB_USER_MAIL/" /etc/postfix/virtual_regexp
+	service postfix reload
 fi
 
 mkdir -p /storage/share/$GISLAB_USER # NFS directory

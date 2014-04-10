@@ -3,6 +3,12 @@
 
 set -e
 
+if [[ $EUID -ne 0 ]]; then
+	echo "[GIS.lab]: This command can be run only with superuser privileges!"
+	exit 1
+fi
+
+# source configuration files
 source /vagrant/config.cfg
 if [ -f /vagrant/config-user.cfg ]
 then
@@ -15,29 +21,36 @@ function usage() {
 	echo "Restore GIS.lab user data."
 	echo -e "\nOPTIONS
 	-b  restore data from given file (optional)
-	-f  force deleting account - do not ask before
-	-p  set password for user. If not given it will be automatically generated.
-	-s  add user do 'labadmins' group to allow 'sudo'
+	-d  user description
+	-f  force deleting account - do not ask before deleting account
+	-g  first name (required)
 	-h  display this help
-	"
+	-l  last name (required)
+	-m  email (required)
+	-p  set password for user. If not given it will be automatically generated.
+	-s  add user do 'labadmins' group to allow 'sudo'	"
 	exit 0
 }
 
 # options
-while getopts "b:fhp:s" OPTION
+while getopts "b:d:fg:hl:m:p:s" OPTION
 do
         case "$OPTION" in
 			b) BACKUP_FILE="$OPTARG" ;;
+			d) GISLAB_USER_DESC_FLAG="-d $OPTARG" ;;
 			f) FORCE_FLAG="-f" ;;
+			g) GISLAB_USER_GIVEN_NAME_FLAG="-g $OPTARG" ;;
+			h) usage ;;
+			l) GISLAB_USER_SURNAME_FLAG="-l $OPTARG" ;;
+			m) GISLAB_USER_MAIL_FLAG="-m $OPTARG" ;;
 			p) GISLAB_USER_PASSWORD_FLAG="-p $OPTARG" ;;
 			s) SUDO_FLAG="-s" ;;
-			h) usage ; exit 0 ;;
 			\?) exit 1;;
         esac
 done
 
 shift $(($OPTIND - 1))
-if [ $# -eq 0 ]; then usage; exit 0; fi
+if [ $# -eq 0 ]; then usage; fi
 
 GISLAB_USER=$1
 
@@ -45,7 +58,7 @@ GISLAB_USER=$1
 if [ -z "$BACKUP_FILE" ]; then
 	while true; do
 		i=0
-		for BACKUP in $(ls -tr $GISLAB_BACKUP_DIR/gislab-backup-$GISLAB_USER-* 2>/dev/null); do
+		for BACKUP in $(ls -tr /storage/backup/gislab-backup-$GISLAB_USER-* 2>/dev/null); do
 			echo " $(($i+1)): $BACKUP"
 			BACKUPS[$i]="$BACKUP"
 			let i=$i+1
@@ -84,7 +97,8 @@ else
 fi
 
 # add user
-gislab-adduser $GISLAB_USER_PASSWORD_FLAG $SUDO_FLAG $GISLAB_USER
+gislab-adduser "$GISLAB_USER_DESC_FLAG" $GISLAB_USER_GIVEN_NAME_FLAG $GISLAB_USER_SURNAME_FLAG \
+               $GISLAB_USER_MAIL_FLAG $GISLAB_USER_PASSWORD_FLAG $SUDO_FLAG $GISLAB_USER
 
 # untar backup file
 BACKUP_TEMP_DIR=/tmp/$GISLAB_USER.$$
@@ -111,3 +125,6 @@ sudo -u postgres pg_restore -n $GISLAB_USER -d gislab $GISLAB_USER-db.dump
 rm -rf $BACKUP_TEMP_DIR
 
 echo -e "[GIS.lab]: '$GISLAB_USER' user's data restored."
+
+
+# vim: set ts=4 sts=4 sw=4 noet:

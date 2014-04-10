@@ -3,6 +3,11 @@
 
 set -e
 
+if [[ $EUID -ne 0 ]]; then
+	echo "[GIS.lab]: This command can be run only with superuser privileges!"
+	exit 1
+fi
+
 # source configuration files
 source /vagrant/config.cfg
 if [ -f /vagrant/config-user.cfg ]
@@ -31,14 +36,20 @@ do
         case "$OPTION" in
 			b) BACKUP="yes" ;;
 			f) FORCE="yes" ;;
-			h) usage ; exit 0 ;;
+			h) usage ;;
 			\?) exit 1;;
         esac
 done
 shift $(($OPTIND - 1))
-if [ $# -eq 0 ]; then usage; exit 0; fi
+if [ $# -eq 0 ]; then usage; fi
 
 GISLAB_USER=$1
+
+if ! id $GISLAB_USER >/dev/null 2>&1; then
+	echo "[GIS.lab]: GIS.lab user '$GISLAB_USER' does not exists."
+	echo
+	exit 1
+fi
 
 if [ "$FORCE" != "yes" ]; then
 	echo "[GIS.lab]: You are going to delete user account '$GISLAB_USER'."
@@ -58,6 +69,15 @@ GISLAB_USER_HOME=$(getent passwd $GISLAB_USER | awk -F: '{ print $6 }')
 
 if [ -d "$GISLAB_USER_HOME" ]; then
 	rm -rf $GISLAB_USER_HOME
+fi
+
+# disable forwarding system mails to user if user was superuser
+user_mail=$(ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// "uid=$GISLAB_USER" mail | awk '/^mail: / { print $2 }')
+user_mail=$(echo $user_mail | sed "s/\./\\\./g")
+
+if id $GISLAB_USER 2>/dev/null | grep -q '(labadmins)' && grep -q "[ ,]$user_mail\([ ,]\|$\)" /etc/postfix/virtual_regexp; then
+	sed -i -e "s/[ ,]$user_mail\([ ,]\|$\)//" -e "s/[, ]*$//" /etc/postfix/virtual_regexp
+	service postfix reload
 fi
 
 # manunaly delete user from additional groups (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
