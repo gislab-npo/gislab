@@ -20,7 +20,7 @@ TEMPLATE_DEBUG = False
 
 
 ### WebGIS SETTINGS ###
-WEBGIS_PROJECTS_ROOT = '/storage/share/'
+WEBGIS_PROJECT_ROOT = '/storage/share/'
 WEBGIS_OWS_URL = 'http://server.gis.lab/cgi-bin/qgis_mapserv.fcgi'
 WEBGIS_SCALES = (10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500)
 WEBGIS_GUEST_USERNAME = 'guest'
@@ -50,10 +50,16 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MIDDLEWARE_CLASSES = (
+	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
 INSTALLED_APPS = (
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
 	'django.contrib.staticfiles',
 	'webgis.viewer',
 	'webgis.storage',

@@ -240,14 +240,14 @@
 						iconCls: 'logout-icon',
 						tooltip: 'Logout',
 						handler: function(action) {
-							window.location.href = Ext.urlAppend('{% url "viewer:logout" %}', Ext.urlEncode({next: window.location.href}));
+							window.location.href = Ext.urlAppend('{% url "logout" %}', Ext.urlEncode({next: window.location.href}));
 						}
 					}){% else %}new Ext.Action({
 						cls: 'x-btn-icon',
 						iconCls: 'login-icon',
 						tooltip: 'Login',
 						handler: function(action) {
-							window.location.href = Ext.urlAppend('{% url "viewer:login" %}', Ext.urlEncode({next: window.location.href}));
+							window.location.href = Ext.urlAppend('{% url "login" %}', Ext.urlEncode({next: window.location.href}));
 						}
 					})
 				{% endif %}

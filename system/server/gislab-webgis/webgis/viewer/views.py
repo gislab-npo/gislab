@@ -152,7 +152,7 @@ def page(request):
 	context['projection'] = 'EPSG:3857'
 
 	if project:
-		project = os.path.join(settings.WEBGIS_PROJECTS_ROOT, project)
+		project = os.path.join(settings.WEBGIS_PROJECT_ROOT, project)
 		metadata_filename = project + '.meta'
 		try:
 			metadata = MetadataParser(metadata_filename)
@@ -170,7 +170,7 @@ def page(request):
 
 		if (not allow_anonymous and (not request.user.is_authenticated() or request.user.is_guest)) or (require_superuser and not request.user.is_superuser):
 			# redirect to login page
-			login_url = reverse('viewer:login')
+			login_url = reverse('login')
 			return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
 
 		ows_url = '{0}?map={1}'.format(settings.WEBGIS_OWS_URL, project)

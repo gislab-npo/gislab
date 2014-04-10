@@ -5,8 +5,3 @@ urlpatterns = patterns("webgis.viewer.views",
 	url("^featureinfo/$", "getfeatureinfo", name="featureinfo"),
 	url("^print/$", "getprint", name="print"),
 )
-
-urlpatterns += patterns("",
-	url(r"^login/$", "django.contrib.auth.views.login", name="login"),
-	url(r"^logout/$", "django.contrib.auth.views.logout", name="logout"),
-)

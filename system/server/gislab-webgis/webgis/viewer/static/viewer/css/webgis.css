@@ -15,7 +15,7 @@
 }
 
 .olControlPanPanel div {
-	background-image: url("images/tool-sprites.gif") !important;
+	background-image: url('../images/tool-sprites.gif') !important;
 	font-size: 0 !important;
 	height: 15px !important;
 	width: 15px !important;
@@ -49,7 +49,7 @@
 }
 
 .olControlZoomPanel div {
-	background-image: url("images/tool-sprites.gif") !important;
+	background-image: url('../images/tool-sprites.gif') !important;
 	font-size: 0 !important;
 	height: 15px !important;
 	width: 15px !important;
