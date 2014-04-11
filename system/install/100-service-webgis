@@ -30,7 +30,7 @@ source /usr/local/python-virtualenvs/webgis/bin/activate
 # install requirements and webgis itself
 GISLAB_INSTALL_WEBGIS_DIR=/tmp/gislab-install-webgis-$(date +%s)
 cp -a /vagrant/system/server/gislab-webgis $GISLAB_INSTALL_WEBGIS_DIR
-pip install -r $GISLAB_INSTALL_WEBGIS_DIR/requirements.txt
+pip install --download-cache=/var/cache/pip --requirement=$GISLAB_INSTALL_WEBGIS_DIR/requirements.txt
 python $GISLAB_INSTALL_WEBGIS_DIR/setup.py install > /dev/null
 rm -r $GISLAB_INSTALL_WEBGIS_DIR
 
