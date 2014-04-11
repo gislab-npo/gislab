@@ -152,14 +152,14 @@ def page(request):
 	context['projection'] = 'EPSG:3857'
 
 	if project:
-		project = os.path.join(settings.WEBGIS_PROJECT_ROOT, project)
-		metadata_filename = project + '.meta'
+		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, project + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
+			allow_anonymous = metadata.authentication['allow_anonymous']
+			require_superuser = metadata.authentication['require_superuser']
 		except Exception, e:
-			return HttpResponse("Can't load project metadata. Error: {0}".format(str(e)), content_type='text/plain', status=404);
-		allow_anonymous = metadata.authentication['allow_anonymous']
-		require_superuser = metadata.authentication['require_superuser']
+			allow_anonymous = False
+			require_superuser = False
 		if not request.user.is_authenticated() and allow_anonymous:
 			# login as quest and continue
 			user = models.GislabUser.get_guest_user()
