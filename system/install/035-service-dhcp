@@ -43,6 +43,9 @@ then
     cat << EOF >> /etc/ltsp/dhcpd.conf
 include "/etc/ltsp/dhcpd-clients-allowed.conf";
 EOF
+
+	# allow client's MACs
+	/vagrant/system/bin/gislab-clients-allowed
 fi
 
 cat << EOF > /etc/default/isc-dhcp-server
