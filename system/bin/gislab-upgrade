@@ -24,6 +24,8 @@ function usage() {
 	from scratch using latest available software. Old client images are stored for 7 days in '/opt/ltsp/images'
 	directory as a backups if something went wrong."
 	echo -e "\nOPTIONS
+	-s  upgrade only server system even if GISLAB_SUITE is set to other value
+	-f  force running this command - do not ask before running
 	-h  display this help
 	"
 	exit 0
@@ -31,10 +33,12 @@ function usage() {
 
 
 # options
+SERVER_ONLY="no"
 FORCE="no"
-while getopts "fh" OPTION
+while getopts "sfh" OPTION
 do
         case "$OPTION" in
+			s) SERVER_ONLY="yes" ;;
 			f) FORCE="yes" ;;
 			h) usage ; exit 0 ;;
 			\?) exit 1 ;;
@@ -43,14 +47,19 @@ done
 shift $(($OPTIND - 1))
 
 if [ "$FORCE" != "yes" ]; then
-	echo "[GIS.lab]: You are going to upgrade server and client software. Please check if all clients are shut down !"
+	echo "[GIS.lab]: You are going to upgrade GIS.lab system. Please check if all clients are shut down !"
 	echo "[GIS.lab]: Continue ? [ENTER to continue, CTRL-C to cancel]"
 	read
 fi
 
 
 # perform upgrade
-bash  /vagrant/system/install.sh
+if [ "$SERVER_ONLY" == "no" ]; then
+	bash /vagrant/system/install.sh
+else
+	echo "[GIS.lab]: upgrading only server system ..."
+	GISLAB_SUITE_OVERRIDE=server bash /vagrant/system/install.sh
+fi
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

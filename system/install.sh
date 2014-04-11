@@ -35,6 +35,11 @@ else
 	GISLAB_INSTALLATION_DONE="no"
 fi
 
+# override suite value if requested from environment variable (GISLAB_SUITE_OVERRIDE=<value> bash install.sh)
+if [ -n "$GISLAB_SUITE_OVERRIDE" ]; then
+	GISLAB_SUITE=$GISLAB_SUITE_OVERRIDE
+fi
+
 
 GISLAB_INSTALL_DIR=/tmp/gislab-install-$(date +%s)
 mkdir -p ${GISLAB_INSTALL_DIR}
