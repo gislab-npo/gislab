@@ -1,6 +1,6 @@
 #!/bin/bash
 # List AWS GIS.lab server instances.
-# Author Ivan Mincik, Gista s.r.o., ivan.mincik@gmail.com
+# Author: Ivan Mincik, ivan.mincik@gmail.com
 
 
 ec2-describe-instances --filter "tag:Name=GIS.lab server"

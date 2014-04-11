@@ -4,7 +4,7 @@
 # idempotent operation, which means, that there is no unwanted effect if
 # script is called more than once (in case of upgrade).
 
-# Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
+# Author: Ivan Mincik, ivan.mincik@gmail.com
 
 
 set -e

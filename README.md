@@ -9,4 +9,4 @@ GIS.lab provides possibility to automatically deploy GIS server and unlimited nu
 
 
 ## Authors
- * Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
+ * Ivan Mincik, ivan.mincik@gmail.com

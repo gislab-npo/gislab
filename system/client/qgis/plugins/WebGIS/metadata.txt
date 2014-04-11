@@ -1,32 +1,20 @@
-# This file contains metadata for your plugin. Beginning
-# with version 1.8 this is the preferred way to supply information about a
-# plugin. The current method of embedding metadata in __init__.py will
-# be supported until version 2.0
-
-# This file should be included when you package your plugin.
-
-# Mandatory items:
-
-
 [general]
 name=GIS.lab Web plugin
 qgisMinimumVersion=2.0
 description=Publish your projects in GIS.lab Web
 version=0.1
-author=Marcel Dancak, GISTA s.r.o.
+author=Marcel Dancak
 email=marcel.dancak@gista.sk
 
-# end of mandatory metadata
 
-# Optional items:
-
-# Uncomment the following line and add your changelog entries:
+# OPTIONAL ITEMS
+# uncomment the following line and add your changelog entries:
 # changelog=
 
 # tags are comma separated with spaces allowed
 tags=
 
-homepage=http://www.gista.sk
+homepage=http://imincik.github.io/gis-lab
 tracker=
 repository=
 icon=icon.png

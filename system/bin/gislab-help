@@ -1,5 +1,5 @@
 #!/bin/bash
-# Author Ivan Mincik, GISTA s.r.o., ivan.mincik@gmail.com
+# Author: Ivan Mincik, ivan.mincik@gmail.com
 
 set -e
 

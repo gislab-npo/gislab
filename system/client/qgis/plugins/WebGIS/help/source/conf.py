@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'webgisplugin'
-copyright = u'2014, Marcel Dancak, GISTA s.r.o.'
+copyright = u'2014, Marcel Dancak
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -179,7 +179,7 @@ htmlhelp_basename = 'templateclassdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'webgisplugin.tex', u'webgisplugin Documentation',
-   u'GISTA s.r.o.', 'manual'),
+   u'GIS.lab', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -212,5 +212,5 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'templateclass', u'webgisplugin Documentation',
-     [u'GISTA s.r.o.'], 1)
+     [u'GIS.lab'], 1)
 ]

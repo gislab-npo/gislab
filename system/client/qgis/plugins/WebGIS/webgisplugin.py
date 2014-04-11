@@ -2,11 +2,10 @@
 """
 /***************************************************************************
  GIS.lab Web plugin
-                                 A QGIS plugin
  Publish your projects into GIS.lab Web application
                               -------------------
         begin                : 2014-01-09
-        copyright            : (C) 2014 by Marcel Dancak, GISTA s.r.o.
+        copyright            : (C) 2014 by Marcel Dancak
         email                : marcel.dancak@gista.sk
  ***************************************************************************/
 

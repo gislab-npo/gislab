@@ -1,5 +1,5 @@
 #!/bin/bash
-# Author Ivan Mincik, Gista s.r.o., ivan.mincik@gmail.com
+# Author: Ivan Mincik, ivan.mincik@gmail.com
 
 # Mount LTSP server /storage/barrel dir. Requires 'nfs-common' package installed.
 

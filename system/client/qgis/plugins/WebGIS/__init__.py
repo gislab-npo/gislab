@@ -2,11 +2,10 @@
 """
 /***************************************************************************
  WebGIS plugin
-                                 A QGIS plugin
  Publish your projects into WebGis application
                              -------------------
         begin                : 2014-01-09
-        copyright            : (C) 2014 by Marcel Dancak, GISTA s.r.o.
+        copyright            : (C) 2014 by Marcel Dancak
         email                : marcel.dancak@gista.sk
  ***************************************************************************/
 
