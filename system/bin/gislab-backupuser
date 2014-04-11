@@ -51,16 +51,27 @@ DATE=$(date '+%Y-%m-%d:%H-%M-%S')
 BACKUP_FILE=/storage/backup/gislab-backup-$GISLAB_USER-$DATE.tar
 GISLAB_USER_HOME=/home/$GISLAB_USER
 TEMP_BACKUP_DIR=/tmp/$GISLAB_USER-$DATE
-HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar.bz2
+HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar
 SHARE_BACKUP_FILE=$TEMP_BACKUP_DIR/share.tar.bz2
 DB_BACKUP_FILE=$TEMP_BACKUP_DIR/$GISLAB_USER-db.dump
+LDAP_BACKUP_FILE=$TEMP_BACKUP_DIR/$GISLAB_USER-ldap.dump
 
 echo -e "[GIS.lab]: Backuping '$GISLAB_USER' user's data..."
 
 mkdir $TEMP_BACKUP_DIR
 
 # tar home dir
-tar -cjf $HOME_BACKUP_FILE --exclude="$GISLAB_USER_HOME/.*" $GISLAB_USER_HOME
+tar -cf $HOME_BACKUP_FILE --exclude="$GISLAB_USER_HOME/.*" --exclude=Downloads --ignore-case --exclude=tmp $GISLAB_USER_HOME
+
+if ls $GISLAB_USER_HOME/.config/QGIS/QGIS2.conf >/dev/null 2>&1; then
+	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.config/QGIS/QGIS2.conf
+fi
+
+if ls $GISLAB_USER_HOME/.qgis2/*.db >/dev/null 2>&1; then
+	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.qgis2/*.db
+fi
+
+bzip2 $HOME_BACKUP_FILE
 
 # tar share data
 tar -cjf $SHARE_BACKUP_FILE /storage/share/$GISLAB_USER
@@ -70,6 +81,12 @@ cd $TEMP_BACKUP_DIR
 
 # dump and tar user's database data
 sudo -u postgres pg_dump -Fc -n $GISLAB_USER gislab > $DB_BACKUP_FILE
+
+# dump user's LDAP data
+ldapfinger -u $GISLAB_USER > $LDAP_BACKUP_FILE
+
+# should be user added to 'labadmins' group when restoring?
+id $GISLAB_USER | grep -q '(labadmins)' && echo "#superuser" >> $LDAP_BACKUP_FILE
 
 # create backup file and clean up
 tar -cf $BACKUP_FILE *
