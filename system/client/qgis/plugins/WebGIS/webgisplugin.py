@@ -21,6 +21,7 @@
 
 import os.path
 import subprocess
+from urllib import urlencode
 
 # Import the PyQt and QGIS libraries
 import PyQt4.uic
@@ -62,6 +63,15 @@ class Node(object):
 			if res:
 				return res
 
+
+METADATA_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
+<Metadata>
+	<Authentication>
+		<AllowAnonymous>{anonymous}</AllowAnonymous>
+		<RequireSuperuser>{superuser}</RequireSuperuser>
+	</Authentication>
+</Metadata>
+"""
 
 class WebGisPlugin:
 
@@ -233,7 +243,15 @@ class WebGisPlugin:
 		if drawings:
 			get_params.append(('DRAWINGS', drawings.replace(" ", "")))
 
-		link = 'http://web.gis.lab/?{0}'.format("&".join(["{0}={1}".format(name, value) for name, value in get_params]))
+		link = 'http://web.gis.lab/?{0}'.format(urlencode(get_params))
+
+		# create metadata file
+		metadata_filename = self.project.fileName() + '.meta'
+		with open(metadata_filename, "w") as f:
+			f.write(METADATA_TEMPLATE.format(
+				anonymous=False,
+				superuser=False
+			))
 		#print "Starting firefox ...", link
 		subprocess.Popen([r'firefox', '-new-tab', link])
 		dialog.close()
