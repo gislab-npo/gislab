@@ -65,8 +65,8 @@ EOF
 wget -q https://dl-ssl.google.com/linux/linux_signing_key.pub -O- | sudo apt-key add - # add Google repositories key
 
 
-# use APT proxy on server if configured
-if [ -n "${GISLAB_APT_HTTP_PROXY}" ]; then
+# use APT proxy on server if configured and provider is not AWS (AWS is using AWS hosted repositories)
+if [[ -n "${GISLAB_APT_HTTP_PROXY}" && "${GISLAB_SERVER_PROVIDER}" != "aws" ]]; then
 	cat << EOF > /etc/apt/apt.conf.d/02proxy
 Acquire::http { Proxy "$GISLAB_APT_HTTP_PROXY"; };
 EOF
