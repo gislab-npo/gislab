@@ -41,6 +41,7 @@ echo "TLS_REQCERT never" >> /etc/ldap/ldap.conf
 certtool --generate-privkey > /etc/ssl/private/cakey.pem
 
 cat << EOL > /etc/ssl/ca.info
+$(config_header)
 cn = GIS.lab
 ca
 cert_signing_key
@@ -56,6 +57,7 @@ certtool --generate-privkey \
 --outfile /etc/ssl/private/$(hostname)_slapd_key.pem
 
 cat << EOL > /etc/ssl/$(hostname).info
+$(config_header)
 organization = Gis.lab
 cn = $(hostname -f)
 tls_www_server

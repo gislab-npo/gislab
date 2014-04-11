@@ -16,6 +16,9 @@ then
 	source /vagrant/config-user.cfg
 fi
 
+source /vagrant/system/functions.sh
+
+
 if [ "$GISLAB_DEBUG" == "yes" ];
 then
 	set -x
@@ -24,6 +27,7 @@ fi
 
 # get provisioning provider name
 GISLAB_SERVER_PROVIDER=$1
+
 
 # create gislab directory in /etc to store some GIS.lab settings
 mkdir -p /etc/gislab
@@ -35,12 +39,16 @@ else
 	GISLAB_INSTALLATION_DONE="no"
 fi
 
+
 # override suite value if requested from environment variable (GISLAB_SUITE_OVERRIDE=<value> bash install.sh)
 if [ -n "$GISLAB_SUITE_OVERRIDE" ]; then
 	GISLAB_SUITE=$GISLAB_SUITE_OVERRIDE
 fi
 
 
+#
+# INSTALLATION
+#
 GISLAB_INSTALL_DIR=/tmp/gislab-install-$(date +%s)
 mkdir -p ${GISLAB_INSTALL_DIR}
 cp -a /vagrant/system/install/* ${GISLAB_INSTALL_DIR}

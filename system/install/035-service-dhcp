@@ -4,18 +4,21 @@
 
 # adding Apparmor profile to enable including allowed MACs from /etc/ltsp/dhcpd-clients-allowed.conf
 cat << EOF > /etc/apparmor.d/local/usr.sbin.dhcpd
+$(config_header)
 /etc/ltsp/dhcpd-clients-allowed.conf lrw,
 EOF
 service apparmor restart
 
 # creating empty MACs file
 cat << EOF > /etc/ltsp/dhcpd-clients-allowed.conf
+$(config_header)
 group {
 }
 EOF
 
 # DHCP server configuration
 cat << EOF > /etc/ltsp/dhcpd.conf
+$(config_header)
 authoritative;
 
 subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
@@ -49,6 +52,7 @@ EOF
 fi
 
 cat << EOF > /etc/default/isc-dhcp-server
+$(config_header)
 INTERFACES="eth1"
 EOF
 

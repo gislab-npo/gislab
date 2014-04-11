@@ -3,6 +3,7 @@
 #
 
 cat << EOL > /etc/postfix/main.cf
+$(config_header)
 smtpd_banner = \$myhostname ESMTP \$mail_name (Ubuntu)
 biff = no
 append_dot_mydomain = no

@@ -3,6 +3,7 @@
 #
 
 cat << EOF > /etc/ircd-hybrid/ircd.conf
+$(config_header)
 serverinfo {
     name = "irc.gis.lab";
     description = "GIS.lab IRC server";
@@ -28,6 +29,7 @@ EOF
 # set correct file mode and ownerschip of irc daemon log file
 # after logrotate so logcheck can access it
 cat << EOL > /etc/logrotate.d/ircd-hybrid
+$(config_header)
 /var/log/ircd/ircd-hybrid.log {
 	rotate 3
 	weekly
@@ -35,7 +37,7 @@ cat << EOL > /etc/logrotate.d/ircd-hybrid
 	delaycompress
 	create 640 irc adm
 	postrotate
-		invoke-rc.d ircd-hybrid reload > /dev/null
+	invoke-rc.d ircd-hybrid reload > /dev/null
 	endscript
 	missingok
 }

@@ -10,7 +10,8 @@ if [[ "$GISLAB_VERSION" == "dev" && -d "/vagrant/.git" ]]; then
 	GISLAB_VERSION=git:$GISLAB_VERSION_BRANCH~$GISLAB_VERSION_CHANGESET
 fi
 
-echo -e "GISLAB_UNIQUE_ID='$GISLAB_UNIQUE_ID'" > /etc/gislab_version
+echo -e "$(config_header)" > /etc/gislab_version
+echo -e "GISLAB_UNIQUE_ID='$GISLAB_UNIQUE_ID'" >> /etc/gislab_version
 echo -e "GISLAB_VERSION='$GISLAB_VERSION'" >> /etc/gislab_version
 echo -e "GISLAB_SERVER_BUILD_TIME='$(date)'" >> /etc/gislab_version
 

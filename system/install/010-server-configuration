@@ -8,11 +8,13 @@ GISLAB_SERVER_IP=$(hostname  -I | awk -F" " '{print $NF}')
 GISLAB_NETWORK=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $1 "." $2 "." $3 }')
 
 cat << EOF > /etc/hosts
+$(config_header)
 127.0.0.1 localhost
 $GISLAB_SERVER_IP server.gis.lab server
 EOF
 
 cat << EOF > /etc/hostname
+$(config_header)
 server
 EOF
 service hostname start
@@ -21,6 +23,7 @@ service rsyslog restart # restart syslog to read new hostname
 
 # timezone
 cat << EOF > /etc/timezone
+$(config_header)
 $GISLAB_TIMEZONE
 EOF
 
@@ -35,6 +38,7 @@ export LC_CTYPE=en_US.UTF-8
 locale-gen en_US.UTF-8
 
 cat << EOF > /etc/default/locale
+$(config_header)
 LANG="en_US.UTF-8"
 LANGUAGE="en_US:en"
 EOF
@@ -42,6 +46,7 @@ EOF
 # add path to management scripts for sudo users. Configuration in 'vagrant-secure-path' is losing
 # effect once sudo-ldap is installed
 cat << EOF > /etc/sudoers.d/vagrant-secure-path
+$(config_header)
 Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/vagrant/system/bin"
 EOF
 chmod 0440 /etc/sudoers.d/vagrant-secure-path

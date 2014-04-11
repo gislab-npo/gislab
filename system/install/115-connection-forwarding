@@ -5,6 +5,7 @@
 # enable IP forwarding for client machines after each server start
 cat << EOF > /etc/rc.local
 #!/bin/sh -e
+$(config_header)
 
 sysctl -w net.ipv4.ip_forward=1
 iptables --table nat --append POSTROUTING --jump MASQUERADE --source $GISLAB_NETWORK.0/24

@@ -2,9 +2,17 @@
 ### LOGCHECK ###
 #
 
-sed -i 's/^#INTRO=1.*/INTRO=0/' /etc/logcheck/logcheck.conf
+cat << EOL > /etc/logcheck/logcheck.conf
+$(config_header)
+INTRO=0
+REPORTLEVEL="server"
+SENDMAILTO="logcheck"
+MAILASATTACH=0
+FQDN=1
+EOL
 
 cat << EOL > /etc/logcheck/logcheck.logfiles
+$(config_header)
 /var/log/syslog
 /var/log/auth.log
 /var/log/postgresql/postgresql-9.1-main.log
@@ -14,9 +22,13 @@ cat << EOL > /etc/logcheck/logcheck.logfiles
 EOL
 
 cat << EOL > /etc/cron.d/logcheck
+$(config_header)
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=root
 
 @reboot		logcheck	if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -R -H "$GISLAB_UNIQUE_ID"; fi
 2 *	* * *	logcheck	if [ -x /usr/sbin/logcheck ]; then nice -n10 /usr/sbin/logcheck -H "$GISLAB_UNIQUE_ID"; fi
 EOL
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:
