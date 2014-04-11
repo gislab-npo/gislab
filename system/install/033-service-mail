@@ -27,6 +27,7 @@ virtual_alias_maps = regexp:/etc/postfix/virtual_regexp
 message_size_limit = 52428800
 EOL
 
+# send admin email to vagrant if exists, else send it to ubuntu or root
 if id vagrant >/dev/null 2>&1; then
 	default_admin_mail=vagrant
 elif id ubuntu >/dev/null 2>&1; then
@@ -59,3 +60,6 @@ if [ -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" -a -n "$GISLAB_SERVER_EMAIL_RELAY_PAS
 fi
 
 service postfix restart
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:
