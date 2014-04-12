@@ -31,7 +31,7 @@ fi
 echo -e $installation_summary
 
 # send installation summary to administrator by email
-echo -e $installation_summary | mail -s "[GIS.lab ($GISLAB_UNIQUE_ID)] Installation done" root
+echo -e $installation_summary | mail -s "[GIS.lab ID: $GISLAB_UNIQUE_ID] Installation done" root
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:
