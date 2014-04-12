@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-	ServerAdmin webmaster@localhost
+	ServerAdmin root@gis.lab
 
 	DocumentRoot /var/www
 	<Directory />
