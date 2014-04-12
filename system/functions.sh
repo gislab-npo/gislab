@@ -2,7 +2,7 @@
 # FUNCTIONS
 #
 
-config_header () {
+gislab_config_header () {
 	# print informative text about creation of configuration
 	# file by GIS.lab install
 	if [ -z "$1" ]; then

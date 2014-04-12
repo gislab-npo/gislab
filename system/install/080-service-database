@@ -7,7 +7,7 @@
 shmmax=$(echo $(free -b | awk '/^Mem:/{print $2}') / 3.5 | bc)
 sysctl -w kernel.shmmax=$shmmax
 cat << EOF > /etc/sysctl.d/30-postgresql-shm.conf
-$(config_header)
+$(gislab_config_header)
 kernel.shmmax = $shmmax
 EOF
 
@@ -15,7 +15,7 @@ EOF
 # and set search path to user schema as first - search_path = '"$user",public' .
 # all other settings are default values taken from postgresql.conf.
 cat << EOF > /etc/postgresql/9.1/main/postgresql.conf
-$(config_header)
+$(gislab_config_header)
 data_directory = '/var/lib/postgresql/9.1/main'
 hba_file = '/etc/postgresql/9.1/main/pg_hba.conf'
 ident_file = '/etc/postgresql/9.1/main/pg_ident.conf'
@@ -39,7 +39,7 @@ pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9
 
 # configure access policy
 cat << EOF > /etc/postgresql/9.1/main/pg_hba.conf
-$(config_header)
+$(gislab_config_header)
 local  all  postgres  peer
 local  all  all  trust
 host   all  all  0.0.0.0/0 ldap ldapserver=server.gis.lab ldaptls=1 ldapprefix="uid=" ldapsuffix=",ou=People,dc=gis,dc=lab"

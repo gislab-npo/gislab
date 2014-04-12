@@ -13,7 +13,7 @@ fi
 
 # Main Ubuntu repositories
 cat << EOF > /etc/apt/sources.list
-$(config_header)
+$(gislab_config_header)
 
 ###### Main Ubuntu repositories
 deb http://$GISLAB_APT_REPOSITORY_COUNTRY_MIRROR_MAIN.archive.ubuntu.com/ubuntu/ precise main universe multiverse 
@@ -70,7 +70,7 @@ wget -q https://dl-ssl.google.com/linux/linux_signing_key.pub -O- | sudo apt-key
 # use APT proxy on server if configured and provider is not AWS (AWS is using AWS hosted repositories)
 if [[ -n "${GISLAB_APT_HTTP_PROXY}" && "${GISLAB_SERVER_PROVIDER}" != "aws" ]]; then
 	cat << EOF > /etc/apt/apt.conf.d/02proxy
-$(config_header)
+$(gislab_config_header)
 Acquire::http { Proxy "$GISLAB_APT_HTTP_PROXY"; };
 EOF
 else

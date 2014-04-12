@@ -3,7 +3,7 @@
 #
 
 cat << EOL > /etc/logcheck/logcheck.conf
-$(config_header)
+$(gislab_config_header)
 INTRO=0
 REPORTLEVEL="server"
 SENDMAILTO="logcheck"
@@ -12,7 +12,7 @@ FQDN=1
 EOL
 
 cat << EOL > /etc/logcheck/logcheck.logfiles
-$(config_header)
+$(gislab_config_header)
 /var/log/syslog
 /var/log/auth.log
 /var/log/postgresql/postgresql-9.1-main.log
@@ -22,7 +22,7 @@ $(config_header)
 EOL
 
 cat << EOL > /etc/cron.d/logcheck
-$(config_header)
+$(gislab_config_header)
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 MAILTO=root
 

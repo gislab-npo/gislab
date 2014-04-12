@@ -5,7 +5,7 @@
 # 'installation.done' file will be used to detect if we are running initial GIS.lab
 # installation or we are performing upgrade
 mkdir -p /etc/gislab
-echo "$(config_header)" >> /etc/gislab/installation.done
+echo "$(gislab_config_header)" >> /etc/gislab/installation.done
 
 
 echo -e "\n[GIS.lab]: Done. GIS.lab is installed and ready to use!"

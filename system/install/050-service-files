@@ -9,7 +9,7 @@ mkdir -p /storage/barrel        # readable and writable for all NFS users
 chmod ugo+rwx /storage/barrel
 
 cat << EOF > /etc/exports
-$(config_header)
+$(gislab_config_header)
 /home                       *(rw,sync,no_subtree_check)
 /storage/repository         *(ro,sync,no_subtree_check)
 /storage/share              *(rw,sync,no_subtree_check)
@@ -17,7 +17,7 @@ $(config_header)
 EOF
 
 cat << EOF > /etc/idmapd.conf
-$(config_header)
+$(gislab_config_header)
 [General]
 Verbosity = 0
 Pipefs-Directory = /run/rpc_pipefs
@@ -31,7 +31,7 @@ EOF
 # add /mnt mount point to fstab
 if [ "$GISLAB_INSTALLATION_DONE" == "no" ]; then
 	cat << EOF >> /etc/fstab
-$(config_header)
+$(gislab_config_header)
 /storage  /mnt  none  bind  0  0
 EOF
 fi
