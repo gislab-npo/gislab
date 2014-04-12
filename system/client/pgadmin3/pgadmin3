@@ -41,9 +41,9 @@ pgsql-Versions=9.1
 [Servers]
 Count=1
 [Servers/1]
-Server=server.gis.lab
+Server=db.gis.lab
 HostAddr=
-Description=gislab@server.gis.lab
+Description=gislab@db.gis.lab
 Service=
 ServiceID=
 DiscoveryID=
