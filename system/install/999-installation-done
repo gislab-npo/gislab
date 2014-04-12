@@ -28,6 +28,7 @@ if [ "$GISLAB_SERVER_PROVIDER" == "aws" ]; then
 fi
 
 # print installation summary
+gislab_print_info "Installation finished"
 echo -e $installation_summary
 
 # send installation summary to administrator by email

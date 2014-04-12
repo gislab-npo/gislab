@@ -10,13 +10,17 @@
 set -e
 
 
+# load configuration
 source /vagrant/config.cfg
 if [ -f /vagrant/config-user.cfg ]
 then
 	source /vagrant/config-user.cfg
 fi
 
-source /vagrant/system/functions.sh
+# install and load utility functions
+mkdir -p /usr/local/gislab
+cp /vagrant/system/functions.sh /usr/local/gislab/
+source /usr/local/gislab/functions.sh
 
 
 if [ "$GISLAB_DEBUG" == "yes" ];
@@ -52,7 +56,11 @@ fi
 GISLAB_INSTALL_DIR=/tmp/gislab-install-$(date +%s)
 mkdir -p ${GISLAB_INSTALL_DIR}
 cp -a /vagrant/system/install/* ${GISLAB_INSTALL_DIR}
-for f in ${GISLAB_INSTALL_DIR}/*; do source $f; done
+for f in ${GISLAB_INSTALL_DIR}/*; do
+	gislab_print_info "Running installation script '$(basename $f)'"
+	source $f
+	echo "$(gislab_config_header)" >> /etc/gislab/$(basename $f).done
+done
 rm -r ${GISLAB_INSTALL_DIR}
 
 

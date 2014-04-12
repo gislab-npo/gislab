@@ -3,10 +3,6 @@
 
 set -e
 
-if [[ $EUID -ne 0 ]]; then
-	echo "[GIS.lab]: This command can be run only with superuser privileges!"
-	exit 1
-fi
 
 # source configuration files
 source /vagrant/config.cfg
@@ -14,6 +10,12 @@ if [ -f /vagrant/config-user.cfg ]
 then
 	source /vagrant/config-user.cfg
 fi
+
+source /usr/local/gislab/functions.sh
+
+# require root privileges
+gislab_require_root
+
 
 # usage
 function usage() {
@@ -55,16 +57,16 @@ if [ -z "$BACKUP_FILE" ]; then
 		done
 
 		if [ $i -eq 0 ]; then
-			echo "[GIS.lab]: Cannot find any previous backup. Exiting."
+			gislab_print_error "Can not find any previous backup"
 			exit
 		fi
 
 		echo
-		read -p "[GIS.lab]: Select backup file to restore data from: " SELECT
+		read -p "Select backup file to restore data from: " SELECT
 
 		# check the selection
 		if ! echo $SELECT | grep -q '[0-9]' || [ $SELECT -lt 1 ] || [ $SELECT -gt $i ]; then
-			echo -e "\n[GIS.lab]: Wrong choice.\n"
+			gislab_print_error "Wrong choice"
 		else
 			SELECT=$(($SELECT-1))
 			BACKUP_FILE=${BACKUPS[$SELECT]}
@@ -74,16 +76,13 @@ if [ -z "$BACKUP_FILE" ]; then
 fi
 
 if [ ! -f "$BACKUP_FILE" ]; then
-	echo -e "[GIS.lab]: Backup file does not exist. Exiting."
+	gislab_print_error "Backup file does not exist"
 	exit 1
 fi
 
 # delete user if exists
 if id $GISLAB_USER >/dev/null 2>&1; then
-	echo -e "[GIS.lab]: User '$GISLAB_USER' exists."
 	gislab-deluser $FORCE_FLAG $GISLAB_USER 
-else
-	echo -e "[GIS.lab]: User '$GISLAB_USER' does not exist."
 fi
 
 # untar backup file
@@ -118,8 +117,6 @@ replace: userPassword
 userPassword:: $GISLAB_USER_PASS_CRYPT
 EOL
 
-echo "[GIS.lab]: Old password restored."
-
 # untar backups
 for file in *.bz2; do
 	tar -xjf $file
@@ -139,7 +136,7 @@ sudo -u postgres pg_restore -n $GISLAB_USER -d gislab $GISLAB_USER-db.dump
 # clean up
 rm -rf $BACKUP_TEMP_DIR
 
-echo -e "[GIS.lab]: '$GISLAB_USER' user's data restored."
+gislab_print_info "Account '$GISLAB_USER' is restored"
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

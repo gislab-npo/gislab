@@ -3,10 +3,6 @@
 
 set -e
 
-if [[ $EUID -ne 0 ]]; then
-	echo "[GIS.lab]: This command can be run only with superuser privileges!"
-	exit 1
-fi
 
 # source configuration files
 source /vagrant/config.cfg
@@ -14,6 +10,11 @@ if [ -f /vagrant/config-user.cfg ]
 then
 	source /vagrant/config-user.cfg
 fi
+
+source /usr/local/gislab/functions.sh
+
+# require root privileges
+gislab_require_root
 
 
 # usage
@@ -58,8 +59,7 @@ fi
 
 GISLAB_USER=$1
 if id -u $GISLAB_USER > /dev/null 2>&1; then
-	echo "[GIS.lab]: User '$GISLAB_USER' already exists!"
-	echo
+	gislab_print_error "User '$GISLAB_USER' already exists"
 	exit 0
 fi
 
@@ -158,7 +158,6 @@ chown -R root:root /etc/skel
 
 
 # create account
-echo -e "[GIS.lab]: Creating user account '$GISLAB_USER'..."
 ldapadduser $GISLAB_USER labusers # LDAP account
 chmod go-rwx /home/$GISLAB_USER
 
@@ -221,7 +220,7 @@ find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER##/$GISLAB_USER/g" 
 find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER_PASSWORD##/$GISLAB_USER_PASSWORD/g" "{}" \;
 
 
-echo -e "\n[GIS.lab]: Created account '$GISLAB_USER' with password '$GISLAB_USER_PASSWORD'."
+gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

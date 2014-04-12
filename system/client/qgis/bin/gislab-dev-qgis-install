@@ -2,8 +2,11 @@
 
 set -e
 
-echo "[GIS.lab]: This script will download latest QGIS source code and make install."
-echo "[GIS.lab]: Continue ? [ENTER to continue, CTRL-C to cancel]"
+
+source /usr/local/gislab/functions.sh
+
+gislab_print_info "This script will download latest QGIS source code and make install"
+echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
 read
 
 mkdir -p ~/apps
@@ -25,7 +28,7 @@ fi
 
 make && make install
 
-echo -e "\n[GIS.lab]: Done. Run command '$ gislab-dev-qgis' to start QGIS."
+gislab_print_info "Done. Run command '$ gislab-dev-qgis' to start QGIS"
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

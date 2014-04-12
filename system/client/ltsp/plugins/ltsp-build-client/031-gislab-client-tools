@@ -2,6 +2,7 @@
 
 case "$MODE" in
     finalization)
+	cp /vagrant/system/functions.sh $ROOT/usr/local/gislab/
 	cp -a /vagrant/system/client/bin/* $ROOT/usr/local/bin/
     ;;
 esac

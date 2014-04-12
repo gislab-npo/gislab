@@ -3,10 +3,6 @@
 
 set -e
 
-if [[ $EUID -ne 0 ]]; then
-	echo "[GIS.lab]: This command can be run only with superuser privileges!"
-	exit 1
-fi
 
 # source configuration files
 source /vagrant/config.cfg
@@ -14,6 +10,11 @@ if [ -f /vagrant/config-user.cfg ]
 then
 	source /vagrant/config-user.cfg
 fi
+
+source /usr/local/gislab/functions.sh
+
+# require root privileges
+gislab_require_root
 
 
 # usage
@@ -46,14 +47,14 @@ if [ $# -eq 0 ]; then usage; fi
 GISLAB_USER=$1
 
 if ! id $GISLAB_USER >/dev/null 2>&1; then
-	echo "[GIS.lab]: GIS.lab user '$GISLAB_USER' does not exists."
+	gislab_print_error "GIS.lab user '$GISLAB_USER' does not exists"
 	echo
 	exit 1
 fi
 
 if [ "$FORCE" != "yes" ]; then
-	echo "[GIS.lab]: You are going to delete user account '$GISLAB_USER'."
-	echo "[GIS.lab]: This command will delete also all data belonging to this user. Continue ? [ENTER to continue, CTRL-C to cancel]"
+	gislab_print_warning "This command will completely remove user account '$GISLAB_USER' including all data"
+	echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
 	read
 fi
 
@@ -61,9 +62,8 @@ if [ "$BACKUP" == "yes" ]; then
 	gislab-backupuser $GISLAB_USER
 fi
 
-# remove account
-echo -e "\n[GIS.lab]: Removing GIS.lab user account ..."
 
+# remove account
 # delete home
 GISLAB_USER_HOME=$(getent passwd $GISLAB_USER | awk -F: '{ print $6 }')
 
@@ -98,8 +98,6 @@ sudo su - postgres -c "dropuser $GISLAB_USER"
 
 rm -rf /storage/share/$GISLAB_USER # NFS directory
 
-
-echo -e "\n[GIS.lab]: Done."
-
+gislab_print_info "Account '$GISLAB_USER' removed"
 
 # vim: set ts=4 sts=4 sw=4 noet:

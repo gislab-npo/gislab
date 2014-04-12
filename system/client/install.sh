@@ -5,10 +5,6 @@
 
 set -e
 
-if [[ $EUID -ne 0 ]]; then
-	echo "[GIS.lab]: This command can be run only with superuser privileges!"
-	exit 1
-fi
 
 # source configuration files
 source /vagrant/config.cfg
@@ -16,6 +12,11 @@ if [ -f /vagrant/config-user.cfg ]
 then
 	source /vagrant/config-user.cfg
 fi
+
+source /usr/local/gislab/functions.sh
+
+# require root privileges
+gislab_require_root
 
 
 # usage
@@ -42,12 +43,11 @@ shift $(($OPTIND - 1))
 
 DATETIME=$(date +"%Y-%m-%d-%T")
 
-echo -e "\n[GIS.lab]: Installing client image ..."
 
 # backup existing client image
 if [ -f /opt/ltsp/images/i386.img ]
 then
-	echo -e "\n[GIS.lab]: Creating backup of existing image and removing expired backups."
+	gislab_print_info "Creating backup of existing image and removing expired backups"
 	cp /opt/ltsp/images/i386.img /opt/ltsp/images/i386-backup-$DATETIME.img
 	find /opt/ltsp/images/ -iname "i386-backup*.img" -mtime 7 | xargs rm -vf
 fi
@@ -122,7 +122,7 @@ service nbd-server restart
 sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/ltsp/i386/pxelinux.cfg/default
 
 
-echo -e "\n[GIS.lab]: Client installation done."
+gislab_print_info "Client installation done"
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

@@ -2,11 +2,14 @@
 
 set -e
 
+
+source /usr/local/gislab/functions.sh
+
 if [ -f "/home/$USER/apps/bin/qgis" ]; then
 	export LD_LIBRARY_PATH=~/apps/lib/
 	~/apps/bin/qgis
 else
-	echo -e "\n[GIS.lab]: Development version of QGIS is not installed. Run '$ gislab-dev-qgis-install'."
+	gislab_print_error "Development version of QGIS is not installed. Run '$ gislab-dev-qgis-install'"
 fi
 
 

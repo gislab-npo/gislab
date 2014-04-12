@@ -3,6 +3,7 @@
 
 set -e
 
+
 echo "This is a list of available GIS.lab administrator commands.
 To get detailed usage help run command with '-h' option.
 "
