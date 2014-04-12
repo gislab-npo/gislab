@@ -5,6 +5,24 @@
 # skip on upgrade
 if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then return; fi
 
+# configure nsswitch
+cat << EOF > /etc/nsswitch.conf
+$(gislab_config_header)
+passwd: files ldap
+group: files ldap
+shadow: files ldap
+
+hosts:          files myhostname dns
+networks:       files
+protocols:      db files
+services:       db files
+ethers:         db files
+rpc:            db files
+
+netgroup: nis
+EOF
+
+
 # generate and set LDAP admin password
 # generally we don't need to know it, but we can
 # find it in '/etc/ldapscripts/ldapscripts.passwd'
@@ -15,7 +33,6 @@ ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
 dn: olcDatabase={1}hdb,cn=config
 replace: olcRootPW
 olcRootPW: $LDAP_ADMIN_PASS_HASH
-
 EOL
 
 
@@ -31,10 +48,12 @@ fi
 
 
 # configure base DN and URI and disable certificates verification
-sed -i 's/#BASE.*/BASE dc=gis,dc=lab/' /etc/ldap/ldap.conf
-sed -i 's/#URI.*/URI ldapi:\/\/\//' /etc/ldap/ldap.conf
-sed -i 's/^TLS_CACERT/#TLS_CACERT/' /etc/ldap/ldap.conf
-echo "TLS_REQCERT never" >> /etc/ldap/ldap.conf
+cat << EOF > /etc/ldap/ldap.conf
+$(gislab_config_header)
+BASE dc=gis,dc=lab
+URI ldapi:///
+TLS_REQCERT never
+EOF
 
 
 # secure LDAP with TLS
@@ -108,11 +127,7 @@ export SUDO_FORCE_REMOVE=no
 
 ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /vagrant/system/server/ldap/sudo.schema
 
-echo "# sudo" >> /etc/nsswitch.conf
 echo "sudoers: files ldap" >> /etc/nsswitch.conf
-
-echo >> /etc/ldap/ldap.conf
-echo "# sudo" >> /etc/ldap/ldap.conf
 echo "SUDOERS_BASE ou=SUDOers,dc=gis,dc=lab" >> /etc/ldap/ldap.conf
 
 
@@ -146,23 +161,43 @@ EOL
 
 
 # configure ldapscripts
-sed -i 's/^#SERVER=.*/SERVER="ldapi:\/\/\/"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^#BINDDN=.*/BINDDN="cn=admin,dc=gis,dc=lab"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^#BINDPWDFILE=/BINDPWDFILE=/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^#SUFFIX=.*/SUFFIX="dc=gis,dc=lab"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^#GSUFFIX=.*/GSUFFIX="ou=groups"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^#USUFFIX=.*/USUFFIX="ou=people"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^GIDSTART=.*/GIDSTART="3000"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^UIDSTART=.*/UIDSTART="3000"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^MIDSTART=/#MIDSTART=/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^CREATEHOMES="no"/CREATEHOMES="yes"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^#HOMESKEL=.*/HOMESKEL="\/etc\/skel"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^#HOMEPERMS="755"/HOMEPERMS="700"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^GTEMPLATE=""/GTEMPLATE="\/etc\/ldapscripts\/addgroup.template"/' /etc/ldapscripts/ldapscripts.conf
-sed -i 's/^UTEMPLATE=""/UTEMPLATE="\/etc\/ldapscripts\/adduser.template"/' /etc/ldapscripts/ldapscripts.conf
+cat << EOF > /etc/ldapscripts/ldapscripts.conf
+$(gislab_config_header)
+SERVER="ldapi:///"
+SUFFIX="dc=gis,dc=lab"
+GSUFFIX="ou=groups"
+USUFFIX="ou=people"
+SASLAUTH=""
+BINDDN="cn=admin,dc=gis,dc=lab"
+BINDPWDFILE="/etc/ldapscripts/ldapscripts.passwd"
+GIDSTART="3000"
+UIDSTART="3000"
+GCLASS="posixGroup"
+CREATEHOMES="yes"
+HOMESKEL="/etc/skel"
+HOMEPERMS="700"
+PASSWORDGEN="pwgen"
+RECORDPASSWORDS="no"
+PASSWORDFILE="/var/log/ldapscripts_passwd.log"
+LOGFILE="/var/log/ldapscripts.log"
+TMPDIR="/tmp"
+LDAPSEARCHBIN="/usr/bin/ldapsearch"
+LDAPADDBIN="/usr/bin/ldapadd"
+LDAPDELETEBIN="/usr/bin/ldapdelete"
+LDAPMODIFYBIN="/usr/bin/ldapmodify"
+LDAPMODRDNBIN="/usr/bin/ldapmodrdn"
+LDAPPASSWDBIN="/usr/bin/ldappasswd"
+GETENTPWCMD=""
+GETENTGRCMD=""
+GTEMPLATE="/etc/ldapscripts/addgroup.template"
+UTEMPLATE="/etc/ldapscripts/adduser.template"
+MTEMPLATE=""
+
+EOF
 
 echo -n "$LDAP_ADMIN_PASS" > /etc/ldapscripts/ldapscripts.passwd
 chmod 0600 /etc/ldapscripts/ldapscripts.passwd
+
 
 # create templates for users and groups
 cat << EOL > /etc/ldapscripts/adduser.template
@@ -195,10 +230,16 @@ sed -i "s/^\[ -z \"\$USER\" \] && end_die 'Could not guess current user'$/\[ -n 
 pam-auth-update --force
 auth-client-config -t nss -p lac_ldap
 
-sed -i 's/^base.*/base dc=gis,dc=lab/' /etc/ldap.conf
-sed -i 's/^rootbinddn/#rootbinddn/' /etc/ldap.conf
-sed -i 's/#ssl start_tls/ssl start_tls/' /etc/ldap.conf
-sed -i 's/^#tls_checkpeer yes/tls_checkpeer no/' /etc/ldap.conf
+cat << EOF > /etc/ldap.conf
+$(gislab_config_header)
+base dc=gis,dc=lab
+uri ldapi:///
+ldap_version 3
+pam_password md5
+ssl start_tls
+tls_checkpeer no
+nss_initgroups_ignoreusers backup,bin,bind,daemon,dhcpd,games,gnats,irc,landscape,libuuid,list,logcheck,lp,mail,man,messagebus,nbd,news,ntp,openldap,postfix,postgres,proxy,puppet,root,sshd,statd,sync,sys,syslog,tftp,uucp,whoopsie,www-data
+EOF
 
 
 # restart service
@@ -251,5 +292,6 @@ description: GIS.lab Users Group
 EOL
 
 unset LDAP_ADMIN_PASS
+
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:
