@@ -7,7 +7,7 @@ if [ "$GISLAB_SUITE" == "server" ]; then
 	return
 fi
 
-/vagrant/system/bin/gislab-install-client # install client image
+bash /vagrant/system/client/install.sh # install client image
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

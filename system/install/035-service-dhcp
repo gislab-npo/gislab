@@ -2,15 +2,15 @@
 ### DHCP SERVER ###
 #
 
-# adding Apparmor profile to enable including allowed MACs from /etc/ltsp/dhcpd-clients-allowed.conf
+# adding Apparmor profile to enable including allowed MACs from /etc/ltsp/dhcpd-machines-allowed.conf
 cat << EOF > /etc/apparmor.d/local/usr.sbin.dhcpd
 $(gislab_config_header)
-/etc/ltsp/dhcpd-clients-allowed.conf lrw,
+/etc/ltsp/dhcpd-machines-allowed.conf lrw,
 EOF
 service apparmor restart
 
 # creating empty MACs file
-cat << EOF > /etc/ltsp/dhcpd-clients-allowed.conf
+cat << EOF > /etc/ltsp/dhcpd-machines-allowed.conf
 $(gislab_config_header)
 group {
 }
@@ -44,11 +44,11 @@ EOF
 if [ "$GISLAB_UNKNOWN_MAC_POLICY" == "deny" ]; # if unknown MACs are denied, load known ones from included file
 then
     cat << EOF >> /etc/ltsp/dhcpd.conf
-include "/etc/ltsp/dhcpd-clients-allowed.conf";
+include "/etc/ltsp/dhcpd-machines-allowed.conf";
 EOF
 
 	# allow client's MACs
-	/vagrant/system/bin/gislab-clients-allowed
+	/vagrant/system/bin/gislab-allowmachines
 fi
 
 cat << EOF > /etc/default/isc-dhcp-server
