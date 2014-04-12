@@ -14,7 +14,6 @@ $GISLAB_SERVER_IP server.gis.lab server
 EOF
 
 cat << EOF > /etc/hostname
-$(gislab_config_header)
 server
 EOF
 service hostname start
@@ -23,7 +22,6 @@ service rsyslog restart # restart syslog to read new hostname
 
 # timezone
 cat << EOF > /etc/timezone
-$(gislab_config_header)
 $GISLAB_TIMEZONE
 EOF
 
