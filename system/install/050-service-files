@@ -29,7 +29,7 @@ Nobody-Group = nogroup
 EOF
 
 # add /mnt mount point to fstab
-if [ "$GISLAB_INSTALLATION_DONE" == "no" ]; then
+if [ ! -f "/etc/gislab/050-service-files.done" ]; then
 	cat << EOF >> /etc/fstab
 $(gislab_config_header)
 /storage  /mnt  none  bind  0  0

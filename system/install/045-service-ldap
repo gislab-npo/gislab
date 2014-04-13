@@ -3,7 +3,7 @@
 #
 
 # skip on upgrade
-if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then return; fi
+if [ -f "/etc/gislab/045-service-ldap.done" ]; then return; fi
 
 # configure nsswitch
 cat << EOF > /etc/nsswitch.conf

@@ -12,7 +12,7 @@ EOF
 
 
 # create database and user only on initial installation
-if [ "$GISLAB_INSTALLATION_DONE" == "no" ]; then
+if [ ! -f "/etc/gislab/100-service-webgis.done" ]; then
 	WEBGIS_DB_PASSWORD=$(pwgen -1 -n 8)
 	sudo su - postgres -c "createdb -E UTF8 -T template0 webgis"
 	sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole webgis" # PostgreSQL account
@@ -40,7 +40,8 @@ rm -rf /var/www/webgis
 mkdir -p /var/www/webgis
 django-admin.py startproject --template=/vagrant/system/server/gislab-webgis/webgis/conf/project_template/ djproject /var/www/webgis
 
-if [ "$GISLAB_INSTALLATION_DONE" == "no" ]; then
+
+if [ ! -f "/etc/gislab/100-service-webgis.done" ]; then
 	cat << EOF >> /var/www/webgis/djproject/settings_secret.py
 DATABASES = {
 	'default': {

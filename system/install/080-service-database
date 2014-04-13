@@ -49,7 +49,7 @@ service postgresql restart
 
 
 # do not continue on upgrade
-if [ "$GISLAB_INSTALLATION_DONE" == "yes" ]; then return; fi
+if [ -f "/etc/gislab/080-service-database.done" ]; then return; fi
 
 # create labusers and labadmins group
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole --no-login labusers"
