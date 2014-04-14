@@ -225,6 +225,8 @@ var printWindow = new Ext.Window({
 				var print_window = Ext.getCmp('print-toolbar-window');
 				var overlays_root = Ext.getCmp('layers-tree-panel').root;
 				var params = {
+					SERVICE: 'WMS',
+					REQUEST: 'GetPrint',
 					FORMAT: print_window.formatCombobox.getValue(),
 					DPI: printExtent.printProvider.dpi.get("value"),
 					TEMPLATE: printExtent.printProvider.layout.get("name"),
@@ -242,7 +244,7 @@ var printWindow = new Ext.Window({
 					}
 				}
 
-				var printUrl = Ext.urlAppend('{% autoescape off %}{{ getprint_url }}{% endautoescape %}', Ext.urlEncode(params))
+				var printUrl = Ext.urlAppend('{% autoescape off %}{{ ows_url }}{% endautoescape %}', Ext.urlEncode(params))
 				window.open(printUrl, '_blank');
 				//action.toggle(false);
 			}
