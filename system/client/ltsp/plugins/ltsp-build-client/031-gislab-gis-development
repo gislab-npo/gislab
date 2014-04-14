@@ -9,7 +9,7 @@ case "$MODE" in
 		pyqt4-dev-tools python python-dev python-qt4 python-qt4-dev python-sip python-sip-dev txt2tags xauth xfonts-base xvfb \
 		python-qscintilla2 python-gdal qgit qt4-dev-tools ccache
 
-		chroot $ROOT apt-get --assume-yes --force-yes install qtcreator
+		chroot $ROOT apt-get --assume-yes --force-yes install qtcreator qt4-designer
 	fi
     ;;
 esac

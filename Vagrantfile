@@ -31,6 +31,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network :forwarded_port, guest: 2049, host: 2049, auto_correct: true
 
   config.ssh.forward_agent = true
+  if not CONFIG['GISLAB_SSH_PRIVATE_KEY'].strip.empty?
+     config.ssh.private_key_path = [CONFIG['GISLAB_SSH_PRIVATE_KEY'].strip, File.join("system", "insecure_private_key")]
+  end
 
   # VirtualBox provider
   config.vm.provider "virtualbox" do |vb, override|
