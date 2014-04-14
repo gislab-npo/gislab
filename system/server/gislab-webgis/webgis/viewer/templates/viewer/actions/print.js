@@ -33,6 +33,16 @@ var printWindow = new Ext.Window({
 			var last_toolbar_item = toolbar.items.last();
 			var toolbar_width = last_toolbar_item.getPosition()[0]-first_toolbar_item.getPosition()[0]+last_toolbar_item.getWidth();
 			window.setWidth(toolbar_width+2*(first_toolbar_item.getPosition()[0]-window.getPosition()[0]));
+		},
+		render: function(window) {
+			var map = new Ext.KeyMap(window.getEl(), [
+				{
+					key: [10, 13],
+					fn: function() {
+						window.print.handler(window.print);
+					}
+				}
+			]);
 		}
 	},
 	updatePrintScales: function() {
@@ -216,6 +226,7 @@ var printWindow = new Ext.Window({
 		}, {
 			xtype: 'tbspacer'
 		}, new Ext.Action({
+			ref: '/print',
 			text: 'Print',
 			tooltip: 'Print',
 			tooltipType: 'qtip',

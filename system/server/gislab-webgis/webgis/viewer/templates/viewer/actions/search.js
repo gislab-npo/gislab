@@ -25,6 +25,16 @@ var searchWindow = new Ext.Window({
 			if (window.items.length == 0) {
 				window.addAttribute();
 			}
+		},
+		render: function(window) {
+			var map = new Ext.KeyMap(window.getEl(), [
+				{
+					key: [10, 13],
+					fn: function() {
+						window.search.handler(window.search);
+					}
+				}
+			]);
 		}
 	},
 	onLayerChanged: function(layer_record) {
@@ -179,7 +189,6 @@ var searchWindow = new Ext.Window({
 						xtype: 'textfield',
 						disabled: true
 					}],
-
 					setType: function(type) {
 						this.multiMode = false;
 						this.type = type;
@@ -413,6 +422,7 @@ var searchWindow = new Ext.Window({
 			xtype: 'tbspacer'
 		}, new Ext.Action({
 			text: 'Search',
+			ref: '/search',
 			tooltip: 'Search',
 			cls: 'x-btn-text',
 			format: new OpenLayers.Format.GML(),
