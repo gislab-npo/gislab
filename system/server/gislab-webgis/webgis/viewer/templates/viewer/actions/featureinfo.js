@@ -67,7 +67,7 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 });
 
 ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
-	url: '{{ getfeatureinfo_url }}',
+	url: '{{ ows_url }}',
 	autoActivate: false,
 	infoFormat: 'application/vnd.ogc.gml',
 	maxFeatures: 10,
