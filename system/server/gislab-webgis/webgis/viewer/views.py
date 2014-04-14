@@ -73,23 +73,13 @@ def set_query_parameters(url, params_dict):
 
 
 @login_required
-def getfeatureinfo(request):
+def ows_request(request):
 	url = "{0}?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
-	resp = urllib2.urlopen(url)
-	resp_content = resp.read()
-	content_type = resp.info().getheader("Content-Type")
-	resp.close()
-	return HttpResponse(resp_content, content_type=content_type)
-
-@login_required
-def getprint(request):
-	url = "{0}?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
-	resp = urllib2.urlopen(url)
-	resp_content = resp.read()
-	content_type = resp.info().getheader("Content-Type")
-	resp.close()
-	return HttpResponse(resp_content, content_type=content_type)
-
+	with contextlib.closing(urllib2.urlopen(url)) as resp:
+		resp_content = resp.read()
+		content_type = resp.info().getheader("Content-Type")
+		status = resp.getcode()
+		return HttpResponse(resp_content, content_type=content_type, status=status)
 
 def parse_layers_param(layers_string, layers_capabilities, skip_layers=None):
 	tree = {
@@ -173,10 +163,8 @@ def page(request):
 			login_url = reverse('login')
 			return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
 
-		ows_url = '{0}?map={1}'.format(settings.WEBGIS_OWS_URL, project)
-		ows_getprojectsettings_url = "{0}&SERVICE=WMS&REQUEST=GetProjectSettings".format(ows_url)
-		getfeatureinfo_url = "{0}?map={1}&REQUEST=GetFeatureInfo".format(reverse('viewer:featureinfo'), project)
-		getprint_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetPrint".format(reverse('viewer:print'), project)
+		ows_url = '{0}?map={1}'.format(reverse('viewer:owsrequest'), project)
+		ows_getprojectsettings_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetProjectSettings".format(settings.WEBGIS_OWS_URL, project)
 
 		try:
 			project_settings = QgisGetProjectSettingsService(ows_getprojectsettings_url)
@@ -316,8 +304,6 @@ def page(request):
 			'project': project,
 			'ows_url': ows_url,
 			'ows_getprojectsettings_url': ows_getprojectsettings_url,
-			'getfeatureinfo_url': getfeatureinfo_url,
-			'getprint_url': getprint_url,
 			'project_extent': root_layer.extent,
 			'featureinfo': 'application/vnd.ogc.gml' in project_settings.featureinfo_formats and project,
 			'print_composers': project_settings.print_composers,

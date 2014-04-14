@@ -445,7 +445,7 @@ var searchWindow = new Ext.Window({
 				var query_filter = String.format('{0}:{1}', layer, attributes_queries.join(String.format(' {0} ', logical_operator)));
 				Ext.Ajax.request({
 					method: 'GET',
-					url: '{{ getfeatureinfo_url }}',
+					url: '{{ ows_url }}',
 					params: {
 						SERVICE: 'WMS',
 						REQUEST: 'GetFeatureInfo',
