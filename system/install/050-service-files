@@ -10,7 +10,7 @@ chmod ugo+rwx /storage/barrel
 
 cat << EOF > /etc/exports
 $(gislab_config_header)
-/home                       *(rw,sync,no_subtree_check)
+/home                       *(rw,sync,no_subtree_check,no_root_squash)
 /storage/repository         *(ro,sync,no_subtree_check)
 /storage/share              *(rw,sync,no_subtree_check)
 /storage/barrel             *(rw,sync,no_subtree_check,all_squash,insecure)
