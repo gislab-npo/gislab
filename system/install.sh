@@ -23,8 +23,8 @@ cp /vagrant/system/functions.sh /usr/local/gislab/
 source /usr/local/gislab/functions.sh
 
 
-if [ "$GISLAB_DEBUG" == "yes" ];
-then
+# enable installation in debug mode if requested
+if [ "$GISLAB_DEBUG_INSTALL" == "yes" ]; then
 	set -x
 fi
 

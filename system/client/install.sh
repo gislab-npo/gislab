@@ -15,6 +15,13 @@ fi
 
 source /usr/local/gislab/functions.sh
 
+
+# enable installation in debug mode if requested
+if [ "$GISLAB_DEBUG_INSTALL" == "yes" ]; then
+	set -x
+fi
+
+
 # require root privileges
 gislab_require_root
 
@@ -82,7 +89,7 @@ GISLAB_BUILD_CLIENT_OPTS+='--late-packages "$GISLAB_CLIENT_INSTALL_PACKAGES" '
 GISLAB_BUILD_CLIENT_OPTS+='--remove-packages "$GISLAB_CLIENT_REMOVE_PACKAGES" '
 
 # enable debug if requested
-if [ "$GISLAB_DEBUG" == "yes" ]; then
+if [ "$GISLAB_DEBUG_INSTALL" == "yes" ]; then
 	GISLAB_BUILD_CLIENT_OPTS+="--debug "
 fi
 

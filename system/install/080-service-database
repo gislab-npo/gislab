@@ -34,6 +34,16 @@ lc_time = 'en_US.UTF-8'
 default_text_search_config = 'pg_catalog.english'
 EOF
 
+# enable extended logging if requested
+if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
+cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
+log_min_messages = 'DEBUG1'
+log_min_error_statement = 'DEBUG1'
+log_min_duration_statement = 0
+EOF
+fi
+
+
 # tune database depending on current server configuration
 pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
 
