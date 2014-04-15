@@ -1,8 +1,8 @@
-
+{% load i18n %}
 var draw_controls = [
 	// Draw points control
 	{
-		title: 'Points',
+		title: '{% trans "Points" %}',
 		iconCls: 'draw-point-icon',
 		control: new OpenLayers.Control.DrawFeature(
 			points_layer,
@@ -22,7 +22,7 @@ var draw_controls = [
 
 	// Draw lines control
 	{
-		title: 'Lines',
+		title: '{% trans "Lines" %}',
 		iconCls: 'draw-line-icon',
 		control: new OpenLayers.Control.DrawFeature(
 			lines_layer,
@@ -42,7 +42,7 @@ var draw_controls = [
 
 	// Draw polygons control
 	{
-		title: 'Polygons',
+		title: '{% trans "Polygons" %}',
 		iconCls: 'draw-polygon-icon',
 		control: new OpenLayers.Control.DrawFeature(
 			polygons_layer,
@@ -69,7 +69,7 @@ action = new WebGIS.DrawAction({
 	iconCls: 'draw-line-icon',
 	enableToggle: true,
 	toggleGroup: 'tools',
-	tooltip: 'Draw geometry',
+	tooltip: '{% trans "Draw geometry" %}',
 	snapping: true,
 	toggleHandler: function(action, toggled) {
 		action.baseAction.toggleHandler(action, toggled);
@@ -103,16 +103,16 @@ action = new WebGIS.DrawAction({
 
 					// Add record into saving history
 					var permalink_url = Ext.get('permalink').dom.children[0].href;
-					var drawing_info = String.format('Points: {0}<br />Lines: {1}<br />Polygons: {2}', points_layer.features.length, lines_layer.features.length, polygons_layer.features.length);
+					var drawing_info = String.format('{% trans "Points" %}: {0}<br />{% trans "Lines" %}: {1}<br />{% trans "Polygons" %}: {2}', points_layer.features.length, lines_layer.features.length, polygons_layer.features.length);
 					var data = [[title, new Date(), String.format('<a target="_blank" href="{0}">{1}</a>', permalink_url, response.responseText), drawing_info]]
 					Ext.getCmp('save-history-action').store.loadData(data, true);
 				},
 				failure: function(response, opts) {
-					Ext.MessageBox.alert("Error", "Failed to save data.");
+					Ext.MessageBox.alert('{% trans "Error" %}', '{% trans "Failed to save data" %}');
 				}
 			});
 		} else {
-			Ext.MessageBox.alert("Warning", "There is no data to be saved.");
+			Ext.MessageBox.alert('{% trans "Warning" %}', '{% trans "There is no data to be saved" %}');
 		}
 	},
 	importFeatures: function(features, makeCopy) {

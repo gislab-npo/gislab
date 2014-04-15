@@ -106,7 +106,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					new Ext.grid.RowNumberer({
 						width: 25
 					}), {
-						header: 'Title',
+						header: gettext('Title'),
 						dataIndex: 'title',
 						width: 50,
 						editor: new Ext.form.TextField({
@@ -120,7 +120,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							},
 						})
 					}, {
-						header: 'Description',
+						header: gettext('Description'),
 						dataIndex: 'description',
 						editor: new Ext.form.TextField({
 							allowBlank: true,
@@ -161,8 +161,8 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					'->',
 					{
 						xtype: 'tbbutton',
-						text: 'Delete selected',
-						tooltip: 'Delete selected',
+						text: gettext('Delete selected'),
+						tooltip: gettext('Delete selected'),
 						drawAction: this,
 						handler: function() {
 							// copy selected features
@@ -178,8 +178,8 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					'-',
 					 {
 						xtype: 'tbbutton',
-						text: 'Delete all',
-						tooltip: 'Delete selected',
+						text: gettext('Delete all'),
+						tooltip: gettext('Delete all'),
 						handler: function() {
 							store.layer.destroyFeatures();
 						}
@@ -200,7 +200,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			tbar: [
 				{
 					xtype: 'label',
-					text: 'Title:',
+					text: gettext('Title')+':',
 				}, {
 					xtype: 'tbspacer',
 					width: 10
@@ -210,8 +210,8 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					ref: '/drawingTitle',
 				}, '->', new Ext.Action({
 					cls: 'x-btn-text',
-					text: 'Save',
-					tooltip: 'Save drawing',
+					text: gettext('Save'),
+					tooltip: gettext('Save drawing'),
 					drawAction: this,
 					handler: function(save_action) {
 						var title = this.drawAction.window.drawingTitle.getValue();

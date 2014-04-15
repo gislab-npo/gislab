@@ -1,10 +1,11 @@
-
+{% load i18n %}
 // Featureinfo Action
 
 var identify_layer_combobox = new Ext.form.ComboBox({
 	width: 150,
 	mode: 'local',
 	disabled: true,
+	tooltip: '{% trans "Active layer" %}',
 	triggerAction: 'all',
 	forceSelection: true,
 	store: new Ext.data.JsonStore({
@@ -19,7 +20,7 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 	valueField: 'name',
 	displayField: 'name',
 	updateLayersList: function(layers_list) {
-		var layers_options = ['All visible layers'].concat(layers_list);
+		var layers_options = ['{% trans "All visible layers" %}'].concat(layers_list);
 		var store_data = [];
 		Ext.each(layers_options, function(layername) {
 			store_data.push({name: layername});
@@ -31,6 +32,7 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 	},
 	listeners: {
 		afterrender: function(combo) {
+			Ext.QuickTips.register({ target: combo.getEl(), text: combo.tooltip });
 			// get list of queryable layers
 			var queryable_layers = [];
 			var layers_attrib_aliases = {};
@@ -100,7 +102,7 @@ action = new GeoExt.Action({
 	enableToggle: true,
 	toggleGroup: 'tools',
 	group: 'tools',
-	tooltip: 'Feature info',
+	tooltip: '{% trans "Feature info" %}',
 	toggleHandler: function(action, toggled) {
 		identify_layer_combobox.setDisabled(!toggled);
 	}

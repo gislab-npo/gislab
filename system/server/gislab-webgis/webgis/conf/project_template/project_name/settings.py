@@ -93,6 +93,10 @@ AUTH_LDAP_GROUP_CACHE_TIMEOUT = 3600
 
 ### INTERNATIONALIZATION ###
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
+LANGUAGES = (
+	('sk', u'Slovak'),
+	('en-us', u'English'),
+)
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Bratislava'
 USE_I18N = True
@@ -108,6 +112,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MIDDLEWARE_CLASSES = (
 	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.locale.LocaleMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',

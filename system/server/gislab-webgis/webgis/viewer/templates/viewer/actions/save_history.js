@@ -1,10 +1,10 @@
-
+{% load i18n %}
 // history of saved drawings
 var action = new Ext.Action({
 	id: 'save-history-action',
 	cls: 'x-btn-icon',
 	iconCls: 'save-history-icon',
-	tooltip: 'History of saved drawings',
+	tooltip: '{% trans "History of saved drawings" %}',
 	toggleGroup: 'tools',
 	store: new Ext.data.ArrayStore({
 		fields: [
@@ -38,21 +38,21 @@ var action = new Ext.Action({
 				columns: [
 					{
 						id       : 'link',
-						header   : 'Drawing',
+						header   : '{% trans "Drawing" %}',
 						width    : 75,
 						sortable : false,
 						dataIndex: 'link',
 					},
 					{
 						id       : 'title',
-						header   : 'Title',
+						header   : '{% trans "Title" %}',
 						sortable : false,
 						dataIndex: 'title',
 						renderer:  renderTip
 					},
 					{
 						id       : 'time',
-						header   : 'Time',
+						header   : '{% trans "Time" %}',
 						width    : 60,
 						sortable : false,
 						dataIndex: 'time',

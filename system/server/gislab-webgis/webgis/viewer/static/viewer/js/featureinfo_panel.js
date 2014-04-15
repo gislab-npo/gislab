@@ -1,8 +1,6 @@
 Ext.namespace('WebGIS');
 
 WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
-	id: 'featureinfo-panel',
-	title: 'Feature Info',
 	split: true,
 	map: null,
 	layout: 'fit',
@@ -79,7 +77,8 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 
 	showFeatures: function(features) {
 		this.clearFeaturesLayers();
-		this.setStatusInfo(String.format('Features: {0}', features.length));
+		var status_format = gettext('Features: %(count)s');
+		this.setStatusInfo(interpolate(status_format, {"count": features.length}, true));
 		var featureinfo_data = {};
 		if (features.length > 0) {
 			// split features by layer name
@@ -118,7 +117,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 					width: 52,
 					scope: this,
 					items : [{
-						tooltip : 'Zoom to feature',
+						tooltip : gettext('Zoom to feature'),
 						getClass: function(v, meta, rec) {
 							return 'zoom-to-feature';
 						},
@@ -132,7 +131,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 							}
 						}
 					}, {
-						tooltip : 'Export to drawings',
+						tooltip : gettext('Export to drawings'),
 						getClass: function(v, meta, rec) {
 							return 'export-feature';
 						},

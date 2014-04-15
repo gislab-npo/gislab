@@ -1,11 +1,11 @@
-
+{% load i18n %}
 //Home Action
 action = new GeoExt.Action({
 	handler: function() { mappanel.map.zoomToExtent(zoom_extent, true); },
 	map: mappanel.map,
 	cls: 'x-btn-icon',
 	iconCls: 'home-icon',
-	tooltip: 'Home'
+	tooltip: '{% trans "Home" %}'
 });
 mappanel.getTopToolbar().add(action);
 
@@ -17,7 +17,7 @@ action = new GeoExt.Action({
 	group: 'tools',
 	cls: 'x-btn-icon',
 	iconCls: 'pan-icon',
-	tooltip: 'Pan'
+	tooltip: '{% trans "Pan" %}'
 });
 mappanel.getTopToolbar().add(action);
 
@@ -30,7 +30,7 @@ action = new GeoExt.Action({
 	disabled: true,
 	cls: 'x-btn-icon',
 	iconCls: 'previous-icon',
-	tooltip: 'Previous in history',
+	tooltip: '{% trans "Previous in history" %}',
 });
 mappanel.getTopToolbar().add(action);
 
@@ -39,6 +39,6 @@ action = new GeoExt.Action({
 	disabled: true,
 	cls: 'x-btn-icon',
 	iconCls: 'next-icon',
-	tooltip: 'Next in history',
+	tooltip: '{% trans "Next in history" %}',
 });
 mappanel.getTopToolbar().add(action);

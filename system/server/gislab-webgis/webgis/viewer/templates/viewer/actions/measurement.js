@@ -1,14 +1,14 @@
-
+{% load i18n %}
 var length = new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
 	immediate: true,
 	persist: true,
 	geodesic: true, //only for projected projections
 	eventListeners: {
 		measurepartial: function(evt) {
-			Ext.getCmp('measurement-info').setText('Length: ' + evt.measure.toFixed(2) + evt.units);
+			Ext.getCmp('measurement-info').setText('{% trans "Length" %}: ' + evt.measure.toFixed(2) + evt.units);
 		},
 		measure: function(evt) {
-			Ext.getCmp('measurement-info').setText('Length: ' + evt.measure.toFixed(2) + evt.units);
+			Ext.getCmp('measurement-info').setText('{% trans "Length" %}: ' + evt.measure.toFixed(2) + evt.units);
 		}
 	}
 });
@@ -18,10 +18,10 @@ var area = new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
 	geodesic: true, //only for projected projections
 	eventListeners: {
 		measurepartial: function(evt) {
-			Ext.getCmp('measurement-info').setText('Area: ' + evt.measure.toFixed(2) + evt.units + '<sup>2</sup>');
+			Ext.getCmp('measurement-info').setText('{% trans "Area" %}: ' + evt.measure.toFixed(2) + evt.units + '<sup>2</sup>');
 		},
 		measure: function(evt) {
-			Ext.getCmp('measurement-info').setText('Area: ' + evt.measure.toFixed(2) + evt.units + '<sup>2</sup>');
+			Ext.getCmp('measurement-info').setText('{% trans "Area" %}: ' + evt.measure.toFixed(2) + evt.units + '<sup>2</sup>');
 		}
 	}
 });
@@ -41,7 +41,7 @@ var length_button = new Ext.Button({
 			Ext.getCmp('measurement-info').setText('');
 		}
 	},
-	tooltip: 'Measure length'
+	tooltip: '{% trans "Measure length" %}'
 });
 
 var area_button = new Ext.Button({
@@ -56,6 +56,6 @@ var area_button = new Ext.Button({
 			Ext.getCmp('measurement-info').setText('');
 		}
 	},
-	tooltip: 'Measure area'
+	tooltip: '{% trans "Measure area" %}'
 });
 mappanel.getTopToolbar().add(length_button, area_button);
