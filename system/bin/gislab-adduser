@@ -75,8 +75,6 @@ fi
 rm -rf /etc/skel
 cp -a /etc/skel.clean /etc/skel
 
-cp -a /vagrant/user/plugins/account/. /etc/skel # copy files from plugins
-
 mkdir /etc/skel/.config
 mkdir /etc/skel/.local
 
@@ -219,6 +217,13 @@ chown $GISLAB_USER:labusers /storage/share/$GISLAB_USER
 find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER##/$GISLAB_USER/g" "{}" \;
 find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER_PASSWORD##/$GISLAB_USER_PASSWORD/g" "{}" \;
 
+
+# run account plugins
+for plugin in /vagrant/user/plugins/account/*.*; do
+	gislab_print_info "Running account plugin '$(basename $plugin)'"
+	GISLAB_ACCOUNT_ACTION="add" GISLAB_USER=$GISLAB_USER $plugin
+	echo "$(gislab_config_header)" >> /etc/gislab/account-plugin-$(basename $plugin).done
+done
 
 gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"
 

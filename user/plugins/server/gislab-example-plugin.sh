@@ -4,13 +4,13 @@ echo "This is an example server plugin."
 
 case $GISLAB_INSTALL_ACTION in
 	install)
-		echo "We are performing initial GIS.lab installation."
+		echo "Performing initial GIS.lab installation."
 		;;
 	upgrade)
-		echo "We are performing GIS.lab upgrade."
+		echo "Performing GIS.lab upgrade."
 		;;
 	*)
-		echo "Unknown."
+		echo "Unknown action."
 		;;
 esac
 
