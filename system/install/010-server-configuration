@@ -61,7 +61,11 @@ Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/b
 EOF
 chmod 0440 /etc/sudoers.d/vagrant-secure-path
 
-echo "PATH="$PATH:/vagrant/system/bin"" >> /etc/profile #TODO: do not append path again on upgrade
+# do not continue on upgrade
+if [ -f "/etc/gislab/010-server-configuration.done" ]; then return; fi
+
+echo "PATH="$PATH:/vagrant/system/bin"" >> /etc/profile
+export PATH=$PATH:/vagrant/system/bin
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:
