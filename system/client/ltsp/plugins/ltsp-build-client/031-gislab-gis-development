@@ -10,6 +10,9 @@ case "$MODE" in
 		python-qscintilla2 python-gdal qgit qt4-dev-tools ccache
 
 		chroot $ROOT apt-get --assume-yes --force-yes install qtcreator qt4-designer
+
+		# set more permissive mode for PTRACE (do not limit PTRACE only to direct child processes)
+		echo "kernel.yama.ptrace_scope = 0" > $ROOT/etc/sysctl.d/10-ptrace.conf
 	fi
     ;;
 esac
