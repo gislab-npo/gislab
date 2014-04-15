@@ -3,7 +3,9 @@
 #
 
 for plugin in /vagrant/user/plugins/server/*.*; do
+	gislab_print_info "Running server plugin '$(basename $plugin)'"
 	$plugin
+	echo "$(gislab_config_header)" >> /etc/gislab/server-plugin-$(basename $plugin).done
 done
 
 
