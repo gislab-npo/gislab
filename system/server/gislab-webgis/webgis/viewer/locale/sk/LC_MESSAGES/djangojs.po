@@ -1,0 +1,55 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-15 11:34+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: static/viewer/js/draw_action.js:109 static/viewer/js/draw_action.js.c:203
+msgid "Title"
+msgstr "Názov"
+
+#: static/viewer/js/draw_action.js:123
+msgid "Description"
+msgstr "Popis"
+
+#: static/viewer/js/draw_action.js:164 static/viewer/js/draw_action.js.c:165
+msgid "Delete selected"
+msgstr "Zmazať vybrané"
+
+#: static/viewer/js/draw_action.js:181 static/viewer/js/draw_action.js.c:182
+msgid "Delete all"
+msgstr "Zmazať všetko"
+
+#: static/viewer/js/draw_action.js:213
+msgid "Save"
+msgstr "Uložiť"
+
+#: static/viewer/js/draw_action.js:214
+msgid "Save drawing"
+msgstr "Uložiť kreslenie"
+
+#: static/viewer/js/featureinfo_panel.js:80
+msgid "Features: %(count)s"
+msgstr "Objekty: %(count)s"
+
+#: static/viewer/js/featureinfo_panel.js:120
+msgid "Zoom to feature"
+msgstr "Priblížiť na objekt"
+
+#: static/viewer/js/featureinfo_panel.js:134
+msgid "Export to drawings"
+msgstr "Exportovať do kreslenia"

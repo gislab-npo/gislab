@@ -1,3 +1,4 @@
+{% load i18n %}
 //Search Action
 
 var searchWindow = new Ext.Window({
@@ -88,6 +89,7 @@ var searchWindow = new Ext.Window({
 					xtype: 'combo',
 					ref: 'attributeName',
 					width: 153,
+					tooltip: '{% trans "Attribute" %}',
 					mode: 'local',
 					triggerAction: 'all',
 					forceSelection: false,
@@ -109,6 +111,9 @@ var searchWindow = new Ext.Window({
 					valueField: 'name',
 					displayField: 'alias',
 					listeners: {
+						afterrender: function(combo) {
+							Ext.QuickTips.register({ target: combo.getEl(), text: combo.tooltip });
+						},
 						select: function (combo, record, index) {
 							var operators_combo = combo.ownerCt.attributeOperator;
 							if (!record) {
@@ -154,6 +159,7 @@ var searchWindow = new Ext.Window({
 					xtype: 'combo',
 					ref: 'attributeOperator',
 					width: 55,
+					tooltip: '{% trans "Logical operator" %}',
 					mode: 'local',
 					triggerAction: 'all',
 					forceSelection: true,
@@ -169,6 +175,9 @@ var searchWindow = new Ext.Window({
 					valueField: 'name',
 					displayField: 'name',
 					listeners: {
+						afterrender: function(combo) {
+							Ext.QuickTips.register({ target: combo.getEl(), text: combo.tooltip });
+						},
 						select: function (combo, record, index) {
 							var valueField = combo.ownerCt.valueField;
 							if (record) {
@@ -196,11 +205,9 @@ var searchWindow = new Ext.Window({
 						this.createValueField();
 					},
 					setMultiMode: function(multi) {
-						if (multi != this.multiMode && this.type != 'text') {
+						if (multi != this.multiMode) {
 							this.multiMode = multi;
 							this.createValueField();
-						} else {
-							this.multiMode = multi;
 						}
 					},
 					createValueField: function() {
@@ -211,12 +218,14 @@ var searchWindow = new Ext.Window({
 								comp = {
 									xtype: 'textfield',
 									regex: /^\d+(\s*,\s*\d+)*$/,
-									regexText:'Incorrect comma-separated list of integers',
+									regexText:'{% trans "Incorrect comma-separated list of integers" %}',
+									tooltip: '{% trans "Comma-separated list of integer numbers" %}'
 								}
 							} else {
 								comp = {
 									xtype: 'numberfield',
 									allowDecimals: false,
+									tooltip: '{% trans "Integer number value" %}'
 								}
 							}
 						} else if (this.type == 'double') {
@@ -224,21 +233,29 @@ var searchWindow = new Ext.Window({
 								comp = {
 									xtype: 'textfield',
 									regex: /^\d+(\.\d+)?(\s*,\s*\d+(\.\d+)?)*$/,
-									regexText:'Incorrect comma-separated list of numbers',
+									regexText:'{% trans "Incorrect comma-separated list of decimal numbers" %}',
+									tooltip: '{% trans "Comma-separated list of decimal numbers" %}'
 								}
 							} else {
 								comp = {
 									xtype: 'numberfield',
 									allowDecimals: true,
-									decimalSeparator: '.'
+									decimalSeparator: '.',
+									tooltip: '{% trans "Decimal number value" %}'
 								}
 							}
 						} else {
 							comp = {
 								xtype: 'textfield',
-								allowDecimals: false
+								allowDecimals: false,
+								tooltip: this.multiMode? '{% trans "Comma-separated list of text values" %}' : '{% trans "Text value" %}'
 							}
 						}
+						comp.listeners = {
+							afterrender: function(component) {
+								Ext.QuickTips.register({ target: component.getEl(), text: component.tooltip });
+							}
+						};
 						this.add(comp);
 						this.doLayout();
 					},
@@ -257,7 +274,7 @@ var searchWindow = new Ext.Window({
 							itemId: 'add-button',
 							cls: 'x-btn-icon',
 							iconCls: 'add-icon',
-							tooltip: 'Add another attribute filter',
+							tooltip: '{% trans "Add another attribute filter" %}',
 							ref: './addButton',
 							handler: function(button) {
 								var search_window = button.ownerCt.ownerCt.ownerCt;
@@ -271,7 +288,7 @@ var searchWindow = new Ext.Window({
 							itemId: 'remove-button',
 							cls: 'x-btn-icon',
 							iconCls: 'remove-icon',
-							tooltip: 'Remove attribute filter',
+							tooltip: '{% trans "Remove attribute filter" %}',
 							ref: './removeButton',
 							handler: function(button) {
 								var window = button.ownerCt.ownerCt.ownerCt;
@@ -295,6 +312,7 @@ var searchWindow = new Ext.Window({
 			xtype: 'combo',
 			ref: '/activeLayer',
 			width: 150,
+			tooltip: '{% trans "Active layer" %}',
 			mode: 'local',
 			triggerAction: 'all',
 			forceSelection: true,
@@ -358,6 +376,7 @@ var searchWindow = new Ext.Window({
 			},
 			listeners: {
 				afterrender: function(combo) {
+					Ext.QuickTips.register({ target: combo.getEl(), text: combo.tooltip });
 					var overlays_root = Ext.getCmp('layers-tree-panel').root;
 					combo.updateLayersList(overlays_root.getVisibleLayers());
 					overlays_root.on('layerchange', function(node, layer, visible_layers) {
@@ -373,7 +392,7 @@ var searchWindow = new Ext.Window({
 			xtype: 'tbspacer'
 		}, {
 			xtype: 'label',
-			text: 'Logical operator:'
+			text: '{% trans "Logical operator" %}:'
 		}, {
 			xtype: 'tbspacer'
 		}, {
@@ -381,7 +400,7 @@ var searchWindow = new Ext.Window({
 			ref: '/logicalOperator',
 			width: 50,
 			mode: 'local',
-			tooltip: 'Logical operator between attributes',
+			tooltip: '{% trans "Logical operator between attributes" %}',
 			triggerAction: 'all',
 			forceSelection: true,
 			store: new Ext.data.ArrayStore({
@@ -405,7 +424,7 @@ var searchWindow = new Ext.Window({
 			xtype: 'tbspacer'
 		}, {
 			xtype: 'label',
-			text: 'Limit:'
+			text: '{% trans "Limit" %}:'
 		}, {
 			xtype: 'tbspacer'
 		}, {
@@ -421,9 +440,9 @@ var searchWindow = new Ext.Window({
 		}, {
 			xtype: 'tbspacer'
 		}, new Ext.Action({
-			text: 'Search',
+			text: '{% trans "Search" %}',
 			ref: '/search',
-			tooltip: 'Search',
+			tooltip: '{% trans "Search" %}',
 			cls: 'x-btn-text',
 			format: new OpenLayers.Format.GML(),
 
@@ -477,13 +496,13 @@ var searchWindow = new Ext.Window({
 						if (features.length == options.params.FEATURE_COUNT) {
 							features.pop();
 							features_panel.showFeatures(features);
-							features_panel.setStatusInfo(String.format('Searching has reach limit of {0} results', features.length));
+							features_panel.setStatusInfo(String.format('{% trans "Searching has reach limit of {0} results" %}', features.length));
 						} else {
 							features_panel.showFeatures(features);
 						}
 					},
 					failure: function(response, opts) {
-						Ext.MessageBox.alert("Error", "Searching failed.");
+						Ext.MessageBox.alert('{% trans "Error" %}', '{% trans "Searching failed" %}');
 					}
 				});
 			}
@@ -498,7 +517,7 @@ action = new Ext.Action({
 	iconCls: 'search-icon',
 	enableToggle: true,
 	toggleGroup: 'tools',
-	tooltip: 'Search',
+	tooltip: '{% trans "Searching" %}',
 	toggleHandler: function(button, toggled) {
 		if (toggled) {
 			searchWindow.show();

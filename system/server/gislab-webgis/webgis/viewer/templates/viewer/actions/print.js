@@ -1,3 +1,4 @@
+{% load i18n %}
 //Print Action
 var printWindow = new Ext.Window({
 	id: 'print-toolbar-window',
@@ -72,6 +73,7 @@ var printWindow = new Ext.Window({
 			xtype: 'combo',
 			id: 'print-layouts-combobox',
 			width: 100,
+			tooltip: '{% trans "Print layout" %}',
 			mode: 'local',
 			triggerAction: 'all',
 			readonly: true,
@@ -90,6 +92,7 @@ var printWindow = new Ext.Window({
 			displayField: 'name',
 			listeners: {
 				afterrender: function(combo) {
+					Ext.QuickTips.register({ target: combo.getEl(), text: combo.tooltip });
 					var recordSelected = combo.getStore().getAt(0);
 					combo.setValue(recordSelected.get('name'));
 					combo.fireEvent('select', combo, recordSelected, 0);
@@ -133,6 +136,7 @@ var printWindow = new Ext.Window({
 			xtype: 'combo',
 			id: 'print-dpi-combobox',
 			width: 70,
+			tooltip: '{% trans "DPI resolution" %}',
 			mode: 'local',
 			triggerAction: 'all',
 			forceSelection: true,
@@ -154,6 +158,7 @@ var printWindow = new Ext.Window({
 			displayField: 'name',
 			listeners: {
 				afterrender: function(combo) {
+					Ext.QuickTips.register({ target: combo.getEl(), text: combo.tooltip });
 					var recordSelected = combo.getStore().getAt(0);
 					combo.setValue(recordSelected.get('name'));
 					combo.fireEvent('select', combo, recordSelected, 0);
@@ -168,6 +173,7 @@ var printWindow = new Ext.Window({
 			xtype: 'combo',
 			ref: '/formatCombobox',
 			width: 70,
+			tooltip: '{% trans "Output file format" %}',
 			mode: 'local',
 			triggerAction: 'all',
 			forceSelection: true,
@@ -186,6 +192,7 @@ var printWindow = new Ext.Window({
 			displayField: 'name',
 			listeners: {
 				afterrender: function(combo) {
+					Ext.QuickTips.register({ target: combo.getEl(), text: combo.tooltip });
 					var recordSelected = combo.getStore().getAt(0);
 					combo.setValue(combo.getStore().getAt(0).get('name'));
 				}
@@ -194,7 +201,7 @@ var printWindow = new Ext.Window({
 			xtype: 'tbspacer'
 		}, {
 			xtype: 'label',
-			text: 'Rotation'
+			text: '{% trans "Rotation" %}'
 		}, {
 			xtype: 'tbspacer'
 		}, {
@@ -227,8 +234,8 @@ var printWindow = new Ext.Window({
 			xtype: 'tbspacer'
 		}, new Ext.Action({
 			ref: '/print',
-			text: 'Print',
-			tooltip: 'Print',
+			text: '{% trans "Print" %}',
+			tooltip: '{% trans "Print" %}',
 			tooltipType: 'qtip',
 			flex: 1,
 			iconCls: '',
@@ -270,7 +277,7 @@ action = new Ext.Action({
 	iconCls: 'print-icon',
 	enableToggle: true,
 	toggleGroup: 'tools',
-	tooltip: 'Print',
+	tooltip: '{% trans "Print" %}',
 	toggleHandler: function(button, toggled) {
 		if (toggled) {
 			printWindow.show();

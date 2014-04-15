@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load staticfiles i18n %}
 
 <!DOCTYPE HTML>
 <html>
@@ -11,6 +11,7 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'viewer/lib/extensions/css/Spinner.css' %}" />
 		<link rel="stylesheet" type="text/css" href="{% static 'viewer/css/webgis.css' %}"/>
 
+		<script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
 		{% if debug %}
 		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/adapter/ext/ext-base-debug.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/ext-all-debug.js' %}"></script>
@@ -58,9 +59,6 @@
 
 				// ###  LAYERS  ###
 				var maplayers = [];
-
-				// base layers
-				// seems that must be loaded after google layer
 
 				// overlay layers
 				{% if layers %}
@@ -168,7 +166,7 @@
 				//featureinfo panel
 				var featureinfo_panel = new WebGIS.FeatureInfoPanel({
 					id: 'featureinfo-panel',
-					title: 'Attributes',
+					title: '{% trans "Attributes" %}',
 					map: mappanel.map,
 					collapseMode: 'mini',
 					autoPanMapOnSelection: false,
@@ -235,17 +233,20 @@
 					{% if not user.is_guest %}{
 						xtype: 'label',
 						text: '{{ user.get_full_name }}'
+					}, {
+						xtype: 'tbspacer',
+						width: 5
 					}, new Ext.Action({
 						cls: 'x-btn-icon',
 						iconCls: 'logout-icon',
-						tooltip: 'Logout',
+						tooltip: '{% trans "Log out" %}',
 						handler: function(action) {
 							window.location.href = Ext.urlAppend('{% url "logout" %}', Ext.urlEncode({next: window.location.href}));
 						}
 					}){% else %}new Ext.Action({
 						cls: 'x-btn-icon',
 						iconCls: 'login-icon',
-						tooltip: 'Login',
+						tooltip: '{% trans "Log in" %}',
 						handler: function(action) {
 							window.location.href = Ext.urlAppend('{% url "login" %}', Ext.urlEncode({next: window.location.href}));
 						}
@@ -269,7 +270,7 @@
 					height: 45,
 					tbar: [{
 						xtype: 'label',
-						text: 'Base Layers',
+						text: '{% trans "Base Layers" %}',
 						cls: 'layers-title',
 					}],
 					items: new WebGIS.BaseLayersComboBox({
@@ -286,7 +287,6 @@
 				var layer_treepanel = new Ext.tree.TreePanel({
 					id: 'layers-tree-panel',
 					cls: 'layers-legend-toolbar',
-					//title: 'Content',
 					enableDD: true,
 					root: overlays_root,
 					split: true,
@@ -297,7 +297,7 @@
 					{% if layers %}
 					tbar: [{
 						xtype: 'label',
-						text: 'Overlay Layers',
+						text: '{% trans "Overlay Layers" %}',
 						cls: 'layers-title',
 					}],
 					{% endif %}
@@ -306,7 +306,7 @@
 				// legend
 				var layer_legend = new GeoExt.LegendPanel({
 					id: 'legend-panel',
-					title: 'Legend',
+					title: '{% trans "Legend" %}',
 					map: mappanel.map,
 					border: false,
 					ascending: false,
@@ -334,14 +334,14 @@
 
 				// properties
 				var properties = new Ext.Panel({
-					title: 'Properties',
+					title: '{% trans "Properties" %}',
 					autoScroll: true,
 					html: '<div class="x-panel-body-text"> \
-							<p><b>Author: </b>{{ author }}</p> \
-							<p><b>E-mail: </b>{{ email }}</p> \
-							<p><b>Organization: </b>{{ organization }}</p> \
-							<p><b>Abstract: </b>{{ abstract }}</p> \
-							<p><b>WMS URL: </b><a href="{{ ows_url }}" target="_blank">copy link location</a></p></div>'
+							<p><b>{% trans "Author" %}: </b>{{ author }}</p> \
+							<p><b>{% trans "E-mail" %}: </b>{{ email }}</p> \
+							<p><b>{% trans "Organization" %}: </b>{{ organization }}</p> \
+							<p><b>{% trans "Abstract" %}: </b>{{ abstract }}</p> \
+							<p><b>{% trans "WMS URL" %}: </b><a href="{{ ows_url }}" target="_blank">copy link location</a></p></div>'
 				});
 
 				// legend and properties panel
@@ -357,7 +357,7 @@
 				var left_panel = new Ext.Panel({
 					region: 'west',
 					width: 250,
-					title: 'Content',
+					title: '{% trans "Content" %}',
 					defaults: {
 						width: '100%',
 						flex: 1
@@ -462,7 +462,7 @@
 						})
 					},
 					failure: function(response, opts) {
-						Ext.MessageBox.alert("Error", "Failed to fetch vector data (drawing: {{ drawing_id }})");
+						Ext.MessageBox.alert('{% trans "Error" %}', '{% blocktrans%}Failed to fetch vector data (drawing: {{ drawing_id }}){% endblocktrans %}');
 					}
 				});
 					{% endfor %}
