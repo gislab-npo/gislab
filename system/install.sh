@@ -36,12 +36,14 @@ GISLAB_SERVER_PROVIDER=$1
 # create gislab directory in /etc to store some GIS.lab settings
 mkdir -p /etc/gislab
 
-# Test if complete initial installation was done. More granular check could
-# be provided by checking individual touch files for each installation script.
+# Set variable to distinguish if we are running initial installation or upgrade. It can be used
+# by installation scripts or by server plugins.
+# More granular check could be provided by checking individual touch files (.done) created for each
+# installation script when finished.
 if [ -f "/etc/gislab/installation.done" ]; then
-	GISLAB_INSTALLATION_DONE="yes"
+	GISLAB_INSTALL_ACTION="upgrade"
 else
-	GISLAB_INSTALLATION_DONE="no"
+	GISLAB_INSTALL_ACTION="install"
 fi
 
 
