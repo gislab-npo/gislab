@@ -25,7 +25,7 @@ function usage() {
 	-b  restore data from given file (optional)
 	-f  force deleting account - do not ask before deleting account
 	-h  display this help"
-	exit 0
+	exit 255
 }
 
 # options

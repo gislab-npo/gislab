@@ -29,7 +29,7 @@ function usage() {
 	-f  force running this command - do not ask before running
 	-h  display this help
 	"
-	exit 0
+	exit 255
 }
 
 

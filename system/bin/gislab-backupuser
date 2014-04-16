@@ -24,7 +24,7 @@ function usage() {
 	echo -e "\nOPTIONS
 	-h display this help
 	"
-	exit 0
+	exit 255
 }
 
 while getopts "h" OPTION

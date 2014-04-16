@@ -30,7 +30,7 @@ function usage() {
 	-s add user do 'labadmins' group to allow 'sudo'
 	-h display this help
 	"
-	exit 0
+	exit 255
 }
 
 
