@@ -63,7 +63,6 @@ if id -u $GISLAB_USER > /dev/null 2>&1; then
 	exit 0
 fi
 
-GISLAB_USER_PASSWORD_HASH=$(slappasswd -s $GISLAB_USER_PASSWORD -h {SSHA})
 GISLAB_USER_COMMON_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
 
 
@@ -187,18 +186,19 @@ EOL
 fi
 
 # allow sudo for user if creating superuser account
-if [ "x$SUDO" != "x" ]; then
+if [ "$SUDO" == "yes" ]; then
 	ldapaddusertogroup $GISLAB_USER labadmins
 fi
 
-ldapsetpasswd $GISLAB_USER "$GISLAB_USER_PASSWORD_HASH"
+# set user password
+gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
 
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $GISLAB_USER" # PostgreSQL account
 sudo su - postgres -c "psql -c \"GRANT labusers TO $GISLAB_USER;\""
 sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $GISLAB_USER;\""
 
 # add user to the database superusers group if creating superuser account
-if [ "x$SUDO" != "x" ]; then
+if [ "$SUDO" == "yes" ]; then
 	sudo su - postgres -c "psql -c \"GRANT labadmins TO $GISLAB_USER;\""
 fi
 

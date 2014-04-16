@@ -82,12 +82,7 @@ fi
 
 # manunaly delete user from additional groups (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
 for GROUP in $(id -nG $GISLAB_USER | grep '[[:space:]]' | sed -r 's/^[^ ]* //'); do
-	# check if a group is a system or LDAP group
-	if ldapgid $GROUP >/dev/null 2>&1; then
-		ldapdeleteuserfromgroup $GISLAB_USER $GROUP
-	elif grep "^$GROUP:" /etc/group >/dev/null 2>&1; then
-		deluser $GISLAB_USER $GROUP
-	fi
+	ldapdeleteuserfromgroup $GISLAB_USER $GROUP
 done
 
 ldapdeleteuser $GISLAB_USER # LDAP account
@@ -107,5 +102,6 @@ for plugin in /vagrant/user/plugins/account/*.*; do
 done
 
 gislab_print_info "Account '$GISLAB_USER' removed"
+
 
 # vim: set ts=4 sts=4 sw=4 noet:
