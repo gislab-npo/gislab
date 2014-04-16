@@ -27,7 +27,7 @@ function usage() {
 	-m email (required)
 	-p set password for user. If not given it will be automatically generated.
 	-d user description text
-	-s add user do 'labadmins' group to allow 'sudo'
+	-s add user to 'labadmins' group to allow 'sudo'
 	-h display this help
 	"
 	exit 255
