@@ -77,7 +77,7 @@ certtool --generate-privkey \
 
 cat << EOL > /etc/ssl/$(hostname).info
 $(gislab_config_header)
-organization = Gis.lab
+organization = GIS.lab
 cn = $(hostname -f)
 tls_www_server
 encryption_key
