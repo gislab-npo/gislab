@@ -1,0 +1,48 @@
+<VirtualHost *:80>
+	ServerName ms.gis.lab
+	ServerAdmin root@gis.lab
+
+	DocumentRoot /var/www
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory /var/www/>
+		Options -Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+	<Directory "/usr/lib/cgi-bin">
+		AllowOverride All
+		Options -Indexes +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+
+		<files "qgis_mapserv.fcgi">
+			RewriteEngine On
+			RewriteCond %{QUERY_STRING} ^(.*)map=(.*)(.*) [NC]
+			RewriteRule ^(.*)$ $1?%1map=/storage/share/%2%3 [DPI]
+		</files>
+	</Directory>
+
+	ExpiresActive on
+	ExpiresByType image/jpg "access plus 1 hours"
+	ExpiresByType image/png "access plus 1 hours"
+	ExpiresByType image/gif "access plus 1 hours"
+	ExpiresByType image/jpeg "access plus 1 hours"
+
+	ExpiresByType text/css "access plus 1 days"
+	ExpiresByType image/x-icon "access plus 1 days"
+	ExpiresByType text/javascript "access plus 1 days"
+	ExpiresByType application/x-javascript "access plus 1 days"
+	ExpiresByType application/javascript "access plus 1 days"
+
+	ErrorLog ${APACHE_LOG_DIR}/mapserver-error.log
+	CustomLog ${APACHE_LOG_DIR}/mapserver-access.log combined
+
+#	RewriteLog ${APACHE_LOG_DIR}/error.log
+#	RewriteLogLevel 3
+</VirtualHost>

@@ -5,6 +5,9 @@
 # configure default virtualhost
 cp -a /vagrant/system/server/gislab-webgis/conf/default.apache /etc/apache2/sites-available/default
 
+# configure mapserver virtualhost
+cp -a /vagrant/system/server/gislab-webgis/conf/mapserver.apache /etc/apache2/sites-available/mapserver
+
 # configure default web server page output
 cat << EOF > /var/www/index.html
 <html><body><h1>GIS.lab server</h1>
@@ -70,6 +73,7 @@ cp -a /vagrant/system/server/gislab-webgis/conf/webgis.apache /etc/apache2/sites
 a2enmod expires
 a2enmod wsgi
 a2enmod rewrite
+a2ensite mapserver
 a2ensite webgis
 service apache2 reload
 
