@@ -10,8 +10,8 @@
 	background-color:rgba(200, 200, 200, 0.3);
 }
 
-.legend-item .x-form-item {
-	display:none;
+.legend-item img {
+	display: block;
 }
 
 .olControlPanPanel div {
@@ -302,10 +302,6 @@ div.overlays-root {
 
 label.layers-title {
 	font-weight: bold;
-}
-
-.legend-item img {
-	display: block;
 }
 
 img.zoom-to-feature {
