@@ -230,28 +230,28 @@
 				{% endif %}
 
 				mappanel.getTopToolbar().add('->',
-					{% if not user.is_guest %}{
+					{
 						xtype: 'label',
 						text: '{{ user.get_full_name }}'
 					}, {
 						xtype: 'tbspacer',
 						width: 5
-					}, new Ext.Action({
-						cls: 'x-btn-icon',
-						iconCls: 'logout-icon',
-						tooltip: '{% trans "Log out" %}',
-						handler: function(action) {
-							window.location.href = Ext.urlAppend('{% url "logout" %}', Ext.urlEncode({next: window.location.href}));
-						}
-					}){% else %}new Ext.Action({
+					},{% if user.is_guest %} new Ext.Action({
 						cls: 'x-btn-icon',
 						iconCls: 'login-icon',
 						tooltip: '{% trans "Log in" %}',
 						handler: function(action) {
 							window.location.href = Ext.urlAppend('{% url "login" %}', Ext.urlEncode({next: window.location.href}));
 						}
+					}){% else %} new Ext.Action({
+						cls: 'x-btn-icon',
+						iconCls: 'logout-icon',
+						tooltip: '{% trans "Log out" %}',
+						handler: function(action) {
+							window.location.href = Ext.urlAppend('{% url "logout" %}', Ext.urlEncode({next: window.location.href}));
+						}
 					})
-				{% endif %}
+					{% endif %}
 				);
 
 				var overlays_root = new WebGIS.WmsLayersNode({

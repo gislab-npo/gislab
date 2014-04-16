@@ -141,6 +141,7 @@ def page(request):
 
 	context['projection'] = 'EPSG:3857'
 
+	# Authentication
 	if project:
 		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, project + '.meta')
 		try:
@@ -150,19 +151,26 @@ def page(request):
 		except Exception, e:
 			allow_anonymous = False
 			require_superuser = False
-		if not request.user.is_authenticated() and allow_anonymous:
-			# login as quest and continue
-			user = models.GislabUser.get_guest_user()
-			if user:
-				login(request, user)
-			else:
-				return HttpResponse("Anonymous user is not configured", content_type='text/plain', status=500)
+	else:
+		allow_anonymous = True
+		require_superuser = False
 
-		if (not allow_anonymous and (not request.user.is_authenticated() or request.user.is_guest)) or (require_superuser and not request.user.is_superuser):
-			# redirect to login page
-			login_url = reverse('login')
-			return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
+	if not request.user.is_authenticated() and allow_anonymous:
+		# login as quest and continue
+		user = models.GislabUser.get_guest_user()
+		if user:
+			login(request, user)
+		else:
+			return HttpResponse("Anonymous user is not configured", content_type='text/plain', status=500)
 
+	if (not allow_anonymous and (not request.user.is_authenticated() or request.user.is_guest)) or (require_superuser and not request.user.is_superuser):
+		# redirect to login page
+		login_url = reverse('login')
+		return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
+	context['user'] = request.user
+
+
+	if project:
 		ows_url = '{0}?map={1}'.format(reverse('viewer:owsrequest'), project)
 		ows_getprojectsettings_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetProjectSettings".format(settings.WEBGIS_OWS_URL, project)
 
@@ -176,7 +184,6 @@ def page(request):
 
 		context['projection'] = root_layer.projection
 
-	context['user'] = request.user
 	context['units'] = 'dd' if context['projection'] in PROJECTION_UNITS_DD else 'm' # TODO: this is very naive
 	context['tile_resolutions'] = _get_tile_resolutions(context['scales'], context['units'], context['dpi'])
 
