@@ -343,7 +343,7 @@
 							<p><b>{% trans "E-mail" %}: </b>{{ email }}</p> \
 							<p><b>{% trans "Organization" %}: </b>{{ organization }}</p> \
 							<p><b>{% trans "Abstract" %}: </b>{{ abstract }}</p> \
-							<p><b>{% trans "WMS URL" %}: </b><a href="{{ ows_url }}" target="_blank">copy link location</a></p></div>'
+							{% if not user.is_guest %}<p><b>{% trans "WMS URL" %}: </b><a href="{{ ows_url }}" target="_blank">copy link location</a></p>{% endif %}</div>'
 				});
 
 				// legend and properties panel
