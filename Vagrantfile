@@ -91,7 +91,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ]
 
     aws.tags = {
-        'Name' => 'GIS.lab server'
+        'Name' => 'GIS.lab server',
+        'GISLAB_UNIQUE_ID' => CONFIG['GISLAB_UNIQUE_ID']
     }
   end
 end
