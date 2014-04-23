@@ -3,11 +3,11 @@
 Version=1.0
 Type=Application
 Name=GIS Project and Data Processing
-Comment=GIS project creation, data processing and analysis
+Comment=GIS project creation, data processing, analysis and project publishing
 Exec=/usr/bin/qgis
 Icon=qgis-icon
 Path=
 Terminal=false
 StartupNotify=false
 Name[sk]=Tvorba projektov GIS a spracovanie dát
-Comment[sk]=Tvorba projektov GIS, spracovanie dát a analýzy
+Comment[sk]=Tvorba projektov GIS, spracovanie dát, analýzy a publikovanie projektov
