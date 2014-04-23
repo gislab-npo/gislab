@@ -2,19 +2,28 @@
 ### FILE SERVER - NFS ###
 #
 
-mkdir -p /storage/repository    # readable for all, writable only for server superuser
-mkdir -p /storage/share         # readable for all, writable for file owners
-mkdir -p /storage/barrel        # readable and writable for all NFS users
 
-chmod ugo+rwx /storage/barrel
+mkdir -p /storage/repository    # readable for all, writable only for labadmins
+chown root:labadmins /storage/repository
+chmod 775 /storage/repository
+
+mkdir -p /storage/share         # readable for all, writable for file owners or labadmins
+chown root:labadmins /storage/share
+chmod 775 /storage/share
+
+mkdir -p /storage/barrel        # readable and writable for all labusers
+chown root:nogroup /storage/barrel
+chmod 775 /storage/barrel
+
 
 cat << EOF > /etc/exports
 $(gislab_config_header)
 /home                       *(rw,sync,no_subtree_check,no_root_squash)
-/storage/repository         *(ro,sync,no_subtree_check)
-/storage/share              *(rw,sync,no_subtree_check)
+/storage/repository         *(rw,sync,no_subtree_check,no_root_squash)
+/storage/share              *(rw,sync,no_subtree_check,no_root_squash)
 /storage/barrel             *(rw,sync,no_subtree_check,all_squash,insecure)
 EOF
+
 
 cat << EOF > /etc/idmapd.conf
 $(gislab_config_header)
@@ -27,6 +36,7 @@ Domain = gis.lab
 Nobody-User = nobody
 Nobody-Group = nogroup
 EOF
+
 
 # add /mnt mount point to fstab
 if [ ! -f "/etc/gislab/050-service-files.done" ]; then
