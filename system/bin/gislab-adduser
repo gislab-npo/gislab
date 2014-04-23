@@ -115,10 +115,6 @@ cp /vagrant/system/client/desktop-session/conky/conkyrc /etc/skel/.conkyrc
 cp /vagrant/system/client/desktop-session/conky/conky.desktop /etc/skel/.config/autostart/conky.desktop
 
 
-# add projects directory
-mkdir -p /etc/skel/Projects
-
-
 # add shared directories
 ln -s /mnt/repository /etc/skel/Repository
 ln -s /mnt/share /etc/skel/Share

@@ -116,6 +116,7 @@ changetype: modify
 replace: userPassword
 userPassword:: $GISLAB_USER_PASS_CRYPT
 EOL
+gislab_print_info "Original password restored from backup"
 
 # untar backups
 for file in *.bz2; do
@@ -124,6 +125,12 @@ done
 
 # restore home data
 cp -r home/$GISLAB_USER /home/
+
+if [ -f home/$GISLAB_USER/.config/user-dirs.dirs ]; then
+	source home/$GISLAB_USER/.config/user-dirs.dirs
+	mkdir -p /home/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR) /home/$GISLAB_USER/$(basename $XDG_TEMPORARY_DIR)
+fi
+
 chown -R $GISLAB_USER:labusers /home/$GISLAB_USER
 
 # restore share data

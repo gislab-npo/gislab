@@ -1,0 +1,20 @@
+# Configure default home directories structure
+
+case "$MODE" in
+    finalization)
+	# set home directories
+	cat << EOF > $ROOT/etc/xdg/user-dirs.defaults
+DESKTOP=Desktop
+DOWNLOAD=Downloads
+TEMPLATES=Templates
+PUBLICSHARE=Public
+DOCUMENTS=Documents
+MUSIC=Documents/Music
+PICTURES=Documents/Pictures
+VIDEOS=Documents/Videos
+TEMPORARY=Temporary
+PROJECTS=Projects
+EOF
+    
+    ;;
+esac
