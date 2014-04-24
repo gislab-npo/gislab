@@ -42,7 +42,7 @@ boot     IN    CNAME    server
 db       IN    CNAME    server
 ms       IN    CNAME    server
 web      IN    CNAME    server
-irc      IN    CNAME    server
+chat     IN    CNAME    server
 EOF
 
 cat << EOF > /etc/bind/db.192
