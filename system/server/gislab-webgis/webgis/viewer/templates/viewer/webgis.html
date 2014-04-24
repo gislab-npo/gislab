@@ -110,8 +110,8 @@
 						{
 							name: '{{ print_composer.name }}',
 							map: {
-								'width': {{ print_composer.maps.0.width }}*mmToPt,
-								'height': {{ print_composer.maps.0.height }}*mmToPt
+								'width': {{ print_composer.map.width|stringformat:".3f" }}*mmToPt,
+								'height': {{ print_composer.map.height|stringformat:".3f" }}*mmToPt
 							},
 							rotation: true,
 							labels: {% if print_composer.labels %}['{{ print_composer.labels |join:"','"}}'],{% else %}[],{% endif %}
@@ -163,7 +163,7 @@
 
 
 				var ctrl, action;
-				{% if featureinfo %}
+				{% if project %}
 				//featureinfo panel
 				var featureinfo_panel = new WebGIS.FeatureInfoPanel({
 					id: 'featureinfo-panel',
@@ -214,7 +214,7 @@
 
 				{% include "viewer/actions/basic.js" %}
 
-				{% if featureinfo %}
+				{% if project %}
 				mappanel.getTopToolbar().add({xtype: 'tbspacer', width: 25});
 				{% include "viewer/actions/search.js" %}
 				{% include "viewer/actions/featureinfo.js" %}
@@ -343,7 +343,7 @@
 							<p><b>{% trans "E-mail" %}: </b>{{ email }}</p> \
 							<p><b>{% trans "Organization" %}: </b>{{ organization }}</p> \
 							<p><b>{% trans "Abstract" %}: </b>{{ abstract }}</p> \
-							{% if not user.is_guest %}<p><b>{% trans "WMS URL" %}: </b><a href="{{ ows_url }}" target="_blank">copy link location</a></p>{% endif %}</div>'
+							{% if not user.is_guest %}<p><b>{% trans "WMS URL" %}: </b><a href="{{ wms_url }}" target="_blank">copy link location</a></p>{% endif %}</div>'
 				});
 
 				// legend and properties panel

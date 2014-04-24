@@ -22,11 +22,8 @@ from django.contrib.auth.decorators import login_required
 from webgis.viewer import forms
 from webgis.viewer import models
 from webgis.viewer.metadata_parser import MetadataParser
-from webgis.viewer.wms import WmsGetCapabilitiesService
-from webgis.viewer.qgis_wms import QgisGetProjectSettingsService
 
 
-PROJECTION_UNITS_DD=('EPSG:4326',)
 SPECIAL_BASE_LAYERS = {
 	'BLANK': {'name': 'BLANK', 'type': 'BLANK', 'title': 'Blank Layer'},
 	'OSM': {'name': 'OSM', 'type': 'OSM', 'title': 'Open Street Map'},
@@ -139,21 +136,16 @@ def page(request):
 	if scales:
 		context['scales'] = scales
 
-	context['projection'] = 'EPSG:3857'
-
-	# Authentication
 	if project:
-		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, project + '.meta')
+		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, os.path.splitext(project)[0] + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
-			allow_anonymous = metadata.authentication['allow_anonymous']
-			require_superuser = metadata.authentication['require_superuser']
 		except Exception, e:
-			allow_anonymous = False
-			require_superuser = False
-	else:
-		allow_anonymous = True
-		require_superuser = False
+			return HttpResponse("Can't load project. Error: {0}".format(str(e)), content_type='text/plain', status=404);
+
+	# Authentication
+	allow_anonymous = metadata.authentication['allow_anonymous'] if project else True
+	require_superuser = metadata.authentication['require_superuser'] if project else False
 
 	if not request.user.is_authenticated() and allow_anonymous:
 		# login as quest and continue
@@ -173,77 +165,44 @@ def page(request):
 	if project:
 		ows_url = '{0}?map={1}'.format(reverse('viewer:owsrequest'), project)
 		ows_getprojectsettings_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetProjectSettings".format(settings.WEBGIS_OWS_URL, project)
+		context['projection'] = metadata.projection
+		context['units'] = {'meters': 'm', 'feet': 'ft', 'degrees': 'dd'}.get(metadata.units, 'dd')
+	else:
+		context['projection'] = 'EPSG:3857'
+		context['units'] = 'dd'
 
-		try:
-			project_settings = QgisGetProjectSettingsService(ows_getprojectsettings_url)
-		except Exception, e:
-			return HttpResponse("Can't load project. Error: {0}".format(str(e)), content_type='text/plain', status=404);
-
-		root_layer = project_settings.root_layer
-		if not root_layer: raise Exception("Root layer not found.")
-
-		context['projection'] = root_layer.projection
-
-	context['units'] = 'dd' if context['projection'] in PROJECTION_UNITS_DD else 'm' # TODO: this is very naive
 	context['tile_resolutions'] = _get_tile_resolutions(context['scales'], context['units'], context['dpi'])
 
 	if project:
-		baselayers_capabilities = {}
-		overlays_capabilities = {}
-		def process_layer_info(layer_info):
-			if layer_info.sublayers:
-				baselayer_nodes = []
-				overlay_nodes = []
-				for sublayer_info in layer_info.sublayers:
-					baselayer_node, overlay_node = process_layer_info(sublayer_info)
-					if baselayer_node:
-						baselayer_nodes.append(baselayer_node)
-					if overlay_node:
-						overlay_nodes.append(overlay_node)
-				baselayer_node = {
-					'name': layer_info.name,
-					'layers': baselayer_nodes
-				} if baselayer_nodes else None
-				overlay_node = {
-					'name': layer_info.name,
-					'layers': overlay_nodes
-				} if overlay_nodes else None
-				return baselayer_node, overlay_node
+		project_tile_resolutions = context['tile_resolutions']
+		project_projection = context['projection']
+
+		# converts tree with layers data into simple dictionary
+		def collect_layers_capabilities(layer_data, capabilities=None):
+			if capabilities is None:
+				capabilities = {}
+			sublayers = layer_data.get('layers')
+			if sublayers:
+				for sublayer_data in sublayers:
+					collect_layers_capabilities(sublayer_data, capabilities)
 			else:
-				if layer_info.properties['providerType'] == 'wms':
-					base_layer_data = {
-						'name': layer_info.name,
-						'visible': layer_info.properties.get('visible') == '1',
-						'url': layer_info.properties['url'],
-						'image_format': layer_info.properties['imageFormat'],
-						'extent': layer_info.extent,
-						'dpi': context['dpi']
-					}
-					baselayers_capabilities[layer_info.name] = base_layer_data
-					return base_layer_data, None
-				else:
-					layer_data = {
-						'name': layer_info.name,
-						'visible': layer_info.properties.get('visible') == '1',
-						'queryable': layer_info.properties.get('queryable') == '1',
-						'geom_type': layer_info.properties.get('geomType'),
-						'attributes': layer_info.attributes,
-						'attribution': layer_info.attribution
-					}
-					overlays_capabilities[layer_info.name] = layer_data
-					return None, layer_data
+				capabilities[layer_data['name']] = layer_data
+			return capabilities
 
-		baselayers_tree, layers_tree = process_layer_info(project_settings.root_layer)
-		layers = form.cleaned_data['overlay']
-		# override layers tree with LAYERS GET parameter if provided
-		if layers:
-			try:
-				layers_tree = parse_layers_param(layers, overlays_capabilities)
-			except LookupError, e:
-				return HttpResponse("Unknown overlayer: {0}".format(str(e)), content_type='text/plain', status=400);
-
-		SPECIAL_BASE_LAYERS['BLANK']['resolutions'] = context['tile_resolutions']
-		baselayers_capabilities.update(SPECIAL_BASE_LAYERS)
+		# BASE LAYERS
+		base_layers_capabilities = collect_layers_capabilities({'layers': metadata.base_layers}) if metadata.base_layers else {}
+		base_layers_capabilities.update(SPECIAL_BASE_LAYERS)
+		for layer_capabilities in base_layers_capabilities.itervalues():
+			layer_type = layer_capabilities.get('type')
+			if layer_type == 'WMSC':
+				layer_resolutions = layer_capabilities['resolutions']
+				layer_capabilities['min_resolution'] = layer_resolutions[-1]
+				layer_capabilities['max_resolution'] = layer_resolutions[0]
+				upper_resolutions = filter(lambda res: res > layer_capabilities['max_resolution'], project_tile_resolutions)
+				lower_resolutions = filter(lambda res: res < layer_capabilities['min_resolution'], project_tile_resolutions)
+				layer_capabilities['resolutions'] = upper_resolutions + layer_resolutions + lower_resolutions
+			elif layer_type in ('WMS', 'BLANK'):
+				layer_capabilities['resolutions'] = project_tile_resolutions
 		base = form.cleaned_data['base']
 		if base:
 			try:
@@ -252,74 +211,41 @@ def page(request):
 				if context['projection'] != 'EPSG:3857':
 					skip_layers = SPECIAL_BASE_LAYERS.keys()
 					skip_layers.remove('BLANK')
-				baselayers_tree = parse_layers_param(base, baselayers_capabilities, skip_layers=skip_layers)
+				baselayers_tree = parse_layers_param(base, base_layers_capabilities, skip_layers=skip_layers)['layers']
 			except LookupError, e:
 				return HttpResponse("Unknown base layer: {0}".format(str(e)), content_type='text/plain', status=400);
-
+		else:
+			baselayers_tree = metadata.base_layers
 		# ensure that a blank base layer is always used
 		if not baselayers_tree:
-			baselayers_tree = {'name': '', 'layers': [baselayers_capabilities['BLANK']]}
+			baselayers_tree = [base_layers_capabilities['BLANK']]
+		context['base_layers'] = json.dumps(baselayers_tree)
 
-		project_tile_resolutions = context['tile_resolutions']
-		project_projection = context['projection']
-		base_layers_capabilities = {}
-		unavailable_wms_servers = []
-		# Fill additional properties of WMS layers from GetCapabilities response
-		for baselayer_name, base_layer in baselayers_capabilities.iteritems():
-			if baselayer_name in SPECIAL_BASE_LAYERS:
-				continue
-			wms_server_url = base_layer['url']
-			if wms_server_url not in base_layers_capabilities and wms_server_url not in unavailable_wms_servers:
-				try:
-					get_capabilities_url = set_query_parameters(wms_server_url, {'SERVICE': 'WMS', 'REQUEST': 'GetCapabilities'})
-					capabilities = WmsGetCapabilitiesService(get_capabilities_url)
-					base_layers_capabilities[wms_server_url] = capabilities
-				except Exception, e:
-					unavailable_wms_servers.append(wms_server_url)
-			capabilities = base_layers_capabilities.get(wms_server_url)
-			if capabilities:
-				if baselayer_name in capabilities.wmsc_layers:
-					wmsc_layer = capabilities.wmsc_layers[baselayer_name]
-					base_layer['type'] = 'WMSC'
-					base_layer['resolutions'] = wmsc_layer.resolutions
-					base_layer['extent'] = wmsc_layer.extent
-					upper_resolutions = filter(lambda res: res > wmsc_layer.resolutions[0], project_tile_resolutions)
-					lower_resolutions = filter(lambda res: res < wmsc_layer.resolutions[-1], project_tile_resolutions)
-					base_layer['resolutions'] = upper_resolutions + wmsc_layer.resolutions + lower_resolutions
-					base_layer['min_resolution'] = wmsc_layer.resolutions[-1]
-					base_layer['max_resolution'] = wmsc_layer.resolutions[0]
-				elif baselayer_name in capabilities.wms_layers:
-					wms_layer = capabilities.wms_layers[baselayer_name]
-					if project_projection in wms_layer.projections:
-						base_layer['type'] = 'WMS'
-						base_layer['resolutions'] = project_tile_resolutions
-						layer = wms_layer
-						while project_projection not in layer.extents and layer.parent:
-							layer = layer.parent
-						base_layer['extent'] = layer.extents.get(project_projection)
-					else:
-						base_layer['type'] = 'UNAVAILABLE'
-				else:
-					base_layer['type'] = 'UNAVAILABLE'
-			else:
-				base_layer['type'] = 'UNAVAILABLE'
-
-		context['base_layers'] = json.dumps(baselayers_tree.values()[0]) if baselayers_tree else None
-		context['layers'] = json.dumps(layers_tree.values()[0]) if layers_tree else None
+		# OVERLAYS LAYERS
+		layers = form.cleaned_data['overlay']
+		# override layers tree with LAYERS GET parameter if provided
+		if layers:
+			overlays_capabilities = collect_layers_capabilities({'layers': metadata.overlays}) if metadata.overlays else {}
+			try:
+				layers_tree = parse_layers_param(layers, overlays_capabilities)['layers']
+			except LookupError, e:
+				return HttpResponse("Unknown overlayer: {0}".format(str(e)), content_type='text/plain', status=400);
+		else:
+			layers_tree = metadata.overlays
+		context['layers'] = json.dumps(layers_tree) if layers_tree else None
 
 		context.update({
 			'project': project,
 			'ows_url': ows_url,
+			'wms_url': set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
 			'ows_getprojectsettings_url': ows_getprojectsettings_url,
-			'project_extent': root_layer.extent,
-			'featureinfo': 'application/vnd.ogc.gml' in project_settings.featureinfo_formats and project,
-			'print_composers': project_settings.print_composers,
-
-			'root_title': project_settings.title,
-			'author': project_settings.author,
-			'email': project_settings.email,
-			'organization': project_settings.organization,
-			'abstract': project_settings.abstract
+			'project_extent': metadata.extent,
+			'print_composers': metadata.composer_templates,
+			'root_title': metadata.title,
+			'author': metadata.contact_person,
+			'email': metadata.contact_mail,
+			'organization': metadata.contact_organization,
+			'abstract': metadata.abstract
 		})
 	else:
 		context.update({
@@ -328,7 +254,7 @@ def page(request):
 		})
 		base = form.cleaned_data['base'] or '/OSM:1;GHYBRID:0'
 		try:
-			context['base_layers'] = json.dumps(parse_layers_param(base, SPECIAL_BASE_LAYERS).values()[0])
+			context['base_layers'] = json.dumps(parse_layers_param(base, SPECIAL_BASE_LAYERS)['layers'])
 		except LookupError, e:
 			return HttpResponse("Unknown base layer: {0}".format(str(e)), content_type='text/plain', status=400);
 

@@ -112,7 +112,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 				layer_config.name,
 				[layer_config.url],
 				{
-					layers: [layer_config.name],
+					layers: layer_config.wms_layers,
 					transparent: false,
 					format: layer_config.image_format,
 					dpi: layer_config.dpi,
@@ -132,7 +132,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 				layer_config.name,
 				[layer_config.url],
 				{
-					layers: [layer_config.name],
+					layers: layer_config.wms_layers,
 					transparent: false,
 					format: layer_config.image_format,
 					dpi: layer_config.dpi,
