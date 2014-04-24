@@ -1,0 +1,19 @@
+#
+###  DEFAULT WEB PAGE ###
+#
+
+
+# configure default virtualhost
+mkdir -p /var/www/default
+cp -a /vagrant/system/server/default-web/default.apache /etc/apache2/sites-available/default
+
+# set default web server page output
+cat << EOF > /var/www/default/index.html
+<html><body><h1>GIS.lab server</h1>
+EOF
+
+a2ensite default
+service apache2 reload
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

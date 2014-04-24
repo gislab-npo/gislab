@@ -1,12 +1,12 @@
 <VirtualHost *:80>
 	ServerAdmin root@gis.lab
 
-	DocumentRoot /var/www
+	DocumentRoot /var/www/default
 	<Directory />
 		Options FollowSymLinks
 		AllowOverride None
 	</Directory>
-	<Directory /var/www/>
+	<Directory /var/www/default/>
 		Options -Indexes FollowSymLinks MultiViews
 		AllowOverride None
 		Order allow,deny
