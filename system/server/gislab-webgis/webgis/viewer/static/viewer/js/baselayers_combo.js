@@ -217,19 +217,22 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 		}.bind(this);
 		var param_parts = [];
 		var layers_nodes = [];
-		this.baselayerRoot.cascade(function(node) {
+		var visit_node = function(node) {
 			if (node.isLeaf()) {
 				layers_nodes.push(node);
 			} else {
 				if (layers_nodes.length > 0) {
 					param_parts.push(encode_layers_set(layers_nodes));
+					layers_nodes = [];
 				}
-				layers_nodes = [];
+				node.eachChild(visit_node, this);
+				if (layers_nodes.length > 0) {
+					param_parts.push(encode_layers_set(layers_nodes));
+					layers_nodes = [];
+				}
 			}
-		}, this);
-		if (layers_nodes.length > 0) {
-			param_parts.push(encode_layers_set(layers_nodes));
 		}
+		visit_node(this.baselayerRoot);
 		return param_parts.join(';');
 	}
 });
