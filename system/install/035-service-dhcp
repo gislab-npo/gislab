@@ -28,7 +28,7 @@ subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
         $GISLAB_UNKNOWN_MAC_POLICY unknown clients;
         range $GISLAB_NETWORK.100 $GISLAB_NETWORK.250;
         option domain-name "gis.lab";
-        option domain-name-servers $GISLAB_SERVER_IP, $GISLAB_DNS_SERVERS;
+        option domain-name-servers $GISLAB_SERVER_IP;
         option broadcast-address $GISLAB_NETWORK.255;
         option subnet-mask 255.255.255.0;
         option root-path "/opt/ltsp/i386";
