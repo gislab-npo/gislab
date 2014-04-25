@@ -74,21 +74,6 @@ ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
 	infoFormat: 'application/vnd.ogc.gml',
 	maxFeatures: 10,
 	eventListeners: {
-		beforegetfeatureinfo: function(event) {
-			// because we provided 'url' parameter that will not match url of any layer,
-			// GetFeatureInfo request will not be performed automatically, so we have to
-			// create it manualy with given 'url'.
-			var visible_layers = overlays_group_layer.params.LAYERS; // save LAYERS parameter value
-			if (identify_layer_combobox.selectedIndex > 0) {
-				this.queryVisible = false;
-				overlays_group_layer.params.LAYERS = [identify_layer_combobox.getValue()];
-			} else {
-				this.queryVisible = true;
-			}
-			var wms_options = this.buildWMSOptions(this.url, [overlays_group_layer], event.xy);
-			overlays_group_layer.params.LAYERS = visible_layers; // restore LAYERS parameter value
-			var request = OpenLayers.Request.GET(wms_options);
-		},
 		getfeatureinfo: function(e) {
 			Ext.getCmp('featureinfo-panel').showFeatures(e.features, identify_layer_combobox.layersAttributesAliases);
 		}

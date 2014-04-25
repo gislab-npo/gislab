@@ -18,9 +18,12 @@
  ***************************************************************************/
 """
 
+import json
+import time
 import os.path
 import subprocess
 from urllib import urlencode
+from urlparse import parse_qs
 
 # Import the PyQt and QGIS libraries
 import PyQt4.uic
@@ -40,19 +43,22 @@ class Node(object):
 	layer = None
 	parent = None
 	children = None
+	isBaseLayerNode = False
 
-	def __init__(self, name, children=None):
+	def __init__(self, name, children=None, layer=None):
 		self.name = name
+		self.layer = layer
 		self.children = []
 		if children:
 			self.append(*children)
 
 	def append(self, *nodes):
 		for node in nodes:
-			if not isinstance(node, Node):
-				node = Node(node)
-			node.parent = self
-			self.children.append(node)
+			if node is not None:
+				if not isinstance(node, Node):
+					node = Node(node)
+				node.parent = self
+				self.children.append(node)
 
 	def find(self, name):
 		if name == self.name:
@@ -62,15 +68,14 @@ class Node(object):
 			if res:
 				return res
 
+	def cascade(self, fn):
+		for child in self.children:
+			child.cascade(fn)
+		fn(self)
 
-METADATA_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
-<Metadata>
-	<Authentication>
-		<AllowAnonymous>{anonymous}</AllowAnonymous>
-		<RequireSuperuser>{superuser}</RequireSuperuser>
-	</Authentication>
-</Metadata>
-"""
+
+def extent_to_list(extent):
+	return [extent.xMinimum(), extent.yMinimum(), extent.xMaximum(), extent.yMaximum()]
 
 class WebGisPlugin:
 
@@ -177,6 +182,48 @@ class WebGisPlugin:
 		extent = [round(coord, 3) for coord in map_canvas.extent().toRectF().getCoords()]
 		get_params = [('PROJECT', project)]
 
+		scales, ok = self.project.readListEntry("Scales", "/ScalesList")
+		if ok and scales:
+			scales = [scale.split(":")[-1] for scale in scales]
+			get_params.append(('SCALES', ','.join(scales)))
+
+		get_params.append(('EXTENT', ','.join(map(str, extent))))
+		drawings = dialog.drawings.text()
+		if drawings:
+			get_params.append(('DRAWINGS', drawings.replace(" ", "")))
+
+		link = 'http://web.gis.lab/?{0}'.format(urlencode(get_params))
+
+		metadata = {
+			'title': self.project.readEntry("WMSServiceTitle", "/")[0] or self.project.title(),
+			'abstract': self.project.readEntry("WMSServiceAbstract", "/")[0],
+			'contact_person': self.project.readEntry("WMSContactPerson", "/")[0],
+			'contact_organization': self.project.readEntry("WMSContactOrganization", "/")[0],
+			'contact_mail': self.project.readEntry("WMSContactMail", "/")[0],
+			'authentication': {
+				'allow_anonymous': False,
+				'require_superuser': False
+			},
+			'publish_date_unix': time.time(),
+			'publish_date': time.ctime(),
+		}
+		renderer_context = map_canvas.mapRenderer().rendererContext()
+		selection_color = renderer_context.selectionColor()
+		canvas_color = map_canvas.canvasColor()
+		metadata.update({
+			'extent': extent_to_list(map_canvas.fullExtent()),
+			'projection': map_canvas.mapRenderer().destinationCrs().authid(),
+			'selection_color': '{0}{1:02x}'.format(selection_color.name(), selection_color.alpha()),
+			'canvas_color': '{0}{1:02x}'.format(canvas_color.name(), canvas_color.alpha()),
+			'units': ('meters', 'feet', 'degrees', 'unknown')[map_canvas.mapUnits()],
+			'measure_ellipsoid': self.project.readEntry("Measure", "/Ellipsoid", "")[0],
+			'position_precision': {
+				'automatic': self.project.readBoolEntry("PositionPrecision", "/Automatic")[0],
+				'decimal_places': self.project.readNumEntry("PositionPrecision", "/DecimalPlaces")[0]
+			}
+		})
+
+		# ALL LAYERS TREE
 		layers_reletionship = legend_iface.groupLayerRelationship()
 		layers_root = Node('')
 		for parent_name, child_names in layers_reletionship:
@@ -186,15 +233,59 @@ class WebGisPlugin:
 				layers_root.append(parent)
 			parent.append(*child_names)
 
-		# filter base layers only
-		base_layers = [layer for layer in legend_iface.layers() if self._is_base_layer_for_publish(layer)]
-		# asign base layers to nodes
-		for layer in base_layers:
-			node = layers_root.find(layer.id())
-			node.layer = layer
+		# BASE LAYERS
+		# filter to base layers only
+		base_layers = {layer.id(): layer for layer in legend_iface.layers() if self._is_base_layer_for_publish(layer)}
+		def base_tree(node):
+			base_children = []
+			for child in node.children:
+				base_child = base_tree(child)
+				if base_child:
+					base_children.append(base_child)
+			if base_children:
+				return Node(node.name, base_children)
+			elif not node.children and node.name in base_layers:
+				return Node(node.name, layer=base_layers[node.name])
+		base_layers_tree = base_tree(layers_root)
+
+		# create base layers metadata
+		def base_layers_data(node):
+			if node.children:
+				sublayers_data = [base_layers_data(child) for child in node.children]
+				return {
+					'name': node.name,
+					'layers': sublayers_data
+				}
+			else:
+				layer = node.layer
+				source_params = parse_qs(layer.source())
+				layer_data = {
+					'name': layer.name(),
+					'provider_type': layer.providerType(),
+					'visible': legend_iface.isLayerVisible(layer),
+					'extent': extent_to_list(map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent())),
+					'wms_layers': source_params['layers'][0].split(','),
+					'projection': source_params['crs'][0],
+					'format': source_params['format'][0],
+					'url': source_params['url'][0],
+					'dpi': layer.dataProvider().dpi()
+				}
+				resolutions = layer.dataProvider().property("resolutions")
+				if resolutions:
+					layer_data.update({
+						'type': 'WMSC',
+						'resolutions': sorted(resolutions, reverse=True)
+					})
+				else:
+					layer_data.update({
+						'type': 'WMS'
+					})
+				return layer_data
+
+		if base_layers_tree:
+			metadata['base_layers'] = base_layers_data(base_layers_tree).get('layers')
 
 		# encode layers grouped by their parents
-		base_param_parts = []
 		def encode_layers_group(layers_nodes):
 			categories = []
 			node = layers_nodes[0]
@@ -205,20 +296,23 @@ class WebGisPlugin:
 			encoded_layers = ["{0}:{1}".format(node.layer.name(), "1" if legend_iface.isLayerVisible(node.layer) else "0") for node in layers_nodes]
 			return "{0}/{1}".format(location, ";".join(encoded_layers))
 
-		base_group = []
-		def visit_node(node, base_group=base_group):
-			for child in node.children:
-				visit_node(child, base_group=base_group)
-			if not node.children:
-				if node.layer in base_layers:
+		# find largest groups of sibling nodes and encode them for BASE parameter value
+		base_param_parts = []
+		if base_layers_tree:
+			base_group = []
+			def base_node_callback(node):
+				if not node.children:
 					base_group.append(node)
-			else:
-				if base_group:
-					base_param_parts.append(encode_layers_group(base_group))
-				del base_group[:]
-		visit_node(layers_root)
-		if base_group:
-			base_param_parts.append(encode_layers_group(base_group))
+				else:
+					if base_group:
+						base_param_parts.append(encode_layers_group(base_group))
+						del base_group[:]
+					for child in node.children:
+						base_node_callback(child)
+					if base_group:
+						base_param_parts.append(encode_layers_group(base_group))
+						del base_group[:]
+			base_node_callback(base_layers_tree)
 
 		special_base_layers = []
 		if dialog.osm.isChecked():
@@ -232,26 +326,99 @@ class WebGisPlugin:
 		if base_param:
 			get_params.append(('BASE', base_param))
 
-		scales, ok = self.project.readListEntry("Scales", "/ScalesList")
-		if ok and scales:
-			scales = [scale.split(":")[-1] for scale in scales]
-			get_params.append(('SCALES', ','.join(scales)))
 
-		get_params.append(('EXTENT', ','.join(map(str, extent))))
-		drawings = dialog.drawings.text()
-		if drawings:
-			get_params.append(('DRAWINGS', drawings.replace(" ", "")))
+		# OVERLAY LAYERS
+		# filter to overlay layers only
+		overlay_layers = {layer.id(): layer for layer in legend_iface.layers() if self._is_overlay_layer_for_publish(layer)}
+		def overlays_tree(node):
+			overlay_children = []
+			for child in node.children:
+				overlay_child = overlays_tree(child)
+				if overlay_child:
+					overlay_children.append(overlay_child)
+			if overlay_children:
+				return Node(node.name, overlay_children)
+			elif not node.children and node.name in overlay_layers:
+				return Node(node.name, layer=overlay_layers[node.name])
+		overlay_layers_tree = overlays_tree(layers_root)
 
-		link = 'http://web.gis.lab/?{0}'.format(urlencode(get_params))
+		non_identifiable_layers = self.project.readListEntry("Identify", "/disabledLayers")[0] or []
+
+		def create_overlays_data(node):
+			sublayers = []
+			for child in node.children:
+				sublayer = create_overlays_data(child)
+				if sublayer:
+					sublayers.append(sublayer)
+			if sublayers:
+				return {
+					'name': node.name,
+					'layers': sublayers
+				}
+			elif node.layer:
+				layer = node.layer
+				transformation = map_canvas.mapRenderer().transformation(layer)
+				extent = transformation.transformBoundingBox(layer.extent())
+				layer_data = {
+					'name': layer.name(),
+					'provider_type': layer.providerType(),
+					'extent': extent_to_list(map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent())),
+					'visible': legend_iface.isLayerVisible(layer),
+					'queryable': layer.id() not in non_identifiable_layers
+				}
+				if layer.attribution():
+					layer_data['attribution'] = {
+						'title': layer.attribution(),
+						'url': layer.attributionUrl()
+					}
+				if layer.hasGeometryType():
+					layer_data['geom_type'] = ('POINT', 'LINE', 'POLYGON')[layer.geometryType()]
+				fields = layer.pendingFields()
+				attributes_data = []
+				excluded_attributes = layer.excludeAttributesWMS()
+				for index, field in enumerate(fields):
+					if field.name() in excluded_attributes:
+						continue
+					attribute_data = {
+						'name': field.name(),
+						'type': field.typeName(),
+						#'length': field.length(),
+						#'precision': field.precision()
+					}
+					if field.comment():
+						attribute_data['comment'] = field.comment()
+					alias = layer.attributeAlias(index)
+					if alias:
+						attribute_data['alias'] = alias
+					attributes_data.append(attribute_data)
+				layer_data['attributes'] = attributes_data
+				return layer_data
+		metadata['overlays'] = create_overlays_data(overlay_layers_tree).get('layers')
+
+		composer_templates = []
+		for composer in self.iface.activeComposers():
+			composition = composer.composition()
+			map_composer = composition.getComposerMapById(0)
+			map_rect = map_composer.rect()
+			composer_templates.append({
+				# cannot get composer name other way
+				'name': composer.composerWindow().windowTitle(),
+				'width': composition.paperWidth(),
+				'height': composition.paperHeight(),
+				'map': {
+					'name': 'map0',
+					'width': map_rect.width(),
+					'height': map_rect.height()
+				},
+				'labels': [item.id() for item in composition.items() if isinstance(item, QgsComposerLabel) and item.id()]
+			})
+		metadata['composer_templates'] = composer_templates
 
 		# create metadata file
-		metadata_filename = self.project.fileName() + '.meta'
+		metadata_filename = os.path.splitext(self.project.fileName())[0] + '.meta'
 		with open(metadata_filename, "w") as f:
-			f.write(METADATA_TEMPLATE.format(
-				anonymous=False,
-				superuser=False
-			))
-		#print "Starting firefox ...", link
+			json.dump(metadata, f, indent=2)
+
 		subprocess.Popen([r'firefox', '-new-tab', link])
 		dialog.close()
 

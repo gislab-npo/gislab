@@ -16,8 +16,6 @@ set following project configurations:
    file to same directory
  * on-the-fly CRS transformation must be enabled (File > Project Properties > CRS) and target projection
    must be chosen (if You are not sure chose EPSG:3857)
- * OWS advertised extent must be enabled (File > Project Properties > OWS server)
- * for better performance limit number of supported CRSs (File > Project Properties > OWS server > CRS restrictions)
 
 save project to '~/Share/<USERNAME>' directory
 

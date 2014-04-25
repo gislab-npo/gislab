@@ -70,10 +70,11 @@ ns1      IN    A        $GISLAB_SERVER_IP
 ns1      IN    AAAA     ::1
 
 server   IN    A        $GISLAB_SERVER_IP
+boot     IN    CNAME    server
 db       IN    CNAME    server
 ms       IN    CNAME    server
 web      IN    CNAME    server
-irc      IN    CNAME    server
+chat     IN    CNAME    server
 EOF
 
 cat << EOF > /etc/bind/db.192

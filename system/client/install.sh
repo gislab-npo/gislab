@@ -122,12 +122,31 @@ FSTAB_4="$GISLAB_CLIENT_NETWORK_STORAGE"
 EOF
 fi
 
-service nbd-server restart
 
-
+# PXE boot
 # disable plymouth screen for better client troubleshooting on boot
 sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/ltsp/i386/pxelinux.cfg/default
 
+
+# HTTP boot (alternative method using iPXE)
+# To boot via HTTP, client machine must boot iPXE boot image first. This boot image will launch HTTP boot.
+# Prepared iPXE boot image exists in 'http-boot/gislab-client-loader.iso.gz' of GIS.lab source code
+# or can be created by running '$ make bin/ipxe.iso EMBED=boot-gislab.ipxe' in iPXE source code.
+
+# add boot files (files can be launched by http://boot.gis.lab/<file> or http://$GISLAB_NETWORK.5/<file>)
+ln -sf /var/lib/tftpboot/ltsp/i386/vmlinuz /var/www/default/vmlinuz
+ln -sf /var/lib/tftpboot/ltsp/i386/initrd.img /var/www/default/initrd.img
+
+# add boot script
+cat << EOF > /var/www/default/i386
+#!ipxe
+kernel http://${GISLAB_NETWORK}.5/vmlinuz ro root=/dev/nbd0 init=/sbin/init-ltsp nbdroot=${GISLAB_NETWORK}.5:ltsp_i386
+initrd http://${GISLAB_NETWORK}.5/initrd.img
+boot
+EOF
+
+service nbd-server restart
+service apache2 reload
 
 gislab_print_info "Client installation done"
 

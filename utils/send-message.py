@@ -13,7 +13,7 @@ except IndexError:
 	sys.exit(0)
 
 
-HOST="irc.gis.lab"
+HOST="chat.gis.lab"
 PORT=6667
 NICK=IDENT="labadmin"
 REALNAME="script"

@@ -5,7 +5,7 @@
 cat << EOF > /etc/ircd-hybrid/ircd.conf
 $(gislab_config_header)
 serverinfo {
-    name = "irc.gis.lab";
+    name = "chat.gis.lab";
     description = "GIS.lab IRC server";
     network_name = "GIS.lab";
     network_desc = "GIS.lab";
