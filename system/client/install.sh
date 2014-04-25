@@ -134,8 +134,8 @@ sed -i "s/quiet splash plymouth:force-splash vt.handoff=7//" /var/lib/tftpboot/l
 # or can be created by running '$ make bin/ipxe.iso EMBED=boot-gislab.ipxe' in iPXE source code.
 
 # add boot files (files can be launched by http://boot.gis.lab/<file> or http://$GISLAB_NETWORK.5/<file>)
-ln -s /var/lib/tftpboot/ltsp/i386/vmlinuz /var/www/default/vmlinuz
-ln -s /var/lib/tftpboot/ltsp/i386/initrd.img /var/www/default/initrd.img
+ln -sf /var/lib/tftpboot/ltsp/i386/vmlinuz /var/www/default/vmlinuz
+ln -sf /var/lib/tftpboot/ltsp/i386/initrd.img /var/www/default/initrd.img
 
 # add boot script
 cat << EOF > /var/www/default/i386
