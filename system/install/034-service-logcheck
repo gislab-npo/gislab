@@ -15,6 +15,8 @@ cat << EOL > /etc/logcheck/logcheck.logfiles
 $(gislab_config_header)
 /var/log/syslog
 /var/log/auth.log
+/var/log/mail-error.log
+/var/log/dhcpd-error.log
 /var/log/postgresql/postgresql-9.1-main.log
 /var/log/apache2/error.log
 /var/log/apache2/webgis-error.log

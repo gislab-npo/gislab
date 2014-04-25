@@ -36,10 +36,20 @@ EOF
 
 # enable extended logging if requested
 if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
-cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
+	touch /var/log/postgresql/postgresql-debug.log
+	chown postgres:adm  /var/log/postgresql/postgresql-debug.log
+	chmod 0640  /var/log/postgresql/postgresql-debug.log
+	cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
+logging_collector = on
+log_directory = '/var/log/postgresql'
+log_filename = 'postgresql-debug.log'
 log_min_messages = 'DEBUG1'
 log_min_error_statement = 'DEBUG1'
 log_min_duration_statement = 0
+EOF
+else
+	cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
+log_min_messages = FATAL
 EOF
 fi
 
