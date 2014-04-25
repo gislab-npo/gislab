@@ -89,8 +89,11 @@ mkdir -p /etc/skel/.local/share/desktop-directories
 cp /vagrant/system/client/desktop-session/menus/*.directory /etc/skel/.local/share/desktop-directories/
 
 
-# configure GIS.lab desktop and panel
+# configure GIS.lab desktop session and panel
 mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
+
+cp /vagrant/system/client/desktop-session/xfce4/xinitrc /etc/skel/.config/xfce4/
+
 cp /vagrant/system/client/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 cp /vagrant/system/client/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
 
