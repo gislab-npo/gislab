@@ -124,7 +124,6 @@ $alignc \
 ${color1}${exec whoami}@${nodename} | \
 ${color0}UP ${color1}$uptime_short | \
 ${color0}LOAD ${color1}$loadavg | \
-${color0}CPU ${color1}$cpu% ${cpubar 5,50} ${freq 1}MHz ${acpitemp}C | \
+${color0}CPU ${color1}$cpu% ${cpubar 5,50} ${freq 1}MHz | \
 ${color0}RAM ${color1}$mem ${membar 5,50} | \
-${color0}SWAP ${color1}$swap ${swapbar 5,50} | \
 ${color0}ETH0 ${color1}${downspeed eth0}:${upspeed eth0}
