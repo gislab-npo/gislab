@@ -16,7 +16,7 @@ if [ ! -f /etc/gislab/033-service-mail.done ]; then
 fi
 
 sed -i '/^mail\.err[[:space:]]\+\/var\/log\/mail-error\.log$/d' /etc/rsyslog.d/50-default.conf
-sed -i '/^mail\.\*[[:space:]]\+\/var\/log\/mail-debug\.log/$d' /etc/rsyslog.d/50-default.conf
+sed -i '/^mail\.\*[[:space:]]\+\/var\/log\/mail-debug\.log$/d' /etc/rsyslog.d/50-default.conf
 
 if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
 	# in debug mode log everything to /var/log/mail-debug.log
