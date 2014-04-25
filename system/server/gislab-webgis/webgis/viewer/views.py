@@ -137,6 +137,7 @@ def page(request):
 		context['scales'] = scales
 
 	if project:
+		project = os.path.splitext(project)[0] + '.qgs'
 		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, os.path.splitext(project)[0] + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
