@@ -282,7 +282,8 @@ class WebGisPlugin:
 					})
 				return layer_data
 
-		metadata['base_layers'] = base_layers_data(base_layers_tree).get('layers')
+		if base_layers_tree:
+			metadata['base_layers'] = base_layers_data(base_layers_tree).get('layers')
 
 		# encode layers grouped by their parents
 		def encode_layers_group(layers_nodes):
@@ -297,20 +298,21 @@ class WebGisPlugin:
 
 		# find largest groups of sibling nodes and encode them for BASE parameter value
 		base_param_parts = []
-		base_group = []
-		def base_node_callback(node):
-			if not node.children:
-				base_group.append(node)
-			else:
-				if base_group:
-					base_param_parts.append(encode_layers_group(base_group))
-					del base_group[:]
-				for child in node.children:
-					base_node_callback(child)
-				if base_group:
-					base_param_parts.append(encode_layers_group(base_group))
-					del base_group[:]
-		base_node_callback(base_layers_tree)
+		if base_layers_tree:
+			base_group = []
+			def base_node_callback(node):
+				if not node.children:
+					base_group.append(node)
+				else:
+					if base_group:
+						base_param_parts.append(encode_layers_group(base_group))
+						del base_group[:]
+					for child in node.children:
+						base_node_callback(child)
+					if base_group:
+						base_param_parts.append(encode_layers_group(base_group))
+						del base_group[:]
+			base_node_callback(base_layers_tree)
 
 		special_base_layers = []
 		if dialog.osm.isChecked():
