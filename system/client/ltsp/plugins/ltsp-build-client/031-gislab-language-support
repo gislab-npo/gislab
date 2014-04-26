@@ -11,7 +11,6 @@ case "$MODE" in
 		if [ "$(apt-cache --names-only search ^language-pack-${lang}$)" != "" ]; then packages+="language-pack-${lang} "; fi
 		if [ "$(apt-cache --names-only search ^firefox-locale-${lang}$)" != "" ]; then packages+="firefox-locale-${lang} "; fi
 		if [ "$(apt-cache --names-only search ^libreoffice-l10n-${lang}$)" != "" ]; then packages+="libreoffice-l10n-${lang} "; fi
-		if [ "$(apt-cache --names-only search ^thunderbird-locale-${lang}$)" != "" ]; then packages+="thunderbird-locale-${lang} "; fi
 		if [ "$(apt-cache --names-only search ^myspell-${lang}$)" != "" ]; then packages+="myspell-${lang} "; fi
 		if [ "$(apt-cache --names-only search ^mythes-${lang}$)" != "" ]; then packages+="mythes-${lang} "; fi
 		
