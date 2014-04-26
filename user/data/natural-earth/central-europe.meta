@@ -1,0 +1,3083 @@
+{
+  "measure_ellipsoid": "WGS84", 
+  "projection": "EPSG:3857", 
+  "title": "Countries of Central Europe", 
+  "contact_mail": "ivan.mincik@gmail.com", 
+  "position_precision": {
+    "automatic": true, 
+    "decimal_places": 2
+  }, 
+  "contact_organization": "GIS.lab", 
+  "publish_date_unix": 1398517271.858552, 
+  "canvas_color": "#ffffffff", 
+  "authentication": {
+    "require_superuser": false, 
+    "allow_anonymous": false
+  }, 
+  "publish_date": "Sat Apr 26 15:01:11 2014", 
+  "extent": [
+    651496.1919785641, 
+    5688462.821393402, 
+    2687603.8734734296, 
+    7374556.522260039
+  ], 
+  "units": "meters", 
+  "selection_color": "#ffff00ff", 
+  "contact_person": "Ivan Min\u010d\u00edk", 
+  "overlays": [
+    {
+      "name": "Places", 
+      "visible": true, 
+      "extent": [
+        683504.7942115112, 
+        5780410.452177983, 
+        2579272.189339249, 
+        7320008.578475137
+      ], 
+      "attributes": [
+        {
+          "type": "INTEGER", 
+          "name": "PK_UID"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "SCALERANK"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "NATSCALE"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "LABELRANK"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "FEATURECLA"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "NAME"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "NAMEPAR"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "NAMEALT"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "DIFFASCII"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "NAMEASCII"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "ADM0CAP"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "CAPALT"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "CAPIN"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "WORLDCITY"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "MEGACITY"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "SOV0NAME"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "SOV_A3"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "ADM0NAME"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "ADM0_A3"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "ADM1NAME"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "ISO_A2"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "NOTE"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "LATITUDE"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "LONGITUDE"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "CHANGED"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "NAMEDIFF"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "DIFFNOTE"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "POP_MAX"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "POP_MIN"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "POP_OTHER"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "RANK_MAX"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "RANK_MIN"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "GEONAMEID"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "MEGANAME"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "LS_NAME"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "LS_MATCH"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "CHECKME"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_POP10"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_POP20"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_POP50"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_POP300"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_POP310"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_NATSCA"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MIN_AREAKM"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_AREAKM"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MIN_AREAMI"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_AREAMI"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MIN_PERKM"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_PERKM"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MIN_PERMI"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_PERMI"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MIN_BBXMIN"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_BBXMIN"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MIN_BBXMAX"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_BBXMAX"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MIN_BBYMIN"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_BBYMIN"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MIN_BBYMAX"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MAX_BBYMAX"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MEAN_BBXC"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "MEAN_BBYC"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "COMPARE"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "GN_ASCII"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "FEATURE_CL"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "FEATURE_CO"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "ADMIN1_COD"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "GN_POP"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "ELEVATION"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "GTOPO30"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "TIMEZONE"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "GEONAMESNO"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "UN_FID"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "UN_ADM0"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "UN_LAT"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "UN_LONG"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP1950"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP1955"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP1960"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP1965"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP1970"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP1975"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP1980"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP1985"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP1990"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP1995"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP2000"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP2005"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP2010"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP2015"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP2020"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP2025"
+        }, 
+        {
+          "type": "DOUBLE", 
+          "name": "POP2050"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "CITYALT"
+        }
+      ], 
+      "queryable": true, 
+      "geom_type": "POINT", 
+      "provider_type": "spatialite"
+    }, 
+    {
+      "name": "Roads", 
+      "visible": true, 
+      "extent": [
+        675820.5426159283, 
+        5706275.042890986, 
+        2655198.809358287, 
+        7323564.558576378
+      ], 
+      "attributes": [
+        {
+          "type": "INTEGER", 
+          "name": "PK_UID"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "scalerank"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "featurecla"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "type"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "sov_a3"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "note"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "edited"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "name"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "namealt"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "namealtt"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "routeraw"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "question"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "length_km"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "toll"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "ne_part"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "label"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "label2"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "local"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "localtype"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "localalt"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "labelrank"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "ignore"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "add"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "rwdb_rd_id"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "orig_fid"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "prefix"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "uident"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "continent"
+        }, 
+        {
+          "type": "INTEGER", 
+          "name": "expressway"
+        }, 
+        {
+          "type": "TEXT", 
+          "name": "level"
+        }
+      ], 
+      "queryable": true, 
+      "geom_type": "LINE", 
+      "provider_type": "spatialite"
+    }, 
+    {
+      "layers": [
+        {
+          "name": "Austria", 
+          "visible": true, 
+          "extent": [
+            651496.1919785641, 
+            5688462.821393402, 
+            2687603.8734734296, 
+            7374556.522260039
+          ], 
+          "attributes": [
+            {
+              "type": "INTEGER", 
+              "name": "PK_UID"
+            }, 
+            {
+              "type": "INTEGER", 
+              "name": "scalerank"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "featurecla"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LABELRANK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOVEREIGNT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOV_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_DIF"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LEVEL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "TYPE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADMIN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GEOU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GEOUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "SU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "BRK_DIFF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_LONG"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_GROUP"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ABBREV"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "POSTAL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_EN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_FR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_ADM0"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_BRK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_SORT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_ALT"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR7"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR8"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR9"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR13"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_MD_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_YEAR"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LASTCENSUS"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_YEAR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ECONOMY"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "INCOME_GRP"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WIKIPEDIA"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FIPS_10_"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_N3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "UN_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID_EH"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WOE_NOTE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_IS"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_US"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_UN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_WB"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "CONTINENT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_UN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBREGION"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_WB"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "NAME_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LONG_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ABBREV_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "TINY"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "HOMEPART"
+            }
+          ], 
+          "queryable": true, 
+          "geom_type": "POLYGON", 
+          "provider_type": "spatialite"
+        }, 
+        {
+          "name": "Czech rep.", 
+          "visible": true, 
+          "extent": [
+            651496.1919785641, 
+            5688462.821393402, 
+            2687603.8734734296, 
+            7374556.522260039
+          ], 
+          "attributes": [
+            {
+              "type": "INTEGER", 
+              "name": "PK_UID"
+            }, 
+            {
+              "type": "INTEGER", 
+              "name": "scalerank"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "featurecla"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LABELRANK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOVEREIGNT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOV_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_DIF"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LEVEL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "TYPE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADMIN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GEOU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GEOUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "SU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "BRK_DIFF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_LONG"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_GROUP"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ABBREV"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "POSTAL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_EN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_FR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_ADM0"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_BRK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_SORT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_ALT"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR7"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR8"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR9"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR13"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_MD_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_YEAR"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LASTCENSUS"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_YEAR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ECONOMY"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "INCOME_GRP"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WIKIPEDIA"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FIPS_10_"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_N3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "UN_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID_EH"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WOE_NOTE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_IS"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_US"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_UN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_WB"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "CONTINENT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_UN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBREGION"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_WB"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "NAME_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LONG_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ABBREV_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "TINY"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "HOMEPART"
+            }
+          ], 
+          "queryable": true, 
+          "geom_type": "POLYGON", 
+          "provider_type": "spatialite"
+        }, 
+        {
+          "name": "Germany", 
+          "visible": true, 
+          "extent": [
+            651496.1919785641, 
+            5688462.821393402, 
+            2687603.8734734296, 
+            7374556.522260039
+          ], 
+          "attributes": [
+            {
+              "type": "INTEGER", 
+              "name": "PK_UID"
+            }, 
+            {
+              "type": "INTEGER", 
+              "name": "scalerank"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "featurecla"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LABELRANK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOVEREIGNT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOV_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_DIF"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LEVEL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "TYPE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADMIN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GEOU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GEOUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "SU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "BRK_DIFF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_LONG"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_GROUP"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ABBREV"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "POSTAL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_EN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_FR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_ADM0"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_BRK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_SORT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_ALT"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR7"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR8"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR9"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR13"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_MD_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_YEAR"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LASTCENSUS"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_YEAR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ECONOMY"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "INCOME_GRP"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WIKIPEDIA"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FIPS_10_"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_N3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "UN_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID_EH"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WOE_NOTE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_IS"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_US"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_UN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_WB"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "CONTINENT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_UN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBREGION"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_WB"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "NAME_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LONG_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ABBREV_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "TINY"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "HOMEPART"
+            }
+          ], 
+          "queryable": true, 
+          "geom_type": "POLYGON", 
+          "provider_type": "spatialite"
+        }, 
+        {
+          "name": "Hungary", 
+          "visible": true, 
+          "extent": [
+            651496.1919785641, 
+            5688462.821393402, 
+            2687603.8734734296, 
+            7374556.522260039
+          ], 
+          "attributes": [
+            {
+              "type": "INTEGER", 
+              "name": "PK_UID"
+            }, 
+            {
+              "type": "INTEGER", 
+              "name": "scalerank"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "featurecla"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LABELRANK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOVEREIGNT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOV_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_DIF"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LEVEL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "TYPE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADMIN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GEOU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GEOUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "SU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "BRK_DIFF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_LONG"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_GROUP"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ABBREV"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "POSTAL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_EN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_FR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_ADM0"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_BRK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_SORT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_ALT"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR7"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR8"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR9"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR13"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_MD_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_YEAR"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LASTCENSUS"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_YEAR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ECONOMY"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "INCOME_GRP"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WIKIPEDIA"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FIPS_10_"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_N3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "UN_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID_EH"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WOE_NOTE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_IS"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_US"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_UN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_WB"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "CONTINENT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_UN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBREGION"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_WB"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "NAME_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LONG_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ABBREV_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "TINY"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "HOMEPART"
+            }
+          ], 
+          "queryable": true, 
+          "geom_type": "POLYGON", 
+          "provider_type": "spatialite"
+        }, 
+        {
+          "name": "Liechtenstein", 
+          "visible": true, 
+          "extent": [
+            651496.1919785641, 
+            5688462.821393402, 
+            2687603.8734734296, 
+            7374556.522260039
+          ], 
+          "attributes": [
+            {
+              "type": "INTEGER", 
+              "name": "PK_UID"
+            }, 
+            {
+              "type": "INTEGER", 
+              "name": "scalerank"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "featurecla"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LABELRANK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOVEREIGNT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOV_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_DIF"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LEVEL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "TYPE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADMIN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GEOU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GEOUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "SU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "BRK_DIFF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_LONG"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_GROUP"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ABBREV"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "POSTAL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_EN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_FR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_ADM0"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_BRK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_SORT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_ALT"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR7"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR8"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR9"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR13"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_MD_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_YEAR"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LASTCENSUS"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_YEAR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ECONOMY"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "INCOME_GRP"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WIKIPEDIA"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FIPS_10_"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_N3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "UN_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID_EH"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WOE_NOTE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_IS"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_US"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_UN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_WB"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "CONTINENT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_UN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBREGION"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_WB"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "NAME_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LONG_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ABBREV_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "TINY"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "HOMEPART"
+            }
+          ], 
+          "queryable": true, 
+          "geom_type": "POLYGON", 
+          "provider_type": "spatialite"
+        }, 
+        {
+          "name": "Poland", 
+          "visible": true, 
+          "extent": [
+            651496.1919785641, 
+            5688462.821393402, 
+            2687603.8734734296, 
+            7374556.522260039
+          ], 
+          "attributes": [
+            {
+              "type": "INTEGER", 
+              "name": "PK_UID"
+            }, 
+            {
+              "type": "INTEGER", 
+              "name": "scalerank"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "featurecla"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LABELRANK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOVEREIGNT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOV_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_DIF"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LEVEL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "TYPE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADMIN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GEOU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GEOUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "SU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "BRK_DIFF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_LONG"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_GROUP"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ABBREV"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "POSTAL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_EN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_FR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_ADM0"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_BRK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_SORT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_ALT"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR7"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR8"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR9"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR13"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_MD_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_YEAR"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LASTCENSUS"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_YEAR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ECONOMY"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "INCOME_GRP"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WIKIPEDIA"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FIPS_10_"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_N3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "UN_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID_EH"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WOE_NOTE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_IS"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_US"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_UN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_WB"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "CONTINENT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_UN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBREGION"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_WB"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "NAME_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LONG_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ABBREV_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "TINY"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "HOMEPART"
+            }
+          ], 
+          "queryable": true, 
+          "geom_type": "POLYGON", 
+          "provider_type": "spatialite"
+        }, 
+        {
+          "name": "Slovakia", 
+          "visible": true, 
+          "extent": [
+            651496.1919785641, 
+            5688462.821393402, 
+            2687603.8734734296, 
+            7374556.522260039
+          ], 
+          "attributes": [
+            {
+              "type": "INTEGER", 
+              "name": "PK_UID"
+            }, 
+            {
+              "type": "INTEGER", 
+              "name": "scalerank"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "featurecla"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LABELRANK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOVEREIGNT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOV_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_DIF"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LEVEL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "TYPE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADMIN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GEOU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GEOUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "SU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "BRK_DIFF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_LONG"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_GROUP"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ABBREV"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "POSTAL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_EN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_FR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_ADM0"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_BRK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_SORT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_ALT"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR7"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR8"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR9"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR13"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_MD_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_YEAR"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LASTCENSUS"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_YEAR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ECONOMY"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "INCOME_GRP"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WIKIPEDIA"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FIPS_10_"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_N3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "UN_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID_EH"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WOE_NOTE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_IS"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_US"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_UN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_WB"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "CONTINENT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_UN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBREGION"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_WB"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "NAME_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LONG_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ABBREV_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "TINY"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "HOMEPART"
+            }
+          ], 
+          "queryable": true, 
+          "geom_type": "POLYGON", 
+          "provider_type": "spatialite"
+        }, 
+        {
+          "name": "Slovenia", 
+          "visible": true, 
+          "extent": [
+            651496.1919785641, 
+            5688462.821393402, 
+            2687603.8734734296, 
+            7374556.522260039
+          ], 
+          "attributes": [
+            {
+              "type": "INTEGER", 
+              "name": "PK_UID"
+            }, 
+            {
+              "type": "INTEGER", 
+              "name": "scalerank"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "featurecla"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LABELRANK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOVEREIGNT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOV_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_DIF"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LEVEL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "TYPE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADMIN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GEOU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GEOUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "SU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "BRK_DIFF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_LONG"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_GROUP"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ABBREV"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "POSTAL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_EN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_FR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_ADM0"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_BRK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_SORT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_ALT"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR7"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR8"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR9"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR13"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_MD_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_YEAR"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LASTCENSUS"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_YEAR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ECONOMY"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "INCOME_GRP"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WIKIPEDIA"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FIPS_10_"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_N3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "UN_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID_EH"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WOE_NOTE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_IS"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_US"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_UN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_WB"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "CONTINENT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_UN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBREGION"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_WB"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "NAME_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LONG_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ABBREV_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "TINY"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "HOMEPART"
+            }
+          ], 
+          "queryable": true, 
+          "geom_type": "POLYGON", 
+          "provider_type": "spatialite"
+        }, 
+        {
+          "name": "Switzerland", 
+          "visible": true, 
+          "extent": [
+            651496.1919785641, 
+            5688462.821393402, 
+            2687603.8734734296, 
+            7374556.522260039
+          ], 
+          "attributes": [
+            {
+              "type": "INTEGER", 
+              "name": "PK_UID"
+            }, 
+            {
+              "type": "INTEGER", 
+              "name": "scalerank"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "featurecla"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LABELRANK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOVEREIGNT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SOV_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_DIF"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LEVEL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "TYPE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADMIN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GEOU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GEOUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "GU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "SU_DIF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBUNIT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SU_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "BRK_DIFF"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_LONG"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_NAME"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "BRK_GROUP"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ABBREV"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "POSTAL"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_EN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FORMAL_FR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_ADM0"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NOTE_BRK"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_SORT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "NAME_ALT"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR7"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR8"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR9"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "MAPCOLOR13"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_MD_EST"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "POP_YEAR"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LASTCENSUS"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "GDP_YEAR"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ECONOMY"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "INCOME_GRP"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WIKIPEDIA"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "FIPS_10_"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ISO_N3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "UN_A3"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A2"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WB_A3"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "WOE_ID_EH"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "WOE_NOTE"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_IS"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "ADM0_A3_US"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_UN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ADM0_A3_WB"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "CONTINENT"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_UN"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "SUBREGION"
+            }, 
+            {
+              "type": "TEXT", 
+              "name": "REGION_WB"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "NAME_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "LONG_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "ABBREV_LEN"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "TINY"
+            }, 
+            {
+              "type": "DOUBLE", 
+              "name": "HOMEPART"
+            }
+          ], 
+          "queryable": true, 
+          "geom_type": "POLYGON", 
+          "provider_type": "spatialite"
+        }
+      ], 
+      "name": "Countries"
+    }
+  ], 
+  "composer_templates": [
+    {
+      "width": 297.0, 
+      "map": {
+        "width": 229.857, 
+        "name": "map0", 
+        "height": 154.202
+      }, 
+      "labels": [
+        "Title"
+      ], 
+      "name": "A4", 
+      "height": 210.0
+    }
+  ], 
+  "abstract": "GIS.lab demonstration project"
+}
