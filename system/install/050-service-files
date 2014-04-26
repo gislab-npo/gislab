@@ -46,7 +46,9 @@ $(gislab_config_header)
 EOF
 fi
 
-mount /mnt  # bind mount to keep the same paths on server as on client
+umount /mnt || true				# for sure try to umount first (some AWS instances can boot with
+								# /mnt already occupied)
+mount -o bind /storage /mnt		# bind mount to keep the same paths on server as on client
 
 service nfs-kernel-server restart
 service idmapd restart
