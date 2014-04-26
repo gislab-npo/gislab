@@ -2,6 +2,9 @@
 ### PROVIDER CUSTOMIZATIONS ###
 #
 
+# skip on upgrade
+if [ -f "/etc/gislab/990-provider-customizations.done" ]; then return; fi
+
 if [ "$GISLAB_SERVER_PROVIDER" == "aws" ]; then
 
 	# detect AWS instance properties
@@ -10,6 +13,48 @@ if [ "$GISLAB_SERVER_PROVIDER" == "aws" ]; then
 	GISLAB_SERVER_AWS_LOCAL_IP=$(curl $aws_meta_url/local-ipv4)
 	GISLAB_SERVER_AWS_PUBLIC_IP=$(curl $aws_meta_url/public-ipv4)
 	GISLAB_SERVER_AWS_PUBLIC_HOSTNAME=$(curl $aws_meta_url/public-hostname)
+
+	# if instance contains ephemeral0 disk use it for database storage
+	if [ -b /dev/xvdb ]; then
+		umount /dev/xvdb || true
+		mkfs.ext4 /dev/xvdb
+		sleep 2
+		
+		sed -i "/xvdb/d" /etc/fstab
+		echo "/dev/xvdb  /var/lib/postgresql  ext4  noatime,nodiratime,nobootwait,comment=cloudconfig 0 2" >> /etc/fstab
+
+		service postgresql stop
+		sleep 2
+		mv /var/lib/postgresql /var/lib/postgresql.old
+		mkdir -p /var/lib/postgresql
+		mount /dev/xvdb /var/lib/postgresql
+		chown postgres:postgres /var/lib/postgresql
+		mv /var/lib/postgresql.old/* /var/lib/postgresql/
+		rm -rf /var/lib/postgresql.old
+		service postgresql start
+		
+	fi
+
+	# if instance contains ephemeral1 disk use it for files storage
+	if [ -b /dev/xvdc ]; then
+		umount /dev/xvdc || true
+		mkfs.ext4 /dev/xvdc
+		sleep 2
+
+		sed -i "/xvdc/d" /etc/fstab
+		echo "/dev/xvdc  /storage  ext4  noatime,nodiratime,nobootwait,comment=cloudconfig 0 2" >> /etc/fstab
+
+		service nfs-kernel-server stop
+		sleep 2
+		umount /mnt # /storage bind mount
+		mv /storage /storage.old
+		mkdir /storage
+		mount /dev/xvdc /storage
+		mv /storage.old/* /storage/
+		rm -rf /storage.old
+		mount /mnt # /storage bind mount
+		service nfs-kernel-server start
+	fi
 
 	# configure WebGIS with AWS instance values
 	sed -i "/ServerName/a \  ServerAlias $GISLAB_SERVER_AWS_PUBLIC_HOSTNAME" /etc/apache2/sites-available/webgis
