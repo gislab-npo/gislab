@@ -1,0 +1,10 @@
+#
+### MAPSERVER ###
+#
+
+
+# configure mapserver virtualhost
+cp -a /vagrant/system/server/gislab-webgis/conf/mapserver.apache /etc/apache2/sites-available/mapserver
+
+
+# vim: set syntax=sh ts=4 sts=4 sw=4 noet:

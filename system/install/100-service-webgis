@@ -3,10 +3,6 @@
 #
 
 
-# configure mapserver virtualhost
-cp -a /vagrant/system/server/gislab-webgis/conf/mapserver.apache /etc/apache2/sites-available/mapserver
-
-
 # create database and user only on initial installation
 if [ ! -f "/etc/gislab/100-service-webgis.done" ]; then
 	WEBGIS_DB_PASSWORD=$(pwgen -1 -n 8)
