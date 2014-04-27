@@ -57,7 +57,14 @@ python /var/www/webgis/manage.py syncdb --noinput
 python /var/www/webgis/manage.py collectstatic --noinput > /dev/null
 deactivate
 
+# configure Apache vierualhost
 cp -a /vagrant/system/server/gislab-web/conf/webgis.apache /etc/apache2/sites-available/webgis
+
+# add alias if configured
+if [ -n "$GISLAB_WEB_ALIAS" ]; then
+	sed -i "/ServerName/a \  ServerAlias $GISLAB_WEB_ALIAS" /etc/apache2/sites-available/webgis
+	sed -i "/ALLOWED_HOSTS/aALLOWED_HOSTS += ['$GISLAB_WEB_ALIAS']" /var/www/webgis/djproject/settings.py
+fi
 
 a2enmod expires
 a2enmod wsgi
