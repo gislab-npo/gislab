@@ -63,7 +63,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       path: "system/install.sh",
       args: "aws"
 
-    config.vm.synced_folder '.', '/vagrant', :rsync_excludes => ['.git', 'tmp', 'mnt']
+    config.vm.synced_folder '.', '/vagrant', :rsync_excludes => ['.git', 'tmp', 'mnt', 'http-boot']
 
     override.ssh.username = "ubuntu"
     override.ssh.private_key_path = CONFIG['GISLAB_SSH_PRIVATE_KEY']
