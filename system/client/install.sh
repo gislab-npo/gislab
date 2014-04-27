@@ -69,7 +69,7 @@ then
 	cp -v /vagrant/config-user.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/001-gislab-config-user
 fi
 
-cp -av /vagrant/system/client/ltsp/plugins/ltsp-build-client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
+cp -av /vagrant/system/client/ltsp/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 cp -av /vagrant/user/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
 
