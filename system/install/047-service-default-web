@@ -9,7 +9,7 @@ cp -a /vagrant/system/server/default-web/default.apache /etc/apache2/sites-avail
 
 # set default web server page output
 cat << EOF > /var/www/default/index.html
-<html><body><h1>GIS.lab server</h1>
+<html><body><h1>GIS.lab server</h1></body></html>
 EOF
 
 a2ensite default
