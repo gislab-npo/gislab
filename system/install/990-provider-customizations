@@ -12,7 +12,7 @@ if [ "$GISLAB_SERVER_PROVIDER" == "aws" ]; then
 	GISLAB_SERVER_AWS_PUBLIC_HOSTNAME=$(curl $aws_meta_url/public-hostname)
 
 	# configure WebGIS with AWS instance values
-	sed -i "/ServerName/a \  ServerAlias $GISLAB_SERVER_AWS_PUBLIC_HOSTNAME" /etc/apache2/sites-available/webgis
+	sed -i "s/server_name web.gis.lab;/server_name web.gis.lab $GISLAB_SERVER_AWS_PUBLIC_HOSTNAME;/" /etc/nginx/sites-available/webgis
 	sed -i "/ALLOWED_HOSTS/aALLOWED_HOSTS += ['$GISLAB_SERVER_AWS_PUBLIC_HOSTNAME']" /var/www/webgis/djproject/settings.py
 	service apache2 reload
 

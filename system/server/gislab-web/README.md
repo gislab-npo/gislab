@@ -67,6 +67,43 @@ http://web.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>&<PARAMETER>=<value>&<PAR
 * list of overlay layers and their visibility and transparency is detected from project and overriden by OVERLAY parameter. 
 
 
+## Gunicorn deployment
+For testing or development, run following command in directory containing 'manage.py' file
+```
+gunicorn djproject.wsgi:application
+```
+
+For production, use this script (update paths to your needs). Use (CPU * 2 + 1) for NUM_WORKERS. If
+only one CPU available, use 3 workers.
+```
+#!/bin/bash
+
+NAME="webgis"
+DJANGODIR=/var/www/webgis
+SOCKFILE=/var/www/webgis/gunicorn.sock
+USER=www-data
+GROUP=www-data
+NUM_WORKERS=3
+DJANGO_SETTINGS_MODULE=djproject.settings
+DJANGO_WSGI_MODULE=djproject.wsgi
+ 
+cd $DJANGODIR
+source /usr/local/python-virtualenvs/webgis/bin/activate
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export PYTHONPATH=$DJANGODIR:$PYTHONPATH
+ 
+RUNDIR=$(dirname $SOCKFILE)
+test -d $RUNDIR || mkdir -p $RUNDIR
+ 
+exec gunicorn ${DJANGO_WSGI_MODULE}:application \
+--name $NAME \
+--workers $NUM_WORKERS \
+--user=$USER --group=$GROUP \
+--log-level=debug \
+--bind=unix:$SOCKFILE
+```
+
+
 ## Credits
  * icons used taken from Heron Mapping Client (http://heron-mc.org/)
  * icons taken from QGIS (http://www.qgis.org)

@@ -25,7 +25,7 @@ TEMPLATE_DEBUG = False
 
 ### WebGIS SETTINGS ###
 WEBGIS_PROJECT_ROOT = '/storage/share/'
-WEBGIS_OWS_URL = 'http://ms.gis.lab/cgi-bin/qgis_mapserv.fcgi'
+WEBGIS_OWS_URL = 'http://ms.gis.lab:8000/cgi-bin/qgis_mapserv.fcgi'
 WEBGIS_SCALES = (10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500)
 WEBGIS_GUEST_USERNAME = 'guest'
 
