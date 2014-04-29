@@ -2,6 +2,7 @@
 # Drop all incoming and outgoing DHCP requests.
 # Useful for developer's machines.
 
+
 for port in 67 68; do
 	for chain in INPUT OUTPUT; do
 		for proto in udp tcp; do

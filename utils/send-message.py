@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-"""Send message to 'gislab' IRC chat room.
+"""Send message to 'gislab' IRC chat room. Requires to run script 'utils/join-gislab-network.sh' first
+to get connection with server.
 Usage: send-message.py <message>
 """
 
 import os, sys
+import re
 import socket
 
 try:
@@ -12,10 +14,28 @@ except IndexError:
 	print __doc__
 	sys.exit(0)
 
+DIR=os.path.dirname(os.path.abspath(__file__))
 
-HOST="chat.gis.lab"
+def get_config(variable):
+	c = open(os.path.join(os.path.dirname(DIR), "config.cfg"), "ro")
+	for line in c:
+		if re.match("^" + variable, line):
+			value = line.split("=")[1].replace("'", "").replace('"', '')
+			c.close()
+			break
+	c = open(os.path.join(os.path.dirname(DIR), "config-user.cfg"), "ro")
+	for line in c:
+		if re.match("^" + variable, line):
+			value = line.split("=")[1].replace("'", "").replace('"', '')
+			c.close()
+			break
+	return value.strip()
+
+
+GISLAB_NETWORK = get_config("GISLAB_NETWORK")
+HOST="{0}.5".format(GISLAB_NETWORK)
 PORT=6667
-NICK=IDENT="labadmin"
+NICK=IDENT=os.environ['USER']
 REALNAME="script"
 CHANNEL="gislab"
 
