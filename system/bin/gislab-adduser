@@ -146,9 +146,9 @@ if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
 	chmod 755 /etc/skel/bin/*
 fi
 
-# WebGIS plugin
+# GIS.lab Web plugin
 mkdir -p /etc/skel/.qgis2/python/plugins/
-cp -a /vagrant/system/client/qgis/plugins/WebGIS/ /etc/skel/.qgis2/python/plugins/
+cp -a /vagrant/system/client/qgis/plugins/webgis/ /etc/skel/.qgis2/python/plugins/
 
 chown -R root:root /etc/skel
 

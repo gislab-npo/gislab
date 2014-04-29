@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- WebGIS plugin
+ GIS.lab Web plugin
  Publish your projects into WebGis application
                              -------------------
         begin                : 2014-01-09
