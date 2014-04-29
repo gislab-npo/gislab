@@ -28,7 +28,6 @@ SOURCES = webgisplugin.py __init__.py
 TRANSLATIONS =
 
 # global
-
 PLUGINNAME = webgis
 
 PY_FILES = webgisplugin.py __init__.py

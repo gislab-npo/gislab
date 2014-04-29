@@ -2,7 +2,7 @@
 """
 /***************************************************************************
  GIS.lab Web plugin
- Publish your projects into WebGis application
+ Publish your projects into GIS.lab Web application
                              -------------------
         begin                : 2014-01-09
         copyright            : (C) 2014 by Marcel Dancak

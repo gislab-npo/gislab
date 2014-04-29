@@ -6,21 +6,11 @@ version=0.1
 author=Marcel Dancak
 email=marcel.dancak@gista.sk
 
-
-# OPTIONAL ITEMS
-# uncomment the following line and add your changelog entries:
-# changelog=
-
-# tags are comma separated with spaces allowed
-tags=
-
 homepage=http://imincik.github.io/gis-lab
 tracker=
 repository=
 icon=icon.png
-# experimental flag
 experimental=False
-
-# deprecated flag (applies to the whole plugin, not just a single version
+tags=
 deprecated=False
-
+# changelog=
