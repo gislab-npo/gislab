@@ -1,0 +1,35 @@
+upstream webgis {
+	server unix:/var/www/webgis/gunicorn.sock fail_timeout=0;
+}
+ 
+server {
+	listen 80;
+	server_name web.gis.lab;
+	client_max_body_size 4G;
+ 
+	access_log /var/log/nginx/webgis-access.log;
+	error_log /var/log/nginx/webgis-error.log;
+	
+	location /static/ {
+		alias /var/www/webgis/static/;
+	}
+
+	location /media/ {
+		alias /var/www/webgis/media/;
+	}
+ 
+	location / {
+		include /etc/nginx/proxy-parameters;
+		proxy_redirect off;
+
+		if (!-f $request_filename) {
+			proxy_pass http://webgis;
+			break;
+		}
+	}
+ 
+	error_page 500 502 503 504 /500.html;
+	location = /500.html {
+		root /var/www/webgis/static/;
+	}
+}

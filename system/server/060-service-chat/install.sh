@@ -2,51 +2,23 @@
 ### IRC SERVER ###
 #
 
-cat << EOF > /etc/ircd-hybrid/ircd.conf
-$(gislab_config_header)
-serverinfo {
-    name = "chat.gis.lab";
-    description = "GIS.lab IRC server";
-    network_name = "GIS.lab";
-    network_desc = "GIS.lab";
-    hub = yes;
-    max_clients = 512;
-};
 
-admin {
-    name = "GIS.lab Administrator";
-    description = "GIS.lab Administrator";
-    email = "root@server.gis.lab";
-};
-EOF
-
-# append a rest of configuration
-cat /vagrant/system/server/060-service-chat/conf/ircd/ircd.conf >> /etc/ircd-hybrid/ircd.conf
+# IRC server configuration
+cp /vagrant/system/server/060-service-chat/conf/ircd/ircd.conf /etc/ircd-hybrid/ircd.conf
+gislab_config_header_to_file /etc/ircd-hybrid/ircd.conf
 
 cat << EOF > /etc/ircd-hybrid/ircd.motd
 Welcome to GIS.lab IRC server !
 EOF
 
-# set correct file mode and ownerschip of irc daemon log file
-# after logrotate so logcheck can access it
-cat << EOL > /etc/logrotate.d/ircd-hybrid
-$(gislab_config_header)
-/var/log/ircd/ircd-hybrid.log {
-	rotate 3
-	weekly
-	compress
-	delaycompress
-	create 640 irc adm
-	postrotate
-	invoke-rc.d ircd-hybrid reload > /dev/null
-	endscript
-	missingok
-}
-EOL
+# rotate IRC server logs
+cp /vagrant/system/server/060-service-chat/conf/logrotate/ircd-hybrid /etc/logrotate.d/ircd-hybrid
+gislab_config_header_to_file /etc/logrotate.d/ircd-hybrid
 
 chmod 0640 /var/log/ircd/ircd-hybrid.log
 chgrp adm /var/log/ircd/ircd-hybrid.log
 
 service ircd-hybrid restart
+
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

@@ -16,6 +16,16 @@ gislab_config_header () {
 }
 
 
+gislab_config_header_to_file () {
+	# write output of 'gislab_config_header' to first line of given file
+	if [ $# -eq 1 ]; then
+		sed -i -e "1i $(echo $(gislab_config_header)) " $1
+	elif [ $# -eq 2 ]; then
+		sed -i -e "1i $(echo $(gislab_config_header $1)) " $2
+	fi
+}
+
+
 gislab_print_info () {
 	# print informative message
 	echo -e "$(tput bold)[GIS.lab]: ${1}.$(tput sgr0)"

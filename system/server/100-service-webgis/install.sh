@@ -64,46 +64,8 @@ deactivate
 
 
 # web server
-cat << EOF > /etc/nginx/sites-available/webgis
-$(gislab_config_header)
-
-upstream webgis {
-	server unix:/var/www/webgis/gunicorn.sock fail_timeout=0;
-}
- 
-server {
-	listen 80;
-	server_name web.gis.lab;
-	client_max_body_size 4G;
- 
-	access_log /var/log/nginx/webgis-access.log;
-	error_log /var/log/nginx/webgis-error.log;
-	
-	location /static/ {
-		alias /var/www/webgis/static/;
-	}
-
-	location /media/ {
-		alias /var/www/webgis/media/;
-	}
- 
-	location / {
-		include /etc/nginx/proxy_params;
-		proxy_redirect off;
-
-		if (!-f \$request_filename) {
-			proxy_pass http://webgis;
-			break;
-		}
-	}
- 
-	error_page 500 502 503 504 /500.html;
-	location = /500.html {
-		root /var/www/webgis/static/;
-	}
-}
-EOF
-
+cp /vagrant/system/server/100-service-webgis/conf/nginx/site-webgis /etc/nginx/sites-available/webgis
+gislab_config_header_to_file /etc/nginx/sites-available/webgis
 ln -sf /etc/nginx/sites-available/webgis /etc/nginx/sites-enabled/webgis
 
 # add web alias if configured
@@ -113,7 +75,7 @@ fi
 
 
 # Gunicorn deployment
-# get number of CPU for setting Gunicorn workers
+# get number of CPU for adjusting number of Gunicorn workers
 cpus=$(cat /proc/cpuinfo  | grep processor | wc -l)
 
 if [ $cpus > 1 ]; then
@@ -122,49 +84,14 @@ else
 	gunicorn_workers=3
 fi
 
-# Gunicorn startup script
-cat << EOF > /var/www/webgis/gunicorn.sh
-#!/bin/bash
-$(gislab_config_header)
-
-NAME="webgis"
-DJANGODIR=/var/www/webgis
-SOCKFILE=/var/www/webgis/gunicorn.sock
-USER=www-data
-GROUP=www-data
-NUM_WORKERS=$gunicorn_workers
-DJANGO_SETTINGS_MODULE=djproject.settings
-DJANGO_WSGI_MODULE=djproject.wsgi
- 
-cd \$DJANGODIR
-source /usr/local/python-virtualenvs/webgis/bin/activate
-export DJANGO_SETTINGS_MODULE=\$DJANGO_SETTINGS_MODULE
-export PYTHONPATH=\$DJANGODIR:\$PYTHONPATH
- 
-RUNDIR=\$(dirname \$SOCKFILE)
-test -d \$RUNDIR || mkdir -p \$RUNDIR
- 
-exec gunicorn \${DJANGO_WSGI_MODULE}:application \
---name \$NAME \
---workers \$NUM_WORKERS \
---user=\$USER --group=\$GROUP \
---log-level=debug \
---bind=unix:\$SOCKFILE
-EOF
+# Gunicorn startup script (adjust number of work)
+cp /vagrant/system/server/100-service-webgis/conf/gunicorn/gunicorn.sh /var/www/webgis/gunicorn.sh
+sed -i "s/NUM_WORKERS=.*/NUM_WORKERS=$gunicorn_workers/" /var/www/webgis/gunicorn.sh
+chmod 755 /var/www/webgis/gunicorn.sh
 
 # Gunicorn Upstart script
-cat << EOF > /etc/init/webgis.conf
-$(gislab_config_header)
-
-description "GIS.lab Web"
-start on runlevel [2345]
-stop on runlevel [06]
-respawn
-respawn limit 10 5
-exec /var/www/webgis/gunicorn.sh
-EOF
-
-chmod 755 /var/www/webgis/gunicorn.sh
+cp /vagrant/system/server/100-service-webgis/conf/upstart/webgis.conf /etc/init/webgis.conf
+gislab_config_header_to_file /etc/init/webgis.conf
 ln -sf /lib/init/upstart-job /etc/init.d/webgis
 
 service webgis restart

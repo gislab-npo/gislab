@@ -11,28 +11,9 @@ $(gislab_config_header)
 kernel.shmmax = $shmmax
 EOF
 
-# allow network connections - listen_addresses = '*'
-# and set search path to user schema as first - search_path = '"$user",public' .
-# all other settings are default values taken from postgresql.conf.
-cat << EOF > /etc/postgresql/9.1/main/postgresql.conf
-$(gislab_config_header)
-data_directory = '/var/lib/postgresql/9.1/main'
-hba_file = '/etc/postgresql/9.1/main/pg_hba.conf'
-ident_file = '/etc/postgresql/9.1/main/pg_ident.conf'
-external_pid_file = '/var/run/postgresql/9.1-main.pid'
-listen_addresses = '*'
-port = 5432
-unix_socket_directory = '/var/run/postgresql'
-ssl = true
-log_line_prefix = '%t '
-search_path = '"\$user",public'
-datestyle = 'iso, mdy'
-lc_messages = 'en_US.UTF-8'
-lc_monetary = 'en_US.UTF-8'
-lc_numeric = 'en_US.UTF-8'
-lc_time = 'en_US.UTF-8'
-default_text_search_config = 'pg_catalog.english'
-EOF
+# main database configuration
+cp /vagrant/system/server/080-service-database/conf/postgresql/postgresql.conf /etc/postgresql/9.1/main/postgresql.conf
+gislab_config_header_to_file /etc/postgresql/9.1/main/postgresql.conf
 
 # enable extended logging if requested
 if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
@@ -53,17 +34,13 @@ log_min_messages = FATAL
 EOF
 fi
 
-
 # tune database depending on current server configuration
 pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
 
-# configure access policy
-cat << EOF > /etc/postgresql/9.1/main/pg_hba.conf
-$(gislab_config_header)
-local  all  postgres  peer
-local  all  all  trust
-host   all  all  0.0.0.0/0 ldap ldapserver=server.gis.lab ldaptls=1 ldapprefix="uid=" ldapsuffix=",ou=People,dc=gis,dc=lab"
-EOF
+
+# access policy
+cp /vagrant/system/server/080-service-database/conf/postgresql/pg_hba.conf /etc/postgresql/9.1/main/pg_hba.conf
+gislab_config_header_to_file /etc/postgresql/9.1/main/pg_hba.conf
 
 service postgresql restart
 

@@ -1,0 +1,5 @@
+dn: cn=<group>,<gsuffix>,<suffix>
+objectClass: posixGroup
+cn: <group>
+gidNumber: <gid>
+description: GIS.lab Group

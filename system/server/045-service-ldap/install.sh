@@ -6,81 +6,22 @@
 pam-auth-update --force
 auth-client-config -t nss -p lac_ldap
 
-cat << EOF > /etc/ldap.conf
-$(gislab_config_header)
-base dc=gis,dc=lab
-uri ldapi:///
-ldap_version 3
-pam_password md5
-ssl start_tls
-tls_checkpeer no
-nss_initgroups_ignoreusers backup,bin,bind,daemon,dhcpd,games,gnats,irc,landscape,libuuid,list,logcheck,lp,mail,man,messagebus,nbd,news,ntp,openldap,postfix,postgres,proxy,puppet,root,sshd,statd,sync,sys,syslog,tftp,uucp,whoopsie,www-data
-EOF
+# LDAP configuration file for pam_ldap and nsswitch
+cp /vagrant/system/server/045-service-ldap/conf/ldap/ldap-pam.conf /etc/ldap.conf
+gislab_config_header_to_file /etc/ldap.conf
 
-
+# LDAP configuration file for clients
 # configure base DN and URI and disable certificates verification
-cat << EOF > /etc/ldap/ldap.conf
-$(gislab_config_header)
-BASE dc=gis,dc=lab
-URI ldapi:///
-TLS_REQCERT never
-SUDOERS_BASE ou=SUDOers,dc=gis,dc=lab
-EOF
+cp /vagrant/system/server/045-service-ldap/conf/ldap/ldap.conf /etc/ldap/ldap.conf
+gislab_config_header_to_file /etc/ldap/ldap.conf
 
+# nsswitch configuration
+cp /vagrant/system/server/045-service-ldap/conf/ldap/nsswitch.conf /etc/nsswitch.conf
+gislab_config_header_to_file /etc/nsswitch.conf
 
-# configure nsswitch
-cat << EOF > /etc/nsswitch.conf
-$(gislab_config_header)
-passwd: files ldap
-group: files ldap
-shadow: files ldap
-
-hosts:          files myhostname dns
-networks:       files
-protocols:      db files
-services:       db files
-ethers:         db files
-rpc:            db files
-
-netgroup: nis
-sudoers: files ldap
-EOF
-
-
-# configure ldapscripts
-cat << EOF > /etc/ldapscripts/ldapscripts.conf
-$(gislab_config_header)
-SERVER="ldapi:///"
-SUFFIX="dc=gis,dc=lab"
-GSUFFIX="ou=groups"
-USUFFIX="ou=people"
-SASLAUTH=""
-BINDDN="cn=admin,dc=gis,dc=lab"
-BINDPWDFILE="/etc/ldapscripts/ldapscripts.passwd"
-GIDSTART="3000"
-UIDSTART="3000"
-GCLASS="posixGroup"
-CREATEHOMES="yes"
-HOMESKEL="/etc/skel"
-HOMEPERMS="700"
-PASSWORDGEN="pwgen"
-RECORDPASSWORDS="no"
-PASSWORDFILE="/var/log/ldapscripts_passwd.log"
-LOGFILE="/var/log/ldapscripts.log"
-TMPDIR="/tmp"
-LDAPSEARCHBIN="/usr/bin/ldapsearch"
-LDAPADDBIN="/usr/bin/ldapadd"
-LDAPDELETEBIN="/usr/bin/ldapdelete"
-LDAPMODIFYBIN="/usr/bin/ldapmodify"
-LDAPMODRDNBIN="/usr/bin/ldapmodrdn"
-LDAPPASSWDBIN="/usr/bin/ldappasswd"
-GETENTPWCMD=""
-GETENTGRCMD=""
-GTEMPLATE="/etc/ldapscripts/addgroup.template"
-UTEMPLATE="/etc/ldapscripts/adduser.template"
-MTEMPLATE=""
-
-EOF
+# ldapscripts configuration
+cp /vagrant/system/server/045-service-ldap/conf/ldapscripts/ldapscripts.conf /etc/ldapscripts/ldapscripts.conf
+gislab_config_header_to_file /etc/ldapscripts/ldapscripts.conf
 
 
 # logging
@@ -121,7 +62,7 @@ fi
 service rsyslog restart
 
 
-# skip on upgrade
+# do not continue on upgrade
 if [ -f "/etc/gislab/045-service-ldap.done" ]; then return; fi
 
 
@@ -243,32 +184,11 @@ EOL
 
 
 # create templates for users and groups
-cat << EOL > /etc/ldapscripts/adduser.template
-dn: uid=<user>,<usuffix>,<suffix>
-objectClass: inetOrgPerson
-objectClass: posixAccount
-objectClass: shadowAccount
-uid: <user>
-cn: <user>
-sn: <user>
-uidNumber: <uid>
-gidNumber: <gid>
-homeDirectory: <home>
-loginShell: <shell>
-EOL
-
-cat << EOL > /etc/ldapscripts/addgroup.template
-dn: cn=<group>,<gsuffix>,<suffix>
-objectClass: posixGroup
-cn: <group>
-gidNumber: <gid>
-description: GIS.lab Group
-EOL
-
+cp /vagrant/system/server/045-service-ldap/conf/ldapscripts/adduser.template /etc/ldapscripts/adduser.template
+cp /vagrant/system/server/045-service-ldap/conf/ldapscripts/addgroup.template /etc/ldapscripts/addgroup.template
 
 # fix ldapscripts runtime script (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=719295)
 sed -i "s/^\[ -z \"\$USER\" \] && end_die 'Could not guess current user'$/\[ -n \"\$USER\" \] || USER=\$\(id -un 2>\/dev\/null\)/" /usr/share/ldapscripts/runtime
-
 
 # restart service
 service slapd restart

@@ -3,51 +3,9 @@
 #
 
 
-# configure mapserver virtualhost
-cat << EOF > /etc/apache2/sites-available/mapserver
-<VirtualHost *:8000>
-	ServerName ms.gis.lab
-	ServerAdmin root@gis.lab
-
-	DocumentRoot /var/www/default
-	<Directory />
-		Options FollowSymLinks
-		AllowOverride None
-	</Directory>
-	<Directory /var/www/default/>
-		Options -Indexes FollowSymLinks MultiViews
-		AllowOverride None
-		Order allow,deny
-		Allow from all
-	</Directory>
-
-	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
-	<Directory "/usr/lib/cgi-bin">
-		AllowOverride All
-		Options -Indexes +ExecCGI -MultiViews +SymLinksIfOwnerMatch
-		Order allow,deny
-		Allow from all
-
-		<files "qgis_mapserv.fcgi">
-			RewriteEngine On
-			RewriteCond %{QUERY_STRING} ^(.*)map=(.*)(.*) [NC]
-			RewriteRule ^(.*)$ \$1?%1map=/storage/share/%2%3 [DPI]
-		</files>
-	</Directory>
-
-	ExpiresActive on
-	ExpiresByType image/jpg "access plus 1 hours"
-	ExpiresByType image/png "access plus 1 hours"
-	ExpiresByType image/gif "access plus 1 hours"
-	ExpiresByType image/jpeg "access plus 1 hours"
-
-	ErrorLog \${APACHE_LOG_DIR}/mapserver-error.log
-	CustomLog \${APACHE_LOG_DIR}/mapserver-access.log combined
-
-#	RewriteLog \${APACHE_LOG_DIR}/error.log
-#	RewriteLogLevel 3
-</VirtualHost>
-EOF
+# mapserver virtualhost
+cp /vagrant/system/server/090-service-mapserver/conf/apache/site-mapserver /etc/apache2/sites-available/mapserver
+gislab_config_header_to_file /etc/apache2/sites-available/mapserver
 
 a2enmod rewrite
 a2enmod expires

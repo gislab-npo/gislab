@@ -15,27 +15,13 @@ mkdir -p /storage/barrel        # readable and writable for all labusers
 chown root:nogroup /storage/barrel
 chmod 775 /storage/barrel
 
+# NFS share exports
+cp /vagrant/system/server/050-service-files/conf/nfs/exports /etc/exports
+gislab_config_header_to_file /etc/exports
 
-cat << EOF > /etc/exports
-$(gislab_config_header)
-/home                       *(rw,sync,no_subtree_check,no_root_squash)
-/storage/repository         *(rw,sync,no_subtree_check,no_root_squash)
-/storage/share              *(rw,sync,no_subtree_check,no_root_squash)
-/storage/barrel             *(rw,sync,no_subtree_check,all_squash,insecure)
-EOF
-
-
-cat << EOF > /etc/idmapd.conf
-$(gislab_config_header)
-[General]
-Verbosity = 0
-Pipefs-Directory = /run/rpc_pipefs
-Domain = gis.lab
-
-[Mapping]
-Nobody-User = nobody
-Nobody-Group = nogroup
-EOF
+# user IDs mapping
+cp /vagrant/system/server/050-service-files/conf/nfs/idmapd.conf /etc/idmapd.conf
+gislab_config_header_to_file /etc/idmapd.conf
 
 
 # add /mnt mount point to fstab

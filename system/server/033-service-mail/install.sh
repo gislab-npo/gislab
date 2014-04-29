@@ -28,31 +28,9 @@ fi
 
 service rsyslog restart
 
-cat << EOL > /etc/postfix/main.cf
-$(gislab_config_header)
-smtpd_banner = \$myhostname ESMTP \$mail_name (Ubuntu)
-biff = no
-append_dot_mydomain = no
-readme_directory = no
-smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
-smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
-smtpd_use_tls=yes
-smtpd_tls_session_cache_database = btree:\${data_directory}/smtpd_scache
-smtp_tls_session_cache_database = btree:\${data_directory}/smtp_scache
-myhostname = server.gis.lab
-alias_maps = hash:/etc/aliases
-alias_database = hash:/etc/aliases
-myorigin = /etc/mailname
-mydestination = server.gis.lab, localhost.gis.lab, localhost
-relayhost = 
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
-mailbox_size_limit = 0
-recipient_delimiter = +
-inet_interfaces = all
-inet_protocols = ipv4
-virtual_alias_maps = regexp:/etc/postfix/virtual_regexp
-message_size_limit = 52428800
-EOL
+# write main configuration file
+cp /vagrant/system/server/033-service-mail/conf/postfix/main.cf /etc/postfix/main.cf
+gislab_config_header_to_file /etc/postfix/main.cf
 
 # send admin email to vagrant if exists, else send it to ubuntu or root
 if id vagrant >/dev/null 2>&1; then

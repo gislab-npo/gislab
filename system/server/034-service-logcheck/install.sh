@@ -2,28 +2,15 @@
 ### LOGCHECK ###
 #
 
-cat << EOL > /etc/logcheck/logcheck.conf
-$(gislab_config_header)
-INTRO=0
-REPORTLEVEL="server"
-SENDMAILTO="logcheck"
-MAILASATTACH=0
-FQDN=1
-EOL
+# main logcheck configuration
+cp /vagrant/system/server/034-service-logcheck/conf/logcheck/logcheck.conf /etc/logcheck/logcheck.conf
+gislab_config_header_to_file /etc/logcheck/logcheck.conf
 
-cat << EOL > /etc/logcheck/logcheck.logfiles
-$(gislab_config_header)
-/var/log/syslog
-/var/log/auth.log
-/var/log/mail-error.log
-/var/log/dhcpd-error.log
-/var/log/postgresql/postgresql-9.1-main.log
-/var/log/apache2/error.log
-/var/log/nginx/error.log
-/var/log/nginx/webgis-error.log
-/var/log/ircd/ircd-hybrid.log
-EOL
+# list of files to check
+cp /vagrant/system/server/034-service-logcheck/conf/logcheck/logcheck.logfiles /etc/logcheck/logcheck.logfiles
+gislab_config_header_to_file /etc/logcheck/logcheck.logfiles
 
+# logcheck cron job
 cat << EOL > /etc/cron.d/logcheck
 $(gislab_config_header)
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin

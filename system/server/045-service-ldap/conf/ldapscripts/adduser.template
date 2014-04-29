@@ -1,0 +1,11 @@
+dn: uid=<user>,<usuffix>,<suffix>
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: <user>
+cn: <user>
+sn: <user>
+uidNumber: <uid>
+gidNumber: <gid>
+homeDirectory: <home>
+loginShell: <shell>
