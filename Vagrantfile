@@ -31,9 +31,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   config.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
 
-  config.vm.network :forwarded_port, guest: 111, host: 1111, auto_correct: true
-  config.vm.network :forwarded_port, guest: 2049, host: 2049, auto_correct: true
-
   config.ssh.forward_agent = true
   if not CONFIG['GISLAB_SSH_PRIVATE_KEY'].empty?
      config.ssh.private_key_path = [CONFIG['GISLAB_SSH_PRIVATE_KEY'], File.join("system", "insecure_private_key")]
