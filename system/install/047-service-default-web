@@ -92,7 +92,7 @@ server {
         root /var/www/default;
         index index.html index.htm;
 
-        server_name localhost 192.168.149.5 boot.gis.lab;
+        server_name localhost $GISLAB_SERVER_IP boot.gis.lab;
 
         location / {
                 try_files \$uri \$uri/ /index.html;
