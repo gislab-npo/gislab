@@ -97,7 +97,7 @@ sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/con
 sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/xor_aggregate.sql"
 
 # add history audit support (run SELECT audit.audit_table('<schema>.<table>'); to enable)
-sudo su - postgres -c "psql -d template_postgis -f /vagrant/system/server/postgresql/audit.sql"
+sudo su - postgres -c "psql -d template_postgis -f /vagrant/system/server/080-service-database/app/audit-trigger/audit.sql"
 sudo su - postgres -c "psql -d template_postgis -c \"CREATE EXTENSION IF NOT EXISTS hstore;\""
 
 # close template database

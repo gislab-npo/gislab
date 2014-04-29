@@ -20,7 +20,8 @@ admin {
 };
 EOF
 
-cat /vagrant/system/server/ircd/ircd.conf >> /etc/ircd-hybrid/ircd.conf # append rest of config
+# append a rest of configuration
+cat /vagrant/system/server/060-service-chat/conf/ircd/ircd.conf >> /etc/ircd-hybrid/ircd.conf
 
 cat << EOF > /etc/ircd-hybrid/ircd.motd
 Welcome to GIS.lab IRC server !

@@ -210,7 +210,7 @@ export SUDO_FORCE_REMOVE=yes
 apt-get -y install sudo-ldap
 export SUDO_FORCE_REMOVE=no
 
-ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /vagrant/system/server/ldap/sudo.schema
+ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /vagrant/system/server/045-service-ldap/conf/ldap/sudo.schema
 
 
 # create indexes

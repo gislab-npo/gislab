@@ -20,7 +20,7 @@ source /usr/local/python-virtualenvs/webgis/bin/activate
 
 # install requirements and webgis itself
 GISLAB_INSTALL_WEBGIS_DIR=/tmp/gislab-install-webgis-$(date +%s)
-cp -a /vagrant/system/server/gislab-web $GISLAB_INSTALL_WEBGIS_DIR
+cp -a /vagrant/system/server/100-service-webgis/app/gislab-web $GISLAB_INSTALL_WEBGIS_DIR
 pip install --download-cache=/var/cache/pip --requirement=$GISLAB_INSTALL_WEBGIS_DIR/requirements.txt
 pip install gunicorn
 python $GISLAB_INSTALL_WEBGIS_DIR/setup.py install > /dev/null
@@ -30,7 +30,7 @@ rm -r $GISLAB_INSTALL_WEBGIS_DIR
 # install webgis
 rm -rf /var/www/webgis
 mkdir -p /var/www/webgis
-django-admin.py startproject --template=/vagrant/system/server/gislab-web/webgis/conf/project_template/ djproject /var/www/webgis
+django-admin.py startproject --template=/vagrant/system/server/100-service-webgis/app/gislab-web/webgis/conf/project_template/ djproject /var/www/webgis
 
 
 if [ ! -f "/etc/gislab/100-service-webgis.done" ]; then
