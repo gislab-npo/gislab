@@ -75,6 +75,7 @@ db       IN    CNAME    server
 ms       IN    CNAME    server
 web      IN    CNAME    server
 chat     IN    CNAME    server
+stats    IN    CNAME    server
 EOF
 
 cat << EOF > /etc/bind/db.192
