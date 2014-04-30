@@ -57,7 +57,7 @@ ln -fs /usr/share/munin/plugins/vmstat /etc/munin/plugins/vmstat
 # create NGINX virtualhost stas.gis.lab
 cp /vagrant/system/server/113-service-statistics/conf/nginx/site-stats /etc/nginx/sites-available/stats
 gislab_config_header_to_file /etc/nginx/sites-available/stats
-ln -s /etc/nginx/sites-available/stats /etc/nginx/sites-enabled/
+ln -fs /etc/nginx/sites-available/stats /etc/nginx/sites-enabled/
 
 # remove unnecessary configuration
 rm -f /etc/apache2/conf.d/munin
