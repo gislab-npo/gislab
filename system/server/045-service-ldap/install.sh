@@ -31,19 +31,9 @@ changetype: modify
 delete: olcLogLevel
 EOL
 
-sed -i 's/,\?local4\.none//' /etc/rsyslog.d/50-default.conf
-sed -i '/^.*\/var\/log\/ldap-debug.log$/d' /etc/rsyslog.d/50-default.conf
-sed -i '/^\$SystemLogRateLimitInterval 0$/d' /etc/rsyslog.conf
 
 # enable extended logging in debug mode
 if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
-	touch /var/log/ldap-debug.log
-	chown syslog /var/log/ldap-debug.log
-	chmod 0600 /var/log/ldap-debug.log
-	sed -i 's|\(^.*[^[:space:]]\)\([[:space:]]\+\)-/var/log/syslog$|\1,local4.none\2-/var/log/syslog|' /etc/rsyslog.d/50-default.conf
-	echo "local4.* /var/log/ldap-debug.log" >> /etc/rsyslog.d/50-default.conf
-	echo "\$SystemLogRateLimitInterval 0" >> /etc/rsyslog.conf
-
 	ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
 dn: cn=config
 changetype: modify
@@ -58,8 +48,6 @@ add: olcLogLevel
 olcLogLevel: none
 EOL
 fi
-
-service rsyslog restart
 
 
 # do not continue on upgrade

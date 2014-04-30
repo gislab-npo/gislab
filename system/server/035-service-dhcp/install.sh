@@ -43,26 +43,6 @@ subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
 }
 EOF
 
-# disable logging to /var/log/syslog and touch /var/log/dhcpd-error.log
-# to run logcheck successfuly
-if [ ! -f /etc/gislab/035-service-dhcp.done ]; then
-	sed -i 's|\(^.\+[^[:space:]]\)\([[:space:]]\+\)-/var/log/syslog$|\1,local7.none\2-/var/log/syslog|' /etc/rsyslog.d/50-default.conf
-	touch /var/log/dhcpd-error.log
-	chown root:adm /var/log/dhcpd-error.log
-	chmod 0640 /var/log/dhcpd-error.log
-fi
-
-sed -i '/^local7\.err[[:space:]]\+\/var\/log\/dhcpd-error.log/d' /etc/rsyslog.d/50-default.conf
-sed -i '/^local7\.\*[[:space:]]\+\/var\/log\/dhcpd-debug.log/d' /etc/rsyslog.d/50-default.conf
-
-if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
-	# in debug mode log everything to /var/log/dhcpd-debug.log
-	echo "local7.* /var/log/dhcpd-debug.log" >> /etc/rsyslog.d/50-default.conf
-else
-	# in non debug mode log only erros to /var/log/dhcpd-error.log
-	echo "local7.err /var/log/dhcpd-error.log" >> /etc/rsyslog.d/50-default.conf
-fi
-
 if [ "$GISLAB_UNKNOWN_MAC_POLICY" == "deny" ]; # if unknown MACs are denied, load known ones from included file
 then
     cat << EOF >> /etc/ltsp/dhcpd.conf

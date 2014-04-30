@@ -1,6 +1,18 @@
 #
 ### BASIC SERVER CONFIGURATION ###
 #
+#
+## Services logging destination
+#
+# service       non-debug                                   debug
+# ---------------------------------------------------------------------------------------------------
+# dns           -                                           /var/log/named/named-debug.log
+# mail          /var/log/mail-error.log                     /var/log/mail-debug.log
+# dhcpd         /var/log/dhcpd-error.log                    /var/log/dhcpd-debug.log
+# ldap          /var/log/ldap-error.log                     /var/log/ldap-debug.log
+# postgres      /var/log/postgresql/postgresql-error.log    /var/log/postgresql/postgresql-debug.log
+#
+
 
 # Read server IP from running server and update GISLAB_NETWORK. This is done because some 
 # cloud providers like AWS ignore IP address given by Vagrantfile and set it by their own.
@@ -60,6 +72,60 @@ $(gislab_config_header)
 Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/vagrant/system/bin"
 EOF
 chmod 0440 /etc/sudoers.d/vagrant-secure-path
+
+
+# enable extended logging of services in debug mode
+if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
+
+	# don't mute ldap when flooding
+	echo "\$SystemLogRateLimitInterval 0" >> /etc/rsyslog.conf
+
+	cat << EOF > /etc/rsyslog.d/50-default.conf
+auth,authpriv.*			/var/log/auth.log
+*.*;auth,authpriv.none,mail.none,local4.none,local7.none		-/var/log/syslog
+kern.*					-/var/log/kern.log
+news.crit				/var/log/news/news.crit
+news.err				/var/log/news/news.err
+news.notice				-/var/log/news/news.notice
+*.emerg					:omusrmsg:*
+
+daemon.*;mail.*;\\
+	news.err;\\
+	*.=debug;*.=info;\\
+	*.=notice;*.=warn	|/dev/xconsole
+
+mail.* /var/log/mail-debug.log
+local4.* /var/log/ldap-debug.log
+local7.* /var/log/dhcpd-debug.log
+EOF
+else
+	sed -i '/^\$SystemLogRateLimitInterval 0$/d' /etc/rsyslog.conf
+
+	cat << EOF > /etc/rsyslog.d/50-default.conf
+auth,authpriv.*			/var/log/auth.log
+*.*;auth,authpriv.none,mail.none,local4.none,local7.none		-/var/log/syslog
+kern.*					-/var/log/kern.log
+news.crit				/var/log/news/news.crit
+news.err				/var/log/news/news.err
+news.notice				-/var/log/news/news.notice
+*.emerg					:omusrmsg:*
+
+daemon.*;mail.*;\\
+	news.err;\\
+	*.=debug;*.=info;\\
+	*.=notice;*.=warn	|/dev/xconsole
+
+mail.err /var/log/mail-error.log
+local4.* /var/log/ldap-error.log
+local7.err /var/log/dhcpd-error.log
+EOF
+fi
+
+gislab_config_header_to_file /etc/rsyslog.d/50-default.conf
+
+# restart syslog to reload configuration
+service rsyslog restart
+
 
 # do not continue on upgrade
 if [ -f "/etc/gislab/010-server-configuration.done" ]; then return; fi

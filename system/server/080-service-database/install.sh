@@ -15,11 +15,9 @@ EOF
 cp /vagrant/system/server/080-service-database/conf/postgresql/postgresql.conf /etc/postgresql/9.1/main/postgresql.conf
 gislab_config_header_to_file /etc/postgresql/9.1/main/postgresql.conf
 
-# enable extended logging if requested
+
+# enable extended logging in debug mode
 if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
-	touch /var/log/postgresql/postgresql-debug.log
-	chown postgres:adm  /var/log/postgresql/postgresql-debug.log
-	chmod 0640  /var/log/postgresql/postgresql-debug.log
 	cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
 logging_collector = on
 log_directory = '/var/log/postgresql'
@@ -36,6 +34,9 @@ log_filename = 'postgresql-error.log'
 log_min_messages = FATAL
 EOF
 fi
+
+# remove default log file
+rm -f /var/log/postgresql/postgresql-9.1-main.log
 
 # tune database depending on current server configuration
 pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf

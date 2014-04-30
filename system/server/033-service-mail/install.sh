@@ -2,32 +2,6 @@
 ### MAIL SERVER - POSTFIX ###
 #
 
-# disable logging to /var/log/syslog, /var/log/mail.err and to /var/log/mail.log
-# and touch /var/log/mail-error.log to run logcheck successfully
-if [ ! -f /etc/gislab/033-service-mail.done ]; then
-	sed -i 's|\(^.\+[^[:space:]]\)\([[:space:]]\+\)-/var/log/syslog$|\1,mail.none\2-/var/log/syslog|' /etc/rsyslog.d/50-default.conf
-	sed -i '/^mail\.err[[:space:]]\+\/var\/log\/mail\.err$/d' /etc/rsyslog.d/50-default.conf
-	sed -i '/^mail\.\*[[:space:]]\+-\/var\/log\/mail\.log$/d' /etc/rsyslog.d/50-default.conf
-	touch /var/log/mail-error.log
-	chown root:adm /var/log/mail-error.log
-	chmod 0640 /var/log/mail-error.log
-	rm -f /var/log/mail.log
-	rm -f /var/log/mail.err
-fi
-
-sed -i '/^mail\.err[[:space:]]\+\/var\/log\/mail-error\.log$/d' /etc/rsyslog.d/50-default.conf
-sed -i '/^mail\.\*[[:space:]]\+\/var\/log\/mail-debug\.log$/d' /etc/rsyslog.d/50-default.conf
-
-if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
-	# in debug mode log everything to /var/log/mail-debug.log
-	echo "mail.* /var/log/mail-debug.log" >> /etc/rsyslog.d/50-default.conf
-else
-	# in non debug mode log only errors to /var/log/mail-error.log
-	echo "mail.err /var/log/mail-error.log" >>/etc/rsyslog.d/50-default.conf
-fi
-
-service rsyslog restart
-
 # write main configuration file
 cp /vagrant/system/server/033-service-mail/conf/postfix/main.cf /etc/postfix/main.cf
 gislab_config_header_to_file /etc/postfix/main.cf
@@ -64,7 +38,13 @@ if [ -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" -a -n "$GISLAB_SERVER_EMAIL_RELAY_PAS
 	done
 fi
 
+# remove system default log files
+rm -f /var/log/mail.log
+rm -f /var/log/mail.err
+
+# restart services
 service postfix restart
+service rsyslog restart
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:
