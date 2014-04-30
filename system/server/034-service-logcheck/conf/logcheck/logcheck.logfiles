@@ -7,3 +7,4 @@
 /var/log/nginx/error.log
 /var/log/nginx/webgis-error.log
 /var/log/ircd/ircd-hybrid.log
+/var/log/ldap-error.log
