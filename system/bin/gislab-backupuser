@@ -61,16 +61,15 @@ LDAP_BACKUP_FILE=$TEMP_BACKUP_DIR/$GISLAB_USER-ldap.dump
 # load directory names from XDG
 if [ -f $GISLAB_USER_HOME/.config/user-dirs.dirs ]; then
 	source $GISLAB_USER_HOME/.config/user-dirs.dirs
+	EXCLUDE=" --exclude=$GISLAB_USER_HOME/$(basename $XDG_DOWNLOAD_DIR)"
+	EXCLUDE+=" --exclude=$GISLAB_USER_HOME/$(basename $XDG_TEMPORARY_DIR)"
 fi
-
 
 mkdir $TEMP_BACKUP_DIR
 
 # tar home dir
-tar -cf $HOME_BACKUP_FILE \
-	--exclude="$GISLAB_USER_HOME/.*" \
-	--exclude=$GISLAB_USER_HOME/$(basename $XDG_DOWNLOAD_DIR) \
-	--exclude=$GISLAB_USER_HOME/$(basename $XDG_TEMPORARY_DIR) $GISLAB_USER_HOME
+tar -cvf $HOME_BACKUP_FILE \
+	--exclude="$GISLAB_USER_HOME/.*" $EXCLUDE $GISLAB_USER_HOME
 
 if ls $GISLAB_USER_HOME/.config/user-dirs.* >/dev/null 2>&1; then
 	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.config/user-dirs.*
