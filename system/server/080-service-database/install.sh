@@ -30,6 +30,9 @@ log_min_duration_statement = 0
 EOF
 else
 	cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
+logging_collector = on
+log_directory = '/var/log/postgresql'
+log_filename = 'postgresql-error.log'
 log_min_messages = FATAL
 EOF
 fi
