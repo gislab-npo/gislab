@@ -98,4 +98,16 @@ service webgis restart
 service nginx reload
 
 
+# activate backup
+mkdir -p /etc/cron.d.bin
+cp /vagrant/system/server/100-service-webgis/bin/gislab-backup-webgis.sh /etc/cron.d.bin
+cat << EOL > /etc/cron.d/gislab-backup-webgis
+$(gislab_config_header)
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/vagrant/system/bin
+MAILTO=root
+
+15 2	* * *  root  nice /etc/cron.d.bin/gislab-backup-webgis.sh > /dev/null
+EOL
+
+
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:
