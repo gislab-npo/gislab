@@ -37,9 +37,6 @@ done
 
 if [ $# -ne 1 ]; then usage; fi
 
-if [ ! -d "/storage/backup" ]; then
-	mkdir -p /storage/backup
-fi
 
 GISLAB_USER=$1
 
@@ -48,6 +45,9 @@ if ! id $GISLAB_USER >/dev/null 2>&1; then
 	echo
 	exit 1
 fi
+
+mkdir -p /storage/backup
+chmod 700 /storage/backup
 
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
 BACKUP_FILE=/storage/backup/gislab-backup-$GISLAB_USER-$DATE.tar
@@ -102,6 +102,8 @@ id $GISLAB_USER | grep -q '(labadmins)' && echo "#superuser" >> $LDAP_BACKUP_FIL
 
 # create backup file and clean up
 tar -cf $BACKUP_FILE *
+chmod 400 $BACKUP_FILE
+
 rm -rf $TEMP_BACKUP_DIR
 
 gislab_print_info "Backup of account '$GISLAB_USER' created in '$BACKUP_FILE'"
