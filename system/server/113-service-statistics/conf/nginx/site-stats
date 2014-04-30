@@ -7,6 +7,7 @@ server {
 	error_log /var/log/nginx/stats-error.log;
 
 	location / {
+		rewrite ^/$ gis.lab/server.gis.lab/index.html redirect; break;
 		try_files $uri $uri/ /index.html;
 	}
 }
