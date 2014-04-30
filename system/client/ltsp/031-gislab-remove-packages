@@ -10,7 +10,7 @@ case "$MODE" in
         fi
         ;;
     finalization)
-        chroot $ROOT apt-get --assume-yes remove $REMOVE_PACKAGES
+        chroot $ROOT apt-get --assume-yes purge $REMOVE_PACKAGES
         chroot $ROOT apt-get --assume-yes autoremove
         ;;
 esac
