@@ -3,7 +3,7 @@
 #
 
 # disable logging to /var/log/syslog, /var/log/mail.err and to /var/log/mail.log
-# and touch /var/log/mail-error.log to run logcheck successfuly
+# and touch /var/log/mail-error.log to run logcheck successfully
 if [ ! -f /etc/gislab/033-service-mail.done ]; then
 	sed -i 's|\(^.\+[^[:space:]]\)\([[:space:]]\+\)-/var/log/syslog$|\1,mail.none\2-/var/log/syslog|' /etc/rsyslog.d/50-default.conf
 	sed -i '/^mail\.err[[:space:]]\+\/var\/log\/mail\.err$/d' /etc/rsyslog.d/50-default.conf
