@@ -5,8 +5,6 @@
 # configure munin master
 cp /vagrant/system/server/113-service-statistics/conf/munin/munin.conf /etc/munin/munin.conf
 gislab_config_header_to_file /etc/munin/munin.conf
-cp /vagrant/system/server/113-service-statistics/conf/munin/munin-cron /etc/cron.d/munin
-gislab_config_header_to_file /etc/cron.d/munin
 
 # configure munin node
 cp /vagrant/system/server/113-service-statistics/conf/munin/munin-node.conf /etc/munin/munin-node.conf
@@ -62,6 +60,14 @@ ln -fs /etc/nginx/sites-available/stats /etc/nginx/sites-enabled/
 # remove unnecessary configuration
 rm -f /etc/apache2/conf.d/munin
 rm -f /etc/cron.d/munin-node
+
+# launch munin by cron
+cat << EOF > /etc/cron.d/munin
+MAILTO=root
+
+*/5 *	* * *	munin	if [ -x /usr/bin/munin-cron ]; then /usr/bin/munin-cron; fi
+EOF
+gislab_config_header_to_file /etc/cron.d/munin
 
 # restart services
 service apache2 restart
