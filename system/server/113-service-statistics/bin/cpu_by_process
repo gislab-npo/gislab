@@ -1,28 +1,24 @@
 #!/bin/sh
-#
-# Plugin to monitor CPU usage, for a selected set of processes. Tested on FreeBSD.
+# Munin Plugin to monitor CPU usage, for a selected set of processes. Tested on FreeBSD.
 #
 # Author: Erik Cederstrand
 # Based on http://waste.mandragor.org/munin_tutorial/cpubyuser
 # Thanks to Yann Hamon.
 #
 # Usage: Place in /usr/local/etc/munin/plugins/ (or link it there  using ln -s)
-#        Add this to your /ur/local/etc/munin/plugin-conf.d/plugins.conf:
-#       [cpubyproc]
-#       env.procs httpd java
+# Add this to your /ur/local/etc/munin/plugin-conf.d/plugins.conf:
+# [cpubyproc]
+# env.procs httpd java
 #
-#    httpd and java being a list of the processes to monitor.
-
+# httpd and java being a list of the processes to monitor.
 #
 # Parameters understood:
-#
-#       config   (required)
-#       autoconf (optional - used by munin-config)
+# config   (required)
+# autoconf (optional - used by munin-config)
 #
 
 #%# family=auto
 #%# capabilities=autoconf
-
 
 
 if [ "$1" = "autoconf" ] ; then 
@@ -39,9 +35,9 @@ if [ "$1" = "config" ] ; then
     echo "graph_title CPU usage by process";
     echo "graph_category system";
     echo "graph_info This graph shows CPU usage for monitored processes.";
-        echo 'graph_vlabel %'
-        echo 'graph_scale no'
-        echo 'graph_period second'
+    echo 'graph_vlabel %'
+    echo 'graph_scale no'
+    echo 'graph_period second'
 
     echo "graph_order $procs"
     
@@ -61,10 +57,7 @@ if [ "$1" = "config" ] ; then
     exit
 fi
 
-
-
 for proc in $procs ; do {
-
     ps axo 'pcpu,comm' | grep "$proc" |
     awk '
     BEGIN {
@@ -80,5 +73,4 @@ for proc in $procs ; do {
     print  "'$proc'.value "CPU_PROC
     }'  
 }
-
 done;
