@@ -58,6 +58,11 @@ $(gislab_config_header)
 INTERFACES="eth1"
 EOF
 
+# touch log file and set appropriate mode and ownership
+touch /var/log/dhcpd-error.log
+chmod 0640 /var/log/dhcpd-error.log
+chown syslog:adm /var/log/dhcpd-error.log
+
 service isc-dhcp-server restart
 
 

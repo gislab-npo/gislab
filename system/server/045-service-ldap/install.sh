@@ -49,6 +49,11 @@ olcLogLevel: none
 EOL
 fi
 
+# touch log file and set appropriate mode and ownership
+touch /var/log/ldap-error.log
+chmod 0640 /var/log/ldap-error.log
+chown syslog:adm /var/log/ldap-error.log
+
 
 # do not continue on upgrade
 if [ -f "/etc/gislab/045-service-ldap.done" ]; then return; fi

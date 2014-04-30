@@ -38,6 +38,11 @@ fi
 # remove default log file
 rm -f /var/log/postgresql/postgresql-9.1-main.log
 
+# touch log file and set appropriate mode and ownership
+touch /var/log/postgresql/postgresql-error.log
+chmod 0640 /var/log/postgresql/postgresql-error.log
+chown postgres:adm /var/log/postgresql/postgresql-error.log
+
 # tune database depending on current server configuration
 pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
 

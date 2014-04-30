@@ -42,6 +42,11 @@ fi
 rm -f /var/log/mail.log
 rm -f /var/log/mail.err
 
+# touch log file and set appropriate mode and ownership
+touch /var/log/mail-error.log
+chmod 0640 /var/log/mail-error.log
+chown syslog:adm /var/log/mail-error.log
+
 # restart services
 service postfix restart
 service rsyslog restart
