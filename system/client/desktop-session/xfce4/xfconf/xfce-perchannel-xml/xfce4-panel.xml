@@ -53,9 +53,7 @@
       <property name="show-frame" type="bool" value="false"/>
       <property name="size-max" type="uint" value="22"/>
       <property name="names-visible" type="array">
-        <value type="string" value="networkmanager applet"/>
         <value type="string" value="xfce4-power-manager"/>
-        <value type="string" value="blueman-applet"/>
       </property>
     </property>
     <property name="plugin-5" type="string" value="indicator"/>
