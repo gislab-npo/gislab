@@ -1,5 +1,5 @@
 #
-###  STATS WEB PAGE (Munin)  ###
+### SERVER STATISTICS - MUNIN ###
 #
 
 # Logging: 
@@ -37,18 +37,13 @@ ln -fs /usr/share/munin/plugins/apache_request_mapserver /etc/munin/plugins/apac
 ln -fs /usr/share/munin/plugins/cpu /etc/munin/plugins/cpu
 ln -fs /usr/share/munin/plugins/cpu_by_process /etc/munin/plugins/cpu_by_process
 ln -fs /usr/share/munin/plugins/df /etc/munin/plugins/df
-ln -fs /usr/share/munin/plugins/df_inode /etc/munin/plugins/df_inode
 ln -fs /usr/share/munin/plugins/diskstats /etc/munin/plugins/diskstats
-ln -fs /usr/share/munin/plugins/interrupts /etc/munin/plugins/interrupts
 ln -fs /usr/share/munin/plugins/iostat /etc/munin/plugins/iostat
 ln -fs /usr/share/munin/plugins/iostat_ios /etc/munin/plugins/iostat_ios
-ln -fs /usr/share/munin/plugins/irqstats /etc/munin/plugins/irqstats
 ln -fs /usr/share/munin/plugins/load /etc/munin/plugins/load
 ln -fs /usr/share/munin/plugins/memory /etc/munin/plugins/memory
 ln -fs /usr/share/munin/plugins/multips_memory /etc/munin/plugins/multips_memory
 ln -fs /usr/share/munin/plugins/nginx_request_webgis /etc/munin/plugins/nginx_request_webgis
-ln -fs /usr/share/munin/plugins/open_files /etc/munin/plugins/open_files
-ln -fs /usr/share/munin/plugins/open_inodes /etc/munin/plugins/open_inodes
 ln -fs /usr/share/munin/plugins/postgres_cache_ /etc/munin/plugins/postgres_cache_ALL
 ln -fs /usr/share/munin/plugins/postgres_cache_ /etc/munin/plugins/postgres_cache_gislab
 ln -fs /usr/share/munin/plugins/postgres_cache_ /etc/munin/plugins/postgres_cache_webgis
