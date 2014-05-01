@@ -78,6 +78,9 @@
 		<Include>
 			<Filename>gislab-client-info.desktop</Filename>
 		</Include>
+		<Include>
+			<Filename>gislab-server-stats.desktop</Filename>
+		</Include>
 	</Menu>
 	<DefaultLayout inline="false"/>
 	<Menu>

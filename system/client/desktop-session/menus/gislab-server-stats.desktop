@@ -1,0 +1,13 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=GIS.lab server statistics
+Comment=GIS.lab server system statistics
+Exec=firefox "http://stats.gis.lab"
+Icon=
+Path=
+Terminal=false
+StartupNotify=false
+Name[sk]=Štatistiky GIS.lab servera
+Comment[sk]=Štatistiky systému GIS.lab servera
