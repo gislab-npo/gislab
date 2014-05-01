@@ -41,6 +41,9 @@ logging {
 	};
 };
 EOF
+	mkdir -p /var/log/named
+	chown bind:bind /var/log/named
+	chmod 0750 /var/log/named
 fi
 
 # gis.lab zone
