@@ -62,7 +62,7 @@ local4.* /var/log/ldap-debug.log
 EOF
 fi
 
-# touch log file and set appropriate mode and ownership
+# create default log file
 touch /var/log/ldap-error.log
 chmod 0640 /var/log/ldap-error.log
 chown syslog:adm /var/log/ldap-error.log
