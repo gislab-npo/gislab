@@ -114,6 +114,7 @@ NFS_HOME=/home
 FSTAB_1="server:/storage/repository /mnt/repository nfs defaults 0 0"
 FSTAB_2="server:/storage/share /mnt/share nfs defaults 0 0"
 FSTAB_3="server:/storage/barrel /mnt/barrel nfs defaults 0 0"
+FSTAB_4="tmpfs /mnt/temporary tmpfs defaults,noatime,noexec,size=20% 0 0"
 EOF
 
 if [ -n "${GISLAB_CLIENT_NETWORK_STORAGE}" ]; then # mount additional shared dir if configured

@@ -123,6 +123,8 @@ ln -s /mnt/repository /etc/skel/Repository
 ln -s /mnt/share /etc/skel/Share
 ln -s /mnt/barrel /etc/skel/Barrel
 
+# add temporary filesystem
+ln -s /mnt/temporary /etc/skel/Temporary
 
 # Pidgin
 mkdir -p /etc/skel/.purple

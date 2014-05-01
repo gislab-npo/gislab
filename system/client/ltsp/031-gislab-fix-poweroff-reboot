@@ -18,6 +18,7 @@ case "$MODE" in
 umount /mnt/repository
 umount /mnt/share
 umount /mnt/barrel
+umount /mnt/temporary
 umount /home
 /sbin/ltsp/reboot -fp
 EOF
@@ -29,6 +30,7 @@ EOF
 umount /mnt/repository
 umount /mnt/share
 umount /mnt/barrel
+umount /mnt/temporary
 umount /home
 /sbin/ltsp/poweroff -fp
 EOF

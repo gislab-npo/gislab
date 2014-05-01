@@ -12,7 +12,6 @@ DOCUMENTS=Documents
 MUSIC=Documents/Music
 PICTURES=Documents/Pictures
 VIDEOS=Documents/Videos
-TEMPORARY=Temporary
 PROJECTS=Projects
 EOF
     

@@ -128,7 +128,7 @@ cp -r home/$GISLAB_USER /home/
 
 if [ -f home/$GISLAB_USER/.config/user-dirs.dirs ]; then
 	source home/$GISLAB_USER/.config/user-dirs.dirs
-	mkdir -p /home/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR) /home/$GISLAB_USER/$(basename $XDG_TEMPORARY_DIR)
+	mkdir -p /home/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR)
 fi
 
 chown -R $GISLAB_USER:labusers /home/$GISLAB_USER
