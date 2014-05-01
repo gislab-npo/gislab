@@ -2,6 +2,11 @@
 ###  LDAP DATABASE ###
 #
 
+# Logging: 
+#   production: /var/log/ldap-error.log
+#   debug:      /var/log/ldap-debug.log
+
+
 # configure PAM
 pam-auth-update --force
 auth-client-config -t nss -p lac_ldap
@@ -24,35 +29,45 @@ cp /vagrant/system/server/045-service-ldap/conf/ldapscripts/ldapscripts.conf /et
 gislab_config_header_to_file /etc/ldapscripts/ldapscripts.conf
 
 
-# logging
+### LOGGING ###
 ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
 dn: cn=config
 changetype: modify
 delete: olcLogLevel
 EOL
 
-
-# enable extended logging in debug mode
-if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
-	ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
-dn: cn=config
-changetype: modify
-add: olcLogLevel
-olcLogLevel: stats
-EOL
-else
+if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
 	ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
 dn: cn=config
 changetype: modify
 add: olcLogLevel
 olcLogLevel: none
 EOL
+else
+	ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
+dn: cn=config
+changetype: modify
+add: olcLogLevel
+olcLogLevel: stats
+EOL
+fi
+
+if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
+cat << EOF >> /etc/rsyslog.d/50-default.conf
+local4.* /var/log/ldap-error.log
+EOF
+else
+cat << EOF >> /etc/rsyslog.d/50-default.conf
+local4.* /var/log/ldap-debug.log
+EOF
 fi
 
 # touch log file and set appropriate mode and ownership
 touch /var/log/ldap-error.log
 chmod 0640 /var/log/ldap-error.log
 chown syslog:adm /var/log/ldap-error.log
+
+service rsyslog restart
 
 
 # do not continue on upgrade

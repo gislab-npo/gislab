@@ -2,6 +2,10 @@
 ### IRC SERVER ###
 #
 
+# Logging: 
+#   production: /var/log/ircd/ircd-hybrid.log
+#   debug:      /var/log/ircd/ircd-hybrid.log
+
 
 # IRC server configuration
 cp /vagrant/system/server/060-service-chat/conf/ircd/ircd.conf /etc/ircd-hybrid/ircd.conf

@@ -2,6 +2,11 @@
 ### MAIL SERVER - POSTFIX ###
 #
 
+# Logging: 
+#   production: /var/log/mail-error.log
+#   debug:      /var/log/mail-debug.log
+
+
 # write main configuration file
 cp /vagrant/system/server/033-service-mail/conf/postfix/main.cf /etc/postfix/main.cf
 gislab_config_header_to_file /etc/postfix/main.cf
@@ -38,17 +43,29 @@ if [ -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" -a -n "$GISLAB_SERVER_EMAIL_RELAY_PAS
 	done
 fi
 
-# remove system default log files
-rm -f /var/log/mail.log
-rm -f /var/log/mail.err
+service postfix restart
+
+
+### LOGGING ###
+if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
+cat << EOF >> /etc/rsyslog.d/50-default.conf
+mail.err /var/log/mail-error.log
+EOF
+else
+cat << EOF >> /etc/rsyslog.d/50-default.conf
+mail.* /var/log/mail-debug.log
+EOF
+fi
 
 # touch log file and set appropriate mode and ownership
 touch /var/log/mail-error.log
 chmod 0640 /var/log/mail-error.log
 chown syslog:adm /var/log/mail-error.log
 
-# restart services
-service postfix restart
+# remove system default log files
+rm -f /var/log/mail.log
+rm -f /var/log/mail.err
+
 service rsyslog restart
 
 

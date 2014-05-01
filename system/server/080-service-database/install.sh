@@ -2,6 +2,10 @@
 ### DATABASE SERVER - POSTGRESQL/POSTGIS ###
 #
 
+# Logging: 
+#   production: /var/log/postgresql/postgresql-error.log
+#   debug:      /var/log/postgresql/postgresql-debug.log
+
 # set system shmmax value which must be something little bit higher than one fourth of
 # system memory size
 shmmax=$(echo $(free -b | awk '/^Mem:/{print $2}') / 3.5 | bc)
@@ -11,13 +15,27 @@ $(gislab_config_header)
 kernel.shmmax = $shmmax
 EOF
 
+# access policy
+cp /vagrant/system/server/080-service-database/conf/postgresql/pg_hba.conf /etc/postgresql/9.1/main/pg_hba.conf
+gislab_config_header_to_file /etc/postgresql/9.1/main/pg_hba.conf
+
 # main database configuration
 cp /vagrant/system/server/080-service-database/conf/postgresql/postgresql.conf /etc/postgresql/9.1/main/postgresql.conf
 gislab_config_header_to_file /etc/postgresql/9.1/main/postgresql.conf
 
+# tune database depending on current server configuration
+pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
 
-# enable extended logging in debug mode
-if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
+
+### LOGGING ##
+if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
+	cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
+logging_collector = on
+log_directory = '/var/log/postgresql'
+log_filename = 'postgresql-error.log'
+log_min_messages = FATAL
+EOF
+else
 	cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
 logging_collector = on
 log_directory = '/var/log/postgresql'
@@ -25,13 +43,6 @@ log_filename = 'postgresql-debug.log'
 log_min_messages = 'DEBUG1'
 log_min_error_statement = 'DEBUG1'
 log_min_duration_statement = 0
-EOF
-else
-	cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
-logging_collector = on
-log_directory = '/var/log/postgresql'
-log_filename = 'postgresql-error.log'
-log_min_messages = FATAL
 EOF
 fi
 
@@ -42,14 +53,6 @@ rm -f /var/log/postgresql/postgresql-9.1-main.log
 touch /var/log/postgresql/postgresql-error.log
 chmod 0640 /var/log/postgresql/postgresql-error.log
 chown postgres:adm /var/log/postgresql/postgresql-error.log
-
-# tune database depending on current server configuration
-pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
-
-
-# access policy
-cp /vagrant/system/server/080-service-database/conf/postgresql/pg_hba.conf /etc/postgresql/9.1/main/pg_hba.conf
-gislab_config_header_to_file /etc/postgresql/9.1/main/pg_hba.conf
 
 service postgresql restart
 

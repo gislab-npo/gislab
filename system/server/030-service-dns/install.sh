@@ -2,16 +2,23 @@
 ### DNS SERVER - BIND ###
 #
 
+# Logging: 
+#   production: -
+#   debug:      /var/log/named/named-debug.log
+
+
 GISLAB_NETWORK_REVERSE=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $3 "." $2 "." $1 }')
 
-echo "$(gislab_config_header)" > /etc/bind/named.conf
+# main configuration
+cat << EOF > /etc/bind/named.conf
+include "/etc/bind/named.conf.options";
+include "/etc/bind/named.conf.local";
+include "/etc/bind/named.conf.default-zones";
+EOF
 
 if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
-	mkdir -p /var/log/named
-	chown bind:bind /var/log/named
-	chmod 0750 /var/log/named
-
 	cat << EOF >> /etc/bind/named.conf
+$(gislab_config_header)
 
 logging {
 	channel queries_log {
@@ -28,13 +35,6 @@ logging {
 };
 EOF
 fi
-
-cat << EOF >> /etc/bind/named.conf
-
-include "/etc/bind/named.conf.options";
-include "/etc/bind/named.conf.local";
-include "/etc/bind/named.conf.default-zones";
-EOF
 
 cat << EOF > /etc/bind/named.conf.local
 $(gislab_config_header)

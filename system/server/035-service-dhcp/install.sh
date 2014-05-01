@@ -2,6 +2,11 @@
 ### DHCP SERVER ###
 #
 
+# Logging: 
+#   production: /var/log/dhcpd-error.log
+#   debug:      /var/log/dhcpd-debug.log
+
+
 # adding Apparmor profile to enable including allowed MACs from /etc/ltsp/dhcpd-machines-allowed.conf
 cat << EOF > /etc/apparmor.d/local/usr.sbin.dhcpd
 $(gislab_config_header)
@@ -19,8 +24,8 @@ EOF
 # DHCP server configuration
 cat << EOF > /etc/ltsp/dhcpd.conf
 $(gislab_config_header)
-log-facility local7;
 
+log-facility local7;
 authoritative;
 
 subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
@@ -58,12 +63,26 @@ $(gislab_config_header)
 INTERFACES="eth1"
 EOF
 
+service isc-dhcp-server restart
+
+
+### LOGGING ###
+if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
+cat << EOF >> /etc/rsyslog.d/50-default.conf
+local7.err /var/log/dhcpd-error.log
+EOF
+else
+cat << EOF >> /etc/rsyslog.d/50-default.conf
+local7.* /var/log/dhcpd-debug.log
+EOF
+fi
+
 # touch log file and set appropriate mode and ownership
 touch /var/log/dhcpd-error.log
 chmod 0640 /var/log/dhcpd-error.log
 chown syslog:adm /var/log/dhcpd-error.log
 
-service isc-dhcp-server restart
+service rsyslog restart
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:
