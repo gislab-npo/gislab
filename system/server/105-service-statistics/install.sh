@@ -8,25 +8,25 @@
 
 
 # configure munin master
-cp /vagrant/system/server/113-service-statistics/conf/munin/munin.conf /etc/munin/munin.conf
+cp /vagrant/system/server/105-service-statistics/conf/munin/munin.conf /etc/munin/munin.conf
 gislab_config_header_to_file /etc/munin/munin.conf
 
 # configure munin node
-cp /vagrant/system/server/113-service-statistics/conf/munin/munin-node.conf /etc/munin/munin-node.conf
+cp /vagrant/system/server/105-service-statistics/conf/munin/munin-node.conf /etc/munin/munin-node.conf
 gislab_config_header_to_file /etc/munin/munin-node.conf
-cp /vagrant/system/server/113-service-statistics/conf/munin/munin-node /etc/munin/plugin-conf.d/munin-node
+cp /vagrant/system/server/105-service-statistics/conf/munin/munin-node /etc/munin/plugin-conf.d/munin-node
 gislab_config_header_to_file /etc/munin/plugin-conf.d/munin-node
 
 # install munin plugin for graphing requests to mapserver
-cp /vagrant/system/server/113-service-statistics/bin/apache_request_mapserver /usr/share/munin/plugins/apache_request_mapserver
+cp /vagrant/system/server/105-service-statistics/bin/apache_request_mapserver /usr/share/munin/plugins/apache_request_mapserver
 chmod +x /usr/share/munin/plugins/apache_request_mapserver
 
 # install munin plugin for graphing requests to webgis
-cp /vagrant/system/server/113-service-statistics/bin/nginx_request_webgis /usr/share/munin/plugins/nginx_request_webgis
+cp /vagrant/system/server/105-service-statistics/bin/nginx_request_webgis /usr/share/munin/plugins/nginx_request_webgis
 chmod +x /usr/share/munin/plugins/nginx_request_webgis
 
 # install munin plugin for graphing cpu usage by process
-cp /vagrant/system/server/113-service-statistics/bin/cpu_by_process /usr/share/munin/plugins/cpu_by_process
+cp /vagrant/system/server/105-service-statistics/bin/cpu_by_process /usr/share/munin/plugins/cpu_by_process
 chmod +x /usr/share/munin/plugins/cpu_by_process
 
 # disable all plugins
@@ -53,7 +53,7 @@ ln -fs /usr/share/munin/plugins/uptime /etc/munin/plugins/uptime
 ln -fs /usr/share/munin/plugins/vmstat /etc/munin/plugins/vmstat
 
 # create NGINX virtualhost stats.gis.lab
-cp /vagrant/system/server/113-service-statistics/conf/nginx/site-stats /etc/nginx/sites-available/stats
+cp /vagrant/system/server/105-service-statistics/conf/nginx/site-stats /etc/nginx/sites-available/stats
 gislab_config_header_to_file /etc/nginx/sites-available/stats
 ln -fs /etc/nginx/sites-available/stats /etc/nginx/sites-enabled/
 
