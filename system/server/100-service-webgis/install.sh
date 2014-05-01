@@ -104,7 +104,7 @@ service nginx reload
 
 
 ### BACKUP ###
-Mkdir -p /etc/cron.d.bin
+mkdir -p /etc/cron.d.bin
 cp /vagrant/system/server/100-service-webgis/bin/gislab-backup-webgis.sh /etc/cron.d.bin
 cat << EOL > /etc/cron.d/gislab-backup-webgis
 $(gislab_config_header)
