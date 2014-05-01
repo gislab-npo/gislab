@@ -7,7 +7,7 @@
 #   debug:      /var/log/mail-debug.log
 
 
-# write main configuration file
+# main configuration file
 cp /vagrant/system/server/033-service-mail/conf/postfix/main.cf /etc/postfix/main.cf
 gislab_config_header_to_file /etc/postfix/main.cf
 
@@ -57,7 +57,7 @@ mail.* /var/log/mail-debug.log
 EOF
 fi
 
-# touch log file and set appropriate mode and ownership
+# create default log file
 touch /var/log/mail-error.log
 chmod 0640 /var/log/mail-error.log
 chown syslog:adm /var/log/mail-error.log

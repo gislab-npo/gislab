@@ -2,7 +2,7 @@
 ### DATA ###
 #
 
-# skip on upgrade
+### SKIP ON UPGRADE ###
 if [ -f "/etc/gislab/125-data-installation.done" ]; then return; fi
 
 cp -a /vagrant/user/data /storage/repository/

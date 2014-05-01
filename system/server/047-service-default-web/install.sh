@@ -2,6 +2,14 @@
 ###  DEFAULT WEB PAGE ###
 #
 
+# Logging: 
+#   production: /var/log/apache2/access.log /var/log/apache2/error.log
+#               /var/log/nginx/access.log /var/log/nginx/error.log
+
+#   debug:      /var/log/apache2/access.log /var/log/apache2/error.log
+#               /var/log/nginx/access.log /var/log/nginx/error.log
+
+
 # default web server page output
 mkdir -p /var/www/default
 cp /vagrant/system/server/047-service-default-web/conf/index.html /var/www/default/index.html

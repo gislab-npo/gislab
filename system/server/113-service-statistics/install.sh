@@ -2,6 +2,11 @@
 ###  STATS WEB PAGE (Munin)  ###
 #
 
+# Logging: 
+#   production: /var/log/nginx/stats-access.log /var/log/nginx/stats-error.log
+#   debug:      /var/log/nginx/stats-access.log /var/log/nginx/stats-error.log
+
+
 # configure munin master
 cp /vagrant/system/server/113-service-statistics/conf/munin/munin.conf /etc/munin/munin.conf
 gislab_config_header_to_file /etc/munin/munin.conf

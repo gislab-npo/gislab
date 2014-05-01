@@ -2,6 +2,10 @@
 ### MAPSERVER ###
 #
 
+# Logging: 
+#   production: /var/log/apache2/mapserver-access.log /var/log/apache2/mapserver-error.log
+#   debug:      /var/log/apache2/mapserver-access.log /var/log/apache2/mapserver-error.log
+
 
 # mapserver virtualhost
 cp /vagrant/system/server/090-service-mapserver/conf/apache/site-mapserver /etc/apache2/sites-available/mapserver

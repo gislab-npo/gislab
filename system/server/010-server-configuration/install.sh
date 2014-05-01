@@ -1,7 +1,6 @@
 #
 ### BASIC SERVER CONFIGURATION ###
 #
-#
 
 # Read server IP from running server and update GISLAB_NETWORK. This is done because some 
 # cloud providers like AWS ignore IP address given by Vagrantfile and set it by their own.
@@ -65,7 +64,7 @@ EOF
 chmod 0440 /etc/sudoers.d/vagrant-secure-path
 
 
-# logging
+### LOGGING ###
 if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
 	sed -i '/^\$SystemLogRateLimitInterval 0$/d' /etc/rsyslog.conf
 else
@@ -93,7 +92,7 @@ gislab_config_header_to_file /etc/rsyslog.d/50-default.conf
 service rsyslog restart
 
 
-# do not continue on upgrade
+### DO NOT CONTINUE ON UPGRADE ###
 if [ -f "/etc/gislab/010-server-configuration.done" ]; then return; fi
 
 # add admin scripts on PATH

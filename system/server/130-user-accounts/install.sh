@@ -9,7 +9,7 @@ if id -u vagrant > /dev/null 2>&1; then echo "vagrant:$(pwgen -1 -n 24)" | chpas
 if id -u ubuntu > /dev/null 2>&1; then echo "ubuntu:$(pwgen -1 -n 24)" | chpasswd; fi
 
 
-# activate backup
+### BACKUP ###
 mkdir -p /etc/cron.d.bin
 cp /vagrant/system/server/130-user-accounts/bin/gislab-backup-users.sh /etc/cron.d.bin
 cat << EOL > /etc/cron.d/gislab-backup-users

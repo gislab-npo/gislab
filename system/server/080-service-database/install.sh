@@ -49,7 +49,7 @@ fi
 # remove default log file
 rm -f /var/log/postgresql/postgresql-9.1-main.log
 
-# touch log file and set appropriate mode and ownership
+# create default log file
 touch /var/log/postgresql/postgresql-error.log
 chmod 0640 /var/log/postgresql/postgresql-error.log
 chown postgres:adm /var/log/postgresql/postgresql-error.log
@@ -57,7 +57,7 @@ chown postgres:adm /var/log/postgresql/postgresql-error.log
 service postgresql restart
 
 
-# do not continue on upgrade
+### DO NOT CONTINUE ON UPGRADE ###
 if [ -f "/etc/gislab/080-service-database.done" ]; then return; fi
 
 # create labusers and labadmins group

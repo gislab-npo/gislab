@@ -10,6 +10,13 @@
 GISLAB_NETWORK_REVERSE=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $3 "." $2 "." $1 }')
 
 # main configuration
+# use IPv4 only
+cat << EOF > /etc/default/bind9
+$(gislab_config_header)
+RESOLVCONF=no
+OPTIONS="-4 -u bind"
+EOF
+
 cat << EOF > /etc/bind/named.conf
 include "/etc/bind/named.conf.options";
 include "/etc/bind/named.conf.local";
@@ -36,6 +43,7 @@ logging {
 EOF
 fi
 
+# gis.lab zone
 cat << EOF > /etc/bind/named.conf.local
 $(gislab_config_header)
 
@@ -95,14 +103,8 @@ $(gislab_config_header ";")
 5        IN    PTR       server.gis.lab.
 EOF
 
-# use IPv4 only
-cat << EOF > /etc/default/bind9
-$(gislab_config_header)
-RESOLVCONF=no
-OPTIONS="-4 -u bind"
-EOF
-
 service bind9 restart
+
 
 # use our DNS server
 cat << EOF > /etc/resolvconf/resolv.conf.d/head

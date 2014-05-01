@@ -70,7 +70,7 @@ chown syslog:adm /var/log/ldap-error.log
 service rsyslog restart
 
 
-# do not continue on upgrade
+### DO NOT CONTINUE ON UPGRADE ###
 if [ -f "/etc/gislab/045-service-ldap.done" ]; then return; fi
 
 

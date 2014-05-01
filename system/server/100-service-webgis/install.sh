@@ -2,6 +2,11 @@
 ### GIS.LAB WEB ###
 #
 
+# Logging: 
+#   production: /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log
+#   debug:      /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log
+
+
 # create database and user only on initial installation
 if [ ! -f "/etc/gislab/100-service-webgis.done" ]; then
 	WEBGIS_DB_PASSWORD=$(pwgen -1 -n 8)
@@ -98,8 +103,8 @@ service webgis restart
 service nginx reload
 
 
-# activate backup
-mkdir -p /etc/cron.d.bin
+### BACKUP ###
+Mkdir -p /etc/cron.d.bin
 cp /vagrant/system/server/100-service-webgis/bin/gislab-backup-webgis.sh /etc/cron.d.bin
 cat << EOL > /etc/cron.d/gislab-backup-webgis
 $(gislab_config_header)
