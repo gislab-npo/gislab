@@ -15,7 +15,9 @@ case "$MODE" in
 
 	cat <<EOF > $ROOT/sbin/reboot
 #!/bin/sh
-umount /mnt
+umount /mnt/repository
+umount /mnt/share
+umount /mnt/barrel
 umount /home
 /sbin/ltsp/reboot -fp
 EOF
@@ -24,7 +26,9 @@ EOF
 
 	cat <<EOF > $ROOT/sbin/poweroff
 #!/bin/sh
-umount /mnt
+umount /mnt/repository
+umount /mnt/share
+umount /mnt/barrel
 umount /home
 /sbin/ltsp/poweroff -fp
 EOF
