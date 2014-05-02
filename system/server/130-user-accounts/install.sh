@@ -2,11 +2,26 @@
 ### USER ACCOUNTS ###
 #
 
-# Some Vagrant boxes are using 'vagrant' account for provisioning, some of them are
-# using 'ubuntu' account. Set strong password for these accounts.
-# Test which account exists and set strong password.
-if id -u vagrant > /dev/null 2>&1; then echo "vagrant:$(pwgen -1 -n 24)" | chpasswd; fi
-if id -u ubuntu > /dev/null 2>&1; then echo "ubuntu:$(pwgen -1 -n 24)" | chpasswd; fi
+# Some Vagrant boxes are using 'vagrant' account (VirtualBox) for provisioning, some 
+# of them are using 'ubuntu' account (AWS).
+
+# set strong password and file access permissions for provisioning accounts
+for account in vagrant ubuntu; do
+	if id -u $account > /dev/null 2>&1; then
+		echo "$account:$(pwgen -1 -n 24)" | chpasswd
+		chmod 700 /home/$account
+		chmod 700 /home/$account/.ssh
+	fi
+done
+
+# replace Vagrant insecure SSH key
+if [[ -n "$GISLAB_SSH_PRIVATE_KEY" && -n "$GISLAB_SSH_PUBLIC_KEY" ]]; then
+	for account in vagrant ubuntu; do
+		if id -u $account > /dev/null 2>&1; then
+			cat /vagrant/$GISLAB_SSH_PUBLIC_KEY > /home/$account/.ssh/authorized_keys
+		fi
+	done
+fi
 
 
 ### BACKUP ###

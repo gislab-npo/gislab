@@ -8,17 +8,6 @@ GISLAB_SERVER_IP=$(hostname  -I | awk -F" " '{print $NF}')
 GISLAB_NETWORK=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $1 "." $2 "." $3 }')
 
 
-# replace Vagrant insecure SSH key
-if [[ -n "$GISLAB_SSH_PRIVATE_KEY" && -n "$GISLAB_SSH_PUBLIC_KEY" ]]; then
-	if id -u vagrant > /dev/null 2>&1; then
-		cat /vagrant/$GISLAB_SSH_PUBLIC_KEY > /home/vagrant/.ssh/authorized_keys
-	fi
-	if id -u ubuntu > /dev/null 2>&1; then
-		cat /vagrant/$GISLAB_SSH_PUBLIC_KEY > /home/ubuntu/.ssh/authorized_keys
-	fi
-fi
-
-
 # hosts
 cat << EOF > /etc/hosts
 $(gislab_config_header)
