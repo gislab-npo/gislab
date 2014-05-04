@@ -32,7 +32,7 @@ function usage() {
 while getopts "h" OPTION
 do
         case "$OPTION" in
-			h) usage ; exit 0 ;;
+			h) usage ;;
 			\?) exit 1;;
         esac
 done

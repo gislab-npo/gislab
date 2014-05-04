@@ -35,7 +35,7 @@ do
 			b) BACKUP_FILE="$OPTARG" ;;
 			f) FORCE_FLAG="-f" ;;
 			h) usage ;;
-			\?) exit 1;;
+			\?) exit 1 ;;
         esac
 done
 

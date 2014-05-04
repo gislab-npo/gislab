@@ -41,7 +41,7 @@ do
         case "$OPTION" in
 			s) SERVER_ONLY="yes" ;;
 			f) FORCE="yes" ;;
-			h) usage ; exit 0 ;;
+			h) usage ;;
 			\?) exit 1 ;;
         esac
 done
