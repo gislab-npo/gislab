@@ -11,7 +11,7 @@ gislab_config_header () {
 		c="$1"
 	fi
 
-	echo "${c} This file was generated or modified by GIS.lab management script ($(date))."
+	echo "${c} This file was created or modified by GIS.lab version $GISLAB_VERSION on $(date)."
 
 }
 
@@ -46,7 +46,7 @@ gislab_print_error () {
 
 gislab_require_root () {
 	if [[ $EUID -ne 0 ]]; then
-		gislab_print_error "This command can be run only with superuser privileges"
+		gislab_print_error "This command can only be be run with superuser privileges"
 		exit 1
 	fi
 }
