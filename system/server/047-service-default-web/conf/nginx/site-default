@@ -2,7 +2,8 @@ server {
         root /var/www/default;
         index index.html index.htm;
 
-        server_name localhost boot.gis.lab;
+	listen 80 default_server;
+        server_name _; # catch all
 
         location / {
                 try_files $uri $uri/ /index.html;
