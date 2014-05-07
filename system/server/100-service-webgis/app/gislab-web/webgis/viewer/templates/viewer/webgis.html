@@ -53,7 +53,24 @@
 						maxExtent = this.maxExtent? this.maxExtent : this.baseLayer.maxExtent;
 					}
 					return maxExtent;
-				},
+				}
+			});
+
+			WebgisTmsLayer = OpenLayers.Class(OpenLayers.Layer.TMS, {
+
+				getURL: function (bounds) {
+					bounds = this.adjustBounds(bounds);
+					var res = this.getServerResolution();
+					var x = Math.round((bounds.left - this.tileOrigin.lon) / (res * this.tileSize.w));
+					var y = Math.round((bounds.bottom - this.tileOrigin.lat) / (res * this.tileSize.h));
+					var z = this.getServerZoom();
+					var path = this.layername + "/" + z + "/" + x + "/" + y + "." + this.type;
+					var url = this.url;
+					if (OpenLayers.Util.isArray(url)) {
+						url = this.selectUrl(path, url);
+					}
+					return url + path+'?'+Ext.urlEncode({project: this.project});
+				}
 			});
 
 			function main() {
@@ -81,10 +98,11 @@
 				// overlay layers
 				{% if layers %}
 					{% if mapcache_url %}
-				var overlays_group_layer = new OpenLayers.Layer.TMS(
+				var overlays_group_layer = new WebgisTmsLayer(
 					"OverlaysGroup",
 					["{{ mapcache_url }}"],
 					{
+						project: '{{ project }}',
 						layername: "", // layername will be updated by overlays tree node
 						isBaseLayer: false,
 						type: "png",

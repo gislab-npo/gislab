@@ -7,6 +7,7 @@ Author: Marcel Dancak, marcel.dancak@gista.sk
 import json
 import os.path
 import urllib2
+import hashlib
 import contextlib
 from urllib import urlencode
 from urlparse import parse_qs, urlsplit, urlunsplit
@@ -70,25 +71,25 @@ def set_query_parameters(url, params_dict):
 	return urlunsplit(url_parts)
 
 
-def store_project_layers_info(project, publish, extent, resolutions, projection):
-	prefix = "{0}:{1}:".format(project, publish)
+def store_project_layers_info(project_key, publish, extent, resolutions, projection):
+	prefix = "{0}:{1}:".format(project_key, publish)
 	cache.set_many({
 		prefix+'extent': ','.join(map(str, extent)),
 		prefix+'resolutions': ','.join(map(str, resolutions)),
 		prefix+'projection': projection
 	})
 
-def get_project_layers_info(project, publish, from_cache_only=False):
-	prefix = "{0}:{1}:".format(project, publish)
+def get_project_layers_info(project_key, publish, project=None):
+	prefix = "{0}:{1}:".format(project_key, publish)
 	data = cache.get_many((prefix+'extent', prefix+'resolutions', prefix+'projection'))
 	if data:
 		return { param.replace(prefix, ''): value for param, value in data.iteritems() }
-	elif not from_cache_only:
+	elif project:
 		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, os.path.splitext(project)[0] + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
 			if int(metadata.publish_date_unix) == int(publish):
-				store_project_layers_info(project, publish, metadata.extent, metadata.tile_resolutions, metadata.projection)
+				store_project_layers_info(project_key, publish, metadata.extent, metadata.tile_resolutions, metadata.projection)
 				return {
 					'extent': metadata.extent,
 					'resolutions': metadata.tile_resolutions,
@@ -110,8 +111,9 @@ def ows_request(request):
 
 
 @login_required
-def tile(request, project, publish, layers=None, z=None, x=None, y=None, format=None):
-	layer_params = get_project_layers_info(project, publish, from_cache_only=False)
+def tile(request, project_hash, publish, layers=None, z=None, x=None, y=None, format=None):
+	project = request.GET['project']
+	layer_params = get_project_layers_info(project_hash, publish, project=project)
 	try:
 		layer = WmsLayer(
 			project=project,
@@ -261,13 +263,13 @@ def page(request):
 		context['layers'] = json.dumps(layers_tree) if layers_tree else None
 
 		if use_mapcache:
-			project_layers_info = get_project_layers_info(project, metadata.publish_date_unix, from_cache_only=True)
+			project_hash = hashlib.md5(project).hexdigest()
+			project_layers_info = get_project_layers_info(project_hash, metadata.publish_date_unix)
 			if not project_layers_info:
-				store_project_layers_info(project, metadata.publish_date_unix, metadata.extent, project_tile_resolutions, metadata.projection)
+				store_project_layers_info(project_hash, metadata.publish_date_unix, metadata.extent, project_tile_resolutions, metadata.projection)
 
-			mapcache_url = reverse('viewer:tile', kwargs={'project': project, 'publish': metadata.publish_date_unix, 'layers': '__LAYERS__', 'x': 0, 'y': 0, 'z': 0, 'format': 'png'})
-			#mapcache_url = mapcache_url.split('__LAYERS__')[0]
-			mapcache_url = mapcache_url.split('/1.0.0/')[0]+'/'
+			mapcache_url = reverse('viewer:tile', kwargs={'project_hash': project_hash, 'publish': metadata.publish_date_unix, 'layers': '__layers__', 'x': 0, 'y': 0, 'z': 0, 'format': 'png'})
+			mapcache_url = mapcache_url.split('/__layers__/')[0]+'/'
 			context['mapcache_url'] = mapcache_url
 
 		context.update({
