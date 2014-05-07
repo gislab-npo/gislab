@@ -14,12 +14,21 @@ Ext.override(GeoExt.WMSLegend, {
 	 *
 	 *  Get the legend URL of a sublayer.
 	 */
+
+	getLayersNames: function(layer) {
+		if (layer instanceof OpenLayers.Layer.WMS) {
+			return [layer.params.LAYERS].join(",").split(",");
+		} else {
+			return layer.layername.split(",");
+		}
+	},
+
 	getLegendUrl: function(layerName, layerNames) {
 		var rec = this.layerRecord;
 		var url;
 		var styles = rec && rec.get("styles");
 		var layer = rec.getLayer();
-		layerNames = layerNames || [layer.params.LAYERS].join(",").split(",");
+		layerNames = layerNames || this.getLayersNames(layer);
 
 		var styleNames = layer.params.STYLES &&
 							 [layer.params.STYLES].join(",").split(",");
@@ -40,19 +49,27 @@ Ext.override(GeoExt.WMSLegend, {
 		}
 		
 		if(!url) {
-			url = layer.getFullRequestString({
-				REQUEST: "GetLegendGraphic",
-				WIDTH: null,
-				HEIGHT: null,
-				EXCEPTIONS: "application/vnd.ogc.se_xml",
-				LAYER: layerName,
-				LAYERS: null,
-				STYLE: (styleName !== '') ? styleName: null,
-				STYLES: null,
-				SRS: null,
-				FORMAT: null,
-				TIME: null
-			});
+			if (layer instanceof OpenLayers.Layer.WMS) {
+				url = layer.getFullRequestString({
+					REQUEST: "GetLegendGraphic",
+					WIDTH: null,
+					HEIGHT: null,
+					EXCEPTIONS: "application/vnd.ogc.se_xml",
+					LAYER: layerName,
+					LAYERS: null,
+					STYLE: (styleName !== '') ? styleName: null,
+					STYLES: null,
+					SRS: null,
+					FORMAT: null,
+					TIME: null
+				});
+			} else {
+				url = Ext.urlAppend(layer.options.wmsLegendUrl, Ext.urlEncode({
+					REQUEST: "GetLegendGraphic",
+					EXCEPTIONS: "application/vnd.ogc.se_xml",
+					LAYER: layerName,
+				}));
+			}
 		}
 		var params = Ext.apply({}, this.baseParams);
 		if (layer.params._OLSALT) {
@@ -90,7 +107,7 @@ Ext.override(GeoExt.WMSLegend, {
 
 		var layerNames, layerName, i, len;
 
-		layerNames = [layer.params.LAYERS].join(",").split(",");
+		layerNames = this.getLayersNames(layer);
 
 		var destroyList = [];
 		var textCmp = this.items.get(0);
@@ -140,7 +157,7 @@ Ext.override(GeoExt.WMSLegend, {
 				layerName = layerNames[layerNames.length-i-1];
 				if(!this.items || !this.getComponent(layerName)) {
 					// first item is label, so the first legend image item has index 1
-					var index = layer.params.LAYERS.length-layer.params.LAYERS.indexOf(layerName);
+					var index = layerNames.length-layerNames.indexOf(layerName);
 					this.insert(index, {
 						xtype: "gx_legendimage",
 						url: this.getLegendUrl(layerName, layerNames),
@@ -152,3 +169,8 @@ Ext.override(GeoExt.WMSLegend, {
 		}
 	},
 });
+
+GeoExt.WMSLegend.supports = function(layerRecord) {
+	var layer = layerRecord.getLayer();
+	return layer instanceof OpenLayers.Layer.WMS || (layer.options && layer.options.wmsLegendUrl) ? 1 : 0;
+};

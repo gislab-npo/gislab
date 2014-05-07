@@ -68,12 +68,36 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 	}
 });
 
+/*
+  We have to customize OpenLayers.Control.WMSGetFeatureInfo to make work with both
+  OpenLayers.Layers.WMS and OpenLayers.Layers.TMS layer types and to control LAYERS
+  parameter in GetFeatureInfo:
+
+   * set WMSGetFeatureInfo's url that will differ from any url of map WMS layers or simply any invalid value. Thish will
+     prevent WMSGetFeatureInfo control to perform automatic GetFeatureInfo requests.
+   * handle 'beforegetfeatureinfo' events and manually perform GetFeatureInfo requests with proper LAYERS value.
+*/
 ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
-	url: '{{ ows_url }}',
+	url: 'null',
 	autoActivate: false,
 	infoFormat: 'application/vnd.ogc.gml',
 	maxFeatures: 10,
+	featureinfo_layer: new OpenLayers.Layer.WMS(
+		'WmsOverlaysLayer',
+		'{{ ows_url }}',
+		{},
+		{ projection: config.projection}
+	),
 	eventListeners: {
+		beforegetfeatureinfo: function(event) {
+			if (identify_layer_combobox.selectedIndex > 0) {
+				this.featureinfo_layer.params.LAYERS = [identify_layer_combobox.getValue()];
+			} else {
+				this.featureinfo_layer.params.LAYERS = Ext.getCmp('layers-tree-panel').root.getVisibleLayers();
+			}
+			var wms_options = this.buildWMSOptions(this.featureinfo_layer.url, [this.featureinfo_layer], event.xy);
+			var request = OpenLayers.Request.GET(wms_options);
+		},
 		getfeatureinfo: function(e) {
 			Ext.getCmp('featureinfo-panel').showFeatures(e.features, identify_layer_combobox.layersAttributesAliases);
 		}

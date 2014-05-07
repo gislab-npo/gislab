@@ -17,6 +17,7 @@ WebgisWmsLayer = OpenLayers.Class(OpenLayers.Layer.WMS, {
 
 	getURL: function (bounds) {
 		var resolution = this.getResolution();
+		//console.log('WMS url (resolution:'+resolution+' min:'+this.minResolution+' max:'+this.maxResolution+')');
 		if (resolution >= this.minResolution && resolution <= this.maxResolution) {
 			return OpenLayers.Layer.WMS.prototype.getURL.apply(this, arguments);
 		}
@@ -76,7 +77,6 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 	},
 	listeners: {
 		beforeselect: function(combo, record, index) {
-			//return ("" != record.data.myId);
 			return !(record.get('itemCls') == 'layer-category-item' || record.get('itemCls') == 'layer-unavailable-item');
 		},
 		select: function (combo, record, index) {
@@ -87,7 +87,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 	createLayer: function(layer_config) {
 		// create Openlayer Layer
 		var layer;
-		if (layer_config.name == 'BLANK') {
+		if (layer_config.type == 'BLANK') {
 			layer = new OpenLayers.Layer(
 				"Blank",
 				{
@@ -99,7 +99,6 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 			layer = new OpenLayers.Layer.OSM();
 		} else if (layer_config.type == 'google') {
 			var google_map = layer_config.name.slice(1);
-			//layer_config.title = 'Google '+google_map.charAt(0)+google_map.slice(1).toLowerCase()
 			layer = new OpenLayers.Layer.Google(
 				layer_config.name,
 				{
@@ -108,7 +107,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 				}
 			);
 		} else if (layer_config.type == 'WMS') {
-			layer = new OpenLayers.Layer.WMS(
+			layer = new WebgisWmsLayer(
 				layer_config.name,
 				[layer_config.url],
 				{
@@ -123,7 +122,10 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 					buffer: 0,
 					singleTile: true,
 					maxExtent: layer_config.extent,
+					displayOutsideMaxExtent: false,
 					resolutions: layer_config.resolutions,
+					minResolution: layer_config.min_resolution,
+					maxResolution: layer_config.max_resolution,
 					// attribution: "",
 				}
 			);
@@ -136,7 +138,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 					transparent: false,
 					format: layer_config.image_format,
 					dpi: layer_config.dpi,
-					tiled: 'true',
+					tiled: 'true', // TODO maybe for TileGo only?
 				},
 				{
 					isBaseLayer: true,

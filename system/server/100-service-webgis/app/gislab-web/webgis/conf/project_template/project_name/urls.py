@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.i18n import javascript_catalog
+from django.conf.urls.static import static
 
 
 js_info_dict = {
@@ -16,3 +18,4 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

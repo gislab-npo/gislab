@@ -13,6 +13,7 @@ from urlparse import parse_qs, urlsplit, urlunsplit
 import xml.etree.ElementTree as etree
 
 from django.conf import settings
+from django.core.cache import cache
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -22,11 +23,12 @@ from django.contrib.auth.decorators import login_required
 from webgis.viewer import forms
 from webgis.viewer import models
 from webgis.viewer.metadata_parser import MetadataParser
+from webgis.mapcache import get_tile_response, WmsLayer, TileNotFoundException
 
 
-SPECIAL_BASE_LAYERS = {
-	'BLANK': {'name': 'BLANK', 'type': 'BLANK', 'title': 'Blank Layer'},
-	'OSM': {'name': 'OSM', 'type': 'OSM', 'title': 'Open Street Map'},
+OSM_LAYER = {'name': 'OSM', 'type': 'OSM', 'title': 'Open Street Map'}
+
+GOOGLE_LAYERS = {
 	'GHYBRID': {'name': 'GHYBRID', 'type': 'google', 'title': 'Google Hybrid'},
 	'GROADMAP': {'name': 'GROADMAP', 'type': 'google', 'title': 'Google Roadmap'},
 	'GSATELLITE': {'name': 'GSATELLITE', 'type': 'google', 'title': 'Google Satellite'},
@@ -37,8 +39,7 @@ def _get_tile_resolutions(scales, units, dpi=96):
 	"""Helper function to compute OpenLayers tile resolutions."""
 
 	dpi = float(dpi)
-	factor = {'in': 1.0, 'ft': 12.0, 'mi': 63360.0,
-			'm': 39.3701, 'km': 39370.1, 'dd': 4374754.0}
+	factor = {'ft': 12.0, 'm': 39.3701, 'mi': 63360.0, 'dd': 4374754.0}
 
 	inches = 1.0 / dpi
 	monitor_l = inches / factor[units]
@@ -69,6 +70,35 @@ def set_query_parameters(url, params_dict):
 	return urlunsplit(url_parts)
 
 
+def store_project_layers_info(project, publish, extent, resolutions, projection):
+	prefix = "{0}:{1}:".format(project, publish)
+	cache.set_many({
+		prefix+'extent': ','.join(map(str, extent)),
+		prefix+'resolutions': ','.join(map(str, resolutions)),
+		prefix+'projection': projection
+	})
+
+def get_project_layers_info(project, publish, from_cache_only=False):
+	prefix = "{0}:{1}:".format(project, publish)
+	data = cache.get_many((prefix+'extent', prefix+'resolutions', prefix+'projection'))
+	if data:
+		return { param.replace(prefix, ''): value for param, value in data.iteritems() }
+	elif not from_cache_only:
+		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, os.path.splitext(project)[0] + '.meta')
+		try:
+			metadata = MetadataParser(metadata_filename)
+			if int(metadata.publish_date_unix) == int(publish):
+				store_project_layers_info(project, publish, metadata.extent, metadata.tile_resolutions, metadata.projection)
+				return {
+					'extent': metadata.extent,
+					'resolutions': metadata.tile_resolutions,
+					'projection': metadata.projection
+				}
+		except Exception, e:
+			pass
+	return {}
+
+
 @login_required
 def ows_request(request):
 	url = "{0}?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
@@ -78,7 +108,28 @@ def ows_request(request):
 		status = resp.getcode()
 		return HttpResponse(resp_content, content_type=content_type, status=status)
 
-def parse_layers_param(layers_string, layers_capabilities, skip_layers=None):
+
+@login_required
+def tile(request, project, publish, layers=None, z=None, x=None, y=None, format=None):
+	layer_params = get_project_layers_info(project, publish, from_cache_only=False)
+	try:
+		layer = WmsLayer(
+			project=project,
+			publish=publish,
+			name=layers,
+			provider_url=set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
+			#provider_image_format="tiff",
+			image_format=format,
+			tile_size=256,
+			metasize=5,
+			**layer_params
+		)
+		return get_tile_response(layer, z=z, x=x, y=y)
+	except TileNotFoundException, e:
+		raise Http404
+
+
+def parse_layers_param(layers_string, layers_capabilities):
 	tree = {
 		'name': '',
 		'layers': []
@@ -108,8 +159,6 @@ def parse_layers_param(layers_string, layers_capabilities, skip_layers=None):
 		for layer_string in layers_string.split(';'):
 			layer_info = layer_string.split(':')
 			layer_name = layer_info[0]
-			if skip_layers and layer_name in skip_layers:
-				continue
 			layer = layers_capabilities.get(layer_name)
 			if layer is None:
 				raise LookupError(layer_name)
@@ -131,10 +180,6 @@ def page(request):
 
 	context = {'dpi': 96}
 	project = form.cleaned_data['project']
-
-	scales = form.cleaned_data['scales'] or settings.WEBGIS_SCALES
-	if scales:
-		context['scales'] = scales
 
 	if project:
 		project = os.path.splitext(project)[0] + '.qgs'
@@ -164,69 +209,49 @@ def page(request):
 
 
 	if project:
-		ows_url = '{0}?map={1}'.format(reverse('viewer:owsrequest'), project)
-		ows_getprojectsettings_url = "{0}?map={1}&SERVICE=WMS&REQUEST=GetProjectSettings".format(settings.WEBGIS_OWS_URL, project)
-		context['projection'] = metadata.projection
-		context['units'] = {'meters': 'm', 'feet': 'ft', 'degrees': 'dd'}.get(metadata.units, 'dd')
-	else:
-		context['projection'] = 'EPSG:3857'
-		context['units'] = 'dd'
+		ows_url = set_query_parameters(reverse('viewer:owsrequest'), {'map': project})
+		context['units'] = {'meters': 'm', 'feet': 'ft', 'miles': 'mi', 'degrees': 'dd' }[metadata.units] or 'dd'
+		use_mapcache = metadata.use_mapcache
+		project_projection = metadata.projection
+		project_tile_resolutions = metadata.tile_resolutions
 
-	context['tile_resolutions'] = _get_tile_resolutions(context['scales'], context['units'], context['dpi'])
-
-	if project:
-		project_tile_resolutions = context['tile_resolutions']
-		project_projection = context['projection']
+		context['projection'] = project_projection
+		context['tile_resolutions'] = project_tile_resolutions
 
 		# converts tree with layers data into simple dictionary
-		def collect_layers_capabilities(layer_data, capabilities=None):
+		def collect_layers_capabilities(layers_data, capabilities=None):
 			if capabilities is None:
 				capabilities = {}
-			sublayers = layer_data.get('layers')
-			if sublayers:
-				for sublayer_data in sublayers:
-					collect_layers_capabilities(sublayer_data, capabilities)
-			else:
-				capabilities[layer_data['name']] = layer_data
+			for layer_data in layers_data:
+				sublayers = layer_data.get('layers')
+				if sublayers:
+					collect_layers_capabilities(sublayers, capabilities)
+				else:
+					capabilities[layer_data['name']] = layer_data
 			return capabilities
 
 		# BASE LAYERS
-		base_layers_capabilities = collect_layers_capabilities({'layers': metadata.base_layers}) if metadata.base_layers else {}
-		base_layers_capabilities.update(SPECIAL_BASE_LAYERS)
-		for layer_capabilities in base_layers_capabilities.itervalues():
-			layer_type = layer_capabilities.get('type')
-			if layer_type == 'WMSC':
-				layer_resolutions = layer_capabilities['resolutions']
-				layer_capabilities['min_resolution'] = layer_resolutions[-1]
-				layer_capabilities['max_resolution'] = layer_resolutions[0]
-				upper_resolutions = filter(lambda res: res > layer_capabilities['max_resolution'], project_tile_resolutions)
-				lower_resolutions = filter(lambda res: res < layer_capabilities['min_resolution'], project_tile_resolutions)
-				layer_capabilities['resolutions'] = upper_resolutions + layer_resolutions + lower_resolutions
-			elif layer_type in ('WMS', 'BLANK'):
-				layer_capabilities['resolutions'] = project_tile_resolutions
+		baselayers_tree = None
 		base = form.cleaned_data['base']
 		if base:
+			base_layers_capabilities = collect_layers_capabilities(metadata.base_layers)
 			try:
-				skip_layers = None
-				# ignore OSM and Google layers when project's projection is not EPSG:3857
-				if context['projection'] != 'EPSG:3857':
-					skip_layers = SPECIAL_BASE_LAYERS.keys()
-					skip_layers.remove('BLANK')
-				baselayers_tree = parse_layers_param(base, base_layers_capabilities, skip_layers=skip_layers)['layers']
+				baselayers_tree = parse_layers_param(base, base_layers_capabilities)['layers']
 			except LookupError, e:
 				return HttpResponse("Unknown base layer: {0}".format(str(e)), content_type='text/plain', status=400);
 		else:
 			baselayers_tree = metadata.base_layers
+
 		# ensure that a blank base layer is always used
 		if not baselayers_tree:
-			baselayers_tree = [base_layers_capabilities['BLANK']]
+			baselayers_tree = [{'name': 'BLANK', 'type': 'BLANK', 'title': 'Blank Layer', 'resolutions': project_tile_resolutions}]
 		context['base_layers'] = json.dumps(baselayers_tree)
 
 		# OVERLAYS LAYERS
 		layers = form.cleaned_data['overlay']
 		# override layers tree with LAYERS GET parameter if provided
 		if layers:
-			overlays_capabilities = collect_layers_capabilities({'layers': metadata.overlays}) if metadata.overlays else {}
+			overlays_capabilities = collect_layers_capabilities(metadata.overlays) if metadata.overlays else {}
 			try:
 				layers_tree = parse_layers_param(layers, overlays_capabilities)['layers']
 			except LookupError, e:
@@ -235,11 +260,20 @@ def page(request):
 			layers_tree = metadata.overlays
 		context['layers'] = json.dumps(layers_tree) if layers_tree else None
 
+		if use_mapcache:
+			project_layers_info = get_project_layers_info(project, metadata.publish_date_unix, from_cache_only=True)
+			if not project_layers_info:
+				store_project_layers_info(project, metadata.publish_date_unix, metadata.extent, project_tile_resolutions, metadata.projection)
+
+			mapcache_url = reverse('viewer:tile', kwargs={'project': project, 'publish': metadata.publish_date_unix, 'layers': '__LAYERS__', 'x': 0, 'y': 0, 'z': 0, 'format': 'png'})
+			#mapcache_url = mapcache_url.split('__LAYERS__')[0]
+			mapcache_url = mapcache_url.split('/1.0.0/')[0]+'/'
+			context['mapcache_url'] = mapcache_url
+
 		context.update({
 			'project': project,
 			'ows_url': ows_url,
 			'wms_url': set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
-			'ows_getprojectsettings_url': ows_getprojectsettings_url,
 			'project_extent': metadata.extent,
 			'print_composers': metadata.composer_templates,
 			'root_title': metadata.title,
@@ -250,19 +284,18 @@ def page(request):
 		})
 	else:
 		context.update({
+			'root_title': 'Empty Project',
 			'project_extent': [-20037508.34, -20037508.34, 20037508.34, 20037508.34],
-			'root_title': 'Empty Project'
+			'projection': 'EPSG:3857',
+			'units': 'dd'
 		})
-		base = form.cleaned_data['base'] or '/OSM:1;GHYBRID:0'
-		try:
-			context['base_layers'] = json.dumps(parse_layers_param(base, SPECIAL_BASE_LAYERS)['layers'])
-		except LookupError, e:
-			return HttpResponse("Unknown base layer: {0}".format(str(e)), content_type='text/plain', status=400);
+		context['tile_resolutions'] = _get_tile_resolutions(settings.WEBGIS_SCALES, context['units'], context['dpi'])
+		context['base_layers'] = json.dumps([OSM_LAYER, GOOGLE_LAYERS['GHYBRID']])
 
 	google = False
 	if context.get('base_layers'):
-		for name, baselayer_info in SPECIAL_BASE_LAYERS.iteritems():
-			if baselayer_info.get('type') == 'google' and name in context['base_layers']:
+		for google_layer_name in GOOGLE_LAYERS.iterkeys():
+			if google_layer_name in context['base_layers']:
 				google = True
 				break
 	context['google'] = google

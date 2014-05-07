@@ -39,6 +39,23 @@
 		
 		{% comment %} ##  CONFIGURATION  ## {% endcomment %}
 		<script type="text/javascript">
+			/* Customization of OpenLayers.Map that will prefer OpenLayers.Map.maxExtent option
+			   instead of OpenLayers.Map.baseLayer.maxExtent in OpenLayers.Map.getMaxExtent method,
+			   otherwise OpenLayers.Map.zoomToExtent wouldn't work outside base layer's maxExtent.
+			*/
+			WebgisMap = OpenLayers.Class(OpenLayers.Map, {
+
+				getMaxExtent: function (options) {
+					var maxExtent = null;
+					if(options && options.restricted && this.restrictedExtent){
+						maxExtent = this.restrictedExtent;
+					} else if (this.baseLayer != null) {
+						maxExtent = this.maxExtent? this.maxExtent : this.baseLayer.maxExtent;
+					}
+					return maxExtent;
+				},
+			});
+
 			function main() {
 
 				Ext.BLANK_IMAGE_URL = "{% static 'viewer/images/s.gif' %}";
@@ -63,6 +80,25 @@
 
 				// overlay layers
 				{% if layers %}
+					{% if mapcache_url %}
+				var overlays_group_layer = new OpenLayers.Layer.TMS(
+					"OverlaysGroup",
+					["{{ mapcache_url }}"],
+					{
+						layername: "", // layername will be updated by overlays tree node
+						isBaseLayer: false,
+						type: "png",
+						gutter: 0,
+						buffer: 0,
+						serverResolutions: {{ tile_resolutions }},
+						visibility: true,
+						singleTile: false,
+						maxExtent: config.maxExtent,
+						displayOutsideMaxExtent: false,
+						wmsLegendUrl: '{{ ows_url }}'
+					}
+				);
+					{% else %}
 				var overlays_group_layer = new OpenLayers.Layer.WMS(
 					"OverlaysGroup",
 					["{{ ows_url }}"],
@@ -72,13 +108,16 @@
 						dpi: "{{ dpi }}",
 					},
 					{
-						gutter: 0,
 						isBaseLayer: false,
+						gutter: 0,
 						buffer: 0,
 						visibility: true,
 						singleTile: true,
+						maxExtent: config.maxExtent,
+						displayOutsideMaxExtent: false,
 					}
 				);
+					{% endif %}
 				{% else %}
 				var overlays_group_layer = new OpenLayers.Layer('Empty');
 				{% endif %}
@@ -135,7 +174,7 @@
 					title: '{{ root_title }}',
 					collapsible: false,
 					zoom: 3,
-					map: {
+					map: new WebgisMap({
 						allOverlays: {% if base_layers %}false{% else %}true{% endif %},
 						units: config.units,
 						projection: new OpenLayers.Projection(config.projection),
@@ -143,7 +182,7 @@
 						restrictedExtent: config.maxExtent,
 						maxExtent: config.maxExtent,
 						controls: []
-					},
+					}),
 					layers: maplayers,
 					items: [{
 						xtype: "gx_zoomslider",

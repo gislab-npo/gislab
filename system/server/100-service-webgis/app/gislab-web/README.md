@@ -45,10 +45,8 @@ http://web.gis.lab/?PROJECT=<PATH-TO-QGIS-PROJECT-FILE>&<PARAMETER>=<value>&<PAR
 
  * OVERLAY: overlay layers encoded in following syntax: /[<category name>/.../]<layer name>[:<visible (integer)>:<transparency (integer)>];<layer name>[:<visible>:<transparency>];/[<category name>/.../]<layer name>[:<visible>:<transparency>];... Example: /cat/subcat/subsubcat/layer1:1:50;layer2:1:100;/cat2/subcat2/subsubcat2/layer1:0:75;layer2:1:85
 
- * SCALES: available list of scales available in map. Example: 10000,5000,2500. Default: 1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500. Some base layers like OSM, GOOGLE or WMS-C can override these values to suite their needs.
- 
  * EXTENT: map extent on start. Example 1234.1,5678.5,2345.2,6789.6. Default is extent of the project.
- 
+
  * DRAWINGS: list of drawings identifiers containing geometry data in GeoJSON format. Format: <DRAWING_ID>,<DRAWING_ID>,...
 
 

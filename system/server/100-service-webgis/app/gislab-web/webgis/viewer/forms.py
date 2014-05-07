@@ -48,6 +48,5 @@ class ViewerForm(forms.Form):
 	project = forms.CharField(required=False)
 	base = forms.CharField(required=False)
 	overlay = forms.CharField(required=False)
-	scales = MultipleIntegersField(required=False)
 	extent = ExtentField(required=False)
 	drawings = MultipleStringsField(required=False)

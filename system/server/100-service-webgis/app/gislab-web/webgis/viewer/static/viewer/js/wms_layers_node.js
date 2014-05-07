@@ -32,11 +32,14 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		this.on('checkchange', this.onNodeCheckChanged);
 	},
 	updateLayersParam: function() {
+		var visible_layers = this.getVisibleLayers();
 		if (this.layer.CLASS_NAME == 'OpenLayers.Layer.WMS') {
-			var visible_layers = this.getVisibleLayers();
 			this.layer.mergeNewParams({LAYERS: [].concat(visible_layers).reverse()});
-			this.fireEvent('layerchange', this, this.layer, visible_layers);
+		} else if (this.layer.CLASS_NAME == 'OpenLayers.Layer.TMS') {
+			this.layer.layername = [].concat(visible_layers).reverse().join(',');
+			this.layer.mergeNewParams();// to update legend
 		}
+		this.fireEvent('layerchange', this, this.layer, visible_layers);
 		//console.log(visible_layers);
 		//console.log(this.root.checkchangeParamsStack);
 	},
