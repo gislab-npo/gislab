@@ -16,20 +16,14 @@ class WMS (object):
 	__slots__ = ("base_url", "params", "client", "data", "response", "base_url_params")
 
 	def __init__ (self, base, user=None, password=None):
+		base = urllib.unquote(base)
 		if base[-1] not in "?&":
 			if "?" in base:
 				base += "&"
 			else:
 				base += "?"
 
-		if user is not None and password is not None:
-			x = urllib2.HTTPPasswordMgrWithDefaultRealm()
-			x.add_password(None, base, user, password)
-			self.client = urllib2.build_opener()
-			auth = urllib2.HTTPBasicAuthHandler(x)
-			self.client = urllib2.build_opener(auth)
-		else:
-			self.client = urllib2.build_opener()
+		self.client = urllib2.build_opener()
 
 		self.base_url, querystring = base.split("?")
 		self.base_url_params = dict([get_param.split("=") for get_param in querystring.split("&") if get_param])

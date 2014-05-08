@@ -6,10 +6,10 @@ Author: Marcel Dancak, marcel.dancak@gista.sk
 
 import json
 import os.path
+import urllib
 import urllib2
 import hashlib
 import contextlib
-from urllib import urlencode
 from urlparse import parse_qs, urlsplit, urlunsplit
 import xml.etree.ElementTree as etree
 
@@ -67,7 +67,7 @@ def set_query_parameters(url, params_dict):
 		if name.lower() not in new_params_names:
 			params[name] = value
 
-	url_parts[3] = urlencode(params, doseq=True)
+	url_parts[3] = urllib.urlencode(params, doseq=True)
 	return urlunsplit(url_parts)
 
 

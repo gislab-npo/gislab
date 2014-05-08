@@ -250,7 +250,7 @@ class WebGisPlugin:
 				'allow_anonymous': False,
 				'require_superuser': False
 			},
-			'use_mapcache': False,
+			'use_mapcache': True,
 			'publish_date_unix': int(time.time()),
 			'publish_date': time.ctime(),
 		}

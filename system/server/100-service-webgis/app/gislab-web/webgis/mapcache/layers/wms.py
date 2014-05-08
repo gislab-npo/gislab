@@ -5,13 +5,11 @@ from webgis.mapcache import client
 
 class WmsLayer(MetaLayer):
 
-	def __init__ (self, project, publish, name, provider_url, provider_image_format = None, user = None, password = None, **kwargs):
+	def __init__ (self, project, publish, name, provider_url, provider_image_format = None, **kwargs):
 		MetaLayer.__init__(self, project, publish, name, **kwargs) 
 		self.provider_url = provider_url
 		self.provider_image_format = provider_image_format or self.image_format
-		self.user = user
-		self.password = password
-		self.client = client.WMS(self.provider_url, self.user, self.password)
+		self.client = client.WMS(self.provider_url)
 
 	def render_tile(self, tile):
 		tile.data, response = self.client.fetch({
