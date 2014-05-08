@@ -62,6 +62,7 @@ if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
 		/var/log/postgresql/postgresql-error.log
 		/var/log/apache2/mapserver-error.log
 		/var/log/nginx/webgis-error.log
+		/var/log/webgis-error.log
 		/var/log/ircd/ircd-hybrid.log
 	"
 
@@ -77,6 +78,7 @@ else
 		/var/log/postgresql/postgresql-debug.log
 		/var/log/apache2/mapserver-error.log
 		/var/log/nginx/webgis-error.log
+		/var/log/webgis-debug.log
 		/var/log/ircd/ircd-hybrid.log
 	"
 fi

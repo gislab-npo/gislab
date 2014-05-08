@@ -3,8 +3,8 @@
 #
 
 # Logging: 
-#   production: /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log
-#   debug:      /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log
+#   production: /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log /var/log/webgis-error.log
+#   debug:      /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log /var/log/webgis-debug.log
 
 
 # create database and user only on initial installation
@@ -89,10 +89,19 @@ else
 	gunicorn_workers=3
 fi
 
-# Gunicorn startup script (adjust number of work)
+# Gunicorn startup script
 cp /vagrant/system/server/100-service-webgis/conf/gunicorn/gunicorn.sh /var/www/webgis/gunicorn.sh
-sed -i "s/NUM_WORKERS=.*/NUM_WORKERS=$gunicorn_workers/" /var/www/webgis/gunicorn.sh
 chmod 755 /var/www/webgis/gunicorn.sh
+
+# adjust number of workers
+sed -i "s/NUM_WORKERS=.*/NUM_WORKERS=$gunicorn_workers/" /var/www/webgis/gunicorn.sh
+
+# configure logging
+if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
+	sed -i "s/LOG_LEVEL=.*/LOG_LEVEL=error/" /var/www/webgis/gunicorn.sh
+else
+	sed -i "s/LOG_LEVEL=.*/LOG_LEVEL=debug/" /var/www/webgis/gunicorn.sh
+fi
 
 # Gunicorn Upstart script
 cp /vagrant/system/server/100-service-webgis/conf/upstart/webgis.conf /etc/init/webgis.conf
