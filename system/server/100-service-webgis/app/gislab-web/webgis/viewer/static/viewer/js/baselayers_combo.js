@@ -86,6 +86,14 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 	},
 	createLayer: function(layer_config) {
 		// create Openlayer Layer
+		var attribution = layer_config.attribution;
+		if (attribution && attribution.title) {
+			if (attribution.url) {
+				attribution = String.format('<a href="{0}">{1}</a>', attribution.url, attribution.title);
+			} else {
+				attribution = attribution.title;
+			}
+		}
 		var layer;
 		if (layer_config.type == 'BLANK') {
 			layer = new OpenLayers.Layer(
@@ -93,6 +101,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 				{
 					isBaseLayer: true,
 					resolutions: layer_config.resolutions,
+					attribution: attribution,
 				}
 			);
 		} else if (layer_config.type == 'OSM') {
@@ -126,7 +135,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 					resolutions: layer_config.resolutions,
 					minResolution: layer_config.min_resolution,
 					maxResolution: layer_config.max_resolution,
-					// attribution: "",
+					attribution: attribution,
 				}
 			);
 		} else if (layer_config.type == 'WMSC') {
@@ -148,7 +157,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 					resolutions: layer_config.resolutions,
 					minResolution: layer_config.min_resolution,
 					maxResolution: layer_config.max_resolution,
-					// attribution: "",
+					attribution: attribution,
 				}
 			);
 		}

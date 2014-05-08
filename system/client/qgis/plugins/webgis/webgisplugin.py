@@ -351,6 +351,11 @@ class WebGisPlugin:
 					'url': source_params['url'][0],
 					'dpi': layer.dataProvider().dpi()
 				}
+				if layer.attribution():
+					layer_data['attribution'] = {
+						'title': layer.attribution(),
+						'url': layer.attributionUrl()
+					}
 				layer_resolutions = layer.dataProvider().property('resolutions')
 				if layer_resolutions:
 					layer_resolutions = self._wmsc_layers_resolutions(layer, units)
