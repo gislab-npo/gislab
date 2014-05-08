@@ -1,0 +1,100 @@
+#!/bin/bash
+# Author: Ivan Mincik, ivan.mincik@gmail.com
+
+set -e
+
+
+# source configuration files
+source /vagrant/config.cfg
+if [ -f /vagrant/config-user.cfg ]
+then
+	source /vagrant/config-user.cfg
+fi
+
+source /usr/local/gislab/functions.sh
+
+# require root privileges
+gislab_require_root
+
+
+# usage
+function usage() {
+	echo "USAGE: $(basename $0) [OPTIONS]"
+	echo "Print important runtime GIS.lab server logs in real time."
+	echo "Hit [CTRL-C] to exit!"
+	echo -e "\nOPTIONS
+	-n  number of lines to display from each log file on start (default 1)
+	-w  print also access logs from web services (HTTP boot, Mapserver and GIS.lab Web)
+	-h  display this help
+	"
+	exit 255
+}
+
+
+# options
+LOGLINES=1
+while getopts "n:wh" OPTION
+do
+        case "$OPTION" in
+			n) LOGLINES="$OPTARG" ;;
+			w) WEB_ACCESS_LOGS="yes" ;;
+			h) usage ;;
+			\?) exit 1 ;;
+        esac
+done
+shift $(($OPTIND - 1))
+
+
+# main log files
+LOGFILES="
+	/var/log/syslog
+	/var/log/auth.log
+"
+
+# log files of services in production mode
+if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
+	LOGFILES+="
+		/var/log/mail-error.log
+		/var/log/dhcpd-error.log
+		/var/log/ldap-error.log
+		/var/log/apache2/error.log
+		/var/log/nginx/error.log
+		/var/log/postgresql/postgresql-error.log
+		/var/log/apache2/mapserver-error.log
+		/var/log/nginx/webgis-error.log
+		/var/log/ircd/ircd-hybrid.log
+	"
+
+# log files of services in debug mode
+else
+	LOGFILES+="
+		/var/log/named/named-debug.log
+		/var/log/mail-debug.log
+		/var/log/dhcpd-debug.log	
+		/var/log/ldap-debug.log
+		/var/log/apache2/error.log
+		/var/log/nginx/error.log
+		/var/log/postgresql/postgresql-debug.log
+		/var/log/apache2/mapserver-error.log
+		/var/log/nginx/webgis-error.log
+		/var/log/ircd/ircd-hybrid.log
+	"
+fi
+
+# web services access log files
+WEB_ACCESS_LOGFILES="
+	/var/log/apache2/access.log
+	/var/log/nginx/access.log
+	/var/log/apache2/mapserver-access.log 
+	/var/log/nginx/webgis-access.log 
+"
+
+if [ "$WEB_ACCESS_LOGS" == "yes" ]; then
+	LOGFILES+=$WEB_ACCESS_LOGFILES
+fi
+
+
+tail -n $LOGLINES -f $LOGFILES
+
+
+# vim: set ts=4 sts=4 sw=4 noet:
