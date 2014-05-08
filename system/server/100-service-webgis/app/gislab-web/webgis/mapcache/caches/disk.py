@@ -39,7 +39,7 @@ class Disk (Cache):
 
 	def get_key (self, tile):
 		components = ( self.basedir,
-					   tile.layer.project,# TODO remove .qgs
+					   tile.layer.project,
 					   tile.layer.publish,
 					   tile.layer.name,
 					   "%d" % tile.z,

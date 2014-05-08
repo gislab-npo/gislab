@@ -291,7 +291,6 @@ def page(request):
 			'projection': 'EPSG:3857',
 			'units': 'dd'
 		})
-		context['tile_resolutions'] = _get_tile_resolutions(settings.WEBGIS_SCALES, context['units'], context['dpi'])
 		context['base_layers'] = json.dumps([OSM_LAYER, GOOGLE_LAYERS['GHYBRID']])
 
 	google = False

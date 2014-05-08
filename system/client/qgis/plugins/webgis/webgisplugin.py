@@ -93,6 +93,8 @@ def extent_to_list(extent):
 	return [extent.xMinimum(), extent.yMinimum(), extent.xMaximum(), extent.yMaximum()]
 
 
+DEFAULT_PROJECT_SCALES = (10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500)
+
 OSM_LAYER = {'name': 'OSM', 'type': 'OSM', 'title': 'Open Street Map', 'resolutions': [156543.03390625, 78271.516953125, 39135.7584765625, 19567.87923828125, 9783.939619140625, 4891.9698095703125, 2445.9849047851562, 1222.9924523925781, 611.4962261962891, 305.74811309814453, 152.87405654907226, 76.43702827453613, 38.218514137268066, 19.109257068634033, 9.554628534317017, 4.777314267158508, 2.388657133579254, 1.194328566789627, 0.5971642833948135]}
 
 google_resolutions = [156543.03390625, 78271.516953125, 39135.7584765625, 19567.87923828125, 9783.939619140625, 4891.9698095703125, 2445.9849047851562, 1222.9924523925781, 611.4962261962891, 305.74811309814453, 152.87405654907226, 76.43702827453613, 38.218514137268066, 19.109257068634033, 9.554628534317017, 4.777314267158508]
@@ -258,7 +260,6 @@ class WebGisPlugin:
 		metadata.update({
 			'extent': extent_to_list(map_canvas.fullExtent()),
 			'projection': map_canvas.mapRenderer().destinationCrs().authid(),
-			#'scales': scales,
 			'selection_color': '{0}{1:02x}'.format(selection_color.name(), selection_color.alpha()),
 			'canvas_color': '{0}{1:02x}'.format(canvas_color.name(), canvas_color.alpha()),
 			'units': units,
@@ -311,7 +312,7 @@ class WebGisPlugin:
 				project_tile_resolutions.update(layer_resolutions)
 
 		if not project_tile_resolutions:
-			project_tile_resolutions = get_tile_resolutions(DEFAULT_PROJECT_SCALES, units) #TODO: or always meters?
+			project_tile_resolutions = get_tile_resolutions(DEFAULT_PROJECT_SCALES, units)
 		project_tile_resolutions = sorted(project_tile_resolutions, reverse=True)
 		metadata['tile_resolutions'] = project_tile_resolutions
 
