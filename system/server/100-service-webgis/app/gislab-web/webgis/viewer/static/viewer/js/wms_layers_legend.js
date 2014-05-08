@@ -64,7 +64,7 @@ Ext.override(GeoExt.WMSLegend, {
 					TIME: null
 				});
 			} else {
-				url = Ext.urlAppend(layer.options.wmsLegendUrl, Ext.urlEncode({
+				url = Ext.urlAppend(layer.wmsLegendUrl, Ext.urlEncode({
 					REQUEST: "GetLegendGraphic",
 					EXCEPTIONS: "application/vnd.ogc.se_xml",
 					LAYER: layerName,
@@ -172,5 +172,5 @@ Ext.override(GeoExt.WMSLegend, {
 
 GeoExt.WMSLegend.supports = function(layerRecord) {
 	var layer = layerRecord.getLayer();
-	return layer instanceof OpenLayers.Layer.WMS || (layer.options && layer.options.wmsLegendUrl) ? 1 : 0;
+	return layer instanceof OpenLayers.Layer.WMS || layer.wmsLegendUrl ? 1 : 0;
 };
