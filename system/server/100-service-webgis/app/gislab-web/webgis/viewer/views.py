@@ -116,7 +116,7 @@ def tile(request, project_hash, publish, layers=None, z=None, x=None, y=None, fo
 	layer_params = get_project_layers_info(project_hash, publish, project=project)
 	try:
 		layer = WmsLayer(
-			project=project,
+			project=project_hash,
 			publish=publish,
 			name=layers,
 			provider_url=set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
