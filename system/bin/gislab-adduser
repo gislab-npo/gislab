@@ -126,6 +126,7 @@ ln -s /mnt/barrel /etc/skel/Barrel
 # add temporary filesystem
 ln -s /mnt/temporary /etc/skel/Temporary
 
+
 # Pidgin
 mkdir -p /etc/skel/.purple
 cp -a /vagrant/system/client/pidgin/*.xml /etc/skel/.purple
@@ -140,7 +141,6 @@ cp /vagrant/system/client/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
 mkdir -p /etc/skel/.config/QGIS
 mkdir -p /etc/skel/.qgis2
 cp /vagrant/system/client/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
-cp -a /vagrant/system/client/qgis/plugins /etc/skel/.qgis2/
 
 if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
 	mkdir -p /etc/skel/bin
@@ -148,9 +148,6 @@ if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
 	chmod 755 /etc/skel/bin/*
 fi
 
-# GIS.lab Web plugin
-mkdir -p /etc/skel/.qgis2/python/plugins/
-cp -a /vagrant/system/client/qgis/plugins/webgis/ /etc/skel/.qgis2/python/plugins/
 
 chown -R root:root /etc/skel
 
