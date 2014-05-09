@@ -126,10 +126,7 @@ class Layer (object):
 				subimage = image.crop((minx, miny, maxx, maxy))
 				subimage.info = image.info
 				buffer = StringIO()
-				if image.mode != 'P' and image.info.has_key('transparency'):
-					subimage.save(buffer, self.image_format, transparency=image.info['transparency'])
-				else:
-					subimage.save(buffer, self.image_format, quality=85)
+				subimage.save(buffer, self.image_format, quality=85)
 				buffer.seek(0)
 				subdata = buffer.read()
 				x = metatile.x * self.metasize[0] + i
