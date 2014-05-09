@@ -58,6 +58,11 @@ else
 	cp /etc/gislab/webgis-settings_secret.py /var/www/webgis/djproject/settings_secret.py
 fi
 
+# move map cache to /storage
+mkdir -p /storage/webgis-media
+chown www-data:www-data /storage/webgis-media
+sed -i "s/MEDIA_ROOT =.*/MEDIA_ROOT = '\/storage\/webgis-media'/" /var/www/webgis/djproject/settings.py
+
 # add web alias if configured
 if [ -n "$GISLAB_WEB_ALIAS" ]; then
 	sed -i "/ALLOWED_HOSTS/aALLOWED_HOSTS += ['$GISLAB_WEB_ALIAS']" /var/www/webgis/djproject/settings.py

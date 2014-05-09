@@ -15,9 +15,15 @@ server {
 	}
 
 	location /media/ {
-		alias /var/www/webgis/media/;
+		alias /storage/webgis-media/;
 	}
- 
+
+	location ~ ^/tile/(?<tile_path>.*)$ {
+		alias /storage/webgis-media/cache/;
+		add_header X-Static super;
+		try_files $tile_path @cache;
+}
+
 	location / {
 		include /etc/nginx/proxy-parameters;
 		proxy_redirect off;
@@ -28,6 +34,13 @@ server {
 		}
 	}
  
+	location @cache {
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header Host $http_host;
+		proxy_redirect off;
+		proxy_pass http://webgis;
+}
+
 	error_page 500 502 503 504 /500.html;
 	location = /500.html {
 		root /var/www/webgis/static/;
