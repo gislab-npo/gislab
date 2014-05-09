@@ -147,7 +147,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 					transparent: false,
 					format: layer_config.image_format,
 					dpi: layer_config.dpi,
-					tiled: 'true', // TODO maybe for TileGo only?
+					tiled: 'true',
 				},
 				{
 					isBaseLayer: true,

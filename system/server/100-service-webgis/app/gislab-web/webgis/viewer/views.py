@@ -103,9 +103,11 @@ def get_project_layers_info(project_key, publish, project=None):
 @login_required
 def ows_request(request):
 	url = "{0}?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
-	with contextlib.closing(urllib2.urlopen(url)) as resp:
+	owsrequest = urllib2.Request(url)
+	owsrequest.add_header("User-Agent", "GIS.lab Web")
+	with contextlib.closing(urllib2.urlopen(owsrequest)) as resp:
 		resp_content = resp.read()
-		content_type = resp.info().getheader("Content-Type")
+		content_type = resp.info().getheader('Content-Type')
 		status = resp.getcode()
 		return HttpResponse(resp_content, content_type=content_type, status=status)
 
