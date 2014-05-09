@@ -1,12 +1,12 @@
 # BSD Licensed, Copyright (c) 2006-2008 MetaCarta, Inc.
 
-from webgis.mapcache.layer import MetaLayer
+from webgis.mapcache.layer import Layer
 from webgis.mapcache import client
 
-class WmsLayer(MetaLayer):
+class WmsLayer(Layer):
 
 	def __init__ (self, project, publish, name, provider_url, provider_image_format = None, **kwargs):
-		MetaLayer.__init__(self, project, publish, name, **kwargs) 
+		Layer.__init__(self, project, publish, name, **kwargs)
 		self.provider_url = provider_url
 		self.provider_image_format = provider_image_format or self.image_format
 		self.client = client.WMS(self.provider_url)

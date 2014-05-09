@@ -5,8 +5,6 @@ from cStringIO import StringIO
 from PIL import Image, ImageEnhance
 
 
-DEBUG = True
-
 class TileNotFoundException(Exception): pass
 
 
@@ -25,10 +23,10 @@ class Tile (object):
 
 	def bounds (self):
 		res  = self.layer.resolutions[self.z]
-		minx = self.layer.extent[0] + (res * self.x * self.layer.tile_size[0])
-		miny = self.layer.extent[1] + (res * self.y * self.layer.tile_size[1])
-		maxx = self.layer.extent[0] + (res * (self.x + 1) * self.layer.tile_size[0])
-		maxy = self.layer.extent[1] + (res * (self.y + 1) * self.layer.tile_size[1])
+		minx = self.layer.extent[0] + (res * self.x * self.layer.tile_size)
+		miny = self.layer.extent[1] + (res * self.y * self.layer.tile_size)
+		maxx = self.layer.extent[0] + (res * (self.x + 1) * self.layer.tile_size)
+		maxy = self.layer.extent[1] + (res * (self.y + 1) * self.layer.tile_size)
 		return (minx, miny, maxx, maxy)
 
 	def extent (self):
@@ -37,8 +35,8 @@ class Tile (object):
 class MetaTile (Tile):
 	def actual_size (self):
 		meta_cols, meta_rows = self.layer.get_meta_size(self.z)
-		return ( self.layer.tile_size[0] * meta_cols,
-				 self.layer.tile_size[1] * meta_rows )
+		return ( self.layer.tile_size * meta_cols,
+				 self.layer.tile_size * meta_rows )
 
 	def size (self):
 		actual = self.actual_size()
@@ -60,24 +58,13 @@ class MetaTile (Tile):
 class Layer (object):
 	__slots__ = ( "project", "publish", "name", "provider_layers", "extent",
 				  "tile_size", "resolutions", "image_format", "projection",
-				  "cache", "debug",
-				  "extent_type", "units", "mime_type",
-				  "client_expire")
-	
-	config_properties = [
-	  {'name':'provider_layers', 'description': 'Comma seperated list of provider layers associated with this layer.'},
-	  {'name':'image_format', 'description':'File image format', 'default':'png'},
-	  {'name':'extent', 'description':'Bounding box of the layer', 'default':'-180,-90,180,90'},
-	  {'name':'projection', 'description':'Spatial Reference System for the layer', 'default':'EPSG:4326'},
-	  {'name':'client_expire', 'description':'Tiles expiration time in seconds for client browser', 'default':'None'},
-	]  
-	
+				  'metasize', 'metabuffer',
+				  "cache")
+
 	def __init__ (self, project, publish, name, provider_layers = None, extent = (-180, -90, 180, 90),
-						projection  = "EPSG:4326",
-						tile_size = 256, resolutions = None,
-						image_format = "png", mime_type = None, cache = None, debug = False,
-						extent_type = "loose", units = "degrees", 
-						client_expire = 0, **kwargs ):
+						projection  = "EPSG:4326", tile_size = 256, resolutions = None,
+						image_format = "png", metasize = 5, metabuffer = 0, cache = None,
+						**kwargs):
 		self.project = project
 		self.publish = publish
 		self.name = name
@@ -85,129 +72,33 @@ class Layer (object):
 
 		if isinstance(extent, basestring):
 			extent = map(float, extent.split(","))
-		tile_size = (tile_size, tile_size)
-		
+
 		self.extent = extent
 		self.tile_size = tile_size
-		
-		self.units = units
-		
 		self.projection  = projection
-		
+
 		if image_format.lower() == 'jpg': 
 			image_format = 'jpeg' # MIME
 		self.image_format = image_format.lower()
-		self.mime_type = mime_type or self.format()
-		
-		self.debug = debug
-		
+
+		self.metasize = (metasize, metasize)
+		self.metabuffer = (metabuffer, metabuffer)
 		self.cache = cache
-		self.extent_type = extent_type
-		self.client_expire = client_expire
-		
+
 		if isinstance(resolutions, basestring):
 			resolutions = map(float,resolutions.split(","))
 		self.resolutions = resolutions
 
-
-	def get_resolution (self, (minx, miny, maxx, maxy)):
-		return max( float(maxx - minx) / self.tile_size[0],
-					float(maxy - miny) / self.tile_size[1] )
-
-	def get_closest_level (self, res, tile_size = [256, 256]):
-		diff = sys.maxint
-		z = None
-		for i in range(len(self.resolutions)):
-			if diff > abs( self.resolutions[i] - res ):
-				diff = abs( self.resolutions[i] - res ) 
-				z = i
-		return z
-
-	def get_level (self, res, tile_size = [256, 256]):
-		max_diff = res / max(tile_size[0], tile_size[1])
-		z = None
-		for i in range(len(self.resolutions)):
-			if abs( self.resolutions[i] - res ) < max_diff:
-				res = self.resolutions[i]
-				z = i
-				break
-		if z is None:
-			raise TileNotFoundException("Can not find resolution index for %f. Available resolutions are: \n%s" % (res, self.resolutions))
-		return z
-
-	def get_cell (self, (minx, miny, maxx, maxy), exact = True):
-		if exact and self.extent_type == "strict" and not self.contains((minx, miny)): 
-			raise TileNotFoundException("Lower left corner (%f, %f) is outside layer bounds %s." 
-					 % (minx, miny, self.extent))
-			return None
-
-		res = self.get_resolution((minx, miny, maxx, maxy))
-		x = y = None
-
-		if exact:
-			z = self.get_level(res, self.tile_size)
-		else:
-			z = self.get_closest_level(res, self.tile_size)
-
-		res = self.resolutions[z]
-		x0 = (minx - self.extent[0]) / (res * self.tile_size[0])
-		y0 = (miny - self.extent[1]) / (res * self.tile_size[1])
-		
-		x = int(round(x0))
-		y = int(round(y0))
-		
-		tilex = ((x * res * self.tile_size[0]) + self.extent[0])
-		tiley = ((y * res * self.tile_size[1]) + self.extent[1])
-		if exact:
-			if (abs(minx - tilex)  / res > 1):
-				raise TileNotFoundException("Current x value %f is too far from tile corner x %f" % (minx, tilex))  
-			
-			if (abs(miny - tiley)  / res > 1):
-				raise TileNotFoundException("Current y value %f is too far from tile corner y %f" % (miny, tiley))  
-		
-		return (x, y, z)
-
-	def get_closest_cell (self, z, (minx, miny)):
-		res = self.resolutions[z]
-		maxx = minx + self.tile_size[0] * res
-		maxy = miny + self.tile_size[1] * res
-		return self.get_cell((minx, miny, maxx, maxy), False)
-
-	def get_tile (self, extent):
-		coord = self.get_cell(extent)
-		if not coord: return None
-		return Tile(self, *coord)
-
-	def contains (self, (x, y)):
-		return x >= self.extent[0] and x <= self.extent[2] \
-		   and y >= self.extent[1] and y <= self.extent[3]
-
 	def grid (self, z):
 		try:
-			width  = (self.extent[2] - self.extent[0]) / (self.resolutions[z] * self.tile_size[0])
-			height = (self.extent[3] - self.extent[1]) / (self.resolutions[z] * self.tile_size[1])
+			width  = (self.extent[2] - self.extent[0]) / (self.resolutions[z] * self.tile_size)
+			height = (self.extent[3] - self.extent[1]) / (self.resolutions[z] * self.tile_size)
 		except IndexError:
 			raise TileNotFoundException("Requested zoom level %s does not exist" % z)
 		return (width, height)
 
 	def format (self):
 		return "image/" + self.image_format
-	
-	def render_tile (self, tile):
-		# To be implemented by subclasses
-		pass 
-
-	def render (self, tile, force=False):
-		return self.render_tile(tile)
-
-class MetaLayer (Layer):
-	__slots__ = ('metasize', 'metabuffer')
-
-	def __init__ (self, project, publish, name, metasize = 5, metabuffer = 0, **kwargs):
-		Layer.__init__(self, project, publish, name, **kwargs)
-
-		self.metasize = (metasize, metasize)
-		self.metabuffer = (metabuffer, metabuffer)
 
 	def get_meta_size (self, z):
 		maxcol, maxrow = self.grid(z)
@@ -224,14 +115,14 @@ class MetaLayer (Layer):
 		image = Image.open( StringIO(data) )
 
 		meta_cols, meta_rows = self.get_meta_size(metatile.z)
-		meta_height = meta_rows * self.tile_size[1] + 2 * self.metabuffer[1]
+		meta_height = meta_rows * self.tile_size + 2 * self.metabuffer[1]
 		for i in range(meta_cols):
 			for j in range(meta_rows):
-				minx = i * self.tile_size[0] + self.metabuffer[0]
-				maxx = minx + self.tile_size[0]
+				minx = i * self.tile_size + self.metabuffer[0]
+				maxx = minx + self.tile_size
 				### this next calculation is because image origin is (top,left)
-				maxy = meta_height - (j * self.tile_size[1] + self.metabuffer[1])
-				miny = maxy - self.tile_size[1]
+				maxy = meta_height - (j * self.tile_size + self.metabuffer[1])
+				miny = maxy - self.tile_size
 				subimage = image.crop((minx, miny, maxx, maxy))
 				subimage.info = image.info
 				buffer = StringIO()

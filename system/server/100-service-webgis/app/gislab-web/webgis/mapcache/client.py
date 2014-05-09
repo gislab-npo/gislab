@@ -1,10 +1,5 @@
-#!/usr/bin/env python
-
 # BSD Licensed, Copyright (c) 2006-2008 MetaCarta, Inc.
 
-import sys
-import time
-import math
 import urllib
 import urllib2
 import httplib
@@ -15,7 +10,7 @@ class WMS (object):
 	default_params = {'VERSION': '1.1.1', 'REQUEST': 'GetMap', 'SERVICE': 'WMS'}
 	__slots__ = ("base_url", "params", "client", "data", "response", "base_url_params")
 
-	def __init__ (self, base, user=None, password=None):
+	def __init__ (self, base):
 		base = urllib.unquote(base)
 		if base[-1] not in "?&":
 			if "?" in base:
@@ -37,7 +32,7 @@ class WMS (object):
 		# request_params.update(self.base_url_params)
 		# request_params.update(params)
 		urlrequest = urllib2.Request(self.base_url + "?" + urllib.urlencode(request_params))
-		urlrequest.add_header("User-Agent", "TileGo")
+		urlrequest.add_header("User-Agent", "GIS.lab Web")
 		response = None
 		while response is None:
 			try:
