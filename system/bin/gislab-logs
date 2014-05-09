@@ -24,7 +24,13 @@ function usage() {
 	echo "Hit [CTRL-C] to exit!"
 	echo -e "\nOPTIONS
 	-n  number of lines to display from each log file on start (default 1)
-	-w  print also access logs from web services (HTTP boot, Mapserver and GIS.lab Web)
+	-s  print system and authentication logs
+	-e  print email service logs
+	-d  print database service logs
+	-m  print mapserver service logs
+	-w  print web services error logs
+	-W  print web services access and error logs
+	-c  print chat service logs 
 	-h  display this help
 	"
 	exit 255
@@ -33,11 +39,17 @@ function usage() {
 
 # options
 LOGLINES=1
-while getopts "n:wh" OPTION
+while getopts "n:sedmwWch" OPTION
 do
         case "$OPTION" in
 			n) LOGLINES="$OPTARG" ;;
-			w) WEB_ACCESS_LOGS="yes" ;;
+			s) SYSTEM="yes" ;;
+			e) EMAIL="yes" ;;
+			d) DATABASE="yes" ;;
+			m) MAPSERVER="yes" ;;
+			w) WEB="yes" ;;
+			W) WEB_ACCESS="yes" ;;
+			c) CHAT="yes" ;;
 			h) usage ;;
 			\?) exit 1 ;;
         esac
@@ -45,57 +57,109 @@ done
 shift $(($OPTIND - 1))
 
 
-# main log files
-LOGFILES="
-	/var/log/syslog
-	/var/log/auth.log
-"
-
 # log files of services in production mode
 if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
-	LOGFILES+="
-		/var/log/mail-error.log
+	LOGFILES_SYSTEM="
+		/var/log/syslog
+		/var/log/auth.log
+
 		/var/log/dhcpd-error.log
 		/var/log/ldap-error.log
+	"
+	
+	LOGFILES_EMAIL="
+		/var/log/mail-error.log
+	"
+
+	LOGFILES_DATABASE="
+		/var/log/postgresql/postgresql-error.log
+	"
+
+	LOGFILES_MAPSERVER="
+		/var/log/apache2/mapserver-error.log
+		/var/log/apache2/mapserver-access.log 
+	"
+
+	LOGFILES_WEB="
 		/var/log/apache2/error.log
 		/var/log/nginx/error.log
-		/var/log/postgresql/postgresql-error.log
-		/var/log/apache2/mapserver-error.log
 		/var/log/nginx/webgis-error.log
 		/var/log/webgis-error.log
-		/var/log/ircd/ircd-hybrid.log
 	"
 
 # log files of services in debug mode
 else
-	LOGFILES+="
+	LOGFILES_SYSTEM="
+		/var/log/syslog
+		/var/log/auth.log
+
+		/var/log/dhcpd-debug.log
 		/var/log/named/named-debug.log
-		/var/log/mail-debug.log
-		/var/log/dhcpd-debug.log	
 		/var/log/ldap-debug.log
+	"
+
+	LOGFILES_EMAIL="
+		/var/log/mail-debug.log
+	"
+
+	LOGFILES_DATABASE="
+		/var/log/postgresql/postgresql-debug.log
+	"
+
+	LOGFILES_MAPSERVER="
+		/var/log/apache2/mapserver-error.log
+		/var/log/apache2/mapserver-access.log 
+	"
+
+	LOGFILES_WEB="
 		/var/log/apache2/error.log
 		/var/log/nginx/error.log
-		/var/log/postgresql/postgresql-debug.log
-		/var/log/apache2/mapserver-error.log
 		/var/log/nginx/webgis-error.log
 		/var/log/webgis-debug.log
-		/var/log/ircd/ircd-hybrid.log
 	"
+
 fi
 
+# chat log file
+LOGFILES_CHAT="
+	/var/log/ircd/ircd-hybrid.log
+"
+
 # web services access log files
-WEB_ACCESS_LOGFILES="
+LOGFILES_WEB_ACCESS="
 	/var/log/apache2/access.log
 	/var/log/nginx/access.log
-	/var/log/apache2/mapserver-access.log 
 	/var/log/nginx/webgis-access.log 
 "
 
-if [ "$WEB_ACCESS_LOGS" == "yes" ]; then
-	LOGFILES+=$WEB_ACCESS_LOGFILES
+
+# collect log files
+LOGFILES=""
+if [ "$SYSTEM" == "yes" ]; then
+	LOGFILES+=$LOGFILES_SYSTEM
+fi
+if [ "$EMAIL" == "yes" ]; then
+	LOGFILES+=$LOGFILES_EMAIL
+fi
+if [ "$DATABASE" == "yes" ]; then
+	LOGFILES+=$LOGFILES_DATABASE
+fi
+if [ "$MAPSERVER" == "yes" ]; then
+	LOGFILES+=$LOGFILES_MAPSERVER
+fi
+if [ "$WEB" == "yes" ]; then
+	LOGFILES+=$LOGFILES_WEB
+fi
+if [ "$WEB_ACCESS" == "yes" ]; then
+	LOGFILES+=$LOGFILES_WEB
+	LOGFILES+=$LOGFILES_WEB_ACCESS
+fi
+if [ "$CHAT" == "yes" ]; then
+	LOGFILES+=$LOGFILES_CHAT
 fi
 
 
+# print logs
 tail -n $LOGLINES -f $LOGFILES
 
 
