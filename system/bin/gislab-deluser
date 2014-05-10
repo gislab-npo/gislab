@@ -94,11 +94,11 @@ sudo su - postgres -c "dropuser $GISLAB_USER"
 rm -rf /storage/share/$GISLAB_USER # NFS directory
 
 
-# run account plugins
-for plugin in /vagrant/user/plugins/account/*.*; do
-	gislab_print_info "Running account plugin '$(basename $plugin)'"
-	GISLAB_ACCOUNT_ACTION="remove" GISLAB_USER=$GISLAB_USER $plugin
-	echo "$(gislab_config_header)" >> /etc/gislab/account-plugin-$(basename $plugin).done
+# run account hooks
+for hook in /vagrant/user/plugins/account/*.*; do
+	gislab_print_info "Running account hooks '$(basename $hook)'"
+	GISLAB_ACCOUNT_ACTION="remove" GISLAB_USER=$GISLAB_USER $hook
+	echo "$(gislab_config_header)" >> /etc/gislab/account-hook-$(basename $hook).done
 done
 
 gislab_print_info "Account '$GISLAB_USER' removed"

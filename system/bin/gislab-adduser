@@ -216,11 +216,11 @@ find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER##/$GISLAB_USER/g" 
 find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER_PASSWORD##/$GISLAB_USER_PASSWORD/g" "{}" \;
 
 
-# run account plugins
-for plugin in /vagrant/user/plugins/account/*.*; do
-	gislab_print_info "Running account plugin '$(basename $plugin)'"
-	GISLAB_ACCOUNT_ACTION="add" GISLAB_USER=$GISLAB_USER $plugin
-	echo "$(gislab_config_header)" >> /etc/gislab/account-plugin-$(basename $plugin).done
+# run account hooks
+for hook in /vagrant/user/plugins/account/*.*; do
+	gislab_print_info "Running account hook '$(basename $hook)'"
+	GISLAB_ACCOUNT_ACTION="add" GISLAB_USER=$GISLAB_USER $hook
+	echo "$(gislab_config_header)" >> /etc/gislab/account-hook-$(basename $hook).done
 done
 
 gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"
