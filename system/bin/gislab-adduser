@@ -46,7 +46,7 @@ do
 			m) GISLAB_USER_MAIL=$OPTARG ;;
 			p) GISLAB_USER_PASSWORD=$OPTARG ;;
 			s) SUDO=yes ;;
-			h) usage ; exit 0 ;;
+			h) usage ;;
 			\?) exit 1 ;;
         esac
 done
