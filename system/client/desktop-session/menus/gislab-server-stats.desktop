@@ -2,7 +2,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=GIS.lab server statistics
+Name=GIS.lab Server Statistics
 Comment=GIS.lab server system statistics
 Exec=firefox "http://stats.gis.lab"
 Icon=
