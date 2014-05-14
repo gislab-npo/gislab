@@ -11,7 +11,7 @@ gislab_config_header () {
 		c="$1"
 	fi
 
-	echo "${c} This file was created or modified by GIS.lab version $GISLAB_VERSION on $(date)."
+	echo "${c} This file was created or modified by GIS.lab $GISLAB_VERSION on $(date)."
 
 }
 

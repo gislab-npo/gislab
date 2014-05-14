@@ -21,7 +21,7 @@ sudo rm -rf /etc/update-motd.d/10-help-text
 sudo rm -rf /etc/update-motd.d/51-cloudguest
 sudo rm -rf /etc/update-motd.d/98-cloudguest
 
-sed -i "s/Welcome to.*/Welcome to GIS.lab ID: $GISLAB_UNIQUE_ID, ver.: $GISLAB_VERSION.\"/" /etc/update-motd.d/00-header
+sed -i "s/Welcome to.*/Welcome to GIS.lab $GISLAB_VERSION ID: $GISLAB_UNIQUE_ID.\"/" /etc/update-motd.d/00-header
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:
