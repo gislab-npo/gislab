@@ -102,6 +102,9 @@
 			<Include>
 				<Filename>gislab-documentation-quickstart.desktop</Filename>
 			</Include>
+			<Include>
+				<Filename>gislab-documentation-user.desktop</Filename>
+			</Include>
 		</Menu>
 		<Include>
 			<Filename>gislab-webgis.desktop</Filename>

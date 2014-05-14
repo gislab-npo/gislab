@@ -2,11 +2,11 @@
 Version=1.0
 Type=Application
 Name=Quick Start
-Comment=GIS.lab Quick Start manual
-Exec=firefox "https://github.com/imincik/gis-lab/wiki/Quick-Start#wiki-gislab-project"
+Comment=GIS.lab quick start manual
+Exec=/usr/local/bin/gislab-documentation quick_start
 Icon=
 Path=
 Terminal=false
 StartupNotify=false
-Name[sk]=Rýchly štart
+Name[sk]=Rýchly štart GIS.lab
 Comment[sk]=Rýchly štart GIS.lab
