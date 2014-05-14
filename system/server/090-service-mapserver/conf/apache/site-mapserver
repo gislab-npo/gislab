@@ -28,12 +28,6 @@
 		</files>
 	</Directory>
 
-	ExpiresActive on
-	ExpiresByType image/jpg "access plus 1 hours"
-	ExpiresByType image/png "access plus 1 hours"
-	ExpiresByType image/gif "access plus 1 hours"
-	ExpiresByType image/jpeg "access plus 1 hours"
-
 	ErrorLog ${APACHE_LOG_DIR}/mapserver-error.log
 	CustomLog ${APACHE_LOG_DIR}/mapserver-access.log combined
 
