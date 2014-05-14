@@ -20,7 +20,7 @@ gislab_require_root
 # usage
 function usage() {
 	echo "USAGE: $(basename $0) [OPTIONS] username"
-	echo "Create GIS.lab user account."
+	echo "Create GIS.lab user account. User name can contain only lower case digits and numbers."
 	echo -e "\nOPTIONS
 	-g first name (required)
 	-l last name (required)
@@ -47,7 +47,7 @@ do
 			p) GISLAB_USER_PASSWORD=$OPTARG ;;
 			s) SUDO=yes ;;
 			h) usage ; exit 0 ;;
-			\?) exit 1;;
+			\?) exit 1 ;;
         esac
 done
 shift $(($OPTIND - 1))
@@ -58,9 +58,20 @@ if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_US
 fi
 
 GISLAB_USER=$1
+# sanity checks
 if id -u $GISLAB_USER > /dev/null 2>&1; then
 	gislab_print_error "User '$GISLAB_USER' already exists"
-	exit 0
+	exit 1
+fi
+
+if ! [[ "$GISLAB_USER" =~ ^[a-z][a-z0-9]*$ ]]; then
+	gislab_print_error "Invalid characters in user name"
+	exit 1
+fi
+
+if ! [[ "$GISLAB_USER_MAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
+	gislab_print_error "Invalid e-mail address format"
+	exit 1
 fi
 
 GISLAB_USER_COMMON_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
