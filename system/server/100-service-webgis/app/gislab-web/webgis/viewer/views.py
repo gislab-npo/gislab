@@ -10,6 +10,7 @@ import os.path
 import urllib
 import urllib2
 import hashlib
+import datetime
 import contextlib
 from urlparse import parse_qs, urlsplit, urlunsplit
 import xml.etree.ElementTree as etree
@@ -301,6 +302,11 @@ def page(request):
 			'organization': metadata.contact_organization,
 			'abstract': metadata.abstract
 		})
+		if metadata.message:
+			valid_until = datetime.datetime.strptime(metadata.message['valid_until'], "%d.%m.%Y").date()
+			today = datetime.date.today()
+			if today <= valid_until:
+				context['message'] = metadata.message['text']
 	else:
 		context.update({
 			'root_title': 'Empty Project',
