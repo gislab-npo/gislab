@@ -105,7 +105,13 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 				}
 			);
 		} else if (layer_config.type == 'OSM') {
-			layer = new OpenLayers.Layer.OSM();
+			layer = new OpenLayers.Layer.OSM(
+				layer_config.name, '', {
+					zoomOffset: layer_config.min_zoom_level,
+					resolutions: layer_config.resolutions,
+					wrapDateLine: true
+				}
+			);
 		} else if (layer_config.type == 'google') {
 			var google_map = layer_config.name.slice(1);
 			layer = new OpenLayers.Layer.Google(
@@ -113,6 +119,9 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 				{
 					type: google.maps.MapTypeId[google_map],
 					mapTypeId: google_map,
+					minZoomLevel: layer_config.min_zoom_level,
+					maxZoomLevel: layer_config.max_zoom_level,
+					wrapDateLine: true,
 				}
 			);
 		} else if (layer_config.type == 'WMS') {
