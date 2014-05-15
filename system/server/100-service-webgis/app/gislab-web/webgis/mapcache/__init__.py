@@ -16,7 +16,7 @@ from webgis.mapcache.caches.disk import Disk
 
 def get_tile_response(layer, z=0, x=0, y=0):
 	tile = Tile(layer, int(x), int(y), int(z))
-	cache = Disk(base=os.path.join(settings.MEDIA_ROOT, 'cache'), sendfile=False)
+	cache = Disk(base=os.path.join(settings.MEDIA_ROOT, 'cache'))
 	layer.cache = cache
 
 	image = cache.get(tile)
@@ -25,10 +25,6 @@ def get_tile_response(layer, z=0, x=0, y=0):
 		if not data:
 			raise Exception("Zero length data returned from layer.")
 	layer = tile.layer
-	if layer.cache.sendfile:
-		resp = HttpResponse('', content_type="image/"+layer.image_format)
-		resp['X-SendFile'] = tile.data
-	else:
-		resp = HttpResponse(tile.data, content_type="image/"+layer.image_format)
-		#resp['Content-Length'] = len(image)
+	resp = HttpResponse(tile.data, content_type=layer.format())
+	#resp['Content-Length'] = len(image)
 	return resp

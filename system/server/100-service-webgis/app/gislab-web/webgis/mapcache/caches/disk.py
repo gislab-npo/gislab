@@ -52,17 +52,12 @@ class Disk (Cache):
 	def get (self, tile):
 		filename = self.get_key(tile)
 		if self.access(filename, 'read'):
-			if self.sendfile:
-				return filename
-			else:
-				tile.data = file(filename, "rb").read()
-				return tile.data
+			tile.data = file(filename, "rb").read()
+			return tile.data
 		else:
 			return None
 
 	def set (self, tile, data):
-		if self.readonly: return data
-
 		filename = self.get_key(tile)
 		dirname  = os.path.dirname(filename)
 		if not self.access(dirname, 'write'):

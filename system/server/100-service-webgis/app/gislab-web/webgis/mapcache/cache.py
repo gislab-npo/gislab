@@ -2,11 +2,9 @@
 import time
 
 class Cache (object):
-	def __init__ (self, timeout = 30.0, stale_interval = 300.0, readonly = False, sendfile = False, **kwargs):
+	def __init__ (self, timeout = 30.0, stale_interval = 300.0, **kwargs):
 		self.stale	  = float(stale_interval)
 		self.timeout = float(timeout)
-		self.readonly = readonly
-		self.sendfile = sendfile
 
 	def lock (self, tile, blocking = True):
 		start_time = time.time()
