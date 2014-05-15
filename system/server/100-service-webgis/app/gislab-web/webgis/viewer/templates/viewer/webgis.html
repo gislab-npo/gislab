@@ -396,11 +396,21 @@
 					title: '{% trans "Properties" %}',
 					autoScroll: true,
 					html: '<div class="x-panel-body-text"> \
-							<p><b>{% trans "Author" %}: </b>{{ author }}</p> \
-							<p><b>{% trans "E-mail" %}: </b>{{ email }}</p> \
-							<p><b>{% trans "Organization" %}: </b>{{ organization }}</p> \
-							<p><b>{% trans "Abstract" %}: </b>{{ abstract }}</p> \
-							{% if not user.is_guest %}<p><b>{% trans "WMS URL" %}: </b><a href="{{ wms_url }}" target="_blank">copy link location</a></p>{% endif %}</div>'
+							<p><label>{% trans "Author" %}: </label>{{ author }}</p> \
+							<p><label>{% trans "E-mail" %}: </label>{{ email }}</p> \
+							<p><label>{% trans "Organization" %}: </label>{{ organization }}</p> \
+							<p><label>{% trans "Abstract" %}: </label>{{ abstract }}</p> \
+							{% if not user.is_guest %}<p><label>{% trans "WMS URL" %}: </label><a href="{{ wms_url }}" target="_blank">copy link location</a></p>{% endif %}</div>'
+				});
+
+				// properties
+				var about_panel = new Ext.Panel({
+					title: '{% trans "About" %}',
+					autoScroll: true,
+					html: '<div class="x-panel-body-text"> \
+							<p><label>{% trans "GIS.lab ID" %}: </label>{{ gislab_unique_id }}</p> \
+							<p><label>{% trans "GIS.lab version" %}: </label>{{ gislab_version }}</p> \
+							<p><label>{% trans "WWW" %}: </label><a href="http://imincik.github.io/gis-lab">http://imincik.github.io/gis-lab</a></p></div>'
 				});
 
 				// legend and properties panel
@@ -408,7 +418,8 @@
 					activeTab: 0,
 					items: [
 						layer_legend,
-						properties
+						properties,
+						about_panel
 					]
 				});
 

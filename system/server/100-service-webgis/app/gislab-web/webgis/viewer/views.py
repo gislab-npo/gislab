@@ -4,6 +4,7 @@ Author: Ivan Mincik, ivan.mincik@gmail.com
 Author: Marcel Dancak, marcel.dancak@gista.sk
 """
 
+import re
 import json
 import os.path
 import urllib
@@ -35,6 +36,19 @@ GOOGLE_LAYERS = {
 	'GSATELLITE': {'name': 'GSATELLITE', 'type': 'google', 'title': 'Google Satellite'},
 	'GTERRAIN': {'name': 'GTERRAIN', 'type': 'google', 'title': 'Google Terrain'},
 }
+
+GISLAB_VERSION = {}
+try:
+	with open('/etc/gislab_version', 'r') as f:
+		param_pattern = re.compile("\s*(\w+)\s*\=\s*'([^']*)'")
+		for line in f:
+			match = param_pattern.match(line)
+			if match:
+				name, value = match.groups()
+				GISLAB_VERSION[name] = value
+except IOError:
+	pass
+
 
 def _get_tile_resolutions(scales, units, dpi=96):
 	"""Helper function to compute OpenLayers tile resolutions."""
@@ -305,6 +319,9 @@ def page(request):
 				break
 	context['google'] = google
 	context['drawings'] = form.cleaned_data['drawings']
+
+	context['gislab_unique_id'] = GISLAB_VERSION.get('GISLAB_UNIQUE_ID', 'unknown')
+	context['gislab_version'] = GISLAB_VERSION.get('GISLAB_VERSION', 'unknown')
 
 	if settings.DEBUG:
 		context['debug'] = True

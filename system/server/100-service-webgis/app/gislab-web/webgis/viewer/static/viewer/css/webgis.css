@@ -79,6 +79,15 @@
 	font-size: 11px;
 }
 
+.x-panel-body-text label {
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.x-panel-body-text p {
+	margin-top: 8px;
+}
+
 .featureinfo-icon {
 	background-image: url('../images/toolbar/information.png')!important;
 	background: no-repeat;
