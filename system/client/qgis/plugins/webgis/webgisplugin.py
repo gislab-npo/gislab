@@ -426,11 +426,16 @@ class WebGisPlugin:
 		default_baselayer = self.dialog.default_baselayer.itemData(self.dialog.default_baselayer.currentIndex())
 		def base_layers_data(node):
 			if node.children:
-				sublayers_data = [base_layers_data(child) for child in node.children]
-				return {
-					'name': node.name,
-					'layers': sublayers_data
-				}
+				sublayers_data = []
+				for child in node.children:
+					sublayer_data = base_layers_data(child)
+					if sublayer_data:
+						sublayers_data.append(sublayer_data)
+				if sublayers_data:
+					return {
+						'name': node.name,
+						'layers': sublayers_data
+					}
 			else:
 				layer = node.layer
 				source_params = parse_qs(layer.source())
@@ -453,6 +458,8 @@ class WebGisPlugin:
 				layer_resolutions = layer.dataProvider().property('resolutions')
 				if layer_resolutions:
 					layer_resolutions = publish_resolutions(self._wmsc_layer_resolutions(layer, units))
+					if not layer_resolutions:
+						return None
 					min_resolution = layer_resolutions[-1]
 					max_resolution = layer_resolutions[0]
 					upper_resolutions = filter(lambda res: res > max_resolution, project_tile_resolutions)
@@ -487,6 +494,13 @@ class WebGisPlugin:
 			special_base_layer['visible'] = special_base_layer['name'] == default_baselayer
 			if 'resolutions' not in special_base_layer:
 				special_base_layer['resolutions'] = project_tile_resolutions
+			else:
+				layer_resolutions = special_base_layer['resolutions']
+				visible_resolutions = publish_resolutions(special_base_layer['resolutions'])
+				special_base_layer['resolutions'] = visible_resolutions
+				special_base_layer['min_zoom_level'] = layer_resolutions.index(visible_resolutions[0])
+				special_base_layer['max_zoom_level'] = layer_resolutions.index(visible_resolutions[-1])
+
 			if 'extent' not in special_base_layer:
 				special_base_layer['extent'] = metadata['extent']
 			base_layers_metadata['layers'].insert(0, special_base_layer)
