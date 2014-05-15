@@ -279,6 +279,7 @@ def page(request):
 			'ows_url': ows_url,
 			'wms_url': set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
 			'project_extent': metadata.extent,
+			'zoom_extent': form.cleaned_data['extent'] or metadata.zoom_extent,
 			'print_composers': metadata.composer_templates,
 			'root_title': metadata.title,
 			'author': metadata.contact_person,
@@ -293,6 +294,7 @@ def page(request):
 			'projection': 'EPSG:3857',
 			'units': 'dd'
 		})
+		context['zoom_extent'] = form.cleaned_data['extent'] or context['project_extent']
 		context['base_layers'] = json.dumps([OSM_LAYER, GOOGLE_LAYERS['GHYBRID']])
 
 	google = False
@@ -302,7 +304,6 @@ def page(request):
 				google = True
 				break
 	context['google'] = google
-	context['zoom_extent'] = form.cleaned_data['extent'] or context['project_extent']
 	context['drawings'] = form.cleaned_data['drawings']
 
 	if settings.DEBUG:

@@ -347,53 +347,10 @@ class WebGisPlugin:
 			json.dump(self.metadata, f, indent=2, default=decimal_default)
 
 		if self.dialog.open_in_browser.isChecked():
-			zoom_extent = [round(coord, 3) for coord in self.iface.mapCanvas().extent().toRectF().getCoords()]
-			get_params = [('PROJECT', self._get_publish_project_name()), ('EXTENT', ','.join(map(str, zoom_extent)))]
+			get_params = [('PROJECT', self._get_publish_project_name())]
 			drawings = self.dialog.drawings.text()
 			if drawings:
 				get_params.append(('DRAWINGS', drawings.replace(" ", "")))
-
-			base_layers_tree, overlay_layers_tree = self._get_project_layers()
-
-			default_baselayer = self.dialog.default_baselayer.itemData(self.dialog.default_baselayer.currentIndex())
-
-			# encode layers grouped by their parents
-			def encode_layers_group(layers_nodes):
-				categories = []
-				node = layers_nodes[0]
-				while node.parent:
-					categories.insert(0, node.parent.name)
-					node = node.parent
-				location = "/".join(categories) if categories else "/"
-				encoded_layers = ["{0}:{1}".format(node.layer.name(), "1" if node.layer.name() == default_baselayer else "0") for node in layers_nodes]
-				return "{0}/{1}".format(location, ";".join(encoded_layers))
-
-			# find largest groups of sibling nodes and encode them for BASE parameter value
-			base_param_parts = []
-			if base_layers_tree:
-				base_group = []
-				def base_node_callback(node):
-					if not node.children:
-						base_group.append(node)
-					else:
-						if base_group:
-							base_param_parts.append(encode_layers_group(base_group))
-							del base_group[:]
-						for child in node.children:
-							base_node_callback(child)
-						if base_group:
-							base_param_parts.append(encode_layers_group(base_group))
-							del base_group[:]
-				base_node_callback(base_layers_tree)
-
-			special_base_layers = [baselayer for baselayer in self.metadata['base_layers'] if baselayer['type'] in ('BLANK', 'OSM', 'google')]
-			if special_base_layers:
-				encoded_layers = ["{0}:{1}".format(special_base_layer['name'], "1" if special_base_layer['name'] == default_baselayer else "0") for special_base_layer in special_base_layers]
-				base_param_parts.insert(0, "/{0}".format(";".join(encoded_layers)))
-
-			base_param = ";".join(base_param_parts)
-			if base_param:
-				get_params.append(('BASE', base_param))
 
 			link = '{0}?{1}'.format(GISLAB_WEB_URL, urlencode(get_params))
 			subprocess.Popen([r'firefox', '-new-tab', link])
@@ -423,6 +380,7 @@ class WebGisPlugin:
 		canvas_color = map_canvas.canvasColor()
 		metadata.update({
 			'extent': extent_to_list(map_canvas.fullExtent()),
+			'zoom_extent': [round(coord, 3) for coord in self.iface.mapCanvas().extent().toRectF().getCoords()],
 			'projection': map_canvas.mapRenderer().destinationCrs().authid(),
 			'selection_color': '{0}{1:02x}'.format(selection_color.name(), selection_color.alpha()),
 			'canvas_color': '{0}{1:02x}'.format(canvas_color.name(), canvas_color.alpha()),
@@ -443,7 +401,7 @@ class WebGisPlugin:
 			if dialog.osm.isChecked():
 				special_base_layers.append(dict(OSM_LAYER))
 			if dialog.google.currentIndex() > 0:
-				special_base_layers.append(GOOGLE_LAYERS[dialog.google.currentIndex()-1])
+				special_base_layers.append(dict(GOOGLE_LAYERS[dialog.google.currentIndex()-1]))
 
 		min_resolution = self.dialog.min_scale.itemData(self.dialog.min_scale.currentIndex())
 		max_resolution = self.dialog.max_scale.itemData(self.dialog.max_scale.currentIndex())
@@ -465,6 +423,7 @@ class WebGisPlugin:
 		metadata['tile_resolutions'] = project_tile_resolutions
 
 		# create base layers metadata
+		default_baselayer = self.dialog.default_baselayer.itemData(self.dialog.default_baselayer.currentIndex())
 		def base_layers_data(node):
 			if node.children:
 				sublayers_data = [base_layers_data(child) for child in node.children]
@@ -478,7 +437,7 @@ class WebGisPlugin:
 				layer_data = {
 					'name': layer.name(),
 					'provider_type': layer.providerType(),
-					'visible': legend_iface.isLayerVisible(layer),
+					'visible': layer.name() == default_baselayer,
 					'extent': extent_to_list(map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent())),
 					'wms_layers': source_params['layers'][0].split(','),
 					'projection': source_params['crs'][0],
@@ -525,6 +484,7 @@ class WebGisPlugin:
 
 		# insert special base layers metadata
 		for special_base_layer in reversed(special_base_layers):
+			special_base_layer['visible'] = special_base_layer['name'] == default_baselayer
 			if 'resolutions' not in special_base_layer:
 				special_base_layer['resolutions'] = project_tile_resolutions
 			if 'extent' not in special_base_layer:
