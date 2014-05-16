@@ -21,6 +21,7 @@
 		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/ext-all.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/lib/OpenLayers-2.13/OpenLayers.js' %}"></script>
 		{% endif %}
+		<script type="text/javascript" src="{% static 'viewer/lib/md5.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/lib/extensions/Spinner.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/lib/extensions/SpinnerField.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/lib/GeoExt-1.1/GeoExt.js' %}"></script>
@@ -69,7 +70,7 @@
 					if (OpenLayers.Util.isArray(url)) {
 						url = this.selectUrl(path, url);
 					}
-					return url + path+'?'+Ext.urlEncode({project: this.project});
+					return url + path+'?'+Ext.urlEncode({project: this.project, layers: this.wms_layers});
 				}
 			});
 

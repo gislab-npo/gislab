@@ -36,7 +36,8 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		if (this.layer.CLASS_NAME == 'OpenLayers.Layer.WMS') {
 			this.layer.mergeNewParams({LAYERS: [].concat(visible_layers).reverse()});
 		} else if (this.layer.CLASS_NAME == 'OpenLayers.Layer.TMS') {
-			this.layer.layername = [].concat(visible_layers).reverse().join(',');
+			this.layer.wms_layers = [].concat(visible_layers).reverse().join(',');
+			this.layer.layername = CryptoJS.MD5(this.layer.wms_layers).toString();
 			this.layer.mergeNewParams();// to update legend
 		}
 		this.fireEvent('layerchange', this, this.layer, visible_layers);

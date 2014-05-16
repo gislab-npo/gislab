@@ -128,16 +128,16 @@ def ows_request(request):
 
 
 @login_required
-def tile(request, project_hash, publish, layers=None, z=None, x=None, y=None, format=None):
+def tile(request, project_hash, publish, layers_hash=None, z=None, x=None, y=None, format=None):
 	project = request.GET['project']
 	layer_params = get_project_layers_info(project_hash, publish, project=project)
 	try:
 		layer = WmsLayer(
 			project=project_hash,
 			publish=publish,
-			name=layers,
+			name=layers_hash,
+			provider_layers=request.GET['layers'].encode("utf-8"),
 			provider_url=set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
-			#provider_image_format="tiff",
 			image_format=format,
 			tile_size=256,
 			metasize=5,
@@ -285,7 +285,7 @@ def page(request):
 			if not project_layers_info:
 				store_project_layers_info(project_hash, metadata.publish_date_unix, metadata.extent, project_tile_resolutions, metadata.projection)
 
-			mapcache_url = reverse('viewer:tile', kwargs={'project_hash': project_hash, 'publish': metadata.publish_date_unix, 'layers': '__layers__', 'x': 0, 'y': 0, 'z': 0, 'format': 'png'})
+			mapcache_url = reverse('viewer:tile', kwargs={'project_hash': project_hash, 'publish': metadata.publish_date_unix, 'layers_hash': '__layers__', 'x': 0, 'y': 0, 'z': 0, 'format': 'png'})
 			mapcache_url = mapcache_url.split('/__layers__/')[0]+'/'
 			context['mapcache_url'] = mapcache_url
 
