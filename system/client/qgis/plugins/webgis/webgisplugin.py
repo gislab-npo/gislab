@@ -756,6 +756,8 @@ class WebGisPlugin:
 
 
 	def _update_min_max_scales(self, resolutions):
+		if not resolutions:
+			resolutions = get_tile_resolutions(DEFAULT_PROJECT_SCALES, self._map_units())
 		resolutions = sorted(resolutions, reverse=True)
 		scales = get_scales_from_resolutions(resolutions, self._map_units())
 		old_min_resolution = self.dialog.min_scale.itemData(self.dialog.min_scale.currentIndex()) if self.dialog.min_scale.currentIndex() != -1 else None
