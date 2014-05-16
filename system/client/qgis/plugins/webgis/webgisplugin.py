@@ -103,10 +103,6 @@ def get_scales_from_resolutions(resolutions, units, dpi=96):
 	return [int(round(resolution/monitor_l)) for resolution in resolutions]
 
 
-def extent_to_list(extent):
-	return [extent.xMinimum(), extent.yMinimum(), extent.xMaximum(), extent.yMaximum()]
-
-
 GISLAB_WEB_URL = 'http://web.gis.lab/'
 
 DEFAULT_PROJECT_SCALES = (10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500)
@@ -378,8 +374,10 @@ class WebGisPlugin:
 		renderer_context = map_canvas.mapRenderer().rendererContext()
 		selection_color = renderer_context.selectionColor()
 		canvas_color = map_canvas.canvasColor()
+
+		extent_layer = dialog.extent_layer.itemData(dialog.extent_layer.currentIndex())
 		metadata.update({
-			'extent': extent_to_list(map_canvas.fullExtent()),
+			'extent': map_canvas.mapRenderer().layerExtentToOutputExtent(extent_layer, extent_layer.extent()).toRectF().getCoords(),
 			'zoom_extent': [round(coord, 3) for coord in self.iface.mapCanvas().extent().toRectF().getCoords()],
 			'projection': map_canvas.mapRenderer().destinationCrs().authid(),
 			'selection_color': '{0}{1:02x}'.format(selection_color.name(), selection_color.alpha()),
@@ -443,7 +441,7 @@ class WebGisPlugin:
 					'name': layer.name(),
 					'provider_type': layer.providerType(),
 					'visible': layer.name() == default_baselayer,
-					'extent': extent_to_list(map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent())),
+					'extent': map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords(),
 					'wms_layers': source_params['layers'][0].split(','),
 					'projection': source_params['crs'][0],
 					'format': source_params['format'][0],
@@ -528,7 +526,7 @@ class WebGisPlugin:
 				layer_data = {
 					'name': layer.name(),
 					'provider_type': layer.providerType(),
-					'extent': extent_to_list(map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent())),
+					'extent': map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords(),
 					'visible': legend_iface.isLayerVisible(layer),
 					'queryable': layer.id() not in non_identifiable_layers,
 					'drawing_order': overlays_order.index(layer.id())
@@ -856,6 +854,8 @@ class WebGisPlugin:
 		for layer in self.iface.legendInterface().layers():
 			if self._is_base_layer_for_publish(layer):
 				dialog.default_baselayer.addItem(layer.name(), layer.name())
+			if self._is_base_layer_for_publish(layer) or self._is_overlay_layer_for_publish(layer):
+				dialog.extent_layer.addItem(layer.name(), layer)
 
 		dialog.message_valid_until.setDate(datetime.date.today() + datetime.timedelta(days=1))
 		self._check_publish_constrains()
