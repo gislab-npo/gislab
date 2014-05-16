@@ -16,6 +16,7 @@ set following project configurations:
    file to same directory
  * on-the-fly CRS transformation must be enabled (File > Project Properties > CRS) and target projection
    must be chosen (if You are not sure chose EPSG:3857)
+ * to use "Zoom to feature" and "Export to drawings" tools, "Add geometry to feature response" must be enabled (Properties > OWS server)
 
 save project to '~/Share/<USERNAME>' directory
 
