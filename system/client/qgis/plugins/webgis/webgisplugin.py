@@ -649,7 +649,7 @@ class WebGisPlugin:
 				if 'min_resolution' in layer_data:
 					resolutions = filter(lambda res: res >= layer_data['min_resolution'] and res <= layer_data['max_resolution'], resolutions)
 				scales = get_scales_from_resolutions(resolutions, self._map_units())
-				layer_summary = """<h4>{0}</h4>
+				layer_summary = u"""<h4>{0}</h4>
 					<ul>
 						<li><label>Extent:</label> {1}</li>
 						<li><label>Visible resolutions:</label> {2}</li>
@@ -669,7 +669,7 @@ class WebGisPlugin:
 				for sublayer_data in sublayers:
 					collect_overlays_summary(sublayer_data)
 			else:
-				layer_summary = """<h4>{0}</h4>
+				layer_summary = u"""<h4>{0}</h4>
 					<ul>
 						<li><label>Visible:</label> {1}</li>
 						<li><label>Queryable:</label> {2}</li>
@@ -681,12 +681,12 @@ class WebGisPlugin:
 
 		for layer_data in metadata['overlays']:
 			collect_overlays_summary(layer_data)
-		data['OVERLAY_LAYERS'] = '\n'.join(overlays_summary)
+		data['OVERLAY_LAYERS'] = u'\n'.join(overlays_summary)
 
 		print_composers = []
 		for composer_data in metadata['composer_templates']:
-			print_composers.append('<li>{0} ( {1} x {2}mm )</li>'.format(composer_data['name'], int(round(composer_data['width'])), int(round(composer_data['height']))))
-		data['PRINT_COMPOSERS'] = '\n'.join(print_composers)
+			print_composers.append(u'<li>{0} ( {1} x {2}mm )</li>'.format(composer_data['name'], int(round(composer_data['width'])), int(round(composer_data['height']))))
+		data['PRINT_COMPOSERS'] = u'\n'.join(print_composers)
 
 		html = u"""<html>
 			<head>
