@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>938</width>
-    <height>747</height>
+    <width>975</width>
+    <height>819</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,8 +34,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>885</width>
-         <height>655</height>
+         <width>922</width>
+         <height>695</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -189,14 +189,14 @@ QGroupBox::title {
            <property name="fieldGrowthPolicy">
             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
            </property>
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="label_mapcache">
              <property name="text">
               <string>Use cache</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="1" column="1">
             <widget class="QCheckBox" name="use_mapcache">
              <property name="text">
               <string/>
@@ -206,27 +206,27 @@ QGroupBox::title {
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="3" column="0">
             <widget class="QLabel" name="label_min_scale">
              <property name="text">
               <string>Minimum scale</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="3" column="1">
             <widget class="QComboBox" name="min_scale"/>
            </item>
-           <item row="2" column="0">
+           <item row="4" column="0">
             <widget class="QLabel" name="label_max_scale">
              <property name="text">
               <string>Maximum scale</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="4" column="1">
             <widget class="QComboBox" name="max_scale"/>
            </item>
-           <item row="3" column="0">
+           <item row="5" column="0">
             <widget class="QLabel" name="label_drawings">
              <property name="font">
               <font>
@@ -243,8 +243,18 @@ QGroupBox::title {
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
+           <item row="5" column="1">
             <widget class="QLineEdit" name="drawings"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_extent_layer">
+             <property name="text">
+              <string>Project extent by layer</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="extent_layer"/>
            </item>
           </layout>
          </widget>
