@@ -524,8 +524,6 @@ action = new Ext.Action({
 			searchWindow.alignTo(mappanel.getTopToolbar().getId(), 'bl', [70, 4]);
 		} else {
 			searchWindow.hide();
-			//Ext.getCmp('featureinfo-panel').clearFeaturesLayers();
-			Ext.getCmp('featureinfo-panel').collapse();
 		}
 	},
 });

@@ -195,6 +195,10 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 			this.expand(false);
 			this.featureinfo_tabpanel.setActiveTab(0);
 			this.featureinfo_tabpanel.doLayout();
+		} else {
+			if (this.collapsed) {
+				this.expand(false);
+			}
 		}
 	},
 	listeners: {
