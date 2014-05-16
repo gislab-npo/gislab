@@ -521,8 +521,6 @@ class WebGisPlugin:
 				}
 			elif node.layer:
 				layer = node.layer
-				transformation = map_canvas.mapRenderer().transformation(layer)
-				extent = transformation.transformBoundingBox(layer.extent())
 				layer_data = {
 					'name': layer.name(),
 					'provider_type': layer.providerType(),
