@@ -509,6 +509,7 @@ class WebGisPlugin:
 
 		non_identifiable_layers = self.project.readListEntry("Identify", "/disabledLayers")[0] or []
 
+		overlays_order = [layer.id() for layer in legend_iface.layers() if self._is_overlay_layer_for_publish(layer)]
 		def create_overlays_data(node):
 			sublayers = []
 			for child in node.children:
@@ -529,7 +530,8 @@ class WebGisPlugin:
 					'provider_type': layer.providerType(),
 					'extent': extent_to_list(map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent())),
 					'visible': legend_iface.isLayerVisible(layer),
-					'queryable': layer.id() not in non_identifiable_layers
+					'queryable': layer.id() not in non_identifiable_layers,
+					'drawing_order': overlays_order.index(layer.id())
 				}
 				if layer.attribution():
 					layer_data['attribution'] = {

@@ -146,23 +146,31 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		this.attributes.checked = groupChecked;
 	},
 
+	orderedLayersNames: function(layers_nodes) {
+		layers_nodes.sort(function(l1, l2) {return l1.attributes.config.drawing_order-l2.attributes.config.drawing_order});
+		var names = [];
+		Ext.each(layers_nodes, function(node) {
+			names.push(node.attributes.text);
+		});
+		return names;
+	},
 	getVisibleLayers: function() {
-		var layers_names = [];
+		var layers_nodes = [];
 		this.cascade(function(node) {
 			if (node.isLeaf() && node.attributes.checked) {
-				layers_names.push(node.attributes.text)
+				layers_nodes.push(node)
 			}
 		}, this);
-		return layers_names;
+		return this.orderedLayersNames(layers_nodes);
 	},
 	getAllLayers: function() {
-		var layers_names = [];
+		var layers_nodes = [];
 		this.cascade(function(node) {
 			if (node.isLeaf()) {
-				layers_names.push(node.attributes.text)
+				layers_nodes.push(node)
 			}
 		}, this);
-		return layers_names;
+		return this.orderedLayersNames(layers_nodes);
 	},
 	getEncodedLayersParam: function() {
 		var encode_layers_set = function(layers_nodes) {
