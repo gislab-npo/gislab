@@ -2,10 +2,10 @@
 Version=1.0
 Type=Application
 Name=Personal Geo Database
-Comment=SpatiaLite database management
+Comment=Advanced SpatiaLite database management
 Exec=/usr/bin/spatialite-gui
 Path=
 Terminal=false
 StartupNotify=false
 Name[sk]=Osobná geodatabáza
-Comment[sk]=Správa databázy SpatiaLite
+Comment[sk]=Pokročilá správa databázy SpatiaLite
