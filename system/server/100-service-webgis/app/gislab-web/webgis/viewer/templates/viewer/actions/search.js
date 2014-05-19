@@ -39,30 +39,38 @@ var searchWindow = new Ext.Window({
 		}
 	},
 	onLayerChanged: function(layer_record) {
-		var attribs_store_data;
-		if (layer_record) {
-			attribs_store_data = layer_record.json;
-		} else {
-			attribs_store_data = {attributes: []};
-		}
-		this.items.each(function(attrib_item) {
-			attributes_combo = attrib_item.attributeName;
+		if (this.items.getCount() > 0) {
+			// set attributes filters count to 1
+			while(this.items.getCount() > 1) {
+				this.remove(this.get(0));
+			}
+			this.doLayout();
+			this.updateControlButtons();
+
+			// clear first attribute value
+			var attribs_store_data;
+			if (layer_record) {
+				attribs_store_data = layer_record.json;
+			} else {
+				attribs_store_data = {attributes: []};
+			}
+			var attributes_combo = this.items.first().attributeName;
 			attributes_combo.store.loadData(attribs_store_data);
 			attributes_combo.setValue('');
 			attributes_combo.fireEvent('select', attributes_combo, null, -1);
-		});
+		}
 	},
 	updateControlButtons: function() {
-		var last_item_index = this.items.length -1;
-		this.items.each(function(attrib_item, index) {
-			if (index == last_item_index) {
-				attrib_item.removeButton.setVisible(index > 0);
-				attrib_item.addButton.show();
-			} else {
+		if (this.items.getCount() == 1) {
+			this.items.first().removeButton.hide();
+			this.items.first().addButton.show();
+		} else {
+			this.items.each(function(attrib_item, index) {
 				attrib_item.removeButton.show();
 				attrib_item.addButton.hide();
-			}
-		});
+			});
+			this.items.last().addButton.show();
+		}
 	},
 	addAttribute: function() {
 		var layer_combo = this.activeLayer;
