@@ -727,7 +727,7 @@ class WebGisPlugin:
 				<h3>Project:</h3>
 				<ul>
 					<li><label>Title:</label> {TITLE}</li>
-					<li><label>Abstract:</label> {TITLE}</li>
+					<li><label>Abstract:</label> {ABSTRACT}</li>
 					<li><label>Contact person:</label> {CONTACT_PERSON}</li>
 					<li><label>Contact mail:</label> {CONTACT_MAIL}</li>
 					<li><label>Contact organization:</label> {CONTACT_ORGANIZATION}</li>
