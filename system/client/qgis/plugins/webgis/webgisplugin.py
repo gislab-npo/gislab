@@ -380,6 +380,9 @@ class WebGisPlugin:
 		else:
 			extent_layer = dialog.extent_layer.itemData(dialog.extent_layer.currentIndex())
 			project_extent = map_canvas.mapRenderer().layerExtentToOutputExtent(extent_layer, extent_layer.extent()).toRectF().getCoords()
+		extent_buffer = dialog.extent_buffer.value()
+		if extent_buffer:
+			project_extent = [project_extent[0]-extent_buffer, project_extent[1]-extent_buffer, project_extent[2]+extent_buffer, project_extent[3]+extent_buffer]
 		metadata.update({
 			'extent': project_extent,
 			'zoom_extent': [round(coord, 3) for coord in self.iface.mapCanvas().extent().toRectF().getCoords()],
