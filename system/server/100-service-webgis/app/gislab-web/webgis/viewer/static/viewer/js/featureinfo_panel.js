@@ -112,36 +112,38 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 				var columns = [];
 				var data = [];
 				fields.push({ name: 'feature', type: 'auto' });
-				columns.push({
-					xtype : 'actioncolumn',
-					width: 52,
-					scope: this,
-					items : [{
-						tooltip : gettext('Zoom to feature'),
-						getClass: function(v, meta, rec) {
-							return 'zoom-to-feature';
-						},
-						handler: function(grid, rowIndex, colIndex) {
-							var record = grid.getStore().getAt(rowIndex);
-							var feature = record.get('feature');
-							if (feature.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point') {
-								this.map.setCenter(feature.bounds.getCenterLonLat());
-							} else {
-								this.map.zoomToExtent(feature.bounds, true);
+				if (layer_features[0].geometry) {
+					columns.push({
+						xtype : 'actioncolumn',
+						width: 52,
+						scope: this,
+						items : [{
+							tooltip : gettext('Zoom to feature'),
+							getClass: function(v, meta, rec) {
+								return 'zoom-to-feature';
+							},
+							handler: function(grid, rowIndex, colIndex) {
+								var record = grid.getStore().getAt(rowIndex);
+								var feature = record.get('feature');
+								if (feature.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point') {
+									this.map.setCenter(feature.bounds.getCenterLonLat());
+								} else {
+									this.map.zoomToExtent(feature.bounds, true);
+								}
 							}
-						}
-					}, {
-						tooltip : gettext('Export to drawings'),
-						getClass: function(v, meta, rec) {
-							return 'export-feature';
-						},
-						handler: function(grid, rowIndex, colIndex) {
-							var record = grid.getStore().getAt(rowIndex);
-							var feature = record.get('feature');
-							Ext.getCmp('draw-action').importFeatures([feature], true);
-						}
-					}]
-				});
+						}, {
+							tooltip : gettext('Export to drawings'),
+							getClass: function(v, meta, rec) {
+								return 'export-feature';
+							},
+							handler: function(grid, rowIndex, colIndex) {
+								var record = grid.getStore().getAt(rowIndex);
+								var feature = record.get('feature');
+								Ext.getCmp('draw-action').importFeatures([feature], true);
+							}
+						}]
+					});
+				}
 
 				var attribs_aliases = this.layersFeaturesAliases? this.layersFeaturesAliases[layer_name] : null;
 				for (var attr_name in layer_features[0].attributes) {
