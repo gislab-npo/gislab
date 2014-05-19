@@ -123,6 +123,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 								return 'zoom-to-feature';
 							},
 							handler: function(grid, rowIndex, colIndex) {
+								grid.getSelectionModel().selectRow(rowIndex);
 								var record = grid.getStore().getAt(rowIndex);
 								var feature = record.get('feature');
 								if (feature.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point') {
