@@ -375,9 +375,13 @@ class WebGisPlugin:
 		selection_color = renderer_context.selectionColor()
 		canvas_color = map_canvas.canvasColor()
 
-		extent_layer = dialog.extent_layer.itemData(dialog.extent_layer.currentIndex())
+		if dialog.extent_layer.currentIndex() == 0:
+			project_extent = map_canvas.fullExtent().toRectF().getCoords()
+		else:
+			extent_layer = dialog.extent_layer.itemData(dialog.extent_layer.currentIndex())
+			project_extent = map_canvas.mapRenderer().layerExtentToOutputExtent(extent_layer, extent_layer.extent()).toRectF().getCoords()
 		metadata.update({
-			'extent': map_canvas.mapRenderer().layerExtentToOutputExtent(extent_layer, extent_layer.extent()).toRectF().getCoords(),
+			'extent': project_extent,
 			'zoom_extent': [round(coord, 3) for coord in self.iface.mapCanvas().extent().toRectF().getCoords()],
 			'projection': map_canvas.mapRenderer().destinationCrs().authid(),
 			'selection_color': '{0}{1:02x}'.format(selection_color.name(), selection_color.alpha()),
@@ -851,6 +855,7 @@ class WebGisPlugin:
 		dialog.osm.setEnabled(projection == 'EPSG:3857')
 		dialog.google.setEnabled(projection == 'EPSG:3857')
 
+		dialog.extent_layer.addItem("All layers")
 		for layer in self.iface.legendInterface().layers():
 			if self._is_base_layer_for_publish(layer):
 				dialog.default_baselayer.addItem(layer.name(), layer.name())
