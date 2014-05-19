@@ -401,6 +401,8 @@
 							<p><label>{% trans "E-mail" %}: </label>{{ email }}</p> \
 							<p><label>{% trans "Organization" %}: </label>{{ organization }}</p> \
 							<p><label>{% trans "Abstract" %}: </label>{{ abstract }}</p> \
+							<p><label>{% trans "User" %}: </label>{{ publish_user }}</p> \
+							<p><label>{% trans "Publish date" %}: </label>{{ publish_date }}</p> \
 							{% if not user.is_guest %}<p><label>{% trans "WMS URL" %}: </label><a href="{{ wms_url }}" target="_blank">copy link location</a></p>{% endif %}</div>'
 				});
 

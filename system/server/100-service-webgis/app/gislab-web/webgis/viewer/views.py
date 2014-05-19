@@ -300,7 +300,9 @@ def page(request):
 			'author': metadata.contact_person,
 			'email': metadata.contact_mail,
 			'organization': metadata.contact_organization,
-			'abstract': metadata.abstract
+			'abstract': metadata.abstract,
+			'publish_user': metadata.gislab_user,
+			'publish_date': metadata.publish_date
 		})
 		if metadata.message:
 			valid_until = datetime.datetime.strptime(metadata.message['valid_until'], "%d.%m.%Y").date()
