@@ -464,6 +464,11 @@ var searchWindow = new Ext.Window({
 								list_values.push(list_value.trim());
 							});
 							value = String.format(" ( '{0}' ) ", list_values.join("' , '"));
+						} else if (operator == 'LIKE') {
+							if (value.indexOf('%') == -1) {
+								value = '%'+value+'%'
+							}
+							value = String.format("'{0}'", value);
 						} else {
 							value = String.format("'{0}'", value);
 						}
