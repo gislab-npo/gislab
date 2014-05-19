@@ -27,7 +27,7 @@ var WebgisStyles = {
 			strokeOpacity: 1,
 			strokeWidth: 1.5,
 			fillColor: '#66CCCC',
-			fillOpacity: 0.3,
+			fillOpacity: 0.4,
 			pointRadius: 6,
 			labelYOffset: '6',
 			labelXOffset: '6',
@@ -44,5 +44,24 @@ var WebgisStyles = {
 			strokeOpacity: 1,
 			strokeWidth: 2,
 		}
-	})
+	}),
+	featureinfo_style: new OpenLayers.StyleMap({
+		'default':{
+			strokeColor: '#AA0000',
+			strokeOpacity: 1,
+			strokeWidth: 1.5,
+			fillColor: '#FF0000',
+			fillOpacity: 0.5,
+			pointRadius: 6,
+		},
+		'select': {
+			strokeColor: '#66CCCC',
+			strokeOpacity: 1,
+			strokeWidth: 1.5,
+			fillColor: '#66CCCC',
+			fillOpacity: 0.4,
+			pointRadius: 6,
+			fontColor: '#306060',
+		},
+	}),
 }
