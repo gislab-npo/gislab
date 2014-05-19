@@ -7,7 +7,12 @@
 if [[ "$GISLAB_VERSION" == "dev" && -d "/vagrant/.git" ]]; then
 	GISLAB_VERSION_BRANCH=$(git --git-dir=/vagrant/.git --work-tree=/vagrant rev-parse --abbrev-ref HEAD)
 	GISLAB_VERSION_CHANGESET=$(git --git-dir=/vagrant/.git --work-tree=/vagrant rev-parse --short HEAD)
-	GISLAB_VERSION=dev~git+$GISLAB_VERSION_BRANCH+$GISLAB_VERSION_CHANGESET
+	GISLAB_VERSION=git+$GISLAB_VERSION_BRANCH+$GISLAB_VERSION_CHANGESET
+
+	GISLAB_VERSION_TAG=$(git --git-dir=/vagrant/.git --work-tree=/vagrant describe --tags --exact-match 2> /dev/null || true)
+	if [ "$GISLAB_VERSION_TAG" != "" ]; then
+		GISLAB_VERSION=$GISLAB_VERSION~$GISLAB_VERSION_TAG
+	fi
 fi
 
 echo -e "$(gislab_config_header)" > /etc/gislab_version
