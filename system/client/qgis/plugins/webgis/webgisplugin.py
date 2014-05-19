@@ -809,7 +809,7 @@ class WebGisPlugin:
 			resolutions = set(project_resolutions)
 			position = 1 if self.dialog.blank.isChecked() else 0
 			if checked:
-				self.dialog.default_baselayer.insertItem(position, 'Open Street Maps', 'OSM')
+				self.dialog.default_baselayer.insertItem(position, OSM_LAYER['title'], OSM_LAYER['name'])
 				resolutions.update(OSM_LAYER['resolutions'])
 			else:
 				self.dialog.default_baselayer.removeItem(position)
