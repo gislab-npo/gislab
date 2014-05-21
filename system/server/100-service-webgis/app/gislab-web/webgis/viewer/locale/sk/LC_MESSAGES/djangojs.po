@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-15 11:34+0200\n"
+"POT-Creation-Date: 2014-05-20 14:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,14 +42,18 @@ msgstr "Uložiť"
 msgid "Save drawing"
 msgstr "Uložiť kreslenie"
 
-#: static/viewer/js/featureinfo_panel.js:80
+#: static/viewer/js/featureinfo_panel.js:84
 msgid "Features: %(count)s"
 msgstr "Objekty: %(count)s"
 
-#: static/viewer/js/featureinfo_panel.js:120
+#: static/viewer/js/featureinfo_panel.js:125
 msgid "Zoom to feature"
 msgstr "Priblížiť na objekt"
 
-#: static/viewer/js/featureinfo_panel.js:134
+#: static/viewer/js/featureinfo_panel.js:140
 msgid "Export to drawings"
 msgstr "Exportovať do kreslenia"
+
+#: static/viewer/js/featureinfo_panel.js:153
+msgid "Copy of feature #%(pk)s from layer %(layer)s"
+msgstr "Kópia objektu #%(pk)s z vrstvy %(layer)s"
