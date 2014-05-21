@@ -66,6 +66,10 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 		this.layersFeaturesAliases = layers_features_aliases;
 	},
 
+	setLayersAttributesPks: function(layers_features_pks) {
+		this.layersFeaturesPks = layers_features_pks;
+	},
+
 	clearFeaturesLayers: function() {
 		this.featureinfo_tabpanel.removeAll(true);
 		Ext.each(this.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
@@ -142,7 +146,16 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 								var feature = record.get('feature');
 								var layer_name = feature.fid.split(".")[0];
 
-								Ext.getCmp('draw-action').importFeatures([feature], true);
+								if (this.layersFeaturesPks) {
+									var feature_pks = [];
+									Ext.each(this.layersFeaturesPks[layer_name], function(pk_attr_name) {
+										 feature_pks.push(feature.attributes[pk_attr_name]);
+									});
+									feature.attributes.title = String.format('{0} - #{1}', layer_name, feature_pks.join(','));
+									var description_format = gettext('Copy of feature #%(pk)s from layer %(layer)s');
+									feature.attributes.description = interpolate(description_format, {pk: feature_pks.join(','), layer: layer_name}, true);
+								}
+								Ext.getCmp('draw-action').importFeatures([feature], true, true);
 							}
 						}]
 					});

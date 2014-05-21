@@ -562,6 +562,7 @@ class WebGisPlugin:
 						attribute_data['alias'] = alias
 					attributes_data.append(attribute_data)
 				layer_data['attributes'] = attributes_data
+				layer_data['pk_attributes'] = [fields[index].name() for index in layer.dataProvider().pkAttributeIndexes()]
 				return layer_data
 		metadata['overlays'] = create_overlays_data(overlay_layers_tree).get('layers')
 

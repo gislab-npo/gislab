@@ -36,6 +36,7 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 			// get list of queryable layers
 			var queryable_layers = [];
 			var layers_attrib_aliases = {};
+			var layers_attrib_pks = {};
 			Ext.getCmp('layers-tree-panel').root.cascade(function(node) {
 				if (node.isLeaf() && node.attributes.config.queryable) {
 					queryable_layers.push(node.attributes.text);
@@ -46,10 +47,13 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 						}
 					});
 					layers_attrib_aliases[node.attributes.text] = attrib_aliases;
+					layers_attrib_pks[node.attributes.text] = node.attributes.config.pk_attributes;
 				}
 			});
 			combo.queryableLayers = queryable_layers;
-			Ext.getCmp('featureinfo-panel').setLayersAttributesAliases(layers_attrib_aliases);
+			var featureinfo_panel = Ext.getCmp('featureinfo-panel');
+			featureinfo_panel.setLayersAttributesAliases(layers_attrib_aliases);
+			featureinfo_panel.setLayersAttributesPks(layers_attrib_pks);
 
 			var on_visible_layers_changed = function(node, layer, visible_layers) {
 				var layers_list = [];

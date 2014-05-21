@@ -115,11 +115,18 @@ action = new WebGIS.DrawAction({
 			Ext.MessageBox.alert('{% trans "Warning" %}', '{% trans "There is no data to be saved" %}');
 		}
 	},
-	importFeatures: function(features, makeCopy) {
+	importFeatures: function(features, makeCopy, skipDuplicit) {
 		var points = [];
 		var lines = [];
 		var polygons = [];
 		Ext.each(features, function(f) {
+			if (skipDuplicit) {
+				if (points_layer.getFeaturesByAttribute('title', f.attributes.title).length ||
+					lines_layer.getFeaturesByAttribute('title', f.attributes.title).length ||
+					polygons_layer.getFeaturesByAttribute('title', f.attributes.title).length) {
+					return true; //continue
+				}
+			}
 			var converted_features = [];
 			// break feature with multipoint, multilinestrings or multipolygons geom type to multiple features
 			// with simple geometry type and copy/create only supported attributes
