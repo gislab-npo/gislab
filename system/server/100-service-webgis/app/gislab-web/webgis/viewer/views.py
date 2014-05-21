@@ -129,7 +129,7 @@ def ows_request(request):
 
 @login_required
 def tile(request, project_hash, publish, layers_hash=None, z=None, x=None, y=None, format=None):
-	project = request.GET['project']
+	project = request.GET['project']+'.qgs'
 	layer_params = get_project_layers_info(project_hash, publish, project=project)
 	try:
 		layer = WmsLayer(
@@ -290,7 +290,7 @@ def page(request):
 			context['mapcache_url'] = mapcache_url
 
 		context.update({
-			'project': project,
+			'project': os.path.splitext(project)[0],
 			'ows_url': ows_url,
 			'wms_url': set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
 			'project_extent': metadata.extent,
