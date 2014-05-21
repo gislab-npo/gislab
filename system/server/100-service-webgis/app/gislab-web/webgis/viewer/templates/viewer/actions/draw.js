@@ -11,10 +11,12 @@ var draw_controls = [
 				type: OpenLayers.Control.TYPE_TOOL,
 				featureAdded: function(feature) {
 					feature.attributes = {
-						title: ''
+						title: '-',
+						description: '-'
 					};
 					// update feature on map
-					points_layer.drawFeature(feature);
+					feature.layer.drawFeature(feature);
+					feature.layer.events.triggerEvent("featuremodified", {feature: feature});
 				}
 			}
 		)
@@ -31,10 +33,12 @@ var draw_controls = [
 				type: OpenLayers.Control.TYPE_TOOL,
 				featureAdded: function(feature) {
 					feature.attributes = {
-						title: ''
+						title: '-',
+						description: '-'
 					};
 					// update feature on map
-					lines_layer.drawFeature(feature);
+					feature.layer.drawFeature(feature);
+					feature.layer.events.triggerEvent("featuremodified", {feature: feature});
 				}
 			}
 		)
@@ -51,10 +55,12 @@ var draw_controls = [
 				type: OpenLayers.Control.TYPE_TOOL,
 				featureAdded: function(feature) {
 					feature.attributes = {
-						title: ''
+						title: '-',
+						description: '-'
 					};
 					// update feature on map
-					polygons_layer.drawFeature(feature);
+					feature.layer.drawFeature(feature);
+					feature.layer.events.triggerEvent("featuremodified", {feature: feature});
 				}
 			}
 		)
