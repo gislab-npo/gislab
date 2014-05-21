@@ -31,7 +31,14 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		this.updateLayersParam();
 		this.on('checkchange', this.onNodeCheckChanged);
 	},
+	updateLayersParamWithTimer: function() {
+		if (this.timer) {
+			clearTimeout(this.timer);
+		}
+		this.timer = setTimeout(this.updateLayersParam.bind(this), 800);
+	},
 	updateLayersParam: function() {
+		this.timer = null;
 		var visible_layers = this.getVisibleLayers();
 		if (this.layer.CLASS_NAME == 'OpenLayers.Layer.WMS') {
 			this.layer.mergeNewParams({LAYERS: [].concat(visible_layers).reverse()});
@@ -93,7 +100,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 
 		if (param == 0) {
 			this.root.checkchangeParamsStack = [0];
-			this.root.updateLayersParam();
+			this.root.updateLayersParamWithTimer();
 		}
 	},
 	createLayerNode: function(layer_config) {
