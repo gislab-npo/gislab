@@ -140,6 +140,8 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 							handler: function(grid, rowIndex, colIndex) {
 								var record = grid.getStore().getAt(rowIndex);
 								var feature = record.get('feature');
+								var layer_name = feature.fid.split(".")[0];
+
 								Ext.getCmp('draw-action').importFeatures([feature], true);
 							}
 						}]
