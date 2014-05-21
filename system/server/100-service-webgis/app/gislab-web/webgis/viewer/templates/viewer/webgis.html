@@ -335,6 +335,7 @@
 					}],
 					items: new WebGIS.BaseLayersComboBox({
 						id: 'base-layer-combo',
+						editable: false,
 						map: mappanel.map,
 						baselayers: JSON.parse('{{ base_layers|escapejs }}'),
 					}),

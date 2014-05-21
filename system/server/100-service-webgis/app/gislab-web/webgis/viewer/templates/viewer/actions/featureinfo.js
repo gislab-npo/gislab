@@ -5,6 +5,7 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 	width: 150,
 	mode: 'local',
 	disabled: true,
+	editable: false,
 	tooltip: '{% trans "Active layer" %}',
 	triggerAction: 'all',
 	forceSelection: true,
