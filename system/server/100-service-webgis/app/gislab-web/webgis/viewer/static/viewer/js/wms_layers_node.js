@@ -47,20 +47,30 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 	onNodeCheckChanged: function(node, checked) {
 		var param = this.root.checkchangeParamsStack.pop();
 
+		if (node.hidden) {
+			return;
+		}
 		// check parent whether this is its first checked child
 		if (checked && node.getDepth() > node.root.getDepth()) {
 			this.root.checkchangeParamsStack.push(3);
 			node.parentNode.getUI().toggleCheck(true);
+			// check all hidden layers nodes
+			Ext.each(node.parentNode.childNodes, function(n) {
+				if (n.hidden) {
+					this.root.checkchangeParamsStack.push(1);
+					n.getUI().toggleCheck(true);
+				}
+			});
 		}
 		if (param == 3) {
 			return;
 		}
 
-		// uncheck parent whether its every child is unchecked
+		// uncheck parent whether its every child (except hidden) is unchecked
 		if (!checked && node.getDepth() > node.root.getDepth()) {
 			var allSiblingsUnchecked = true;
 			Ext.each(node.parentNode.childNodes, function(n) {
-				if (n.attributes.checked) {
+				if (!n.hidden && n.attributes.checked) {
 					allSiblingsUnchecked = false;
 					return false;
 				}
@@ -92,6 +102,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			text: layer_config.name,
 			checked: true,
 			leaf: !isGroup,
+			hidden: !isGroup && layer_config.hidden,
 			iconCls: this.layersIconClsMap[layer_config.geom_type],
 			allowDrop: isGroup,
 			expanded: true,

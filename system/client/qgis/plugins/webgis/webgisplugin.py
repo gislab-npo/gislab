@@ -534,6 +534,7 @@ class WebGisPlugin:
 					'extent': map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords(),
 					'visible': legend_iface.isLayerVisible(layer),
 					'queryable': layer.id() not in non_identifiable_layers,
+					'hidden': layer.title() == '*HIDDEN LAYER*',
 					'drawing_order': overlays_order.index(layer.id())
 				}
 				if layer.attribution():
