@@ -289,8 +289,9 @@ def page(request):
 			mapcache_url = mapcache_url.split('/__layers__/')[0]+'/'
 			context['mapcache_url'] = mapcache_url
 
+		project = os.path.splitext(project)[0]
 		context.update({
-			'project': os.path.splitext(project)[0],
+			'project': project,
 			'ows_url': ows_url,
 			'wms_url': set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
 			'project_extent': metadata.extent,
@@ -309,6 +310,20 @@ def page(request):
 			today = datetime.date.today()
 			if today <= valid_until:
 				context['message'] = metadata.message['text']
+		project_info = {
+			'gislab_version': metadata.gislab_version,
+			'gislab_user': metadata.gislab_user,
+			'gislab_unique_id': metadata.gislab_unique_id,
+			'publish_date': datetime.datetime.fromtimestamp(metadata.publish_date_unix),
+			'last_display': datetime.datetime.now()
+		}
+		# Update projects registry
+		try:
+			rows = models.Project_registry.objects.filter(project=project).update(**project_info)
+			if not rows:
+				models.Project_registry(project=project, **project_info).save()
+		except:
+			raise
 	else:
 		context.update({
 			'root_title': 'Empty Project',
