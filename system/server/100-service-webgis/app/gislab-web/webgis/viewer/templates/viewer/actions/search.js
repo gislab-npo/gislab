@@ -138,7 +138,7 @@ var searchWindow = new Ext.Window({
 							}
 							combo.attrib_type = attrib_type;
 							combo.ownerCt.valueField.setType(attrib_type);
-							if (attrib_type == 'integer' || attrib_type == 'double') {
+							if (attrib_type == 'INTEGER' || attrib_type == 'DOUBLE') {
 								operators = [
 									{name: '=', value: '='},
 									{name: '!=', value: '!='},
@@ -223,7 +223,7 @@ var searchWindow = new Ext.Window({
 					createValueField: function() {
 						this.removeAll();
 						var comp;
-						if (this.type == 'integer') {
+						if (this.type == 'INTEGER') {
 							if (this.multiMode) {
 								comp = {
 									xtype: 'textfield',
@@ -238,7 +238,7 @@ var searchWindow = new Ext.Window({
 									tooltip: '{% trans "Integer number value" %}'
 								}
 							}
-						} else if (this.type == 'double') {
+						} else if (this.type == 'DOUBLE') {
 							if (this.multiMode) {
 								comp = {
 									xtype: 'textfield',
