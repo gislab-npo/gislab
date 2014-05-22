@@ -6,6 +6,10 @@
 	width: 1in;
 }
 
+div.scale-control {
+	line-height: 0px !important;
+}
+
 .olControlAttribution {
 	bottom: 5px !important;
 	right: 5px !important;
@@ -15,8 +19,15 @@
 	background-color: rgba(255, 255, 255, 0.3) !important;
 }
 
+.olControlScaleLine {
+	bottom: 5px !important;
+	font-size: 10px !important;
+	font-family: tahoma,arial,verdana,sans-serif !important;
+	background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
 .app-title {
-	font-size: 12px  !important;
+	font-size: 12px !important;
 	font-weight: bold !important;
 }
 

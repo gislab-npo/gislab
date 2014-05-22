@@ -1,5 +1,5 @@
 {% load staticfiles i18n %}
-
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -21,6 +21,7 @@
 		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/ext-all.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/lib/OpenLayers-2.13/OpenLayers.js' %}"></script>
 		{% endif %}
+		<script type="text/javascript" src="{% static 'viewer/lib/OpenLayers-2.13/Lang/' %}{{ LANGUAGE_CODE }}.js"></script>
 		<script type="text/javascript" src="{% static 'viewer/lib/md5.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/lib/extensions/Spinner.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/lib/extensions/SpinnerField.js' %}"></script>
@@ -78,7 +79,7 @@
 
 				Ext.BLANK_IMAGE_URL = "{% static 'viewer/images/s.gif' %}";
 				OpenLayers.DOTS_PER_INCH = {{ dpi }};
-				//OpenLayers.ProxyHost = "/proxy/?url=";
+				OpenLayers.Lang.setCode("{{ LANGUAGE_CODE }}");
 				var config = {
 					projection: "{{ projection }}",
 					units: "{{ units }}",
@@ -473,9 +474,10 @@
 
 				// controls
 				var coords = new GeoExt.Toolbar.ControlDisplay({control: new OpenLayers.Control.MousePosition({separator: ' , '}), map: mappanel.map});
+				var scale = new GeoExt.Toolbar.ControlDisplay({cls: 'scale-control', control: new OpenLayers.Control.Scale(), map: mappanel.map});
 
 				mappanel.getBottomToolbar().add(new Ext.Toolbar.TextItem({text: config.projection}));
-				mappanel.getBottomToolbar().add(' ', '-', '');
+				mappanel.getBottomToolbar().add(' ', '-',' ', scale, ' ', '-', '');
 				mappanel.getBottomToolbar().add(coords);
 				var measurement_output = new Ext.Toolbar.TextItem({
 					id:'measurement-info',
@@ -490,7 +492,7 @@
 				mappanel.getBottomToolbar().add('->', geojson_links);
 
 				mappanel.map.zoomToExtent(zoom_extent, true);
-				mappanel.map.addControl(new OpenLayers.Control.Scale());
+				//mappanel.map.addControl(new OpenLayers.Control.Scale());
 				mappanel.map.addControl(new OpenLayers.Control.ScaleLine());
 				mappanel.map.addControl(new OpenLayers.Control.PanPanel());
 				mappanel.map.addControl(new OpenLayers.Control.ZoomPanel());
