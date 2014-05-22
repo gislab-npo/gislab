@@ -166,7 +166,7 @@ msgstr "Varovanie"
 
 #: templates/viewer/actions/draw.js:121
 msgid "There is no data to be saved"
-msgstr ""
+msgstr "Nie sú nakreslené žiadne objekty"
 
 #: templates/viewer/actions/featureinfo.js:8
 #: templates/viewer/actions/search.js:323

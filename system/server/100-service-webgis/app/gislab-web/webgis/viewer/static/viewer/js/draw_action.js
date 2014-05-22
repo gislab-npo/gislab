@@ -157,34 +157,6 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 						grid.selModel.unbind();
 					}
 				},
-				bbar:[
-					'->',
-					{
-						xtype: 'tbbutton',
-						text: gettext('Delete selected'),
-						tooltip: gettext('Delete selected'),
-						drawAction: this,
-						handler: function() {
-							// copy selected features
-							var selected_features = store.layer.selectedFeatures.slice(0);
-							if (selected_features.length > 0) {
-								this.drawAction.clearFeaturesSelection();
-								store.layer.destroyFeatures(selected_features[0]);
-							}
-							// update row numbers
-							this.ownerCt.ownerCt.getView().refresh();
-						}
-					},
-					'-',
-					 {
-						xtype: 'tbbutton',
-						text: gettext('Delete all'),
-						tooltip: gettext('Delete all'),
-						handler: function() {
-							store.layer.destroyFeatures();
-						}
-					}
-				]
 			});
 			features_editors.push(features_editor);
 		}, this);
@@ -197,18 +169,56 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			width: 350,
 			height: 400,
 			layout: 'fit',
-			tbar: [
-				{
-					xtype: 'label',
-					text: gettext('Title')+':',
-				}, {
+			tbar: {
+				xtype: 'toolbar',
+				dock: 'top',
+				layout: {
+					type: 'hbox',
+					pack: 'start',
+				},
+				items: [{
+						xtype: 'tbtext',
+						text: gettext('Title')+':',
+						flex: 0
+					}, {
 					xtype: 'tbspacer',
-					width: 10
-				}, {
-					xtype: 'textfield',
-					width: 185,
-					ref: '/drawingTitle',
-				}, '->', new Ext.Action({
+						width: 10
+					}, {
+						xtype: 'textfield',
+						ref: '/drawingTitle',
+						flex: 1
+					}
+				]
+			},
+			bbar: [
+				{
+					xtype: 'tbbutton',
+					text: gettext('Delete selected'),
+					tooltip: gettext('Delete selected'),
+					drawAction: this,
+					handler: function() {
+						var features_editor = this.drawAction.window.get(0).activeTab;
+						var layer = features_editor.getStore().layer;
+						// copy selected features
+						var selected_features = layer.selectedFeatures.slice(0);
+						if (selected_features.length > 0) {
+							this.drawAction.clearFeaturesSelection();
+							layer.destroyFeatures(selected_features[0]);
+						}
+						// update row numbers
+						features_editor.getView().refresh();
+					}
+				}, '-', {
+					xtype: 'tbbutton',
+					text: gettext('Delete all'),
+					tooltip: gettext('Delete all'),
+					drawAction: this,
+					handler: function() {
+						var features_editor = this.drawAction.window.get(0).activeTab;
+						features_editor.getStore().layer.destroyFeatures();
+					}
+				}, '->', '-',
+				new Ext.Action({
 					cls: 'x-btn-text',
 					text: gettext('Save'),
 					tooltip: gettext('Save drawing'),

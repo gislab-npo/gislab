@@ -28,11 +28,11 @@ msgstr "Popis"
 
 #: static/viewer/js/draw_action.js:164 static/viewer/js/draw_action.js.c:165
 msgid "Delete selected"
-msgstr "Zmazať vybrané"
+msgstr "Odstrániť vybraný"
 
 #: static/viewer/js/draw_action.js:181 static/viewer/js/draw_action.js.c:182
 msgid "Delete all"
-msgstr "Zmazať všetko"
+msgstr "Odstrániť všetky"
 
 #: static/viewer/js/draw_action.js:213
 msgid "Save"
