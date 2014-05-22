@@ -190,7 +190,6 @@
 				var mappanel = new GeoExt.MapPanel({
 					id: 'map-panel',
 					region: 'center',
-					title: '{{ root_title }}',
 					collapsible: false,
 					zoom: 3,
 					map: new WebgisMap({
@@ -225,7 +224,6 @@
 				//featureinfo panel
 				var featureinfo_panel = new WebGIS.FeatureInfoPanel({
 					id: 'featureinfo-panel',
-					title: '{% trans "Attributes" %}',
 					map: mappanel.map,
 					styleMap: WebgisStyles.featureinfo_style,
 					collapseMode: 'mini',
@@ -289,31 +287,6 @@
 				{% include "viewer/actions/print.js" %}
 				{% endif %}
 
-				mappanel.getTopToolbar().add('->',
-					{
-						xtype: 'label',
-						text: '{{ user.get_full_name }}'
-					}, {
-						xtype: 'tbspacer',
-						width: 5
-					},{% if user.is_guest %} new Ext.Action({
-						cls: 'x-btn-icon',
-						iconCls: 'login-icon',
-						tooltip: '{% trans "Log in" %}',
-						handler: function(action) {
-							window.location.href = Ext.urlAppend('{% url "login" %}', Ext.urlEncode({next: window.location.href}));
-						}
-					}){% else %} new Ext.Action({
-						cls: 'x-btn-icon',
-						iconCls: 'logout-icon',
-						tooltip: '{% trans "Log out" %}',
-						handler: function(action) {
-							window.location.href = Ext.urlAppend('{% url "logout" %}', Ext.urlEncode({next: window.location.href}));
-						}
-					})
-					{% endif %}
-				);
-
 				var overlays_root = new WebGIS.WmsLayersNode({
 					id: 'overlays-root',
 					text: 'Root',
@@ -325,14 +298,9 @@
 
 				var baselayer_panel = new Ext.Panel({
 					layout: 'fit',
-					cls: 'layers-legend-toolbar',
+					cls: 'layers-toolbar',
 					{% if base_layers %}
-					height: 45,
-					tbar: [{
-						xtype: 'label',
-						text: '{% trans "Base Layers" %}',
-						cls: 'layers-title',
-					}],
+					height: 23,
 					items: new WebGIS.BaseLayersComboBox({
 						id: 'base-layer-combo',
 						editable: false,
@@ -347,7 +315,7 @@
 				// layers tree
 				var layer_treepanel = new Ext.tree.TreePanel({
 					id: 'layers-tree-panel',
-					cls: 'layers-legend-toolbar',
+					cls: 'layers-panel',
 					enableDD: true,
 					root: overlays_root,
 					split: true,
@@ -356,11 +324,7 @@
 					cmargins: '0 0 0 0',
 					autoScroll: true,
 					{% if layers %}
-					tbar: [{
-						xtype: 'label',
-						text: '{% trans "Overlay Layers" %}',
-						cls: 'layers-title',
-					}],
+					title: '{% trans "Overlay Layers" %}',
 					{% endif %}
 				});
 
@@ -430,9 +394,10 @@
 
 				// left panel
 				var left_panel = new Ext.Panel({
+					title: '{% trans "Base Layers" %}',
 					region: 'west',
 					width: 250,
-					title: '{% trans "Content" %}',
+					cls: 'layers-panel',
 					defaults: {
 						width: '100%',
 						flex: 1
@@ -452,11 +417,58 @@
 
 				// viewport
 				var webgis = new Ext.Viewport({
-					layout: "border",
-					items: [
-						mappanel_container,
-						left_panel
-					]
+					id: 'webgis-viewer',
+					layout: 'fit',
+					items: [{
+						xtype: 'panel',
+						layout: "border",
+						tbar: {
+							xtype: 'toolbar',
+							dock: 'top',
+							layout: {
+								type: 'hbox',
+								pack: 'start',
+							},
+							cls: 'x-panel-header',
+							items: [{
+									xtype: 'label',
+									flex: 1
+								}, {
+									xtype: 'tbtext',
+									text: '{{ root_title }}',
+									cls: 'app-title'
+								}, {
+									xtype: 'label',
+									flex: 1
+								}, {
+									xtype: 'tbtext',
+									text: '{{ user.get_full_name }}'
+								}, {
+									xtype: 'tbspacer',
+									width: 5
+								},{% if user.is_guest %} new Ext.Action({
+									cls: 'x-btn-icon',
+									iconCls: 'login-icon',
+									tooltip: '{% trans "Log in" %}',
+									handler: function(action) {
+										window.location.href = Ext.urlAppend('{% url "login" %}', Ext.urlEncode({next: window.location.href}));
+									}
+								}){% else %} new Ext.Action({
+									cls: 'x-btn-icon',
+									iconCls: 'logout-icon',
+									tooltip: '{% trans "Log out" %}',
+									handler: function(action) {
+										window.location.href = Ext.urlAppend('{% url "logout" %}', Ext.urlEncode({next: window.location.href}));
+									}
+								})
+								{% endif %}
+							]
+						},
+						items: [
+							mappanel_container,
+							left_panel
+						]
+					}]
 				});
 
 				// controls
