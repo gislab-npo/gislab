@@ -108,11 +108,12 @@ action = new WebGIS.DrawAction({
 					}]);
 
 					// Add record into saving history
-					var permalink_url = Ext.get('permalink').dom.children[0].href;
+					var permalink = String.format('<a target="_blank" href="{0}">{1}</a>', Ext.get('permalink').dom.children[0].href, response.responseText);
+					var download_link = String.format('<a href="{0}">{1}</a>', Ext.urlAppend('{% url "storage:ball" %}', Ext.urlEncode({ID: response.responseText})), '{% trans "Download" %}');
 					var drawing_info = String.format('{% trans "Points" %}: {0}<br />{% trans "Lines" %}: {1}<br />{% trans "Polygons" %}: {2}', points_layer.features.length, lines_layer.features.length, polygons_layer.features.length);
-					var data = [[title, new Date(), String.format('<a target="_blank" href="{0}">{1}</a>', permalink_url, response.responseText), drawing_info]]
-					Ext.getCmp('save-history-action').store.loadData(data, true);
-				},
+					var data = [[new Date(), title, permalink, download_link, drawing_info]]
+					this.historyStore.loadData(data, true);
+				}.bind(drawAction),
 				failure: function(response, opts) {
 					Ext.MessageBox.alert('{% trans "Error" %}', '{% trans "Failed to save data" %}');
 				}

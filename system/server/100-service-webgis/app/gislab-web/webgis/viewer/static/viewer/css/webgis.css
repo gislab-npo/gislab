@@ -208,11 +208,6 @@ div.scale-control {
 	background: no-repeat;
 }
 
-.save-history-icon {
-	background-image: url('../images/toolbar/save_history.png')!important;
-	background: no-repeat;
-}
-
 .print-icon {
 	background-image: url('../images/toolbar/print.png')!important;
 	background: no-repeat;

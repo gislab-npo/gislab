@@ -160,13 +160,78 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			});
 			features_editors.push(features_editor);
 		}, this);
+
+		if (!this.historyStore) {
+			this.historyStore = new Ext.data.ArrayStore({
+				fields: [
+					{name: 'time', type: 'date'},
+					{name: 'title', type: 'string'},
+					{name: 'permalink', type: 'string'},
+					{name: 'download', type: 'string'},
+					{name: 'info', type: 'string'},
+				]
+			});
+		}
+		function tooltip_renderer(val, meta, record, rowIndex, colIndex, store) {
+			var info = record.get('info');
+			meta.attr = String.format('ext:qtip="{0}"',  info);
+			return val;
+		};
+		var history_grid = new Ext.grid.GridPanel({
+			id: 'save-history-grid',
+			title: gettext('History'),
+			store: this.historyStore,
+			viewConfig: {
+				templates: {
+					cell: new Ext.Template(
+						'<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} x-selectable {css}" style="{style}" tabIndex="0" {cellAttr}>\
+							<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>\
+						</td>'
+					)
+				}
+			},
+			columns: [{
+					id       : 'time',
+					header   : gettext('Time'),
+					width    : 60,
+					sortable : false,
+					dataIndex: 'time',
+					renderer : Ext.util.Format.dateRenderer('H:i:s'),
+				}, {
+					id       : 'title',
+					header   : gettext('Title'),
+					sortable : false,
+					dataIndex: 'title',
+					renderer:  tooltip_renderer
+				}, {
+					id       : 'permalink',
+					header   : gettext('Permalink'),
+					width    : 72,
+					sortable : false,
+					dataIndex: 'permalink',
+				}, {
+					id       : 'permalink',
+					header   : gettext('Download'),
+					width    : 72,
+					sortable : false,
+					dataIndex: 'download',
+				},
+
+			],
+			//stripeRows: true,
+			autoExpandColumn: 'title',
+			// config options for stateful behavior
+			stateful: true,
+			stateId: 'grid'
+		});
+
 		this.window = new Ext.Window({
 			id: 'drawing-window',
 			header: false,
 			//title: this.dialogTitle,
 			closable: false,
 			minWidth: 300,
-			width: 350,
+			width: 400,
 			height: 400,
 			layout: 'fit',
 			tbar: {
@@ -191,7 +256,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				]
 			},
 			bbar: [
-				{
+				'->', {
 					xtype: 'tbbutton',
 					text: gettext('Delete selected'),
 					tooltip: gettext('Delete selected'),
@@ -217,7 +282,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 						var features_editor = this.drawAction.window.get(0).activeTab;
 						features_editor.getStore().layer.destroyFeatures();
 					}
-				}, '->', '-',
+				}, '-',
 				new Ext.Action({
 					cls: 'x-btn-text',
 					text: gettext('Save'),
@@ -239,17 +304,17 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				{
 					xtype: 'tabpanel',
 					activeTab: 0,
-					items: features_editors,
+					items: features_editors.concat(history_grid),
 					drawAction: this,
 					listeners: {
 						beforetabchange: function(tabPanel, newTab, currentTab) {
-							if (currentTab) {
+							if (currentTab && currentTab.control) {
 								currentTab.control.deactivate();
 								this.drawAction.clearFeaturesSelection();
 							}
 						},
 						tabchange: function(tabPanel, tab) {
-							if (tab) {
+							if (tab && tab.control) {
 								tab.control.setMap(this.drawAction.map);
 								tab.control.activate();
 								if (this.drawAction.snapping) {
@@ -265,7 +330,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			listeners: {
 				beforehide: function(window) {
 					var activeTab = window.get(0).getActiveTab();
-					if (activeTab) {
+					if (activeTab && activeTab.control) {
 						activeTab.control.deactivate();
 						activeTab.selModel.clearSelections();
 					}

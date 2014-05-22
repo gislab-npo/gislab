@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-20 14:23+0200\n"
+"POT-Creation-Date: 2014-05-22 16:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: static/viewer/js/draw_action.js:109 static/viewer/js/draw_action.js.c:203
+#: static/viewer/js/draw_action.js:109 static/viewer/js/draw_action.js.c:200
+#: static/viewer/js/draw_action.js:245
 msgid "Title"
 msgstr "Názov"
 
@@ -26,19 +27,35 @@ msgstr "Názov"
 msgid "Description"
 msgstr "Popis"
 
-#: static/viewer/js/draw_action.js:164 static/viewer/js/draw_action.js.c:165
+#: static/viewer/js/draw_action.js:180
+msgid "History"
+msgstr "História"
+
+#: static/viewer/js/draw_action.js:193
+msgid "Time"
+msgstr "Čas"
+
+#: static/viewer/js/draw_action.js:206
+msgid "Permalink"
+msgstr "Permalink"
+
+#: static/viewer/js/draw_action.js:212
+msgid "Download"
+msgstr "Stiahnuť"
+
+#: static/viewer/js/draw_action.js:260 static/viewer/js/draw_action.js.c:261
 msgid "Delete selected"
 msgstr "Odstrániť vybraný"
 
-#: static/viewer/js/draw_action.js:181 static/viewer/js/draw_action.js.c:182
+#: static/viewer/js/draw_action.js:277 static/viewer/js/draw_action.js.c:278
 msgid "Delete all"
 msgstr "Odstrániť všetky"
 
-#: static/viewer/js/draw_action.js:213
+#: static/viewer/js/draw_action.js:287
 msgid "Save"
 msgstr "Uložiť"
 
-#: static/viewer/js/draw_action.js:214
+#: static/viewer/js/draw_action.js:288
 msgid "Save drawing"
 msgstr "Uložiť kreslenie"
 
@@ -54,6 +71,7 @@ msgstr "Priblížiť na objekt"
 msgid "Export to drawings"
 msgstr "Exportovať do kreslenia"
 
-#: static/viewer/js/featureinfo_panel.js:153
+#: static/viewer/js/featureinfo_panel.js:155
 msgid "Copy of feature #%(pk)s from layer %(layer)s"
 msgstr "Kópia objektu #%(pk)s z vrstvy %(layer)s"
+
