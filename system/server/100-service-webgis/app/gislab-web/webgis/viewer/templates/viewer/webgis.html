@@ -504,7 +504,7 @@
 							var attribution = node.attributes.config.attribution;
 							if (attribution && attribution.title) {
 								if (attribution.url) {
-									attributions.push(String.format('<a href="{0}">{1}</a>', attribution.url, attribution.title));
+									attributions.push(String.format('<a href="{0}" target="_blank">{1}</a>', attribution.url, attribution.title));
 								} else {
 									attributions.push(attribution.title);
 								}

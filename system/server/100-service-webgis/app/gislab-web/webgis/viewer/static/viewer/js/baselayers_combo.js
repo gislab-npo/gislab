@@ -89,7 +89,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 		var attribution = layer_config.attribution;
 		if (attribution && attribution.title) {
 			if (attribution.url) {
-				attribution = String.format('<a href="{0}">{1}</a>', attribution.url, attribution.title);
+				attribution = String.format('<a href="{0}" target="_blank">{1}</a>', attribution.url, attribution.title);
 			} else {
 				attribution = attribution.title;
 			}
