@@ -13,7 +13,7 @@ var searchWindow = new Ext.Window({
 	scrollable: false,
 	listeners: {
 		afterLayout: function(window, layout) {
-			window.setHeight(window.getTopToolbar().getHeight()+16+28*window.items.length);
+			window.setHeight(window.getTopToolbar().getHeight()+window.getBottomToolbar().getHeight()+16+28*window.items.length);
 			window.logicalOperator.setDisabled(window.items.length < 2);
 		},
 		beforeshow: function(window) {
@@ -401,15 +401,15 @@ var searchWindow = new Ext.Window({
 			}
 		}, {
 			xtype: 'tbspacer'
-		}, {
+		}, ' ', {
 			xtype: 'label',
 			text: '{% trans "Logical operator" %}:'
-		}, {
+		}, ' ', {
 			xtype: 'tbspacer'
 		}, {
 			xtype: 'combo',
 			ref: '/logicalOperator',
-			width: 50,
+			width: 55,
 			editable: false,
 			mode: 'local',
 			tooltip: '{% trans "Logical operator between attributes" %}',
@@ -434,15 +434,15 @@ var searchWindow = new Ext.Window({
 			}
 		}, {
 			xtype: 'tbspacer'
-		}, {
+		}, ' ', {
 			xtype: 'label',
 			text: '{% trans "Limit" %}:'
-		}, {
+		}, ' ', {
 			xtype: 'tbspacer'
 		}, {
 			xtype: 'spinnerfield',
 			ref: '/limit',
-			width: 50,
+			width: 55,
 			mode: 'local',
 			triggerAction: 'all',
 			allowNegative: false,
@@ -451,80 +451,81 @@ var searchWindow = new Ext.Window({
 			value: 50
 		}, {
 			xtype: 'tbspacer'
-		}, new Ext.Action({
-			text: '{% trans "Search" %}',
-			ref: '/search',
-			tooltip: '{% trans "Search" %}',
-			cls: 'x-btn-text',
-			format: new OpenLayers.Format.GML(),
-
-			handler: function(action) {
-				var search_window = Ext.getCmp('search-toolbar-window');
-				var layer = search_window.activeLayer.getValue();
-				var logical_operator = search_window.logicalOperator.getValue();
-				var features_count = search_window.limit.getValue();
-				var attributes_queries = [];
-				search_window.items.each(function(attrib_item) {
-					var attribute = attrib_item.attributeName.getValue();
-					if (attribute) {
-						var operator = attrib_item.attributeOperator.getValue();
-						var value = attrib_item.valueField.getValue().toString();
-						if (operator == 'IN') {
-							// Format to proper list value string. Spaces are very important. Example: " ( 'val1' , 'val2' , ... ) "
-							var list_values = [];
-							Ext.each(value.split(','), function(list_value) {
-								list_values.push(list_value.trim());
-							});
-							value = String.format(" ( '{0}' ) ", list_values.join("' , '"));
-						} else if (operator == 'LIKE') {
-							if (value.indexOf('%') == -1) {
-								value = '%'+value+'%'
-							}
-							value = String.format("'{0}'", value);
-						} else {
-							value = String.format("'{0}'", value);
-						}
-						attributes_queries.push(String.format('"{0}" {1} {2}', attribute, operator, value))
-					}
-				});
-
-				var query_filter = String.format('{0}:{1}', layer, attributes_queries.join(String.format(' {0} ', logical_operator)));
-				Ext.Ajax.request({
-					method: 'GET',
-					url: '{{ ows_url }}',
-					params: {
-						SERVICE: 'WMS',
-						REQUEST: 'GetFeatureInfo',
-						FEATURE_COUNT: features_count+1,
-						INFO_FORMAT: 'application/vnd.ogc.gml',
-						SRS: '{{ projection }}',
-						LAYERS: layer,
-						QUERY_LAYERS: layer,
-						FILTER: query_filter
-					},
-					scope: this,
-					success: function(response, options) {
-						var doc = response.responseXML;
-						if(!doc || !doc.documentElement) {
-							doc = response.responseText;
-						}
-						var features_panel = Ext.getCmp('featureinfo-panel');
-						var features = this.format.read(doc);
-						if (features.length == options.params.FEATURE_COUNT) {
-							features.pop();
-							features_panel.showFeatures(features);
-							features_panel.setStatusInfo(String.format('{% trans "Searching has reach limit of {0} results" %}', features.length));
-						} else {
-							features_panel.showFeatures(features);
-						}
-					},
-					failure: function(response, opts) {
-						Ext.MessageBox.alert('{% trans "Error" %}', '{% trans "Searching failed" %}');
-					}
-				});
-			}
-		}),
+		}
 	],
+	bbar: ['->', '-', new Ext.Action({
+		text: '{% trans "Search" %}',
+		ref: '/search',
+		tooltip: '{% trans "Search" %}',
+		cls: 'x-btn-text',
+		format: new OpenLayers.Format.GML(),
+
+		handler: function(action) {
+			var search_window = Ext.getCmp('search-toolbar-window');
+			var layer = search_window.activeLayer.getValue();
+			var logical_operator = search_window.logicalOperator.getValue();
+			var features_count = search_window.limit.getValue();
+			var attributes_queries = [];
+			search_window.items.each(function(attrib_item) {
+				var attribute = attrib_item.attributeName.getValue();
+				if (attribute) {
+					var operator = attrib_item.attributeOperator.getValue();
+					var value = attrib_item.valueField.getValue().toString();
+					if (operator == 'IN') {
+						// Format to proper list value string. Spaces are very important. Example: " ( 'val1' , 'val2' , ... ) "
+						var list_values = [];
+						Ext.each(value.split(','), function(list_value) {
+							list_values.push(list_value.trim());
+						});
+						value = String.format(" ( '{0}' ) ", list_values.join("' , '"));
+					} else if (operator == 'LIKE') {
+						if (value.indexOf('%') == -1) {
+							value = '%'+value+'%'
+						}
+						value = String.format("'{0}'", value);
+					} else {
+						value = String.format("'{0}'", value);
+					}
+					attributes_queries.push(String.format('"{0}" {1} {2}', attribute, operator, value))
+				}
+			});
+
+			var query_filter = String.format('{0}:{1}', layer, attributes_queries.join(String.format(' {0} ', logical_operator)));
+			Ext.Ajax.request({
+				method: 'GET',
+				url: '{{ ows_url }}',
+				params: {
+					SERVICE: 'WMS',
+					REQUEST: 'GetFeatureInfo',
+					FEATURE_COUNT: features_count+1,
+					INFO_FORMAT: 'application/vnd.ogc.gml',
+					SRS: '{{ projection }}',
+					LAYERS: layer,
+					QUERY_LAYERS: layer,
+					FILTER: query_filter
+				},
+				scope: this,
+				success: function(response, options) {
+					var doc = response.responseXML;
+					if(!doc || !doc.documentElement) {
+						doc = response.responseText;
+					}
+					var features_panel = Ext.getCmp('featureinfo-panel');
+					var features = this.format.read(doc);
+					if (features.length == options.params.FEATURE_COUNT) {
+						features.pop();
+						features_panel.showFeatures(features);
+						features_panel.setStatusInfo(String.format('{% trans "Searching has reach limit of {0} results" %}', features.length));
+					} else {
+						features_panel.showFeatures(features);
+					}
+				},
+				failure: function(response, opts) {
+					Ext.MessageBox.alert('{% trans "Error" %}', '{% trans "Searching failed" %}');
+				}
+			});
+		}
+	})],
 	items: []
 });
 
