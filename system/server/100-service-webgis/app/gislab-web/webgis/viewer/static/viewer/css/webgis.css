@@ -16,7 +16,7 @@ div.scale-control {
 }
 
 .x-tree-node .x-tree-node-over {
-	background-color: #FFFFE0;
+	background-color: #FFFFE0 !important;
 	border-top: 1px dotted #BBB;
 	border-bottom: 1px dotted #BBB;
 }
@@ -142,11 +142,12 @@ div.scale-control {
 .x-panel-body-text {
 	font-family: tahoma,arial,verdana,sans-serif;
 	font-size: 11px;
+	margin: 5px;
 }
 
 .x-panel-body-text label {
 	font-weight: bold;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .x-panel-body-text p {

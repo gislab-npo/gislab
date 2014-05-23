@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-22 16:05+0200\n"
+"POT-Creation-Date: 2014-05-23 12:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,85 +34,85 @@ msgstr "Používateľské meno"
 msgid "Password"
 msgstr "Heslo"
 
-#: templates/registration/login.html:106 templates/viewer/webgis.html:454
+#: templates/registration/login.html:106 templates/viewer/webgis.html:453
 msgid "Log in"
 msgstr "Prihlásiť sa"
 
-#: templates/viewer/webgis.html:329
+#: templates/viewer/webgis.html:328
 msgid "Overlay Layers"
 msgstr "Prekladové vrstvy"
 
-#: templates/viewer/webgis.html:336
+#: templates/viewer/webgis.html:335
 msgid "Legend"
 msgstr "Legenda"
 
-#: templates/viewer/webgis.html:365
+#: templates/viewer/webgis.html:364
 msgid "Properties"
 msgstr "Vlastnosti"
 
-#: templates/viewer/webgis.html:368
+#: templates/viewer/webgis.html:367
 msgid "Author"
 msgstr "Autor"
 
-#: templates/viewer/webgis.html:369
+#: templates/viewer/webgis.html:368
 msgid "E-mail"
 msgstr "E-mail"
 
-#: templates/viewer/webgis.html:370
+#: templates/viewer/webgis.html:369
 msgid "Organization"
 msgstr "Organizácia"
 
-#: templates/viewer/webgis.html:371
+#: templates/viewer/webgis.html:370
 msgid "Abstract"
 msgstr "O projekte"
 
-#: templates/viewer/webgis.html:372
+#: templates/viewer/webgis.html:371
 msgid "User"
 msgstr "Používateľ"
 
-#: templates/viewer/webgis.html:373
+#: templates/viewer/webgis.html:372
 msgid "Publish date"
 msgstr "Čas publikácie"
 
-#: templates/viewer/webgis.html:374
+#: templates/viewer/webgis.html:373
 msgid "WMS URL"
 msgstr ""
 
-#: templates/viewer/webgis.html:379
+#: templates/viewer/webgis.html:378
 msgid "About"
 msgstr "O aplikácii"
 
-#: templates/viewer/webgis.html:382
+#: templates/viewer/webgis.html:381
 msgid "GIS.lab ID"
 msgstr ""
 
-#: templates/viewer/webgis.html:383
+#: templates/viewer/webgis.html:382
 msgid "GIS.lab version"
 msgstr "GIS.lab verzia"
 
-#: templates/viewer/webgis.html:384
-msgid "WWW"
-msgstr ""
+#: templates/viewer/webgis.html:383
+msgid "Home page"
+msgstr "Domovská stránka"
 
-#: templates/viewer/webgis.html:399
+#: templates/viewer/webgis.html:398
 msgid "Base Layers"
 msgstr "Podkladové vrstvy"
 
-#: templates/viewer/webgis.html:461
+#: templates/viewer/webgis.html:460
 msgid "Log out"
 msgstr "Odhlásiť sa"
 
-#: templates/viewer/webgis.html:555 templates/viewer/actions/draw.js:118
-#: templates/viewer/actions/search.js:522
+#: templates/viewer/webgis.html:555 templates/viewer/actions/draw.js:119
+#: templates/viewer/actions/draw.js:130 templates/viewer/actions/search.js:524
 msgid "Error"
 msgstr "Chyba"
 
-#: templates/viewer/webgis.html:555
+#: templates/viewer/webgis.html:556
 #, python-format
 msgid "Failed to fetch vector data (drawing: %(drawing_id)s)"
 msgstr "Nepodarilo sa načítať vektorové dáta (kreslenie: %(drawing_id)s)"
 
-#: templates/viewer/webgis.html:567
+#: templates/viewer/webgis.html:573
 msgid "Message"
 msgstr "Správa"
 
@@ -152,15 +152,11 @@ msgstr "Kreslenie"
 msgid "Download"
 msgstr "Stiahnuť"
 
-#: templates/viewer/actions/draw.js:118
+#: templates/viewer/actions/draw.js:120
 msgid "Failed to save data"
 msgstr "Nepodarilo sa uložiť dáta"
 
-#: templates/viewer/actions/draw.js:122
-msgid "Warning"
-msgstr "Varovanie"
-
-#: templates/viewer/actions/draw.js:122
+#: templates/viewer/actions/draw.js:131
 msgid "There is no data to be saved"
 msgstr "Musíte mať nakreslené nejaké objekty"
 
@@ -177,21 +173,21 @@ msgstr "Všetky viditeľné vrstvy"
 msgid "Feature info"
 msgstr "Identifikácia"
 
-#: templates/viewer/actions/measurement.js:8
-#: templates/viewer/actions/measurement.js:11
+#: templates/viewer/actions/measurement.js:9
+#: templates/viewer/actions/measurement.js:12
 msgid "Length"
 msgstr "Dĺžka"
 
-#: templates/viewer/actions/measurement.js:21
-#: templates/viewer/actions/measurement.js:24
+#: templates/viewer/actions/measurement.js:22
+#: templates/viewer/actions/measurement.js:25
 msgid "Area"
 msgstr "Plocha"
 
-#: templates/viewer/actions/measurement.js:44
+#: templates/viewer/actions/measurement.js:45
 msgid "Measure length"
 msgstr "Meranie dĺžky"
 
-#: templates/viewer/actions/measurement.js:59
+#: templates/viewer/actions/measurement.js:60
 msgid "Measure area"
 msgstr "Meranie plochy"
 
@@ -221,7 +217,7 @@ msgid "Attribute"
 msgstr "Atribút"
 
 #: templates/viewer/actions/search.js:172
-#: templates/viewer/actions/search.js:406
+#: templates/viewer/actions/search.js:405
 msgid "Logical operator"
 msgstr "Logický operátor"
 
@@ -265,28 +261,30 @@ msgstr "Pridať filter podľa atribútu"
 msgid "Remove attribute filter"
 msgstr "Odstrániť filter atribútu"
 
-#: templates/viewer/actions/search.js:415
+#: templates/viewer/actions/search.js:414
 msgid "Logical operator between attributes"
 msgstr "Logický operátor medzi atribútmi"
 
-#: templates/viewer/actions/search.js:439
+#: templates/viewer/actions/search.js:438
 msgid "Limit"
 msgstr "Limit"
 
-#: templates/viewer/actions/search.js:455
-#: templates/viewer/actions/search.js:457
+#: templates/viewer/actions/search.js:456
+#: templates/viewer/actions/search.js:458
 msgid "Search"
 msgstr "Vyhľadať"
 
-#: templates/viewer/actions/search.js:516
+#: templates/viewer/actions/search.js:517
 msgid "Searching has reach limit of {0} results"
 msgstr "Vyhľadávanie prekročilo stanovený limit {0} výsledkov"
 
-#: templates/viewer/actions/search.js:522
+#: templates/viewer/actions/search.js:525
 msgid "Searching failed"
 msgstr "Vyhľadávanie zlyhalo"
 
-#: templates/viewer/actions/search.js:537
+#: templates/viewer/actions/search.js:544
 msgid "Searching"
 msgstr "Vyhľadávanie"
 
+#~ msgid "Warning"
+#~ msgstr "Varovanie"
