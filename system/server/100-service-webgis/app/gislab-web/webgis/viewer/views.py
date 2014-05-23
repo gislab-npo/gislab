@@ -104,11 +104,11 @@ def get_project_layers_info(project_key, publish, project=None):
 		try:
 			metadata = MetadataParser(metadata_filename)
 			if int(metadata.publish_date_unix) == int(publish):
-				store_project_layers_info(project_key, publish, metadata.extent, metadata.tile_resolutions, metadata.projection)
+				store_project_layers_info(project_key, publish, metadata.extent, metadata.tile_resolutions, metadata.projection['code'])
 				return {
 					'extent': metadata.extent,
 					'resolutions': metadata.tile_resolutions,
-					'projection': metadata.projection
+					'projection': metadata.projection['code']
 				}
 		except Exception, e:
 			pass
@@ -231,10 +231,9 @@ def page(request):
 		ows_url = set_query_parameters(reverse('viewer:owsrequest'), {'map': project})
 		context['units'] = {'meters': 'm', 'feet': 'ft', 'miles': 'mi', 'degrees': 'dd' }[metadata.units] or 'dd'
 		use_mapcache = metadata.use_mapcache
-		project_projection = metadata.projection
 		project_tile_resolutions = metadata.tile_resolutions
 
-		context['projection'] = project_projection
+		context['projection'] = metadata.projection
 		context['tile_resolutions'] = project_tile_resolutions
 
 		# converts tree with layers data into simple dictionary
@@ -283,7 +282,7 @@ def page(request):
 			project_hash = hashlib.md5(project).hexdigest()
 			project_layers_info = get_project_layers_info(project_hash, metadata.publish_date_unix)
 			if not project_layers_info:
-				store_project_layers_info(project_hash, metadata.publish_date_unix, metadata.extent, project_tile_resolutions, metadata.projection)
+				store_project_layers_info(project_hash, metadata.publish_date_unix, metadata.extent, project_tile_resolutions, metadata.projection['code'])
 
 			mapcache_url = reverse('viewer:tile', kwargs={'project_hash': project_hash, 'publish': metadata.publish_date_unix, 'layers_hash': '__layers__', 'x': 0, 'y': 0, 'z': 0, 'format': 'png'})
 			mapcache_url = mapcache_url.split('/__layers__/')[0]+'/'
