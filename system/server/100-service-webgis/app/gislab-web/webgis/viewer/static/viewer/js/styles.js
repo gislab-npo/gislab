@@ -1,3 +1,30 @@
+var measure_style_config = {
+	"Point": {
+		pointRadius: 4,
+		graphicName: "square",
+		fillColor: "white",
+		fillOpacity: 1,
+		strokeWidth: 1,
+		strokeOpacity: 1,
+		strokeColor: "#333333"
+	},
+	"Line": {
+		strokeWidth: 3,
+		strokeOpacity: 1,
+		strokeColor: "#666666",
+		strokeDashstyle: "dash"
+	},
+	"Polygon": {
+		strokeWidth: 2,
+		strokeOpacity: 1,
+		strokeColor: "#666666",
+		fillColor: "white",
+		fillOpacity: 0.3
+	}
+	};
+var measure_style = new OpenLayers.Style();
+measure_style.addRules([new OpenLayers.Rule({symbolizer: measure_style_config})]);
+
 var WebgisStyles = {
 	drawing_style: new OpenLayers.StyleMap({
 		'default':{
@@ -64,4 +91,5 @@ var WebgisStyles = {
 			fontColor: '#306060',
 		},
 	}),
+	measure_style: new OpenLayers.StyleMap({"default": measure_style})
 }

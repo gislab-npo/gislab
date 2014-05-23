@@ -81,7 +81,7 @@
 				OpenLayers.DOTS_PER_INCH = {{ dpi }};
 				OpenLayers.Lang.setCode("{{ LANGUAGE_CODE }}");
 				var config = {
-					projection: "{{ projection }}",
+					projection: "{{ projection.code }}",
 					units: "{{ units }}",
 					maxExtent: new OpenLayers.Bounds({{ project_extent|join:', '}}),
 				};
@@ -473,7 +473,11 @@
 
 				// controls
 				var coords = new GeoExt.Toolbar.ControlDisplay({control: new OpenLayers.Control.MousePosition({separator: ' , '}), map: mappanel.map});
-				var scale = new GeoExt.Toolbar.ControlDisplay({cls: 'scale-control', control: new OpenLayers.Control.Scale(), map: mappanel.map});
+				var scale = new GeoExt.Toolbar.ControlDisplay({
+					cls: 'scale-control',
+					control: new OpenLayers.Control.Scale({geodesic: {{ projection.is_geographic|yesno:"true,false" }}}),
+					map: mappanel.map
+				});
 
 				mappanel.getBottomToolbar().add(new Ext.Toolbar.TextItem({text: config.projection}));
 				mappanel.getBottomToolbar().add(' ', '-',' ', scale, ' ', '-', '');
@@ -491,8 +495,7 @@
 				mappanel.getBottomToolbar().add('->', geojson_links);
 
 				mappanel.map.zoomToExtent(zoom_extent, true);
-				//mappanel.map.addControl(new OpenLayers.Control.Scale());
-				mappanel.map.addControl(new OpenLayers.Control.ScaleLine());
+				mappanel.map.addControl(new OpenLayers.Control.ScaleLine({geodesic: {{ projection.is_geographic|yesno:"true,false" }}}));
 				mappanel.map.addControl(new OpenLayers.Control.PanPanel());
 				mappanel.map.addControl(new OpenLayers.Control.ZoomPanel());
 				mappanel.map.addControl(new OpenLayers.Control.Navigation());

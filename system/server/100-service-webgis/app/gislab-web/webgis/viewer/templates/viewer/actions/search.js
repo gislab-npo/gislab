@@ -498,7 +498,7 @@ var searchWindow = new Ext.Window({
 					REQUEST: 'GetFeatureInfo',
 					FEATURE_COUNT: features_count+1,
 					INFO_FORMAT: 'application/vnd.ogc.gml',
-					SRS: '{{ projection }}',
+					SRS: '{{ projection.code }}',
 					LAYERS: layer,
 					QUERY_LAYERS: layer,
 					FILTER: query_filter

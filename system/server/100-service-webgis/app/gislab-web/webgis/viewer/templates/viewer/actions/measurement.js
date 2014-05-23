@@ -2,7 +2,12 @@
 var length = new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
 	immediate: true,
 	persist: true,
-	geodesic: true, //only for projected projections
+	geodesic: {{ projection.is_geographic|yesno:"true,false" }},
+	handlerOptions: {
+		layerOptions: {
+			styleMap: WebgisStyles.measure_style
+		}
+	},
 	eventListeners: {
 		measurepartial: function(evt) {
 			Ext.getCmp('measurement-info').setText('{% trans "Length" %}: ' + evt.measure.toFixed(2) + evt.units);
@@ -15,7 +20,12 @@ var length = new OpenLayers.Control.Measure(OpenLayers.Handler.Path, {
 var area = new OpenLayers.Control.Measure(OpenLayers.Handler.Polygon, {
 	immediate: true,
 	persist: true,
-	geodesic: true, //only for projected projections
+	geodesic: {{ projection.is_geographic|yesno:"true,false" }},
+	handlerOptions: {
+		layerOptions: {
+			styleMap: WebgisStyles.measure_style
+		}
+	},
 	eventListeners: {
 		measurepartial: function(evt) {
 			Ext.getCmp('measurement-info').setText('{% trans "Area" %}: ' + evt.measure.toFixed(2) + evt.units + '<sup>2</sup>');

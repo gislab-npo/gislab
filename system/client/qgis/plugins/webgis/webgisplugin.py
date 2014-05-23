@@ -386,7 +386,10 @@ class WebGisPlugin:
 		metadata.update({
 			'extent': project_extent,
 			'zoom_extent': [round(coord, 3) for coord in self.iface.mapCanvas().extent().toRectF().getCoords()],
-			'projection': map_canvas.mapRenderer().destinationCrs().authid(),
+			'projection': {
+				'code': map_canvas.mapRenderer().destinationCrs().authid(),
+				'is_geographic': map_canvas.mapRenderer().destinationCrs().geographicFlag()
+			},
 			'selection_color': '{0}{1:02x}'.format(selection_color.name(), selection_color.alpha()),
 			'canvas_color': '{0}{1:02x}'.format(canvas_color.name(), canvas_color.alpha()),
 			'units': units,
@@ -402,7 +405,7 @@ class WebGisPlugin:
 		special_base_layers = []
 		if dialog.blank.isChecked():
 			special_base_layers.append({'name': 'Blank', 'type': 'BLANK'})
-		if metadata['projection'].upper() == 'EPSG:3857':
+		if metadata['projection']['code'].upper() == 'EPSG:3857':
 			if dialog.osm.isChecked():
 				special_base_layers.append(dict(OSM_LAYER))
 			if dialog.google.currentIndex() > 0:
