@@ -75,7 +75,7 @@ action = new WebGIS.DrawAction({
 	iconCls: 'draw-line-icon',
 	enableToggle: true,
 	toggleGroup: 'tools',
-	tooltip: '{% trans "Draw geometry" %}',
+	tooltip: '{% trans "Draw on map" %}',
 	snapping: true,
 	toggleHandler: function(action, toggled) {
 		action.baseAction.toggleHandler(action, toggled);

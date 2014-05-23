@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-23 12:41+0200\n"
+"POT-Creation-Date: 2014-05-23 16:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -102,35 +102,35 @@ msgstr "Podkladové vrstvy"
 msgid "Log out"
 msgstr "Odhlásiť sa"
 
-#: templates/viewer/webgis.html:555 templates/viewer/actions/draw.js:119
+#: templates/viewer/webgis.html:558 templates/viewer/actions/draw.js:119
 #: templates/viewer/actions/draw.js:130 templates/viewer/actions/search.js:524
 msgid "Error"
 msgstr "Chyba"
 
-#: templates/viewer/webgis.html:556
+#: templates/viewer/webgis.html:559
 #, python-format
 msgid "Failed to fetch vector data (drawing: %(drawing_id)s)"
 msgstr "Nepodarilo sa načítať vektorové dáta (kreslenie: %(drawing_id)s)"
 
-#: templates/viewer/webgis.html:573
+#: templates/viewer/webgis.html:576
 msgid "Message"
 msgstr "Správa"
 
 #: templates/viewer/actions/basic.js:8
-msgid "Home"
-msgstr "Domov"
+msgid "Zoom to default extent"
+msgstr "Priblížiť na predvolenú oblasť"
 
-#: templates/viewer/actions/basic.js:20
-msgid "Pan"
-msgstr "Posun po mape"
-
-#: templates/viewer/actions/basic.js:33
+#: templates/viewer/actions/basic.js:21
 msgid "Previous in history"
 msgstr "Predchádzajúca poloha"
 
-#: templates/viewer/actions/basic.js:42
+#: templates/viewer/actions/basic.js:30
 msgid "Next in history"
 msgstr "Nasledujúca poloha"
+
+#: templates/viewer/actions/basic.js:42
+msgid "Map pan"
+msgstr "Posun po mape"
 
 #: templates/viewer/actions/draw.js:5 templates/viewer/actions/draw.js:113
 msgid "Points"
@@ -145,7 +145,7 @@ msgid "Polygons"
 msgstr "Polygóny"
 
 #: templates/viewer/actions/draw.js:78
-msgid "Draw geometry"
+msgid "Draw on map"
 msgstr "Kreslenie"
 
 #: templates/viewer/actions/draw.js:112
@@ -170,24 +170,24 @@ msgid "All visible layers"
 msgstr "Všetky viditeľné vrstvy"
 
 #: templates/viewer/actions/featureinfo.js:119
-msgid "Feature info"
-msgstr "Identifikácia"
+msgid "Object identification"
+msgstr "Identifikácia objektov"
 
-#: templates/viewer/actions/measurement.js:9
-#: templates/viewer/actions/measurement.js:12
+#: templates/viewer/actions/measurement.js:13
+#: templates/viewer/actions/measurement.js:16
 msgid "Length"
 msgstr "Dĺžka"
 
-#: templates/viewer/actions/measurement.js:22
-#: templates/viewer/actions/measurement.js:25
+#: templates/viewer/actions/measurement.js:31
+#: templates/viewer/actions/measurement.js:34
 msgid "Area"
 msgstr "Plocha"
 
-#: templates/viewer/actions/measurement.js:45
+#: templates/viewer/actions/measurement.js:54
 msgid "Measure length"
 msgstr "Meranie dĺžky"
 
-#: templates/viewer/actions/measurement.js:60
+#: templates/viewer/actions/measurement.js:69
 msgid "Measure area"
 msgstr "Meranie plochy"
 
@@ -286,5 +286,3 @@ msgstr "Vyhľadávanie zlyhalo"
 msgid "Searching"
 msgstr "Vyhľadávanie"
 
-#~ msgid "Warning"
-#~ msgstr "Varovanie"

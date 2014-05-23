@@ -116,7 +116,7 @@ action = new GeoExt.Action({
 	enableToggle: true,
 	toggleGroup: 'tools',
 	group: 'tools',
-	tooltip: '{% trans "Feature info" %}',
+	tooltip: '{% trans "Object identification" %}',
 	toggleHandler: function(action, toggled) {
 		identify_layer_combobox.setDisabled(!toggled);
 	}
