@@ -79,9 +79,15 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 		this.setStatusInfo('');
 	},
 
+	setFeaturesLayersVisibility: function(visibility) {
+		Ext.each(this.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
+			layer.setVisibility(visibility);
+		});
+	},
+
 	showFeatures: function(features) {
 		this.clearFeaturesLayers();
-		var status_format = gettext('Features: %(count)s');
+		var status_format = gettext('Number of results: %(count)s');
 		this.setStatusInfo(interpolate(status_format, {"count": features.length}, true));
 		var featureinfo_data = {};
 		if (features.length > 0) {
@@ -221,7 +227,10 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 	},
 	listeners: {
 		collapse: function(panel) {
-			this.clearFeaturesLayers();
+			this.setFeaturesLayersVisibility(false);
+		},
+		expand: function(panel) {
+			this.setFeaturesLayersVisibility(true);
 		}
 	},
 });
