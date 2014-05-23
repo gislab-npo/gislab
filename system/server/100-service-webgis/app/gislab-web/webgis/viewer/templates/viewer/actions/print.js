@@ -72,7 +72,7 @@ var printWindow = new Ext.Window({
 		{
 			xtype: 'combo',
 			id: 'print-layouts-combobox',
-			width: 100,
+			width: 130,
 			editable: false,
 			tooltip: '{% trans "Print layout" %}',
 			mode: 'local',
@@ -131,9 +131,7 @@ var printWindow = new Ext.Window({
 					printWindow.syncShadow();
 				}
 			}
-		}, {
-			xtype: 'tbspacer'
-		}, {
+		}, ' ', {
 			xtype: 'combo',
 			id: 'print-dpi-combobox',
 			width: 70,
@@ -169,9 +167,7 @@ var printWindow = new Ext.Window({
 					printExtent.printProvider.setDpi(record);
 				}
 			}
-		}, {
-			xtype: 'tbspacer'
-		}, {
+		}, ' ', {
 			xtype: 'combo',
 			ref: '/formatCombobox',
 			width: 70,
@@ -200,14 +196,10 @@ var printWindow = new Ext.Window({
 					combo.setValue(combo.getStore().getAt(0).get('name'));
 				}
 			}
-		}, {
-			xtype: 'tbspacer'
-		}, {
+		}, ' ', {
 			xtype: 'label',
 			text: '{% trans "Rotation" %}'
-		}, {
-			xtype: 'tbspacer'
-		}, {
+		}, ' ', {
 			xtype: 'spinnerfield',
 			ref: '/rotationSpinner',
 			width: 60,
@@ -233,9 +225,10 @@ var printWindow = new Ext.Window({
 					event.stopPropagation();
 				}
 			}
-		}, {
-			xtype: 'tbspacer'
-		}, new Ext.Action({
+		}
+	],
+	bbar: ['->', '-',
+		new Ext.Action({
 			ref: '/print',
 			text: '{% trans "Print" %}',
 			tooltip: '{% trans "Print" %}',
