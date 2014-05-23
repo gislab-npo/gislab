@@ -62,8 +62,8 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 		this.statusElem.update(info);
 	},
 
-	setLayersAttributesAliases: function(layers_features_aliases) {
-		this.layersFeaturesAliases = layers_features_aliases;
+	setLayerAttributes: function(layers_attributes) {
+		this.layersAttributes = layers_attributes;
 	},
 
 	setLayersAttributesPks: function(layers_features_pks) {
@@ -167,16 +167,16 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 					});
 				}
 
-				var attribs_aliases = this.layersFeaturesAliases? this.layersFeaturesAliases[layer_name] : null;
-				for (var attr_name in layer_features[0].attributes) {
-					if (attr_name == 'geometry' || attr_name == 'boundedBy') {continue;}
+				Ext.each(this.layersAttributes[layer_name], function(layer_attrib) {
+					var attr_name = layer_attrib.name;
+					if (attr_name == 'geometry' || attr_name == 'boundedBy') {return true;}
 					fields.push({ name: attr_name, type: 'string' });
 					columns.push({
 						id: attr_name,
-						header: attribs_aliases && attribs_aliases.hasOwnProperty(attr_name)? attribs_aliases[attr_name] : attr_name,
+						header: layer_attrib.alias? layer_attrib.alias : attr_name,
 						dataIndex: attr_name
 					});
-				}
+				});
 
 				var store = new GeoExt.data.FeatureStore({
 					layer: flayer,

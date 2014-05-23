@@ -33,6 +33,7 @@ import PyQt4.uic
 from qgis.core import *
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
+from PyQt4.QtXml import QDomDocument
 
 # Initialize Qt resources from file resources.py
 import resources_rc
@@ -547,10 +548,23 @@ class WebGisPlugin:
 					}
 				if layer.hasGeometryType():
 					layer_data['geom_type'] = ('POINT', 'LINE', 'POLYGON')[layer.geometryType()]
+
 				fields = layer.pendingFields()
 				attributes_data = []
+				attributes_indexes = []
+				for elem in layer.attributeEditorElements():
+					attribs_group = elem.toDomElement(QDomDocument())
+					attribs_elems = attribs_group.elementsByTagName('attributeEditorField')
+					for i in range(attribs_elems.count()):
+						attrib_elem = attribs_elems.item(i)
+						index = int(attrib_elem.attributes().namedItem('index').nodeValue())
+						name = attrib_elem.attributes().namedItem('name').nodeValue()
+						attributes_indexes.append(index)
+				if not attributes_indexes:
+					attributes_indexes = range(fields.count())
 				excluded_attributes = layer.excludeAttributesWMS()
-				for index, field in enumerate(fields):
+				for index in attributes_indexes:
+					field = fields.field(index)
 					if field.name() in excluded_attributes:
 						continue
 					attribute_data = {
