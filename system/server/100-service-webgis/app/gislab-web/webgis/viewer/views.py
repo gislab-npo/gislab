@@ -308,7 +308,7 @@ def page(request):
 			valid_until = datetime.datetime.strptime(metadata.message['valid_until'], "%d.%m.%Y").date()
 			today = datetime.date.today()
 			if today <= valid_until:
-				context['message'] = metadata.message['text']
+				context['message'] = metadata.message['text'].replace('\n', '<br />')
 		project_info = {
 			'gislab_version': metadata.gislab_version,
 			'gislab_user': metadata.gislab_user,

@@ -573,7 +573,7 @@
 				{% if message %}
 				Ext.MessageBox.show({
 					title: '{% trans "Message" %}',
-					msg: '{{ message }}',
+					msg: '{{ message|escapejs }}',
 					minWidth: 300,
 					closable: false,
 					modal: true,
