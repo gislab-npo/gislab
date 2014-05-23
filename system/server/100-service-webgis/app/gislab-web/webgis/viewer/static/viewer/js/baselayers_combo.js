@@ -109,7 +109,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 				layer_config.name, '', {
 					zoomOffset: layer_config.min_zoom_level,
 					resolutions: layer_config.resolutions,
-					wrapDateLine: true
+					wrapDateLine: false
 				}
 			);
 		} else if (layer_config.type == 'google') {
@@ -121,7 +121,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 					mapTypeId: google_map,
 					minZoomLevel: layer_config.min_zoom_level,
 					maxZoomLevel: layer_config.max_zoom_level,
-					wrapDateLine: true,
+					wrapDateLine: false,
 				}
 			);
 		} else if (layer_config.type == 'WMS') {
