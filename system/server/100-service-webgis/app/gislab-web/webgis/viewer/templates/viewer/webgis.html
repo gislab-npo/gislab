@@ -550,7 +550,14 @@
 						})
 					},
 					failure: function(response, opts) {
-						Ext.MessageBox.alert('{% trans "Error" %}', '{% blocktrans%}Failed to fetch vector data (drawing: {{ drawing_id }}){% endblocktrans %}');
+						Ext.MessageBox.show({
+							title: '{% trans "Error" %}',
+							msg: '{% blocktrans%}Failed to fetch vector data (drawing: {{ drawing_id }}){% endblocktrans %}',
+							minWidth: 300,
+							closable: false,
+							modal: true,
+							buttons: Ext.Msg.OK,
+						});
 					}
 				});
 					{% endfor %}
@@ -564,7 +571,10 @@
 				Ext.MessageBox.show({
 					title: '{% trans "Message" %}',
 					msg: '{{ message }}',
-					modal: false
+					minWidth: 300,
+					closable: false,
+					modal: true,
+					buttons: Ext.Msg.OK,
 				});
 				{% endif %}
 			}; // end of main function

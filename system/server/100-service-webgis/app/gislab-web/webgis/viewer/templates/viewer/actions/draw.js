@@ -115,11 +115,25 @@ action = new WebGIS.DrawAction({
 					this.historyStore.loadData(data, true);
 				}.bind(drawAction),
 				failure: function(response, opts) {
-					Ext.MessageBox.alert('{% trans "Error" %}', '{% trans "Failed to save data" %}');
+					Ext.MessageBox.show({
+						title: '{% trans "Error" %}',
+						msg: '{% trans "Failed to save data" %}',
+						minWidth: 300,
+						closable: false,
+						modal: true,
+						buttons: Ext.Msg.OK,
+					});
 				}
 			});
 		} else {
-			Ext.MessageBox.alert('{% trans "Warning" %}', '{% trans "There is no data to be saved" %}');
+			Ext.MessageBox.show({
+				title: '{% trans "Error" %}',
+				msg: '{% trans "There is no data to be saved" %}',
+				minWidth: 300,
+				closable: false,
+				modal: true,
+				buttons: Ext.Msg.OK,
+			});
 		}
 	},
 	importFeatures: function(features, makeCopy, skipDuplicit) {

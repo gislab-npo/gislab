@@ -368,7 +368,6 @@ var searchWindow = new Ext.Window({
 				var available_layers = [];
 				// filter available layers
 				Ext.each(this.layersData, function(layer_data) {
-					//console.log(layer_data);
 					if (layers_list.indexOf(layer_data.name) != -1) {
 						available_layers.push(layer_data);
 					}
@@ -521,7 +520,14 @@ var searchWindow = new Ext.Window({
 					}
 				},
 				failure: function(response, opts) {
-					Ext.MessageBox.alert('{% trans "Error" %}', '{% trans "Searching failed" %}');
+					Ext.MessageBox.show({
+						title: '{% trans "Error" %}',
+						msg: '{% trans "Searching failed" %}',
+						minWidth: 300,
+						closable: false,
+						modal: true,
+						buttons: Ext.Msg.OK,
+					});
 				}
 			});
 		}
