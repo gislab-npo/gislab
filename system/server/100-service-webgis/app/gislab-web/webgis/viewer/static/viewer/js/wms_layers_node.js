@@ -2,9 +2,9 @@ Ext.namespace('WebGIS');
 
 WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 	layersIconClsMap: {
-		POINT: 'draw-point-icon',
-		LINE: 'draw-line-icon',
-		POLYGON: 'draw-polygon-icon',
+		POINT: 'point-layer-icon',
+		LINE: 'line-layer-icon',
+		POLYGON: 'polygon-layer-icon',
 	},
 	constructor: function(config) {
 		config.checked = true;

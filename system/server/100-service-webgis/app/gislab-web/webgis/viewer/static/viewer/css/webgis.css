@@ -10,6 +10,21 @@ div.scale-control {
 	line-height: 0px !important;
 }
 
+.x-tree-node-el {
+	border-bottom: 1px solid #FFFFFF;
+	border-top: 1px solid #FFFFFF;
+}
+
+.x-tree-node .x-tree-node-over {
+	background-color: #FFFFE0;
+	border-top: 1px dotted #BBB;
+	border-bottom: 1px dotted #BBB;
+}
+
+.x-tree-node .x-tree-selected {
+	background-color: transparent;
+}
+
 .olControlAttribution {
 	bottom: 5px !important;
 	right: 5px !important;
@@ -188,18 +203,33 @@ div.scale-control {
 	background: no-repeat;
 }
 
+.point-layer-icon {
+	background-image: url('../images/toolbar/point_gray.png')!important;
+	background: no-repeat;
+}
+
+.line-layer-icon {
+	background-image: url('../images/toolbar/line_gray.png')!important;
+	background: no-repeat;
+}
+
+.polygon-layer-icon {
+	background-image: url('../images/toolbar/polygon_gray.png')!important;
+	background: no-repeat;
+}
+
 .draw-point-icon {
-	background-image: url('../images/toolbar/point.png')!important;
+	background-image: url('../images/toolbar/add_point.png')!important;
 	background: no-repeat;
 }
 
 .draw-line-icon {
-	background-image: url('../images/toolbar/line.png')!important;
+	background-image: url('../images/toolbar/add_line.png')!important;
 	background: no-repeat;
 }
 
 .draw-polygon-icon {
-	background-image: url('../images/toolbar/polygon.png')!important;
+	background-image: url('../images/toolbar/add_polygon.png')!important;
 	background: no-repeat;
 }
 
