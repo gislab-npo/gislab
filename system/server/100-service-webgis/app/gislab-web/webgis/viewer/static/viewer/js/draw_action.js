@@ -260,6 +260,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					xtype: 'tbbutton',
 					text: gettext('Delete selected'),
 					tooltip: gettext('Delete selected'),
+					hideMode: 'visibility',
 					drawAction: this,
 					handler: function() {
 						var features_editor = this.drawAction.window.get(0).activeTab;
@@ -277,6 +278,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					xtype: 'tbbutton',
 					text: gettext('Delete all'),
 					tooltip: gettext('Delete all'),
+					hideMode: 'visibility',
 					drawAction: this,
 					handler: function() {
 						var features_editor = this.drawAction.window.get(0).activeTab;
@@ -287,6 +289,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					cls: 'x-btn-text',
 					text: gettext('Save'),
 					tooltip: gettext('Save drawing'),
+					hideMode: 'visibility',
 					drawAction: this,
 					handler: function(save_action) {
 						var title = this.drawAction.window.drawingTitle.getValue();
@@ -322,6 +325,13 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 									this.drawAction.enableSnapping(tab.control);
 								}
 								this.drawAction.enableFeatureModify(tab.control);
+								this.drawAction.window.getBottomToolbar().items.each(function(item) {
+									item.show();
+								});
+							} else { // history tab
+								this.drawAction.window.getBottomToolbar().items.each(function(item) {
+									item.hide();
+								});
 							}
 						}
 					}
