@@ -264,10 +264,6 @@ class WebGisPlugin:
 		# When no project resolutions can be calculated, default scales will be used.
 		project_tile_resolutions = set()
 		units = self._map_units()
-		scales, ok = self.project.readListEntry("Scales", "/ScalesList")
-		if ok and scales:
-			scales = [scale.split(":")[-1] for scale in scales]
-			project_tile_resolutions.update(get_tile_resolutions(sorted(scales, reverse=True), units))
 
 		# collect set of all resolutions from WMSC base layers
 		base_layers = {layer.id(): layer for layer in self.iface.legendInterface().layers() if self._is_base_layer_for_publish(layer)}
@@ -275,6 +271,14 @@ class WebGisPlugin:
 			layer_resolutions = self._wmsc_layer_resolutions(layer, units)
 			if layer_resolutions:
 				project_tile_resolutions.update(layer_resolutions)
+
+		wmsc_layers_scales = get_scales_from_resolutions(project_tile_resolutions, self._map_units())
+		scales, ok = self.project.readListEntry("Scales", "/ScalesList")
+		if ok and scales:
+			scales = [int(scale.split(":")[-1]) for scale in scales]
+			# filter duplicit scales
+			scales = filter(lambda scale: scale not in wmsc_layers_scales, scales)
+			project_tile_resolutions.update(get_tile_resolutions(sorted(scales, reverse=True), units))
 
 		project_tile_resolutions = sorted(project_tile_resolutions, reverse=True)
 		return project_tile_resolutions
