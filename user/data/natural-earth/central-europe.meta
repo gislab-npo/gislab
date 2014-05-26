@@ -85,7 +85,7 @@
   "canvas_color": "#ffffffff", 
   "message": {
     "valid_until": "01.01.2099", 
-    "text": "Welcome to GIS.lab example project !"
+    "text": "Welcome to GIS.lab demonstration project !"
   }, 
   "overlays": [
     {
