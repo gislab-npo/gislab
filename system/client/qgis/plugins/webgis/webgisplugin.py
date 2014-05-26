@@ -264,10 +264,6 @@ class WebGisPlugin:
 		# When no project resolutions can be calculated, default scales will be used.
 		project_tile_resolutions = set()
 		units = self._map_units()
-		scales, ok = self.project.readListEntry("Scales", "/ScalesList")
-		if ok and scales:
-			scales = [scale.split(":")[-1] for scale in scales]
-			project_tile_resolutions.update(get_tile_resolutions(sorted(scales, reverse=True), units))
 
 		# collect set of all resolutions from WMSC base layers
 		base_layers = {layer.id(): layer for layer in self.iface.legendInterface().layers() if self._is_base_layer_for_publish(layer)}
@@ -275,6 +271,14 @@ class WebGisPlugin:
 			layer_resolutions = self._wmsc_layer_resolutions(layer, units)
 			if layer_resolutions:
 				project_tile_resolutions.update(layer_resolutions)
+
+		wmsc_layers_scales = get_scales_from_resolutions(project_tile_resolutions, self._map_units())
+		scales, ok = self.project.readListEntry("Scales", "/ScalesList")
+		if ok and scales:
+			scales = [int(scale.split(":")[-1]) for scale in scales]
+			# filter duplicit scales
+			scales = filter(lambda scale: scale not in wmsc_layers_scales, scales)
+			project_tile_resolutions.update(get_tile_resolutions(sorted(scales, reverse=True), units))
 
 		project_tile_resolutions = sorted(project_tile_resolutions, reverse=True)
 		return project_tile_resolutions
@@ -653,13 +657,14 @@ class WebGisPlugin:
 			'WEB_URL': '{0}?PROJECT={1}'.format(GISLAB_WEB_URL, self._get_publish_project_name()),
 			'DEFAULT_BASE_LAYER': self.dialog.default_baselayer.currentText(),
 			'SCALES': get_scales_from_resolutions(metadata['tile_resolutions'], self._map_units()),
+			'PROJECTION': metadata['projection']['code'],
 			'AUTHENTICATION': 'Public' if metadata['authentication']['allow_anonymous'] else 'Require superuser' if metadata['authentication']['require_superuser'] else 'Require authentication',
 			'MESSAGE_TEXT': message['text'] if message else '',
 			'MESSAGE_VALIDITY': message['valid_until'] if message else '',
 			'DRAWINGS': self.dialog.drawings.text()
 		}
 
-		for param in ('gislab_user', 'gislab_unique_id', 'gislab_version', 'title', 'abstract', 'contact_person', 'contact_mail', 'contact_organization', 'extent', 'projection', 'units', 'measure_ellipsoid', 'use_mapcache'):
+		for param in ('gislab_user', 'gislab_unique_id', 'gislab_version', 'title', 'abstract', 'contact_person', 'contact_mail', 'contact_organization', 'extent', 'units', 'measure_ellipsoid', 'use_mapcache'):
 			data[param.upper()] = metadata[param]
 
 		base_layers_summary = []
