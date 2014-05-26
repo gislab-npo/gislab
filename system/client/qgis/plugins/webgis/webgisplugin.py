@@ -653,13 +653,14 @@ class WebGisPlugin:
 			'WEB_URL': '{0}?PROJECT={1}'.format(GISLAB_WEB_URL, self._get_publish_project_name()),
 			'DEFAULT_BASE_LAYER': self.dialog.default_baselayer.currentText(),
 			'SCALES': get_scales_from_resolutions(metadata['tile_resolutions'], self._map_units()),
+			'PROJECTION': metadata['projection']['code'],
 			'AUTHENTICATION': 'Public' if metadata['authentication']['allow_anonymous'] else 'Require superuser' if metadata['authentication']['require_superuser'] else 'Require authentication',
 			'MESSAGE_TEXT': message['text'] if message else '',
 			'MESSAGE_VALIDITY': message['valid_until'] if message else '',
 			'DRAWINGS': self.dialog.drawings.text()
 		}
 
-		for param in ('gislab_user', 'gislab_unique_id', 'gislab_version', 'title', 'abstract', 'contact_person', 'contact_mail', 'contact_organization', 'extent', 'projection', 'units', 'measure_ellipsoid', 'use_mapcache'):
+		for param in ('gislab_user', 'gislab_unique_id', 'gislab_version', 'title', 'abstract', 'contact_person', 'contact_mail', 'contact_organization', 'extent', 'units', 'measure_ellipsoid', 'use_mapcache'):
 			data[param.upper()] = metadata[param]
 
 		base_layers_summary = []
