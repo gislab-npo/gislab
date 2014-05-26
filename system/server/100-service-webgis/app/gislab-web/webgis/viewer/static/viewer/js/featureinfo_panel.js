@@ -62,12 +62,8 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 		this.statusElem.update(info);
 	},
 
-	setLayerAttributes: function(layers_attributes) {
-		this.layersAttributes = layers_attributes;
-	},
-
-	setLayersAttributesPks: function(layers_features_pks) {
-		this.layersFeaturesPks = layers_features_pks;
+	setLayersMetadata: function(layers_meta) {
+		this.layersMetadata = layers_meta;
 	},
 
 	clearFeaturesLayers: function() {
@@ -152,9 +148,9 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 								var feature = record.get('feature');
 								var layer_name = feature.fid.split(".")[0];
 
-								if (this.layersFeaturesPks) {
+								if (this.layersMetadata[layer_name]) {
 									var feature_pks = [];
-									Ext.each(this.layersFeaturesPks[layer_name], function(pk_attr_name) {
+									Ext.each(this.layersMetadata[layer_name].pk_attributes, function(pk_attr_name) {
 										 feature_pks.push(feature.attributes[pk_attr_name]);
 									});
 									feature.attributes.title = String.format('{0} - #{1}', layer_name, feature_pks.join(','));
@@ -167,7 +163,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 					});
 				}
 
-				Ext.each(this.layersAttributes[layer_name], function(layer_attrib) {
+				Ext.each(this.layersMetadata[layer_name].attributes, function(layer_attrib) {
 					var attr_name = layer_attrib.name;
 					if (attr_name == 'geometry' || attr_name == 'boundedBy') {return true;}
 					fields.push({ name: attr_name, type: 'string' });
