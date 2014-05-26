@@ -475,7 +475,7 @@
 				var coords = new GeoExt.Toolbar.ControlDisplay({control: new OpenLayers.Control.MousePosition({separator: ' , '}), map: mappanel.map});
 				var scale = new GeoExt.Toolbar.ControlDisplay({
 					cls: 'scale-control',
-					control: new OpenLayers.Control.Scale({geodesic: {{ projection.is_geographic|yesno:"true,false" }}}),
+					control: new OpenLayers.Control.Scale('', {geodesic: {{ projection.is_geographic|yesno:"true,false" }}}),
 					map: mappanel.map
 				});
 
