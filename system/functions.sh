@@ -41,6 +41,7 @@ gislab_print_warning () {
 gislab_print_error () {
 	# print error message
 	echo -e "$(tput bold)$(tput setaf 1)[GIS.lab]: ${1}!$(tput sgr0)"
+	exit 1
 }
 
 
