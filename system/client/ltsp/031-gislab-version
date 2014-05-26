@@ -3,7 +3,7 @@
 case "$MODE" in
     finalization)
 	# set version from Git if we are running from sources
-	if [[ "$GISLAB_VERSION" == "dev" && -d "/vagrant/.git" ]]
+	if [ -d "/vagrant/.git" ]
 	then
 		GISLAB_VERSION_BRANCH=$(git --git-dir=/vagrant/.git --work-tree=/vagrant rev-parse --abbrev-ref HEAD)
 		GISLAB_VERSION_CHANGESET=$(git --git-dir=/vagrant/.git --work-tree=/vagrant rev-parse --short HEAD)
