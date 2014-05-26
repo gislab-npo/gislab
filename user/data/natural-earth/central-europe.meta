@@ -1,12 +1,16 @@
 {
   "measure_ellipsoid": "WGS84", 
   "use_mapcache": true, 
-  "projection": "EPSG:3857", 
+  "projection": {
+    "code": "EPSG:3857", 
+    "is_geographic": false
+  }, 
   "contact_mail": "ivan.mincik@gmail.com", 
   "base_layers": [
     {
       "visible": false, 
       "resolutions": [
+        4891.9698095703125, 
         2445.9849047851562, 
         1222.9924523925781, 
         611.4962261962891, 
@@ -42,6 +46,7 @@
         5615981.3413867
       ], 
       "resolutions": [
+        4891.9698095703125, 
         2445.9849047851562, 
         1222.9924523925781, 
         611.4962261962891, 
@@ -57,7 +62,7 @@
         0.5971642833948135
       ], 
       "type": "OSM", 
-      "min_zoom_level": 6
+      "min_zoom_level": 5
     }
   ], 
   "contact_organization": "GIS.lab", 
@@ -72,15 +77,15 @@
     7374556.522260039
   ], 
   "zoom_extent": [
-    175145.312, 
+    129581.022, 
     5435987.414, 
-    3163954.754, 
+    3209519.043, 
     7627031.93
   ], 
   "canvas_color": "#ffffffff", 
   "message": {
-    "valid_until": "23.05.2099", 
-    "text": "Welcome to GIS.lab Web demonstration project !"
+    "valid_until": "01.01.2099", 
+    "text": "Welcome to GIS.lab example project !"
   }, 
   "overlays": [
     {
@@ -3197,6 +3202,7 @@
     }
   ], 
   "tile_resolutions": [
+    4891.9698095703125, 
     2445.9849047851562, 
     1222.9924523925781, 
     611.4962261962891, 
@@ -3211,16 +3217,16 @@
     1.194328566789627, 
     0.5971642833948135
   ], 
-  "gislab_user": "lab1", 
+  "gislab_user": "ivo", 
   "title": "Countries of Central Europe", 
-  "gislab_unique_id": "gislab-testing", 
-  "publish_date_unix": 1400730269, 
+  "gislab_unique_id": "unknown", 
+  "publish_date_unix": 1401096129, 
   "authentication": {
     "require_superuser": false, 
     "allow_anonymous": true
   }, 
-  "publish_date": "Thu May 22 05:44:29 2014", 
-  "gislab_version": "git+master+5674f1b", 
+  "publish_date": "Mon May 26 11:22:09 2014", 
+  "gislab_version": "unknown", 
   "units": "meters", 
   "selection_color": "#ffff00ff", 
   "contact_person": "Ivan Min\u010d\u00edk", 
