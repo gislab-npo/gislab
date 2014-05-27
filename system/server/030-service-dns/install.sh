@@ -18,33 +18,51 @@ OPTIONS="-4 -u bind"
 EOF
 
 cat << EOF > /etc/bind/named.conf
+$(gislab_config_header)
+
 include "/etc/bind/named.conf.options";
 include "/etc/bind/named.conf.local";
 include "/etc/bind/named.conf.default-zones";
-EOF
-
-if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
-	cat << EOF >> /etc/bind/named.conf
-$(gislab_config_header)
 
 logging {
-	channel queries_log {
-		file "/var/log/named/named-debug.log" versions 20 size 200k;
-		severity debug 5;
+	channel default_syslog {
+		null;
+	};
+
+	channel default_debug {
+		null;
+	};
+
+	channel debug_log {
+		syslog local5;
+		severity info;
 		print-time yes;
 		print-severity yes;
 		print-category yes;
 	};
 
-	category queries {
-		queries_log;
+	category default {
+		debug_log;
 	};
-};
+
+	category unmatched {
+		null;
+	};
 EOF
-	mkdir -p /var/log/named
-	chown bind:bind /var/log/named
-	chmod 0750 /var/log/named
+
+if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
+	cat << EOF >> /etc/bind/named.conf
+
+	category queries {
+		debug_log;
+	};
+EOF
+	echo "local5.* /var/log/named-debug.log" >> /etc/rsyslog.d/50-default.conf
+else
+	echo "local5.* /var/log/named-error.log" >> /etc/rsyslog.d/50-default.conf
 fi
+
+echo "};" >> /etc/bind/named.conf
 
 # gis.lab zone
 cat << EOF > /etc/bind/named.conf.local
@@ -106,6 +124,12 @@ $(gislab_config_header ";")
 5        IN    PTR       server.gis.lab.
 EOF
 
+# create default log file
+touch /var/log/named-error.log
+chmod 0640 /var/log/named-error.log
+chown syslog:adm /var/log/named-error.log
+
+service rsyslog restart
 service bind9 restart
 
 

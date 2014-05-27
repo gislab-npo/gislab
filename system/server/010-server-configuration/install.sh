@@ -63,8 +63,9 @@ fi
 gislab_config_header_to_file /etc/rsyslog.conf
 
 cat << EOF > /etc/rsyslog.d/50-default.conf
+$(gislab_config_header)
 auth,authpriv.*			/var/log/auth.log
-*.*;auth,authpriv.none,mail.none,local4.none,local7.none		-/var/log/syslog
+*.*;auth,authpriv.none,mail.none,local4.none,local5.none,local7.none		-/var/log/syslog
 kern.*					-/var/log/kern.log
 news.crit				/var/log/news/news.crit
 news.err				/var/log/news/news.err
@@ -76,7 +77,6 @@ daemon.*;mail.*;\\
 	*.=debug;*.=info;\\
 	*.=notice;*.=warn	|/dev/xconsole
 EOF
-gislab_config_header_to_file /etc/rsyslog.d/50-default.conf
 
 service rsyslog restart
 

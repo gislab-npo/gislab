@@ -25,6 +25,7 @@ function usage() {
 	echo -e "\nOPTIONS
 	-n  number of lines to display from each log file on start (default 1)
 	-s  print system and authentication logs
+	-b  print dns service logs
 	-e  print email service logs
 	-d  print database service logs
 	-m  print mapserver service logs
@@ -39,11 +40,12 @@ function usage() {
 
 # options
 LOGLINES=1
-while getopts "n:sedmwWch" OPTION
+while getopts "n:sbedmwWch" OPTION
 do
         case "$OPTION" in
 			n) LOGLINES="$OPTARG" ;;
 			s) SYSTEM="yes" ;;
+			b) DNS="yes";;
 			e) EMAIL="yes" ;;
 			d) DATABASE="yes" ;;
 			m) MAPSERVER="yes" ;;
@@ -65,6 +67,10 @@ if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
 
 		/var/log/dhcpd-error.log
 		/var/log/ldap-error.log
+	"
+
+	LOGFILES_DNS="
+		/var/log/named-error.log
 	"
 	
 	LOGFILES_EMAIL="
@@ -96,6 +102,10 @@ else
 		/var/log/dhcpd-debug.log
 		/var/log/named/named-debug.log
 		/var/log/ldap-debug.log
+	"
+
+	LOGFILES_DNS="
+		/var/log/named-debug.log
 	"
 
 	LOGFILES_EMAIL="
@@ -137,6 +147,9 @@ LOGFILES_WEB_ACCESS="
 LOGFILES=""
 if [ "$SYSTEM" == "yes" ]; then
 	LOGFILES+=$LOGFILES_SYSTEM
+fi
+if [ "$DNS" == "yes" ]; then
+	LOGFILES+=$LOGFILES_DNS
 fi
 if [ "$EMAIL" == "yes" ]; then
 	LOGFILES+=$LOGFILES_EMAIL

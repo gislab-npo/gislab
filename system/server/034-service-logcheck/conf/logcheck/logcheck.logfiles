@@ -9,3 +9,4 @@
 /var/log/webgis-error.log
 /var/log/ircd/ircd-hybrid.log
 /var/log/ldap-error.log
+/var/log/named-error.log
