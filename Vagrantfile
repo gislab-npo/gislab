@@ -3,7 +3,7 @@
 
 Vagrant.require_version ">= 1.5.0"
 
-# Load GIS.lab configuration file
+# load GIS.lab configuration file
 CONFIG = Hash.new
 File.readlines("config.cfg").each do |line|
   values = line.split("=")
@@ -18,6 +18,16 @@ if File.exist?('config-user.cfg')
     if not values[1].nil?
       CONFIG[values[0]] = values[1].strip.gsub(/["']/, '')
     end
+  end
+end
+
+# override allowed configuration variables from environment
+allowed_envs = Array["GISLAB_SERVER_MEMORY", "GISLAB_SERVER_GUI_CONSOLE",
+  "GISLAB_SERVER_AWS_ACCESS_KEY_ID", "GISLAB_SERVER_AWS_SECRET_ACCESS_KEY"
+]
+ENV.each do |envvar|
+  if envvar[0].match(/^GISLAB_/) && (allowed_envs.include? envvar[0])
+    CONFIG[envvar[0]] = ENV[envvar[0]]
   end
 end
 
