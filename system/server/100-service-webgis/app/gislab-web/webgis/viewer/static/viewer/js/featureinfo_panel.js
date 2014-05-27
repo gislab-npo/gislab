@@ -89,7 +89,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 		if (features.length > 0) {
 			// split features by layer name
 			Ext.each(features, function(feature) {
-				var layer_name = feature.fid.split(".")[0];
+				var layer_name = feature.fid.substring(0, feature.fid.lastIndexOf("."));
 				if (!featureinfo_data.hasOwnProperty(layer_name)) {
 					featureinfo_data[layer_name] = [];
 				}
@@ -146,7 +146,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 							handler: function(grid, rowIndex, colIndex) {
 								var record = grid.getStore().getAt(rowIndex);
 								var feature = record.get('feature');
-								var layer_name = feature.fid.split(".")[0];
+								var layer_name = feature.fid.substring(0, feature.fid.lastIndexOf("."));
 
 								if (this.layersMetadata[layer_name]) {
 									var feature_pks = [];
