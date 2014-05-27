@@ -34,7 +34,7 @@ GISLAB_SERVER_PROVIDER=$1
 
 
 # test if all required plugins are available
-if [ -n $GISLAB_PLUGINS_REQUIRE ]; then
+if [ -n "$GISLAB_PLUGINS_REQUIRE" ]; then
 	for plugin in "${GISLAB_PLUGINS_REQUIRE[@]}"; do
 		if [ ! -f "/vagrant/user/plugins/$plugin" ]; then
 			gislab_print_error "Missing required plugin '$plugin'"
