@@ -541,7 +541,7 @@ action = new Ext.Action({
 	iconCls: 'search-icon',
 	enableToggle: true,
 	toggleGroup: 'tools',
-	tooltip: '{% trans "Searching" %}',
+	tooltip: '{% trans "Search" %}',
 	toggleHandler: function(button, toggled) {
 		if (toggled) {
 			searchWindow.show();

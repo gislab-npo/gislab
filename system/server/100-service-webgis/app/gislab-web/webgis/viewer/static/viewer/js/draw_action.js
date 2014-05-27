@@ -139,6 +139,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				xtype: 'editorgrid',
 				title: control.title,
 				autoScroll: true,
+				trackMouseOver: true,
 				viewConfig: {
 					forceFit:true,
 				},
@@ -244,13 +245,15 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				items: [{
 						xtype: 'tbtext',
 						text: gettext('Title')+':',
+						hideMode: 'visibility',
 						flex: 0
 					}, {
-					xtype: 'tbspacer',
+						xtype: 'tbspacer',
 						width: 10
 					}, {
 						xtype: 'textfield',
 						ref: '/drawingTitle',
+						hideMode: 'visibility',
 						flex: 1
 					}
 				]
@@ -325,10 +328,12 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 									this.drawAction.enableSnapping(tab.control);
 								}
 								this.drawAction.enableFeatureModify(tab.control);
+								this.drawAction.window.drawingTitle.setDisabled(false);
 								this.drawAction.window.getBottomToolbar().items.each(function(item) {
 									item.show();
 								});
 							} else { // history tab
+								this.drawAction.window.drawingTitle.setDisabled(true);
 								this.drawAction.window.getBottomToolbar().items.each(function(item) {
 									item.hide();
 								});

@@ -216,7 +216,11 @@
 						y: 85,
 						plugins: new GeoExt.ZoomSliderTip()
 					}],
-					tbar: [],
+					tbar: {
+						xtype: 'toolbar',
+						dock: 'top',
+						cls: 'main-toolbar',
+					},
 					bbar: [],
 					stateId: 'map',
 					plugins: mappanel_plugins
@@ -277,17 +281,19 @@
 				{% include "viewer/actions/basic.js" %}
 
 				{% if project %}
-				mappanel.getTopToolbar().add({xtype: 'tbspacer', width: 25});
+				mappanel.getTopToolbar().add(' ', '-', ' ');
 				{% include "viewer/actions/search.js" %}
+				mappanel.getTopToolbar().add(' ');
 				{% include "viewer/actions/featureinfo.js" %}
 				{% endif %}
 
-				mappanel.getTopToolbar().add({xtype: 'tbspacer', width: 25});
+				mappanel.getTopToolbar().add(' ', '-', ' ');
 				{% include "viewer/actions/measurement.js" %}
+				mappanel.getTopToolbar().add(' ');
 				{% include "viewer/actions/draw.js" %}
 
 				{% if print_composers and not user.is_guest %}
-				mappanel.getTopToolbar().add({xtype: 'tbspacer', width: 25});
+				mappanel.getTopToolbar().add(' ', '-', ' ');
 				{% include "viewer/actions/print.js" %}
 				{% endif %}
 
@@ -432,7 +438,7 @@
 								type: 'hbox',
 								pack: 'start',
 							},
-							cls: 'x-panel-header',
+							cls: 'x-panel-header app-header',
 							items: [{
 									xtype: 'label',
 									flex: 1

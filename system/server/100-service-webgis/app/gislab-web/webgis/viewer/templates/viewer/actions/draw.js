@@ -72,7 +72,7 @@ action = new WebGIS.DrawAction({
 	controls: draw_controls,
 	map: mappanel.map,
 	cls: 'x-btn-icon',
-	iconCls: 'draw-line-icon',
+	iconCls: 'draw-icon',
 	enableToggle: true,
 	toggleGroup: 'tools',
 	tooltip: '{% trans "Draw on map" %}',

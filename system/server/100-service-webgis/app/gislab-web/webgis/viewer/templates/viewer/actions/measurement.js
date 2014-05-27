@@ -68,4 +68,4 @@ var area_button = new Ext.Button({
 	},
 	tooltip: '{% trans "Measure area" %}'
 });
-mappanel.getTopToolbar().add(length_button, area_button);
+mappanel.getTopToolbar().add(length_button, ' ', area_button);

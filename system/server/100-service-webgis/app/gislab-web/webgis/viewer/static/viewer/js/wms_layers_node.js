@@ -28,6 +28,13 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		if (!this.layersTree || this.layersTree.length == 0) {
 			//this.hidden = true;
 		}
+		var hidden_layers = [];
+		this.cascade(function(node) {
+			if (node.isLeaf() && node.hidden) {
+				hidden_layers.push(node.attributes.text);
+			}
+		}, this);
+		this.layer.hiddenLayers = hidden_layers;
 		this.updateLayersParam();
 		this.on('checkchange', this.onNodeCheckChanged);
 	},
@@ -177,7 +184,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		var layers_nodes = [];
 		this.cascade(function(node) {
 			if (node.isLeaf() && node.attributes.checked) {
-				layers_nodes.push(node)
+				layers_nodes.push(node);
 			}
 		}, this);
 		return this.orderedLayersNames(layers_nodes);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-23 16:17+0200\n"
+"POT-Creation-Date: 2014-05-27 13:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,91 +34,87 @@ msgstr "Používateľské meno"
 msgid "Password"
 msgstr "Heslo"
 
-#: templates/registration/login.html:106 templates/viewer/webgis.html:453
+#: templates/registration/login.html:106 templates/viewer/webgis.html:462
 msgid "Log in"
 msgstr "Prihlásiť sa"
 
-#: templates/viewer/webgis.html:328
+#: templates/viewer/webgis.html:338
 msgid "Overlay Layers"
 msgstr "Prekladové vrstvy"
 
-#: templates/viewer/webgis.html:335
+#: templates/viewer/webgis.html:345
 msgid "Legend"
 msgstr "Legenda"
 
-#: templates/viewer/webgis.html:364
+#: templates/viewer/webgis.html:374
 msgid "Properties"
 msgstr "Vlastnosti"
 
-#: templates/viewer/webgis.html:367
+#: templates/viewer/webgis.html:377
 msgid "Author"
 msgstr "Autor"
 
-#: templates/viewer/webgis.html:368
+#: templates/viewer/webgis.html:378
 msgid "E-mail"
 msgstr "E-mail"
 
-#: templates/viewer/webgis.html:369
+#: templates/viewer/webgis.html:379
 msgid "Organization"
 msgstr "Organizácia"
 
-#: templates/viewer/webgis.html:370
+#: templates/viewer/webgis.html:380
 msgid "Abstract"
 msgstr "O projekte"
 
-#: templates/viewer/webgis.html:371
-msgid "User"
-msgstr "Používateľ"
-
-#: templates/viewer/webgis.html:372
+#: templates/viewer/webgis.html:381
 msgid "Publish date"
 msgstr "Čas publikácie"
 
-#: templates/viewer/webgis.html:373
+#: templates/viewer/webgis.html:382
 msgid "WMS URL"
 msgstr ""
 
-#: templates/viewer/webgis.html:378
+#: templates/viewer/webgis.html:387
 msgid "About"
 msgstr "O aplikácii"
 
-#: templates/viewer/webgis.html:381
+#: templates/viewer/webgis.html:390
 msgid "GIS.lab ID"
 msgstr ""
 
-#: templates/viewer/webgis.html:382
+#: templates/viewer/webgis.html:391
 msgid "GIS.lab version"
 msgstr "GIS.lab verzia"
 
-#: templates/viewer/webgis.html:383
+#: templates/viewer/webgis.html:392
 msgid "Home page"
 msgstr "Domovská stránka"
 
-#: templates/viewer/webgis.html:398
+#: templates/viewer/webgis.html:407
 msgid "Base Layers"
 msgstr "Podkladové vrstvy"
 
-#: templates/viewer/webgis.html:460
+#: templates/viewer/webgis.html:469
 msgid "Log out"
 msgstr "Odhlásiť sa"
 
-#: templates/viewer/webgis.html:558 templates/viewer/actions/draw.js:119
+#: templates/viewer/webgis.html:567 templates/viewer/actions/draw.js:119
 #: templates/viewer/actions/draw.js:130 templates/viewer/actions/search.js:524
 msgid "Error"
 msgstr "Chyba"
 
-#: templates/viewer/webgis.html:559
+#: templates/viewer/webgis.html:568
 #, python-format
 msgid "Failed to fetch vector data (drawing: %(drawing_id)s)"
 msgstr "Nepodarilo sa načítať vektorové dáta (kreslenie: %(drawing_id)s)"
 
-#: templates/viewer/webgis.html:576
+#: templates/viewer/webgis.html:585
 msgid "Message"
 msgstr "Správa"
 
 #: templates/viewer/actions/basic.js:8
-msgid "Zoom to default extent"
-msgstr "Priblížiť na predvolenú oblasť"
+msgid "Zoom to max extent"
+msgstr "Oddialiť na maximálnu oblasť"
 
 #: templates/viewer/actions/basic.js:21
 msgid "Previous in history"
@@ -169,7 +165,7 @@ msgstr "Aktívna vrstva"
 msgid "All visible layers"
 msgstr "Všetky viditeľné vrstvy"
 
-#: templates/viewer/actions/featureinfo.js:119
+#: templates/viewer/actions/featureinfo.js:110
 msgid "Object identification"
 msgstr "Identifikácia objektov"
 
@@ -195,20 +191,20 @@ msgstr "Meranie plochy"
 msgid "Print layout"
 msgstr "Šablóna pre tlač"
 
-#: templates/viewer/actions/print.js:141
+#: templates/viewer/actions/print.js:139
 msgid "DPI resolution"
 msgstr "PDI rozlíšenie"
 
-#: templates/viewer/actions/print.js:179
+#: templates/viewer/actions/print.js:175
 msgid "Output file format"
 msgstr "Formát tlačového výstupu"
 
-#: templates/viewer/actions/print.js:207
+#: templates/viewer/actions/print.js:201
 msgid "Rotation"
 msgstr "Natočenie"
 
-#: templates/viewer/actions/print.js:240 templates/viewer/actions/print.js:241
-#: templates/viewer/actions/print.js:283
+#: templates/viewer/actions/print.js:233 templates/viewer/actions/print.js:234
+#: templates/viewer/actions/print.js:282
 msgid "Print"
 msgstr "Tlačiť"
 
@@ -271,6 +267,7 @@ msgstr "Limit"
 
 #: templates/viewer/actions/search.js:456
 #: templates/viewer/actions/search.js:458
+#: templates/viewer/actions/search.js:544
 msgid "Search"
 msgstr "Vyhľadať"
 
@@ -282,7 +279,5 @@ msgstr "Vyhľadávanie prekročilo stanovený limit {0} výsledkov"
 msgid "Searching failed"
 msgstr "Vyhľadávanie zlyhalo"
 
-#: templates/viewer/actions/search.js:544
-msgid "Searching"
-msgstr "Vyhľadávanie"
-
+#~ msgid "User"
+#~ msgstr "Používateľ"
