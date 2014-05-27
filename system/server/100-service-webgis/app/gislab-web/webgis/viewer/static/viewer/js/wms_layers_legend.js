@@ -6,6 +6,22 @@
 */
 
 Ext.override(GeoExt.WMSLegend, {
+
+	getLayersNames: function(layer) {
+		var layers_names;
+		if (layer instanceof OpenLayers.Layer.WMS) {
+			layers_names = [layer.params.LAYERS].join(",").split(",");
+		} else {
+			layers_names = layer.layername.split(",");
+		}
+		if (layer.hiddenLayers) {
+			layers_names = layers_names.filter(function(name) {
+				return layer.hiddenLayers.indexOf(name) == -1;
+			});
+		}
+		return layers_names;
+	},
+
 	/** private: method[getLegendUrl]
 	 *  :param layerName: ``String`` A sublayer.
 	 *  :param layerNames: ``Array(String)`` The array of sublayers,
@@ -14,15 +30,6 @@ Ext.override(GeoExt.WMSLegend, {
 	 *
 	 *  Get the legend URL of a sublayer.
 	 */
-
-	getLayersNames: function(layer) {
-		if (layer instanceof OpenLayers.Layer.WMS) {
-			return [layer.params.LAYERS].join(",").split(",");
-		} else {
-			return layer.layername.split(",");
-		}
-	},
-
 	getLegendUrl: function(layerName, layerNames) {
 		var rec = this.layerRecord;
 		var url;
