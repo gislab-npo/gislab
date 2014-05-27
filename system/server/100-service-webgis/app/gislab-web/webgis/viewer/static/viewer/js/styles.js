@@ -6,19 +6,14 @@ var measure_style_config = {
 		fillOpacity: 1,
 		strokeWidth: 1,
 		strokeOpacity: 1,
-		strokeColor: "#333333"
 	},
 	"Line": {
 		strokeWidth: 3,
 		strokeOpacity: 1,
-		strokeColor: "#666666",
-		strokeDashstyle: "dash"
 	},
 	"Polygon": {
 		strokeWidth: 2,
 		strokeOpacity: 1,
-		strokeColor: "#666666",
-		fillColor: "white",
 		fillOpacity: 0.3
 	}
 	};
