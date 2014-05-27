@@ -80,6 +80,10 @@
 				Ext.BLANK_IMAGE_URL = "{% static 'viewer/images/s.gif' %}";
 				OpenLayers.DOTS_PER_INCH = {{ dpi }};
 				OpenLayers.Lang.setCode("{{ LANGUAGE_CODE }}");
+
+				WebgisStyles.featureinfo_style.styles.default.defaultStyle.fillColor = '{{ selection_color }}';
+				WebgisStyles.featureinfo_style.styles.default.defaultStyle.strokeColor = '{{ selection_color }}';
+
 				var config = {
 					projection: "{{ projection.code }}",
 					units: "{{ units }}",
