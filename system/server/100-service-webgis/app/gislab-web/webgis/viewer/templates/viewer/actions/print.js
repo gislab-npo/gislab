@@ -237,14 +237,20 @@ var printWindow = new Ext.Window({
 			iconCls: '',
 			handler: function(action) {
 				var print_window = Ext.getCmp('print-toolbar-window');
+				var layers = [];
+				var base_layer = printExtent.map.baseLayer;
+				if (base_layer && base_layer.CLASS_NAME == 'OpenLayers.Layer.WMS') {
+					layers.push(base_layer.name);
+				}
 				var overlays_root = Ext.getCmp('layers-tree-panel').root;
+				layers = layers.concat(overlays_root.getVisibleLayers().reverse());
 				var params = {
 					SERVICE: 'WMS',
 					REQUEST: 'GetPrint',
 					FORMAT: print_window.formatCombobox.getValue(),
 					DPI: printExtent.printProvider.dpi.get("value"),
 					TEMPLATE: printExtent.printProvider.layout.get("name"),
-					LAYERS: overlays_root.getVisibleLayers().reverse().join(','),
+					LAYERS: layers.join(','),
 					SRS: printExtent.map.projection.getCode(),
 					'map0:extent': printExtent.page.getPrintExtent(printExtent.map).toBBOX(1, false),
 					'map0:rotation': -printExtent.page.rotation,
