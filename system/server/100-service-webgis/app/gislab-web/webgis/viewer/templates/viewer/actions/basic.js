@@ -1,13 +1,13 @@
 {% load i18n %}
-//Home Action
+//Zoom to max extent action
 action = new GeoExt.Action({
-	handler: function() { mappanel.map.zoomToExtent(zoom_extent, true); },
+	handler: function() { mappanel.map.setCenter(map.getMaxExtent().getCenterLonLat(), 0); },
 	map: mappanel.map,
 	cls: 'x-btn-icon',
-	iconCls: 'home-icon',
-	tooltip: '{% trans "Zoom to default extent" %}'
+	iconCls: 'zoom-to-max-icon',
+	tooltip: '{% trans "Zoom to max extent" %}'
 });
-mappanel.getTopToolbar().add(action);
+mappanel.getTopToolbar().add(' ', action);
 
 // Navigation history - two 'button' controls
 ctrl = new OpenLayers.Control.NavigationHistory();
@@ -20,7 +20,7 @@ action = new GeoExt.Action({
 	iconCls: 'previous-icon',
 	tooltip: '{% trans "Previous in history" %}',
 });
-mappanel.getTopToolbar().add(action);
+mappanel.getTopToolbar().add(' ', action);
 
 action = new GeoExt.Action({
 	control: ctrl.next,
@@ -29,7 +29,7 @@ action = new GeoExt.Action({
 	iconCls: 'next-icon',
 	tooltip: '{% trans "Next in history" %}',
 });
-mappanel.getTopToolbar().add(action);
+mappanel.getTopToolbar().add(' ', action);
 
 //Pan Map Action
 action = new GeoExt.Action({
@@ -41,4 +41,4 @@ action = new GeoExt.Action({
 	iconCls: 'pan-icon',
 	tooltip: '{% trans "Map pan" %}'
 });
-mappanel.getTopToolbar().add(action);
+mappanel.getTopToolbar().add(' ', action);
