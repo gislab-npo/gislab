@@ -5,7 +5,7 @@ description=Publish your projects in GIS.lab Web
 category=Web
 version=1.0.0
 author=Marcel Dancak
-email=marcel.dancak@gista.sk
+email=dancakm@gmail.com
 
 homepage=http://imincik.github.io/gis-lab
 tracker=

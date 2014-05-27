@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Author: Ivan Mincik, ivan.mincik@gmail.com
-Author: Marcel Dancak, marcel.dancak@gista.sk
-"""
+
 
 import os.path
 
