@@ -192,80 +192,100 @@ div.scale-control {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png') !important;
-	background-position: 0px 0px !important;
 	background: no-repeat;
+	background-position: 0px 0px !important;
+	background-position-x: 0px !important;
+	background-position-y: 0px !important;
 }
 
 .pan-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background-position: 0px -18px !important;
 	background: no-repeat;
+	background-position: 0px -18px !important;
+	background-position-x: 0px !important;
+	background-position-y: -18px !important;
 }
 
 .previous-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background-position: -18px 0px !important;
 	background: no-repeat;
+	background-position: -18px 0px !important;
+	background-position-x: -18px !important;
+	background-position-y: 0px !important;
 }
 
 .next-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background-position: -36px 0px !important;
 	background: no-repeat;
+	background-position: -36px 0px !important;
+	background-position-x: -36px !important;
+	background-position-y: 0px !important;
 }
 
 .search-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background-position: 0px -36px !important;
 	background: no-repeat;
+	background-position: 0px -36px !important;
+	background-position-x: 0px !important;
+	background-position-y: -36px !important;
 }
 
 .featureinfo-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background-position: -18px -18px !important;
 	background: no-repeat;
+	background-position: -18px -18px !important;
+	background-position-x: -18px !important;
+	background-position-y: -18px !important;
 }
 
 .length-measure-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background-position: -72px -36px !important;
 	background: no-repeat;
+	background-position: -72px -36px !important;
+	background-position-x: -72px !important;
+	background-position-y: -36px !important;
 }
 
 .area-measure-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background-position: -72px -18px !important;
 	background: no-repeat;
+	background-position: -72px -18px !important;
+	background-position-x: -72px !important;
+	background-position-y: -18px !important;
 }
 
 .draw-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background-position: -54px -18px !important;
 	background: no-repeat;
+	background-position: -54px -18px !important;
+	background-position-x: -54px !important;
+	background-position-y: -18px !important;
 }
 
 .print-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background-position: -54px -36px !important;
 	background: no-repeat;
+	background-position: -54px -36px !important;
+	background-position-x: -54px !important;
+	background-position-y: -36px !important;
 }
 
 .point-layer-icon {
@@ -321,19 +341,23 @@ div.scale-control {
 }
 
 .x-btn-icon button.add-icon {
-	background-image: url('../images/tool-sprites.gif')!important;
-	background-position: -15px -240px !important;
 	width: 15px !important;
 	height: 15px !important;
+	background-image: url('../images/tool-sprites.gif')!important;
 	background: no-repeat;
+	background-position: -15px -240px !important;
+	background-position-x: -15px !important;
+	background-position-y: -240px !important;
 }
 
 .x-btn-icon button.remove-icon {
-	background-image: url('../images/tool-sprites.gif')!important;
-	background-position: -15px 0px !important;
 	width: 15px !important;
 	height: 15px !important;
+	background-image: url('../images/tool-sprites.gif')!important;
 	background: no-repeat;
+	background-position: -15px 0px !important;
+	background-position-x: -15px !important;
+	background-position-y: 0px !important;
 }
 
 .search-control-buttons .x-btn-tl, .search-control-buttons .x-btn-tr, .search-control-buttons .x-btn-tc, .search-control-buttons .x-btn-ml, .search-control-buttons .x-btn-mr, .search-control-buttons .x-btn-mc, .search-control-buttons .x-btn-bl, .search-control-buttons .x-btn-br, .search-control-buttons .x-btn-bc {
