@@ -198,8 +198,8 @@ def page(request):
 	project = form.cleaned_data['project']
 
 	if project:
-		project = os.path.splitext(project)[0] + '.qgs'
-		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, os.path.splitext(project)[0] + '.meta')
+		project = os.path.splitext(project)[0]
+		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, project + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
 		except Exception, e:
@@ -225,7 +225,7 @@ def page(request):
 
 
 	if project:
-		ows_url = set_query_parameters(reverse('viewer:owsrequest'), {'map': project})
+		ows_url = set_query_parameters(reverse('viewer:owsrequest'), {'map': project+'.qgs'})
 		context['units'] = {'meters': 'm', 'feet': 'ft', 'miles': 'mi', 'degrees': 'dd' }[metadata.units] or 'dd'
 		use_mapcache = metadata.use_mapcache
 		project_tile_resolutions = metadata.tile_resolutions
@@ -285,11 +285,10 @@ def page(request):
 			mapcache_url = mapcache_url.split('/__layers__/')[0]+'/'
 			context['mapcache_url'] = mapcache_url
 
-		project = os.path.splitext(project)[0]
 		context.update({
 			'project': project,
 			'ows_url': ows_url,
-			'wms_url': set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
+			'wms_url': set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project+'.qgs'}),
 			'project_extent': metadata.extent,
 			'zoom_extent': form.cleaned_data['extent'] or metadata.zoom_extent,
 			'print_composers': metadata.composer_templates,
