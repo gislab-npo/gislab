@@ -27,6 +27,7 @@ from PyQt4.QtXml import QDomDocument
 import resources_rc
 
 
+GISLAB_VERSION_FILE = "/etc/gislab_version"
 MSG_ERROR = "Error"
 MSG_WARNING = "Warning"
 
@@ -163,7 +164,10 @@ class WebGisPlugin:
 
 	def _check_plugin_state(self, *args):
 		filepath = self.project.fileName()
-		self.action.setEnabled("/Share/" in filepath)
+		if os.path.exists(GISLAB_VERSION_FILE):
+			self.action.setEnabled("/Share/" in filepath)
+		else:
+			self.action.setEnabled(True)
 
 	def _show_messages(self, messages):
 		dialog = self.dialog
@@ -187,6 +191,9 @@ class WebGisPlugin:
 		messages = []
 		if self.project.isDirty():
 			messages.append((MSG_ERROR, u"Project has been modified. Save it (Project > Save)."))
+
+		if not os.path.exists(GISLAB_VERSION_FILE) and "/Share/" not in self.project.fileName():
+			messages.append((MSG_WARNING, u"Project file is not stored in Share folder"))
 
 		map_canvas = self.iface.mapCanvas()
 		all_layers = [layer.name() for layer in self.iface.legendInterface().layers()]
@@ -604,7 +611,7 @@ class WebGisPlugin:
 
 		gislab_version_data = {}
 		try:
-			with open("/etc/gislab_version") as f:
+			with open(GISLAB_VERSION_FILE) as f:
 				param_pattern = re.compile("\s*(\w+)\s*\=\s*'([^']*)'")
 				for line in f:
 					match = param_pattern.match(line)
@@ -652,7 +659,7 @@ class WebGisPlugin:
 			'DRAWINGS': self.dialog.drawings.text()
 		}
 
-		for param in ('gislab_user', 'gislab_unique_id', 'gislab_version', 'title', 'abstract', 'contact_person', 'contact_mail', 'contact_organization', 'extent', 'units', 'measure_ellipsoid', 'use_mapcache'):
+		for param in ('gislab_user', 'gislab_unique_id', 'gislab_version', 'title', 'abstract', 'contact_person', 'contact_mail', 'contact_organization', 'extent', 'tile_resolutions', 'units', 'measure_ellipsoid', 'use_mapcache'):
 			data[param.upper()] = metadata[param]
 
 		base_layers_summary = []
@@ -669,10 +676,10 @@ class WebGisPlugin:
 				layer_summary = u"""<h4>{0}</h4>
 					<ul>
 						<li><label>Extent:</label> {1}</li>
-						<li><label>Visible resolutions:</label> {2}</li>
-						<li><label>Visible scales:</label> {3}</li>
+						<li><label>Visible scales:</label> {2}</li>
+						<li><label>Visible resolutions:</label> {3}</li>
 						<li><label>Provider type:</label> {4}</li>
-					</ul>""".format(*(format_template_data([layer_data['name'], layer_data['extent'], resolutions, scales, layer_data.get('provider_type', '')])))
+					</ul>""".format(*(format_template_data([layer_data['name'], layer_data['extent'], scales, resolutions, layer_data.get('provider_type', '')])))
 				base_layers_summary.append(layer_summary)
 
 		for layer_data in metadata['base_layers']:
@@ -748,6 +755,7 @@ class WebGisPlugin:
 					<li><label>Contact organization:</label> {CONTACT_ORGANIZATION}</li>
 					<li><label>Extent:</label> {EXTENT}</li>
 					<li><label>Scales:</label> {SCALES}</li>
+					<li><label>Resolutions:</label> {TILE_RESOLUTIONS}</li>
 					<li><label>Projection:</label> {PROJECTION}</li>
 					<li><label>Units:</label> {UNITS}</li>
 					<li><label>Measure ellipsoid:</label> {MEASURE_ELLIPSOID}</li>

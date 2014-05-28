@@ -6,17 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>797</width>
-    <height>669</height>
+    <width>723</width>
+    <height>664</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Publish in GIS.lab Web</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QWizard { 
+    margin: 10px;
+    padding: 10;
+ }</string>
+  </property>
   <property name="modal">
    <bool>true</bool>
   </property>
   <widget class="QWizardPage" name="wizard_page1">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QScrollArea" name="scroll_area">
@@ -26,6 +35,9 @@
         <verstretch>1</verstretch>
        </sizepolicy>
       </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
@@ -34,7 +46,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>744</width>
+         <width>670</width>
          <height>729</height>
         </rect>
        </property>
@@ -574,6 +586,9 @@ QGroupBox::title {
      <widget class="QCheckBox" name="open_in_browser">
       <property name="text">
        <string>Open in web browser</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
