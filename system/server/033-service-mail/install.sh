@@ -11,16 +11,8 @@
 cp /vagrant/system/server/033-service-mail/conf/postfix/main.cf /etc/postfix/main.cf
 gislab_config_header_to_file /etc/postfix/main.cf
 
-# send admin email to vagrant if exists, else send it to ubuntu or root
-if id vagrant >/dev/null 2>&1; then
-	default_admin_mail=vagrant
-elif id ubuntu >/dev/null 2>&1; then
-	default_admin_mail=ubuntu
-else
-	default_admin_mail=root
-fi
-
-echo "/.+@.+/ $default_admin_mail" > /etc/postfix/virtual_regexp
+# send admin email by default to provisioning user
+echo "/.+@.+/ $GISLAB_PROVISIONING_USER" > /etc/postfix/virtual_regexp
 
 rm -f /etc/postfix/sasl_passwd /etc/postfix/sasl_passwd.db
 

@@ -46,9 +46,22 @@ gislab_print_error () {
 
 
 gislab_require_root () {
+	# exit if user is not root
 	if [[ $EUID -ne 0 ]]; then
 		gislab_print_error "This command can only be be run with superuser privileges"
 		exit 1
+	fi
+}
+
+
+gislab_provisioning_user () {
+	# set provisioning user to variable
+	if id -u vagrant > /dev/null 2>&1; then
+		GISLAB_PROVISIONING_USER=vagrant
+	elif id -u ubuntu > /dev/null 2>&1; then
+		GISLAB_PROVISIONING_USER=ubuntu
+	else
+		gislab_print_error "No GIS.lab provisioning user found"
 	fi
 }
 

@@ -17,10 +17,8 @@ then
 	source /vagrant/config-user.cfg
 fi
 
-# install and load utility functions
-mkdir -p /usr/local/gislab
-cp /vagrant/system/functions.sh /usr/local/gislab/
-source /usr/local/gislab/functions.sh
+# load utility functions
+source /vagrant/system/functions.sh
 
 
 # enable installation in debug mode if requested
@@ -31,6 +29,9 @@ fi
 
 # get provisioning provider name
 GISLAB_SERVER_PROVIDER=$1
+
+# get provisioning user name
+gislab_provisioning_user
 
 
 # test if all required plugins are available

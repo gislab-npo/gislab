@@ -2,7 +2,7 @@
 # Backup GIS.lab Web data.
 
 
-source /usr/local/gislab/functions.sh
+source /vagrant/system/functions.sh
 
 # require root privileges
 gislab_require_root

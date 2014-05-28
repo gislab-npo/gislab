@@ -90,8 +90,7 @@ export PATH=$PATH:/vagrant/system/bin
 
 # configure more informative server prompt
 export PS1="\[$(tput bold)\]\u@\h.GIS.lab($GISLAB_UNIQUE_ID):\w\\$\[$(tput sgr0)\] "
-if id -u vagrant > /dev/null 2>&1; then echo "PS1='$PS1'" > /home/vagrant/.bashrc; fi
-if id -u ubuntu > /dev/null 2>&1; then echo "PS1='$PS1'" > /home/ubuntu/.bashrc; fi
+echo "PS1='$PS1'" >> /home/$GISLAB_PROVISIONING_USER/.bashrc
 echo "PS1='$PS1'" >> /etc/profile
 echo "PS1='$PS1'" >> /etc/skel/.bashrc
 
