@@ -220,6 +220,12 @@ fi
 mkdir -p /storage/share/$GISLAB_USER # NFS directory
 chown $GISLAB_USER:labusers /storage/share/$GISLAB_USER
 
+# copy administrator public SSH key
+gislab_provisioning_user # set provisioning user variable
+mkdir -p /home/$GISLAB_USER/.ssh
+chmod 700 /home/$GISLAB_USER/.ssh
+cp /home/$GISLAB_PROVISIONING_USER/.ssh/authorized_keys /home/$GISLAB_USER/.ssh/authorized_keys
+chown $GISLAB_USER:labusers -R /home/$GISLAB_USER/.ssh
 
 # replace user name and password placeholders with real user values
 find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER##/$GISLAB_USER/g" "{}" \;
