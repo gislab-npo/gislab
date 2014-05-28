@@ -148,15 +148,20 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 								var feature = record.get('feature');
 								var layer_name = feature.fid.substring(0, feature.fid.lastIndexOf("."));
 
+								var feature_pk = null;
 								if (this.layersMetadata[layer_name]) {
 									var feature_pks = [];
 									Ext.each(this.layersMetadata[layer_name].pk_attributes, function(pk_attr_name) {
 										 feature_pks.push(feature.attributes[pk_attr_name]);
 									});
-									feature.attributes.title = String.format('{0} - #{1}', layer_name, feature_pks.join(','));
-									var description_format = gettext('Copy of feature #%(pk)s from layer %(layer)s');
-									feature.attributes.description = interpolate(description_format, {pk: feature_pks.join(','), layer: layer_name}, true);
+									feature_pk = feature_pks.join(',');
 								}
+								if (!feature_pk) {
+									feature_pk = feature.fid.substring(feature.fid.lastIndexOf(".")+1);
+								}
+								feature.attributes.title = String.format('{0} - #{1}', layer_name, feature_pk);
+								var description_format = gettext('Copy of feature #%(pk)s from layer %(layer)s');
+								feature.attributes.description = interpolate(description_format, {pk: feature_pk, layer: layer_name}, true);
 								Ext.getCmp('draw-action').importFeatures([feature], true, true);
 							}
 						}]
