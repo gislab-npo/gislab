@@ -13,7 +13,7 @@ then
 	source /vagrant/config-user.cfg
 fi
 
-source /usr/local/gislab/functions.sh
+source /vagrant/system/functions.sh
 
 
 # enable installation in debug mode if requested
