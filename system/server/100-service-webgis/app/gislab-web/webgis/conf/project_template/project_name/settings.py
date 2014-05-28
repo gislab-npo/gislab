@@ -127,6 +127,7 @@ INSTALLED_APPS = (
 	'django.contrib.staticfiles',
 	'webgis.viewer',
 	'webgis.storage',
+	'webgis.mapcache',
 )
 
 ROOT_URLCONF = '{{ project_name }}.urls'
