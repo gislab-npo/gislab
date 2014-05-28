@@ -106,14 +106,16 @@ class Disk (Cache):
 		if self.access(filename, 'read'):
 			os.unlink(filename)
 
-	def delete_layer_cache (self, layer):
-		# Deletes folder in another process. Folder will be renamed immediately,
-		# so the original cache folder will not exists after the function will return.
-		# Deletion of this renamed folder will be started, but there is no guaranty
-		# where or even if it will be completely done.
-
-		cache_dir = os.path.join(self.basedir, layer.name)
+	def delete_project_cache (self, project, publish=None):
+		if not publish:
+			cache_dir = os.path.join(self.basedir, project)
+		else:
+			cache_dir = os.path.join(self.basedir, project, publish)
 		if os.path.exists(cache_dir):
+			# Deletes folder in another process. Folder will be renamed immediately,
+			# so the original cache folder will not exists after the function will return.
+			# Deletion of this renamed folder will be started, but there is no guaranty
+			# where or even if it will be completely done.
 			tmp_name = "%s-%f" % (cache_dir, time.time())
 			shutil.move(cache_dir, tmp_name)
 			subprocess.Popen(["rm", "-rf", tmp_name])
