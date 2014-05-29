@@ -76,7 +76,7 @@ def get_tile_resolutions(scales, units, dpi=96):
 	"""Helper function to compute OpenLayers tile resolutions."""
 
 	dpi = Decimal(dpi)
-	factor = {'feett': Decimal('12.0'), 'meters': Decimal('39.3701'), 'miles': Decimal('63360.0'), 'degrees': Decimal('4374754.0')}
+	factor = {'feet': Decimal('12.0'), 'meters': Decimal('39.3701'), 'miles': Decimal('63360.0'), 'degrees': Decimal('4374754.0')}
 
 	inches = Decimal('1.0') / dpi
 	monitor_l = inches / factor[units]
@@ -85,7 +85,7 @@ def get_tile_resolutions(scales, units, dpi=96):
 
 def get_scales_from_resolutions(resolutions, units, dpi=96):
 	dpi = Decimal(dpi)
-	factor = {'feett': Decimal('12.0'), 'meters': Decimal('39.3701'), 'miles': Decimal('63360.0'), 'degrees': Decimal('4374754.0')}
+	factor = {'feet': Decimal('12.0'), 'meters': Decimal('39.3701'), 'miles': Decimal('63360.0'), 'degrees': Decimal('4374754.0')}
 
 	inches = Decimal('1.0') / dpi
 	monitor_l = inches / factor[units]
