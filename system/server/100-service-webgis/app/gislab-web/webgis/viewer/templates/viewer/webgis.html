@@ -23,6 +23,7 @@
 		{% endif %}
 		{% if LANGUAGE_CODE and LANGUAGE_CODE != 'en-us' %}
 		<script type="text/javascript" src="{% static 'viewer/lib/OpenLayers-2.13/Lang/' %}{{ LANGUAGE_CODE }}.js"></script>
+		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/locale/ext-lang-' %}{{ LANGUAGE_CODE }}.js"></script>
 		{% endif %}
 		<script type="text/javascript" src="{% static 'viewer/lib/md5.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/lib/extensions/Spinner.js' %}"></script>
