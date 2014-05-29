@@ -16,14 +16,11 @@ var printWindow = new Ext.Window({
 			//printExtent.page.setRotation(0, true);
 			printExtent.page.setCenter(printExtent.map.getCenter());
 			printExtent.map.events.register("zoomend", this, this.updatePrintScales);
-			printExtent.page.on('change', function(window, mods) {
+			printExtent.page.on('change', function(print, mods) {
 				if (mods.hasOwnProperty('rotation')) {
-					var spinner = window.rotationSpinner;
-					if (spinner) {
-						spinner.setValue(mods.rotation);
-					}
+					this.rotationSpinner.setValue(mods.rotation);
 				}
-			});
+			}.bind(this));
 			//window.setWidth(toolbar.getWidth());
 			printExtent.show();
 		},
