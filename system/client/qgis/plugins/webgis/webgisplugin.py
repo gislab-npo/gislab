@@ -118,6 +118,7 @@ class WebGisPlugin:
 	dialog = None
 	project = None
 	publish_allowed = False
+	run_in_gislab = False
 
 	def __init__(self, iface):
 		# Save reference to the QGIS interface
@@ -134,6 +135,7 @@ class WebGisPlugin:
 
 			if qVersion() > '4.3.3':
 				QCoreApplication.installTranslator(self.translator)
+		self.run_in_gislab = os.path.exists(GISLAB_VERSION_FILE)
 
 	def initGui(self):
 		# Create action that will start plugin configuration
@@ -192,7 +194,7 @@ class WebGisPlugin:
 		if self.project.isDirty():
 			messages.append((MSG_ERROR, u"Project has been modified. Save it (Project > Save)."))
 
-		if not os.path.exists(GISLAB_VERSION_FILE) and "/Share/" not in self.project.fileName():
+		if not self.run_in_gislab and "/Share/" not in self.project.fileName():
 			messages.append((MSG_WARNING, u"Project file is not stored in Share folder"))
 
 		map_canvas = self.iface.mapCanvas()
@@ -326,8 +328,10 @@ class WebGisPlugin:
 
 
 	def _get_publish_project_name(self):
-		project_name = self.project.fileName().split("/Share/")[1]
-		return os.path.splitext(project_name)[0]
+		"""Returns project name of published project, or None if working outside GIS.lab enviroment."""
+		if self.run_in_gislab:
+			project_name = self.project.fileName().split("/Share/")[1]
+			return os.path.splitext(project_name)[0]
 
 	def publish_project(self):
 		if not self.metadata:
@@ -342,14 +346,15 @@ class WebGisPlugin:
 				raise TypeError
 			json.dump(self.metadata, f, indent=2, default=decimal_default)
 
-		if self.dialog.open_in_browser.isChecked():
-			get_params = [('PROJECT', self._get_publish_project_name())]
-			drawings = self.dialog.drawings.text()
-			if drawings:
-				get_params.append(('DRAWINGS', drawings.replace(" ", "")))
+		if self.run_in_gislab:
+			if self.dialog.open_in_browser.isChecked():
+				get_params = [('PROJECT', self._get_publish_project_name())]
+				drawings = self.dialog.drawings.text()
+				if drawings:
+					get_params.append(('DRAWINGS', drawings.replace(" ", "")))
 
-			link = '{0}?{1}'.format(GISLAB_WEB_URL, urlencode(get_params))
-			subprocess.Popen([r'firefox', '-new-tab', link])
+				link = '{0}?{1}'.format(GISLAB_WEB_URL, urlencode(get_params))
+				subprocess.Popen([r'firefox', '-new-tab', link])
 
 	def generate_project_metadata(self):
 		dialog = self.dialog
@@ -649,7 +654,7 @@ class WebGisPlugin:
 		metadata = self.metadata
 		message = metadata.get('message')
 		data = {
-			'WEB_URL': '{0}?PROJECT={1}'.format(GISLAB_WEB_URL, self._get_publish_project_name()),
+			'WEB_URL': '{0}?PROJECT={1}'.format(GISLAB_WEB_URL, self._get_publish_project_name()) if self.run_in_gislab else '',
 			'DEFAULT_BASE_LAYER': self.dialog.default_baselayer.currentText(),
 			'SCALES': get_scales_from_resolutions(metadata['tile_resolutions'], self._map_units()),
 			'PROJECTION': metadata['projection']['code'],
@@ -715,37 +720,40 @@ class WebGisPlugin:
 		html = u"""<html>
 			<head>
 				<style type="text/css">
-					body {{
+					body {
 						background-color: #DDDDDD;
-					}}
-					h3 {{
+					}
+					h3 {
 						margin-bottom: 4px;
 						margin-top: 6px;
 						text-decoration: underline;
-					}}
-					h4 {{
+					}
+					h4 {
 						margin-bottom: 1px;
 						margin-top: 2px;
-					}}
-					div {{
+					}
+					div {
 						margin-left: 10px;
-					}}
-					ul {{
+					}
+					ul {
 						margin-top: 0px;
-					}}
-					label {{
+					}
+					label {
 						font-weight: bold;
-					}}
+					}
 				</style>
 			</head>
-			<body>
+			<body>"""
+		if self.run_in_gislab:
+			html += u"""
 				<h3>General information:</h3>
 				<ul>
 					<li><label>GIS.lab user:</label> {GISLAB_USER}</li>
 					<li><label>GIS.lab ID:</label> {GISLAB_UNIQUE_ID}</li>
 					<li><label>GIS.lab version:</label> {GISLAB_VERSION}</li>
 					<li><label>GIS.lab Web URL:</label> {WEB_URL}</li>
-				</ul>
+				</ul>""".format(**format_template_data(data))
+		html += u"""
 				<h3>Project:</h3>
 				<ul>
 					<li><label>Title:</label> {TITLE}</li>
@@ -886,6 +894,8 @@ class WebGisPlugin:
 				dialog.extent_layer.addItem(layer.name(), layer)
 
 		dialog.message_valid_until.setDate(datetime.date.today() + datetime.timedelta(days=1))
+		dialog.open_in_browser.setEnabled(self.run_in_gislab)
+
 		self._check_publish_constrains()
 		dialog.show()
 		dialog.exec_()
