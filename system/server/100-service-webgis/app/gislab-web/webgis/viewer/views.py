@@ -202,8 +202,8 @@ def page(request):
 		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, project + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
-		except Exception, e:
-			return HttpResponse("Can't load project. Error: {0}".format(str(e)), content_type='text/plain', status=404);
+		except:
+			return HttpResponse("Error when loading project or project does not exist", content_type='text/plain', status=404)
 
 	# Authentication
 	allow_anonymous = metadata.authentication['allow_anonymous'] if project else True
@@ -253,7 +253,7 @@ def page(request):
 			try:
 				baselayers_tree = parse_layers_param(base, base_layers_capabilities)['layers']
 			except LookupError, e:
-				return HttpResponse("Unknown base layer: {0}".format(str(e)), content_type='text/plain', status=400);
+				return HttpResponse("Unknown base layer: {0}".format(str(e)), content_type='text/plain', status=400)
 		else:
 			baselayers_tree = metadata.base_layers
 
@@ -270,7 +270,7 @@ def page(request):
 			try:
 				layers_tree = parse_layers_param(layers, overlays_capabilities)['layers']
 			except LookupError, e:
-				return HttpResponse("Unknown overlayer: {0}".format(str(e)), content_type='text/plain', status=400);
+				return HttpResponse("Unknown overlay layer: {0}".format(str(e)), content_type='text/plain', status=400)
 		else:
 			layers_tree = metadata.overlays
 		context['layers'] = json.dumps(layers_tree) if layers_tree else None
