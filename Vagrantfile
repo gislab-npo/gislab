@@ -83,7 +83,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     aws.instance_type = CONFIG['GISLAB_SERVER_AWS_INSTANCE_TYPE']
     aws.region = CONFIG['GISLAB_SERVER_AWS_REGION']
     aws.availability_zone = CONFIG['GISLAB_SERVER_AWS_AVAILABILITY_ZONE']
-    aws.security_groups = CONFIG['GISLAB_SERVER_AWS_SECURITY_GROUP']
+    aws.security_groups = CONFIG['GISLAB_SERVER_AWS_SECURITY_GROUPS'].strip.gsub(/[()]/, '').split(' ')
+
 
     # ephemeral storage will be silently ignored in 't1.micro' instances
     aws.block_device_mapping = [
