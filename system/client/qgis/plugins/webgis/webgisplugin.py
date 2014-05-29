@@ -212,7 +212,7 @@ class WebGisPlugin:
 			messages.append((MSG_ERROR, u"Project has been modified. Save it (Project > Save)."))
 
 		if not self.run_in_gislab and "/Share/" not in self.project.fileName():
-			messages.append((MSG_WARNING, u"Project file is not stored in Share folder"))
+			messages.append((MSG_WARNING, u"Project file is not stored in Share folder."))
 
 		map_canvas = self.iface.mapCanvas()
 		all_layers = [layer.name() for layer in self.iface.legendInterface().layers()]
