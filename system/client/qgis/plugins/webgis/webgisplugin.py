@@ -32,6 +32,7 @@ MSG_ERROR = "Error"
 MSG_WARNING = "Warning"
 
 class Node(object):
+	"""Tree node element for holding information about layers organization and easier manipulation."""
 	name = None
 	layer = None
 	parent = None
@@ -67,16 +68,20 @@ class Node(object):
 		fn(self)
 
 def to_decimal_array(value):
+	"""Converts list of float/string numbers or comma-separated string to list of Decimal values"""
 	if isinstance(value, basestring):
 		return [Decimal(res_string.strip())for res_string in value.split(',')]
 	else:
 		return [Decimal(res) for res in value]
 
 def get_tile_resolutions(scales, units, dpi=96):
-	"""Helper function to compute OpenLayers tile resolutions."""
+	"""Helper function to compute tile resolutions from map scales."""
 
 	dpi = Decimal(dpi)
-	factor = {'feet': Decimal('12.0'), 'meters': Decimal('39.3701'), 'miles': Decimal('63360.0'), 'degrees': Decimal('4374754.0')}
+	factor = {
+		'feet': Decimal('12.0'), 'meters': Decimal('39.3701'),
+		'miles': Decimal('63360.0'), 'degrees': Decimal('4374754.0')
+	}
 
 	inches = Decimal('1.0') / dpi
 	monitor_l = inches / factor[units]
@@ -84,8 +89,12 @@ def get_tile_resolutions(scales, units, dpi=96):
 	return [monitor_l*int(m) for m in scales]
 
 def get_scales_from_resolutions(resolutions, units, dpi=96):
+	"""Helper function to compute map scales from tile resolutions."""
 	dpi = Decimal(dpi)
-	factor = {'feet': Decimal('12.0'), 'meters': Decimal('39.3701'), 'miles': Decimal('63360.0'), 'degrees': Decimal('4374754.0')}
+	factor = {
+		'feet': Decimal('12.0'), 'meters': Decimal('39.3701'),
+		'miles': Decimal('63360.0'), 'degrees': Decimal('4374754.0')
+	}
 
 	inches = Decimal('1.0') / dpi
 	monitor_l = inches / factor[units]
@@ -97,14 +106,18 @@ GISLAB_WEB_URL = 'http://web.gis.lab/'
 
 DEFAULT_PROJECT_SCALES = (10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500)
 
-osm_resolutions = to_decimal_array("""156543.03390625,78271.516953125,39135.7584765625,19567.87923828125,9783.939619140625,4891.9698095703125,
-2445.9849047851562,1222.9924523925781,611.4962261962891,305.74811309814453,152.87405654907226,76.43702827453613,38.218514137268066,
-19.109257068634033,9.554628534317017,4.777314267158508,2.388657133579254,1.194328566789627,0.5971642833948135""")
-OSM_LAYER = {'name': 'OSM', 'type': 'OSM', 'title': 'Open Street Map', 'resolutions': osm_resolutions, 'extent': [-16319611.284727, -5615981.3413867, 16319611.284727, 5615981.3413867]}
+osm_resolutions = to_decimal_array("""156543.03390625,78271.516953125,39135.7584765625,19567.87923828125,9783.939619140625,
+4891.9698095703125,2445.9849047851562,1222.9924523925781,611.4962261962891,305.74811309814453,152.87405654907226,76.43702827453613,
+38.218514137268066,19.109257068634033,9.554628534317017,4.777314267158508,2.388657133579254,1.194328566789627,0.5971642833948135""")
+OSM_LAYER = {
+	'name': 'OSM', 'type': 'OSM', 'title': 'Open Street Map',
+	'resolutions': osm_resolutions,
+	'extent': [-16319611.284727, -5615981.3413867, 16319611.284727, 5615981.3413867]
+}
 
-google_resolutions = to_decimal_array("""156543.03390625,78271.516953125,39135.7584765625,19567.87923828125,9783.939619140625,
-4891.9698095703125,2445.9849047851562,1222.9924523925781,611.4962261962891,305.74811309814453,152.87405654907226,
-76.43702827453613,38.218514137268066,19.109257068634033,9.554628534317017,4.777314267158508""")
+google_resolutions = to_decimal_array("""156543.03390625,78271.516953125,39135.7584765625,19567.87923828125,
+9783.939619140625,4891.9698095703125,2445.9849047851562,1222.9924523925781,611.4962261962891,305.74811309814453,
+152.87405654907226,76.43702827453613,38.218514137268066,19.109257068634033,9.554628534317017,4.777314267158508""")
 google_extent = [-16319611.284727, -5615981.3413867, 16319611.284727, 5615981.3413867]
 GOOGLE_LAYERS = (
 	{'name': 'GROADMAP', 'type': 'google', 'title': 'Google Roadmap', 'resolutions': google_resolutions, 'extent': google_extent},
@@ -165,13 +178,15 @@ class WebGisPlugin:
 		self.iface.newProjectCreated.disconnect()
 
 	def _check_plugin_state(self, *args):
+		"""Checks whether plugin can be enabled."""
 		filepath = self.project.fileName()
-		if os.path.exists(GISLAB_VERSION_FILE):
+		if self.run_in_gislab:
 			self.action.setEnabled("/Share/" in filepath)
 		else:
 			self.action.setEnabled(True)
 
 	def _show_messages(self, messages):
+		"""Display messages in dialog window."""
 		dialog = self.dialog
 		table = dialog.info_table
 		if messages:
@@ -190,6 +205,8 @@ class WebGisPlugin:
 			dialog.errors_group.setVisible(False)
 
 	def _check_publish_constrains(self):
+		"""Checks whether all conditions for publishing project is satisfied,
+		generating all warnings/errors displayed to user."""
 		messages = []
 		if self.project.isDirty():
 			messages.append((MSG_ERROR, u"Project has been modified. Save it (Project > Save)."))
@@ -204,7 +221,10 @@ class WebGisPlugin:
 
 		crs_transformation, ok = self.project.readEntry("SpatialRefSys", "/ProjectionsEnabled")
 		if not ok or not crs_transformation:
-			messages.append((MSG_ERROR, u"'On the fly' CRS transformation not enabled ('Project > Project Properties > CRS')."))
+			messages.append((
+				MSG_ERROR,
+				u"'On the fly' CRS transformation not enabled ('Project > Project Properties > CRS')."
+			))
 
 		min_resolution = self.dialog.min_scale.itemData(self.dialog.min_scale.currentIndex())
 		max_resolution = self.dialog.max_scale.itemData(self.dialog.max_scale.currentIndex())
@@ -215,7 +235,10 @@ class WebGisPlugin:
 		for layer in base_layers:
 			resolutions = self._wmsc_layer_resolutions(layer, self._map_units())
 			if resolutions is not None and not publish_resolutions(resolutions):
-				messages.append((MSG_WARNING, u"Base layer '{0}' will not be visible in published project scales".format(layer.name())))
+				messages.append((
+					MSG_WARNING,
+					u"Base layer '{0}' will not be visible in published project scales".format(layer.name())
+				))
 
 		self._show_messages(messages)
 		for msg_type, msg_text in messages:
@@ -228,20 +251,25 @@ class WebGisPlugin:
 		return True
 
 	def _is_overlay_layer_for_publish(self, layer):
-		return layer.type() == QgsMapLayer.VectorLayer or (layer.type() == QgsMapLayer.RasterLayer and layer.providerType() != "wms")
+		"""Checks whether layer could be published as overlay layer."""
+		return (layer.type() == QgsMapLayer.VectorLayer or
+			(layer.type() == QgsMapLayer.RasterLayer and layer.providerType() != "wms"))
 
 	def _is_base_layer_for_publish(self, layer, resolutions=None):
+		"""Checks whether layer could be published as base layer."""
 		return layer.type() == QgsMapLayer.RasterLayer and layer.providerType() == "wms"
 
 	def _filter_layer_visible_resolutions(self, resolutions, layer, units):
+		"""Filters given tile resolutions by layer's visibility settings."""
 		if layer.hasScaleBasedVisibility():
 			max_scale_exclusive = layer.maximumScale()
 			min_scale_inclusive = layer.minimumScale()
-			max_resolution_exclusive, min_resolution_inclusive = get_tile_resolutions([max_scale_exclusive, min_scale_inclusive], units)
-			return filter(lambda res: res >= min_resolution_inclusive and res < max_resolution_exclusive, resolutions)
+			max_res_exclusive, min_res_inclusive = get_tile_resolutions([max_scale_exclusive, min_scale_inclusive], units)
+			return filter(lambda res: res >= min_res_inclusive and res < max_res_exclusive, resolutions)
 		return resolutions
 
 	def _wmsc_layer_resolutions(self, layer, units):
+		"""Returns visible resolutions of given WMSC layer."""
 		layer_resolutions = layer.dataProvider().property('resolutions')
 		if layer_resolutions:
 			layer_resolutions = to_decimal_array(layer_resolutions)
@@ -253,12 +281,13 @@ class WebGisPlugin:
 		return None
 
 	def _map_units(self):
+		"""Returns current map units name ('meters', 'feet', 'degrees', 'miles' or 'unknown')."""
 		map_canvas = self.iface.mapCanvas()
 		return {0: 'meters', 1: 'feet', 2: 'degrees', 3: 'unknown', 7: 'miles'}[map_canvas.mapUnits()]
 
 	def _project_layers_resolutions(self):
-		# Calculate project resolutions as an union of resolutions calculated from project scales and resolutions of WMSC layers.
-		# When no project resolutions can be calculated, default scales will be used.
+		"""Calculate project resolutions as an union of resolutions calculated
+		from project scales and resolutions of all WMSC layers."""
 		project_tile_resolutions = set()
 		units = self._map_units()
 
@@ -281,6 +310,7 @@ class WebGisPlugin:
 		return project_tile_resolutions
 
 	def _get_project_layers(self):
+		"""Returns root layer node of all base layers and overlay layers."""
 		legend_iface = self.iface.legendInterface()
 
 		# ALL LAYERS TREE
@@ -334,6 +364,7 @@ class WebGisPlugin:
 			return os.path.splitext(project_name)[0]
 
 	def publish_project(self):
+		"""Creates project metadata file."""
 		if not self.metadata:
 			return
 
@@ -357,6 +388,7 @@ class WebGisPlugin:
 				subprocess.Popen([r'firefox', '-new-tab', link])
 
 	def generate_project_metadata(self):
+		"""Generated project's metadata (dictionary)."""
 		dialog = self.dialog
 		map_canvas = self.iface.mapCanvas()
 		legend_iface = self.iface.legendInterface()
@@ -381,13 +413,19 @@ class WebGisPlugin:
 		canvas_color = map_canvas.canvasColor()
 
 		if dialog.extent_layer.currentIndex() == 0:
-			project_extent = map_canvas.fullExtent().toRectF().getCoords()
+			project_extent = map_canvas.fullExtent()
 		else:
 			extent_layer = dialog.extent_layer.itemData(dialog.extent_layer.currentIndex())
-			project_extent = map_canvas.mapRenderer().layerExtentToOutputExtent(extent_layer, extent_layer.extent()).toRectF().getCoords()
+			project_extent = map_canvas.mapRenderer().layerExtentToOutputExtent(extent_layer, extent_layer.extent())
+		project_extent = project_extent.toRectF().getCoords()
 		extent_buffer = dialog.extent_buffer.value()
 		if extent_buffer:
-			project_extent = [project_extent[0]-extent_buffer, project_extent[1]-extent_buffer, project_extent[2]+extent_buffer, project_extent[3]+extent_buffer]
+			project_extent = [
+				project_extent[0]-extent_buffer,
+				project_extent[1]-extent_buffer,
+				project_extent[2]+extent_buffer,
+				project_extent[3]+extent_buffer
+			]
 		metadata.update({
 			'extent': project_extent,
 			'zoom_extent': [round(coord, 3) for coord in self.iface.mapCanvas().extent().toRectF().getCoords()],
@@ -642,6 +680,7 @@ class WebGisPlugin:
 		return True
 
 	def generate_config_summary(self):
+		"""Creates configuration summary of published project."""
 		def format_template_data(data):
 			iterator = data.iteritems() if type(data) == dict else enumerate(data)
 			for key, value in iterator:
@@ -653,18 +692,26 @@ class WebGisPlugin:
 
 		metadata = self.metadata
 		message = metadata.get('message')
+		if metadata['authentication']['allow_anonymous']:
+			authentication = 'Public'
+		elif metadata['authentication']['require_superuser']:
+			authentication = 'Require superuser'
+		else:
+			authentication = 'Require authentication'
 		data = {
 			'WEB_URL': '{0}?PROJECT={1}'.format(GISLAB_WEB_URL, self._get_publish_project_name()) if self.run_in_gislab else '',
 			'DEFAULT_BASE_LAYER': self.dialog.default_baselayer.currentText(),
 			'SCALES': get_scales_from_resolutions(metadata['tile_resolutions'], self._map_units()),
 			'PROJECTION': metadata['projection']['code'],
-			'AUTHENTICATION': 'Public' if metadata['authentication']['allow_anonymous'] else 'Require superuser' if metadata['authentication']['require_superuser'] else 'Require authentication',
+			'AUTHENTICATION': authentication,
 			'MESSAGE_TEXT': message['text'] if message else '',
 			'MESSAGE_VALIDITY': message['valid_until'] if message else '',
 			'DRAWINGS': self.dialog.drawings.text()
 		}
 
-		for param in ('gislab_user', 'gislab_unique_id', 'gislab_version', 'title', 'abstract', 'contact_person', 'contact_mail', 'contact_organization', 'extent', 'tile_resolutions', 'units', 'measure_ellipsoid', 'use_mapcache'):
+		for param in ('gislab_user', 'gislab_unique_id', 'gislab_version', 'title', 'abstract',
+					'contact_person', 'contact_mail', 'contact_organization', 'extent',
+					'tile_resolutions', 'units', 'measure_ellipsoid', 'use_mapcache'):
 			data[param.upper()] = metadata[param]
 
 		base_layers_summary = []
@@ -678,13 +725,20 @@ class WebGisPlugin:
 				if 'min_resolution' in layer_data:
 					resolutions = filter(lambda res: res >= layer_data['min_resolution'] and res <= layer_data['max_resolution'], resolutions)
 				scales = get_scales_from_resolutions(resolutions, self._map_units())
+				template_data = format_template_data([
+					layer_data['name'],
+					layer_data['extent'],
+					scales,
+					resolutions,
+					layer_data.get('provider_type', '')
+				])
 				layer_summary = u"""<h4>{0}</h4>
 					<ul>
 						<li><label>Extent:</label> {1}</li>
 						<li><label>Visible scales:</label> {2}</li>
 						<li><label>Visible resolutions:</label> {3}</li>
 						<li><label>Provider type:</label> {4}</li>
-					</ul>""".format(*(format_template_data([layer_data['name'], layer_data['extent'], scales, resolutions, layer_data.get('provider_type', '')])))
+					</ul>""".format(*template_data)
 				base_layers_summary.append(layer_summary)
 
 		for layer_data in metadata['base_layers']:
@@ -698,6 +752,14 @@ class WebGisPlugin:
 				for sublayer_data in sublayers:
 					collect_overlays_summary(sublayer_data)
 			else:
+				template_data = format_template_data([
+					layer_data['name'],
+					layer_data['visible'],
+					layer_data['queryable'],
+					layer_data['extent'],
+					layer_data['geom_type'],
+					layer_data['provider_type']
+				])
 				layer_summary = u"""<h4>{0}</h4>
 					<ul>
 						<li><label>Visible:</label> {1}</li>
@@ -705,7 +767,7 @@ class WebGisPlugin:
 						<li><label>Extent:</label> {3}</li>
 						<li><label>Geometry type:</label> {4}</li>
 						<li><label>Provider type:</label> {5}</li>
-					</ul>""".format(*(format_template_data([layer_data['name'], layer_data['visible'], layer_data['queryable'], layer_data['extent'], layer_data['geom_type'], layer_data['provider_type']])))
+					</ul>""".format(*template_data)
 				overlays_summary.append(layer_summary)
 
 		for layer_data in metadata['overlays']:
@@ -714,7 +776,12 @@ class WebGisPlugin:
 
 		print_composers = []
 		for composer_data in metadata['composer_templates']:
-			print_composers.append(u'<li>{0} ( {1} x {2}mm )</li>'.format(composer_data['name'], int(round(composer_data['width'])), int(round(composer_data['height']))))
+			template_data = (
+				composer_data['name'],
+				int(round(composer_data['width'])),
+				int(round(composer_data['height']))
+			)
+			print_composers.append(u'<li>{0} ( {1} x {2}mm )</li>'.format(*template_data))
 		data['PRINT_COMPOSERS'] = u'\n'.join(print_composers)
 
 		html = u"""<html>
@@ -791,12 +858,15 @@ class WebGisPlugin:
 
 
 	def _update_min_max_scales(self, resolutions):
+		"""Updates available scales in Minimum/Maximum scale fields based on given resolutions."""
 		if not resolutions:
 			resolutions = get_tile_resolutions(DEFAULT_PROJECT_SCALES, self._map_units())
 		resolutions = sorted(resolutions, reverse=True)
 		scales = get_scales_from_resolutions(resolutions, self._map_units())
-		old_min_resolution = self.dialog.min_scale.itemData(self.dialog.min_scale.currentIndex()) if self.dialog.min_scale.currentIndex() != -1 else None
-		old_max_resolution = self.dialog.max_scale.itemData(self.dialog.max_scale.currentIndex()) if self.dialog.max_scale.currentIndex() != -1 else None
+		index = self.dialog.min_scale.currentIndex()
+		old_min_resolution = self.dialog.min_scale.itemData(index) if index != -1 else None
+		index = self.dialog.max_scale.currentIndex()
+		old_max_resolution = self.dialog.max_scale.itemData(index) if index != -1 else None
 
 		self.dialog.min_scale.clear()
 		self.dialog.max_scale.clear()
@@ -860,7 +930,8 @@ class WebGisPlugin:
 				position += 1
 				resolutions.update(OSM_LAYER['resolutions'])
 
-			contains_google_layer = self.dialog.default_baselayer.itemText(position) in [self.dialog.google.itemText(i) for i in range(1, 5)]
+			google_layers = [self.dialog.google.itemText(i) for i in range(1, 5)]
+			contains_google_layer = self.dialog.default_baselayer.itemText(position) in google_layers
 			if index > 0:
 				google_layer = GOOGLE_LAYERS[index-1]
 				if contains_google_layer:
