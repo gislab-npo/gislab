@@ -116,6 +116,15 @@ ln -sf /lib/init/upstart-job /etc/init.d/webgis
 service webgis restart
 service nginx reload
 
+# cache cleanup job
+cat << EOL > /etc/cron.d/gislab-webgis-mapcache-clean
+$(gislab_config_header)
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/vagrant/system/bin
+MAILTO=root
+
+15 0	* * *  www-data  nice /usr/local/python-virtualenvs/webgis/bin/python /var/www/webgis/manage.py mapcache_clean > /dev/null
+EOL
+
 
 ### BACKUP ###
 mkdir -p /etc/cron.d.bin
