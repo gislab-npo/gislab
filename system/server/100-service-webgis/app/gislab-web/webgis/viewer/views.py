@@ -177,7 +177,10 @@ def parse_layers_param(layers_string, layers_capabilities):
 			layer_name = layer_info[0]
 			layer = layers_capabilities.get(layer_name)
 			if layer is None:
-				raise LookupError(layer_name)
+				if layer_name == 'BLANK':
+					continue
+				else:
+					raise LookupError(layer_name)
 
 			if len(layer_info) > 1:
 				layer['visible'] = int(layer_info[1]) == 1
