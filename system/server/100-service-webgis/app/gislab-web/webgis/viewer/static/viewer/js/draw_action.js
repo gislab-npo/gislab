@@ -102,10 +102,33 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				],
 			});
 			var cm = new Ext.grid.ColumnModel({
+				defaults: {
+					sortable: false,
+					menuDisabled: true,
+				},
 				columns: [
-					new Ext.grid.RowNumberer({
-						width: 25
-					}), {
+					{
+						xtype : 'actioncolumn',
+						width: 16,
+						scope: this,
+						hideable: false,
+						resizable: false,
+						items : [{
+							tooltip : gettext('Zoom to feature'),
+							getClass: function(v, meta, rec) {
+								return 'zoom-to-feature';
+							},
+							handler: function(grid, rowIndex, colIndex) {
+								grid.getSelectionModel().selectRow(rowIndex);
+								var feature = grid.getStore().getAt(rowIndex).get('feature'); //grid.getSelectionModel().selectedFeatures[0];
+								if (feature.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point') {
+									this.map.setCenter(feature.geometry.bounds.getCenterLonLat());
+								} else {
+									this.map.zoomToExtent(feature.geometry.bounds, true);
+								}
+							}
+						}],
+					}, {
 						header: gettext('Title'),
 						dataIndex: 'title',
 						width: 50,
@@ -122,6 +145,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					}, {
 						header: gettext('Description'),
 						dataIndex: 'description',
+						menuDisabled: true,
 						editor: new Ext.form.TextField({
 							allowBlank: true,
 							maxLength: 200,
@@ -194,28 +218,32 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			columns: [{
 					id       : 'time',
 					header   : gettext('Time'),
+					dataIndex: 'time',
 					width    : 60,
 					sortable : false,
-					dataIndex: 'time',
+					menuDisabled: true,
 					renderer : Ext.util.Format.dateRenderer('H:i:s'),
 				}, {
 					id       : 'title',
 					header   : gettext('Title'),
-					sortable : false,
 					dataIndex: 'title',
+					sortable : false,
+					menuDisabled: true,
 					renderer:  tooltip_renderer
 				}, {
 					id       : 'permalink',
 					header   : gettext('Permalink'),
+					dataIndex: 'permalink',
 					width    : 72,
 					sortable : false,
-					dataIndex: 'permalink',
+					menuDisabled: true,
 				}, {
 					id       : 'permalink',
 					header   : gettext('Download'),
+					dataIndex: 'download',
 					width    : 72,
 					sortable : false,
-					dataIndex: 'download',
+					menuDisabled: true,
 				},
 
 			],

@@ -117,12 +117,15 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 				var fields = [];
 				var columns = [];
 				var data = [];
-				fields.push({ name: 'feature', type: 'auto' });
 				if (layer_features[0].geometry) {
 					columns.push({
 						xtype : 'actioncolumn',
 						width: 52,
 						scope: this,
+						sortable: false,
+						hideable: false,
+						resizable: false,
+						menuDisabled: true,
 						items : [{
 							tooltip : gettext('Zoom to feature'),
 							getClass: function(v, meta, rec) {
@@ -130,12 +133,11 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 							},
 							handler: function(grid, rowIndex, colIndex) {
 								grid.getSelectionModel().selectRow(rowIndex);
-								var record = grid.getStore().getAt(rowIndex);
-								var feature = record.get('feature');
+								var feature = grid.getStore().getAt(rowIndex).get('feature'); //grid.getSelectionModel().selectedFeatures[0];
 								if (feature.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point') {
-									this.map.setCenter(feature.bounds.getCenterLonLat());
+									this.map.setCenter(feature.geometry.bounds.getCenterLonLat());
 								} else {
-									this.map.zoomToExtent(feature.bounds, true);
+									this.map.zoomToExtent(feature.geometry.bounds, true);
 								}
 							}
 						}, {
@@ -144,8 +146,8 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 								return 'export-feature';
 							},
 							handler: function(grid, rowIndex, colIndex) {
-								var record = grid.getStore().getAt(rowIndex);
-								var feature = record.get('feature');
+								grid.getSelectionModel().selectRow(rowIndex);
+								var feature = grid.getSelectionModel().selectedFeatures[0];
 								var layer_name = feature.fid.substring(0, feature.fid.lastIndexOf("."));
 
 								var feature_pk = null;
