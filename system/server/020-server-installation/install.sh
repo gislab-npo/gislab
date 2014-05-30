@@ -30,10 +30,9 @@ deb http://archive.canonical.com/ubuntu precise partner
 
 EOF
 
-# GIS.lab GIS repository TODO: change repository to ppa:imincik/gis once dev packages will move there
 cat << EOF >> /etc/apt/sources.list
 #### GIS.lab GIS repository
-deb http://ppa.launchpad.net/imincik/gis-dev/ubuntu precise main
+deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main
 
 EOF
 
