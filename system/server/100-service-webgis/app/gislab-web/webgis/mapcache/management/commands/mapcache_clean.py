@@ -17,8 +17,8 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		cache = Disk(base=os.path.join(settings.MEDIA_ROOT, 'cache'))
-		for project_info in Project_registry.objects.all():
-			project = project_info.project
+		for project_record in list(Project_registry.objects.all()):
+			project = project_record.project
 			project_hash = hashlib.md5(project).hexdigest()
 			project_dir = os.path.join(cache.basedir, project_hash)
 			metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, project+'.meta')
@@ -51,5 +51,6 @@ class Command(BaseCommand):
 				self.stdout.write("Cleaning cache of deleted project '{0}'".format(project))
 				try:
 					cache.delete_project_cache(project_hash)
+					project_record.delete()
 				except:
 					self.stderr.write("Failed to delete '{0}' project's cache: {1}".format(project, project_dir))
