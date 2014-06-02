@@ -518,11 +518,15 @@
 					root.cascade(function(node) {
 						if (node.isLeaf() && node.attributes.checked) {
 							var attribution = node.attributes.config.attribution;
+							var attribution_html;
 							if (attribution && attribution.title) {
 								if (attribution.url) {
-									attributions.push(String.format('<a href="{0}" target="_blank">{1}</a>', attribution.url, attribution.title));
+									attribution_html = String.format('<a href="{0}" target="_blank">{1}</a>', attribution.url, attribution.title);
 								} else {
-									attributions.push(attribution.title);
+									attribution_html = attribution.title;
+								}
+								if (attributions.indexOf(attribution_html) == -1) {
+									attributions.push(attribution_html);
 								}
 							}
 						}
