@@ -63,9 +63,9 @@ mkdir -p /storage/webgis-media
 chown www-data:www-data /storage/webgis-media
 sed -i "s/MEDIA_ROOT =.*/MEDIA_ROOT = '\/storage\/webgis-media'/" /var/www/webgis/djproject/settings.py
 
-# add web alias if configured
-if [ -n "$GISLAB_WEB_ALIAS" ]; then
-	sed -i "/ALLOWED_HOSTS/aALLOWED_HOSTS += ['$GISLAB_WEB_ALIAS']" /var/www/webgis/djproject/settings.py
+# allow requests also from = DNS alias if configured
+if [ -n "$GISLAB_DNS_ALIAS" ]; then
+	sed -i "/ALLOWED_HOSTS/aALLOWED_HOSTS += ['web.$GISLAB_DNS_ALIAS']" /var/www/webgis/djproject/settings.py
 fi
 
 python /var/www/webgis/manage.py syncdb --noinput
@@ -78,9 +78,9 @@ cp /vagrant/system/server/100-service-webgis/conf/nginx/site-webgis /etc/nginx/s
 gislab_config_header_to_file /etc/nginx/sites-available/webgis
 ln -sf /etc/nginx/sites-available/webgis /etc/nginx/sites-enabled/webgis
 
-# add web alias if configured
-if [ -n "$GISLAB_WEB_ALIAS" ]; then
-	sed -i "s/server_name web.gis.lab;/server_name web.gis.lab $GISLAB_WEB_ALIAS;/" /etc/nginx/sites-available/webgis
+# acivate DNS alias if configured
+if [ -n "$GISLAB_DNS_ALIAS" ]; then
+	sed -i "s/server_name web.gis.lab;/server_name web.gis.lab web.$GISLAB_DNS_ALIAS;/" /etc/nginx/sites-available/webgis
 fi
 
 
