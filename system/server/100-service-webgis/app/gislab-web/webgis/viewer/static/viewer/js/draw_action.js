@@ -120,7 +120,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							},
 							handler: function(grid, rowIndex, colIndex) {
 								grid.getSelectionModel().selectRow(rowIndex);
-								var feature = grid.getStore().getAt(rowIndex).get('feature'); //grid.getSelectionModel().selectedFeatures[0];
+								var feature = grid.getStore().getAt(rowIndex).get('feature');
 								if (feature.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point') {
 									this.map.setCenter(feature.geometry.bounds.getCenterLonLat());
 								} else {

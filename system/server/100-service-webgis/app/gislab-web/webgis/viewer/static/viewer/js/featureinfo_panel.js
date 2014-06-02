@@ -147,7 +147,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 							},
 							handler: function(grid, rowIndex, colIndex) {
 								grid.getSelectionModel().selectRow(rowIndex);
-								var feature = grid.getSelectionModel().selectedFeatures[0];
+								var feature = grid.getStore().getAt(rowIndex).get('feature');
 								var layer_name = feature.fid.substring(0, feature.fid.lastIndexOf("."));
 
 								var feature_pk = null;
