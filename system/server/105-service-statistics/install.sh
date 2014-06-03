@@ -71,7 +71,7 @@ rm -f /etc/cron.d/munin-node
 cat << EOF > /etc/cron.d/munin
 MAILTO=root
 
-*/15 *	* * *	munin	if [ -x /usr/bin/munin-cron ]; then /usr/bin/munin-cron; fi
+*/5 *	* * *	munin	if [ -x /usr/bin/munin-cron ]; then /usr/bin/munin-cron; fi
 EOF
 gislab_config_header_to_file /etc/cron.d/munin
 
