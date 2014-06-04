@@ -20,17 +20,21 @@ $(gislab_config_header)
 log-facility local7;
 authoritative;
 
+option gislab-unique-id code 224 = text;
+
 subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
     option routers $GISLAB_SERVER_IP;
 
     pool {
         $GISLAB_UNKNOWN_MAC_POLICY unknown clients;
         range $GISLAB_NETWORK.100 $GISLAB_NETWORK.250;
+        option dhcp-parameter-request-list 1,3,6,14,15,17,51,54,224;
         option domain-name "gis.lab";
         option domain-name-servers $GISLAB_SERVER_IP;
         option broadcast-address $GISLAB_NETWORK.255;
         option subnet-mask 255.255.255.0;
         option root-path "/opt/ltsp/i386";
+        option gislab-unique-id "$GISLAB_UNIQUE_ID";
         if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
             filename "/ltsp/i386/pxelinux.0";
         } else {
