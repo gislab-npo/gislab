@@ -98,6 +98,24 @@ ltsp-build-client $GISLAB_BUILD_CLIENT_OPTS
 ltsp-update-sshkeys
 ltsp-update-kernels
 
+# modify client DHCP boot up sequence
+PWD_OLD=$(pwd)
+INITRD_PATH=/opt/ltsp/i386/boot
+INITRD=$(readlink $INITRD_PATH/initrd.img)
+GISLAB_SERVER_IP_REGEX=$(hostname -I | awk -F" " '{print $NF}' | sed 's/\./\\\\./g')
+mkdir -p /var/tmp/initrd
+cd /var/tmp/initrd
+cp -vf $INITRD_PATH/$INITRD ./$INITRD.gz
+gunzip $INITRD.gz
+cpio -id < $(ls)
+cp -vf /vagrant/system/client/udhcp/udhcp scripts/init-premount/
+sed -i "s/###GISLAB_SERVER_IP_REGEX###/$GISLAB_SERVER_IP_REGEX/" scripts/init-premount/udhcp
+rm -vf $INITRD
+find . | cpio --create --format='newc' > /var/tmp/$INITRD
+gzip /var/tmp/$INITRD
+mv -vf /var/tmp/$INITRD.gz /var/lib/tftpboot/ltsp/i386/$INITRD
+cd $PWD_OLD
+rm -rf /var/tmp/initrd*
 
 # LTSP configuration
 cat << EOF > /var/lib/tftpboot/ltsp/i386/lts.conf
