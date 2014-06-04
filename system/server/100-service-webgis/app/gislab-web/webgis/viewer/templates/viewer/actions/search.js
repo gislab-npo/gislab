@@ -476,13 +476,17 @@ var searchWindow = new Ext.Window({
 						Ext.each(value.split(','), function(list_value) {
 							list_values.push(list_value.trim());
 						});
-						value = String.format(" ( '{0}' ) ", list_values.join("' , '"));
+						if (attrib_item.valueField.type == 'TEXT') {
+							value = String.format(" ( '{0}' ) ", list_values.join("' , '"));
+						} else {
+							value = String.format(" ( {0} ) ", list_values.join(" , "));
+						}
 					} else if (operator == 'LIKE') {
 						if (value.indexOf('%') == -1) {
 							value = '%'+value+'%'
 						}
 						value = String.format("'{0}'", value);
-					} else {
+					} else if (attrib_item.valueField.type == 'TEXT') {
 						value = String.format("'{0}'", value);
 					}
 					attributes_queries.push(String.format('"{0}" {1} {2}', attribute, operator, value))
