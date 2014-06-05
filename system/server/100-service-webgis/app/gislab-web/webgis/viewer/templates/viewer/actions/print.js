@@ -280,7 +280,7 @@ action = new Ext.Action({
 	toggleHandler: function(button, toggled) {
 		if (toggled) {
 			printWindow.show();
-			printWindow.alignTo(mappanel.getTopToolbar().getId(), 'bl', [70, 4]);
+			printWindow.alignTo(mappanel.getTopToolbar().getId(), 'tl-bl', [70, 4]);
 		} else {
 			printWindow.hide();
 		}
