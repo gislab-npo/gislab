@@ -78,6 +78,27 @@
 				}
 			});
 
+			/* Workaround for zoom slider to work better with base layers with minZoomLevel/maxZoomLevel options set to
+			   non-default values (Google Map layers with restricted scales). It should also provide better choosing of
+			   zoom level (scale) when switching between base layers with different scales.
+			*/
+			Ext.override(GeoExt.ZoomSlider, {
+				initZoomValues: function() {
+					var layer = this.map.baseLayer;
+					if (this.initialConfig.minValue === undefined) {
+						this.minValue = 0;
+					}
+					if (this.initialConfig.maxValue === undefined) {
+						this.maxValue = this.map.getNumZoomLevels() -1;
+					}
+					var value = this.map.getZoomForResolution(this.map.getResolution());
+					this.updating = true;
+					this.setValue(value>0? value-1 : value+1, false);
+					this.setValue(value);
+					this.updating = false;
+					this.map.zoomTo(value);
+				},
+			});
 			function main() {
 
 				Ext.BLANK_IMAGE_URL = "{% static 'viewer/images/s.gif' %}";
@@ -214,6 +235,7 @@
 						xtype: "gx_zoomslider",
 						aggressive: true,
 						vertical: true,
+						animate: false,
 						height: 150,
 						x: 17,
 						y: 85,
