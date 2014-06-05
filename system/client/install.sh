@@ -98,7 +98,7 @@ ltsp-build-client $GISLAB_BUILD_CLIENT_OPTS
 ltsp-update-sshkeys
 ltsp-update-kernels
 
-# modify client DHCP boot up sequence
+# modify DHCP client to be sure that client will always get IP from correct server
 PWD_OLD=$(pwd)
 INITRD_PATH=/opt/ltsp/i386/boot
 INITRD=$(readlink $INITRD_PATH/initrd.img)
