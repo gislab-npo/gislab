@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-23 16:40+0200\n"
+"POT-Creation-Date: 2014-06-05 09:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,59 +18,64 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: static/viewer/js/draw_action.js:109 static/viewer/js/draw_action.js.c:202
-#: static/viewer/js/draw_action.js:246
-msgid "Title"
-msgstr "Názov"
+#: static/viewer/js/baselayers_combo.js:100
+msgid "Blank"
+msgstr "Prázdna vrstva"
 
-#: static/viewer/js/draw_action.js:123
-msgid "Description"
-msgstr "Popis"
-
-#: static/viewer/js/draw_action.js:182
-msgid "History"
-msgstr "História"
-
-#: static/viewer/js/draw_action.js:195
-msgid "Time"
-msgstr "Čas"
-
-#: static/viewer/js/draw_action.js:208
-msgid "Permalink"
-msgstr "Permalink"
-
-#: static/viewer/js/draw_action.js:214
-msgid "Download"
-msgstr "Stiahnuť"
-
-#: static/viewer/js/draw_action.js:261 static/viewer/js/draw_action.js.c:262
-msgid "Delete selected"
-msgstr "Odstrániť vybraný"
-
-#: static/viewer/js/draw_action.js:279 static/viewer/js/draw_action.js.c:280
-msgid "Delete all"
-msgstr "Odstrániť všetky"
-
-#: static/viewer/js/draw_action.js:290
-msgid "Save"
-msgstr "Uložiť"
-
-#: static/viewer/js/draw_action.js:291
-msgid "Save drawing"
-msgstr "Uložiť kreslenie"
-
-#: static/viewer/js/featureinfo_panel.js:90
-msgid "Number of results: %(count)s"
-msgstr "Počet výsledkov: %(count)s"
-
-#: static/viewer/js/featureinfo_panel.js:131
+#: static/viewer/js/draw_action.js:117
+#: static/viewer/js/featureinfo_panel.js:130
 msgid "Zoom to feature"
 msgstr "Priblížiť na objekt"
 
-#: static/viewer/js/featureinfo_panel.js:146
+#: static/viewer/js/draw_action.js:132 static/viewer/js/draw_action.js.c:228
+#: static/viewer/js/draw_action.js:275
+msgid "Title"
+msgstr "Názov"
+
+#: static/viewer/js/draw_action.js:146
+msgid "Description"
+msgstr "Popis"
+
+#: static/viewer/js/draw_action.js:207
+msgid "History"
+msgstr "História"
+
+#: static/viewer/js/draw_action.js:220
+msgid "Time"
+msgstr "Čas"
+
+#: static/viewer/js/draw_action.js:235
+msgid "Permalink"
+msgstr "Permalink"
+
+#: static/viewer/js/draw_action.js:242
+msgid "Download"
+msgstr "Stiahnuť"
+
+#: static/viewer/js/draw_action.js:292 static/viewer/js/draw_action.js.c:293
+msgid "Delete selected"
+msgstr "Odstrániť vybraný"
+
+#: static/viewer/js/draw_action.js:310 static/viewer/js/draw_action.js.c:311
+msgid "Delete all"
+msgstr "Odstrániť všetky"
+
+#: static/viewer/js/draw_action.js:321
+msgid "Save"
+msgstr "Uložiť"
+
+#: static/viewer/js/draw_action.js:322
+msgid "Save drawing"
+msgstr "Uložiť kreslenie"
+
+#: static/viewer/js/featureinfo_panel.js:86
+msgid "Number of results: %(count)s"
+msgstr "Počet výsledkov: %(count)s"
+
+#: static/viewer/js/featureinfo_panel.js:144
 msgid "Export to drawings"
 msgstr "Exportovať do kreslenia"
 
-#: static/viewer/js/featureinfo_panel.js:161
+#: static/viewer/js/featureinfo_panel.js:165
 msgid "Copy of feature #%(pk)s from layer %(layer)s"
 msgstr "Kópia objektu #%(pk)s z vrstvy %(layer)s"

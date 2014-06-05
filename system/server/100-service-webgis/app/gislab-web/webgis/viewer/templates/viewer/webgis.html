@@ -217,7 +217,9 @@
 						height: 150,
 						x: 17,
 						y: 85,
-						plugins: new GeoExt.ZoomSliderTip()
+						plugins: new GeoExt.ZoomSliderTip({
+							template: '{% trans "Scale" %}: 1 : {scale}<br>{% trans "Resolution" %}: {resolution}'
+						})
 					}],
 					tbar: {
 						xtype: 'toolbar',
@@ -452,28 +454,38 @@
 								}, {
 									xtype: 'label',
 									flex: 1
-								}, {
+								},{% if user.is_guest %} {
 									xtype: 'tbtext',
-									text: '{{ user.get_full_name }}'
+									text: '{% trans "Guest" %}'
 								}, {
 									xtype: 'tbspacer',
 									width: 5
-								},{% if user.is_guest %} new Ext.Action({
+								}, new Ext.Action({
 									cls: 'x-btn-icon',
 									iconCls: 'login-icon',
 									tooltip: '{% trans "Log in" %}',
 									handler: function(action) {
 										window.location.href = Ext.urlAppend('{% url "login" %}', Ext.urlEncode({next: window.location.href}));
 									}
-								}){% else %} new Ext.Action({
+								}),{% else %} {
+									xtype: 'tbtext',
+									text: '{{ user.get_full_name }}'
+								}, {
+									xtype: 'tbspacer',
+									width: 5
+								}, new Ext.Action({
 									cls: 'x-btn-icon',
 									iconCls: 'logout-icon',
 									tooltip: '{% trans "Log out" %}',
 									handler: function(action) {
 										window.location.href = Ext.urlAppend('{% url "logout" %}', Ext.urlEncode({next: window.location.href}));
 									}
-								})
+								}),
 								{% endif %}
+								{
+									xtype: 'tbspacer',
+									width: 5
+								}
 							]
 						},
 						items: [

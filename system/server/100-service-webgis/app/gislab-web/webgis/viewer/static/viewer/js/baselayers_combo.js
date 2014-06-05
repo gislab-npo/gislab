@@ -175,8 +175,9 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 	createLayerNode: function(parentNode, layer_config) {
 		var node;
 		var isGroup = layer_config.hasOwnProperty('layers');
+		var title = layer_config.type == 'BLANK'? gettext("Blank") : layer_config.title? layer_config.title : layer_config.name;
 		var layerRecordData = {
-			title: layer_config.title? layer_config.title : layer_config.name,
+			title: title,
 			name: layer_config.name,
 			indent: parentNode.attributes.layerRecordData? parentNode.attributes.layerRecordData.indent+1 : 0,
 		};
