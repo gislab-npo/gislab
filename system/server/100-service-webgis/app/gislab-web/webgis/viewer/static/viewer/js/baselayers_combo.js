@@ -81,6 +81,13 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 		},
 		select: function (combo, record, index) {
 			var layer = record.json.layer;
+			if (layer.CLASS_NAME == 'OpenLayers.Layer.Google') {
+				Ext.Element.select('.olControlScaleLine').addClass("google");
+				Ext.Element.select('.olControlAttribution').addClass("google");
+			} else if (this.map.baseLayer.CLASS_NAME == 'OpenLayers.Layer.Google') {
+				Ext.Element.select('.olControlScaleLine').removeClass("google");
+				Ext.Element.select('.olControlAttribution').removeClass("google");
+			}
 			this.map.setBaseLayer(layer);
 		}
 	},

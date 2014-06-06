@@ -52,11 +52,19 @@ div.scale-control {
 	background-color: rgba(255, 255, 255, 0.3) !important;
 }
 
+.olControlAttribution.google {
+	bottom: 16px !important;
+}
+
 .olControlScaleLine {
+	left: 6px !important;
 	bottom: 5px !important;
 	font-size: 10px !important;
 	font-family: tahoma,arial,verdana,sans-serif !important;
 	background-color: rgba(255, 255, 255, 0.3) !important;
+}
+.olControlScaleLine.google {
+	bottom: 32px !important;
 }
 
 .app-title {
