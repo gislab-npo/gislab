@@ -518,7 +518,7 @@ var searchWindow = new Ext.Window({
 					if (features.length == options.params.FEATURE_COUNT) {
 						features.pop();
 						features_panel.showFeatures(features);
-						features_panel.setStatusInfo(String.format('{% trans "Searching has reach limit of {0} results" %}', features.length));
+						features_panel.setStatusInfo(String.format('{% trans "More than {0} features are matching search condition" %}', features.length));
 					} else {
 						features_panel.showFeatures(features);
 					}

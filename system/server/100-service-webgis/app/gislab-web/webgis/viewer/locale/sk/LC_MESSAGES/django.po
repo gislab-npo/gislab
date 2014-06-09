@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-05 09:20+0200\n"
+"POT-Creation-Date: 2014-06-09 10:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,93 +34,93 @@ msgstr "Používateľské meno"
 msgid "Password"
 msgstr "Heslo"
 
-#: templates/registration/login.html:106 templates/viewer/webgis.html:486
+#: templates/registration/login.html:106 templates/viewer/webgis.html:489
 msgid "Log in"
 msgstr "Prihlásiť sa"
 
-#: templates/viewer/webgis.html:241
+#: templates/viewer/webgis.html:244
 msgid "Scale"
 msgstr "Mierka"
 
-#: templates/viewer/webgis.html:241
+#: templates/viewer/webgis.html:244
 msgid "Resolution"
 msgstr "Rozlíšenie"
 
-#: templates/viewer/webgis.html:362
+#: templates/viewer/webgis.html:365
 msgid "Overlay Layers"
 msgstr "Prekladové vrstvy"
 
-#: templates/viewer/webgis.html:369
+#: templates/viewer/webgis.html:372
 msgid "Legend"
 msgstr "Legenda"
 
-#: templates/viewer/webgis.html:398
+#: templates/viewer/webgis.html:401
 msgid "Properties"
 msgstr "Vlastnosti"
 
-#: templates/viewer/webgis.html:401
+#: templates/viewer/webgis.html:404
 msgid "Author"
 msgstr "Autor"
 
-#: templates/viewer/webgis.html:402
+#: templates/viewer/webgis.html:405
 msgid "E-mail"
 msgstr "E-mail"
 
-#: templates/viewer/webgis.html:403
+#: templates/viewer/webgis.html:406
 msgid "Organization"
 msgstr "Organizácia"
 
-#: templates/viewer/webgis.html:404
+#: templates/viewer/webgis.html:407
 msgid "Abstract"
 msgstr "O projekte"
 
-#: templates/viewer/webgis.html:405
+#: templates/viewer/webgis.html:408
 msgid "Publish date"
 msgstr "Čas publikácie"
 
-#: templates/viewer/webgis.html:406
+#: templates/viewer/webgis.html:409
 msgid "WMS URL"
 msgstr ""
 
-#: templates/viewer/webgis.html:411
+#: templates/viewer/webgis.html:414
 msgid "About"
 msgstr "O aplikácii"
 
-#: templates/viewer/webgis.html:414
+#: templates/viewer/webgis.html:417
 msgid "GIS.lab ID"
 msgstr ""
 
-#: templates/viewer/webgis.html:415
+#: templates/viewer/webgis.html:418
 msgid "GIS.lab version"
 msgstr "GIS.lab verzia"
 
-#: templates/viewer/webgis.html:416
+#: templates/viewer/webgis.html:419
 msgid "Home page"
 msgstr "Domovská stránka"
 
-#: templates/viewer/webgis.html:431
+#: templates/viewer/webgis.html:434
 msgid "Base Layers"
 msgstr "Podkladové vrstvy"
 
-#: templates/viewer/webgis.html:479
+#: templates/viewer/webgis.html:482
 msgid "Guest"
 msgstr "Neprihlásený"
 
-#: templates/viewer/webgis.html:499
+#: templates/viewer/webgis.html:502
 msgid "Log out"
 msgstr "Odhlásiť sa"
 
-#: templates/viewer/webgis.html:605 templates/viewer/actions/draw.js:119
+#: templates/viewer/webgis.html:608 templates/viewer/actions/draw.js:119
 #: templates/viewer/actions/draw.js:130 templates/viewer/actions/search.js:528
 msgid "Error"
 msgstr "Chyba"
 
-#: templates/viewer/webgis.html:606
+#: templates/viewer/webgis.html:609
 #, python-format
 msgid "Failed to fetch vector data (drawing: %(drawing_id)s)"
 msgstr "Nepodarilo sa načítať vektorové dáta (kreslenie: %(drawing_id)s)"
 
-#: templates/viewer/webgis.html:623
+#: templates/viewer/webgis.html:626
 msgid "Message"
 msgstr "Správa"
 
@@ -284,8 +284,8 @@ msgid "Search"
 msgstr "Vyhľadať"
 
 #: templates/viewer/actions/search.js:521
-msgid "Searching has reach limit of {0} results"
-msgstr "Vyhľadávanie prekročilo stanovený limit {0} výsledkov"
+msgid "More than {0} features are matching search condition"
+msgstr "Viac ako {0} objektov vyhovuje vyhľadávaniu"
 
 #: templates/viewer/actions/search.js:529
 msgid "Searching failed"
