@@ -20,6 +20,7 @@ $(gislab_config_header)
 log-facility local7;
 authoritative;
 
+# custom DHCP option to distinguish more GIS.lab servers in shared LAN
 option gislab-unique-id code 224 = text;
 
 subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
@@ -28,6 +29,7 @@ subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
     pool {
         $GISLAB_UNKNOWN_MAC_POLICY unknown clients;
         range $GISLAB_NETWORK.100 $GISLAB_NETWORK.250;
+        # return specified DHCP options in offer
         option dhcp-parameter-request-list 1,3,6,14,15,17,51,54,224;
         option domain-name "gis.lab";
         option domain-name-servers $GISLAB_SERVER_IP;
