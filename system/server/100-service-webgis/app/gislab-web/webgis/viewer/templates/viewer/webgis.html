@@ -467,14 +467,17 @@
 							},
 							cls: 'x-panel-header app-header',
 							items: [{
-									xtype: 'label',
+									xtype: 'tbspacer',
+									width: 120,
+								}, {
+									xtype: 'tbspacer',
 									flex: 1
 								}, {
 									xtype: 'tbtext',
 									text: '{{ root_title }}',
 									cls: 'app-title'
 								}, {
-									xtype: 'label',
+									xtype: 'tbspacer',
 									flex: 1
 								},{% if user.is_guest %} {
 									xtype: 'tbtext',
@@ -508,7 +511,17 @@
 									xtype: 'tbspacer',
 									width: 5
 								}
-							]
+							],
+							listeners: {
+								// center application's title depending on the user name length
+								afterLayout: function(toolbar) {
+									var width = toolbar.get(4).getWidth()+25;
+									if (toolbar.get(0).width != width) {
+										toolbar.get(0).width = width;
+										toolbar.doLayout();
+									}
+								}
+							}
 						},
 						items: [
 							mappanel_container,
