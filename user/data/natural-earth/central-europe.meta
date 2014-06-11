@@ -85,7 +85,7 @@
   "canvas_color": "#ffffffff", 
   "message": {
     "valid_until": "01.01.2099", 
-    "text": "Welcome to GIS.lab demonstration project !"
+    "text": "Welcome to GIS.lab demonstration project ! Please note that print composer is not available for guest user."
   }, 
   "overlays": [
     {
