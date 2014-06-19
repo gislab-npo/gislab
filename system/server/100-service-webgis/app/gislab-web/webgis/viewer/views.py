@@ -294,7 +294,7 @@ def page(request):
 			'wms_url': set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project+'.qgs'}),
 			'project_extent': metadata.extent,
 			'zoom_extent': form.cleaned_data['extent'] or metadata.zoom_extent,
-			'print_composers': metadata.composer_templates,
+			'print_composers': metadata.composer_templates if not context['user'].is_guest else None,
 			'root_title': metadata.title,
 			'author': metadata.contact_person,
 			'email': metadata.contact_mail,

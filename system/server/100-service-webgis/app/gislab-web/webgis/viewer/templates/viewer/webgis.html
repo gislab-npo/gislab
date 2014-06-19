@@ -184,7 +184,7 @@
 				var printCapabilities = {
 					'scales':[],
 					'dpis':[
-						{'name': '75dpi', 'value': '75'},
+						{'name': '96dpi', 'value': '96'},
 						{'name': '150dpi', 'value': '150'},
 						{'name': '300dpi', 'value': '300'}
 					],
@@ -319,7 +319,7 @@
 				mappanel.getTopToolbar().add(' ');
 				{% include "viewer/actions/draw.js" %}
 
-				{% if print_composers and not user.is_guest %}
+				{% if print_composers %}
 				mappanel.getTopToolbar().add(' ', '-', ' ');
 				{% include "viewer/actions/print.js" %}
 				{% endif %}
