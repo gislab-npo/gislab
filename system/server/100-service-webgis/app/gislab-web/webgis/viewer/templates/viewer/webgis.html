@@ -221,7 +221,7 @@
 					region: 'center',
 					collapsible: false,
 					zoom: 3,
-					map: new WebgisMap({
+					map: new WebgisMap("map", {
 						allOverlays: {% if base_layers %}false{% else %}true{% endif %},
 						units: config.units,
 						projection: new OpenLayers.Projection(config.projection),
@@ -650,7 +650,6 @@
 		</script>
 	</head>
 	<body>
-		<div id="overviewLegend" style="margin-left:10px"></div>
-		<div id="dpiDetection"></div>
+		<div id="map"></div>
 	</body>
 </html>
