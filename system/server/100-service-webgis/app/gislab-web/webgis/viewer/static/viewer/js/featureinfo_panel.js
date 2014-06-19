@@ -218,7 +218,8 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 					}),
 					listeners: {
 						'removed': function (grid, ownerCt ) {
-							grid.selModel.unbind();
+							grid.getSelectionModel().selectControl.map.removeControl(grid.getSelectionModel().selectControl);
+							grid.getSelectionModel().unbind();
 						}
 					}
 				});
