@@ -104,7 +104,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 		var layer;
 		if (layer_config.type == 'BLANK') {
 			layer = new OpenLayers.Layer(
-				"Blank",
+				layer_config.name,
 				{
 					isBaseLayer: true,
 					resolutions: layer_config.resolutions,

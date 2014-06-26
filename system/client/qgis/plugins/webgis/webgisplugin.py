@@ -447,7 +447,7 @@ class WebGisPlugin:
 
 		special_base_layers = []
 		if dialog.blank.isChecked():
-			special_base_layers.append({'name': 'Blank', 'type': 'BLANK'})
+			special_base_layers.append({'title': 'Blank', 'name': 'BLANK', 'type': 'BLANK'})
 		if metadata['projection']['code'].upper() == 'EPSG:3857':
 			if dialog.osm.isChecked():
 				special_base_layers.append(dict(OSM_LAYER))
