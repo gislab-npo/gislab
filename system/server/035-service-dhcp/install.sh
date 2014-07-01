@@ -97,6 +97,9 @@ touch /var/log/dhcpd-error.log
 chmod 0640 /var/log/dhcpd-error.log
 chown syslog:adm /var/log/dhcpd-error.log
 
+# check logs with logcheck
+echo "/var/log/dhcpd-error.log" >> /etc/logcheck/logcheck.logfiles
+
 service rsyslog restart
 
 

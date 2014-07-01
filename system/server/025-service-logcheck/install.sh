@@ -11,11 +11,11 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 
 
 # main logcheck configuration
-cp /vagrant/system/server/034-service-logcheck/conf/logcheck/logcheck.conf /etc/logcheck/logcheck.conf
+cp /vagrant/system/server/025-service-logcheck/conf/logcheck/logcheck.conf /etc/logcheck/logcheck.conf
 gislab_config_header_to_file /etc/logcheck/logcheck.conf
 
 # list of files to check
-cp /vagrant/system/server/034-service-logcheck/conf/logcheck/logcheck.logfiles /etc/logcheck/logcheck.logfiles
+cp /vagrant/system/server/025-service-logcheck/conf/logcheck/logcheck.logfiles /etc/logcheck/logcheck.logfiles
 gislab_config_header_to_file /etc/logcheck/logcheck.logfiles
 
 # logcheck cron job

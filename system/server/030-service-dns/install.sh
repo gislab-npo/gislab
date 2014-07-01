@@ -3,7 +3,7 @@
 #
 
 # Logging: 
-#   production: -
+#   production: /var/log/named-error.log
 #   debug:      /var/log/named/named-debug.log
 
 # packages installation
@@ -131,12 +131,6 @@ $(gislab_config_header ";")
 5        IN    PTR       server.gis.lab.
 EOF
 
-# create default log file
-touch /var/log/named-error.log
-chmod 0640 /var/log/named-error.log
-chown syslog:adm /var/log/named-error.log
-
-service rsyslog restart
 service bind9 restart
 
 
@@ -146,6 +140,18 @@ $(gislab_config_header)
 nameserver 127.0.0.1
 EOF
 resolvconf -u
+
+
+### LOGGING ###
+# create default log file
+touch /var/log/named-error.log
+chmod 0640 /var/log/named-error.log
+chown syslog:adm /var/log/named-error.log
+
+# check logs with logcheck
+echo "/var/log/named-error.log" >> /etc/logcheck/logcheck.logfiles
+
+service rsyslog restart
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

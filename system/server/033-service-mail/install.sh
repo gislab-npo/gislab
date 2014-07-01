@@ -67,6 +67,9 @@ chown syslog:adm /var/log/mail-error.log
 rm -f /var/log/mail.log
 rm -f /var/log/mail.err
 
+# check logs with logcheck
+echo "/var/log/mail-error.log" >> /etc/logcheck/logcheck.logfiles
+
 service rsyslog restart
 
 

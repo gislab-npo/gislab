@@ -22,14 +22,18 @@ cat << EOF > /etc/ircd-hybrid/ircd.motd
 Welcome to GIS.lab IRC server !
 EOF
 
-# rotate IRC server logs
+service ircd-hybrid restart
+
+
+### LOGGING ###
 cp /vagrant/system/server/060-service-chat/conf/logrotate/ircd-hybrid /etc/logrotate.d/ircd-hybrid
 gislab_config_header_to_file /etc/logrotate.d/ircd-hybrid
 
 chmod 0640 /var/log/ircd/ircd-hybrid.log
 chgrp adm /var/log/ircd/ircd-hybrid.log
 
-service ircd-hybrid restart
+# check logs with logcheck
+echo "/var/log/ircd/ircd-hybrid.log" >> /etc/logcheck/logcheck.logfiles
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

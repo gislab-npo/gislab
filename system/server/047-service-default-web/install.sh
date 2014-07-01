@@ -48,4 +48,10 @@ gislab_config_header_to_file /etc/nginx/sites-available/default
 sudo service nginx restart
 
 
+### LOGGING ###
+# check logs with logcheck
+echo "/var/log/apache2/error.log" >> /etc/logcheck/logcheck.logfiles
+echo "/var/log/nginx/error.log" >> /etc/logcheck/logcheck.logfiles
+
+
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

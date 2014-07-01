@@ -139,6 +139,12 @@ MAILTO=root
 EOL
 
 
+### LOGGING ###
+# check logs with logcheck
+echo "/var/log/nginx/webgis-error.log" >> /etc/logcheck/logcheck.logfiles
+echo "/var/log/webgis-error.log" >> /etc/logcheck/logcheck.logfiles
+
+
 ### BACKUP ###
 mkdir -p /etc/cron.d.bin
 cp /vagrant/system/server/100-service-webgis/bin/gislab-backup-webgis.sh /etc/cron.d.bin

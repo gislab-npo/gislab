@@ -39,7 +39,7 @@ gislab_config_header_to_file /etc/postgresql/9.1/main/postgresql.conf
 pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
 
 
-### LOGGING ##
+### LOGGING ###
 if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
 	cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
 logging_collector = on
@@ -65,6 +65,9 @@ rm -f /var/log/postgresql/postgresql-9.1-main.log
 touch /var/log/postgresql/postgresql-error.log
 chmod 0640 /var/log/postgresql/postgresql-error.log
 chown postgres:adm /var/log/postgresql/postgresql-error.log
+
+# check logs with logcheck
+echo "/var/log/postgresql/postgresql-error.log" >> /etc/logcheck/logcheck.logfiles
 
 service postgresql restart
 

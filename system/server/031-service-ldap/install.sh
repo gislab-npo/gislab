@@ -80,6 +80,9 @@ touch /var/log/ldap-error.log
 chmod 0640 /var/log/ldap-error.log
 chown syslog:adm /var/log/ldap-error.log
 
+# check logs with logcheck
+echo "/var/log/ldap-error.log" >> /etc/logcheck/logcheck.logfiles
+
 service rsyslog restart
 
 
