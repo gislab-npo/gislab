@@ -30,6 +30,9 @@ fi
 # get provisioning provider name
 GISLAB_SERVER_PROVIDER=$1
 
+# get server architecture - 32 bit (i386) or 64 bit (x86_64)
+GISLAB_SERVER_ARCHITECTURE=$(uname -i)
+
 # get provisioning user name
 gislab_provisioning_user
 

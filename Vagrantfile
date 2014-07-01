@@ -37,7 +37,9 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box
-  config.vm.box = "precise32-canonical"
+  # or
+  # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box
+  config.vm.box = "precise-canonical"
   
   config.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
 

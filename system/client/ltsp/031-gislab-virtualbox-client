@@ -1,4 +1,4 @@
-# Install VirtualBox client support (VirtualBox guest additions).
+# Install VirtualBox support (guest additions).
 
 case "$MODE" in
     finalization)
@@ -10,20 +10,25 @@ case "$MODE" in
 		chroot $ROOT apt-get --assume-yes --force-yes --no-install-recommends install linux-image-$(uname -r) \
 			linux-headers-$(uname -r)
 
-		# install from VirtualBox additions ISO if given
+		# install VirtualBox additions from ISO
 		if [ -n "${GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO}" ]; then
 			mkdir -p $ROOT/tmp/virtualbox/{iso,mnt}
 			cp /vagrant/$GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO $ROOT/tmp/virtualbox/iso
 
 			chroot $ROOT apt-get --assume-yes --force-yes --no-install-recommends install build-essential
 			chroot $ROOT mount -o loop /tmp/virtualbox/iso/VBoxGuestAdditions.iso /tmp/virtualbox/mnt/
+
+			export BUILD_TARGET_ARCH=x86
 			chroot $ROOT /bin/sh /tmp/virtualbox/mnt/VBoxLinuxAdditions.run | tee /dev/null
+
 			chroot $ROOT umount /tmp/virtualbox/mnt
 
 			rm -r $ROOT/tmp/virtualbox/
 
-		# else install additions from Ubuntu repository which could not match version used on client 
+		# else install VirtualBox additions from Ubuntu repository - could not match version used on client 
+		# for manual installation run: $ dkms install -m virtualbox-guest/<vbox-version> -k <kernel-versiob>/i386
 		else
+			export BUILD_TARGET_ARCH=x86
 			chroot $ROOT apt-get --assume-yes --force-yes --no-install-recommends install virtualbox-guest-dkms \
 				virtualbox-guest-x11 virtualbox-guest-utils
 		fi
