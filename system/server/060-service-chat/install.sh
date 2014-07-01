@@ -6,6 +6,13 @@
 #   production: /var/log/ircd/ircd-hybrid.log
 #   debug:      /var/log/ircd/ircd-hybrid.log
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  ircd-hybrid
+  irssi
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
 
 # IRC server configuration
 cp /vagrant/system/server/060-service-chat/conf/ircd/ircd.conf /etc/ircd-hybrid/ircd.conf

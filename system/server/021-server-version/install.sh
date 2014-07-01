@@ -2,6 +2,13 @@
 ### SERVER VERSION ###
 #
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  git
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
+
 # version
 # set version from Git if we are running from sources
 if [ -d "/vagrant/.git" ]; then

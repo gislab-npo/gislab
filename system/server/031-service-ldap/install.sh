@@ -6,26 +6,39 @@
 #   production: /var/log/ldap-error.log
 #   debug:      /var/log/ldap-debug.log
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  gnutls-bin
+  ldapscripts
+  ldap-utils
+  libnss-ldap
+  pwgen
+  python-ldap
+  slapd
+  ssl-cert
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
 
 # configure PAM
 pam-auth-update --force
 auth-client-config -t nss -p lac_ldap
 
 # LDAP configuration file for pam_ldap and nsswitch
-cp /vagrant/system/server/045-service-ldap/conf/ldap/ldap-pam.conf /etc/ldap.conf
+cp /vagrant/system/server/031-service-ldap/conf/ldap/ldap-pam.conf /etc/ldap.conf
 gislab_config_header_to_file /etc/ldap.conf
 
 # LDAP configuration file for clients
 # configure base DN and URI and disable certificates verification
-cp /vagrant/system/server/045-service-ldap/conf/ldap/ldap.conf /etc/ldap/ldap.conf
+cp /vagrant/system/server/031-service-ldap/conf/ldap/ldap.conf /etc/ldap/ldap.conf
 gislab_config_header_to_file /etc/ldap/ldap.conf
 
 # nsswitch configuration
-cp /vagrant/system/server/045-service-ldap/conf/ldap/nsswitch.conf /etc/nsswitch.conf
+cp /vagrant/system/server/031-service-ldap/conf/ldap/nsswitch.conf /etc/nsswitch.conf
 gislab_config_header_to_file /etc/nsswitch.conf
 
 # ldapscripts configuration
-cp /vagrant/system/server/045-service-ldap/conf/ldapscripts/ldapscripts.conf /etc/ldapscripts/ldapscripts.conf
+cp /vagrant/system/server/031-service-ldap/conf/ldapscripts/ldapscripts.conf /etc/ldapscripts/ldapscripts.conf
 gislab_config_header_to_file /etc/ldapscripts/ldapscripts.conf
 
 
@@ -71,7 +84,7 @@ service rsyslog restart
 
 
 ### DO NOT CONTINUE ON UPGRADE ###
-if [ -f "/etc/gislab/045-service-ldap.done" ]; then return; fi
+if [ -f "/etc/gislab/031-service-ldap.done" ]; then return; fi
 
 
 # generate and set LDAP admin password
@@ -159,7 +172,7 @@ export SUDO_FORCE_REMOVE=yes
 apt-get -y install sudo-ldap
 export SUDO_FORCE_REMOVE=no
 
-ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /vagrant/system/server/045-service-ldap/conf/ldap/sudo.schema
+ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /vagrant/system/server/031-service-ldap/conf/ldap/sudo.schema
 
 
 # create indexes
@@ -192,8 +205,8 @@ EOL
 
 
 # create templates for users and groups
-cp /vagrant/system/server/045-service-ldap/conf/ldapscripts/adduser.template /etc/ldapscripts/adduser.template
-cp /vagrant/system/server/045-service-ldap/conf/ldapscripts/addgroup.template /etc/ldapscripts/addgroup.template
+cp /vagrant/system/server/031-service-ldap/conf/ldapscripts/adduser.template /etc/ldapscripts/adduser.template
+cp /vagrant/system/server/031-service-ldap/conf/ldapscripts/addgroup.template /etc/ldapscripts/addgroup.template
 
 # fix ldapscripts runtime script (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=719295)
 sed -i "s/^\[ -z \"\$USER\" \] && end_die 'Could not guess current user'$/\[ -n \"\$USER\" \] || USER=\$\(id -un 2>\/dev\/null\)/" /usr/share/ldapscripts/runtime

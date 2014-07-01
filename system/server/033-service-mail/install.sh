@@ -6,6 +6,15 @@
 #   production: /var/log/mail-error.log
 #   debug:      /var/log/mail-debug.log
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  bsd-mailx
+  mutt
+  postfix
+  sasl2-bin
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
 
 # main configuration file
 cp /vagrant/system/server/033-service-mail/conf/postfix/main.cf /etc/postfix/main.cf

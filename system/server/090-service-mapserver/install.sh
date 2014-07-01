@@ -6,6 +6,15 @@
 #   production: /var/log/apache2/mapserver-access.log /var/log/apache2/mapserver-error.log
 #   debug:      /var/log/apache2/mapserver-access.log /var/log/apache2/mapserver-error.log
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  apache2
+  apache2-mpm-worker
+  libapache2-mod-fcgid
+  qgis-mapserver
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
 
 # mapserver virtualhost
 cp /vagrant/system/server/090-service-mapserver/conf/apache/site-mapserver /etc/apache2/sites-available/mapserver

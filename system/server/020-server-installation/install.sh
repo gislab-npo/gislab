@@ -92,8 +92,17 @@ echo "virtualbox-guest-utils hold" | dpkg --set-selections
 echo "virtualbox-guest-x11 hold" | dpkg --set-selections
 
 
+# initial packages installation
 apt-get update
 apt-get --assume-yes --force-yes upgrade
+
+GISLAB_SERVER_INSTALL_PACKAGES="
+  htop
+  mc
+  ntp
+  tmux
+  vim
+"
 apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
 
 

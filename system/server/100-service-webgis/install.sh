@@ -6,6 +6,19 @@
 #   production: /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log /var/log/webgis-error.log
 #   debug:      /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log /var/log/webgis-debug.log
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  gcc
+  nginx
+  python-dateutil
+  python-dev
+  python-pip
+  python-psycopg2
+  python-virtualenv
+  pwgen
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
 
 # create database and user only on initial installation
 if [ ! -f "/etc/gislab/100-service-webgis.done" ]; then

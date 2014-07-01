@@ -2,6 +2,12 @@
 ### FILE SERVER - NFS ###
 #
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  nfs-kernel-server
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
 
 mkdir -p /storage/repository    # readable for all, writable only for labadmins
 chown root:labadmins /storage/repository

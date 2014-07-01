@@ -9,6 +9,14 @@
 #   debug:      /var/log/apache2/access.log /var/log/apache2/error.log
 #               /var/log/nginx/access.log /var/log/nginx/error.log
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  apache2
+  apache2-mpm-worker
+  nginx
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
 
 # default web server page output
 mkdir -p /var/www/default

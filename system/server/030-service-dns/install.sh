@@ -6,6 +6,13 @@
 #   production: -
 #   debug:      /var/log/named/named-debug.log
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  bind9
+  resolvconf
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
 
 GISLAB_NETWORK_REVERSE=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $3 "." $2 "." $1 }')
 

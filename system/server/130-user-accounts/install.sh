@@ -2,6 +2,13 @@
 ### USER ACCOUNTS ###
 #
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  pwgen
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
+
 # Some Vagrant boxes are using 'vagrant' account (VirtualBox) for provisioning, some 
 # of them are using 'ubuntu' account (AWS).
 

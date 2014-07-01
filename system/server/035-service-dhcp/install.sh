@@ -6,6 +6,12 @@
 #   production: /var/log/dhcpd-error.log
 #   debug:      /var/log/dhcpd-debug.log
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  isc-dhcp-server
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
 
 # network interface
 cat << EOF > /etc/default/isc-dhcp-server
@@ -14,7 +20,7 @@ INTERFACES="eth1"
 EOF
 
 # DHCP server configuration
-cat << EOF > /etc/ltsp/dhcpd.conf
+cat << EOF > /etc/dhcp/dhcpd.conf
 $(gislab_config_header)
 
 log-facility local7;
@@ -47,15 +53,15 @@ subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
 EOF
 
 
-# adding Apparmor profile to enable including allowed MACs from /etc/ltsp/dhcpd-machines-allowed.conf
+# adding Apparmor profile to enable including of allowed MACs from /etc/dhcp/dhcpd-machines-allowed.conf
 cat << EOF > /etc/apparmor.d/local/usr.sbin.dhcpd
 $(gislab_config_header)
-/etc/ltsp/dhcpd-machines-allowed.conf lrw,
+/etc/dhcp/dhcpd-machines-allowed.conf lrw,
 EOF
 service apparmor restart
 
 # creating empty MACs file (must always exist)
-cat << EOF > /etc/ltsp/dhcpd-machines-allowed.conf
+cat << EOF > /etc/dhcp/dhcpd-machines-allowed.conf
 $(gislab_config_header)
 group {
 }
@@ -64,8 +70,8 @@ EOF
 # allow MAC addresses if unknown MACs are denied
 if [ "$GISLAB_UNKNOWN_MAC_POLICY" == "deny" ];
 then
-    cat << EOF >> /etc/ltsp/dhcpd.conf
-include "/etc/ltsp/dhcpd-machines-allowed.conf";
+    cat << EOF >> /etc/dhcp/dhcpd.conf
+include "/etc/dhcp/dhcpd-machines-allowed.conf";
 EOF
 
 	# allow client's MACs

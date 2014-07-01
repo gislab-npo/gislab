@@ -7,6 +7,16 @@ if [ "$GISLAB_SUITE" == "server" ]; then
 	return
 fi
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  ltsp-server-standalone
+  tftpd-hpa
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
+# do not allow overriding of DHCP server configuration by LTSP, keep using configuration located in /etc/dhcp
+rm -f /etc/ltsp/dhcpd.conf
+
 bash /vagrant/system/client/install.sh # install client image
 
 

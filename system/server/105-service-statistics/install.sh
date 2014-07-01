@@ -6,6 +6,13 @@
 #   production: /var/log/nginx/stats-access.log /var/log/nginx/stats-error.log
 #   debug:      /var/log/nginx/stats-access.log /var/log/nginx/stats-error.log
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  munin
+  munin-node
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
 
 # configure munin master
 cp /vagrant/system/server/105-service-statistics/conf/munin/munin.conf /etc/munin/munin.conf

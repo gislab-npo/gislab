@@ -6,6 +6,18 @@
 #   production: /var/log/postgresql/postgresql-error.log
 #   debug:      /var/log/postgresql/postgresql-debug.log
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  pgtune
+  postgis
+  postgresql
+  postgresql-9.1-postgis-2.1
+  postgresql-comparator
+  postgresql-contrib
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
+
 # set system shmmax value which must be something little bit higher than one fourth of
 # system memory size
 shmmax=$(echo $(free -b | awk '/^Mem:/{print $2}') / 3.5 | bc)

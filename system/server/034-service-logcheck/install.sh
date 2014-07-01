@@ -2,6 +2,14 @@
 ### LOGCHECK ###
 #
 
+# packages installation
+GISLAB_SERVER_INSTALL_PACKAGES="
+  logcheck
+  logcheck-database
+"
+apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
+
+
 # main logcheck configuration
 cp /vagrant/system/server/034-service-logcheck/conf/logcheck/logcheck.conf /etc/logcheck/logcheck.conf
 gislab_config_header_to_file /etc/logcheck/logcheck.conf
