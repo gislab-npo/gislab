@@ -54,21 +54,29 @@ DATETIME=$(date +"%Y-%m-%d-%T")
 # backup existing client image
 if [ -f /opt/ltsp/images/i386.img ]
 then
-	gislab_print_info "Creating backup of existing image and removing expired backups"
+	gislab_print_info "Creating backup of existing client image and removing expired backups"
 	cp /opt/ltsp/images/i386.img /opt/ltsp/images/i386-backup-$DATETIME.img
 	find /opt/ltsp/images/ -iname "i386-backup*.img" -mtime 7 | xargs rm -vf
 fi
 
 
-# add some ltsp-build-client plugins which takes care about our image customizations
-rm -vf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/*gislab*
-
-cp -v /vagrant/config.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/000-gislab-config # load config
-if [ -f /vagrant/config-user.cfg ] # load user config
-then
-	cp -v /vagrant/config-user.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/001-gislab-config-user
+# create clean copy of client installation scripts
+if [ ! -d " /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean" ]; then
+	cp -a /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu  /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean
 fi
 
+# clean installation scripts
+rm -rf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu
+cp -a /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu
+
+# load GIS.lab configuration
+cp /vagrant/config.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/000-gislab-config
+if [ -f /vagrant/config-user.cfg ]
+then
+	cp /vagrant/config-user.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/001-gislab-config-user
+fi
+
+# load custom GIS.lab client installation scripts
 cp -av /vagrant/system/client/ltsp/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 cp -av /vagrant/user/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
@@ -93,6 +101,7 @@ if [ "$GISLAB_DEBUG_INSTALL" == "yes" ]; then
 	GISLAB_BUILD_CLIENT_OPTS+="--debug "
 fi
 
+gislab_print_info "Starting client installation"
 ltsp-build-client $GISLAB_BUILD_CLIENT_OPTS
 
 ltsp-update-sshkeys
@@ -117,7 +126,7 @@ mv -vf /var/tmp/$INITRD.gz /var/lib/tftpboot/ltsp/i386/$INITRD
 cd $PWD_OLD
 rm -rf /var/tmp/initrd*
 
-# LTSP configuration
+# GIS.lab client (LTSP) configuration
 cat << EOF > /var/lib/tftpboot/ltsp/i386/lts.conf
 [default]
 LDM_SESSION=/usr/bin/startxfce4
