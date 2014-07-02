@@ -64,13 +64,7 @@ gislab_require_root () {
 
 gislab_provisioning_user () {
 	# set provisioning user to variable
-	if id -u vagrant > /dev/null 2>&1; then
-		GISLAB_PROVISIONING_USER=vagrant
-	elif id -u ubuntu > /dev/null 2>&1; then
-		GISLAB_PROVISIONING_USER=ubuntu
-	else
-		gislab_print_error "No GIS.lab provisioning user found"
-	fi
+	GISLAB_PROVISIONING_USER=$(stat -c %U /vagrant/config.cfg)
 }
 
 
