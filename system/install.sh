@@ -10,15 +10,11 @@
 set -e
 
 
-# load configuration
-source /vagrant/config.cfg
-if [ -f /vagrant/config-user.cfg ]
-then
-	source /vagrant/config-user.cfg
-fi
-
 # load utility functions
 source /vagrant/system/functions.sh
+
+# load configuration
+gislab_config
 
 
 # enable installation in debug mode if requested

@@ -2,6 +2,15 @@
 # UTILITY FUNCTIONS
 #
 
+gislab_config () {
+	# read configuration
+	source /vagrant/config.cfg
+	if [ -f /vagrant/config-user.cfg ]
+	then
+		source /vagrant/config-user.cfg
+	fi
+}
+
 gislab_config_header () {
 	# print informative text about creation of configuration
 	# file by GIS.lab install
@@ -12,7 +21,6 @@ gislab_config_header () {
 	fi
 
 	echo "${c} This file was created or modified by GIS.lab $GISLAB_VERSION on $(date)."
-
 }
 
 
