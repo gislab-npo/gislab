@@ -26,74 +26,73 @@
 <li><a href="http://github.com/imincik/gis-lab/wiki/Get-Involved">Get Involved</a></li>
     
                             <li><a href="http://imincik.github.io/gis-lab/pages/workshops.html">Workshops</a></li>
-                    <li><a href="http://imincik.github.io/gis-lab/category/news.html">News</a></li>
+    
+                            <li><a href="http://imincik.github.io/gis-lab/pages/faq.html">FAQ</a></li>
                 </ul>
                 </nav>
                 <div id="submenu">
                     <ul>
 <li><a href="http://imincik.github.io/gis-lab/pages/gislab-server.html">GIS.lab server</a></li>
 <li class="active"><a href="http://imincik.github.io/gis-lab/pages/gislab-client.html">GIS.lab client</a></li>
+<li><a href="http://imincik.github.io/gis-lab/pages/gislab-web.html">GIS.lab Web</a></li>
 <li><a href="http://imincik.github.io/gis-lab/pages/gislab-unit.html">GIS.lab Unit</a></li>
                     </ul>
                 <div>
         </header><!-- /#banner -->
 <section id="content" class="body">
     
-    <p>GIS.lab client combines best features of web applications like central software distribution and no software requirements on client with capabilities and performance of desktop computer. </p>
-<h1>Office productivity suite</h1>
+    <p><strong>GIS.lab client</strong> combines best features of web application like central software distribution with capabilities and performance of desktop computer. </p>
+<p>GIS.lab client can run in two modes - <strong>physical client mode</strong> and <strong>virtual client mode</strong>. Both provide the same environment and features, but differ in deployment and performance.</p>
+<h2>Physical client mode</h2>
+<p>Preferred method of launching <strong>GIS.lab client</strong> machine is a <strong>physical client mode</strong>. In this mode, client machine is configured to boot a GIS.lab client environment from network boot service running on GIS.lab server. This configuration is done in BIOS or by pressing F12 key early in boot process. Access to operating system physically installed on client machine is temporary not available (it will be restored after restart without any changes or a danger of data loss). This mode provides best performance.</p>
+<div style="text-align:center;padding:10px">
+<p><img alt="GIS.lab physical client" src="http://imincik.github.io/gis-lab/images/schema-physical-client.png" /><br />
+Fig. 2: Empty machine or machine running Windows turning to GIS.lab physical client and back</p>
+</div>
+<h2>Virtual client mode</h2>
+<p>In case when user can't offer loosing access to a system physically installed on client machine, there is a possibility to launch <strong>GIS.lab client</strong> inside of any Windows, Linux or Mac OS X operating system in <strong>virtual client mode</strong>. This mode starts the same client environment from network boot service as in physical mode, but it runs inside of VirtualBox virtual machine. This mode allows to run both systems side-by-side. It is possible use GIS.lab virtual client in a windowed mode, similar as it would be a common application or in a full screen mode for best user experience.</p>
+<div style="text-align:center;padding:10px">
+<p><img alt="GIS.lab virtual client" src="http://imincik.github.io/gis-lab/images/schema-virtual-client.png" /><br />
+Fig. 3: Machine running Windows launching GIS.lab virtual client</p>
+</div>
+<p>In a both modes, client machine runs fully featured operating system capable to use client's hardware potential to minimize server load.</p>
+<h2>Third party clients</h2>
+<p>Any third-party computers can be connected to GIS.lab network without requirement to launch GIS.lab client environment (in physical or virtual mode). After network configuration is automatically received from GIS.lab server (DHCP), third-party computer can use some limited set of services provided by GIS.lab network like Internet sharing, file sharing, geo-database, OWS services and GIS.lab Web. </p>
+<h1>Services provided by GIS.lab client</h1>
+<h2>Office productivity suite</h2>
 <p>GIS.lab client environment offers fully featured office productivity suite which contains tools such as <em>text documents, tables and presentations editor, Internet browser, Email and chat client, images and vector graphic editor and video viewer</em> and more.</p>
 <div style="text-align:center;padding-top:10px;padding-bottom:10px;">
 <p><img alt="GIS.lab client" src="http://imincik.github.io/gis-lab/images/client-office.png" />
 Fig. 1: LibreOffice Writer</p>
 </div>
 <p>Implemented by: LibreOffice, Firefox, Thunderbird, Pidgin, GIMP, Inkscape, VLC</p>
-<h1>Base maps</h1>
-<p>Well known base maps such as OpenStreetMap or Google maps are accessible from GIS.lab desktop and web GIS software when Internet connection is available. They are ready to use to provide a user quick overview of any place on earth.</p>
+<h2>Base maps</h2>
+<p>Well known base maps such as OpenStreetMap or Google maps are accessible from GIS projects when Internet connection is available. They are ready to provide a quick overview of any place on earth.</p>
 <div style="text-align:center;padding-top:10px;padding-bottom:10px;">
 <p><img alt="GIS.lab client" src="http://imincik.github.io/gis-lab/images/client-osm-base-map.png" />
 Fig. 2: OpenStreetMap base map in desktop GIS editor</p>
 </div>
-<p>Implemented by: QGIS, QGIS OpenLayers plugin, GIS.lab WebGIS</p>
-<h1>GIS data processing and analysis</h1>
-<p>GIS software provided by GIS.lab can successfully read and write large number of spatial data formats like <em>AutoCAD DXF, ESRI Shapefile, GeoJSON, GML, GeoJPEG, KML, Microstation DGN v.7, OpenStreetMap XML and PBF, SQLite/SpatiaLite, TIFF/GeoTIFF, PostgreSQL/PostGIS, MS SQL Spatial, Oracle Spatial, OGC WMS and WFS</em> and many more. Most of the world's spatial reference systems (SRS) are transparently handled by on-the-fly reprojection to choosen destination SRS of project. Geometry and attribute data can be created and modified by advanced geometry editing, data processing tools and analysis. </p>
+<p>Implemented by: QGIS, QGIS OpenLayers plugin, GIS.lab Web</p>
+<h2>GIS data processing and analysis</h2>
+<p>GIS software provided by GIS.lab can successfully read and write large number of spatial data formats like <em>AutoCAD DXF, ESRI Shapefile, GeoJSON, GML, GeoJPEG, KML, Microstation DGN v.7, OpenStreetMap XML and PBF, SQLite/SpatiaLite, TIFF/GeoTIFF, PostgreSQL/PostGIS, MS SQL Spatial, Oracle Spatial, OGC WMS and WFS</em> and many more. Most of the world's spatial reference systems (SRS) are transparently handled by on-the-fly reprojection. Geometry and attribute data can be created and modified by advanced geometry editing, data processing tools and analysis. </p>
 <div style="text-align:center;padding-top:10px;padding-bottom:10px;">
 <p><img alt="GIS.lab client" src="http://imincik.github.io/gis-lab/images/client-analysis.png" />
 Fig. 3: Available analysis in desktop GIS editor</p>
 </div>
 <p>Implemented by: QGIS, QIS Processing Toolbox, GDAL, Proj4, SpatiaLite</p>
-<h1>Print composer</h1>
-<p>Powerful print composer allows to create outputs in image and PDF format. Output maps can include legends, labels, scalebar, vector shapes and arrows, tables and html content. Output layout can be created as single landscape or portrait page or as multiple pages in atlas format. </p>
+<h2>Print composer</h2>
+<p>Powerful print composer allows to create outputs in raster and PDF format. Output maps can include legends, labels, scale bar, vector shapes and arrows, tables and html content. Output layout can be created as single landscape or portrait page or as multiple pages in atlas format. </p>
 <div style="text-align:center;padding-top:10px;padding-bottom:10px;">
 <p><img alt="GIS.lab client" src="http://imincik.github.io/gis-lab/images/client-print-composer.png" />
 Fig. 4: Print composer</p>
 </div>
 <p>Implemented by: QGIS, QGIS Print composer</p>
-<h1>Instant web publishing from all desktop GIS projects</h1>
-<p>All GIS projects created in GIS.lab desktop environment can be automatically published in web application which closely mimics desktop project settings and data and works out-of-box without any additional configuration.</p>
-<div style="text-align:center;padding:10px">
-<p><img alt="GIS project QGIS" src="http://imincik.github.io/gis-lab/images/client-qgis.png" /><br />
-Fig. 5: GIS project in desktop processing software</p>
-</div>
-<div style="text-align:center;padding:10px">
-<p><img alt="GIS project Web" src="http://imincik.github.io/gis-lab/images/client-webgis.png" /><br />
-Fig. 6: Automatically published GIS project on web</p>
-</div>
-<p><strong>WebGIS application features</strong></p>
-<ul>
-<li>map layers browsing</li>
-<li>measuring of distances and areas</li>
-<li>feature queries by clicking to map or by advanced search forms</li>
-<li>creation of print outputs</li>
-<li>vector data capturing (point, line, polygon)</li>
-<li>map composition sharing and collaboration</li>
-</ul>
-<p>Implemented by: QGIS Mapserver, QGIS WebGIS plugin, GIS.lab WebGIS</p>
 </section>
         <section id="extras" class="body">
                 <div class="blogroll">
-                        <h2>blogroll</h2>
                         <ul>
-                            <li><a href="http://www.gista.sk">GIS.lab project is sponsored by GISTA s.r.o.</a></li>
+                            <li><a href="mailto:gislab@gista.sk">Contact: gislab@gista.sk</a></li>
+                            <li><a href="http://www.gista.sk">Main sponsor: GISTA s.r.o.</a></li>
                         </ul>
                 </div><!-- /.blogroll -->
                 <div class="social">

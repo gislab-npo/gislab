@@ -26,41 +26,45 @@
 <li><a href="http://github.com/imincik/gis-lab/wiki/Get-Involved">Get Involved</a></li>
     
                             <li><a href="http://imincik.github.io/gis-lab/pages/workshops.html">Workshops</a></li>
-                    <li><a href="http://imincik.github.io/gis-lab/category/news.html">News</a></li>
+    
+                            <li><a href="http://imincik.github.io/gis-lab/pages/faq.html">FAQ</a></li>
                 </ul>
                 </nav>
                 <div id="submenu">
                     <ul>
 <li class="active"><a href="http://imincik.github.io/gis-lab/pages/gislab-server.html">GIS.lab server</a></li>
 <li><a href="http://imincik.github.io/gis-lab/pages/gislab-client.html">GIS.lab client</a></li>
+<li><a href="http://imincik.github.io/gis-lab/pages/gislab-web.html">GIS.lab Web</a></li>
 <li><a href="http://imincik.github.io/gis-lab/pages/gislab-unit.html">GIS.lab Unit</a></li>
                     </ul>
                 <div>
         </header><!-- /#banner -->
 <section id="content" class="body">
     
-    <p>GIS.lab server combines best features of platform as a service (PaaS) services like zero deployment and management costs or horizontal scaling and in house server benefits like no monthly charges and full control of whole technology.</p>
-<h1>GIS.lab client boot service</h1>
-<p>One of a core features of GIS.lab server is to provide a network boot service and runtime infrastructure for GIS.lab client systems. Any client machine connected to GIS.lab network can boot client environment (physical or virtual) from network. Users authentication credentials are centrally managed in LDAP database and they are not tight to particular client machine - any client machine can be used by any user as far as his authentication credentials exists in database.</p>
-<p>Implemented by: ISC DHCP, TFTP, NBD, BIND, OpenLDAP</p>
-<h1>GIS data storage, management and sharing</h1>
+    <p><strong>GIS.lab server</strong> is a heart of whole system. It provides basic network services such as central user authentication, client networking configuration, domain names service or email. It also provides <strong>file and geo-database storage</strong> service and dedicated services for GIS such as <strong>Web Map Service (WMS)</strong>, <strong>Web Feature Service (WFS)</strong> and <strong>GIS project publishing service GIS.lab Web</strong>.</p>
+<p>If deployed in LAN, GIS.lab server also provides network boot service powering <strong>GIS.lab client</strong> infrastructure which is specially prepared for desktop GIS data processing and analysis.</p>
+<p>GIS.lab server can run in automatically provisioned virtual machine (Linux, OS X, MS Windows host system), on bare metal server or in a cloud.</p>
+<h2>GIS data storage, management and sharing</h2>
 <p>Spatial or non-spatial data can be stored, managed and shared in hierarchy of shared directories or in more sophisticated manner in dedicated geo-database storage. This service is accessible also for third party clients which do not run GIS.lab client environment. </p>
 <p>Implemented by: SFTP, SSHFS, NFS 4, PostgreSQL/PostGIS</p>
-<h1>OGC Web Services</h1>
-<p>Raster or vector spatial data managed by GIS.lab server can be shared with clients via standardized services such as Web Map Service (WMS) or Web Feature Server (WFS). This interface allows usage of GIS.lab provided data to all clients, including third party clients, via industry standard services.</p>
+<h2>OGC Web Services</h2>
+<p>Raster or vector spatial data managed by GIS.lab server can be shared with any clients using standardized services Web Map Service (WMS) or Web Feature Service (WFS). These services allows delivery of GIS data to any clients using industry standard format.</p>
 <p>Implemented by: QGIS Mapserver</p>
-<h1>Web GIS publishing service</h1>
-<p>GIS.lab server provides powerful web GIS project publishing service (see more in <a href="gislab-client">GIS.lab client page</a>)</p>
-<p>Implemented by: QGIS Desktop and Mapserver, GIS.lab WebGIS</p>
-<h1>Central data backup and recovery</h1>
-<p>Data backup is implemented in form of user archive packages which contains all important user settings and data and can be easily restored on any GIS.lab system.</p>
+<h2>GIS.lab client boot service</h2>
+<p>One of a core features of GIS.lab server is to provide a network boot service and runtime infrastructure for GIS.lab client systems. Any client machine connected to GIS.lab network can boot in to GIS.lab client environment (physical or virtual) from network. User authentication credentials and data are centrally managed on GIS.lab server and are not tight to particular client machine. Once client machine is started it will always receive clean and up-to-date operating system image and after authentication it will connect to user's data.</p>
+<p>Implemented by: ISC DHCP, TFTP, NBD, BIND, OpenLDAP, LTSP</p>
+<h2>GIS.lab Web publishing service</h2>
+<p>GIS.lab server provides powerful service for instant publishing of GIS projects on web (see more in <a href="gislab-web">GIS.lab Web page</a>)</p>
+<p>Implemented by: QGIS Desktop and Mapserver, GIS.lab Web</p>
+<h2>Central data backup and recovery</h2>
+<p>Data backup is implemented in form of user archive packages which contains all data and important settings belonging to particular user and can be easily restored on any GIS.lab system.</p>
 <p>Implemented by: GIS.lab management tools</p>
 </section>
         <section id="extras" class="body">
                 <div class="blogroll">
-                        <h2>blogroll</h2>
                         <ul>
-                            <li><a href="http://www.gista.sk">GIS.lab project is sponsored by GISTA s.r.o.</a></li>
+                            <li><a href="mailto:gislab@gista.sk">Contact: gislab@gista.sk</a></li>
+                            <li><a href="http://www.gista.sk">Main sponsor: GISTA s.r.o.</a></li>
                         </ul>
                 </div><!-- /.blogroll -->
                 <div class="social">
