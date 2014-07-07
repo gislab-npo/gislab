@@ -82,7 +82,7 @@ service rsyslog restart
 
 
 ### DO NOT CONTINUE ON UPGRADE ###
-if [ -f "/etc/gislab/010-server-configuration.done" ]; then return; fi
+if [ -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
 
 # add admin scripts on PATH
 echo "PATH="$PATH:/vagrant/system/bin"" >> /etc/profile

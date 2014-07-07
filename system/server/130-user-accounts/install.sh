@@ -33,7 +33,7 @@ fi
 
 ### BACKUP ###
 mkdir -p /etc/cron.d.bin
-cp /vagrant/system/server/130-user-accounts/bin/gislab-backup-users.sh /etc/cron.d.bin
+cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/bin/gislab-backup-users.sh /etc/cron.d.bin
 cat << EOL > /etc/cron.d/gislab-backup-users
 $(gislab_config_header)
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/vagrant/system/bin

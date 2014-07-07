@@ -17,7 +17,7 @@ if [ "$GISLAB_SERVER_PROVIDER" == "aws" ]; then
 	service apache2 reload
 
 	# do not continue on upgrade
-	if [ -f "/etc/gislab/990-provider-customizations.done" ]; then return; fi
+	if [ -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
 
 	# if instance contains ephemeral0 disk use it for database storage
 	if [ -b /dev/xvdb ]; then

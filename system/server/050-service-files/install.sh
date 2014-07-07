@@ -22,16 +22,16 @@ chown root:nogroup /storage/barrel
 chmod 775 /storage/barrel
 
 # NFS share exports
-cp /vagrant/system/server/050-service-files/conf/nfs/exports /etc/exports
+cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/nfs/exports /etc/exports
 gislab_config_header_to_file /etc/exports
 
 # user IDs mapping
-cp /vagrant/system/server/050-service-files/conf/nfs/idmapd.conf /etc/idmapd.conf
+cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/nfs/idmapd.conf /etc/idmapd.conf
 gislab_config_header_to_file /etc/idmapd.conf
 
 
 # add /mnt mount point to fstab
-if [ ! -f "/etc/gislab/050-service-files.done" ]; then
+if [ ! -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
 	cat << EOF >> /etc/fstab
 $(gislab_config_header)
 /storage  /mnt  none  bind  0  0

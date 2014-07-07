@@ -3,7 +3,7 @@
 #
 
 ### SKIP ON UPGRADE ###
-if [ -f "/etc/gislab/125-data-installation.done" ]; then return; fi
+if [ -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
 
 cp -a /vagrant/user/data /storage/repository/
 chown -R :labadmins /storage/repository/*
