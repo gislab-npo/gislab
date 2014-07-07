@@ -25,6 +25,7 @@ from PyQt4.QtXml import QDomDocument
 
 # Initialize Qt resources from file resources.py
 import resources_rc
+from themes import setup_themes_ui, get_themes, load_themes_from_metadata
 
 
 GISLAB_VERSION_FILE = "/etc/gislab_version"
@@ -212,7 +213,7 @@ class WebGisPlugin:
 			messages.append((MSG_ERROR, u"Project has been modified. Save it (Project > Save)."))
 
 		if not self.run_in_gislab and "/Share/" not in self.project.fileName():
-			messages.append((MSG_WARNING, u"Project file is not stored in Share folder."))
+			messages.append((MSG_WARNING, u"Project file is not stored in Share folder"))
 
 		map_canvas = self.iface.mapCanvas()
 		all_layers = [layer.name() for layer in self.iface.legendInterface().layers()]
@@ -412,14 +413,15 @@ class WebGisPlugin:
 		selection_color = renderer_context.selectionColor()
 		canvas_color = map_canvas.canvasColor()
 
-		if dialog.extent_layer.currentIndex() == 0:
-			project_extent = map_canvas.fullExtent()
-		else:
-			extent_layer = dialog.extent_layer.itemData(dialog.extent_layer.currentIndex())
-			project_extent = map_canvas.mapRenderer().layerExtentToOutputExtent(extent_layer, extent_layer.extent())
-		project_extent = project_extent.toRectF().getCoords()
+		#if dialog.extent_layer.currentIndex() == 0:
+		#	project_extent = map_canvas.fullExtent()
+		#else:
+		#	extent_layer = dialog.extent_layer.itemData(dialog.extent_layer.currentIndex())
+		#	project_extent = map_canvas.mapRenderer().layerExtentToOutputExtent(extent_layer, extent_layer.extent())
+		#project_extent = project_extent.toRectF().getCoords()
+		project_extent = dialog.extent_layer.itemData(dialog.extent_layer.currentIndex())
 		extent_buffer = dialog.extent_buffer.value()
-		if extent_buffer:
+		if extent_buffer != 0:
 			project_extent = [
 				project_extent[0]-extent_buffer,
 				project_extent[1]-extent_buffer,
@@ -428,22 +430,22 @@ class WebGisPlugin:
 			]
 		metadata.update({
 			'extent': project_extent,
+			'extent_buffer': extent_buffer,
 			'zoom_extent': [round(coord, 3) for coord in self.iface.mapCanvas().extent().toRectF().getCoords()],
 			'projection': {
 				'code': map_canvas.mapRenderer().destinationCrs().authid(),
 				'is_geographic': map_canvas.mapRenderer().destinationCrs().geographicFlag()
 			},
+			'units': units,
+			'drawings': dialog.drawings.text(),
 			'selection_color': '{0}{1:02x}'.format(selection_color.name(), selection_color.alpha()),
 			'canvas_color': '{0}{1:02x}'.format(canvas_color.name(), canvas_color.alpha()),
-			'units': units,
 			'measure_ellipsoid': self.project.readEntry("Measure", "/Ellipsoid", "")[0],
 			'position_precision': {
 				'automatic': self.project.readBoolEntry("PositionPrecision", "/Automatic")[0],
 				'decimal_places': self.project.readNumEntry("PositionPrecision", "/DecimalPlaces")[0]
 			}
 		})
-
-		base_layers_tree, overlay_layers_tree = self._get_project_layers()
 
 		special_base_layers = []
 		if dialog.blank.isChecked():
@@ -535,8 +537,8 @@ class WebGisPlugin:
 							})
 				return layer_data
 
-		if base_layers_tree:
-			base_layers_metadata = base_layers_data(base_layers_tree)
+		if self.base_layers_tree:
+			base_layers_metadata = base_layers_data(self.base_layers_tree)
 		else:
 			base_layers_metadata = {'layers': []}
 
@@ -574,13 +576,17 @@ class WebGisPlugin:
 				}
 			elif node.layer:
 				layer = node.layer
+				layer_widget = dialog.overlaysTree.findItems(layer.name(), Qt.MatchExactly | Qt.MatchRecursive)[0]
+				if layer_widget.checkState(0) == Qt.Unchecked:
+					return None
 				layer_data = {
 					'name': layer.name(),
 					'provider_type': layer.providerType(),
 					'extent': map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords(),
 					'visible': legend_iface.isLayerVisible(layer),
 					'queryable': layer.id() not in non_identifiable_layers,
-					'hidden': layer.title() == '*HIDDEN LAYER*',
+					'invisible': layer_widget.checkState(1) == Qt.Checked,
+					'export_to_drawings': layer_widget.checkState(2) == Qt.Checked,
 					'drawing_order': overlays_order.index(layer.id())
 				}
 				if layer.attribution():
@@ -624,7 +630,7 @@ class WebGisPlugin:
 				layer_data['attributes'] = attributes_data
 				layer_data['pk_attributes'] = [fields[index].name() for index in layer.dataProvider().pkAttributeIndexes()]
 				return layer_data
-		metadata['overlays'] = create_overlays_data(overlay_layers_tree).get('layers')
+		metadata['overlays'] = create_overlays_data(self.overlay_layers_tree).get('layers')
 
 		composer_templates = []
 		for composer in self.iface.activeComposers():
@@ -672,11 +678,21 @@ class WebGisPlugin:
 		return self.publish_allowed
 
 	def validate_config_page(self):
-		self.metadata = None
 		if not self._check_publish_constrains():
 			return
+
+		if not self.themes_initialized:
+			setup_themes_ui(self.dialog, self.overlay_layers_tree)
+			if self.current_metadata is not None:
+				load_themes_from_metadata(self.dialog, self.current_metadata)
+			self.themes_initialized = True
+		return True
+
+	def validate_themes_page(self):
+		self.metadata = None
 		self.metadata = self.generate_project_metadata()
 		self.generate_config_summary()
+		self.metadata['themes'] = get_themes(self.dialog)
 		return True
 
 	def generate_config_summary(self):
@@ -706,7 +722,7 @@ class WebGisPlugin:
 			'AUTHENTICATION': authentication,
 			'MESSAGE_TEXT': message['text'] if message else '',
 			'MESSAGE_VALIDITY': message['valid_until'] if message else '',
-			'DRAWINGS': self.dialog.drawings.text()
+			'DRAWINGS': metadata['drawings']
 		}
 
 		for param in ('gislab_user', 'gislab_unique_id', 'gislab_version', 'title', 'abstract',
@@ -890,6 +906,77 @@ class WebGisPlugin:
 		else:
 			self.dialog.max_scale.setCurrentIndex(0)
 
+	def setup_config_page_from_metadata(self):
+		dialog = self.dialog
+		metadata = self.current_metadata
+		message = metadata.get('message')
+		if message:
+			dialog.message_text.insertPlainText(message.get('text', ''))
+			valid_until = message.get('valid_until')
+			dialog.message_valid_until.setDate(datetime.datetime.strptime(valid_until, "%d.%m.%Y"))
+
+		authentication = metadata.get('authentication')
+		if authentication:
+			dialog.authentication_required.setChecked(not authentication['allow_anonymous'] or authentication['require_superuser'])
+			dialog.superuser_required.setChecked(authentication['require_superuser'])
+		project_extent = list(metadata['extent'])
+		extent_buffer = metadata.get('extent_buffer', 0)
+		if extent_buffer != 0:
+			project_extent = [
+				project_extent[0]+extent_buffer,
+				project_extent[1]+extent_buffer,
+				project_extent[2]-extent_buffer,
+				project_extent[3]-extent_buffer
+			]
+		dialog.extent_layer.setCurrentIndex(dialog.extent_layer.findData(project_extent))
+		dialog.use_mapcache.setChecked(metadata['use_mapcache'])
+		dialog.extent_buffer.setValue(extent_buffer)
+		# create list of all layers from layers metadata tree structure
+		def extract_layers(layers_data, layers=None):
+			if layers is None:
+				layers = []
+			for layer_data in layers_data:
+				if 'layers' in layer_data:
+					extract_layers(layer_data['layers'], layers)
+				else:
+					layers.append(layer_data)
+			return layers
+
+		if metadata.get('base_layers'):
+			for base_layer in extract_layers(metadata['base_layers']):
+				if base_layer['type'] == 'BLANK':
+					dialog.blank.setChecked(True)
+				elif base_layer['type'] == 'OSM':
+					dialog.osm.setChecked(True)
+				elif base_layer['type'] == 'google':
+					for index, glayer in enumerate(GOOGLE_LAYERS, 1):
+						if glayer['name'] == base_layer['name']:
+							dialog.google.setCurrentIndex(index);
+							break
+				if base_layer['visible']:
+					dialog.default_baselayer.setCurrentIndex(dialog.default_baselayer.findData(base_layer['name']))
+
+		overlays_data = extract_layers(metadata['overlays'])
+		project_overlays = [layer_data['name'] for layer_data in overlays_data]
+		hidden_overlays = [layer_data['name'] for layer_data in overlays_data if layer_data['invisible']]
+		overlays_with_export_to_drawings = [layer_data['name'] for layer_data in overlays_data if layer_data['export_to_drawings']]
+		def uncheck_excluded_layers(widget):
+			if widget.data(0, Qt.UserRole):
+				widget.setCheckState(0, Qt.Checked if widget.text(0) in project_overlays else Qt.Unchecked)
+				widget.setCheckState(1, Qt.Checked if widget.text(0) in hidden_overlays else Qt.Unchecked)
+				widget.setCheckState(2, Qt.Checked if widget.text(0) in overlays_with_export_to_drawings else Qt.Unchecked)
+			else:
+				for index in range(widget.childCount()):
+					uncheck_excluded_layers(widget.child(index))
+		uncheck_excluded_layers(dialog.overlaysTree.invisibleRootItem())
+
+		max_res = metadata['tile_resolutions'][0]
+		min_res = metadata['tile_resolutions'][-1]
+		min_scale, max_scale = get_scales_from_resolutions(to_decimal_array([min_res, max_res]), self._map_units())
+		dialog.min_scale.setCurrentIndex(dialog.min_scale.findText("1:{0}".format(min_scale)))
+		dialog.max_scale.setCurrentIndex(dialog.max_scale.findText("1:{0}".format(max_scale)))
+		dialog.drawings.setText(metadata.get('drawings', ''))
+
 	def run(self):
 		if self.dialog and self.dialog.isVisible():
 			return
@@ -899,7 +986,10 @@ class WebGisPlugin:
 		dialog.accepted.connect(self.publish_project)
 		dialog.setButtonText(QWizard.FinishButton, "Publish")
 		dialog.wizard_page1.validatePage = self.validate_config_page
+		dialog.wizard_page2.validatePage = self.validate_themes_page
 		self.dialog = dialog
+		self.themes_initialized = False
+		map_canvas = self.iface.mapCanvas()
 
 		resolutions = self._project_layers_resolutions()
 		self._update_min_max_scales(resolutions)
@@ -953,21 +1043,52 @@ class WebGisPlugin:
 		dialog.min_scale.currentIndexChanged.connect(scales_changed)
 		dialog.max_scale.currentIndexChanged.connect(scales_changed)
 
-		projection = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
+		projection = map_canvas.mapRenderer().destinationCrs().authid()
 		dialog.osm.setEnabled(projection == 'EPSG:3857')
 		dialog.google.setEnabled(projection == 'EPSG:3857')
 
-		dialog.extent_layer.addItem("All layers")
+		dialog.extent_layer.addItem("All layers", list(map_canvas.fullExtent().toRectF().getCoords()))
 		for layer in self.iface.legendInterface().layers():
 			if self._is_base_layer_for_publish(layer):
 				dialog.default_baselayer.addItem(layer.name(), layer.name())
 			if self._is_base_layer_for_publish(layer) or self._is_overlay_layer_for_publish(layer):
-				dialog.extent_layer.addItem(layer.name(), layer)
+				dialog.extent_layer.addItem(layer.name(), list(map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords()))
 
 		dialog.message_valid_until.setDate(datetime.date.today() + datetime.timedelta(days=1))
 		dialog.open_in_browser.setEnabled(self.run_in_gislab)
 
 		self._check_publish_constrains()
+		dialog.overlaysTree.header().setResizeMode(0, QHeaderView.Stretch)
+		dialog.overlaysTree.header().setVisible(True)
+		self.base_layers_tree, self.overlay_layers_tree = self._get_project_layers()
+
+		def create_layer_widget(node):
+			widget = QTreeWidgetItem()
+			widget.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
+			sublayers_widgets = []
+			for child in node.children:
+				sublayer_widget = create_layer_widget(child)
+				if sublayer_widget:
+					sublayers_widgets.append(sublayer_widget)
+			if sublayers_widgets:
+				widget.setText(0, node.name)
+				widget.setCheckState(0, Qt.Unchecked)
+				widget.addChildren(sublayers_widgets)
+			elif node.layer:
+				layer = node.layer
+				widget.setText(0, layer.name())
+				widget.setData(0, Qt.UserRole, layer)
+				widget.setCheckState(0, Qt.Checked)
+				widget.setCheckState(1, Qt.Unchecked)
+				widget.setCheckState(2, Qt.Checked)
+			return widget
+		dialog.overlaysTree.addTopLevelItems(create_layer_widget(self.overlay_layers_tree).takeChildren())
+
+		metadata_filename = os.path.splitext(self.project.fileName())[0] + '.meta'
+		self.current_metadata = None
+		if os.path.exists(metadata_filename):
+			with open(metadata_filename, "r") as f:
+				self.current_metadata = json.load(f)
+			self.setup_config_page_from_metadata()
 		dialog.show()
 		dialog.exec_()
-
