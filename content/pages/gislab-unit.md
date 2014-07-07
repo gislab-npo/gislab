@@ -1,10 +1,10 @@
 Title: GIS.lab Unit
 Submenu: yes
-Order: 30
+Order: 40
 Slug: gislab-unit
 
-GIS.lab Unit is a hardware solution containing pre-installed GIS.lab software with goal to provide
-plug-and-play system deployment experience. Web management interface is planned to be developed in near future.
+__GIS.lab Unit__ is a hardware solution containing pre-installed GIS.lab software with goal to provide
+plug-and-play system deployment experience similar to home router or NAS box. Web management interface is planned to be developed in near future.
 
 <div style="text-align:center;padding:10px" markdown="1">
 ![GIS.lab Unit]({filename}/images/gislab-unit.png)  
@@ -16,16 +16,16 @@ Creating fully functional production ready network from scratch using GIS.lab Un
 
 <div style="text-align:center;padding:10px" markdown="1">
 ![GIS.lab Unit]({filename}/images/schema-architecture.png)  
-Fig. 1: GIS.lab Unit network architecture
+Fig. 2: GIS.lab Unit network architecture
 </div>
 
-### Hardware requirements
+## Hardware requirements
 * gigabit Ethernet switch
 * gigabit Ethernet cables (CAT 5e)
 * client machines (PC)
 * GIS.lab Unit
 
-### Instructions
+## Instructions
 * connect all client machines with Ethernet switch via Ethernet cables
 * connect GIS.lab Unit with Ethernet switch via Ethernet cable
 * configure all client machines to boot from network in BIOS or in boot manager
@@ -35,7 +35,7 @@ Fig. 1: GIS.lab Unit network architecture
 
 GIS.lab is designed to use client hardware power as much as possible and minimize server load. This approach allows to run large number of client machines with one GIS.lab Unit.
 
-# Hardware specification
+## Hardware specification
 * CPU: Intel Core i5 3427U 1,8 GHz
 * RAM: 8 GB
 * Disk: 64 GB SSD Kingston

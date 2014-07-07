@@ -18,7 +18,8 @@ TRANSLATION_FEED_ATOM = None
 
 # Blogroll
 LINKS =  (
-	('GIS.lab project is sponsored by GISTA s.r.o.', 'http://www.gista.sk'),
+	('Contact: gislab@gista.sk', 'mailto:gislab@gista.sk'),
+	('Main sponsor: GISTA s.r.o.', 'http://www.gista.sk'),
 )
 
 # Social widget
