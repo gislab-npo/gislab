@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>723</width>
-    <height>664</height>
+    <width>801</width>
+    <height>748</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>693</width>
+    <height>600</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Publish in GIS.lab Web</string>
@@ -28,29 +34,15 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QScrollArea" name="scroll_area">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-        <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>670</width>
-         <height>729</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Base layer</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <widget class="QGroupBox" name="groupBox">
           <property name="font">
@@ -62,11 +54,11 @@
           </property>
           <property name="styleSheet">
            <string notr="true">QGroupBox { 
-    border: 1px solid gray; 
+    border: 0px solid gray; 
     border-radius: 5px;
-    margin: 10 0px;
+    margin: 0px;
     text-align: top;
-    padding: 8 0 2 0;
+    padding: 0px;
  }
 QGroupBox::title {
     subcontrol-origin: margin;
@@ -75,7 +67,7 @@ QGroupBox::title {
 }</string>
           </property>
           <property name="title">
-           <string>Base layer</string>
+           <string/>
           </property>
           <layout class="QFormLayout" name="formLayout">
            <property name="fieldGrowthPolicy">
@@ -178,15 +170,22 @@ QGroupBox::title {
           </layout>
          </widget>
         </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Layers</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_9">
         <item>
-         <widget class="QGroupBox" name="groupBox_4">
+         <widget class="QGroupBox" name="groupBox_5">
           <property name="styleSheet">
            <string notr="true">QGroupBox { 
-    border: 1px solid gray; 
+    border: 0px solid gray; 
     border-radius: 5px;
-    margin: 10 0px;
+    margin: 0px;
     text-align: top;
-    padding: 8 0 2 0;
+    padding: 0px;
  }
 QGroupBox::title {
     subcontrol-origin: margin;
@@ -195,20 +194,17 @@ QGroupBox::title {
 }</string>
           </property>
           <property name="title">
-           <string>Map options</string>
+           <string/>
           </property>
-          <layout class="QFormLayout" name="formLayout_4">
-           <property name="fieldGrowthPolicy">
-            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-           </property>
-           <item row="2" column="0">
+          <layout class="QFormLayout" name="formLayout_5">
+           <item row="0" column="0">
             <widget class="QLabel" name="label_mapcache">
              <property name="text">
               <string>Use cache</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="0" column="1">
             <widget class="QCheckBox" name="use_mapcache">
              <property name="text">
               <string/>
@@ -218,143 +214,101 @@ QGroupBox::title {
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_min_scale">
-             <property name="text">
-              <string>Minimum scale</string>
+           <item row="1" column="0" colspan="2">
+            <widget class="QTreeWidget" name="overlaysTree">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>2</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
              </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QComboBox" name="min_scale"/>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_max_scale">
-             <property name="text">
-              <string>Maximum scale</string>
+             <property name="alternatingRowColors">
+              <bool>false</bool>
              </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QComboBox" name="max_scale"/>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="label_drawings">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-               <weight>50</weight>
-               <bold>false</bold>
-              </font>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::MultiSelection</enum>
              </property>
-             <property name="styleSheet">
-              <string notr="true"/>
+             <property name="columnCount">
+              <number>3</number>
              </property>
-             <property name="text">
-              <string>Drawing IDs</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1">
-            <widget class="QLineEdit" name="drawings"/>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_extent_layer">
-             <property name="text">
-              <string>Project extent by layer</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="extent_layer"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_extent_buffer">
-             <property name="text">
-              <string>Extent buffer</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QDoubleSpinBox" name="extent_buffer">
-             <property name="maximum">
-              <double>100000.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="messages_group">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>150</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">QGroupBox { 
-    border: 1px solid gray; 
-    border-radius: 5px;
-    margin: 10 0px;
-    text-align: top;
-    padding: 8 0 2 0;
- }
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top left;
-    padding: 1 5;
-}</string>
-          </property>
-          <property name="title">
-           <string>Messages</string>
-          </property>
-          <layout class="QFormLayout" name="formLayout_2">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Text</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QPlainTextEdit" name="message_text">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Valid until</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QDateEdit" name="message_valid_until">
-             <property name="calendarPopup">
+             <attribute name="headerVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="headerCascadingSectionResizes">
               <bool>true</bool>
-             </property>
+             </attribute>
+             <attribute name="headerDefaultSectionSize">
+              <number>120</number>
+             </attribute>
+             <attribute name="headerMinimumSectionSize">
+              <number>28</number>
+             </attribute>
+             <attribute name="headerShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="headerStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Layers</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Hidden</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Export drawing</string>
+              </property>
+             </column>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Project</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_10">
         <item>
-         <widget class="QGroupBox" name="groupBox_2">
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>400</height>
+           </size>
+          </property>
           <property name="styleSheet">
-           <string notr="true">QGroupBox { 
+           <string notr="true">QScrollArea { 
+    border: 0px solid gray; 
+    margin: 0px;
+    text-align: top;
+    padding: 0px;
+ }</string>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>-113</y>
+             <width>728</width>
+             <height>546</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QGroupBox" name="groupBox_4">
+              <property name="styleSheet">
+               <string notr="true">QGroupBox { 
     border: 1px solid gray; 
     border-radius: 5px;
     margin: 10 0px;
@@ -366,54 +320,224 @@ QGroupBox::title {
     subcontrol-position: top left;
     padding: 1 5;
 }</string>
-          </property>
-          <property name="title">
-           <string>Authentication</string>
-          </property>
-          <layout class="QFormLayout" name="formLayout_3">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_authentication_required">
-             <property name="text">
-              <string>Require authentication</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="authentication_required">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Require superuser</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QCheckBox" name="superuser_required">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-          </layout>
+              </property>
+              <property name="title">
+               <string>Extent/Scales</string>
+              </property>
+              <layout class="QFormLayout" name="formLayout_4">
+               <property name="fieldGrowthPolicy">
+                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+               </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_extent_layer">
+                 <property name="text">
+                  <string>Project extent by layer</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="extent_layer"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_extent_buffer">
+                 <property name="text">
+                  <string>Extent buffer</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="extent_buffer">
+                 <property name="maximum">
+                  <double>100000.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_min_scale">
+                 <property name="text">
+                  <string>Minimum scale</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QComboBox" name="min_scale"/>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_max_scale">
+                 <property name="text">
+                  <string>Maximum scale</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QComboBox" name="max_scale"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="messages_group">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>150</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QGroupBox { 
+    border: 1px solid gray; 
+    border-radius: 5px;
+    margin: 10 0px;
+    text-align: top;
+    padding: 8 0 2 0;
+ }
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 1 5;
+}</string>
+              </property>
+              <property name="title">
+               <string>Messages</string>
+              </property>
+              <layout class="QFormLayout" name="formLayout_2">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>Text</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QPlainTextEdit" name="message_text">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>Valid until</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDateEdit" name="message_valid_until">
+                 <property name="calendarPopup">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_2">
+              <property name="styleSheet">
+               <string notr="true">QGroupBox { 
+    border: 1px solid gray; 
+    border-radius: 5px;
+    margin: 10 0px;
+    text-align: top;
+    padding: 8 0 2 0;
+ }
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 1 5;
+}</string>
+              </property>
+              <property name="title">
+               <string>Authentication</string>
+              </property>
+              <layout class="QFormLayout" name="formLayout_3">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_authentication_required">
+                 <property name="text">
+                  <string>Require authentication</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QCheckBox" name="authentication_required">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Require superuser</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QCheckBox" name="superuser_required">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_6">
+              <property name="styleSheet">
+               <string notr="true">QGroupBox { 
+    border: 1px solid gray; 
+    border-radius: 5px;
+    margin: 10 0px;
+    text-align: top;
+    padding: 8 0 2 0;
+ }
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 1 5;
+}</string>
+              </property>
+              <property name="title">
+               <string>Drawings</string>
+              </property>
+              <layout class="QFormLayout" name="formLayout_6">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_drawings">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <weight>50</weight>
+                   <bold>false</bold>
+                  </font>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string>Drawing IDs</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="drawings"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>
@@ -543,6 +667,138 @@ QGroupBox::title {
    </layout>
   </widget>
   <widget class="QWizardPage" name="wizard_page2">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QWidget" name="widget_3" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Themes</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="themesList">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_4" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QPushButton" name="addTheme">
+            <property name="text">
+             <string>Add</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="removeTheme">
+            <property name="text">
+             <string>Remove</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="themeWidget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>2</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>25</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Abstract</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="themeAbstract">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>100</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Layers</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeWidget" name="themeLayers">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>2</verstretch>
+          </sizepolicy>
+         </property>
+         <attribute name="headerVisible">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string notr="true">1</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="wizard_page3">
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QGroupBox" name="groupBox_3">
