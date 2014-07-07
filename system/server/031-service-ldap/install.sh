@@ -25,20 +25,20 @@ pam-auth-update --force
 auth-client-config -t nss -p lac_ldap
 
 # LDAP configuration file for pam_ldap and nsswitch
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/ldap/ldap-pam.conf /etc/ldap.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/ldap/ldap-pam.conf /etc/ldap.conf
 gislab_config_header_to_file /etc/ldap.conf
 
 # LDAP configuration file for clients
 # configure base DN and URI and disable certificates verification
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/ldap/ldap.conf /etc/ldap/ldap.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/ldap/ldap.conf /etc/ldap/ldap.conf
 gislab_config_header_to_file /etc/ldap/ldap.conf
 
 # nsswitch configuration
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/ldap/nsswitch.conf /etc/nsswitch.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/ldap/nsswitch.conf /etc/nsswitch.conf
 gislab_config_header_to_file /etc/nsswitch.conf
 
 # ldapscripts configuration
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/ldapscripts/ldapscripts.conf /etc/ldapscripts/ldapscripts.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/ldapscripts/ldapscripts.conf /etc/ldapscripts/ldapscripts.conf
 gislab_config_header_to_file /etc/ldapscripts/ldapscripts.conf
 
 
@@ -175,7 +175,7 @@ export SUDO_FORCE_REMOVE=yes
 apt-get -y install sudo-ldap
 export SUDO_FORCE_REMOVE=no
 
-ldapadd -Q -Y EXTERNAL -H ldapi:/// -f $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/ldap/sudo.schema
+ldapadd -Q -Y EXTERNAL -H ldapi:/// -f $GISLAB_INSTALL_CURRENT_ROOT/conf/ldap/sudo.schema
 
 
 # create indexes
@@ -208,8 +208,8 @@ EOL
 
 
 # create templates for users and groups
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/ldapscripts/adduser.template /etc/ldapscripts/adduser.template
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/ldapscripts/addgroup.template /etc/ldapscripts/addgroup.template
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/ldapscripts/adduser.template /etc/ldapscripts/adduser.template
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/ldapscripts/addgroup.template /etc/ldapscripts/addgroup.template
 
 # fix ldapscripts runtime script (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=719295)
 sed -i "s/^\[ -z \"\$USER\" \] && end_die 'Could not guess current user'$/\[ -n \"\$USER\" \] || USER=\$\(id -un 2>\/dev\/null\)/" /usr/share/ldapscripts/runtime

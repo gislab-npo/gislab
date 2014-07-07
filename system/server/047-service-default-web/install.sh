@@ -20,16 +20,16 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 
 # default web server page output
 mkdir -p /var/www/default
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/index.html /var/www/default/index.html
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/index.html /var/www/default/index.html
 
 
 ### APACHE
 # port 8000 configuration
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/apache/ports.conf /etc/apache2/ports.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/apache/ports.conf /etc/apache2/ports.conf
 gislab_config_header_to_file /etc/apache2/ports.conf
 
 # default virtualhost
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/apache/site-default /etc/apache2/sites-available/default
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/apache/site-default /etc/apache2/sites-available/default
 gislab_config_header_to_file /etc/apache2/sites-available/default
 
 a2ensite default
@@ -38,11 +38,11 @@ service apache2 restart
 
 ### NGINX
 # proxy parameters
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/nginx/proxy-parameters /etc/nginx/proxy-parameters
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/nginx/proxy-parameters /etc/nginx/proxy-parameters
 gislab_config_header_to_file /etc/nginx/proxy-parameters
 
 # default virtualhost
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/nginx/site-default /etc/nginx/sites-available/default
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/nginx/site-default /etc/nginx/sites-available/default
 gislab_config_header_to_file /etc/nginx/sites-available/default
 
 sudo service nginx restart

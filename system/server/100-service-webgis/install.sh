@@ -38,7 +38,7 @@ source /usr/local/python-virtualenvs/webgis/bin/activate
 
 # install requirements and webgis itself
 GISLAB_INSTALL_WEBGIS_DIR=/tmp/gislab-install-webgis-$(date +%s)
-cp -a ${GISLAB_INSTALL_DIR}/$GISLAB_INSTALL_CURRENT_DIR/app/gislab-web $GISLAB_INSTALL_WEBGIS_DIR
+cp -a $GISLAB_INSTALL_CURRENT_ROOT/app/gislab-web $GISLAB_INSTALL_WEBGIS_DIR
 pip install --download-cache=/var/cache/pip --requirement=$GISLAB_INSTALL_WEBGIS_DIR/requirements.txt
 pip install gunicorn
 python $GISLAB_INSTALL_WEBGIS_DIR/setup.py install > /dev/null
@@ -48,7 +48,7 @@ rm -r $GISLAB_INSTALL_WEBGIS_DIR
 # install webgis
 rm -rf /var/www/webgis
 mkdir -p /var/www/webgis
-django-admin.py startproject --template=${GISLAB_INSTALL_DIR}/$GISLAB_INSTALL_CURRENT_DIR/app/gislab-web/webgis/conf/project_template/ djproject /var/www/webgis
+django-admin.py startproject --template=$GISLAB_INSTALL_CURRENT_ROOT/app/gislab-web/webgis/conf/project_template/ djproject /var/www/webgis
 
 
 if [ ! -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
@@ -87,7 +87,7 @@ deactivate
 
 
 # web server
-cp ${GISLAB_INSTALL_DIR}/$GISLAB_INSTALL_CURRENT_DIR/conf/nginx/site-webgis /etc/nginx/sites-available/webgis
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/nginx/site-webgis /etc/nginx/sites-available/webgis
 gislab_config_header_to_file /etc/nginx/sites-available/webgis
 ln -sf /etc/nginx/sites-available/webgis /etc/nginx/sites-enabled/webgis
 
@@ -108,7 +108,7 @@ else
 fi
 
 # Gunicorn startup script
-cp ${GISLAB_INSTALL_DIR}/$GISLAB_INSTALL_CURRENT_DIR/conf/gunicorn/gunicorn.sh /var/www/webgis/gunicorn.sh
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/gunicorn/gunicorn.sh /var/www/webgis/gunicorn.sh
 chmod 755 /var/www/webgis/gunicorn.sh
 
 # adjust number of workers
@@ -122,7 +122,7 @@ else
 fi
 
 # Gunicorn Upstart script
-cp ${GISLAB_INSTALL_DIR}/$GISLAB_INSTALL_CURRENT_DIR/conf/upstart/webgis.conf /etc/init/webgis.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/upstart/webgis.conf /etc/init/webgis.conf
 gislab_config_header_to_file /etc/init/webgis.conf
 ln -sf /lib/init/upstart-job /etc/init.d/webgis
 
@@ -147,7 +147,7 @@ echo "/var/log/webgis-error.log" >> /etc/logcheck/logcheck.logfiles
 
 ### BACKUP ###
 mkdir -p /etc/cron.d.bin
-cp ${GISLAB_INSTALL_DIR}/$GISLAB_INSTALL_CURRENT_DIR/bin/gislab-backup-webgis.sh /etc/cron.d.bin
+cp $GISLAB_INSTALL_CURRENT_ROOT/bin/gislab-backup-webgis.sh /etc/cron.d.bin
 cat << EOL > /etc/cron.d/gislab-backup-webgis
 $(gislab_config_header)
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/vagrant/system/bin

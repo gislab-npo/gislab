@@ -17,7 +17,7 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 
 
 # mapserver virtualhost
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/apache/site-mapserver /etc/apache2/sites-available/mapserver
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/apache/site-mapserver /etc/apache2/sites-available/mapserver
 gislab_config_header_to_file /etc/apache2/sites-available/mapserver
 
 a2enmod rewrite

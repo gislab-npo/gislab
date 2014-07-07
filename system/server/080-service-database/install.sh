@@ -28,11 +28,11 @@ kernel.shmmax = $shmmax
 EOF
 
 # access policy
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/postgresql/pg_hba.conf /etc/postgresql/9.1/main/pg_hba.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/postgresql/pg_hba.conf /etc/postgresql/9.1/main/pg_hba.conf
 gislab_config_header_to_file /etc/postgresql/9.1/main/pg_hba.conf
 
 # main database configuration
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/postgresql/postgresql.conf /etc/postgresql/9.1/main/postgresql.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/postgresql/postgresql.conf /etc/postgresql/9.1/main/postgresql.conf
 gislab_config_header_to_file /etc/postgresql/9.1/main/postgresql.conf
 
 # tune database depending on current server configuration
@@ -101,7 +101,7 @@ sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/con
 sudo su - postgres -c "psql -d template_postgis -f /usr/share/postgresql/9.1/contrib/xor_aggregate.sql"
 
 # add history audit support (run SELECT audit.audit_table('<schema>.<table>'); to enable)
-sudo su - postgres -c "psql -d template_postgis -f $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/app/audit-trigger/audit.sql"
+sudo su - postgres -c "psql -d template_postgis -f $GISLAB_INSTALL_CURRENT_ROOT/app/audit-trigger/audit.sql"
 sudo su - postgres -c "psql -d template_postgis -c \"CREATE EXTENSION IF NOT EXISTS hstore;\""
 
 # close template database

@@ -15,7 +15,7 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 
 
 # IRC server configuration
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/ircd/ircd.conf /etc/ircd-hybrid/ircd.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/ircd/ircd.conf /etc/ircd-hybrid/ircd.conf
 gislab_config_header_to_file /etc/ircd-hybrid/ircd.conf
 
 cat << EOF > /etc/ircd-hybrid/ircd.motd
@@ -26,7 +26,7 @@ service ircd-hybrid restart
 
 
 ### LOGGING ###
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/logrotate/ircd-hybrid /etc/logrotate.d/ircd-hybrid
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/logrotate/ircd-hybrid /etc/logrotate.d/ircd-hybrid
 gislab_config_header_to_file /etc/logrotate.d/ircd-hybrid
 
 chmod 0640 /var/log/ircd/ircd-hybrid.log

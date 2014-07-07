@@ -11,11 +11,11 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 
 
 # main logcheck configuration
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/logcheck/logcheck.conf /etc/logcheck/logcheck.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/logcheck/logcheck.conf /etc/logcheck/logcheck.conf
 gislab_config_header_to_file /etc/logcheck/logcheck.conf
 
 # list of files to check
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/logcheck/logcheck.logfiles /etc/logcheck/logcheck.logfiles
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/logcheck/logcheck.logfiles /etc/logcheck/logcheck.logfiles
 gislab_config_header_to_file /etc/logcheck/logcheck.logfiles
 
 # logcheck cron job

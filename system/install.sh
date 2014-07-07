@@ -68,13 +68,13 @@ fi
 #
 GISLAB_INSTALL_DIR=/tmp/gislab-install-$(date +%s)
 mkdir -p ${GISLAB_INSTALL_DIR}
-cp -a /vagrant/system/server/* ${GISLAB_INSTALL_DIR}
+cp -a /vagrant/* ${GISLAB_INSTALL_DIR}
 
-for directory in ${GISLAB_INSTALL_DIR}/*; do
-	GISLAB_INSTALL_CURRENT_DIR=$(basename $directory)
-	GISLAB_INSTALL_CURRENT_SERVICE=$(echo $GISLAB_INSTALL_CURRENT_DIR | sed "s/^...-//")
+for directory in ${GISLAB_INSTALL_DIR}/system/server/*; do
+	GISLAB_INSTALL_CURRENT_ROOT=$directory
+	GISLAB_INSTALL_CURRENT_SERVICE=$(echo $(basename $GISLAB_INSTALL_CURRENT_ROOT) | sed "s/^...-//")
 	gislab_print_info "Running installation script '$GISLAB_INSTALL_CURRENT_SERVICE'"
-	source ${GISLAB_INSTALL_DIR}/$GISLAB_INSTALL_CURRENT_DIR/install.sh
+	source $GISLAB_INSTALL_CURRENT_ROOT/install.sh
 	echo "$(gislab_config_header)" >> /etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done
 done
 

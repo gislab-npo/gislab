@@ -17,7 +17,7 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 
 
 # main configuration file
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/postfix/main.cf /etc/postfix/main.cf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/postfix/main.cf /etc/postfix/main.cf
 gislab_config_header_to_file /etc/postfix/main.cf
 
 # send admin email by default to provisioning user

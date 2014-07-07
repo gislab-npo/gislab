@@ -22,11 +22,11 @@ chown root:nogroup /storage/barrel
 chmod 775 /storage/barrel
 
 # NFS share exports
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/nfs/exports /etc/exports
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/nfs/exports /etc/exports
 gislab_config_header_to_file /etc/exports
 
 # user IDs mapping
-cp $GISLAB_INSTALL_DIR/$GISLAB_INSTALL_CURRENT_DIR/conf/nfs/idmapd.conf /etc/idmapd.conf
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/nfs/idmapd.conf /etc/idmapd.conf
 gislab_config_header_to_file /etc/idmapd.conf
 
 
