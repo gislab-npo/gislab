@@ -25,13 +25,12 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		//  3 - checkchange event generated programmatically on parent node - to check it but do not change checked state of its child nodes
 		this.checkchangeParamsStack = [0];
 		this.buildLayersTree();
-		if (!this.layersTree || this.layersTree.length == 0) {
-			//this.hidden = true;
-		}
+
 		var hidden_layers = [];
 		this.cascade(function(node) {
-			if (node.isLeaf() && node.hidden) {
+			if (node.isLeaf() && node.attributes.config.hidden) {
 				hidden_layers.push(node.attributes.text);
+				node.attributes.checked = node.parentNode.attributes.checked;
 			}
 		}, this);
 		this.layer.hiddenLayers = hidden_layers;
@@ -61,7 +60,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 	onNodeCheckChanged: function(node, checked) {
 		var param = this.root.checkchangeParamsStack.pop();
 
-		if (node.hidden) {
+		if (node.isLeaf() && node.attributes.config.hidden) {
 			return;
 		}
 		// check parent whether this is its first checked child
@@ -70,7 +69,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			node.parentNode.getUI().toggleCheck(true);
 			// check all hidden layers nodes
 			Ext.each(node.parentNode.childNodes, function(n) {
-				if (n.hidden) {
+				if (n.isLeaf() && n.attributes.config.hidden) {
 					this.root.checkchangeParamsStack.push(1);
 					n.getUI().toggleCheck(true);
 				}
@@ -84,7 +83,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		if (!checked && node.getDepth() > node.root.getDepth()) {
 			var allSiblingsUnchecked = true;
 			Ext.each(node.parentNode.childNodes, function(n) {
-				if (!n.hidden && n.attributes.checked) {
+				if (n.attributes.checked && (!n.isLeaf() || !n.attributes.config.hidden)) {
 					allSiblingsUnchecked = false;
 					return false;
 				}
@@ -155,9 +154,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			}, this);
 			node.attributes.checked = groupChecked;
 		} else {
-			if (layer_config.visible == false) {
-				node.attributes.checked = false;
-			}
+			node.attributes.checked = layer_config.visible && !layer_config.hidden;
 			node.attributes.config = layer_config;
 		}
 		return node;
@@ -176,7 +173,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		layers_nodes.sort(function(l1, l2) {return l1.attributes.config.drawing_order-l2.attributes.config.drawing_order});
 		var names = [];
 		Ext.each(layers_nodes, function(node) {
-			names.push(node.attributes.text);
+			names.push(node.attributes.config.name);
 		});
 		return names;
 	},
