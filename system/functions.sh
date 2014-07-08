@@ -62,10 +62,4 @@ gislab_require_root () {
 }
 
 
-gislab_provisioning_user () {
-	# set provisioning user to variable
-	GISLAB_PROVISIONING_USER=$(stat -c %U /vagrant/config.cfg)
-}
-
-
 # vim: set ts=4 sts=4 sw=4 noet:

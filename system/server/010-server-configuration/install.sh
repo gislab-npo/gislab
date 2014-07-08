@@ -53,6 +53,15 @@ EOF
 chmod 0440 /etc/sudoers.d/vagrant-secure-path
 
 
+# save public SSH key
+mkdir -p /etc/gislab/ssh
+if [[ -n "$GISLAB_SSH_PRIVATE_KEY" && -n "$GISLAB_SSH_PUBLIC_KEY" ]]; then
+	cp /vagrant/$GISLAB_SSH_PUBLIC_KEY > /etc/gislab/ssh/gislab_ssh_public_key
+else
+	cp /home/$GISLAB_PROVISIONING_USER/.ssh/authorized_keys /etc/gislab/ssh/gislab_ssh_public_key
+fi
+
+
 ### LOGGING ###
 if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
 	sed -i '/^\$SystemLogRateLimitInterval 0$/d' /etc/rsyslog.conf
