@@ -9,16 +9,6 @@ GISLAB_SERVER_INSTALL_PACKAGES="
 apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
 
 
-# Some server images are using 'vagrant' account (VirtualBox) for provisioning, some 
-# of them are using 'ubuntu' account (AWS). Remove those which we do not use.
-for account in vagrant ubuntu; do
-	if id -u $account > /dev/null 2>&1; then
-		if [ "$account" != "$GISLAB_PROVISIONING_USER" ]; then
-			deluser --remove-home $account
-		fi
-	fi
-done
-
 # set strong password and file access permissions for provisioning account
 echo "$GISLAB_PROVISIONING_USER:$(pwgen -1 -n 24)" | chpasswd
 chmod 700 /home/$GISLAB_PROVISIONING_USER
@@ -26,6 +16,21 @@ chmod 700 /home/$GISLAB_PROVISIONING_USER/.ssh
 
 # set public SSH key for provisioning account
 cp /etc/gislab/ssh/gislab_ssh_public_key /home/$GISLAB_PROVISIONING_USER/.ssh/authorized_keys
+
+
+# user accounts cleanup running only on installation
+if [ ! -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
+	# Some server images are coming with multiple default accounts prepared for
+	# provisioning ('vagrant' account for VirtualBox or 'ubuntu' account for AWS).
+	# For cleanup, we want to remove those, which we do not use for our provisioning.
+	for userid in {1000..1010}; do
+		username=$(getent passwd $userid | awk -F ':' '{print $1}')
+		if [[ "$username" != "" && "$username" != "$GISLAB_PROVISIONING_USER" ]]; then
+			gislab_print_info "Removing unused user account '$username'"
+			deluser --remove-home $username
+		fi
+	done
+fi
 
 
 ### BACKUP ###
