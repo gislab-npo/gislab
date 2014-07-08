@@ -501,7 +501,12 @@ class WebGisPlugin:
 					'projection': source_params['crs'][0],
 					'format': source_params['format'][0],
 					'url': source_params['url'][0],
-					'dpi': layer.dataProvider().dpi()
+					'dpi': layer.dataProvider().dpi(),
+					'metadata': {
+						'title': layer.title(),
+						'abstract': layer.abstract(),
+						'keyword_list': layer.keywordList()
+					}
 				}
 				if layer.attribution():
 					layer_data['attribution'] = {
@@ -579,21 +584,33 @@ class WebGisPlugin:
 				layer_widget = dialog.overlaysTree.findItems(layer.name(), Qt.MatchExactly | Qt.MatchRecursive)[0]
 				if layer_widget.checkState(0) == Qt.Unchecked:
 					return None
+				layer_label_settings = QgsPalLayerSettings()
+				layer_label_settings.readFromLayer(layer)
 				layer_data = {
 					'name': layer.name(),
 					'provider_type': layer.providerType(),
 					'extent': map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords(),
+					'projection': layer.crs().authid(),
 					'visible': legend_iface.isLayerVisible(layer),
 					'queryable': layer.id() not in non_identifiable_layers,
-					'invisible': layer_widget.checkState(1) == Qt.Checked,
+					'labels': layer_label_settings.enabled,
+					'hidden': layer_widget.checkState(1) == Qt.Checked,
 					'export_to_drawings': layer_widget.checkState(2) == Qt.Checked,
-					'drawing_order': overlays_order.index(layer.id())
+					'drawing_order': overlays_order.index(layer.id()),
+					'metadata': {
+						'title': layer.title(),
+						'abstract': layer.abstract(),
+						'keyword_list': layer.keywordList()
+					}
 				}
 				if layer.attribution():
 					layer_data['attribution'] = {
 						'title': layer.attribution(),
 						'url': layer.attributionUrl()
 					}
+				if layer.hasScaleBasedVisibility():
+					layer_data['visibility_scale_min'] = layer.minimumScale()
+					layer_data['visibility_scale_max'] = layer.maximumScale()
 				if layer.hasGeometryType():
 					layer_data['geom_type'] = ('POINT', 'LINE', 'POLYGON')[layer.geometryType()]
 
@@ -734,6 +751,7 @@ class WebGisPlugin:
 		def collect_base_layer_summary(layer_data):
 			sublayers = layer_data.get('layers')
 			if sublayers:
+				base_layers_summary.append(u'<h4>{0}</h4><div class="subcategory">'.format(layer_data['name']))
 				for sublayer_data in sublayers:
 					collect_base_layer_summary(sublayer_data)
 			else:
@@ -741,20 +759,61 @@ class WebGisPlugin:
 				if 'min_resolution' in layer_data:
 					resolutions = filter(lambda res: res >= layer_data['min_resolution'] and res <= layer_data['max_resolution'], resolutions)
 				scales = get_scales_from_resolutions(resolutions, self._map_units())
-				template_data = format_template_data([
-					layer_data['name'],
-					layer_data['extent'],
-					scales,
-					resolutions,
-					layer_data.get('provider_type', '')
-				])
-				layer_summary = u"""<h4>{0}</h4>
-					<ul>
-						<li><label>Extent:</label> {1}</li>
-						<li><label>Visible scales:</label> {2}</li>
-						<li><label>Visible resolutions:</label> {3}</li>
-						<li><label>Provider type:</label> {4}</li>
-					</ul>""".format(*template_data)
+				if 'metadata' in layer_data:
+					if 'visibility_scale_max' in layer_data:
+						scale_visibility = 'Maximum (inclusive): {0}, Minimum (exclusive): {1}'.format(layer_data['visibility_scale_max'], layer_data['visibility_scale_min'])
+					else:
+						scale_visibility = ''
+					template_data = format_template_data([
+						layer_data['name'],
+						layer_data['extent'],
+						layer_data['projection'],
+						scale_visibility,
+						scales,
+						resolutions,
+						layer_data.get('provider_type', ''),
+						layer_data['attribution']['title'] if 'attribution' in layer_data and 'title' in layer_data['attribution'] else '',
+						layer_data['attribution']['url'] if 'attribution' in layer_data and 'url' in layer_data['attribution'] else '',
+						layer_data['metadata']['title'],
+						layer_data['metadata']['abstract'],
+						layer_data['metadata']['keyword_list'],
+					])
+					layer_summary = u"""<h4>{0}</h4>
+						<ul>
+							<li><label>Extent:</label> {1}</li>
+							<li><label>CRS:</label> {2}</li>
+							<li><label>Scale based visibility:</label> {3}</li>
+							<li><label>Visible scales:</label> {4}</li>
+							<li><label>Visible resolutions:</label> {5}</li>
+							<li><label>Provider type:</label> {6}</li>
+							<li><label>Attribution:</label>
+								<ul>
+									<li><label>Title:</label> {7}</li>
+									<li><label>URL:</label> {8}</li>
+								</ul>
+							</li>
+							<li><label>Metadata:</label>
+								<ul>
+									<li><label>Title:</label> {9}</li>
+									<li><label>Abstract:</label> {10}</li>
+									<li><label>Keyword list:</label> {11}</li>
+								</ul>
+							</li>
+						</ul>""".format(*template_data)
+				# Special base layers
+				else:
+					template_data = format_template_data([
+						layer_data['name'],
+						layer_data['extent'],
+						scales,
+						resolutions,
+					])
+					layer_summary = u"""<h4>{0}</h4>
+						<ul>
+							<li><label>Extent:</label> {1}</li>
+							<li><label>Visible scales:</label> {2}</li>
+							<li><label>Visible resolutions:</label> {3}</li>
+						</ul>""".format(*template_data)
 				base_layers_summary.append(layer_summary)
 
 		for layer_data in metadata['base_layers']:
@@ -765,24 +824,56 @@ class WebGisPlugin:
 		def collect_overlays_summary(layer_data):
 			sublayers = layer_data.get('layers')
 			if sublayers:
+				overlays_summary.append(u'<h4>{0}</h4><div class="subcategory">'.format(layer_data['name']))
 				for sublayer_data in sublayers:
 					collect_overlays_summary(sublayer_data)
+				overlays_summary.append(u'</div>')
 			else:
+				if 'visibility_scale_max' in layer_data:
+					scale_visibility = 'Maximum (inclusive): {0}, Minimum (exclusive): {1}'.format(layer_data['visibility_scale_max'], layer_data['visibility_scale_min'])
+				else:
+					scale_visibility = ''
 				template_data = format_template_data([
 					layer_data['name'],
 					layer_data['visible'],
 					layer_data['queryable'],
 					layer_data['extent'],
+					layer_data['projection'],
 					layer_data['geom_type'],
-					layer_data['provider_type']
+					scale_visibility,
+					layer_data['labels'],
+					layer_data['provider_type'],
+					", ".join([attribute.get('title', attribute['name']) for attribute in layer_data.get('attributes', [])]),
+					layer_data['attribution']['title'] if 'attribution' in layer_data and 'title' in layer_data['attribution'] else '',
+					layer_data['attribution']['url'] if 'attribution' in layer_data and 'url' in layer_data['attribution'] else '',
+					layer_data['metadata']['title'],
+					layer_data['metadata']['abstract'],
+					layer_data['metadata']['keyword_list'],
 				])
 				layer_summary = u"""<h4>{0}</h4>
 					<ul>
 						<li><label>Visible:</label> {1}</li>
 						<li><label>Queryable:</label> {2}</li>
 						<li><label>Extent:</label> {3}</li>
-						<li><label>Geometry type:</label> {4}</li>
-						<li><label>Provider type:</label> {5}</li>
+						<li><label>CRS:</label> {4}</li>
+						<li><label>Geometry type:</label> {5}</li>
+						<li><label>Scale based visibility:</label> {6}</li>
+						<li><label>Labels:</label> {7}</li>
+						<li><label>Provider type:</label> {8}</li>
+						<li><label>Attributes:</label> {9}</li>
+						<li><label>Attribution:</label>
+							<ul>
+								<li><label>Title:</label> {10}</li>
+								<li><label>URL:</label> {11}</li>
+							</ul>
+						</li>
+						<li><label>Metadata:</label>
+							<ul>
+								<li><label>Title:</label> {12}</li>
+								<li><label>Abstract:</label> {13}</li>
+								<li><label>Keyword list:</label> {14}</li>
+							</ul>
+						</li>
 					</ul>""".format(*template_data)
 				overlays_summary.append(layer_summary)
 
@@ -958,8 +1049,8 @@ class WebGisPlugin:
 
 		overlays_data = extract_layers(metadata['overlays'])
 		project_overlays = [layer_data['name'] for layer_data in overlays_data]
-		hidden_overlays = [layer_data['name'] for layer_data in overlays_data if layer_data['invisible']]
-		overlays_with_export_to_drawings = [layer_data['name'] for layer_data in overlays_data if layer_data['export_to_drawings']]
+		hidden_overlays = [layer_data['name'] for layer_data in overlays_data if layer_data['hidden']]
+		overlays_with_export_to_drawings = [layer_data['name'] for layer_data in overlays_data if layer_data.get('export_to_drawings')]
 		def uncheck_excluded_layers(widget):
 			if widget.data(0, Qt.UserRole):
 				widget.setCheckState(0, Qt.Checked if widget.text(0) in project_overlays else Qt.Unchecked)
