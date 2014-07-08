@@ -76,6 +76,14 @@ else
 	rm -f /etc/apt/apt.conf.d/02proxy
 fi
 
+
+# remove linux header which doesn't match current kernel
+dpkg-query -W -f='${PackageSpec} ${Status}\n' linux-headers* \
+	| grep "install ok installed" \
+	| grep -v "linux-headers-$(uname -r)" \
+	| awk -F " " '{print $1}' \
+	| xargs  apt-get --assume-yes --force-yes purge
+
 # Hold kernel packages from upgrade to avoid a need to restart server after
 # installation (Vagrant box could provide up-to-date kernel image).
 # If some package still triggers system restart check '/var/run/reboot-required.pkgs'.
