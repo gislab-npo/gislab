@@ -1,7 +1,7 @@
 #!/bin/bash
 # GIS.lab installation script. DO NOT RUN BY HAND.
 
-# Be careful when modifying this script. Eeach task must be created as
+# Be careful when modifying this script. Each task must be created as
 # idempotent operation, which means, that there is no unwanted effect if
 # script is called more than once (in case of upgrade).
 
