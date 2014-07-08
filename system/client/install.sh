@@ -3,56 +3,13 @@
 
 # LTSP troubleshooting https://help.ubuntu.com/community/UbuntuLTSP/ClientTroubleshooting
 
-set -e
-
-
-source /vagrant/system/functions.sh
-
-# load configuration
-gislab_config
-
-
-# enable installation in debug mode if requested
-if [ "$GISLAB_DEBUG_INSTALL" == "yes" ]; then
-	set -x
-fi
-
-
-# require root privileges
-gislab_require_root
-
-
-# usage
-function usage() {
-	echo "USAGE: $(basename $0) [OPTIONS]"
-	echo "Install GIS.lab client image."
-	echo -e "\nOPTIONS
-	-h  display this help
-	"
-	exit 0
-}
-
-
-# options
-while getopts "h" OPTION
-do
-        case "$OPTION" in
-			h) usage ; exit 0 ;;
-			\?) exit 1;;
-        esac
-done
-shift $(($OPTIND - 1))
-
-
-DATETIME=$(date +"%Y-%m-%d-%T")
-
 
 # backup existing client image
 if [ -f /opt/ltsp/images/i386.img ]
 then
 	gislab_print_info "Creating backup of existing client image and removing expired backups"
-	cp /opt/ltsp/images/i386.img /opt/ltsp/images/i386-backup-$DATETIME.img
-	find /opt/ltsp/images/ -iname "i386-backup*.img" -mtime 7 | xargs rm -vf
+	cp /opt/ltsp/images/i386.img /opt/ltsp/images/i386-backup-$GISLAB_INSTALL_DATETIME.img
+	find /opt/ltsp/images/ -iname "i386-backup-*.img" -mtime 7 | xargs rm -vf
 fi
 
 
@@ -73,7 +30,7 @@ then
 fi
 
 # load custom GIS.lab client installation scripts
-cp -av /vagrant/system/client/ltsp/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
+cp -av $GISLAB_INSTALL_CLIENT_ROOT/ltsp/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 cp -av /vagrant/user/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
 
@@ -113,7 +70,7 @@ cd /var/tmp/initrd
 cp -vf $INITRD_PATH/$INITRD ./$INITRD.gz
 gunzip $INITRD.gz
 cpio -id < $(ls)
-cp -vf /vagrant/system/client/udhcp/udhcp scripts/init-premount/
+cp -vf $GISLAB_INSTALL_CLIENT_ROOT/udhcp/udhcp scripts/init-premount/
 sed -i "s/###GISLAB_SERVER_IP_REGEX###/$GISLAB_SERVER_IP_REGEX/" scripts/init-premount/udhcp
 rm -vf $INITRD
 find . | cpio --create --format='newc' > /var/tmp/$INITRD

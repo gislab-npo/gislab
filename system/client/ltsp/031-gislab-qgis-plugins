@@ -2,6 +2,6 @@
 
 case "$MODE" in
     finalization)
-    	cp -a /vagrant/system/client/qgis/plugins/* $ROOT/usr/share/qgis/python/plugins
+    	cp -a $GISLAB_INSTALL_CLIENT_ROOT/qgis/plugins/* $ROOT/usr/share/qgis/python/plugins
         ;;
 esac

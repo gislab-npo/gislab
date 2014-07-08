@@ -2,6 +2,6 @@
 
 case "$MODE" in
     finalization)
-	cp -a /vagrant/system/client/ldm/rc.d/S14-gislab-deny-concurrent-login $ROOT/usr/share/ldm/rc.d/
+	cp -a $GISLAB_INSTALL_CLIENT_ROOT/ldm/rc.d/S14-gislab-deny-concurrent-login $ROOT/usr/share/ldm/rc.d/
     ;;
 esac

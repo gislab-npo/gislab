@@ -5,6 +5,6 @@ case "$MODE" in
 	mkdir -p $ROOT/usr/local/gislab
 	cp /vagrant/system/functions.sh $ROOT/usr/local/gislab/
 
-	cp -a /vagrant/system/client/bin/* $ROOT/usr/local/bin/
+	cp -a $GISLAB_INSTALL_CLIENT_ROOT/bin/* $ROOT/usr/local/bin/
     ;;
 esac

@@ -17,7 +17,8 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 # do not allow overriding of DHCP server configuration by LTSP, keep using configuration located in /etc/dhcp
 rm -f /etc/ltsp/dhcpd.conf
 
-bash /vagrant/system/client/install.sh # install client image
+
+source $GISLAB_INSTALL_CLIENT_ROOT/install.sh # install client image
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

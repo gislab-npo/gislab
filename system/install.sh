@@ -1,6 +1,7 @@
 #!/bin/bash
-# Vagrant shell provisioner script. DO NOT RUN BY HAND.
-# Be careful when adding new provisioning task to create it as
+# GIS.lab installation script. DO NOT RUN BY HAND.
+
+# Be careful when modifying this script. Eeach task must be created as
 # idempotent operation, which means, that there is no unwanted effect if
 # script is called more than once (in case of upgrade).
 
@@ -25,12 +26,19 @@ fi
 
 # get provisioning provider name
 GISLAB_SERVER_PROVIDER=$1
+export GISLAB_SERVER_PROVIDER
+
+# get current time
+GISLAB_INSTALL_DATETIME=$(date +"%Y-%m-%d-%T")
+export GISLAB_INSTALL_DATETIME
 
 # get server architecture - 32 bit (i386) or 64 bit (x86_64)
 GISLAB_SERVER_ARCHITECTURE=$(uname -i)
+export GISLAB_SERVER_ARCHITECTURE
 
-# get provisioning user name
-gislab_provisioning_user
+# get provisioning user name and ID
+GISLAB_PROVISIONING_USER=$(stat -c %U /vagrant/config.cfg)
+export GISLAB_PROVISIONING_USER
 
 
 # test if all required plugins are available
@@ -66,11 +74,16 @@ fi
 #
 # INSTALLATION
 #
-GISLAB_INSTALL_DIR=/tmp/gislab-install-$(date +%s)
-mkdir -p ${GISLAB_INSTALL_DIR}
-cp -a /vagrant/* ${GISLAB_INSTALL_DIR}
+GISLAB_INSTALL_ROOT=/tmp/gislab-install-$(date +%s)
+export GISLAB_INSTALL_ROOT
 
-for directory in ${GISLAB_INSTALL_DIR}/system/server/*; do
+GISLAB_INSTALL_CLIENT_ROOT=$GISLAB_INSTALL_ROOT/system/client
+export GISLAB_INSTALL_CLIENT_ROOT
+
+mkdir -p $GISLAB_INSTALL_ROOT
+cp -a /vagrant/* $GISLAB_INSTALL_ROOT
+
+for directory in $GISLAB_INSTALL_ROOT/system/server/*; do
 	GISLAB_INSTALL_CURRENT_ROOT=$directory
 	GISLAB_INSTALL_CURRENT_SERVICE=$(echo $(basename $GISLAB_INSTALL_CURRENT_ROOT) | sed "s/^...-//")
 	gislab_print_info "Running installation script '$GISLAB_INSTALL_CURRENT_SERVICE'"
@@ -78,7 +91,7 @@ for directory in ${GISLAB_INSTALL_DIR}/system/server/*; do
 	echo "$(gislab_config_header)" >> /etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done
 done
 
-rm -r ${GISLAB_INSTALL_DIR}
+rm -r $GISLAB_INSTALL_ROOT
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
