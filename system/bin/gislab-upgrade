@@ -43,7 +43,7 @@ done
 shift $(($OPTIND - 1))
 
 if [ "$FORCE" != "yes" ]; then
-	gislab_print_warning "This command will upgrade GIS.lab system. Please check if all clients are disconnected"
+	gislab_print_warning "This command will upgrade GIS.lab system. Please check if all users are disconnected"
 	echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
 	read
 fi
