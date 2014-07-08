@@ -65,10 +65,11 @@ DATABASES = {
 }
 EOF
 	# create backup of secrets file. It will be used on upgrade
-	cp /var/www/webgis/djproject/settings_secret.py /etc/gislab/webgis-settings_secret.py
+	mkdir -p /etc/gislab/webgis
+	cp /var/www/webgis/djproject/settings_secret.py /etc/gislab/webgis/settings_secret.py
 else
 	# on upgrade load secrets file from backup
-	cp /etc/gislab/webgis-settings_secret.py /var/www/webgis/djproject/settings_secret.py
+	cp /etc/gislab/webgis/settings_secret.py /var/www/webgis/djproject/settings_secret.py
 fi
 
 # move map cache to /storage
