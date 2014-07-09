@@ -19,7 +19,7 @@ cp /etc/gislab/ssh/gislab_ssh_public_key /home/$GISLAB_PROVISIONING_USER/.ssh/au
 
 
 # user accounts cleanup running only on installation
-if [ ! -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
+if [ ! -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
 	# Some server images are coming with multiple default accounts prepared for
 	# provisioning ('vagrant' account for VirtualBox or 'ubuntu' account for AWS).
 	# For cleanup, we want to remove those, which we do not use for our provisioning.
@@ -38,7 +38,7 @@ mkdir -p /etc/cron.d.bin
 cp $GISLAB_INSTALL_CURRENT_ROOT/bin/gislab-backup-users.sh /etc/cron.d.bin
 cat << EOL > /etc/cron.d/gislab-backup-users
 $(gislab_config_header)
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/vagrant/system/bin
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$GISLAB_ROOT/system/bin
 MAILTO=root
 
 0 2	* * *  root  nice /etc/cron.d.bin/gislab-backup-users.sh > /dev/null

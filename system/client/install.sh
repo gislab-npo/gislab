@@ -14,7 +14,7 @@ fi
 
 
 # create clean copy of client installation scripts
-if [ ! -d " /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean" ]; then
+if [ ! -d "/usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean" ]; then
 	cp -a /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu  /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean
 fi
 
@@ -23,15 +23,15 @@ rm -rf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu
 cp -a /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu
 
 # load GIS.lab configuration
-cp /vagrant/config.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/000-gislab-config
-if [ -f /vagrant/config-user.cfg ]
+cp $GISLAB_ROOT/config.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/000-gislab-config
+if [ -f $GISLAB_ROOT/config-user.cfg ]
 then
-	cp /vagrant/config-user.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/001-gislab-config-user
+	cp $GISLAB_ROOT/config-user.cfg /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/001-gislab-config-user
 fi
 
 # load custom GIS.lab client installation scripts
 cp -av $GISLAB_INSTALL_CLIENT_ROOT/ltsp/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
-cp -av /vagrant/user/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
+cp -av $GISLAB_ROOT/user/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
 
 # build client options

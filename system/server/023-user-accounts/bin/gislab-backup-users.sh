@@ -2,7 +2,7 @@
 # Backup all GIS.lab user's accounts.
 
 
-source /vagrant/system/functions.sh
+source $GISLAB_ROOT/system/functions.sh
 
 # require root privileges
 gislab_require_root

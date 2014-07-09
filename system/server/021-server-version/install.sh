@@ -11,12 +11,12 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 
 # version
 # set version from Git if we are running from sources
-if [ -d "/vagrant/.git" ]; then
-	GISLAB_VERSION_BRANCH=$(git --git-dir=/vagrant/.git --work-tree=/vagrant rev-parse --abbrev-ref HEAD)
-	GISLAB_VERSION_CHANGESET=$(git --git-dir=/vagrant/.git --work-tree=/vagrant rev-parse --short HEAD)
+if [ -d "$GISLAB_ROOT/.git" ]; then
+	GISLAB_VERSION_BRANCH=$(git --git-dir=$GISLAB_ROOT/.git --work-tree=$GISLAB_ROOT rev-parse --abbrev-ref HEAD)
+	GISLAB_VERSION_CHANGESET=$(git --git-dir=$GISLAB_ROOT/.git --work-tree=$GISLAB_ROOT rev-parse --short HEAD)
 	GISLAB_VERSION=git+$GISLAB_VERSION_BRANCH+$GISLAB_VERSION_CHANGESET
 
-	GISLAB_VERSION_TAG=$(git --git-dir=/vagrant/.git --work-tree=/vagrant describe --tags --exact-match 2> /dev/null || true)
+	GISLAB_VERSION_TAG=$(git --git-dir=$GISLAB_ROOT/.git --work-tree=$GISLAB_ROOT describe --tags --exact-match 2> /dev/null || true)
 	if [ "$GISLAB_VERSION_TAG" != "" ]; then
 		GISLAB_VERSION=$GISLAB_VERSION~$GISLAB_VERSION_TAG
 	fi

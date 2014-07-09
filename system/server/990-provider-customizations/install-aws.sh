@@ -1,4 +1,6 @@
-# AWS provider
+#
+### PROVIDER CUSTOMIZATIONS - AWS ###
+#
 
 
 # detect AWS instance properties
@@ -8,13 +10,13 @@ GISLAB_SERVER_AWS_LOCAL_IP=$(curl $aws_meta_url/local-ipv4)
 GISLAB_SERVER_AWS_PUBLIC_IP=$(curl $aws_meta_url/public-ipv4)
 GISLAB_SERVER_AWS_PUBLIC_HOSTNAME=$(curl $aws_meta_url/public-hostname)
 
-# configure WebGIS with AWS instance values
+# configure GIS.lab Web with AWS instance values
 sed -i "s/server_name web.gis.lab;/server_name web.gis.lab $GISLAB_SERVER_AWS_PUBLIC_HOSTNAME;/" /etc/nginx/sites-available/webgis
 sed -i "/ALLOWED_HOSTS/aALLOWED_HOSTS += ['$GISLAB_SERVER_AWS_PUBLIC_HOSTNAME']" /var/www/webgis/djproject/settings.py
 service apache2 reload
 
 # do not continue on upgrade
-if [ -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
+if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
 
 # if instance contains ephemeral0 disk use it for database storage
 if [ -b /dev/xvdb ]; then

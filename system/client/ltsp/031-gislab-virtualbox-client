@@ -13,7 +13,7 @@ case "$MODE" in
 		# install VirtualBox additions from ISO
 		if [ -n "${GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO}" ]; then
 			mkdir -p $ROOT/tmp/virtualbox/{iso,mnt}
-			cp /vagrant/$GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO $ROOT/tmp/virtualbox/iso
+			cp $GISLAB_ROOT/$GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO $ROOT/tmp/virtualbox/iso
 
 			chroot $ROOT apt-get --assume-yes --force-yes --no-install-recommends install build-essential
 			chroot $ROOT mount -o loop /tmp/virtualbox/iso/VBoxGuestAdditions.iso /tmp/virtualbox/mnt/

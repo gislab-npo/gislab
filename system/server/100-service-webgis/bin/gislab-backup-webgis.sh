@@ -2,12 +2,12 @@
 # Backup GIS.lab Web data.
 
 
-source /vagrant/system/functions.sh
+source $GISLAB_ROOT/system/functions.sh
 
 # require root privileges
 gislab_require_root
 
-
+# get current date
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
 
 # backup webgis data

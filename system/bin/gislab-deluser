@@ -2,8 +2,7 @@
 
 set -e
 
-
-source /vagrant/system/functions.sh
+source $GISLAB_ROOT/system/functions.sh
 
 # load configuration
 gislab_config
@@ -90,10 +89,10 @@ rm -rf /storage/share/$GISLAB_USER # NFS directory
 
 
 # run account hooks
-for hook in /vagrant/user/plugins/account/*.*; do
+for hook in $GISLAB_ROOT/user/plugins/account/*.*; do
 	gislab_print_info "Running account hooks '$(basename $hook)'"
 	GISLAB_ACCOUNT_ACTION="remove" GISLAB_USER=$GISLAB_USER $hook
-	echo "$(gislab_config_header)" >> /etc/gislab/account-hook-$(basename $hook).done
+	echo "$(gislab_config_header)" >> /var/lib/gislab/account-hook-$(basename $hook).done
 done
 
 gislab_print_info "Account '$GISLAB_USER' removed"

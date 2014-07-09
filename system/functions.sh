@@ -3,11 +3,12 @@
 #
 
 gislab_config () {
-	# read configuration
-	source /vagrant/config.cfg
-	if [ -f /vagrant/config-user.cfg ]
+	# read default config file
+	source $GISLAB_ROOT/config.cfg
+	
+	if [ -f $GISLAB_ROOT/config-user.cfg ]
 	then
-		source /vagrant/config-user.cfg
+		source $GISLAB_ROOT/config-user.cfg
 	fi
 }
 

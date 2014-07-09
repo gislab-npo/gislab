@@ -31,7 +31,7 @@ gislab_config_header_to_file /etc/idmapd.conf
 
 
 # add /mnt mount point to fstab
-if [ ! -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
+if [ ! -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
 	cat << EOF >> /etc/fstab
 $(gislab_config_header)
 /storage  /mnt  none  bind  0  0

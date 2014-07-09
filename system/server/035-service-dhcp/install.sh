@@ -75,7 +75,7 @@ include "/etc/dhcp/dhcpd-machines-allowed.conf";
 EOF
 
 	# allow client's MACs
-	/vagrant/system/bin/gislab-allowmachines
+	$GISLAB_ROOT/system/bin/gislab-allowmachines
 fi
 
 service isc-dhcp-server restart

@@ -2,10 +2,10 @@
 ### SERVER PLUGINS ###
 #
 
-for plugin in /vagrant/user/plugins/server/*.*; do
+for plugin in $GISLAB_ROOT/user/plugins/server/*.*; do
 	gislab_print_info "Running server plugin '$(basename $plugin)'"
 	GISLAB_INSTALL_ACTION=$GISLAB_INSTALL_ACTION $plugin
-	echo "$(gislab_config_header)" >> /etc/gislab/server-plugin-$(basename $plugin).done
+	echo "$(gislab_config_header)" >> /var/lib/gislab/server-plugin-$(basename $plugin).done
 done
 
 

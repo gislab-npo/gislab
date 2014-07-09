@@ -73,7 +73,7 @@ service postgresql restart
 
 
 ### DO NOT CONTINUE ON UPGRADE ###
-if [ -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
+if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
 
 # create labusers and labadmins group
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole --no-login labusers"

@@ -2,12 +2,6 @@
 ### BASIC SERVER CONFIGURATION ###
 #
 
-# Read server IP from running server and update GISLAB_NETWORK. This is done because some 
-# cloud providers like AWS ignore IP address given by Vagrantfile and set it by their own.
-GISLAB_SERVER_IP=$(hostname  -I | awk -F" " '{print $NF}')
-GISLAB_NETWORK=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $1 "." $2 "." $3 }')
-
-
 # hosts
 cat << EOF > /etc/hosts
 $(gislab_config_header)
@@ -48,7 +42,7 @@ EOF
 # effect once sudo-ldap is installed
 cat << EOF > /etc/sudoers.d/vagrant-secure-path
 $(gislab_config_header)
-Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/vagrant/system/bin"
+Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$GISLAB_ROOT/system/bin"
 EOF
 chmod 0440 /etc/sudoers.d/vagrant-secure-path
 
@@ -56,7 +50,7 @@ chmod 0440 /etc/sudoers.d/vagrant-secure-path
 # save public SSH key
 mkdir -p /etc/gislab/ssh
 if [[ -n "$GISLAB_SSH_PRIVATE_KEY" && -n "$GISLAB_SSH_PUBLIC_KEY" ]]; then
-	cp /vagrant/$GISLAB_SSH_PUBLIC_KEY > /etc/gislab/ssh/gislab_ssh_public_key
+	cp $GISLAB_ROOT/$GISLAB_SSH_PUBLIC_KEY > /etc/gislab/ssh/gislab_ssh_public_key
 else
 	cp /home/$GISLAB_PROVISIONING_USER/.ssh/authorized_keys /etc/gislab/ssh/gislab_ssh_public_key
 fi
@@ -91,11 +85,13 @@ service rsyslog restart
 
 
 ### DO NOT CONTINUE ON UPGRADE ###
-if [ -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
+if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
+# set GIS.lab root directory variable
+echo "GISLAB_ROOT=$GISLAB_ROOT" >> /etc/environment
 
 # add admin scripts on PATH
-echo "PATH="$PATH:/vagrant/system/bin"" >> /etc/profile
-export PATH=$PATH:/vagrant/system/bin
+echo "PATH="$PATH:$GISLAB_ROOT/system/bin"" >> /etc/profile
+export PATH=$PATH:$GISLAB_ROOT/system/bin
 
 # configure more informative server prompt
 export PS1="\[$(tput bold)\]\u@\h.GIS.lab($GISLAB_UNIQUE_ID):\w\\$\[$(tput sgr0)\] "

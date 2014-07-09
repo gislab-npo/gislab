@@ -3,9 +3,9 @@
 #
 
 ### SKIP ON UPGRADE ###
-if [ -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
+if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
 
-cp -a /vagrant/user/data /storage/repository/
+cp -a /$GISLAB_ROOT/user/data /storage/repository/
 chown -R :labadmins /storage/repository/*
 
 

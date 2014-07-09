@@ -3,7 +3,7 @@
 case "$MODE" in
     finalization)
 	mkdir -p $ROOT/usr/local/gislab
-	cp /vagrant/system/functions.sh $ROOT/usr/local/gislab/
+	cp $GISLAB_ROOT/system/functions.sh $ROOT/usr/local/gislab/
 
 	cp -a $GISLAB_INSTALL_CLIENT_ROOT/bin/* $ROOT/usr/local/bin/
     ;;

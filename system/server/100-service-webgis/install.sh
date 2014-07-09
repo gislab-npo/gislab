@@ -21,7 +21,7 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 
 
 # create database and user only on initial installation
-if [ ! -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
+if [ ! -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
 	WEBGIS_DB_PASSWORD=$(pwgen -1 -n 8)
 	sudo su - postgres -c "createdb -E UTF8 -T template0 webgis"
 	sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole webgis" # PostgreSQL account
@@ -51,7 +51,7 @@ mkdir -p /var/www/webgis
 django-admin.py startproject --template=$GISLAB_INSTALL_CURRENT_ROOT/app/gislab-web/webgis/conf/project_template/ djproject /var/www/webgis
 
 
-if [ ! -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
+if [ ! -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
 	cat << EOF >> /var/www/webgis/djproject/settings_secret.py
 DATABASES = {
 	'default': {
@@ -133,7 +133,7 @@ service nginx reload
 # cache cleanup job
 cat << EOL > /etc/cron.d/gislab-webgis-mapcache-clean
 $(gislab_config_header)
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/vagrant/system/bin
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$GISLAB_ROOT/system/bin
 MAILTO=root
 
 15 0	* * *  www-data  nice /usr/local/python-virtualenvs/webgis/bin/python /var/www/webgis/manage.py mapcache_clean > /dev/null
@@ -151,7 +151,7 @@ mkdir -p /etc/cron.d.bin
 cp $GISLAB_INSTALL_CURRENT_ROOT/bin/gislab-backup-webgis.sh /etc/cron.d.bin
 cat << EOL > /etc/cron.d/gislab-backup-webgis
 $(gislab_config_header)
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/vagrant/system/bin
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$GISLAB_ROOT/system/bin
 MAILTO=root
 
 15 2	* * *  root  nice /etc/cron.d.bin/gislab-backup-webgis.sh > /dev/null

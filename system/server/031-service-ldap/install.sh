@@ -87,7 +87,7 @@ service rsyslog restart
 
 
 ### DO NOT CONTINUE ON UPGRADE ###
-if [ -f "/etc/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
+if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
 
 
 # generate and set LDAP admin password
@@ -239,7 +239,7 @@ objectClass: sudoRole
 cn: defaults
 description: Default sudoOption's go here
 sudoOption: env_reset
-sudoOption: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/vagrant/system/bin:"
+sudoOption: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$GISLAB_ROOT/system/bin:"
 
 dn: cn=%labadmins,ou=SUDOers,dc=gis,dc=lab
 objectClass: top

@@ -2,8 +2,7 @@
 
 set -e
 
-
-source /vagrant/system/functions.sh
+source $GISLAB_ROOT/system/functions.sh
 
 # load_configuration
 gislab_config
@@ -86,25 +85,25 @@ mkdir /etc/skel/.local
 
 # configure menu
 mkdir -p /etc/skel/.config/menus
-cp /vagrant/system/client/desktop-session/menus/xfce-applications.menu /etc/skel/.config/menus/
+cp $GISLAB_ROOT/system/client/desktop-session/menus/xfce-applications.menu /etc/skel/.config/menus/
 
 mkdir -p /etc/skel/.local/share/applications
-cp /vagrant/system/client/desktop-session/menus/*.desktop /etc/skel/.local/share/applications/
+cp $GISLAB_ROOT/system/client/desktop-session/menus/*.desktop /etc/skel/.local/share/applications/
 
 mkdir -p /etc/skel/.local/share/desktop-directories
-cp /vagrant/system/client/desktop-session/menus/*.directory /etc/skel/.local/share/desktop-directories/
+cp $GISLAB_ROOT/system/client/desktop-session/menus/*.directory /etc/skel/.local/share/desktop-directories/
 
 
 # configure GIS.lab desktop session and panel
 mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
 
-cp /vagrant/system/client/desktop-session/xfce4/xinitrc /etc/skel/.config/xfce4/
+cp $GISLAB_ROOT/system/client/desktop-session/xfce4/xinitrc /etc/skel/.config/xfce4/
 
-cp /vagrant/system/client/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-cp /vagrant/system/client/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+cp $GISLAB_ROOT/system/client/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+cp $GISLAB_ROOT/system/client/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
 
 mkdir -p /etc/skel/.config/xfce4/panel
-cp -a /vagrant/system/client/desktop-session/xfce4/panel/* /etc/skel/.config/xfce4/panel
+cp -a $GISLAB_ROOT/system/client/desktop-session/xfce4/panel/* /etc/skel/.config/xfce4/panel
 
 # confugure keyboard languages
 languages="us" # english is always active
@@ -120,8 +119,8 @@ sed -i "s/^variants=/variants=$variants/" /etc/skel/.config/xfce4/panel/xkb-plug
 
 # Conky
 mkdir -p /etc/skel/.config/autostart
-cp /vagrant/system/client/desktop-session/conky/conkyrc /etc/skel/.conkyrc
-cp /vagrant/system/client/desktop-session/conky/conky.desktop /etc/skel/.config/autostart/conky.desktop
+cp $GISLAB_ROOT/system/client/desktop-session/conky/conkyrc /etc/skel/.conkyrc
+cp $GISLAB_ROOT/system/client/desktop-session/conky/conky.desktop /etc/skel/.config/autostart/conky.desktop
 
 
 # add shared directories
@@ -135,22 +134,22 @@ ln -s /mnt/temporary /etc/skel/Temporary
 
 # Pidgin
 mkdir -p /etc/skel/.purple
-cp -a /vagrant/system/client/pidgin/*.xml /etc/skel/.purple
-#cp /vagrant/system/client/pidgin/pidgin.desktop /etc/skel/.config/autostart/pidgin.desktop
+cp -a $GISLAB_ROOT/system/client/pidgin/*.xml /etc/skel/.purple
+#cp $GISLAB_ROOT/system/client/pidgin/pidgin.desktop /etc/skel/.config/autostart/pidgin.desktop
 
 
 # PostgreSQL
-cp /vagrant/system/client/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
+cp $GISLAB_ROOT/system/client/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
 
 
 # QGIS
 mkdir -p /etc/skel/.config/QGIS
 mkdir -p /etc/skel/.qgis2
-cp /vagrant/system/client/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
+cp $GISLAB_ROOT/system/client/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
 
 if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
 	mkdir -p /etc/skel/bin
-	cp /vagrant/system/client/qgis/bin/gislab-dev-* /etc/skel/bin
+	cp $GISLAB_ROOT/system/client/qgis/bin/gislab-dev-* /etc/skel/bin
 	chmod 755 /etc/skel/bin/*
 fi
 
@@ -228,10 +227,10 @@ find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER_PASSWORD##/$GISLAB
 
 
 # run account hooks
-for hook in /vagrant/user/plugins/account/*.*; do
+for hook in $GISLAB_ROOT/user/plugins/account/*.*; do
 	gislab_print_info "Running account hook '$(basename $hook)'"
 	GISLAB_ACCOUNT_ACTION="add" GISLAB_USER=$GISLAB_USER $hook
-	echo "$(gislab_config_header)" >> /etc/gislab/account-hook-$(basename $hook).done
+	echo "$(gislab_config_header)" >> /var/lib/gislab/account-hook-$(basename $hook).done
 done
 
 gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"

@@ -3,10 +3,10 @@
 case "$MODE" in
     finalization)
 	cp -a $GISLAB_INSTALL_CLIENT_ROOT/ldm/themes/gislab $ROOT/usr/share/ldm/themes/
-	cp /vagrant/$GISLAB_LOGO $ROOT/usr/share/ldm/themes/gislab/logo.png
+	cp $GISLAB_ROOT/$GISLAB_LOGO $ROOT/usr/share/ldm/themes/gislab/logo.png
 
-	cp /vagrant/$GISLAB_WALLPAPER $ROOT/usr/share/xfce4/backdrops/gislab-wallpaper.png
+	cp $GISLAB_ROOT/$GISLAB_WALLPAPER $ROOT/usr/share/xfce4/backdrops/gislab-wallpaper.png
 
-	cp /vagrant/system/server/100-service-webgis/app/gislab-web/webgis/viewer/static/viewer/images/webgis.xpm $ROOT/usr/share/pixmaps/webgis.xpm
+	cp $GISLAB_ROOT/system/server/100-service-webgis/app/gislab-web/webgis/viewer/static/viewer/images/webgis.xpm $ROOT/usr/share/pixmaps/webgis.xpm
     ;;
 esac

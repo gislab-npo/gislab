@@ -1,4 +1,10 @@
-# AWS provider
+#
+### INSTALLATION DONE - AWS ###
+#
+
+
+# execute default script first
+source $GISLAB_INSTALL_CURRENT_ROOT/install.sh
 
 
 installation_summary="

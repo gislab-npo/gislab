@@ -2,8 +2,7 @@
 
 set -e
 
-
-source /vagrant/system/functions.sh
+source $GISLAB_ROOT/system/functions.sh
 
 # load configuration
 gislab_config

@@ -2,11 +2,10 @@
 
 set -e
 
-
 echo "This is a list of available GIS.lab administrator commands.
 To get detailed usage help run command with '-h' option.
 "
-for file in /vagrant/system/bin/gislab-*; do
+for file in $GISLAB_ROOT/system/bin/gislab-*; do
 	if [ $file != "$0" ]; then
 		echo -e "* $(basename $file)"
 	fi
