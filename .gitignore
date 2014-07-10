@@ -6,3 +6,5 @@ install.log
 config-user.cfg
 *.pyc
 http-boot/gislab-client-loader.iso
+user/plugins/
+user/id_*.pub
