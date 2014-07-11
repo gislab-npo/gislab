@@ -301,13 +301,28 @@ div.scale-control {
 	background: no-repeat;
 }
 
+.point-layer-icon-queryable {
+	background-image: url('../images/toolbar/point_blue.png')!important;
+	background: no-repeat;
+}
+
 .line-layer-icon {
 	background-image: url('../images/toolbar/line_gray.png')!important;
 	background: no-repeat;
 }
 
+.line-layer-icon-queryable {
+	background-image: url('../images/toolbar/line_blue.png')!important;
+	background: no-repeat;
+}
+
 .polygon-layer-icon {
 	background-image: url('../images/toolbar/polygon_gray.png')!important;
+	background: no-repeat;
+}
+
+.polygon-layer-icon-queryable {
+	background-image: url('../images/toolbar/polygon_blue.png')!important;
 	background: no-repeat;
 }
 

@@ -116,7 +116,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			checked: true,
 			leaf: !isGroup,
 			hidden: !isGroup && layer_config.hidden,
-			iconCls: this.layersIconClsMap[layer_config.geom_type],
+			iconCls: this.layersIconClsMap[layer_config.geom_type]+(layer_config.queryable? '-queryable' : ''),
 			allowDrop: isGroup,
 			expanded: true,
 			listeners: {
