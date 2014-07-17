@@ -89,6 +89,38 @@ div.scale-control {
 	padding: 6px 5px 2px 2px;
 }
 
+.measure-panel .x-panel-header {
+	background-image: url("../images/header-gray.gif");
+	line-height: normal;
+	border-top: 0px;
+	border-bottom: 0px;
+	border-left: 0px solid;
+	border-right: 1px solid;
+	border-color: #D0D0D0;
+	padding: 4px 1px 4px 1px;
+}
+
+.measure-panel .x-panel-header-text {
+	font-family: tahoma,arial,verdana,sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	color: #222222;
+}
+
+.x-panel-body label {
+	font-family: tahoma,arial,verdana,sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+}
+
+.measure-panel .x-panel-body {
+	background-color: #F0F0F0 !important;
+}
+
+.measure-panel form.x-panel-body {
+	margin: 12px 4px 8px 4px;
+}
+
 #layers-tree-panel.layers-panel .x-panel-header {
 	padding: 1px 1px 1px 2px;
 }
@@ -256,23 +288,23 @@ div.scale-control {
 	background-position-y: -18px !important;
 }
 
-.length-measure-icon {
+.measure-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
 	background: no-repeat;
-	background-position: -72px -36px !important;
-	background-position-x: -72px !important;
-	background-position-y: -36px !important;
+	background-position: -36px -18px !important;
+	background-position-x: -36px !important;
+	background-position-y: -18px !important;
 }
 
-.area-measure-icon {
+.draw-icon {
 	height: 18px !important;
 	width: 18px !important;
 	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
 	background: no-repeat;
-	background-position: -72px -18px !important;
-	background-position-x: -72px !important;
+	background-position: -54px -18px !important;
+	background-position-x: -54px !important;
 	background-position-y: -18px !important;
 }
 
@@ -326,8 +358,18 @@ div.scale-control {
 	background: no-repeat;
 }
 
-.draw-point-icon {
+.draw-point-icon, .measure-point-icon {
 	background-image: url('../images/toolbar/point_gray.png')!important;
+	background: no-repeat;
+}
+
+.draw-line-icon, .measure-line-icon {
+	background-image: url('../images/toolbar/line_gray.png')!important;
+	background: no-repeat;
+}
+
+.draw-polygon-icon, .measure-polygon-icon {
+	background-image: url('../images/toolbar/polygon_gray.png')!important;
 	background: no-repeat;
 }
 
@@ -335,22 +377,24 @@ div.scale-control {
 	background-image: url('../images/toolbar/point_red.png')!important;
 }
 
-.draw-line-icon {
-	background-image: url('../images/toolbar/line_gray.png')!important;
-	background: no-repeat;
-}
-
 .x-tab-strip-active .draw-line-icon {
 	background-image: url('../images/toolbar/line_red.png')!important;
 }
 
-.draw-polygon-icon {
-	background-image: url('../images/toolbar/polygon_gray.png')!important;
-	background: no-repeat;
-}
-
 .x-tab-strip-active .draw-polygon-icon {
 	background-image: url('../images/toolbar/polygon_red.png')!important;
+}
+
+.x-tab-strip-active .measure-point-icon {
+	background-image: url('../images/toolbar/point_orange.png')!important;
+}
+
+.x-tab-strip-active .measure-line-icon {
+	background-image: url('../images/toolbar/line_orange.png')!important;
+}
+
+.x-tab-strip-active .measure-polygon-icon {
+	background-image: url('../images/toolbar/polygon_orange.png')!important;
 }
 
 .logout-icon {

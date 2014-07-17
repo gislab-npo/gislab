@@ -35,6 +35,7 @@
 		<script type="text/javascript" src="{% static 'viewer/js/wms_layers_node.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/wms_layers_legend.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/featureinfo_panel.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer/js/measure_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/draw_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/control_display.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/link_list.js' %}"></script>
@@ -541,11 +542,6 @@
 				mappanel.getBottomToolbar().add(new Ext.Toolbar.TextItem({text: config.projection}));
 				mappanel.getBottomToolbar().add(' ', '-',' ', scale, ' ', '-', '');
 				mappanel.getBottomToolbar().add(coords);
-				var measurement_output = new Ext.Toolbar.TextItem({
-					id:'measurement-info',
-					text: ''
-				});
-				mappanel.getBottomToolbar().add(' ', '-', ' ', measurement_output);
 
 				var geojson_links = new WebGIS.Toolbar.LinkList({
 					id: 'geojson-links',
