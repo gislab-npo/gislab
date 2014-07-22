@@ -3,6 +3,7 @@ Ext.namespace('WebGIS');
 WebGIS.DrawAction = Ext.extend(Ext.Action, {
 	controls: null,
 	saveHandler: function(drawAction, title, features) {},
+	storagePrefix: '',
 
 	layers: null,
 	window: null,
@@ -13,6 +14,9 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 		if (config.hasOwnProperty('saveHandler')) {
 			this.saveHandler = config.saveHandler;
 		}
+		if (config.hasOwnProperty('storagePrefix')) {
+			this.storagePrefix = config.storagePrefix;
+		}
 		this.controls = config.controls;
 		this.controls[0].control.deactivate();
 		this.map = config.map;
@@ -22,6 +26,32 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 		});
 		this.layers = layers;
 		WebGIS.DrawAction.superclass.constructor.apply(this, arguments);
+	},
+
+	addRecordsToStorage: function(records) {
+		var record = records[0];
+		var encoded_record = [
+			record.data.time.getTime(),
+			record.data.title,
+			record.data.permalink,
+			record.data.download,
+			record.data.info].join(";")
+		var storage_key = this.storagePrefix+'drawing_history';
+		var history_data = localStorage.getItem(storage_key)? localStorage.getItem(storage_key)+'$'+encoded_record : encoded_record;
+		localStorage.setItem(storage_key, history_data);
+	},
+	loadRecordsFromStorage: function() {
+		var encoded_records = localStorage.getItem(this.storagePrefix+'drawing_history');
+		if (encoded_records) {
+			var history_data = [];
+			encoded_records = encoded_records.split('$');
+			Ext.each(encoded_records, function(encoded_record) {
+				var record_data = encoded_record.split(";");
+				record_data[0] = new Date(parseInt(record_data[0]));
+				history_data.push(record_data);
+			});
+			this.historyStore.loadData(history_data, true);
+		}
 	},
 
 	onFeatureSelected: function(evt) {
@@ -243,6 +273,12 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				{name: 'info', type: 'string'},
 			],
 		});
+		if (typeof(Storage) !== "undefined") {
+			this.loadRecordsFromStorage();
+			this.historyStore.on('add', function(store, records, index) {
+				store.drawAction.addRecordsToStorage(records);
+			});
+		}
 
 		function tooltip_renderer(val, meta, record, rowIndex, colIndex, store) {
 			var info = record.get('info');

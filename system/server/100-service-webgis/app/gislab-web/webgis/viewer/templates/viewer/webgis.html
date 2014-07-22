@@ -630,15 +630,23 @@
 
 				// startup message
 				{% if message %}
-				Ext.MessageBox.show({
-					title: '{% trans "Message" %}',
-					msg: '{{ message|escapejs }}',
-					minWidth: 300,
-					closable: false,
-					modal: true,
-					buttons: Ext.Msg.OK,
-				});
+					if (typeof(Storage) === 'undefined' || localStorage.getItem( '{{ project }}-notification_read') !== 'true') {
+						Ext.MessageBox.show({
+							title: '{% trans "Message" %}',
+							msg: '{{ message|escapejs }}',
+							minWidth: 300,
+							closable: false,
+							modal: true,
+							buttons: Ext.Msg.OK,
+							fn: function() {
+								if (!typeof(Storage) !== 'undefined') {
+									localStorage.setItem('{{ project }}-notification_read', 'true');
+								}
+							}
+						});
+					}
 				{% endif %}
+
 			}; // end of main function
 
 			Ext.QuickTips.init();
