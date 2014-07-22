@@ -99,7 +99,7 @@ div.scale-control {
 	padding: 4px 1px 4px 1px;
 }
 
-.measure-panel .x-panel-header-text {
+.measure-panel .x-panel-header-text, .theme-detail-panel .x-panel-header-text, .themes-panel .x-panel-header-text {
 	font-family: tahoma,arial,verdana,sans-serif;
 	font-size: 11px;
 	font-weight: normal;
@@ -324,6 +324,16 @@ div.scale-control {
 	background: no-repeat;
 	background-position: -54px -36px !important;
 	background-position-x: -54px !important;
+	background-position-y: -36px !important;
+}
+
+.themes-icon {
+	height: 18px !important;
+	width: 18px !important;
+	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
+	background: no-repeat;
+	background-position: -18px -36px !important;
+	background-position-x: -18px !important;
 	background-position-y: -36px !important;
 }
 
@@ -621,3 +631,33 @@ div.layer-info-panel {
 	background: no-repeat;
 }
 
+div.theme-layers {
+	background-color: #fff;
+	border: 1px solid #c1c1c1;
+	padding-top: 6px;
+	padding-bottom: 20px;
+	overflow-y: auto;
+}
+
+label.layer-group {
+	font-weight: bold !important;
+}
+
+.x-tool-expand-east {
+	background-position: 0 -165px;
+	margin: 6px 0px 0px 0px;
+}
+.x-tool-collapse-east {
+	background-position: 0 -180px;
+}
+
+.x-layout-collapsed-east {
+	background-color: #F0F0F0 !important;
+	border: none;
+	width: 15px;
+}
+
+.theme-detail-panel .x-panel-body {
+	background-color: #f0f0f0;
+	padding: 4px;
+}

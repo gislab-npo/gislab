@@ -37,6 +37,7 @@
 		<script type="text/javascript" src="{% static 'viewer/js/featureinfo_panel.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/measure_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/draw_action.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer/js/themes_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/control_display.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/link_list.js' %}"></script>
 		{% if google %}<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>{% endif %}
@@ -306,6 +307,10 @@
 
 				// Toolbar Actions
 
+				{% if themes %}
+				{% include "viewer/themes.js" %}
+				mappanel.getTopToolbar().add(' ', '-', ' ');
+				{% endif %}
 				{% include "viewer/actions/basic.js" %}
 
 				{% if project %}

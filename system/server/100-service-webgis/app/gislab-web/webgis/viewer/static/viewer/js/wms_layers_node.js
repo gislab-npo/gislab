@@ -229,5 +229,12 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		}
 		visit_node(this);
 		return param_parts.join(';');
+	},
+	setVisibleLayers: function(layernames) {
+		this.cascade(function(node) {
+			if (node.isLeaf()) {
+				node.getUI().toggleCheck(layernames.indexOf(node.attributes.text) != -1);
+			}
+		});
 	}
 });
