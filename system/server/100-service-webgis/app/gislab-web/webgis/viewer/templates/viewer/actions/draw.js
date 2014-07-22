@@ -76,7 +76,6 @@ action = new WebGIS.DrawAction({
 	enableToggle: true,
 	toggleGroup: 'tools',
 	tooltip: '{% trans "Draw on map" %}',
-	snapping: true,
 	toggleHandler: function(action, toggled) {
 		action.baseAction.toggleHandler(action, toggled);
 	},
@@ -111,7 +110,7 @@ action = new WebGIS.DrawAction({
 					var permalink = String.format('<a target="_blank" href="{0}">{1}</a>', Ext.get('permalink').dom.children[0].href, response.responseText);
 					var download_link = String.format('<a href="{0}">{1}</a>', Ext.urlAppend('{% url "storage:ball" %}', Ext.urlEncode({ID: response.responseText})), '{% trans "Download" %}');
 					var drawing_info = String.format('{% trans "Points" %}: {0}<br />{% trans "Lines" %}: {1}<br />{% trans "Polygons" %}: {2}', points_layer.features.length, lines_layer.features.length, polygons_layer.features.length);
-					var data = [[new Date(), title, permalink, download_link, drawing_info]]
+					var data = [[new Date(), title, permalink, download_link, drawing_info]];
 					this.historyStore.loadData(data, true);
 				}.bind(drawAction),
 				failure: function(response, opts) {

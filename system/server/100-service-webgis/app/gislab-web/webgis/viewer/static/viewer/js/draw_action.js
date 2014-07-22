@@ -1,9 +1,7 @@
 Ext.namespace('WebGIS');
 
 WebGIS.DrawAction = Ext.extend(Ext.Action, {
-	dialogTitle: '',
 	controls: null,
-	snapping: false,
 	saveHandler: function(drawAction, title, features) {},
 
 	layers: null,
@@ -12,14 +10,8 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 	modifyControl: null,
 
 	constructor: function(config) {
-		if (config.hasOwnProperty('dialogTitle')) {
-			this.dialogTitle = config.dialogTitle;
-		}
 		if (config.hasOwnProperty('saveHandler')) {
 			this.saveHandler = config.saveHandler;
-		}
-		if (config.hasOwnProperty('snapping')) {
-			this.snapping = config.snapping;
 		}
 		this.controls = config.controls;
 		this.controls[0].control.deactivate();
@@ -37,7 +29,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 		this.modifyControl.selectFeature(feature);
 	},
 	clearFeaturesSelection: function() {
-		var currentTab = this.window.get(0).getActiveTab();
+		var currentTab = this.window.drawPanel.getActiveTab();
 		currentTab.selModel.clearSelections();
 		if (this.modifyControl) {
 			var modifyFeature = this.modifyControl.feature;
@@ -62,14 +54,49 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 		this.modifyControl = new OpenLayers.Control.ModifyFeature(draw_control.layer, {
 			standalone: true,
 			vertexRenderIntent: 'modify',
-			mode: OpenLayers.Control.ModifyFeature.RESHAPE
+			mode: OpenLayers.Control.ModifyFeature.RESHAPE,
+			/*
+			beforeSelectFeature: function(feature) {
+				var grid = Ext.getCmp('drawing-window').drawPanel.activeTab;
+				grid.getSelectionModel().selectRecords([grid.store.getByFeature(feature)]);
+			},*/
+			handleKeypress: function(evt) {
+				var code = evt.keyCode;
+				// check for delete key
+				if(this.feature && OpenLayers.Util.indexOf(this.deleteCodes, code) != -1) {
+					var vertex = this.layer.getFeatureFromEvent(this.handlers.drag.evt);
+					if (evt.shiftKey && vertex &&
+						OpenLayers.Util.indexOf(this.vertices, vertex) != -1 &&
+						!this.handlers.drag.dragging && vertex.geometry.parent) {
+						// remove the vertex
+						vertex.geometry.parent.removeComponent(vertex.geometry);
+						this.layer.events.triggerEvent("vertexremoved", {
+							vertex: vertex.geometry,
+							feature: this.feature,
+							pixel: evt.xy
+						});
+						this.layer.drawFeature(this.feature, this.standalone ? undefined : 'select');
+						this.modified = true;
+						this.resetVertices();
+						this.setFeatureState();
+						this.onModification(this.feature);
+						this.layer.events.triggerEvent("featuremodified", {feature: this.feature});
+					} else if (!evt.shiftKey) {
+						var feature = this.feature;
+						var layer = feature.layer;
+						this.unselectFeature(feature);
+						layer.destroyFeatures(feature);
+					}
+				}
+			}
 		});
 		this.map.addControl(this.modifyControl);
 		this.modifyControl.activate();
 		this.modifyControl.layer.events.register("featureselected", this, this.onFeatureSelected);
 	},
 
-	enableSnapping: function(draw_control) {
+	enableSnapping: function() {
+		var draw_control = this.window.drawPanel.activeTab.control;
 		this.disableSnapping();
 		// configure the snapping agent
 		this.snapControl = new OpenLayers.Control.Snapping({
@@ -92,6 +119,10 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 	},
 
 	showDrawingToolbar: function() {
+		if (this.window) {
+			this.window.show();
+			return;
+		}
 		var features_editors = [];
 		Ext.each(this.controls, function(control) {
 			var store = new GeoExt.data.FeatureStore({
@@ -101,6 +132,25 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					{name: 'description', type: 'string'},
 				],
 			});
+			function measurement_tooltip_renderer(val, meta, record, rowIndex, colIndex, store) {
+				var info = '';
+				var feature = record.get('feature');
+				var mc = feature.layer.map.getControlsByClass('OpenLayers.Control.Measure')[0];
+				if (feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point') {
+					info = String.format('{0}: {1} {2}', gettext('Coordinates'), feature.geometry.x, feature.geometry.y);
+				} else if (feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.LineString') {
+					var length_data = mc.getBestLength(feature.geometry);
+					info = String.format('{0}: {1} {2}', gettext('Length'), length_data[0].toFixed(3), length_data[1]);
+				} else if (feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
+					var area_data = mc.getBestArea(feature.geometry);
+					var perimeter_data = mc.getBestLength(feature.geometry);
+					info = String.format('{0}: {1} {2}<sup>2</sup><br />{3}: {4} {5}',
+						gettext('Area'), area_data[0].toFixed(3), area_data[1],
+						gettext('Perimeter'), perimeter_data[0].toFixed(3), perimeter_data[1]);
+				}
+				meta.attr = String.format('ext:qtip="{0}"',  info);
+				return val;
+			};
 			var cm = new Ext.grid.ColumnModel({
 				defaults: {
 					sortable: false,
@@ -141,7 +191,8 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 								type: 'text',
 								autocomplete: 'off'
 							},
-						})
+						}),
+						renderer:  measurement_tooltip_renderer
 					}, {
 						header: gettext('Description'),
 						dataIndex: 'description',
@@ -155,7 +206,8 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 								type: 'text',
 								autocomplete: 'off'
 							},
-						})
+						}),
+						renderer:  measurement_tooltip_renderer
 					}
 				]
 			});
@@ -177,26 +229,21 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					multiple: false,
 					layerFromStore: true
 				}),
-				listeners: {
-					'removed': function (grid, ownerCt) {
-						grid.selModel.unbind();
-					}
-				},
 			});
 			features_editors.push(features_editor);
 		}, this);
 
-		if (!this.historyStore) {
-			this.historyStore = new Ext.data.ArrayStore({
-				fields: [
-					{name: 'time', type: 'date'},
-					{name: 'title', type: 'string'},
-					{name: 'permalink', type: 'string'},
-					{name: 'download', type: 'string'},
-					{name: 'info', type: 'string'},
-				]
-			});
-		}
+		this.historyStore = new Ext.data.ArrayStore({
+			drawAction: this,
+			fields: [
+				{name: 'time', type: 'date'},
+				{name: 'title', type: 'string'},
+				{name: 'permalink', type: 'string'},
+				{name: 'download', type: 'string'},
+				{name: 'info', type: 'string'},
+			],
+		});
+
 		function tooltip_renderer(val, meta, record, rowIndex, colIndex, store) {
 			var info = record.get('info');
 			meta.attr = String.format('ext:qtip="{0}"',  info);
@@ -257,13 +304,12 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 		this.window = new Ext.Window({
 			id: 'drawing-window',
 			header: false,
-			//title: this.dialogTitle,
 			closable: false,
 			minWidth: 300,
 			width: 400,
 			height: 400,
-			layout: 'fit',
-			tbar: {
+			layout: 'border',
+			xtbar: {
 				xtype: 'toolbar',
 				dock: 'top',
 				layout: {
@@ -287,14 +333,42 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				]
 			},
 			bbar: [
-				'->', {
+				new Ext.Action({
+					ref: '/selectMode',
+					iconCls: 'select-mode-icon',
+					pressed: false,
+					enableToggle: true,
+					scope: this,
+					toggleHandler: function(action, toggled) {
+						var draw_control = this.window.drawPanel.activeTab.control;
+						if (toggled) {
+							draw_control.deactivate();
+						} else {
+							draw_control.activate();
+						}
+					}
+				}), ' ', new Ext.Action({
+					ref: '/snapAction',
+					iconCls: 'snapping-icon',
+					enableToggle: true,
+					pressed: false,
+					scope: this,
+					toggleHandler: function(action, toggled) {
+						if (toggled) {
+							this.enableSnapping();
+						} else {
+							this.disableSnapping();
+						}
+					}
+				}), '->', {
 					xtype: 'tbbutton',
+					ref: '/deleteSelected',
 					text: gettext('Delete selected'),
 					tooltip: gettext('Delete selected'),
 					hideMode: 'visibility',
 					drawAction: this,
 					handler: function() {
-						var features_editor = this.drawAction.window.get(0).activeTab;
+						var features_editor = this.drawAction.window.drawPanel.activeTab;
 						var layer = features_editor.getStore().layer;
 						// copy selected features
 						var selected_features = layer.selectedFeatures.slice(0);
@@ -305,41 +379,102 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 						// update row numbers
 						features_editor.getView().refresh();
 					}
-				}, '-', {
+				}, ' ', {
 					xtype: 'tbbutton',
 					text: gettext('Delete all'),
 					tooltip: gettext('Delete all'),
 					hideMode: 'visibility',
 					drawAction: this,
 					handler: function() {
-						var features_editor = this.drawAction.window.get(0).activeTab;
+						var features_editor = this.drawAction.window.drawPanel.activeTab;
 						features_editor.getStore().layer.destroyFeatures();
 					}
-				}, '-',
-				new Ext.Action({
+				}, ' ', new Ext.Action({
 					cls: 'x-btn-text',
 					text: gettext('Save'),
 					tooltip: gettext('Save drawing'),
 					hideMode: 'visibility',
 					drawAction: this,
 					handler: function(save_action) {
-						var title = this.drawAction.window.drawingTitle.getValue();
-						var features = [];
-						var currentTab = this.drawAction.window.get(0).getActiveTab();
-						this.drawAction.clearFeaturesSelection();
-						Ext.each(this.drawAction.layers, function(layer) {
-							features = features.concat(layer.features);
+						var save_window = new Ext.Window({
+							id: 'drawing-save-window',
+							header: false,
+							closable: false,
+							width: 450,
+							height: 110,
+							layout: 'fit',
+							buttonAlign: 'right',
+							scope: save_action,
+							items: [{
+									xtype: 'form',
+									region: 'center',
+									cls: 'save-drawings-form',
+									labelWidth: 80,
+									frame: true,
+									defaults: {
+										anchor: "100%",
+									},
+									defaultType: 'textfield',
+									items: [{
+											fieldLabel: gettext('Title'),
+											name: 'title',
+											ref: '/titleField'
+									}]
+								}
+							],
+							buttons: [{
+									text: gettext('Cancel'),
+									scope: save_action,
+									handler: function(button, evt) {
+										var window = button.ownerCt.ownerCt;
+										window.close();
+									}
+								}, {
+									text: gettext('Save'),
+									scope: save_action,
+									handler: function(button, evt) {
+										var window = button.ownerCt.ownerCt;
+										var title = window.titleField.getValue();
+										var features = [];
+										var currentTab = this.drawAction.window.drawPanel.getActiveTab();
+										this.drawAction.clearFeaturesSelection();
+										Ext.each(this.drawAction.layers, function(layer) {
+											features = features.concat(layer.features);
+										});
+										this.drawAction.saveHandler(this.drawAction, title, features);
+										window.close();
+									}
+							}]
 						});
-						this.drawAction.saveHandler(this.drawAction, title, features);
+						save_window.show();
 					}
 				})
 			],
 			items: [
 				{
 					xtype: 'tabpanel',
+					ref: 'drawPanel',
 					activeTab: 0,
+					region: 'center',
 					items: features_editors.concat(history_grid),
 					drawAction: this,
+					initDrawTool: function() {
+						var draw_control = this.drawAction.window.drawPanel.activeTab.control;
+						draw_control.setMap(this.drawAction.map);
+						if (this.drawAction.window.selectMode.pressed) {
+							draw_control.deactivate();
+						} else {
+							draw_control.activate();
+						}
+						this.drawAction.disableSnapping();
+						if (this.drawAction.window.snapAction.pressed) {
+							this.drawAction.enableSnapping();
+						}
+						this.drawAction.enableFeatureModify(draw_control);
+						this.drawAction.window.getBottomToolbar().items.each(function(item) {
+							item.show();
+						});
+					},
 					listeners: {
 						beforetabchange: function(tabPanel, newTab, currentTab) {
 							if (currentTab && currentTab.control) {
@@ -349,19 +484,8 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 						},
 						tabchange: function(tabPanel, tab) {
 							if (tab && tab.control) {
-								tab.control.setMap(this.drawAction.map);
-								tab.control.activate();
-								if (this.drawAction.snapping) {
-									this.drawAction.disableSnapping();
-									this.drawAction.enableSnapping(tab.control);
-								}
-								this.drawAction.enableFeatureModify(tab.control);
-								this.drawAction.window.drawingTitle.setDisabled(false);
-								this.drawAction.window.getBottomToolbar().items.each(function(item) {
-									item.show();
-								});
+								tabPanel.initDrawTool();
 							} else { // history tab
-								this.drawAction.window.drawingTitle.setDisabled(true);
 								this.drawAction.window.getBottomToolbar().items.each(function(item) {
 									item.hide();
 								});
@@ -372,11 +496,14 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			],
 			listeners: {
 				beforehide: function(window) {
-					var activeTab = window.get(0).getActiveTab();
+					var activeTab = window.drawPanel.getActiveTab();
 					if (activeTab && activeTab.control) {
 						activeTab.control.deactivate();
 						activeTab.selModel.clearSelections();
 					}
+				},
+				show: function(window) {
+					window.drawPanel.initDrawTool();
 				}
 			}
 		});
@@ -388,14 +515,10 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 		if (toggled) {
 			this.showDrawingToolbar();
 		} else {
-			if (this.snapping) {
-				this.disableSnapping();
-			}
 			this.clearFeatureModifyControl();
 			if (this.window) {
-				this.window.destroy();
-				this.window = null;
+				this.window.hide();
 			}
 		}
-	},
+	}
 });
