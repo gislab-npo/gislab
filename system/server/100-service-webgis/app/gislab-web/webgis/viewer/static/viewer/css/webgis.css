@@ -6,6 +6,35 @@
 	width: 1in;
 }
 
+button.layer-info {
+	position: absolute;
+	cursor: pointer;
+	background-color: rgba(0, 0, 0, 0);
+	background-image: url('../images/glyphicons-halflings.png') !important;
+	background: no-repeat;
+	background-position: -119px -95px !important;
+	background-position-x: -119px !important;
+	background-position-y: -95px !important;
+	border: 0 none;
+	right: 1px;
+	width: 16px;
+	height: 16px;
+	margin-top: 2px;
+	display: none;
+}
+
+div.x-tree-node-el {
+	cursor: default !important;
+}
+
+div.x-tree-node-over button.layer-info {
+	display: block;
+}
+
+div.x-tree-node-leaf {
+	clear: right;
+}
+
 button::-moz-focus-inner {
 	border: 0;
 }

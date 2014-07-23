@@ -120,6 +120,14 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			allowDrop: isGroup,
 			expanded: true,
 			listeners: {
+				beforechildrenrendered: function(node) {
+					if (node.isLeaf()) {
+						var info_button = document.createElement('button');
+						info_button.setAttribute('class', 'layer-info');
+						info_button.setAttribute('id', 'layerinfo-'+node.attributes.config.name);
+						node.getUI().getEl().children[0].insertBefore(info_button, node.getUI().getEl().children[0].children[0]);
+					}
+				},
 				checkchange: this.onNodeCheckChanged,
 				move: function(tree, node, oldParent, newParent, index) {
 					if (node.attributes.checked) {
@@ -140,6 +148,41 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 
 						this.root.checkchangeParamsStack.push(0);
 						node.fireEvent('checkchange', node, true);
+					}
+				},
+				click: function(node, evt) {
+					console.log(evt.getTarget().className);
+					if (evt.getTarget().className == "layer-info") {
+						if (node.root.layerInfoWindow) {
+							node.root.layerInfoWindow.destroy();
+						}
+						var layer_info = node.attributes.config;
+						var window = new Ext.Window({
+							id: 'layerinfo-window',
+							header: true,
+							title: layer_info.name,
+							closable: true,
+							resizable: false,
+							layout: 'fit',
+							items: [new Ext.Panel({
+									autoScroll: true,
+									html: '<div class="x-panel-body-text layer-info-panel"> \
+										<p><label>'+gettext('Identification')+': </label>'+(layer_info.queryable? gettext("Yes") : gettext("No"))+'</p> \
+										<p><label>'+gettext('Minimal scale')+': </label>'+(layer_info.visibility_scale_min? layer_info.visibility_scale_min : Math.round(node.root.layer.minScale))+'</p> \
+										<p><label>'+gettext('Maximal scale')+': </label>'+(layer_info.visibility_scale_max? layer_info.visibility_scale_max : Math.round(node.root.layer.maxScale))+'</p> \
+										<p><label>'+gettext('Labels')+': </label>'+(layer_info.labels? gettext("Yes") : gettext("No"))+'</p> \
+										<p><label>'+gettext('Title')+': </label>'+layer_info.metadata.title+'</p> \
+										<p><label>'+gettext('Abstract')+': </label>'+layer_info.metadata.abstract+'</p> \
+										<p><label>'+gettext('Keyword list')+': </label>'+layer_info.metadata.keyword_list+'</p> \
+										</div>'
+								})
+							]
+						});
+						window.show();
+						var node_elem = Ext.get(node.getUI().getEl());
+						var y = node_elem.getOffsetsTo(Ext.get(Ext.getCmp('layers-tree-panel').getEl()))[1];
+						window.alignTo(Ext.getCmp('layers-tree-panel').getId(), 'tl-tr', [7, y]);
+						node.root.layerInfoWindow = window;
 					}
 				}
 			}
