@@ -331,7 +331,6 @@
 				{% endif %}
 
 				var overlays_root = new WebGIS.WmsLayersNode({
-					id: 'overlays-root',
 					text: 'Root',
 					expandable: false,
 					cls: 'overlays-root',
@@ -446,6 +445,7 @@
 					},
 					layout: 'vbox',
 					collapsible: true,
+					animCollapse: false,
 					layoutConfig: {
 						align: 'stretch',
 						pack: 'start'

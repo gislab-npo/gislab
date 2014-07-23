@@ -155,6 +155,6 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 		});
 
 		this.window.show();
-		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tl-bl', [10, 10]);
+		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tl-bl', [5, 5]);
 	}
 });

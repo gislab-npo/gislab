@@ -544,7 +544,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			}
 		});
 		this.window.show();
-		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tr-br', [-10, 4]);
+		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tr-br', [-5, 5]);
 	},
 
 	toggleHandler: function(action, toggled) {

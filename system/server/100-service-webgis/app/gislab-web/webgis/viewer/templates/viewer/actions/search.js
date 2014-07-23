@@ -549,7 +549,7 @@ action = new Ext.Action({
 	toggleHandler: function(button, toggled) {
 		if (toggled) {
 			searchWindow.show();
-			searchWindow.alignTo(mappanel.getTopToolbar().getId(), 'tl-bl', [70, 4]);
+			searchWindow.alignTo(mappanel.getTopToolbar().getId(), 'tl-bl', [70, 5]);
 		} else {
 			searchWindow.hide();
 		}

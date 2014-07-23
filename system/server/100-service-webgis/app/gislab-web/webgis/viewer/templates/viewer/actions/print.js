@@ -224,13 +224,11 @@ var printWindow = new Ext.Window({
 			}
 		}
 	],
-	bbar: ['->', '-',
-		new Ext.Action({
+	bbar: ['->', new Ext.Action({
 			ref: '/print',
 			text: '{% trans "Print" %}',
 			tooltip: '{% trans "Print" %}',
 			tooltipType: 'qtip',
-			flex: 1,
 			iconCls: '',
 			handler: function(action) {
 				var print_window = Ext.getCmp('print-toolbar-window');
@@ -280,7 +278,7 @@ action = new Ext.Action({
 	toggleHandler: function(button, toggled) {
 		if (toggled) {
 			printWindow.show();
-			printWindow.alignTo(mappanel.getTopToolbar().getId(), 'tl-bl', [70, 4]);
+			printWindow.alignTo(mappanel.getTopToolbar().getId(), 'tl-bl', [70, 5]);
 		} else {
 			printWindow.hide();
 		}

@@ -134,10 +134,6 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 						defaults: {
 							anchor: "100%",
 						},
-						layoutConfig: {
-							align: 'center',
-							pack: 'center'
-						},
 						defaultType: 'textfield',
 						items: [{
 								fieldLabel: gettext('Coordinate 1'),
@@ -457,7 +453,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 			}
 		});
 		this.window.show();
-		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tr-br', [-10, 4]);
+		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tr-br', [-5, 5]);
 	},
 
 	toggleHandler: function(action, toggled) {

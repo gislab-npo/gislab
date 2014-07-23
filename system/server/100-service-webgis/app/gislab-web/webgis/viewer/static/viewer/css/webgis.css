@@ -690,3 +690,16 @@ label.layer-group {
 	background-color: #f0f0f0;
 	padding: 4px;
 }
+
+.x-toolbar .x-form-checkbox {
+	margin-top: 0px;
+}
+
+button.x-btn-text {
+	padding-left: 3px !important;
+	padding-right: 3px !important;
+}
+
+table.x-btn-noicon {
+	min-width: 70px;
+}
