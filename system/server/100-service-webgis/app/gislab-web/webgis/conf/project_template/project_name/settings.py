@@ -24,8 +24,8 @@ TEMPLATE_DEBUG = False
 
 
 ### WebGIS SETTINGS ###
-WEBGIS_PROJECT_ROOT = '/storage/share/'
-WEBGIS_OWS_URL = 'http://ms.gis.lab:8000/cgi-bin/qgis_mapserv.fcgi'
+WEBGIS_PROJECT_ROOT = '/mnt/share/'
+WEBGIS_OWS_URL = 'http://ms.gis.lab:90/cgi-bin/qgis_mapserv.fcgi'
 WEBGIS_GUEST_USERNAME = 'guest'
 
 # Dictionary of <MIME Type>: <File extension> pairs

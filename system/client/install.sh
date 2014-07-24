@@ -72,6 +72,7 @@ gunzip $INITRD.gz
 cpio -id < $(ls)
 cp -vf $GISLAB_INSTALL_CLIENT_ROOT/udhcp/udhcp scripts/init-premount/
 sed -i "s/###GISLAB_SERVER_IP_REGEX###/$GISLAB_SERVER_IP_REGEX/" scripts/init-premount/udhcp
+sed -i "s/###GISLAB_UNIQUE_ID###/$GISLAB_UNIQUE_ID/" scripts/init-premount/udhcp
 rm -vf $INITRD
 find . | cpio --create --format='newc' > /var/tmp/$INITRD
 gzip /var/tmp/$INITRD

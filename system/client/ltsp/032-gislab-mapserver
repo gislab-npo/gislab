@@ -1,0 +1,11 @@
+case "$MODE" in
+	finalization)
+		mkdir -p $ROOT/var/www/default
+
+		cp /vagrant/system/client/mapserver/ports.conf $ROOT/etc/apache2/ports.conf
+		cp /vagrant/system/client/mapserver/site-default $ROOT/etc/apache2/sites-available/default
+
+		chroot $ROOT a2enmod rewrite
+		chroot $ROOT a2enmod expires
+	;;
+esac

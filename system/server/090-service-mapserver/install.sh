@@ -3,8 +3,8 @@
 #
 
 # Logging: 
-#   production: /var/log/apache2/mapserver-access.log /var/log/apache2/mapserver-error.log
-#   debug:      /var/log/apache2/mapserver-access.log /var/log/apache2/mapserver-error.log
+#   production: /var/log/apache2/access.log /var/log/apache2/error.log
+#   debug:      /var/log/apache2/access.log /var/log/apache2/error.log
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="
@@ -15,14 +15,33 @@ GISLAB_SERVER_INSTALL_PACKAGES="
 "
 apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
 
+sed -i '/^<\/VirtualHost>/d' /etc/apache2/sites-available/default
 
-# mapserver virtualhost
-cp $GISLAB_INSTALL_CURRENT_ROOT/conf/apache/site-mapserver /etc/apache2/sites-available/mapserver
-gislab_config_header_to_file /etc/apache2/sites-available/mapserver
+cat << EOL >> /etc/apache2/sites-available/default
+
+	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+	<Directory "/usr/lib/cgi-bin">
+		AllowOverride All
+		Options -Indexes +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+
+		<files "qgis_mapserv.fcgi">
+			RewriteEngine On
+			RewriteCond %{QUERY_STRING} ^(.*)map=(.*)(.*) [NC]
+			RewriteRule ^(.*)\$ \$1?%1map=/mnt/share/%2%3 [DPI]
+		</files>
+	</Directory>
+
+#	RewriteLog ${APACHE_LOG_DIR}/error.log
+#	RewriteLogLevel 3
+</VirtualHost>
+EOL
+
+gislab_config_header_to_file /etc/apache2/sites-available/default
 
 a2enmod rewrite
 a2enmod expires
-a2ensite mapserver
 service apache2 reload
 
 
