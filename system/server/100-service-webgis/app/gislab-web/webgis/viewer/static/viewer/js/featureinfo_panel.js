@@ -143,12 +143,17 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 						}, {
 							tooltip : gettext('Export to drawings'),
 							getClass: function(v, meta, rec) {
-								return 'export-feature';
+								var layer_name = this.get(0).activeTab.layer_name;
+								return this.layersMetadata[layer_name].export_to_drawings? 'export-feature' : 'export-feature-disabled';
 							},
 							handler: function(grid, rowIndex, colIndex) {
+								var layer_name = grid.layer_name;
+								if (!this.layersMetadata[layer_name].export_to_drawings) {
+									// do not allow export from this layer
+									return;
+								}
 								grid.getSelectionModel().selectRow(rowIndex);
 								var feature = grid.getStore().getAt(rowIndex).get('feature');
-								var layer_name = feature.fid.substring(0, feature.fid.lastIndexOf("."));
 
 								var feature_pk = null;
 								if (this.layersMetadata[layer_name]) {
@@ -194,6 +199,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 				});
 				var grid_panel = new Ext.grid.GridPanel({
 					title: layer_name,
+					layer_name: layer_name,
 					autoDestroy: true,
 					store: store,
 					autoExpandColumn: fields[fields.length-1].name,
