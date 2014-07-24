@@ -703,3 +703,11 @@ button.x-btn-text {
 table.x-btn-noicon {
 	min-width: 70px;
 }
+
+.theme-detail-panel .x-tool-toggle, #themes-window .x-layout-cmini-east {
+	display: none !important;
+}
+
+.details-expanded .x-tool-right {
+	background-position: 0 -180px;
+}

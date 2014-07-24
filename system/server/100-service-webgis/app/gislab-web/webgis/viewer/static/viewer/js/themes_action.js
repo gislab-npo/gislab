@@ -12,7 +12,7 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 			header: false,
 			closable: false,
 			resizable: false,
-			width: 280,
+			width: 260,
 			height: 450,
 			layout: 'border',
 			baseAction: this,
@@ -20,12 +20,14 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 				{
 					xtype: 'panel',
 					region: 'east',
+					ref: 'themeDetailsPanel',
 					cls: 'theme-detail-panel',
 					width: 330,
 					title: gettext('Theme details'),
 					collapsible: true,
 					collapsed: true,
 					animCollapse: false,
+					collapseMode: 'mini',
 					floatable: false,
 					layout: {
 						type: 'vbox',
@@ -46,7 +48,7 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 							height: 10
 						}, {
 							xtype: 'label',
-							text: gettext('Visible layers'),
+							text: gettext('Layers'),
 						}, {
 							xtype: 'box',
 							id: 'theme-visible-layers',
@@ -59,11 +61,11 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 					listeners: {
 						beforecollapse: function(panel) {
 							var window = panel.ownerCt;
-							window.setSize(280, window.height);
+							window.setSize(260, window.height);
 						},
 						beforeexpand: function(panel) {
 							var window = panel.ownerCt;
-							window.setSize(585, window.height);
+							window.setSize(590, window.height);
 						}
 					},
 				}, {
@@ -72,10 +74,23 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 					title: gettext('Themes'),
 					region: 'center',
 					cls: 'themes-panel',
+					tools: [{
+						id: 'right',
+						scope: this,
+						handler: function(event, toolEl, panel, tc) {
+							var detailsPanel = panel.ownerCt.themeDetailsPanel;
+							detailsPanel.toggleCollapse();
+							if (!detailsPanel.collapsed) {
+								panel.addClass('details-expanded');
+							} else {
+								panel.removeClass('details-expanded');
+							}
+						}
+					}],
 					bbar: ['->',
 						{
 							xtype: 'tbbutton',
-							text: gettext('Set'),
+							text: gettext('Load'),
 							width: 80,
 							handler: function(button) {
 								var window = button.ownerCt.ownerCt.ownerCt;
