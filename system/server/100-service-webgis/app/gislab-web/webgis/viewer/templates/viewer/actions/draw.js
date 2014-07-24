@@ -74,7 +74,7 @@ action = new WebGIS.DrawAction({
 	cls: 'x-btn-icon',
 	iconCls: 'draw-icon',
 	enableToggle: true,
-	toggleGroup: 'tools',
+	toggleGroup: 'measure-draw',
 	tooltip: '{% trans "Draw on map" %}',
 	storagePrefix: '{{ project }}-',
 	toggleHandler: function(action, toggled) {
@@ -164,11 +164,11 @@ action = new WebGIS.DrawAction({
 				converted_features = [f];
 			}
 			Ext.each(converted_features, function(f) {
-				if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point')
+				if (f.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point')
 					points.push(f);
-				if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.LineString')
+				if (f.geometry.CLASS_NAME === 'OpenLayers.Geometry.LineString')
 					lines.push(f);
-				if (f.geometry.CLASS_NAME == 'OpenLayers.Geometry.Polygon')
+				if (f.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon')
 					polygons.push(f);
 			});
 		});

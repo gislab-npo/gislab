@@ -1,5 +1,10 @@
 Ext.namespace('WebGIS');
 
+// prevent automatic scrolling to top
+Ext.override(Ext.grid.GridView, {
+	scrollToTop: Ext.emptyFn
+});
+
 WebGIS.DrawAction = Ext.extend(Ext.Action, {
 	controls: null,
 	saveHandler: function(drawAction, title, features) {},
@@ -157,10 +162,19 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 		Ext.each(this.controls, function(control) {
 			var store = new GeoExt.data.FeatureStore({
 				layer: control.control.layer,
+				drawAction: this,
 				fields: [
 					{name: 'title', type: 'string'},
 					{name: 'description', type: 'string'},
 				],
+				listeners: {
+					load: function(store, records, options) {
+						// scroll to last item
+						if (this.drawAction.window && this.getCount() > 5) {
+							this.drawAction.window.drawPanel.activeTab.getView().focusRow(this.getCount()-1);
+						}
+					}
+				}
 			});
 			function measurement_tooltip_renderer(val, meta, record, rowIndex, colIndex, store) {
 				var info = '';

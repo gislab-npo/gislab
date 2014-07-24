@@ -169,7 +169,17 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 								feature.attributes.title = String.format('{0} - #{1}', layer_name, feature_pk);
 								var description_format = gettext('Copy of feature #%(pk)s from layer %(layer)s');
 								feature.attributes.description = interpolate(description_format, {pk: feature_pk, layer: layer_name}, true);
-								Ext.getCmp('draw-action').importFeatures([feature], true, true);
+								var draw_action = Ext.getCmp('draw-action');
+								draw_action.importFeatures([feature], true, true);
+								draw_action.toggle(true);
+								var draw_tab = 0;
+								var geom_type = feature.geometry.CLASS_NAME.replace('Multi', '');
+								if (geom_type === 'OpenLayers.Geometry.LineString') {
+									draw_tab = 1;
+								} else if (geom_type === 'OpenLayers.Geometry.Polygon') {
+									draw_tab = 2;
+								}
+								draw_action.baseAction.window.drawPanel.setActiveTab(draw_tab);
 							}
 						}]
 					});

@@ -41,7 +41,7 @@ mappanel.getTopToolbar().add(new WebGIS.MeasureAction({
 	iconCls: 'measure-icon',
 	tooltip: '{% trans "Measure point coordinates, length or area" %}',
 	enableToggle: true,
-	toggleGroup: 'tools',
+	toggleGroup: 'measure-draw',
 	toggleHandler: function(action, toggled) {
 		action.baseAction.toggleHandler(action, toggled);
 	}
