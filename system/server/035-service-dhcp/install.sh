@@ -33,7 +33,7 @@ class "gislab-clients" {
     match if option nis-domain = "$GISLAB_UNIQUE_ID-client";
 }
 
-class "non-gislab-clients" {
+class "third-party-clients" {
     match if option nis-domain != "$GISLAB_UNIQUE_ID-client";
 }
 
@@ -42,7 +42,7 @@ subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
 
     pool {
         allow members of "gislab-clients";
-        deny members of "non-gislab-clients";
+        deny members of "third-party-clients";
         allow known-clients;
         $GISLAB_UNKNOWN_MAC_POLICY unknown clients;
         range $GISLAB_NETWORK.50 $GISLAB_NETWORK.149;
@@ -62,7 +62,7 @@ subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
     }
 
     pool {
-        allow members of "non-gislab-clients";
+        allow members of "third-party-clients";
         deny members of "gislab-clients";
         allow known-clients;
         $GISLAB_UNKNOWN_MAC_POLICY unknown clients;
