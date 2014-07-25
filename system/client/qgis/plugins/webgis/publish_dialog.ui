@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>801</width>
-    <height>748</height>
+    <width>748</width>
+    <height>615</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -27,6 +27,9 @@
   </property>
   <property name="modal">
    <bool>true</bool>
+  </property>
+  <property name="options">
+   <set>QWizard::NoBackButtonOnLastPage|QWizard::NoDefaultButton</set>
   </property>
   <widget class="QWizardPage" name="wizard_page1">
    <property name="styleSheet">
@@ -299,9 +302,9 @@ QGroupBox::title {
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-113</y>
-             <width>728</width>
-             <height>546</height>
+             <y>-120</y>
+             <width>675</width>
+             <height>528</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -461,32 +464,33 @@ QGroupBox::title {
                <string>Authentication</string>
               </property>
               <layout class="QFormLayout" name="formLayout_3">
+               <property name="fieldGrowthPolicy">
+                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+               </property>
                <item row="0" column="0">
-                <widget class="QLabel" name="label_authentication_required">
+                <widget class="QLabel" name="label_authentication">
                  <property name="text">
-                  <string>Require authentication</string>
+                  <string>Authentication</string>
                  </property>
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QCheckBox" name="authentication_required">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label">
-                 <property name="text">
-                  <string>Require superuser</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QCheckBox" name="superuser_required">
-                 <property name="text">
-                  <string/>
-                 </property>
+                <widget class="QComboBox" name="authentication">
+                 <item>
+                  <property name="text">
+                   <string>All (including guest)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>All authenticated</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Only project owner</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>
@@ -838,14 +842,40 @@ QGroupBox::title {
       </layout>
      </widget>
     </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="wizard_page4">
+   <layout class="QVBoxLayout" name="verticalLayout_11">
     <item>
-     <widget class="QCheckBox" name="open_in_browser">
-      <property name="text">
-       <string>Open in web browser</string>
+     <widget class="QGroupBox" name="groupBox_7">
+      <property name="styleSheet">
+       <string notr="true">QGroupBox { 
+    border: 1px solid gray; 
+    border-radius: 5px;
+    margin: 10 0px;
+    text-align: top;
+    padding: 8 0 2 0;
+ }
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 1 5;
+}</string>
       </property>
-      <property name="checked">
-       <bool>true</bool>
+      <property name="title">
+       <string/>
       </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QWebView" name="confirmation_info">
+         <property name="url">
+          <url>
+           <string>about:blank</string>
+          </url>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>

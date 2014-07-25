@@ -32,6 +32,31 @@ GISLAB_VERSION_FILE = "/etc/gislab_version"
 MSG_ERROR = "Error"
 MSG_WARNING = "Warning"
 
+
+CSS_STYLE = u"""<style type="text/css">
+	body {
+		background-color: #DDDDDD;
+	}
+	h3 {
+		margin-bottom: 4px;
+		margin-top: 6px;
+		text-decoration: underline;
+	}
+	h4 {
+		margin-bottom: 1px;
+		margin-top: 2px;
+	}
+	div {
+		margin-left: 10px;
+	}
+	ul {
+		margin-top: 0px;
+	}
+	label {
+		font-weight: bold;
+	}
+</style>"""
+
 class Node(object):
 	"""Tree node element for holding information about layers organization and easier manipulation."""
 	name = None
@@ -126,6 +151,9 @@ GOOGLE_LAYERS = (
 	{'name': 'GSATELLITE', 'type': 'google', 'title': 'Google Satellite', 'resolutions': google_resolutions, 'extent': google_extent},
 	{'name': 'GTERRAIN', 'type': 'google', 'title': 'Google Terrain', 'resolutions': google_resolutions, 'extent': google_extent},
 )
+
+
+AUTHENTICATION_OPTIONS = ('all', 'authenticated', 'owner')
 
 class WebGisPlugin:
 
@@ -378,15 +406,8 @@ class WebGisPlugin:
 				raise TypeError
 			json.dump(self.metadata, f, indent=2, default=decimal_default)
 
-		if self.run_in_gislab:
-			if self.dialog.open_in_browser.isChecked():
-				get_params = [('PROJECT', self._get_publish_project_name())]
-				drawings = self.dialog.drawings.text()
-				if drawings:
-					get_params.append(('DRAWINGS', drawings.replace(" ", "")))
-
-				link = '{0}?{1}'.format(GISLAB_WEB_URL, urlencode(get_params))
-				subprocess.Popen([r'firefox', '-new-tab', link])
+		self.generate_confirmation_page()
+		return True
 
 	def generate_project_metadata(self):
 		"""Generated project's metadata (dictionary)."""
@@ -401,10 +422,7 @@ class WebGisPlugin:
 			'contact_person': self.project.readEntry("WMSContactPerson", "/")[0],
 			'contact_organization': self.project.readEntry("WMSContactOrganization", "/")[0],
 			'contact_mail': self.project.readEntry("WMSContactMail", "/")[0],
-			'authentication': {
-				'allow_anonymous': not dialog.authentication_required.isChecked() and not dialog.superuser_required.isChecked(),
-				'require_superuser': dialog.superuser_required.isChecked()
-			},
+			'authentication': AUTHENTICATION_OPTIONS[dialog.authentication.currentIndex()],
 			'use_mapcache': dialog.use_mapcache.isChecked(),
 			'publish_date_unix': int(time.time()),
 			'publish_date': time.ctime(),
@@ -725,18 +743,11 @@ class WebGisPlugin:
 
 		metadata = self.metadata
 		message = metadata.get('message')
-		if metadata['authentication']['allow_anonymous']:
-			authentication = 'Public'
-		elif metadata['authentication']['require_superuser']:
-			authentication = 'Require superuser'
-		else:
-			authentication = 'Require authentication'
 		data = {
-			'WEB_URL': '{0}?PROJECT={1}'.format(GISLAB_WEB_URL, self._get_publish_project_name()) if self.run_in_gislab else '',
 			'DEFAULT_BASE_LAYER': self.dialog.default_baselayer.currentText(),
 			'SCALES': get_scales_from_resolutions(metadata['tile_resolutions'], self._map_units()),
 			'PROJECTION': metadata['projection']['code'],
-			'AUTHENTICATION': authentication,
+			'AUTHENTICATION': self.dialog.authentication.currentText(),
 			'MESSAGE_TEXT': message['text'] if message else '',
 			'MESSAGE_VALIDITY': message['valid_until'] if message else '',
 			'DRAWINGS': metadata['drawings']
@@ -892,32 +903,8 @@ class WebGisPlugin:
 		data['PRINT_COMPOSERS'] = u'\n'.join(print_composers)
 
 		html = u"""<html>
-			<head>
-				<style type="text/css">
-					body {
-						background-color: #DDDDDD;
-					}
-					h3 {
-						margin-bottom: 4px;
-						margin-top: 6px;
-						text-decoration: underline;
-					}
-					h4 {
-						margin-bottom: 1px;
-						margin-top: 2px;
-					}
-					div {
-						margin-left: 10px;
-					}
-					ul {
-						margin-top: 0px;
-					}
-					label {
-						font-weight: bold;
-					}
-				</style>
-			</head>
-			<body>"""
+			<head>{0}</head>
+			<body>""".format(CSS_STYLE)
 		if self.run_in_gislab:
 			html += u"""
 				<h3>General information:</h3>
@@ -925,7 +912,6 @@ class WebGisPlugin:
 					<li><label>GIS.lab user:</label> {GISLAB_USER}</li>
 					<li><label>GIS.lab ID:</label> {GISLAB_UNIQUE_ID}</li>
 					<li><label>GIS.lab version:</label> {GISLAB_VERSION}</li>
-					<li><label>GIS.lab Web URL:</label> {WEB_URL}</li>
 				</ul>""".format(**format_template_data(data))
 		html += u"""
 				<h3>Project:</h3>
@@ -963,6 +949,38 @@ class WebGisPlugin:
 		""".format(**format_template_data(data))
 		self.dialog.config_summary.setHtml(html)
 
+	def generate_confirmation_page(self):
+		datasources = set()
+		def collect_datasources(layer_node):
+			for index in range(layer_node.childCount()):
+				collect_datasources(layer_node.child(index))
+			layer = layer_node.data(0, Qt.UserRole)
+			if layer and layer_node.checkState(0) == Qt.Checked:
+				datasources.add(layer.source())
+		collect_datasources(self.dialog.overlaysTree.invisibleRootItem())
+
+		html = u"""<html>
+			<head>{0}</head>
+			<body>
+				<p><h4>Project '{1}' was successfully published.</h4></p>
+				<p>In order to load this project in GIS.lab Web, do not forget to copy all files to 'Share/GISLAB_USER' folder and visit <a href="http://web.gis.lab/Share">http://web.gis.lab/Share</a> page.</p>
+
+				<p><h4>Project files:</h4></p>
+				<ul>
+					<li><label>Project file:</label> {2}</li>
+					<li><label>Project META file:</label> {3}</li>
+				</ul>
+				<p><h4>Data sources:</h4></p>
+				<ul>{4}</ul>
+			</body>
+		</html>
+		""".format(CSS_STYLE,
+				self.metadata['title'],
+				self.project.fileName(),
+				os.path.splitext(self.project.fileName())[0] + '.meta',
+				''.join(['<li>{0}</li>'.format(datasource) for datasource in datasources])
+		)
+		self.dialog.confirmation_info.setHtml(html)
 
 	def _update_min_max_scales(self, resolutions):
 		"""Updates available scales in Minimum/Maximum scale fields based on given resolutions."""
@@ -1008,8 +1026,14 @@ class WebGisPlugin:
 
 		authentication = metadata.get('authentication')
 		if authentication:
-			dialog.authentication_required.setChecked(not authentication['allow_anonymous'] or authentication['require_superuser'])
-			dialog.superuser_required.setChecked(authentication['require_superuser'])
+			# backward compatibility
+			if type(authentication) is dict:
+				if authentication.get('allow_anonymous') and not authentication.get('require_superuser'):
+					dialog.authentication.setCurrentIndex(0)
+				if not authentication.get('allow_anonymous'):
+					dialog.authentication.setCurrentIndex(1)
+			else:
+				dialog.authentication.setCurrentIndex(AUTHENTICATION_OPTIONS.index(authentication) if authentication in AUTHENTICATION_OPTIONS else 1)
 		project_extent = list(metadata['extent'])
 		extent_buffer = metadata.get('extent_buffer', 0)
 		if extent_buffer != 0:
@@ -1074,10 +1098,13 @@ class WebGisPlugin:
 		dialog_filename = os.path.join(self.plugin_dir, "publish_dialog.ui")
 		dialog = PyQt4.uic.loadUi(dialog_filename)
 		dialog.wizard_page1.isComplete = self.page1_cmplete
-		dialog.accepted.connect(self.publish_project)
-		dialog.setButtonText(QWizard.FinishButton, "Publish")
+		dialog.setButtonText(QWizard.CommitButton, "Publish")
+		#dialog.wizard_page4.setButtonText(QWizard.FinishButton, "Ok")
+		dialog.wizard_page3.setCommitPage(True)
+		dialog.wizard_page4.setButtonText(QWizard.CancelButton, "Close")
 		dialog.wizard_page1.validatePage = self.validate_config_page
 		dialog.wizard_page2.validatePage = self.validate_themes_page
+		dialog.wizard_page3.validatePage = self.publish_project
 		self.dialog = dialog
 		self.themes_initialized = False
 		map_canvas = self.iface.mapCanvas()
@@ -1146,7 +1173,6 @@ class WebGisPlugin:
 				dialog.extent_layer.addItem(layer.name(), list(map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords()))
 
 		dialog.message_valid_until.setDate(datetime.date.today() + datetime.timedelta(days=1))
-		dialog.open_in_browser.setEnabled(self.run_in_gislab)
 
 		self._check_publish_constrains()
 		dialog.overlaysTree.header().setResizeMode(0, QHeaderView.Stretch)
