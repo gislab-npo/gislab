@@ -3,6 +3,6 @@
 
 case "$MODE" in
     finalization)
-	cp $GISLAB_INSTALL_CLIENT_ROOT/desktop-session/greybird-theme/*.* $ROOT/usr/share/themes/Greybird/xfwm4/
+	cp $GISLAB_INSTALL_CLIENT_ROOT/greybird-theme/*.* $ROOT/usr/share/themes/Greybird/xfwm4/
     ;;
 esac

@@ -68,10 +68,10 @@ if ! [[ "$GISLAB_USER_MAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$
 	exit 1
 fi
 
-GISLAB_USER_COMMON_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
+GISLAB_USER_FULL_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
 
 
-# /etc/skel update
+# /etc/skel cleanup
 if [ ! -d "/etc/skel.clean" ]; then # create clean 'skel' backup at first run
 	cp -a /etc/skel /etc/skel.clean
 fi
@@ -79,48 +79,9 @@ fi
 rm -rf /etc/skel
 cp -a /etc/skel.clean /etc/skel
 
-mkdir /etc/skel/.config
-mkdir /etc/skel/.local
 
-
-# configure menu
-mkdir -p /etc/skel/.config/menus
-cp $GISLAB_ROOT/system/client/desktop-session/menus/xfce-applications.menu /etc/skel/.config/menus/
-
-mkdir -p /etc/skel/.local/share/applications
-cp $GISLAB_ROOT/system/client/desktop-session/menus/*.desktop /etc/skel/.local/share/applications/
-
-mkdir -p /etc/skel/.local/share/desktop-directories
-cp $GISLAB_ROOT/system/client/desktop-session/menus/*.directory /etc/skel/.local/share/desktop-directories/
-
-
-# configure GIS.lab desktop session and panel
-mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
-
-cp $GISLAB_ROOT/system/client/desktop-session/xfce4/xinitrc /etc/skel/.config/xfce4/
-
-cp $GISLAB_ROOT/system/client/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-cp $GISLAB_ROOT/system/client/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
-
-mkdir -p /etc/skel/.config/xfce4/panel
-cp -a $GISLAB_ROOT/system/client/desktop-session/xfce4/panel/* /etc/skel/.config/xfce4/panel
-
-# confugure keyboard languages
-languages="us" # english is always active
-variants=""
-for lang in ${!GISLAB_CLIENT_LANGUAGES[*]}
-do
-	languages+=",${GISLAB_CLIENT_LANGUAGES[$lang]}"
-	variants+=","
-done
-sed -i "s/^layouts=/layouts=$languages/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
-sed -i "s/^variants=/variants=$variants/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
-
-
-# Conky
-mkdir -p /etc/skel/.config/autostart
-cp $GISLAB_ROOT/system/client/desktop-session/conky/conkyrc /etc/skel/.conkyrc
-cp $GISLAB_ROOT/system/client/desktop-session/conky/conky.desktop /etc/skel/.config/autostart/conky.desktop
+# launch account configuration script
+source $GISLAB_ROOT/system/account/install.sh
 
 
 # add shared directories
@@ -132,32 +93,7 @@ ln -s /mnt/barrel /etc/skel/Barrel
 ln -s /mnt/temporary /etc/skel/Temporary
 
 
-# Pidgin
-mkdir -p /etc/skel/.purple
-cp -a $GISLAB_ROOT/system/client/pidgin/*.xml /etc/skel/.purple
-#cp $GISLAB_ROOT/system/client/pidgin/pidgin.desktop /etc/skel/.config/autostart/pidgin.desktop
-
-
-# PostgreSQL
-cp $GISLAB_ROOT/system/client/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
-
-
-# QGIS
-mkdir -p /etc/skel/.config/QGIS
-mkdir -p /etc/skel/.qgis2
-cp $GISLAB_ROOT/system/client/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
-
-if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
-	mkdir -p /etc/skel/bin
-	cp $GISLAB_ROOT/system/client/qgis/bin/gislab-dev-* /etc/skel/bin
-	chmod 755 /etc/skel/bin/*
-fi
-
-
-chown -R root:root /etc/skel
-
-
-# create account
+# create LDAP account
 ldapadduser $GISLAB_USER labusers # LDAP account
 chmod go-rwx /home/$GISLAB_USER
 
@@ -165,7 +101,7 @@ chmod go-rwx /home/$GISLAB_USER
 ldapmodifyuser $GISLAB_USER > /dev/null << EOL
 changetype: modify
 replace: cn
-cn: $GISLAB_USER_COMMON_NAME
+cn: $GISLAB_USER_FULL_NAME
 -
 replace: sn
 sn: $GISLAB_USER_SURNAME
@@ -177,7 +113,7 @@ add: mail
 mail: $GISLAB_USER_MAIL
 -
 add: gecos
-gecos: $GISLAB_USER_COMMON_NAME
+gecos: $GISLAB_USER_FULL_NAME
 EOL
 
 if [ -n "$GISLAB_USER_DESC" ]; then
@@ -188,14 +124,18 @@ description: $GISLAB_USER_DESC
 EOL
 fi
 
+
 # allow sudo for user if creating superuser account
 if [ "$SUDO" == "yes" ]; then
 	ldapaddusertogroup $GISLAB_USER labadmins
 fi
 
+
 # set user password
 gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
 
+
+# create PostgreSQL user account
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $GISLAB_USER" # PostgreSQL account
 sudo su - postgres -c "psql -c \"GRANT labusers TO $GISLAB_USER;\""
 sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $GISLAB_USER;\""
@@ -205,6 +145,7 @@ if [ "$SUDO" == "yes" ]; then
 	sudo su - postgres -c "psql -c \"GRANT labadmins TO $GISLAB_USER;\""
 fi
 
+
 # forward system mails to user if creating superuser account
 if [ "$SUDO" == "yes" -a -n "$GISLAB_SERVER_EMAIL_RELAY_SERVER" \
   -a -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" -a -n "$GISLAB_SERVER_EMAIL_RELAY_PASSWORD" ]; then
@@ -212,14 +153,18 @@ if [ "$SUDO" == "yes" -a -n "$GISLAB_SERVER_EMAIL_RELAY_SERVER" \
 	service postfix reload
 fi
 
+
+# create shared directories structure
 mkdir -p /storage/share/$GISLAB_USER # NFS directory
 chown $GISLAB_USER:labusers /storage/share/$GISLAB_USER
+
 
 # copy administrator public SSH key
 mkdir -p /home/$GISLAB_USER/.ssh
 chmod 700 /home/$GISLAB_USER/.ssh
 cp /etc/gislab/ssh/gislab_ssh_public_key /home/$GISLAB_USER/.ssh/authorized_keys
 chown $GISLAB_USER:labusers -R /home/$GISLAB_USER/.ssh
+
 
 # replace user name and password placeholders with real user values
 find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER##/$GISLAB_USER/g" "{}" \;
@@ -232,6 +177,7 @@ for hook in $GISLAB_ROOT/user/plugins/account/*.*; do
 	GISLAB_ACCOUNT_ACTION="add" GISLAB_USER=$GISLAB_USER $hook
 	echo "$(gislab_config_header)" >> /var/lib/gislab/account-hook-$(basename $hook).done
 done
+
 
 gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"
 

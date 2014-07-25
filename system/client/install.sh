@@ -1,6 +1,4 @@
-#!/bin/bash
-# Author: Ivan Mincik, ivan.mincik@gmail.com
-
+# GIS.lab client installation script
 # LTSP troubleshooting https://help.ubuntu.com/community/UbuntuLTSP/ClientTroubleshooting
 
 
