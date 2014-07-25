@@ -24,7 +24,7 @@ cp $GISLAB_INSTALL_CURRENT_ROOT/conf/index.html /var/www/default/index.html
 
 
 ### APACHE
-# port 8000 configuration
+# port 91 configuration
 cp $GISLAB_INSTALL_CURRENT_ROOT/conf/apache/ports.conf /etc/apache2/ports.conf
 gislab_config_header_to_file /etc/apache2/ports.conf
 
