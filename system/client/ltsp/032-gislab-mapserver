@@ -1,5 +1,7 @@
 case "$MODE" in
 	finalization)
+		chroot $ROOT apt-get --assume-yes --force-yes install apache2 apache2-mpm-worker libapache2-mod-fastcgi qgis-mapserver
+
 		mkdir -p $ROOT/var/www/default
 
 		cp /vagrant/system/client/mapserver/ports.conf $ROOT/etc/apache2/ports.conf
