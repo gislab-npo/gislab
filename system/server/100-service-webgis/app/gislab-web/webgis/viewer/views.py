@@ -209,8 +209,13 @@ def page(request):
 			return HttpResponse("Error when loading project or project does not exist", content_type='text/plain', status=404)
 
 	# Authentication
-	allow_anonymous = metadata.authentication['allow_anonymous'] if project else True
-	require_superuser = metadata.authentication['require_superuser'] if project else False
+	if project and type(metadata.authentication) is dict:
+		# backward compatibility
+		allow_anonymous = metadata.authentication.get('allow_anonymous')
+		owner_authentication = False
+	else:
+		allow_anonymous = metadata.authentication == 'all' if project else True
+		owner_authentication = metadata.authentication == 'owner' if project else False
 
 	if not request.user.is_authenticated() and allow_anonymous:
 		# login as quest and continue
