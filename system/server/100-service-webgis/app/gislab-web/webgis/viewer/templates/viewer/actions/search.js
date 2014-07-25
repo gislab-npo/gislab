@@ -452,52 +452,56 @@ var searchWindow = new Ext.Window({
 			xtype: 'tbspacer'
 		}
 	],
-	bbar: ['->', '-', new Ext.Action({
-		text: '{% trans "Search" %}',
-		ref: '/search',
-		tooltip: '{% trans "Search" %}',
-		cls: 'x-btn-text',
-		format: new OpenLayers.Format.GML(),
+	bbar: [{
+			xtype: 'checkbox',
+			ref: '/restrictByExtent'
+		}, {
+			xtype: 'label',
+			text: '{% trans "On visible area only" %}'
+		}, '->', new Ext.Action({
+			text: '{% trans "Search" %}',
+			ref: '/search',
+			tooltip: '{% trans "Search" %}',
+			cls: 'x-btn-text',
+			format: new OpenLayers.Format.GML(),
 
-		handler: function(action) {
-			var search_window = Ext.getCmp('search-toolbar-window');
-			var layer = search_window.activeLayer.getValue();
-			var logical_operator = search_window.logicalOperator.getValue();
-			var features_count = search_window.limit.getValue();
-			var attributes_queries = [];
-			search_window.items.each(function(attrib_item) {
-				var attribute = attrib_item.attributeName.getValue();
-				if (attribute) {
-					var operator = attrib_item.attributeOperator.getValue();
-					var value = attrib_item.valueField.getValue().toString();
-					if (operator == 'IN') {
-						// Format to proper list value string. Spaces are very important. Example: " ( 'val1' , 'val2' , ... ) "
-						var list_values = [];
-						Ext.each(value.split(','), function(list_value) {
-							list_values.push(list_value.trim());
-						});
-						if (attrib_item.valueField.type == 'TEXT') {
-							value = String.format(" ( '{0}' ) ", list_values.join("' , '"));
-						} else {
-							value = String.format(" ( {0} ) ", list_values.join(" , "));
+			handler: function(action) {
+				var search_window = Ext.getCmp('search-toolbar-window');
+				var layer = search_window.activeLayer.getValue();
+				var logical_operator = search_window.logicalOperator.getValue();
+				var features_count = search_window.limit.getValue();
+				var attributes_queries = [];
+				search_window.items.each(function(attrib_item) {
+					var attribute = attrib_item.attributeName.getValue();
+					if (attribute) {
+						var operator = attrib_item.attributeOperator.getValue();
+						var value = attrib_item.valueField.getValue().toString();
+						if (operator == 'IN') {
+							// Format to proper list value string. Spaces are very important. Example: " ( 'val1' , 'val2' , ... ) "
+							var list_values = [];
+							Ext.each(value.split(','), function(list_value) {
+								list_values.push(list_value.trim());
+							});
+							if (attrib_item.valueField.type == 'TEXT') {
+								value = String.format(" ( '{0}' ) ", list_values.join("' , '"));
+							} else {
+								value = String.format(" ( {0} ) ", list_values.join(" , "));
+							}
+						} else if (operator == 'LIKE') {
+							if (value.indexOf('%') == -1) {
+								value = '%'+value+'%'
+							}
+							value = String.format("'{0}'", value);
+						} else if (attrib_item.valueField.type == 'TEXT') {
+							value = String.format("'{0}'", value);
 						}
-					} else if (operator == 'LIKE') {
-						if (value.indexOf('%') == -1) {
-							value = '%'+value+'%'
-						}
-						value = String.format("'{0}'", value);
-					} else if (attrib_item.valueField.type == 'TEXT') {
-						value = String.format("'{0}'", value);
+						attributes_queries.push(String.format('"{0}" {1} {2}', attribute, operator, value))
 					}
-					attributes_queries.push(String.format('"{0}" {1} {2}', attribute, operator, value))
-				}
-			});
+				});
 
-			var query_filter = String.format('{0}:{1}', layer, attributes_queries.join(String.format(' {0} ', logical_operator)));
-			Ext.Ajax.request({
-				method: 'GET',
-				url: '{{ ows_url }}',
-				params: {
+				var query_filter = String.format('{0}:{1}', layer, attributes_queries.join(String.format(' {0} ', logical_operator)));
+				console.log(query_filter);
+				var query_params = {
 					SERVICE: 'WMS',
 					REQUEST: 'GetFeatureInfo',
 					FEATURE_COUNT: features_count+1,
@@ -505,37 +509,46 @@ var searchWindow = new Ext.Window({
 					SRS: '{{ projection.code }}',
 					LAYERS: layer,
 					QUERY_LAYERS: layer,
-					FILTER: query_filter
-				},
-				scope: this,
-				success: function(response, options) {
-					var doc = response.responseXML;
-					if(!doc || !doc.documentElement) {
-						doc = response.responseText;
-					}
-					var features_panel = Ext.getCmp('featureinfo-panel');
-					var features = this.format.read(doc);
-					if (features.length == options.params.FEATURE_COUNT) {
-						features.pop();
-						features_panel.showFeatures(features);
-						features_panel.setStatusInfo(String.format('{% trans "More than {0} features are matching search condition" %}', features.length));
-					} else {
-						features_panel.showFeatures(features);
-					}
-				},
-				failure: function(response, opts) {
-					Ext.MessageBox.show({
-						title: '{% trans "Error" %}',
-						msg: '{% trans "Searching failed" %}',
-						minWidth: 300,
-						closable: false,
-						modal: true,
-						buttons: Ext.Msg.OK,
-					});
+					FILTER: query_filter,
 				}
-			});
+				if (search_window.restrictByExtent.getValue()) {
+					query_params['BBOX'] = Ext.getCmp('map-panel').map.getExtent().toString();
+				}
+				Ext.Ajax.request({
+					method: 'GET',
+					url: '{{ ows_url }}',
+					params: query_params,
+					scope: this,
+					success: function(response, options) {
+						console.log(response);
+						var doc = response.responseXML;
+						if(!doc || !doc.documentElement) {
+							doc = response.responseText;
+						}
+						var features_panel = Ext.getCmp('featureinfo-panel');
+						var features = this.format.read(doc);
+						if (features.length == options.params.FEATURE_COUNT) {
+							features.pop();
+							features_panel.showFeatures(features);
+							features_panel.setStatusInfo(String.format('{% trans "More than {0} features are matching search condition" %}', features.length));
+						} else {
+							features_panel.showFeatures(features);
+						}
+					},
+					failure: function(response, opts) {
+						Ext.MessageBox.show({
+							title: '{% trans "Error" %}',
+							msg: '{% trans "Searching failed" %}',
+							minWidth: 300,
+							closable: false,
+							modal: true,
+							buttons: Ext.Msg.OK,
+						});
+					}
+				});
+			}
 		}
-	})],
+	)],
 	items: []
 });
 
