@@ -1,4 +1,5 @@
-<VirtualHost *:91>
+<VirtualHost *:8000>
+	ServerName ms.gis.lab
 	ServerAdmin root@gis.lab
 
 	DocumentRoot /var/www/default
@@ -13,11 +14,6 @@
 		Allow from all
 	</Directory>
 
-	ErrorLog ${APACHE_LOG_DIR}/error.log
-	LogLevel warn
-
-	CustomLog ${APACHE_LOG_DIR}/access.log combined
-
 	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
 	<Directory "/usr/lib/cgi-bin">
 		AllowOverride All
@@ -28,7 +24,13 @@
 		<files "qgis_mapserv.fcgi">
 			RewriteEngine On
 			RewriteCond %{QUERY_STRING} ^(.*)map=(.*)(.*) [NC]
-			RewriteRule ^(.*)$ $1?%1map=/mnt/share/%2%3 [DPI]
+			RewriteRule ^(.*)$ $1?%1map=/storage/share/%2%3 [DPI]
 		</files>
 	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/mapserver-error.log
+	CustomLog ${APACHE_LOG_DIR}/mapserver-access.log combined
+
+#	RewriteLog ${APACHE_LOG_DIR}/error.log
+#	RewriteLogLevel 3
 </VirtualHost>

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Munin plugin - Mapserver requests (ms.gis.lab)
 
-logfile=/var/log/apache2/access.log
+logfile=/var/log/apache2/mapserver-access.log
 statfile=/var/lib/munin-node/plugin-state/root/mapserver.stat
 valuefile=/var/lib/munin-node/plugin-state/root/mapserver.value
 
@@ -18,7 +18,7 @@ if [ "$1" = "config" ] ; then
 	echo "request.label req/sec"
 	echo "request.type DERIVE"
 	echo "request.min 0"
-	echo "request.label requests port 91"
+	echo "request.label requests port 8000"
 	echo "request.draw LINE2"
 	exit
 fi
