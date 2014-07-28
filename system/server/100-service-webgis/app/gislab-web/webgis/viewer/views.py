@@ -207,6 +207,10 @@ def page(request):
 			metadata = MetadataParser(metadata_filename)
 		except:
 			return HttpResponse("Error when loading project or project does not exist", content_type='text/plain', status=404)
+		if metadata.expiration:
+			expiration_date = datetime.datetime.strptime(metadata.expiration, "%d.%m.%Y").date()
+			if datetime.date.today() > expiration_date:
+				return HttpResponse("Project has reached expiration date.", content_type='text/plain', status=410)
 
 	# Authentication
 	if project and type(metadata.authentication) is dict:
@@ -320,8 +324,7 @@ def page(request):
 		})
 		if metadata.message:
 			valid_until = datetime.datetime.strptime(metadata.message['valid_until'], "%d.%m.%Y").date()
-			today = datetime.date.today()
-			if today <= valid_until:
+			if datetime.date.today() <= valid_until:
 				context['message'] = metadata.message['text'].replace('\n', '<br />')
 		project_info = {
 			'gislab_version': metadata.gislab_version,

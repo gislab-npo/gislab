@@ -433,6 +433,8 @@ class WebGisPlugin:
 			'publish_date_unix': int(time.time()),
 			'publish_date': time.ctime(),
 		}
+		if self.dialog.enable_expiration.isChecked():
+			metadata['expiration'] = self.dialog.expiration.date().toString("dd.MM.yyyy")
 		renderer_context = map_canvas.mapRenderer().rendererContext()
 		selection_color = renderer_context.selectionColor()
 		canvas_color = map_canvas.canvasColor()
@@ -756,6 +758,7 @@ class WebGisPlugin:
 			'AUTHENTICATION': self.dialog.authentication.currentText(),
 			'MESSAGE_TEXT': message['text'] if message else '',
 			'MESSAGE_VALIDITY': message['valid_until'] if message else '',
+			'EXPIRATION': metadata.get('expiration', ''),
 			'DRAWINGS': metadata['drawings']
 		}
 
@@ -935,6 +938,7 @@ class WebGisPlugin:
 					<li><label>Measure ellipsoid:</label> {MEASURE_ELLIPSOID}</li>
 					<li><label>Use cache:</label> {USE_MAPCACHE}</li>
 					<li><label>Authentication:</label> {AUTHENTICATION}</li>
+					<li><label>Expiration date:</label> {EXPIRATION}</li>
 					<li><label>Message text:</label> {MESSAGE_TEXT}</li>
 					<li><label>Message validity:</label> {MESSAGE_VALIDITY}</li>
 					<li><label>Drawings:</label> {DRAWINGS}</li>
@@ -1029,6 +1033,10 @@ class WebGisPlugin:
 			dialog.message_text.insertPlainText(message.get('text', ''))
 			valid_until = message.get('valid_until')
 			dialog.message_valid_until.setDate(datetime.datetime.strptime(valid_until, "%d.%m.%Y"))
+		expiration = metadata.get('expiration')
+		if expiration:
+			dialog.enable_expiration.setChecked(True)
+			dialog.expiration.setDate(datetime.datetime.strptime(expiration, "%d.%m.%Y"))
 
 		authentication = metadata.get('authentication')
 		if authentication:
@@ -1114,6 +1122,11 @@ class WebGisPlugin:
 		self.dialog = dialog
 		self.themes_initialized = False
 		map_canvas = self.iface.mapCanvas()
+
+		def expiration_toggled(checked):
+			self.dialog.expiration.setEnabled(checked)
+		dialog.enable_expiration.toggled.connect(expiration_toggled)
+		dialog.expiration.setDate(datetime.date.today() + datetime.timedelta(days=1))
 
 		resolutions = self._project_layers_resolutions()
 		self._update_min_max_scales(resolutions)
