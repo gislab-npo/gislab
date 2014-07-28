@@ -463,7 +463,7 @@ var searchWindow = new Ext.Window({
 			ref: '/search',
 			tooltip: '{% trans "Search" %}',
 			cls: 'x-btn-text',
-			format: new OpenLayers.Format.GML(),
+			format: new OpenLayers.Format.GML({keepData: true}),
 
 			handler: function(action) {
 				var search_window = Ext.getCmp('search-toolbar-window');
@@ -500,7 +500,6 @@ var searchWindow = new Ext.Window({
 				});
 
 				var query_filter = String.format('{0}:{1}', layer, attributes_queries.join(String.format(' {0} ', logical_operator)));
-				console.log(query_filter);
 				var query_params = {
 					SERVICE: 'WMS',
 					REQUEST: 'GetFeatureInfo',
@@ -520,19 +519,20 @@ var searchWindow = new Ext.Window({
 					params: query_params,
 					scope: this,
 					success: function(response, options) {
-						console.log(response);
 						var doc = response.responseXML;
 						if(!doc || !doc.documentElement) {
 							doc = response.responseText;
 						}
 						var features_panel = Ext.getCmp('featureinfo-panel');
 						var features = this.format.read(doc);
+						var bbox_node = this.format.data.firstElementChild.firstElementChild;
+						var features_extent = this.format.parseGeometry["box"].apply(this.format, [bbox_node]);
 						if (features.length == options.params.FEATURE_COUNT) {
 							features.pop();
-							features_panel.showFeatures(features);
+							features_panel.showFeatures(features, features_extent);
 							features_panel.setStatusInfo(String.format('{% trans "More than {0} features are matching search condition" %}', features.length));
 						} else {
-							features_panel.showFeatures(features);
+							features_panel.showFeatures(features, features_extent);
 						}
 					},
 					failure: function(response, opts) {

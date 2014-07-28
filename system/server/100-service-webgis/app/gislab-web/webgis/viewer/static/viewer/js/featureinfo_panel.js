@@ -6,14 +6,27 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 	layout: 'fit',
 	autoPanMapOnSelection: false,
 	styleMap: null,
+	tools: [{
+		id: 'zoom',
+		qtip: gettext('Zoom to all features'),
+		handler: function(event, toolEl, panel, tc) {
+			if (panel.featuresTabPanel.activeTab) {
+				var features_extent = panel.featuresTabPanel.activeTab.features_extent;
+				if (features_extent) {
+					panel.map.zoomToExtent(features_extent, true);
+				}
+			}
+		}
+	}],
 
 	initComponent: function() {
 		this.on('render', function(panel) {
 			this.header.insertHtml('beforeEnd', '<span id="featureinfo-status"></span>');
 			this.statusElem = Ext.get("featureinfo-status");
 		});
-		this.featureinfo_tabpanel = new Ext.TabPanel({
+		var featureinfo_tabpanel = new Ext.TabPanel({
 			id: 'featureinfo-tabpanel',
+			ref: 'featuresTabPanel',
 			items: [],
 			listeners: {
 				'tabchange': function (tabPanel, tab) {
@@ -28,6 +41,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 					Ext.each(this.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
 						layer.setVisibility(layer.name == tab_layer_name);
 					});
+					tabPanel.ownerCt.tools.zoom.setOpacity(tab.features_extent? 1.0 : 0.5);
 				}
 			}
 		});
@@ -52,9 +66,9 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 			});
 		}
 		Ext.apply(this, {
-			items: [this.featureinfo_tabpanel]
+			items: [featureinfo_tabpanel]
 		});
-		this.featureinfo_tabpanel.map = this.map;
+		featureinfo_tabpanel.map = this.map;
 		WebGIS.FeatureInfoPanel.superclass.initComponent.call(this);
 	},
 
@@ -67,7 +81,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 	},
 
 	clearFeaturesLayers: function() {
-		this.featureinfo_tabpanel.removeAll(true);
+		this.featuresTabPanel.removeAll(true);
 		Ext.each(this.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
 			layer.destroyFeatures();
 			layer.setVisibility(false);
@@ -81,7 +95,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 		});
 	},
 
-	showFeatures: function(features) {
+	showFeatures: function(features, extent) {
 		this.clearFeaturesLayers();
 		var status_format = gettext('Number of results: %(count)s');
 		this.setStatusInfo(interpolate(status_format, {"count": features.length}, true));
@@ -207,9 +221,18 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 					features: layer_features,
 					autoLoad: true
 				});
+
+				var features_extent = extent;
+				if (!features_extent && layer_features[0].bounds) {
+					features_extent = layer_features[0].bounds.clone();
+					Ext.each(layer_features, function(feature) {
+						features_extent.extend(feature.bounds);
+					});
+				}
 				var grid_panel = new Ext.grid.GridPanel({
 					title: layer_name,
 					layer_name: layer_name,
+					features_extent: features_extent,
 					autoDestroy: true,
 					store: store,
 					autoExpandColumn: fields[fields.length-1].name,
@@ -239,15 +262,17 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 						}
 					}
 				});
-				this.featureinfo_tabpanel.add(grid_panel);
+				this.featuresTabPanel.add(grid_panel);
 			}
 			this.expand(false);
-			this.featureinfo_tabpanel.setActiveTab(0);
-			this.featureinfo_tabpanel.doLayout();
+			this.featuresTabPanel.setActiveTab(0);
+			this.featuresTabPanel.doLayout();
 		} else {
 			if (this.collapsed) {
 				this.expand(false);
 			}
+			console.log(this);
+			this.featuresTabPanel.ownerCt.tools.zoom.setOpacity(0.5);
 		}
 	},
 	listeners: {

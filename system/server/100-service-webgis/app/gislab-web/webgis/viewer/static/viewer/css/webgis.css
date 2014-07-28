@@ -562,7 +562,11 @@ div.overlays-root {
 	display: none;
 }
 
-img.zoom-to-feature {
+.x-tool-zoom {
+	float: left;
+}
+
+img.zoom-to-feature, .x-tool-zoom {
 	background-image: url('../images/toolbar/zoom_to.png')!important;
 	background: no-repeat;
 	width: 16px;
@@ -586,7 +590,7 @@ span.x-panel-header-text {
 span#featureinfo-status {
 	position: absolute;
 	top: 6px;
-	left: 15px;
+	left: 32px;
 }
 
 div.x-layout-split-south {

@@ -95,7 +95,7 @@ ctrl = new OpenLayers.Control.WMSGetFeatureInfo({
 			var request = OpenLayers.Request.GET(wms_options);
 		},
 		getfeatureinfo: function(e) {
-			Ext.getCmp('featureinfo-panel').showFeatures(e.features, identify_layer_combobox.layersAttributesAliases);
+			Ext.getCmp('featureinfo-panel').showFeatures(e.features);
 		}
 	}
 })
