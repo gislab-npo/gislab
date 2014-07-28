@@ -24,7 +24,7 @@
 		<files "qgis_mapserv.fcgi">
 			RewriteEngine On
 			RewriteCond %{QUERY_STRING} ^(.*)map=(.*)(.*) [NC]
-			RewriteRule ^(.*)$ $1?%1map=/storage/share/%2%3 [DPI]
+			RewriteRule ^(.*)$ $1?%1map=/mnt/share/%2%3 [DPI]
 		</files>
 	</Directory>
 
