@@ -141,6 +141,10 @@ div.scale-control {
 	font-weight: normal;
 }
 
+.x-tip label {
+	font-weight: bold;
+}
+
 .measure-panel .x-panel-body {
 	background-color: #F0F0F0 !important;
 }
@@ -264,16 +268,6 @@ div.scale-control {
 	background-position: 0px 0px !important;
 	background-position-x: 0px !important;
 	background-position-y: 0px !important;
-}
-
-.pan-icon {
-	height: 18px !important;
-	width: 18px !important;
-	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background: no-repeat;
-	background-position: 0px -18px !important;
-	background-position-x: 0px !important;
-	background-position-y: -18px !important;
 }
 
 .previous-icon {
@@ -598,8 +592,7 @@ div.x-layout-split-south {
 }
 
 div.layer-info-panel {
-	min-width: 250px;
-	max-width: 500px;
+	max-height: 120px !important;
 }
 
 .x-toolbar .x-btn-noicon .x-btn-tl,.x-toolbar .x-btn-noicon .x-btn-tr,.x-toolbar .x-btn-noicon .x-btn-tc,.x-toolbar .x-btn-noicon .x-btn-ml,.x-toolbar .x-btn-noicon .x-btn-mr,.x-toolbar .x-btn-noicon .x-btn-mc,.x-toolbar .x-btn-noicon .x-btn-bl,.x-toolbar .x-btn-noicon .x-btn-br,.x-toolbar .x-btn-noicon .x-btn-bc {

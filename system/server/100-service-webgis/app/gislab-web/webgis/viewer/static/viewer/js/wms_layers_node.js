@@ -114,6 +114,8 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 					var t = new Ext.ToolTip({
 						anchor: 'west',
 						target: node.getUI().getEl(),
+						//anchorToTarget: false,
+						//targetXY: [235, Ext.get(node.getUI().getEl()).getY()+10],
 						title: 'Warning',
 						html: String.format('Layer {0} is not visible in current scale. It will appear if you zoom map to scale range ({1} - {2})',
 											node.attributes.text, min_scale, max_scale),
@@ -174,38 +176,37 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 					}
 				},
 				click: function(node, evt) {
-					console.log(evt.getTarget().className);
 					if (evt.getTarget().className == "layer-info") {
 						if (node.root.layerInfoWindow) {
 							node.root.layerInfoWindow.destroy();
 						}
 						var layer_info = node.attributes.config;
-						var window = new Ext.Window({
-							id: 'layerinfo-window',
-							header: true,
+						var t = new Ext.ToolTip({
+							anchor: 'west',
+							target: node.getUI().getEl(),
 							title: layer_info.name,
-							closable: true,
-							resizable: false,
-							layout: 'fit',
-							items: [new Ext.Panel({
-									autoScroll: true,
-									html: '<div class="x-panel-body-text layer-info-panel"> \
+							html: '<div class="layer-info-panel"> \
 										<p><label>'+gettext('Identification')+': </label>'+(layer_info.queryable? gettext("Yes") : gettext("No"))+'</p> \
-										<p><label>'+gettext('Minimal scale')+': </label>'+(layer_info.visibility_scale_min? layer_info.visibility_scale_min : Math.round(node.root.layer.minScale))+'</p> \
-										<p><label>'+gettext('Maximal scale')+': </label>'+(layer_info.visibility_scale_max? layer_info.visibility_scale_max : Math.round(node.root.layer.maxScale))+'</p> \
+										<p><label>'+gettext('Minimal scale')+': </label>'+(layer_info.visibility_scale_min? layer_info.visibility_scale_min : Math.round(node.root.layer.maxScale))+'</p> \
+										<p><label>'+gettext('Maximal scale')+': </label>'+(layer_info.visibility_scale_max? layer_info.visibility_scale_max : Math.round(node.root.layer.minScale))+'</p> \
 										<p><label>'+gettext('Labels')+': </label>'+(layer_info.labels? gettext("Yes") : gettext("No"))+'</p> \
 										<p><label>'+gettext('Title')+': </label>'+layer_info.metadata.title+'</p> \
 										<p><label>'+gettext('Abstract')+': </label>'+layer_info.metadata.abstract+'</p> \
 										<p><label>'+gettext('Keyword list')+': </label>'+layer_info.metadata.keyword_list+'</p> \
-										</div>'
-								})
-							]
+										</div>',
+							closable: true,
+							autoHide: false,
+							autoScroll: true,
+							width: 300,
+							maxHeight: 100,
+							listeners: {
+								hide: function(t) {
+									t.destroy();
+								}
+							}
 						});
-						window.show();
-						var node_elem = Ext.get(node.getUI().getEl());
-						var y = node_elem.getOffsetsTo(Ext.get(Ext.getCmp('layers-tree-panel').getEl()))[1];
-						window.alignTo(Ext.getCmp('layers-tree-panel').getId(), 'tl-tr', [7, y]);
-						node.root.layerInfoWindow = window;
+						t.show();
+						node.root.layerInfoWindow = t;
 					}
 				}
 			}

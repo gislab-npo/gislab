@@ -30,15 +30,3 @@ action = new GeoExt.Action({
 	tooltip: '{% trans "Next in history" %}',
 });
 mappanel.getTopToolbar().add(' ', action);
-
-//Pan Map Action
-action = new GeoExt.Action({
-	control: new OpenLayers.Control.MousePosition({formatOutput: function(lonLat) {return '';}}),
-	map: mappanel.map,
-	toggleGroup: 'tools',
-	group: 'tools',
-	cls: 'x-btn-icon',
-	iconCls: 'pan-icon',
-	tooltip: '{% trans "Map pan" %}'
-});
-mappanel.getTopToolbar().add(' ', action);

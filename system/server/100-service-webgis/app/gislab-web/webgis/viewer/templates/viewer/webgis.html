@@ -315,6 +315,9 @@
 
 				{% if project %}
 				mappanel.getTopToolbar().add(' ', '-', ' ');
+					{% if print_composers %}
+					{% include "viewer/actions/print.js" %}
+					{% endif %}
 				{% include "viewer/actions/search.js" %}
 				mappanel.getTopToolbar().add(' ');
 				{% include "viewer/actions/featureinfo.js" %}
@@ -324,11 +327,6 @@
 				{% include "viewer/actions/measurement.js" %}
 				mappanel.getTopToolbar().add(' ');
 				{% include "viewer/actions/draw.js" %}
-
-				{% if print_composers %}
-				mappanel.getTopToolbar().add(' ', '-', ' ');
-				{% include "viewer/actions/print.js" %}
-				{% endif %}
 
 				var overlays_root = new WebGIS.WmsLayersNode({
 					text: 'Root',
