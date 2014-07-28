@@ -18,7 +18,7 @@ if [ "$1" = "config" ] ; then
 	echo "request.label req/sec"
 	echo "request.type DERIVE"
 	echo "request.min 0"
-	echo "request.label requests port 8000"
+	echo "request.label requests port 91"
 	echo "request.draw LINE2"
 	exit
 fi
