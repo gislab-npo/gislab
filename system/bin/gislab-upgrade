@@ -53,7 +53,7 @@ if [ "$SERVER_ONLY" == "no" ]; then
 	bash $GISLAB_ROOT/system/install.sh
 else
 	gislab_print_info "Upgrading only server system"
-	GISLAB_SUITE_OVERRIDE=server bash $GISLAB_ROOT/system/install.sh
+	GISLAB_OVERRIDE_SUITE=server bash $GISLAB_ROOT/system/install.sh
 fi
 
 

@@ -63,9 +63,10 @@ if [ -n "$GISLAB_PLUGINS_REQUIRE" ]; then
 	done
 fi
 
-# override suite value if requested from environment variable (GISLAB_SUITE_OVERRIDE=<value> bash install.sh)
-if [ -n "$GISLAB_SUITE_OVERRIDE" ]; then
-	GISLAB_SUITE=$GISLAB_SUITE_OVERRIDE
+# allow overriding GIS.lab suite configuration by environment variable
+# (GISLAB_OVERRIDE_SUITE=<value> bash install.sh)
+if [ -n "$GISLAB_OVERRIDE_SUITE" ]; then
+	GISLAB_SUITE=$GISLAB_OVERRIDE_SUITE
 fi
 export GISLAB_SUITE
 

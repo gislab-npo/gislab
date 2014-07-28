@@ -2,10 +2,11 @@
 ### CLIENT INSTALLATION ###
 #
 
-# do not install client if GISLAB_SUITE="server"
-if [ "$GISLAB_SUITE" == "server" ]; then
+# perform installation only for chosen GIS.lab suites
+if [ "$GISLAB_SUITE" != "lab" ]; then
 	return
 fi
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="
