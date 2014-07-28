@@ -416,12 +416,18 @@ class WebGisPlugin:
 		legend_iface = self.iface.legendInterface()
 		units = self._map_units()
 
+		project_keyword_list = self.project.readListEntry("WMSKeywordList", "/")[0]
 		metadata = {
 			'title': self.project.readEntry("WMSServiceTitle", "/")[0] or self.project.title(),
 			'abstract': self.project.readEntry("WMSServiceAbstract", "/")[0],
 			'contact_person': self.project.readEntry("WMSContactPerson", "/")[0],
 			'contact_organization': self.project.readEntry("WMSContactOrganization", "/")[0],
 			'contact_mail': self.project.readEntry("WMSContactMail", "/")[0],
+			'contact_phone': self.project.readEntry("WMSContactPhone", "/")[0],
+			'online_resource': self.project.readEntry("WMSOnlineResource", "/")[0],
+			'fees': self.project.readEntry("WMSFees", "/")[0],
+			'access_constrains': self.project.readEntry("WMSAccessConstraints", "/")[0],
+			'keyword_list':project_keyword_list if project_keyword_list != [u''] else [],
 			'authentication': AUTHENTICATION_OPTIONS[dialog.authentication.currentIndex()],
 			'use_mapcache': dialog.use_mapcache.isChecked(),
 			'publish_date_unix': int(time.time()),

@@ -405,10 +405,15 @@
 					title: '{% trans "Properties" %}',
 					autoScroll: true,
 					html: '<div class="x-panel-body-text"> \
-							<p><label>{% trans "Author" %}: </label>{{ author }}</p> \
-							<p><label>{% trans "E-mail" %}: </label>{{ email }}</p> \
-							<p><label>{% trans "Organization" %}: </label>{{ organization }}</p> \
-							<p><label>{% trans "Abstract" %}: </label>{{ abstract }}</p> \
+							{% if author %}<p><label>{% trans "Author" %}: </label>{{ author }}</p>{% endif %}\
+							{% if email %}<p><label>{% trans "E-mail" %}: </label>{{ email }}</p>{% endif %}\
+							{% if phone %}<p><label>{% trans "Phone" %}: </label>{{ phone }}</p>{% endif %}\
+							{% if organization %}<p><label>{% trans "Organization" %}: </label>{{ organization }}</p>{% endif %}\
+							{% if abstract %}<p><label>{% trans "Abstract" %}: </label>{{ abstract }}</p>{% endif %}\
+							{% if online_resource %}<p><label>{% trans "Online resource" %}: </label><a href="{{ online_resource }}" target="_blank">{{ online_resource }}</a></p>{% endif %}\
+							{% if fees %}<p><label>{% trans "Fees" %}: </label>{{ fees }}</p>{% endif %}\
+							{% if access_constrains %}<p><label>{% trans "Access constraints" %}: </label>{{ access_constrains }}</p>{% endif %}\
+							{% if keyword_list %}<p><label>{% trans "Keyword list" %}: </label>{{ keyword_list|join:", " }}</p>{% endif %}\
 							<p><label>{% trans "Publish date" %}: </label>{{ publish_date }}</p> \
 							{% if not user.is_guest %}<p><label>{% trans "WMS URL" %}: </label><a href="{{ wms_url }}" target="_blank">copy link location</a></p>{% endif %}</div>'
 				});
