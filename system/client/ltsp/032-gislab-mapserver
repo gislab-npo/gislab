@@ -3,11 +3,15 @@ case "$MODE" in
 		chroot $ROOT apt-get --assume-yes --force-yes install apache2 apache2-mpm-worker libapache2-mod-fastcgi qgis-mapserver
 
 		mkdir -p $ROOT/var/www/default
+		cp /vagrant/system/server/047-service-default-web/conf/index.html $ROOT/var/www/default/index.html
 
-		cp /vagrant/system/client/mapserver/ports.conf $ROOT/etc/apache2/ports.conf
-		cp /vagrant/system/client/mapserver/site-default $ROOT/etc/apache2/sites-available/default
+		cp /vagrant/system/server/047-service-default-web/conf/apache/ports.conf $ROOT/etc/apache2/ports.conf
+		cp /vagrant/system/server/047-service-default-web/conf/apache/site-default $ROOT/etc/apache2/sites-available/default
+		cp /vagrant/system/server/090-service-mapserver/conf/apache/site-mapserver $ROOT/etc/apache2/sites-available/mapserver
 
 		chroot $ROOT a2enmod rewrite
 		chroot $ROOT a2enmod expires
+		chroot $ROOT a2ensite default
+		chroot $ROOT a2ensite mapserver
 	;;
 esac
