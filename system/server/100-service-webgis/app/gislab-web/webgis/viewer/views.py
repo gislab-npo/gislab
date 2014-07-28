@@ -225,12 +225,15 @@ def page(request):
 		else:
 			return HttpResponse("Anonymous user is not configured", content_type='text/plain', status=500)
 
-	if (not allow_anonymous and (not request.user.is_authenticated() or request.user.is_guest)) or (require_superuser and not request.user.is_superuser):
+	if (not allow_anonymous and (not request.user.is_authenticated() or request.user.is_guest)):
 		# redirect to login page
 		login_url = reverse('login')
 		return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
+	if owner_authentication and not request.user.is_superuser:
+		project_owner = project.split('/', 1)[0]
+		if project_owner != request.user.username:
+			return HttpResponse("You don't have permissions for this project", content_type='text/plain', status=403)
 	context['user'] = request.user
-
 
 	if project:
 		ows_url = set_query_parameters(reverse('viewer:owsrequest'), {'map': project+'.qgs'})
