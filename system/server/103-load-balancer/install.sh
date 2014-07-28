@@ -37,7 +37,7 @@ listen mapserver 0.0.0.0:90
     stats hide-version
     stats uri /haproxy?stats
     stats refresh 3s
-    option httpchk GET /cgi-bin/qgis_mapserv.fcgi?REQUEST=GetCapabilities
+    option httpchk GET /cgi-bin/qgis_mapserv.fcgi?REQUEST=GetCapabilities HTTP/1.1\r\nHost:\ ms.gis.lab
     balance static-rr
     fullconn 150
     maxconn 1000
