@@ -105,6 +105,29 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		}
 
 		if (param == 0) {
+			// show warning when turning on layer that is not visible in current scale
+			if (node.isLeaf() && checked) {
+				var layer_info = node.attributes.config;
+				var min_scale = layer_info.visibility_scale_min? layer_info.visibility_scale_min : Math.round(node.root.layer.maxScale);
+				var max_scale = layer_info.visibility_scale_max? layer_info.visibility_scale_max : Math.round(node.root.layer.minScale);
+				if (node.root.layer.map.getScale() < min_scale || node.root.layer.map.getScale() > max_scale) {
+					var t = new Ext.ToolTip({
+						anchor: 'west',
+						target: node.getUI().getEl(),
+						title: 'Warning',
+						html: String.format('Layer {0} is not visible in current scale. It will appear if you zoom map to scale range ({1} - {2})',
+											node.attributes.text, min_scale, max_scale),
+						hideDelay: 5000,
+						closable: false,
+						listeners: {
+							hide: function(t) {
+								t.destroy();
+							}
+						}
+					});
+					t.show();
+				}
+			}
 			this.root.checkchangeParamsStack = [0];
 			this.root.updateLayersParamWithTimer();
 		}
