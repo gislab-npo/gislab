@@ -320,7 +320,7 @@ def page(request):
 			'publish_user': metadata.gislab_user,
 			'publish_date': metadata.publish_date,
 			'selection_color': metadata.selection_color[:-2], #strip alpha channel,
-			'topics': json.dumps(metadata.topics)
+			'topics': json.dumps(metadata.topics) if metadata.topics else ''
 		})
 		if metadata.message:
 			valid_until = datetime.datetime.strptime(metadata.message['valid_until'], "%d.%m.%Y").date()
