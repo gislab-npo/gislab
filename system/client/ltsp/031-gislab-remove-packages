@@ -1,16 +1,8 @@
 # Implements possibility to remove not needed packages installed to a client image by previous commands.
 
 case "$MODE" in
-    commandline)
-        add_option "remove-packages" "`eval_gettext "remove packages from final installation"`" "advanced" "true"
-        ;;
-    configure)
-        if [ -n "$option_remove_packages_value" ]; then
-            REMOVE_PACKAGES="$(echo $option_remove_packages_value | tr ',' ' ')"
-        fi
-        ;;
     finalization)
-        chroot $ROOT apt-get --assume-yes purge $REMOVE_PACKAGES
+        chroot $ROOT apt-get --assume-yes purge $GISLAB_CLIENT_REMOVE_PACKAGES
         chroot $ROOT apt-get --assume-yes autoremove
         ;;
 esac

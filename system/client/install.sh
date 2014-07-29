@@ -43,10 +43,6 @@ else
 	GISLAB_BUILD_CLIENT_OPTS+="--copy-package-cache "
 fi
 
-# install and remove packages
-GISLAB_BUILD_CLIENT_OPTS+='--late-packages "$GISLAB_CLIENT_INSTALL_PACKAGES" '
-GISLAB_BUILD_CLIENT_OPTS+='--remove-packages "$GISLAB_CLIENT_REMOVE_PACKAGES" '
-
 # enable debug if requested
 if [ "$GISLAB_DEBUG_INSTALL" == "yes" ]; then
 	GISLAB_BUILD_CLIENT_OPTS+="--debug "

@@ -2,12 +2,12 @@
 
 case "$MODE" in
     after-install)
-        # Reenable recommedted packages installation for fat clients
+        # Re-enable recommended packages installation for fat clients
         APT_GET_OPTS_ORIG=$APT_GET_OPTS
         APT_GET_OPTS=$(echo "$APT_GET_OPTS" | sed 's/--no-install-recommends//')
 
         # Install the packages
-        for package in ubuntu-standard $GISLAB_CLIENT_INSTALL_PACKAGES; do
+        for package in ubuntu-standard $GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT; do
             echo "Installing $package"
             chroot $ROOT apt-get $APT_GET_OPTS install $package
         done
