@@ -305,29 +305,6 @@
 				});
 				{% endif %}
 
-				// Toolbar Actions
-
-				{% if topics %}
-				{% include "viewer/topics.js" %}
-				mappanel.getTopToolbar().add(' ', '-', ' ');
-				{% endif %}
-				{% include "viewer/actions/basic.js" %}
-
-				{% if project %}
-				mappanel.getTopToolbar().add(' ', '-', ' ');
-					{% if print_composers %}
-					{% include "viewer/actions/print.js" %}
-					{% endif %}
-				{% include "viewer/actions/search.js" %}
-				mappanel.getTopToolbar().add(' ');
-				{% include "viewer/actions/featureinfo.js" %}
-				{% endif %}
-
-				mappanel.getTopToolbar().add(' ', '-', ' ');
-				{% include "viewer/actions/measurement.js" %}
-				mappanel.getTopToolbar().add(' ');
-				{% include "viewer/actions/draw.js" %}
-
 				var overlays_root = new WebGIS.WmsLayersNode({
 					text: 'Root',
 					expandable: false,
@@ -460,6 +437,29 @@
 						{% if project %} info_panel {% endif %}
 					]
 				});
+
+				// Toolbar Actions
+
+				{% if project %}
+				{% include "viewer/topics.js" %}
+				mappanel.getTopToolbar().add(' ', '-', ' ');
+				{% endif %}
+				{% include "viewer/actions/basic.js" %}
+
+				{% if project %}
+				mappanel.getTopToolbar().add(' ', '-', ' ');
+					{% if print_composers %}
+					{% include "viewer/actions/print.js" %}
+					{% endif %}
+				{% include "viewer/actions/search.js" %}
+				mappanel.getTopToolbar().add(' ');
+				{% include "viewer/actions/featureinfo.js" %}
+				{% endif %}
+
+				mappanel.getTopToolbar().add(' ', '-', ' ');
+				{% include "viewer/actions/measurement.js" %}
+				mappanel.getTopToolbar().add(' ');
+				{% include "viewer/actions/draw.js" %}
 
 				// viewport
 				var webgis = new Ext.Viewport({

@@ -1,8 +1,16 @@
 {% load i18n %}
 
+var topics = JSON.parse('{{ topics|default:"[]"|escapejs }}');
+if (topics.length === 0) {
+	topics.push({
+		'title': '{% trans "Default topic" %}',
+		'abstract': '{% trans "Default layers configuration" %}',
+		'visible_overlays': overlays_root.getVisibleLayers()
+	});
+}
 var action = new WebGIS.TopicsAction({
 	id: 'topics-action',
-	topics: JSON.parse('{{ topics|default:"[]"|escapejs }}'),
+	topics: topics,
 	cls: 'x-btn-icon',
 	iconCls: 'topics-icon',
 	enableToggle: true,
