@@ -31,13 +31,20 @@ defaults
     timeout client 50000
     timeout server 50000
 
+listen stats 0.0.0.0:1936
+    mode http
+    stats enable
+    stats hide-version
+    stats realm Haproxy\ Statistics
+    stats uri /
+
 listen mapserver 0.0.0.0:90
     mode http
     stats enable
     stats hide-version
     stats uri /haproxy?stats
     stats refresh 3s
-    option httpchk GET /cgi-bin/qgis_mapserv.fcgi?REQUEST=GetCapabilities HTTP/1.1\r\nHost:\ ms.gis.lab
+    option httpchk GET /cgi-bin/qgis_mapserv.fcgi HTTP/1.1\r\nHost:\ ms.gis.lab
     balance static-rr
     fullconn 150
     maxconn 1000
@@ -46,7 +53,7 @@ listen mapserver 0.0.0.0:90
 EOL
 
 for i in $(seq 50 149); do
-        echo "    server client-$i $GISLAB_NETWORK.$i:91 id $i check observe layer7" >> /etc/haproxy/haproxy.cfg
+        echo "    server c$i $GISLAB_NETWORK.$i:91 id $i check observe layer7" >> /etc/haproxy/haproxy.cfg
 done
 
 service haproxy restart
