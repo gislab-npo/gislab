@@ -1,14 +1,14 @@
-WebGIS.ThemesAction = Ext.extend(Ext.Action, {
+WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 	window: null,
 
 	constructor: function(config) {
-		this.themes = config.themes;
-		WebGIS.ThemesAction.superclass.constructor.apply(this, arguments);
+		this.topics = config.topics;
+		WebGIS.TopicsAction.superclass.constructor.apply(this, arguments);
 	},
 
-	showThemes: function() {
+	showTopics: function() {
 		this.window = new Ext.Window({
-			id: 'themes-window',
+			id: 'topics-window',
 			header: false,
 			closable: false,
 			resizable: false,
@@ -20,10 +20,10 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 				{
 					xtype: 'panel',
 					region: 'east',
-					ref: 'themeDetailsPanel',
-					cls: 'theme-detail-panel',
+					ref: 'topicDetailsPanel',
+					cls: 'topic-detail-panel',
 					width: 330,
-					title: gettext('Theme details'),
+					title: gettext('Topic details'),
 					collapsible: true,
 					collapsed: true,
 					animCollapse: false,
@@ -51,8 +51,8 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 							text: gettext('Layers'),
 						}, {
 							xtype: 'box',
-							id: 'theme-visible-layers',
-							cls: 'theme-layers',
+							id: 'topic-visible-layers',
+							cls: 'topic-layers',
 							ref: '/visibleLayersField',
 							html: '',
 							flex: 1
@@ -71,14 +71,13 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 				}, {
 					xtype: 'panel',
 					layout: 'fit',
-					title: gettext('Themes'),
+					title: gettext('Topics'),
 					region: 'center',
-					cls: 'themes-panel',
+					cls: 'topics-panel',
 					tools: [{
 						id: 'right',
-						scope: this,
 						handler: function(event, toolEl, panel, tc) {
-							var detailsPanel = panel.ownerCt.themeDetailsPanel;
+							var detailsPanel = panel.ownerCt.topicDetailsPanel;
 							detailsPanel.toggleCollapse();
 							if (!detailsPanel.collapsed) {
 								panel.addClass('details-expanded');
@@ -94,7 +93,7 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 							width: 80,
 							handler: function(button) {
 								var window = button.ownerCt.ownerCt.ownerCt;
-								var selected_records = window.themesList.getSelectedRecords();
+								var selected_records = window.topicsList.getSelectedRecords();
 								if (selected_records.length == 1) {
 									Ext.getCmp('layers-tree-panel').root.setVisibleLayers(selected_records[0].get("visible_overlays"));
 									Ext.getCmp(window.baseAction.itemId).toggle(false);
@@ -104,7 +103,7 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 					],
 					items: {
 						xtype: 'listview',
-						ref: '/themesList',
+						ref: '/topicsList',
 						hideHeaders: true,
 						columns: [{
 							dataIndex: 'title',
@@ -116,7 +115,7 @@ WebGIS.ThemesAction = Ext.extend(Ext.Action, {
 								{name: 'abstract', type: 'string'},
 								{name: 'visible_overlays'}
 							],
-							data: this.themes,
+							data: this.topics,
 						}),
 						singleSelect: true,
 						stateful: true,
