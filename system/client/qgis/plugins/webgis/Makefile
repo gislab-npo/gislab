@@ -11,14 +11,14 @@ QGISDIR=.qgis2
 # Makefile for a PyQGIS plugin
 
 # translation
-SOURCES = webgisplugin.py themes.py __init__.py
+SOURCES = webgisplugin.py topics.py __init__.py
 #TRANSLATIONS = i18n/webgisplugin_en.ts
 TRANSLATIONS =
 
 # global
 PLUGINNAME = webgis
 
-PY_FILES = webgisplugin.py themes.py __init__.py
+PY_FILES = webgisplugin.py topics.py __init__.py
 
 EXTRAS = icon.png metadata.txt
 

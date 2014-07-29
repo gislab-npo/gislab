@@ -12,7 +12,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 
-def _save_theme(dialog, theme_item):
+def _save_topic(dialog, topic_item):
 	visible_overlays = []
 	def collect_visible_overlays(widget):
 		if widget.data(0, Qt.UserRole):
@@ -21,25 +21,25 @@ def _save_theme(dialog, theme_item):
 		else:
 			for index in range(widget.childCount()):
 				collect_visible_overlays(widget.child(index))
-	collect_visible_overlays(dialog.themeLayers.invisibleRootItem())
-	theme_item.setData(Qt.UserRole, {
-		'abstract': dialog.themeAbstract.toPlainText(),
+	collect_visible_overlays(dialog.topicLayers.invisibleRootItem())
+	topic_item.setData(Qt.UserRole, {
+		'abstract': dialog.topicAbstract.toPlainText(),
 		'visible_overlays': visible_overlays
 	})
 
-def setup_themes_ui(dialog, overlay_layers_tree):
-	def add_theme():
-		item = QListWidgetItem("New Theme")
+def setup_topics_ui(dialog, overlay_layers_tree):
+	def add_topic():
+		item = QListWidgetItem("New topic")
 		item.setFlags(item.flags() | Qt.ItemIsEditable)
-		dialog.themesList.addItem(item)
-		dialog.themesList.editItem(item)
-		dialog.themesList.setCurrentRow(dialog.themesList.count()-1)
+		dialog.topicsList.addItem(item)
+		dialog.topicsList.editItem(item)
+		dialog.topicsList.setCurrentRow(dialog.topicsList.count()-1)
 
-	def remove_theme():
-		dialog.themesList.takeItem(dialog.themesList.row(dialog.themesList.selectedItems()[0]))
+	def remove_topic():
+		dialog.topicsList.takeItem(dialog.topicsList.row(dialog.topicsList.selectedItems()[0]))
 
-	dialog.addTheme.released.connect(add_theme)
-	dialog.removeTheme.released.connect(remove_theme)
+	dialog.addTopic.released.connect(add_topic)
+	dialog.removeTopic.released.connect(remove_topic)
 
 	def copy_tree_widget(widget):
 		new_widget = QTreeWidgetItem()
@@ -55,43 +55,43 @@ def setup_themes_ui(dialog, overlay_layers_tree):
 		new_widget.setCheckState(0, Qt.Checked)
 		return new_widget
 
-	dialog.themeLayers.addTopLevelItems(copy_tree_widget(dialog.overlaysTree.invisibleRootItem()).takeChildren())
+	dialog.topicLayers.addTopLevelItems(copy_tree_widget(dialog.overlaysTree.invisibleRootItem()).takeChildren())
 
 	# hide excluded layer items, must be done after attaching of all widgets to the QTreeWidget
 	def hide_excluded_layers(widget):
 		for index in range(widget.childCount()):
 			hide_excluded_layers(widget.child(index))
 		if widget.checkState(0) == Qt.Unchecked:
-			for theme_layer_item in dialog.themeLayers.findItems(widget.text(0), Qt.MatchExactly | Qt.MatchRecursive):
-				theme_layer_item.setHidden(True)
+			for topic_layer_item in dialog.topicLayers.findItems(widget.text(0), Qt.MatchExactly | Qt.MatchRecursive):
+				topic_layer_item.setHidden(True)
 	hide_excluded_layers(dialog.overlaysTree.invisibleRootItem())
 
-	# setup synchronization of available and hidden layers in themes with with main layers tree widget
+	# setup synchronization of available and hidden layers in topics with with main layers tree widget
 	def itemchanged(item, column):
 		# layer visibility changed
-		theme_layer_item = dialog.themeLayers.findItems(item.text(0), Qt.MatchExactly | Qt.MatchRecursive)[0]
+		topic_layer_item = dialog.topicLayers.findItems(item.text(0), Qt.MatchExactly | Qt.MatchRecursive)[0]
 		if column == 0:
-			theme_layer_item.setHidden(item.checkState(0) == Qt.Unchecked)
-			# this helps to avoid empty layers group to be visible in themes
+			topic_layer_item.setHidden(item.checkState(0) == Qt.Unchecked)
+			# this helps to avoid empty layers group to be visible in topics
 			if item.parent() and item.parent().checkState(0) == Qt.Unchecked:
-				theme_layer_item.parent().setHidden(True)
+				topic_layer_item.parent().setHidden(True)
 		elif column == 1:
 			is_hidden = item.checkState(1) == Qt.Checked
-			theme_layer_item.setDisabled(is_hidden)
+			topic_layer_item.setDisabled(is_hidden)
 
 	dialog.overlaysTree.itemChanged.connect(itemchanged)
 
-	dialog.themeWidget.setEnabled(False)
+	dialog.topicWidget.setEnabled(False)
 
-	def theme_changed(current, previous):
+	def topic_changed(current, previous):
 		if previous is None:
-			dialog.themeWidget.setEnabled(True)
+			dialog.topicWidget.setEnabled(True)
 		else:
-			_save_theme(dialog, previous)
+			_save_topic(dialog, previous)
 		if current:
-			# load theme data to UI
+			# load topic data to UI
 			current_data = current.data(Qt.UserRole) or {}
-			dialog.themeAbstract.setPlainText(current_data.get('abstract', ''))
+			dialog.topicAbstract.setPlainText(current_data.get('abstract', ''))
 			visible_overlays = current_data.get('visible_overlays')
 			def set_visible_overlays(widget):
 				if widget.data(0, Qt.UserRole):
@@ -103,27 +103,27 @@ def setup_themes_ui(dialog, overlay_layers_tree):
 				else:
 					for index in range(widget.childCount()):
 						set_visible_overlays(widget.child(index))
-			set_visible_overlays(dialog.themeLayers.invisibleRootItem())
+			set_visible_overlays(dialog.topicLayers.invisibleRootItem())
 
-	dialog.themesList.currentItemChanged.connect(theme_changed)
+	dialog.topicsList.currentItemChanged.connect(topic_changed)
 
-def load_themes_from_metadata(dialog, metadata):
-	"""load themes from previous version of published project"""
-	for theme_data in metadata.get('themes') or []:
-		item = QListWidgetItem(theme_data.pop('title'))
+def load_topics_from_metadata(dialog, metadata):
+	"""load topics from previous version of published project"""
+	for topic_data in metadata.get('topics') or []:
+		item = QListWidgetItem(topic_data.pop('title'))
 		item.setFlags(item.flags() | Qt.ItemIsEditable)
-		item.setData(Qt.UserRole, theme_data)
-		dialog.themesList.addItem(item)
-	dialog.themesList.setCurrentRow(0)
+		item.setData(Qt.UserRole, topic_data)
+		dialog.topicsList.addItem(item)
+	dialog.topicsList.setCurrentRow(0)
 
-def get_themes(dialog):
-	"""Returns list of themes data (title, abstract, visible layers)"""
-	if dialog.themesList.selectedItems():
-		_save_theme(dialog, dialog.themesList.selectedItems()[0])
-	themes = []
-	for index in range(dialog.themesList.count()):
-		item = dialog.themesList.item(index)
-		theme_data = dict(item.data(Qt.UserRole))
-		theme_data['title'] = item.text()
-		themes.append(theme_data)
-	return themes
+def get_topics(dialog):
+	"""Returns list of topics data (title, abstract, visible layers)"""
+	if dialog.topicsList.selectedItems():
+		_save_topic(dialog, dialog.topicsList.selectedItems()[0])
+	topics = []
+	for index in range(dialog.topicsList.count()):
+		item = dialog.topicsList.item(index)
+		topic_data = dict(item.data(Qt.UserRole))
+		topic_data['title'] = item.text()
+		topics.append(topic_data)
+	return topics

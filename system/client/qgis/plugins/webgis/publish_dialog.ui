@@ -723,12 +723,12 @@ QGroupBox::title {
        <item>
         <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Themes</string>
+          <string>Topics</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="themesList">
+        <widget class="QListWidget" name="topicsList">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>1</horstretch>
@@ -741,14 +741,14 @@ QGroupBox::title {
         <widget class="QWidget" name="widget_4" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QPushButton" name="addTheme">
+           <widget class="QPushButton" name="addTopic">
             <property name="text">
              <string>Add</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="removeTheme">
+           <widget class="QPushButton" name="removeTopic">
             <property name="text">
              <string>Remove</string>
             </property>
@@ -761,7 +761,7 @@ QGroupBox::title {
      </widget>
     </item>
     <item>
-     <widget class="QWidget" name="themeWidget" native="true">
+     <widget class="QWidget" name="topicWidget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>2</horstretch>
@@ -790,7 +790,7 @@ QGroupBox::title {
         </widget>
        </item>
        <item>
-        <widget class="QPlainTextEdit" name="themeAbstract">
+        <widget class="QPlainTextEdit" name="topicAbstract">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -819,7 +819,7 @@ QGroupBox::title {
         </widget>
        </item>
        <item>
-        <widget class="QTreeWidget" name="themeLayers">
+        <widget class="QTreeWidget" name="topicLayers">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>

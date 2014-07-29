@@ -25,7 +25,7 @@ from PyQt4.QtXml import QDomDocument
 
 # Initialize Qt resources from file resources.py
 import resources_rc
-from themes import setup_themes_ui, get_themes, load_themes_from_metadata
+from topics import setup_topics_ui, get_topics, load_topics_from_metadata
 
 
 GISLAB_VERSION_FILE = "/etc/gislab_version"
@@ -724,18 +724,18 @@ class WebGisPlugin:
 		if not self._check_publish_constrains():
 			return
 
-		if not self.themes_initialized:
-			setup_themes_ui(self.dialog, self.overlay_layers_tree)
+		if not self.topics_initialized:
+			setup_topics_ui(self.dialog, self.overlay_layers_tree)
 			if self.current_metadata is not None:
-				load_themes_from_metadata(self.dialog, self.current_metadata)
-			self.themes_initialized = True
+				load_topics_from_metadata(self.dialog, self.current_metadata)
+			self.topics_initialized = True
 		return True
 
-	def validate_themes_page(self):
+	def validate_topics_page(self):
 		self.metadata = None
 		self.metadata = self.generate_project_metadata()
 		self.generate_config_summary()
-		self.metadata['themes'] = get_themes(self.dialog)
+		self.metadata['topics'] = get_topics(self.dialog)
 		return True
 
 	def generate_config_summary(self):
@@ -1117,10 +1117,10 @@ class WebGisPlugin:
 		dialog.wizard_page3.setCommitPage(True)
 		dialog.wizard_page4.setButtonText(QWizard.CancelButton, "Close")
 		dialog.wizard_page1.validatePage = self.validate_config_page
-		dialog.wizard_page2.validatePage = self.validate_themes_page
+		dialog.wizard_page2.validatePage = self.validate_topics_page
 		dialog.wizard_page3.validatePage = self.publish_project
 		self.dialog = dialog
-		self.themes_initialized = False
+		self.topics_initialized = False
 		map_canvas = self.iface.mapCanvas()
 
 		def expiration_toggled(checked):
