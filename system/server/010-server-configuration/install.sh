@@ -89,6 +89,10 @@ if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; f
 # set GIS.lab root directory variable
 echo "GISLAB_ROOT=$GISLAB_ROOT" >> /etc/environment
 
+# create empty local aliases table
+echo > /etc/aliases
+gislab_config_header_to_file /etc/aliases
+
 # add admin scripts on PATH
 echo "PATH="$PATH:$GISLAB_ROOT/system/bin"" >> /etc/profile
 export PATH=$PATH:$GISLAB_ROOT/system/bin

@@ -66,12 +66,15 @@ if [ -d "$GISLAB_USER_HOME" ]; then
 fi
 
 # disable forwarding system mails to user if user was superuser
-user_mail=$(ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// "uid=$GISLAB_USER" mail | awk '/^mail: / { print $2 }')
-user_mail=$(echo $user_mail | sed "s/\./\\\./g")
+if id $GISLAB_USER 2>/dev/null | grep -q '(labadmins)'; then
+	GISLAB_USER_MAIL=$(ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// "uid=$GISLAB_USER" mail | awk '/^mail: / { print $2 }')
+	ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
+dn: cn=root,ou=MailAliases,dc=gis,dc=lab
+changetype: modify
+delete: maildrop
+maildrop: $GISLAB_USER_MAIL
+EOL
 
-if id $GISLAB_USER 2>/dev/null | grep -q '(labadmins)' && grep -q "[ ,]$user_mail\([ ,]\|$\)" /etc/postfix/virtual_regexp; then
-	sed -i -e "s/[ ,]$user_mail\([ ,]\|$\)//" -e "s/[, ]*$//" /etc/postfix/virtual_regexp
-	service postfix reload
 fi
 
 # manunaly delete user from additional groups (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)

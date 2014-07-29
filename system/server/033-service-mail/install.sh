@@ -11,6 +11,7 @@ GISLAB_SERVER_INSTALL_PACKAGES="
   bsd-mailx
   mutt
   postfix
+  postfix-ldap
   sasl2-bin
 "
 apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_INSTALL_PACKAGES
@@ -20,8 +21,9 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 cp $GISLAB_INSTALL_CURRENT_ROOT/conf/postfix/main.cf /etc/postfix/main.cf
 gislab_config_header_to_file /etc/postfix/main.cf
 
-# send admin email by default to provisioning user
-echo "/.+@.+/ $GISLAB_PROVISIONING_USER" > /etc/postfix/virtual_regexp
+# local LDAP aliases search table
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/postfix/ldap-aliases.cf /etc/postfix/ldap-aliases.cf
+gislab_config_header_to_file /etc/postfix/ldap-aliases.cf
 
 rm -f /etc/postfix/sasl_passwd /etc/postfix/sasl_passwd.db
 
@@ -34,14 +36,6 @@ if [ -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" -a -n "$GISLAB_SERVER_EMAIL_RELAY_PAS
 	echo "[$GISLAB_SERVER_EMAIL_RELAY_SERVER]:587 $GISLAB_SERVER_EMAIL_RELAY_LOGIN:$GISLAB_SERVER_EMAIL_RELAY_PASSWORD" > /etc/postfix/sasl_passwd
 	chmod 0600 /etc/postfix/sasl_passwd
 	postmap /etc/postfix/sasl_passwd
-
-	# send system emails to all users in labadmins group
-	ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
-	for user in $($ldapsearch_cmd -b "cn=labadmins,ou=Groups,dc=gis,dc=lab" memberUid | awk '/^memberUid:/ { print $2 }'); do
-		for mail in $($ldapsearch_cmd -b "ou=People,dc=gis,dc=lab" "uid=$user" mail | awk '/^mail: / { print $2 }'); do
-			sed -i "s/\(.*\)/\1, $mail/" /etc/postfix/virtual_regexp
-		done
-	done
 fi
 
 service postfix restart
@@ -72,5 +66,11 @@ echo "/var/log/mail-error.log" >> /etc/logcheck/logcheck.logfiles
 
 service rsyslog restart
 
+### DO NOT CONTINUE ON UPGRADE ###
+if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
+
+# add service user mail alias
+echo "postmaster: root" >> /etc/aliases
+newaliases
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

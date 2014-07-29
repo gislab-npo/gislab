@@ -177,6 +177,8 @@ export SUDO_FORCE_REMOVE=no
 
 ldapadd -Q -Y EXTERNAL -H ldapi:/// -f $GISLAB_INSTALL_CURRENT_ROOT/conf/ldap/sudo.schema
 
+# add support for postfix
+ldapadd -Q -Y EXTERNAL -H ldapi:/// -f $GISLAB_INSTALL_CURRENT_ROOT/conf/ldap/postfix.schema
 
 # create indexes
 ldapmodify -Q -Y EXTERNAL -H ldapi:/// << EOL
@@ -204,6 +206,12 @@ olcDbIndex: uniqueMember pres,eq
 -
 add: olcDbIndex
 olcDbIndex: sudoUser eq,sub,subany
+-
+add: olcDbIndex
+olcDbIndex: mailacceptinggeneralid pres,eq
+-
+add: olcDbIndex
+olcDbIndex: maildrop pres,eq
 EOL
 
 
@@ -249,6 +257,17 @@ sudoUser: %labadmins
 sudoHost: ALL
 sudoCommand: ALL
 sudoOption: !authenticate
+
+dn: ou=MailAliases,dc=gis,dc=lab
+objectClass: organizationalUnit
+ou: mailaliases
+
+dn: cn=root,ou=MailAliases,dc=gis,dc=lab
+objectclass: top
+objectClass: virtualaccount
+cn: root
+mailacceptinggeneralid: root
+maildrop: $GISLAB_PROVISIONING_USER
 
 dn: cn=labadmins,ou=Groups,dc=gis,dc=lab
 objectClass: posixGroup

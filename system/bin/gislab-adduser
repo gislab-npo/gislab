@@ -149,8 +149,13 @@ fi
 # forward system mails to user if creating superuser account
 if [ "$SUDO" == "yes" -a -n "$GISLAB_SERVER_EMAIL_RELAY_SERVER" \
   -a -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" -a -n "$GISLAB_SERVER_EMAIL_RELAY_PASSWORD" ]; then
-	sed -i "s/\(.*\)/\1, $GISLAB_USER_MAIL/" /etc/postfix/virtual_regexp
-	service postfix reload
+	ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
+dn: cn=root,ou=MailAliases,dc=gis,dc=lab
+changetype: modify
+add: maildrop
+maildrop: $GISLAB_USER_MAIL
+EOL
+
 fi
 
 

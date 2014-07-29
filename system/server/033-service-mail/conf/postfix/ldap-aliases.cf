@@ -1,0 +1,6 @@
+server_host = ldap://server.gis.lab
+start_tls = yes
+
+search_base = ou=MailAliases,dc=gis,dc=lab
+query_filter = mailacceptinggeneralid=%s
+result_attribute = maildrop

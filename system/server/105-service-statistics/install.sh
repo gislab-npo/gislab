@@ -88,4 +88,12 @@ service nginx restart
 service munin-node restart
 
 
+### DO NOT CONTINUE ON UPGRADE ###
+if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
+
+# add service user mail alias
+echo "munin: root" >> /etc/aliases
+newaliases
+
+
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

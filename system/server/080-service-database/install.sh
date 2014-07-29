@@ -75,6 +75,10 @@ service postgresql restart
 ### DO NOT CONTINUE ON UPGRADE ###
 if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
 
+# add service user mail alias
+echo "postgres: root" >> /etc/aliases
+newaliases
+
 # create labusers and labadmins group
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole --no-login labusers"
 sudo su - postgres -c "createuser --superuser --createdb --createrole --no-login labadmins"

@@ -54,4 +54,11 @@ echo "/var/log/apache2/error.log" >> /etc/logcheck/logcheck.logfiles
 echo "/var/log/nginx/error.log" >> /etc/logcheck/logcheck.logfiles
 
 
+### DO NOT CONTINUE ON UPGRADE ###
+if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
+
+# add service user mail alias
+echo "www-data: root" >> /etc/aliases
+newaliases
+
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:
