@@ -31,14 +31,14 @@ defaults
     timeout client 50000
     timeout server 50000
 
-listen stats 0.0.0.0:1936
+listen stats.gis.lab 0.0.0.0:1936
     mode http
     stats enable
     stats hide-version
     stats realm Haproxy\ Statistics
     stats uri /
 
-listen mapserver 0.0.0.0:90
+listen ms.gis.lab 0.0.0.0:90
     mode http
     stats enable
     stats hide-version
