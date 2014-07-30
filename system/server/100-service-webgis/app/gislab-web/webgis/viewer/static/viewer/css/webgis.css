@@ -71,6 +71,11 @@ div.scale-control {
 	border-bottom: 1px dotted #BBB;
 }
 
+.x-combo-list .x-combo-selected {
+	background-color: #FFFFE0 !important;
+
+}
+
 .olControlAttribution {
 	bottom: 5px !important;
 	right: 5px !important;
