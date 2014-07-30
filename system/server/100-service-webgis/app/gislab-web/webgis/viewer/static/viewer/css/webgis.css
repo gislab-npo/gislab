@@ -713,3 +713,10 @@ table.x-btn-noicon {
 .details-expanded .x-tool-right {
 	background-position: 0 -180px;
 }
+
+.x-tip-header-text {
+	font-size: 12px !important;
+}
+.x-tip-header {
+	margin-bottom: 3px !important;
+}
