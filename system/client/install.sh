@@ -86,9 +86,9 @@ LOCAL_APPS=False
 #SCREEN_02=shell                          # get local root prompt when pressing Ctrl+Alt+F2 
 SCREEN_07=ldm
 NFS_HOME=/home
-FSTAB_1="server:/storage/repository /mnt/repository nfs defaults 0 0"
-FSTAB_2="server:/storage/share /mnt/share nfs defaults 0 0"
-FSTAB_3="server:/storage/barrel /mnt/barrel nfs defaults 0 0"
+FSTAB_1="server.gis.lab:/storage/repository /mnt/repository nfs defaults 0 0"
+FSTAB_2="server.gis.lab:/storage/share /mnt/share nfs defaults 0 0"
+FSTAB_3="server.gis.lab:/storage/barrel /mnt/barrel nfs defaults 0 0"
 FSTAB_4="tmpfs /mnt/temporary tmpfs defaults,noatime,noexec,size=20% 0 0"
 EOF
 
