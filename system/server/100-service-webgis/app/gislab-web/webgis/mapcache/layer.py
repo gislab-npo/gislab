@@ -132,7 +132,8 @@ class Layer (object):
 				x = metatile.x * self.metasize[0] + i
 				y = metatile.y * self.metasize[1] + j
 				subtile = Tile( self, x, y, metatile.z )
-				self.cache.set( subtile, subdata )
+				subtile.data = subdata
+				self.cache.set_tile( subtile )
 				if x == tile.x and y == tile.y:
 					tile.data = subdata
 
@@ -141,12 +142,25 @@ class Layer (object):
 	def render (self, tile, force=False):
 		metatile = self.get_meta_tile(tile)
 		try:
-			self.cache.lock(metatile)
+			self.cache.lock_tile(metatile)
 			image = None
 			if not force:
-				image = self.cache.get(tile)
+				image = self.cache.get_tile(tile)
 			if not image:
 				image = self.render_meta_tile(metatile, tile)
 		finally:
-			self.cache.unlock(metatile)
+			self.cache.unlock_tile(metatile)
+		return image
+
+	def render_legend(self, z, **params):
+		image = None
+		try:
+			self.cache.lock_legend(self, z)
+			image = self.cache.get_legend(self, z)
+			if not image:
+				image = self.render_legend_image(**params)
+				if image:
+					self.cache.set_legend(self, z, image)
+		finally:
+			self.cache.unlock_legend(self, z)
 		return image

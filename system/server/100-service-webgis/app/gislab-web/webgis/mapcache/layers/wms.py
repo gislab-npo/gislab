@@ -24,4 +24,14 @@ class WmsLayer(Layer):
 		return tile.data
 
 
+	def render_legend_image(self, **params):
+		client_params = dict(params)
+		client_params.update({
+			"REQUEST": "GetLegendGraphic",
+			"LAYER": self.provider_layers,
+			"FORMAT": self.provider_image_format,
+		})
+		data, response = self.client.fetch(client_params)
+		return data
+
 # vim: set ts=4 sts=4 sw=4 noet:

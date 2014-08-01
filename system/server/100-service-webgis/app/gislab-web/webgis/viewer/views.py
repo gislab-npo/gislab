@@ -23,7 +23,7 @@ from django.contrib.auth.decorators import login_required
 from webgis.viewer import forms
 from webgis.viewer import models
 from webgis.viewer.metadata_parser import MetadataParser
-from webgis.mapcache import get_tile_response, WmsLayer, TileNotFoundException
+from webgis.mapcache import get_tile_response, get_legendgraphic_response, WmsLayer, TileNotFoundException
 
 
 OSM_LAYER = {'name': 'OSM', 'type': 'OSM', 'title': 'Open Street Map'}
@@ -144,6 +144,24 @@ def tile(request, project_hash, publish, layers_hash=None, z=None, x=None, y=Non
 	except TileNotFoundException, e:
 		raise Http404
 
+@login_required
+def legend(request, project_hash, publish, layer_hash=None, zoom=None, format=None):
+	params = {key.upper(): request.GET[key] for key in request.GET.iterkeys()}
+	project = params['PROJECT']+'.qgs'
+	try:
+		layer = WmsLayer(
+			project=project_hash,
+			publish=publish,
+			name=layer_hash,
+			provider_layers=params['LAYER'].encode('utf-8'),
+			provider_url=set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
+			image_format=format,
+		)
+		params.pop('PROJECT')
+		params.pop('LAYER')
+		return get_legendgraphic_response(layer, zoom, **params)
+	except:
+		raise Http404
 
 def parse_layers_param(layers_string, layers_capabilities):
 	tree = {
@@ -299,6 +317,11 @@ def page(request):
 			mapcache_url = reverse('viewer:tile', kwargs={'project_hash': project_hash, 'publish': metadata.publish_date_unix, 'layers_hash': '__layers__', 'x': 0, 'y': 0, 'z': 0, 'format': 'png'})
 			mapcache_url = mapcache_url.split('/__layers__/')[0]+'/'
 			context['mapcache_url'] = mapcache_url
+			legend_url = reverse('viewer:legend', kwargs={'project_hash': project_hash, 'publish': metadata.publish_date_unix, 'layer_hash': '__layer__', 'zoom': 0, 'format': 'png'})
+			legend_url = legend_url.split('/__layer__/')[0]+'/'
+			context['legend_url'] = legend_url
+		else:
+			context['legend_url'] = ows_url
 
 		context.update({
 			'project': project,

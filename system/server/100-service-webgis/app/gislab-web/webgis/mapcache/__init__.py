@@ -16,7 +16,7 @@ def get_tile_response(layer, z=0, x=0, y=0):
 	cache = Disk(base=os.path.join(settings.MEDIA_ROOT, 'cache'))
 	layer.cache = cache
 
-	image = cache.get(tile)
+	image = cache.get_tile(tile)
 	if not image:
 		data = layer.render(tile)
 		if not data:
@@ -24,4 +24,15 @@ def get_tile_response(layer, z=0, x=0, y=0):
 	layer = tile.layer
 	resp = HttpResponse(tile.data, content_type=layer.format())
 	#resp['Content-Length'] = len(image)
+	return resp
+
+def get_legendgraphic_response(layer, zoom, **params):
+	cache = Disk(base=os.path.join(settings.MEDIA_ROOT, 'cache'))
+	layer.cache = cache
+	image = cache.get_legend(layer, zoom)
+	if not image:
+		image = layer.render_legend(zoom, **params)
+		if not image:
+			raise Exception("Zero length data returned from layer.")
+	resp = HttpResponse(image, content_type=layer.format())
 	return resp

@@ -37,10 +37,11 @@ class Disk (Cache):
 		else:
 			return os.access(path, os.W_OK)
 
-	def get_key (self, tile):
+	def get_tile_key (self, tile):
 		components = ( self.basedir,
 					   tile.layer.project,
 					   tile.layer.publish,
+					   "tile",
 					   tile.layer.name,
 					   "%d" % tile.z,
 					   "%d" % tile.x,
@@ -49,16 +50,24 @@ class Disk (Cache):
 		filename = os.path.join( *components )
 		return filename
 
-	def get (self, tile):
-		filename = self.get_key(tile)
+	def get_legend_key (self, layer, z):
+		components = ( self.basedir,
+					   layer.project,
+					   layer.publish,
+					   "legend",
+					   layer.name,
+					   "%s.%s" % (z, layer.image_format)
+					)
+		return os.path.join( *components )
+
+	def get (self, filename):
 		if self.access(filename, 'read'):
-			tile.data = file(filename, "rb").read()
-			return tile.data
+			data = file(filename, "rb").read()
+			return data
 		else:
 			return None
 
-	def set (self, tile, data):
-		filename = self.get_key(tile)
+	def set (self, filename, data):
 		dirname  = os.path.dirname(filename)
 		if not self.access(dirname, 'write'):
 			self.makedirs(dirname)
@@ -98,11 +107,10 @@ class Disk (Cache):
 					os.unlink(tmpfile)
 				raise
 
-		tile.data = data
 		return data
-	
+
 	def delete (self, tile):
-		filename = self.get_key(tile)
+		filename = self.get_tile_key(tile)
 		if self.access(filename, 'read'):
 			os.unlink(filename)
 
@@ -120,8 +128,7 @@ class Disk (Cache):
 			shutil.move(cache_dir, tmp_name)
 			subprocess.Popen(["rm", "-rf", tmp_name])
 
-	def attempt_lock (self, tile):
-		name = self.get_lock_name(tile)
+	def attempt_lock (self, name):
 		try:
 			self.makedirs(name, hide_dir_exists=False)
 			return True
@@ -132,19 +139,17 @@ class Disk (Cache):
 			if st.st_ctime + self.stale < time.time():
 				warnings.warn("removing stale lock %s" % name)
 				# remove stale lock
-				self.unlock(tile)
+				self.unlock(name)
 				self.makedirs(name)
 				return True
 		except OSError:
 			pass
 		return False 
 
-	def unlock (self, tile):
-		name = self.get_lock_name(tile)
+	def unlock (self, name):
 		try:
 			os.rmdir(name)
 		except OSError, E:
 			sys.stderr.write("unlock %s failed: %s \n" % (name, str(E)))
-
 
 # vim: set ts=4 sts=4 sw=4 noet:

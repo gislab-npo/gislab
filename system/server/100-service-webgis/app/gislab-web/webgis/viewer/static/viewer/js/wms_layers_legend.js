@@ -54,7 +54,6 @@ Ext.override(GeoExt.WMSLegend, {
 				url = styles[0].legend && styles[0].legend.href;
 			}
 		}
-		
 		if(!url) {
 			if (layer instanceof OpenLayers.Layer.WMS) {
 				url = layer.getFullRequestString({
@@ -71,10 +70,12 @@ Ext.override(GeoExt.WMSLegend, {
 					TIME: null
 				});
 			} else {
-				url = Ext.urlAppend(layer.wmsLegendUrl, Ext.urlEncode({
+				var image_format_extension = this.baseParams.FORMAT? this.baseParams.FORMAT.replace('image/', '') : 'gif';
+				url = Ext.urlAppend(layer.wmsLegendUrl+String.format('{0}/{1}.{2}', CryptoJS.MD5(layerName).toString(), layer.getServerZoom(), image_format_extension), Ext.urlEncode({
 					REQUEST: "GetLegendGraphic",
 					EXCEPTIONS: "application/vnd.ogc.se_xml",
 					LAYER: layerName,
+					PROJECT: layer.project
 				}));
 			}
 		}
@@ -84,14 +85,14 @@ Ext.override(GeoExt.WMSLegend, {
 			params._OLSALT = layer.params._OLSALT;
 		}
 		url = Ext.urlAppend(url, Ext.urlEncode(params));
-		if (url.toLowerCase().indexOf("request=getlegendgraphic") != -1) {
-			if (url.toLowerCase().indexOf("format=") == -1) {
+		if (url.toLowerCase().indexOf("request=getlegendgraphic") !== -1) {
+			if (url.toLowerCase().indexOf("format=") === -1) {
 				url = Ext.urlAppend(url, "FORMAT=image/gif");
 			}
 			// add scale parameter - also if we have the url from the record's
 			// styles data field and it is actually a GetLegendGraphic request.
 			if (this.useScaleParameter === true) {
-				var scale = layer.map.getScale();
+				var scale = Math.round(layer.map.getScale());
 				url = Ext.urlAppend(url, "SCALE=" + scale);
 			}
 		}
