@@ -1,0 +1,179 @@
+{% load staticfiles i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+		<link rel="icon" type="image/png" href="{% static 'viewer/images/webgis16.png' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'viewer/lib/ext-3.4.1/resources/css/ext-all.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'viewer/lib/ext-3.4.1/resources/css/xtheme-gray.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'viewer/css/webgis.css' %}"/>
+
+		{% if debug %}
+		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/adapter/ext/ext-base-debug.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/ext-all-debug.js' %}"></script>
+		{% else %}
+		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/adapter/ext/ext-base.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/ext-all.js' %}"></script>
+		{% endif %}
+		{% if LANGUAGE_CODE and LANGUAGE_CODE != 'en-us' %}
+		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/locale/ext-lang-' %}{{ LANGUAGE_CODE }}.js"></script>
+		{% endif %}
+
+		<title id="page-title">{% trans "Published projects" %}</title>
+
+		{% comment %} ##  CONFIGURATION  ## {% endcomment %}
+		<script type="text/javascript">
+			function main() {
+				var webgis = new Ext.Viewport({
+					id: 'projects-viewer',
+					layout: 'fit',
+					items: [{
+						xtype: 'panel',
+						layout: "border",
+						tbar: {
+							xtype: 'toolbar',
+							dock: 'top',
+							layout: {
+								type: 'hbox',
+								pack: 'start',
+							},
+							cls: 'x-panel-header app-header',
+							items: [{
+									xtype: 'tbspacer',
+									width: 120,
+								}, {
+									xtype: 'tbspacer',
+									flex: 1
+								}, {
+									xtype: 'tbtext',
+									text: '{% trans "Published projects by user" %} {{ username }}',
+									cls: 'app-title'
+								}, {
+									xtype: 'tbspacer',
+									flex: 1
+								},{% if user.is_guest %} {
+									xtype: 'tbtext',
+									text: '{% trans "Guest" %}'
+								}, {
+									xtype: 'tbspacer',
+									width: 5
+								}, new Ext.Action({
+									cls: 'x-btn-icon',
+									iconCls: 'login-icon',
+									tooltip: '{% trans "Log in" %}',
+									handler: function(action) {
+										window.location.href = Ext.urlAppend('{% url "login" %}', Ext.urlEncode({next: window.location.href}));
+									}
+								}),{% else %} {
+									xtype: 'tbtext',
+									text: '{{ user.get_full_name }}'
+								}, {
+									xtype: 'tbspacer',
+									width: 5
+								}, new Ext.Action({
+									cls: 'x-btn-icon',
+									iconCls: 'logout-icon',
+									tooltip: '{% trans "Log out" %}',
+									handler: function(action) {
+										window.location.href = Ext.urlAppend('{% url "logout" %}', Ext.urlEncode({next: window.location.href}));
+									}
+								}),
+								{% endif %}
+								{
+									xtype: 'tbspacer',
+									width: 5
+								}
+							],
+							listeners: {
+								// center application's title depending on the user name length
+								afterLayout: function(toolbar) {
+									var width = toolbar.get(4).getWidth()+25;
+									if (toolbar.get(0).width != width) {
+										toolbar.get(0).width = width;
+										toolbar.doLayout();
+									}
+								}
+							}
+						},
+						items: [{
+							xtype: 'grid',
+							region: 'center',
+							header: false,
+							viewConfig: {
+								forceFit: true,
+								templates: {
+									cell: new Ext.Template(
+										'<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} x-selectable {css}" style="{style}" tabIndex="0" {cellAttr}>\
+											<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>\
+										</td>'
+									)
+								}
+							},
+							cm: new Ext.grid.ColumnModel({
+								defaults: {
+									sortable: true,
+								},
+								columns: [{
+										id: 'title',
+										header: '{% trans "Title" %}',
+										dataIndex: 'title',
+										width: 150
+									}, {
+										id: 'publication_time',
+										header: '{% trans "Publication time" %}',
+										renderer : Ext.util.Format.dateRenderer('H:i:s d.m.Y'),
+										width: 120,
+										fixed: true,
+									}, {
+										id: 'expiration_time',
+										header: '{% trans "Expiration time" %}',
+										renderer : Ext.util.Format.dateRenderer('d.m.Y'),
+										width: 120,
+										fixed: true,
+									}, {
+										id: 'url',
+										header: '{% trans "URL" %}',
+										dataIndex: 'url',
+										sortable: false,
+										menuDisabled: true,
+										width: 400
+								}]
+							}),
+							store: new Ext.data.JsonStore({
+								data: [
+									{% for project_info in projects %}{
+										title: '{{ project_info.title }}',
+										publication_time: new Date({{ project_info.publication_time_unix }}*1000),
+										url: '<a href="{{ project_info.url }}" target="_blank">{{ project_info.url }}</a>',
+										{% if project_info.expiration_time_unix %}expiration_time: new Date({{ project_info.expiration_time_unix }}*1000),{% endif %}
+									},{% endfor %}
+								],
+								storeId: 'projects-store',
+								fields: [{
+										name: 'title',
+										type: 'string'
+									}, {
+										name: 'publication_time',
+										type: 'date'
+									}, {
+										name: 'expiration_time',
+										type: 'date'
+									}, {
+										name: 'url',
+										type: 'string'
+								}]
+							}),
+						}]
+					}]
+				});
+			}; // end of main function
+
+			Ext.QuickTips.init();
+			Ext.onReady(main);
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

@@ -7,6 +7,7 @@ import os.path
 import urllib
 import urllib2
 import hashlib
+import time
 import datetime
 import contextlib
 from urlparse import parse_qs, urlsplit, urlunsplit
@@ -391,3 +392,42 @@ def page(request):
 
 	return render(request, "viewer/webgis.html", context, content_type="text/html")
 
+
+def user_projects(request, username):
+	if not request.user.is_authenticated() or request.user.is_guest:
+		# redirect to login page
+		login_url = reverse('login')
+		return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
+	if not username:
+		redirect_url = reverse('viewer:user_projects', kwargs={'username': request.user.username})
+		return HttpResponseRedirect(redirect_url)
+	if username != request.user.username and not request.user.is_superuser:
+		return HttpResponse("You don't have permissions to display published projects of other users", content_type='text/plain', status=403)
+
+	projects_root = os.path.join(settings.WEBGIS_PROJECT_ROOT, username)
+	projects = []
+	start_index = len(settings.WEBGIS_PROJECT_ROOT)
+	for root, dirs, files in os.walk(projects_root):
+		if files:
+			for filename in files:
+				if filename.endswith('.qgs'):
+					project_filename = os.path.join(root, filename)
+					metadata_filename = os.path.splitext(project_filename)[0] + '.meta'
+					try:
+						metadata = MetadataParser(metadata_filename)
+						url = set_query_parameters(request.build_absolute_uri('/'), {'project': project_filename[start_index:]})
+						projects.append({
+							'title': metadata.title,
+							'url': url,
+							'publication_time_unix': int(metadata.publish_date_unix),
+							'expiration_time_unix': int(time.mktime(time.strptime(metadata.expiration, "%d.%m.%Y"))) if metadata.expiration else None
+						})
+					except IOError:
+						# metadata file does not exists or not valid
+						pass
+	context = {
+		'username': username,
+		'projects': projects,
+		'debug': settings.DEBUG
+	}
+	return render(request, "viewer/user_projects.html", context, content_type="text/html")
