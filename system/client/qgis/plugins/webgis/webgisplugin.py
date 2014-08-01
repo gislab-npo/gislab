@@ -159,7 +159,6 @@ class WebGisPlugin:
 
 	dialog = None
 	project = None
-	publish_allowed = False
 	run_in_gislab = False
 
 	def __init__(self, iface):
@@ -192,27 +191,11 @@ class WebGisPlugin:
 		self.iface.addPluginToWebMenu(u"&GIS.lab Web", self.action)
 
 		self.project = QgsProject.instance()
-		self.project.readProject.connect(self._check_plugin_state)
-		self.project.projectSaved.connect(self._check_plugin_state)
-		self.iface.newProjectCreated.connect(self._check_plugin_state)
-		self._check_plugin_state()
 
 	def unload(self):
 		# Remove the plugin menu item and icon
 		self.iface.removePluginMenu(u"&GIS.lab Web", self.action)
 		self.iface.removeToolBarIcon(self.action)
-		
-		self.project.projectSaved.disconnect()
-		self.project.readProject.disconnect()
-		self.iface.newProjectCreated.disconnect()
-
-	def _check_plugin_state(self, *args):
-		"""Checks whether plugin can be enabled."""
-		filepath = self.project.fileName()
-		if self.run_in_gislab:
-			self.action.setEnabled("/Share/" in filepath)
-		else:
-			self.action.setEnabled(True)
 
 	def _show_messages(self, messages):
 		"""Display messages in dialog window."""
@@ -240,10 +223,13 @@ class WebGisPlugin:
 		if self.project.isDirty():
 			messages.append((MSG_ERROR, u"Project has been modified. Save it (Project > Save)."))
 
-		if not self.run_in_gislab and "/Share/" not in self.project.fileName():
-			messages.append((MSG_WARNING, u"Project file is not stored in Share folder"))
-
 		map_canvas = self.iface.mapCanvas()
+		if map_canvas.mapRenderer().destinationCrs().authid().startswith('USER:'):
+			messages.append((
+				MSG_ERROR,
+				u"Project use custom coordinate system"
+			))
+
 		all_layers = [layer.name() for layer in self.iface.legendInterface().layers()]
 		if len(all_layers) != len(set(all_layers)):
 			messages.append((MSG_ERROR, u"Project contains layers with the same names."))
@@ -262,6 +248,11 @@ class WebGisPlugin:
 
 		base_layers = [layer for layer in self.iface.legendInterface().layers() if self._is_base_layer_for_publish(layer)]
 		for layer in base_layers:
+			if layer.crs().authid().startswith('USER:'):
+				messages.append((
+					MSG_ERROR,
+					u"Base layer '{0}' use custom coordinate system".format(layer.name())
+				))
 			resolutions = self._wmsc_layer_resolutions(layer, self._map_units())
 			if resolutions is not None and not publish_resolutions(resolutions):
 				messages.append((
@@ -269,14 +260,23 @@ class WebGisPlugin:
 					u"Base layer '{0}' will not be visible in published project scales".format(layer.name())
 				))
 
+		overlay_layers = [layer for layer in self.iface.legendInterface().layers() if self._is_overlay_layer_for_publish(layer)]
+		for layer in overlay_layers:
+			layer_widget = self.dialog.overlaysTree.findItems(layer.name(), Qt.MatchExactly | Qt.MatchRecursive)
+			if layer_widget:
+				layer_widget = layer_widget[0]
+				if layer_widget.checkState(0) == Qt.Checked:
+					print layer.name()
+					if layer.crs().authid().startswith('USER:'):
+						messages.append((
+							MSG_ERROR,
+							u"Overlay layer '{0}' use custom coordinate system".format(layer.name())
+						))
+
 		self._show_messages(messages)
 		for msg_type, msg_text in messages:
 			if msg_type == MSG_ERROR:
-				self.publish_allowed = False
-				self.dialog.wizard_page1.completeChanged.emit()
 				return False
-		self.publish_allowed = True
-		self.dialog.wizard_page1.completeChanged.emit()
 		return True
 
 	def _is_overlay_layer_for_publish(self, layer):
@@ -385,12 +385,6 @@ class WebGisPlugin:
 
 		return base_layers_tree, overlay_layers_tree
 
-
-	def _get_publish_project_name(self):
-		"""Returns project name of published project, or None if working outside GIS.lab enviroment."""
-		if self.run_in_gislab:
-			project_name = self.project.fileName().split("/Share/")[1]
-			return os.path.splitext(project_name)[0]
 
 	def publish_project(self):
 		"""Creates project metadata file."""
@@ -717,12 +711,9 @@ class WebGisPlugin:
 		metadata['gislab_user'] = os.environ['USER']
 		return metadata
 
-	def page1_cmplete(self):
-		return self.publish_allowed
-
 	def validate_config_page(self):
 		if not self._check_publish_constrains():
-			return
+			return False
 
 		if not self.topics_initialized:
 			setup_topics_ui(self.dialog, self.overlay_layers_tree)
@@ -973,7 +964,7 @@ class WebGisPlugin:
 			<head>{0}</head>
 			<body>
 				<p><h4>Project '{1}' was successfully published.</h4></p>
-				<p>In order to load this project in GIS.lab Web, do not forget to copy all files to 'Share/GISLAB_USER' folder and visit <a href="http://web.gis.lab/Share">http://web.gis.lab/Share</a> page.</p>
+				<p>In order to load this project in GIS.lab Web, do not forget to copy all files to 'Share/GISLAB_USER' folder and visit <a href="http://web.gis.lab/share">http://web.gis.lab/share</a> page.</p>
 
 				<p><h4>Project files:</h4></p>
 				<ul>
@@ -1058,7 +1049,7 @@ class WebGisPlugin:
 				project_extent[3]-extent_buffer
 			]
 		dialog.extent_layer.setCurrentIndex(dialog.extent_layer.findData(project_extent))
-		dialog.use_mapcache.setChecked(metadata['use_mapcache'])
+		dialog.use_mapcache.setChecked(metadata.get('use_mapcache') is True)
 		dialog.extent_buffer.setValue(extent_buffer)
 		# create list of all layers from layers metadata tree structure
 		def extract_layers(layers_data, layers=None):
@@ -1087,7 +1078,7 @@ class WebGisPlugin:
 
 		overlays_data = extract_layers(metadata['overlays'])
 		project_overlays = [layer_data['name'] for layer_data in overlays_data]
-		hidden_overlays = [layer_data['name'] for layer_data in overlays_data if layer_data['hidden']]
+		hidden_overlays = [layer_data['name'] for layer_data in overlays_data if layer_data.get('hidden')]
 		overlays_with_export_to_drawings = [layer_data['name'] for layer_data in overlays_data if layer_data.get('export_to_drawings')]
 		def uncheck_excluded_layers(widget):
 			if widget.data(0, Qt.UserRole):
@@ -1111,7 +1102,6 @@ class WebGisPlugin:
 			return
 		dialog_filename = os.path.join(self.plugin_dir, "publish_dialog.ui")
 		dialog = PyQt4.uic.loadUi(dialog_filename)
-		dialog.wizard_page1.isComplete = self.page1_cmplete
 		dialog.setButtonText(QWizard.CommitButton, "Publish")
 		#dialog.wizard_page4.setButtonText(QWizard.FinishButton, "Ok")
 		dialog.wizard_page3.setCommitPage(True)
@@ -1225,6 +1215,9 @@ class WebGisPlugin:
 		if os.path.exists(metadata_filename):
 			with open(metadata_filename, "r") as f:
 				self.current_metadata = json.load(f)
-			self.setup_config_page_from_metadata()
+			try:
+				self.setup_config_page_from_metadata()
+			except:
+				QMessageBox.warning(None, 'Warning', 'Failed to load settings from last published version')
 		dialog.show()
 		dialog.exec_()
