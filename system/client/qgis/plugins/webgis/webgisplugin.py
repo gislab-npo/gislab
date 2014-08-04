@@ -266,7 +266,6 @@ class WebGisPlugin:
 			if layer_widget:
 				layer_widget = layer_widget[0]
 				if layer_widget.checkState(0) == Qt.Checked:
-					print layer.name()
 					if layer.crs().authid().startswith('USER:'):
 						messages.append((
 							MSG_ERROR,
@@ -457,7 +456,6 @@ class WebGisPlugin:
 				'is_geographic': map_canvas.mapRenderer().destinationCrs().geographicFlag()
 			},
 			'units': units,
-			'drawings': dialog.drawings.text(),
 			'selection_color': '{0}{1:02x}'.format(selection_color.name(), selection_color.alpha()),
 			'canvas_color': '{0}{1:02x}'.format(canvas_color.name(), canvas_color.alpha()),
 			'measure_ellipsoid': self.project.readEntry("Measure", "/Ellipsoid", "")[0],
@@ -750,7 +748,6 @@ class WebGisPlugin:
 			'MESSAGE_TEXT': message['text'] if message else '',
 			'MESSAGE_VALIDITY': message['valid_until'] if message else '',
 			'EXPIRATION': metadata.get('expiration', ''),
-			'DRAWINGS': metadata['drawings']
 		}
 
 		for param in ('gislab_user', 'gislab_unique_id', 'gislab_version', 'title', 'abstract',
@@ -932,7 +929,6 @@ class WebGisPlugin:
 					<li><label>Expiration date:</label> {EXPIRATION}</li>
 					<li><label>Message text:</label> {MESSAGE_TEXT}</li>
 					<li><label>Message validity:</label> {MESSAGE_VALIDITY}</li>
-					<li><label>Drawings:</label> {DRAWINGS}</li>
 				</ul>
 				<h3>Base layers:</h3>
 					<div class="subcategory">
@@ -1095,7 +1091,6 @@ class WebGisPlugin:
 		min_scale, max_scale = get_scales_from_resolutions(to_decimal_array([min_res, max_res]), self._map_units())
 		dialog.min_scale.setCurrentIndex(dialog.min_scale.findText("1:{0}".format(min_scale)))
 		dialog.max_scale.setCurrentIndex(dialog.max_scale.findText("1:{0}".format(max_scale)))
-		dialog.drawings.setText(metadata.get('drawings', ''))
 
 	def run(self):
 		if self.dialog and self.dialog.isVisible():

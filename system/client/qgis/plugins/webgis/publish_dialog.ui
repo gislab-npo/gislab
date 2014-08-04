@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>736</width>
-    <height>600</height>
+    <width>864</width>
+    <height>627</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -38,8 +38,14 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -284,7 +290,7 @@ QGroupBox::title {
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>400</height>
+            <height>0</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -293,19 +299,27 @@ QGroupBox::title {
     margin: 0px;
     text-align: top;
     padding: 0px;
- }</string>
+    background-color: transparent;
+}
+
+QScrollArea &gt; QWidget &gt; QWidget#scrollAreaWidgetContent {
+    background-color: transparent;
+}</string>
           </property>
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_2">
+          <widget class="QWidget" name="scrollAreaWidgetContent">
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-152</y>
-             <width>663</width>
-             <height>580</height>
+             <y>0</y>
+             <width>791</width>
+             <height>496</height>
             </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
@@ -531,49 +545,6 @@ QGroupBox::title {
                   </item>
                  </layout>
                 </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_6">
-              <property name="styleSheet">
-               <string notr="true">QGroupBox { 
-    border: 1px solid gray; 
-    border-radius: 5px;
-    margin: 10 0px;
-    text-align: top;
-    padding: 8 0 2 0;
- }
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top left;
-    padding: 1 5;
-}</string>
-              </property>
-              <property name="title">
-               <string>Drawings</string>
-              </property>
-              <layout class="QFormLayout" name="formLayout_6">
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_drawings">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <weight>50</weight>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>Drawing IDs</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="drawings"/>
                </item>
               </layout>
              </widget>
