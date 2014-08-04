@@ -76,7 +76,7 @@ action = new WebGIS.DrawAction({
 	enableToggle: true,
 	toggleGroup: 'measure-draw',
 	tooltip: '{% trans "Draw on map" %}',
-	storagePrefix: '{{ project }}-',
+	storagePrefix: 'gislab-{{ project }}-',
 	toggleHandler: function(action, toggled) {
 		action.baseAction.toggleHandler(action, toggled);
 	},
