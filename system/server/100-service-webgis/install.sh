@@ -55,11 +55,6 @@ mkdir -p /storage/webgis-media
 chown www-data:www-data /storage/webgis-media
 sed -i "s/MEDIA_ROOT =.*/MEDIA_ROOT = '\/storage\/webgis-media'/" /var/www/webgis/djproject/settings.py
 
-# allow requests also from = DNS alias if configured
-if [ -n "$GISLAB_SERVER_ALIAS" ]; then
-	sed -i "/ALLOWED_HOSTS/aALLOWED_HOSTS += ['web.$GISLAB_SERVER_ALIAS']" /var/www/webgis/djproject/settings.py
-fi
-
 
 # secrets
 if [ ! -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
@@ -92,11 +87,6 @@ deactivate
 cp $GISLAB_INSTALL_CURRENT_ROOT/conf/nginx/site-webgis /etc/nginx/sites-available/webgis
 gislab_config_header_to_file /etc/nginx/sites-available/webgis
 ln -sf /etc/nginx/sites-available/webgis /etc/nginx/sites-enabled/webgis
-
-# acivate DNS alias if configured
-if [ -n "$GISLAB_SERVER_ALIAS" ]; then
-	sed -i "s/server_name web.gis.lab;/server_name web.gis.lab web.$GISLAB_SERVER_ALIAS;/" /etc/nginx/sites-available/webgis
-fi
 
 
 # Gunicorn deployment

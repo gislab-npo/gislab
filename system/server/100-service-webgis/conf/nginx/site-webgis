@@ -4,7 +4,7 @@ upstream webgis {
  
 server {
 	listen 80;
-	server_name web.gis.lab;
+	server_name web.*;
 	client_max_body_size 4G;
  
 	access_log /var/log/nginx/webgis-access.log;

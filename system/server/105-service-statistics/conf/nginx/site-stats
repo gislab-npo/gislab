@@ -1,5 +1,5 @@
 server {
-	server_name stats.gis.lab;
+	server_name stats.*;
 	root /var/cache/munin/www;
 	index index.html index.htm;
 

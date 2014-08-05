@@ -64,11 +64,6 @@ cp $GISLAB_INSTALL_CURRENT_ROOT/conf/nginx/site-stats /etc/nginx/sites-available
 gislab_config_header_to_file /etc/nginx/sites-available/stats
 ln -fs /etc/nginx/sites-available/stats /etc/nginx/sites-enabled/
 
-# activate DNS alias if configured
-if [ -n "$GISLAB_SERVER_ALIAS" ]; then
-	sed -i "s/server_name stats.gis.lab;/server_name stats.gis.lab stats.$GISLAB_SERVER_ALIAS;/" /etc/nginx/sites-available/stats
-fi
-
 
 # remove unnecessary configuration
 rm -f /etc/apache2/conf.d/munin
