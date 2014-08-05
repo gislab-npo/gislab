@@ -115,7 +115,7 @@ def get_project_layers_info(project_key, publish, project=None):
 
 @login_required
 def ows_request(request):
-	url = "{0}?{1}".format(settings.WEBGIS_OWS_URL.rstrip("/"), request.environ['QUERY_STRING'])
+	url = "{0}?{1}".format(settings.WEBGIS_MAPSERVER_URL.rstrip("/"), request.environ['QUERY_STRING'])
 	owsrequest = urllib2.Request(url)
 	owsrequest.add_header("User-Agent", "GIS.lab Web")
 	with contextlib.closing(urllib2.urlopen(owsrequest)) as resp:
@@ -135,7 +135,7 @@ def tile(request, project_hash, publish, layers_hash=None, z=None, x=None, y=Non
 			publish=publish,
 			name=layers_hash,
 			provider_layers=request.GET['layers'].encode("utf-8"),
-			provider_url=set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
+			provider_url=set_query_parameters(settings.WEBGIS_MAPSERVER_URL, {'map': project}),
 			image_format=format,
 			tile_size=256,
 			metasize=5,
@@ -155,7 +155,7 @@ def legend(request, project_hash, publish, layer_hash=None, zoom=None, format=No
 			publish=publish,
 			name=layer_hash,
 			provider_layers=params['LAYER'].encode('utf-8'),
-			provider_url=set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project}),
+			provider_url=set_query_parameters(settings.WEBGIS_MAPSERVER_URL, {'map': project}),
 			image_format=format,
 		)
 		params.pop('PROJECT')
@@ -327,7 +327,7 @@ def page(request):
 		context.update({
 			'project': project,
 			'ows_url': ows_url,
-			'wms_url': set_query_parameters(settings.WEBGIS_OWS_URL, {'map': project+'.qgs'}),
+			'wms_url': set_query_parameters(settings.WEBGIS_MAPSERVER_URL, {'map': project+'.qgs'}),
 			'project_extent': metadata.extent,
 			'zoom_extent': form.cleaned_data['extent'] or metadata.zoom_extent,
 			'print_composers': metadata.composer_templates if not context['user'].is_guest else None,

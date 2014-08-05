@@ -50,7 +50,18 @@ rm -rf /var/www/webgis
 mkdir -p /var/www/webgis
 django-admin.py startproject --template=$GISLAB_INSTALL_CURRENT_ROOT/app/gislab-web/webgis/conf/project_template/ djproject /var/www/webgis
 
+# move map cache to /storage
+mkdir -p /storage/webgis-media
+chown www-data:www-data /storage/webgis-media
+sed -i "s/MEDIA_ROOT =.*/MEDIA_ROOT = '\/storage\/webgis-media'/" /var/www/webgis/djproject/settings.py
 
+# allow requests also from = DNS alias if configured
+if [ -n "$GISLAB_DNS_ALIAS" ]; then
+	sed -i "/ALLOWED_HOSTS/aALLOWED_HOSTS += ['web.$GISLAB_DNS_ALIAS']" /var/www/webgis/djproject/settings.py
+fi
+
+
+# secrets
 if [ ! -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then
 	cat << EOF >> /var/www/webgis/djproject/settings_secret.py
 DATABASES = {
@@ -70,16 +81,6 @@ EOF
 else
 	# on upgrade load secrets file from backup
 	cp /etc/gislab/webgis/settings_secret.py /var/www/webgis/djproject/settings_secret.py
-fi
-
-# move map cache to /storage
-mkdir -p /storage/webgis-media
-chown www-data:www-data /storage/webgis-media
-sed -i "s/MEDIA_ROOT =.*/MEDIA_ROOT = '\/storage\/webgis-media'/" /var/www/webgis/djproject/settings.py
-
-# allow requests also from = DNS alias if configured
-if [ -n "$GISLAB_DNS_ALIAS" ]; then
-	sed -i "/ALLOWED_HOSTS/aALLOWED_HOSTS += ['web.$GISLAB_DNS_ALIAS']" /var/www/webgis/djproject/settings.py
 fi
 
 python /var/www/webgis/manage.py syncdb --noinput

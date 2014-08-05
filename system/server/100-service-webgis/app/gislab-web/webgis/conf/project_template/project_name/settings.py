@@ -1,5 +1,5 @@
 """
-Django settings for WebGIS project.
+Django settings for GIS.lab Web.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -23,9 +23,9 @@ DEBUG = False
 TEMPLATE_DEBUG = False
 
 
-### WebGIS SETTINGS ###
+### GIS.lab Web SETTINGS ###
 WEBGIS_PROJECT_ROOT = '/mnt/share/'
-WEBGIS_OWS_URL = 'http://ms.gis.lab:90/cgi-bin/qgis_mapserv.fcgi'
+WEBGIS_MAPSERVER_URL = 'http://ms.gis.lab:90/cgi-bin/qgis_mapserv.fcgi'
 WEBGIS_GUEST_USERNAME = 'guest'
 
 # Dictionary of <MIME Type>: <File extension> pairs
