@@ -7,6 +7,10 @@ WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 	},
 
 	showTopics: function() {
+		if (this.window) {
+			this.window.show();
+			return;
+		}
 		this.window = new Ext.Window({
 			id: 'topics-window',
 			header: false,
@@ -96,7 +100,7 @@ WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 								var selected_records = window.topicsList.getSelectedRecords();
 								if (selected_records.length == 1) {
 									Ext.getCmp('layers-tree-panel').root.setVisibleLayers(selected_records[0].get("visible_overlays"));
-									Ext.getCmp(window.baseAction.itemId).toggle(false);
+									window.hide();
 								}
 							}
 						}
@@ -155,14 +159,14 @@ WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 								var record = listview.store.getAt(index);
 								var window = listview.ownerCt.ownerCt;
 								Ext.getCmp('layers-tree-panel').root.setVisibleLayers(record.get("visible_overlays"));
-								Ext.getCmp(window.baseAction.itemId).toggle(false);
+								window.hide();
 							}
 						}
 					}
 				}
 			],
 			listeners: {
-				close: function(window) {
+				hide: function(window) {
 					Ext.getCmp(window.baseAction.itemId).toggle(false);
 				}
 			}
