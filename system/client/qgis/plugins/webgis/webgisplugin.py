@@ -190,8 +190,6 @@ class WebGisPlugin:
 		self.iface.addToolBarIcon(self.action)
 		self.iface.addPluginToWebMenu(u"&GIS.lab Web", self.action)
 
-		self.project = QgsProject.instance()
-
 	def unload(self):
 		# Remove the plugin menu item and icon
 		self.iface.removePluginMenu(u"&GIS.lab Web", self.action)
@@ -544,7 +542,8 @@ class WebGisPlugin:
 						'type': 'WMSC',
 						'min_resolution': min_resolution,
 						'max_resolution': max_resolution,
-						'resolutions': upper_resolutions + layer_resolutions + lower_resolutions
+						'resolutions': upper_resolutions + layer_resolutions + lower_resolutions,
+						'tile_size': [layer.dataProvider().property('tileWidth') or 256, layer.dataProvider().property('tileHeight') or 256]
 					})
 				else:
 					layer_data.update({
@@ -1095,6 +1094,7 @@ class WebGisPlugin:
 	def run(self):
 		if self.dialog and self.dialog.isVisible():
 			return
+		self.project = QgsProject.instance()
 		dialog_filename = os.path.join(self.plugin_dir, "publish_dialog.ui")
 		dialog = PyQt4.uic.loadUi(dialog_filename)
 		dialog.setButtonText(QWizard.CommitButton, "Publish")

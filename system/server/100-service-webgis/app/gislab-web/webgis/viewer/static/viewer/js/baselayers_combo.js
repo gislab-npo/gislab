@@ -1,5 +1,4 @@
 Ext.namespace('WebGIS');
-
 WebgisWmsLayer = OpenLayers.Class(OpenLayers.Layer.WMS, {
 	prevResolution: 0,
 
@@ -174,6 +173,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 					minResolution: layer_config.min_resolution,
 					maxResolution: layer_config.max_resolution,
 					attribution: attribution,
+					tileSize: layer_config.tile_size? new OpenLayers.Size(layer_config.tile_size[0], layer_config.tile_size[1]) : new OpenLayers.Size(256, 256)
 				}
 			);
 		}
