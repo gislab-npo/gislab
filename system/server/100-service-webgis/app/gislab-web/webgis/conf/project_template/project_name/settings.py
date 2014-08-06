@@ -34,7 +34,7 @@ FILE_EXTENSIONS_TABLE = {
 	"application/geojson": "geojson",
 }
 
-ALLOWED_HOSTS = ['web.gis.lab']
+ALLOWED_HOSTS = ['*']
 
 ### LDAP Authentication ###
 
