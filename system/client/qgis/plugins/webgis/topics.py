@@ -16,7 +16,8 @@ def _save_topic(dialog, topic_item):
 	visible_overlays = []
 	def collect_visible_overlays(widget):
 		if widget.data(0, Qt.UserRole):
-			if not widget.isHidden() and widget.checkState(0) == Qt.Checked:
+			#if not widget.isHidden() and widget.checkState(0) == Qt.Checked:
+			if not widget.isDisabled() and widget.checkState(0) == Qt.Checked:
 				visible_overlays.append(widget.text(0))
 		else:
 			for index in range(widget.childCount()):

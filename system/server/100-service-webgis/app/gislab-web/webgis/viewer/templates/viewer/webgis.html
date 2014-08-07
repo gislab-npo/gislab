@@ -35,6 +35,7 @@
 		<script type="text/javascript" src="{% static 'viewer/js/wms_layers_node.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/wms_layers_legend.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/featureinfo_panel.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer/js/search_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/measure_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/draw_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/topics_action.js' %}"></script>
@@ -441,7 +442,7 @@
 				// Toolbar Actions
 
 				{% if project %}
-				{% include "viewer/topics.js" %}
+				{% include "viewer/actions/topics.js" %}
 				mappanel.getTopToolbar().add(' ', '-', ' ');
 				{% endif %}
 				{% include "viewer/actions/basic.js" %}

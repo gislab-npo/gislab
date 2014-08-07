@@ -30,12 +30,23 @@ server {
 		alias /storage/webgis-media/cache/;
 
 		add_header X-Static super;
-		expires 1h;
+		expires 365d;
 		add_header Pragma public;
 		add_header Cache-Control "public, must-revalidate, proxy-revalidate";
 
 		try_files $tile_path @cache;
-}
+	}
+
+	location ~ ^/legend/(?<legend_path>.*)$ {
+		alias /storage/webgis-media/cache/;
+
+		add_header X-Static super;
+		expires 365d;
+		add_header Pragma public;
+		add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+
+		try_files $legend_path @cache;
+	}
 
 	location / {
 		include /etc/nginx/proxy-parameters;
@@ -52,7 +63,7 @@ server {
 		proxy_set_header Host $http_host;
 		proxy_redirect off;
 		proxy_pass http://webgis;
-}
+	}
 
 	error_page 500 502 503 504 /500.html;
 	location = /500.html {

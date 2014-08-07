@@ -21,7 +21,7 @@ var action = new WebGIS.TopicsAction({
 			action.baseAction.showTopics();
 		} else {
 			if (action.baseAction.window) {
-				action.baseAction.window.close();
+				action.baseAction.window.hide();
 			}
 		}
 	},

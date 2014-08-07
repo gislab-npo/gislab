@@ -720,3 +720,27 @@ table.x-btn-noicon {
 .x-tip-header {
 	margin-bottom: 3px !important;
 }
+
+::-webkit-scrollbar {
+	width:11px;
+	height:11px;
+	background-color:#F7F7F7;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color:#D7D7D7;
+	border:1px solid #AAAAAA;
+	border-radius:10px;
+	-webkit-box-shadow:0 0 3px #B0B0B0 inset;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color:#C0C0C0;
+	border:1px solid #777777;
+}
+
+::-webkit-scrollbar-track {
+	border:1px #BBBBBB solid;
+	border-radius:10px;
+	-webkit-box-shadow:0 0 4px #C0C0C0 inset;
+}
