@@ -20,7 +20,7 @@ global
     group haproxy
 
 defaults
-    log global
+#    log global
     mode http
     option httplog
     option dontlognull

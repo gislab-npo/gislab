@@ -2,9 +2,7 @@
 ### DHCP SERVER ###
 #
 
-# Logging: 
-#   production: /var/log/dhcpd-error.log
-#   debug:      /var/log/dhcpd-debug.log
+# Logging: /var/log/syslog
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="
@@ -108,29 +106,19 @@ EOF
 	$GISLAB_ROOT/system/bin/gislab-allowmachines
 fi
 
-service isc-dhcp-server restart
-
-
 ### LOGGING ###
 if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
-cat << EOF >> /etc/rsyslog.d/50-default.conf
-local7.err /var/log/dhcpd-error.log
+	cat << EOF >> /etc/rsyslog.d/50-default.conf
+local7.err /var/log/syslog
 EOF
 else
-cat << EOF >> /etc/rsyslog.d/50-default.conf
-local7.* /var/log/dhcpd-debug.log
+	cat << EOF >> /etc/rsyslog.d/50-default.conf
+local7.* /var/log/syslog
 EOF
 fi
 
-# create default log file
-touch /var/log/dhcpd-error.log
-chmod 0640 /var/log/dhcpd-error.log
-chown syslog:adm /var/log/dhcpd-error.log
-
-# check logs with logcheck
-echo "/var/log/dhcpd-error.log" >> /etc/logcheck/logcheck.logfiles
-
 service rsyslog restart
+service isc-dhcp-server restart
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

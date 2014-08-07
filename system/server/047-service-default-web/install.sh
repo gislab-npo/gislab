@@ -3,10 +3,10 @@
 #
 
 # Logging: 
-#   production: /var/log/apache2/access.log /var/log/apache2/error.log
+#   production: /var/log/apache2/access.log /var/log/syslog
 #               /var/log/nginx/access.log /var/log/nginx/error.log
 
-#   debug:      /var/log/apache2/access.log /var/log/apache2/error.log
+#   debug:      /var/log/apache2/access.log /var/log/syslog
 #               /var/log/nginx/access.log /var/log/nginx/error.log
 
 # packages installation
@@ -24,6 +24,9 @@ cp $GISLAB_INSTALL_CURRENT_ROOT/conf/index.html /var/www/default/index.html
 
 
 ### APACHE
+# log error to syslog
+sed -i 's/^ErrorLog .*/ErrorLog "|\/usr\/bin\/logger -t apache -p daemon.warn"/' /etc/apache2/apache2.conf
+
 # port 91 configuration
 cp $GISLAB_INSTALL_CURRENT_ROOT/conf/apache/ports.conf /etc/apache2/ports.conf
 gislab_config_header_to_file /etc/apache2/ports.conf
@@ -35,6 +38,7 @@ gislab_config_header_to_file /etc/apache2/sites-available/default
 a2ensite default
 service apache2 restart
 
+rm -f /var/log/apache2/error.log
 
 ### NGINX
 # proxy parameters
@@ -50,7 +54,6 @@ sudo service nginx restart
 
 ### LOGGING ###
 # check logs with logcheck
-echo "/var/log/apache2/error.log" >> /etc/logcheck/logcheck.logfiles
 echo "/var/log/nginx/error.log" >> /etc/logcheck/logcheck.logfiles
 
 

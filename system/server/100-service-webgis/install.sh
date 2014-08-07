@@ -3,8 +3,8 @@
 #
 
 # Logging: 
-#   production: /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log /var/log/webgis-error.log
-#   debug:      /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log /var/log/webgis-debug.log
+#   production: /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log /var/log/syslog
+#   debug:      /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log /var/log/syslog
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="
@@ -134,7 +134,6 @@ EOL
 ### LOGGING ###
 # check logs with logcheck
 echo "/var/log/nginx/webgis-error.log" >> /etc/logcheck/logcheck.logfiles
-echo "/var/log/webgis-error.log" >> /etc/logcheck/logcheck.logfiles
 
 
 ### BACKUP ###

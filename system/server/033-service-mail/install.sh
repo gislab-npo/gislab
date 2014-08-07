@@ -2,9 +2,7 @@
 ### MAIL SERVER - POSTFIX ###
 #
 
-# Logging: 
-#   production: /var/log/mail-error.log
-#   debug:      /var/log/mail-debug.log
+# Logging: /var/log/syslog
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="
@@ -40,31 +38,9 @@ fi
 
 service postfix restart
 
-
-### LOGGING ###
-if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
-cat << EOF >> /etc/rsyslog.d/50-default.conf
-mail.err /var/log/mail-error.log
-EOF
-else
-cat << EOF >> /etc/rsyslog.d/50-default.conf
-mail.* /var/log/mail-debug.log
-EOF
-fi
-
-# create default log file
-touch /var/log/mail-error.log
-chmod 0640 /var/log/mail-error.log
-chown syslog:adm /var/log/mail-error.log
-
 # remove system default log files
 rm -f /var/log/mail.log
 rm -f /var/log/mail.err
-
-# check logs with logcheck
-echo "/var/log/mail-error.log" >> /etc/logcheck/logcheck.logfiles
-
-service rsyslog restart
 
 ### DO NOT CONTINUE ON UPGRADE ###
 if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi
