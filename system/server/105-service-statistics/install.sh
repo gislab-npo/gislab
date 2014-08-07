@@ -15,7 +15,25 @@ apt-get --assume-yes --force-yes --no-install-recommends install $GISLAB_SERVER_
 
 
 # configure munin master
-cp $GISLAB_INSTALL_CURRENT_ROOT/conf/munin/munin.conf /etc/munin/munin.conf
+cat << EOL > /etc/munin/munin.conf
+includedir /etc/munin/munin-conf.d
+
+[gis.lab;]
+
+[gis.lab;server.gis.lab]
+	address 127.0.0.1
+	use_node_name yes
+EOL
+
+for i in $(seq 50 149); do
+	cat << EOL >> /etc/munin/munin.conf
+
+[gis.lab;c$i]
+	address $GISLAB_NETWORK.$i
+	use_node_name yes
+EOL
+done
+
 gislab_config_header_to_file /etc/munin/munin.conf
 
 # configure munin node
@@ -23,14 +41,6 @@ cp $GISLAB_INSTALL_CURRENT_ROOT/conf/munin/munin-node.conf /etc/munin/munin-node
 gislab_config_header_to_file /etc/munin/munin-node.conf
 cp $GISLAB_INSTALL_CURRENT_ROOT/conf/munin/munin-node /etc/munin/plugin-conf.d/munin-node
 gislab_config_header_to_file /etc/munin/plugin-conf.d/munin-node
-
-# install munin plugin for graphing requests to mapserver
-cp $GISLAB_INSTALL_CURRENT_ROOT/bin/apache_request_mapserver /usr/share/munin/plugins/apache_request_mapserver
-chmod +x /usr/share/munin/plugins/apache_request_mapserver
-
-# install munin plugin for graphing requests to webgis
-cp $GISLAB_INSTALL_CURRENT_ROOT/bin/nginx_request_webgis /usr/share/munin/plugins/nginx_request_webgis
-chmod +x /usr/share/munin/plugins/nginx_request_webgis
 
 # install munin plugin for graphing cpu usage by process
 cp $GISLAB_INSTALL_CURRENT_ROOT/bin/cpu_by_process /usr/share/munin/plugins/cpu_by_process
@@ -40,7 +50,6 @@ chmod +x /usr/share/munin/plugins/cpu_by_process
 rm -f /etc/munin/plugins/*
 
 # enable only required plugins
-ln -fs /usr/share/munin/plugins/apache_request_mapserver /etc/munin/plugins/apache_request_mapserver
 ln -fs /usr/share/munin/plugins/cpu /etc/munin/plugins/cpu
 ln -fs /usr/share/munin/plugins/cpu_by_process /etc/munin/plugins/cpu_by_process
 ln -fs /usr/share/munin/plugins/df /etc/munin/plugins/df
@@ -50,10 +59,6 @@ ln -fs /usr/share/munin/plugins/iostat_ios /etc/munin/plugins/iostat_ios
 ln -fs /usr/share/munin/plugins/load /etc/munin/plugins/load
 ln -fs /usr/share/munin/plugins/memory /etc/munin/plugins/memory
 ln -fs /usr/share/munin/plugins/multips_memory /etc/munin/plugins/multips_memory
-ln -fs /usr/share/munin/plugins/nginx_request_webgis /etc/munin/plugins/nginx_request_webgis
-ln -fs /usr/share/munin/plugins/postgres_cache_ /etc/munin/plugins/postgres_cache_ALL
-ln -fs /usr/share/munin/plugins/postgres_cache_ /etc/munin/plugins/postgres_cache_gislab
-ln -fs /usr/share/munin/plugins/postgres_cache_ /etc/munin/plugins/postgres_cache_webgis
 ln -fs /usr/share/munin/plugins/processes /etc/munin/plugins/processes
 ln -fs /usr/share/munin/plugins/swap /etc/munin/plugins/swap
 ln -fs /usr/share/munin/plugins/uptime /etc/munin/plugins/uptime
