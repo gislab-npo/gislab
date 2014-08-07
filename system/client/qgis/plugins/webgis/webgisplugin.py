@@ -105,27 +105,19 @@ def get_tile_resolutions(scales, units, dpi=96):
 
 	dpi = Decimal(dpi)
 	factor = {
-		'feet': Decimal('12.0'), 'meters': Decimal('39.3701'),
+		'feet': Decimal('12.0'), 'meters': Decimal('39.37'),
 		'miles': Decimal('63360.0'), 'degrees': Decimal('4374754.0')
 	}
-
-	inches = Decimal('1.0') / dpi
-	monitor_l = inches / factor[units]
-
-	return [monitor_l*int(m) for m in scales]
+	return [int(scale)/(dpi*factor[units]) for scale in scales]
 
 def get_scales_from_resolutions(resolutions, units, dpi=96):
 	"""Helper function to compute map scales from tile resolutions."""
 	dpi = Decimal(dpi)
 	factor = {
-		'feet': Decimal('12.0'), 'meters': Decimal('39.3701'),
+		'feet': Decimal('12.0'), 'meters': Decimal('39.37'),
 		'miles': Decimal('63360.0'), 'degrees': Decimal('4374754.0')
 	}
-
-	inches = Decimal('1.0') / dpi
-	monitor_l = inches / factor[units]
-
-	return [int(round(resolution/monitor_l)) for resolution in resolutions]
+	return [int(round(resolution * dpi * factor[units])) for resolution in resolutions]
 
 
 GISLAB_WEB_URL = 'http://web.gis.lab/'
