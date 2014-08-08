@@ -1,6 +1,7 @@
 #
 ###  DEFAULT WEB PAGE ###
 #
+# Install web server and configure default web page content.
 
 # Logging: 
 #   production: /var/log/apache2/access.log /var/log/apache2/error.log

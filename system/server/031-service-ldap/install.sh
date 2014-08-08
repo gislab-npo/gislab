@@ -1,6 +1,7 @@
 #
 ###  LDAP DATABASE ###
 #
+# Install and configure authentication server.
 
 # Logging: 
 #   production: /var/log/ldap-error.log

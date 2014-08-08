@@ -1,10 +1,12 @@
 #
 ### SERVER STATISTICS - MUNIN ###
 #
+# Install statistics monitoring system.
 
 # Logging: 
 #   production: /var/log/nginx/stats-access.log /var/log/nginx/stats-error.log
 #   debug:      /var/log/nginx/stats-access.log /var/log/nginx/stats-error.log
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="

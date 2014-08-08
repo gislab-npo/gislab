@@ -1,6 +1,7 @@
 #
 ### DHCP SERVER ###
 #
+# Install and configure DHCP server.
 
 # Logging: 
 #   production: /var/log/dhcpd-error.log

@@ -1,6 +1,8 @@
 #
 ### SERVER VERSION ###
 #
+# Generate GIS.lab version and use in 'motd' welcome message.
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="

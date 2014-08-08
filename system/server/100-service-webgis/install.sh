@@ -1,6 +1,7 @@
 #
 ### GIS.LAB WEB ###
 #
+# Install and configure GIS.lab Web application.
 
 # Logging: 
 #   production: /var/log/nginx/webgis-access.log /var/log/nginx/webgis-error.log /var/log/webgis-error.log

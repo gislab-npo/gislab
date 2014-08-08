@@ -1,6 +1,8 @@
 #
 ### DATA ###
 #
+# Install data placed in 'user/data' directory.
+
 
 ### SKIP ON UPGRADE ###
 if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; fi

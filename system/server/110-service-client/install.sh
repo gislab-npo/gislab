@@ -1,6 +1,8 @@
 #
 ### CLIENT INSTALLATION ###
 #
+# Install GIS.lab client image and configure LAN boot system.
+
 
 # perform installation only for chosen GIS.lab suites
 if [ "$GISLAB_SUITE" != "lab" ]; then

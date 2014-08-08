@@ -1,6 +1,7 @@
 #
 ### PROVIDER CUSTOMIZATIONS - AWS ###
 #
+# Amazon AWS provider customizations.
 
 
 # detect AWS instance properties

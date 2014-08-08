@@ -1,6 +1,9 @@
 #
 ### USER ACCOUNTS ###
 #
+# Set strong password for provisioning user account, remove other not required user accounts
+# and configure backup of user accounts data.
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="

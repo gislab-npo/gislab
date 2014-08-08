@@ -1,6 +1,8 @@
 #
 ### BASIC SERVER CONFIGURATION ###
 #
+# Run basic server configuration.
+
 
 # hosts
 cat << EOF > /etc/hosts

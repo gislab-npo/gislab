@@ -1,6 +1,8 @@
 #
 ### SERVER INSTALLATION ###
 #
+# Configure installation repositories and install basic server software.
+
 
 export DEBIAN_FRONTEND=noninteractive
 

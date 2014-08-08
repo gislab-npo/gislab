@@ -1,10 +1,12 @@
 #
 ### IRC SERVER ###
 #
+# Install and configure IRC chat server.
 
 # Logging: 
 #   production: /var/log/ircd/ircd-hybrid.log
 #   debug:      /var/log/ircd/ircd-hybrid.log
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="

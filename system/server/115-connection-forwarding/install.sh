@@ -1,6 +1,8 @@
 #
 ### CONNECTION FORWARDING ###
 #
+# Activate Internet connection routing from GIS.lab network.
+
 
 # enable IP forwarding for client machines after each server start
 cat << EOF > /etc/rc.local

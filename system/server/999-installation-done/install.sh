@@ -1,6 +1,8 @@
 #
 ### INSTALLATION DONE ###
 #
+# Print messages after installation is done and mark successful installation by
+# creating file in '/var/lib/gislab' directory.
 
 
 # 'installation.done' file is used to detect if we are running initial GIS.lab

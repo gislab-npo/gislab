@@ -1,6 +1,7 @@
 #
 ### INSTALLATION DONE - AWS ###
 #
+# Print AWS specific messages after installation is done.
 
 
 # execute default script first

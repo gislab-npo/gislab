@@ -1,6 +1,7 @@
 #
 ### MAIL SERVER - POSTFIX ###
 #
+# Install and configure email server.
 
 # Logging: 
 #   production: /var/log/mail-error.log

@@ -1,6 +1,7 @@
 #
 ### DNS SERVER - BIND ###
 #
+# Install and configure GIS.lab's internal DNS records 'gis.lab'.
 
 # Logging: 
 #   production: /var/log/named-error.log

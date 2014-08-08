@@ -1,6 +1,8 @@
 #
 ### HAPROXY SERVER ###
 #
+# Install OWS server load balancer.
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="

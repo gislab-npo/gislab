@@ -1,10 +1,12 @@
 #
 ### DATABASE SERVER - POSTGRESQL/POSTGIS ###
 #
+# Install and configure database server and create GIS template database.
 
 # Logging: 
 #   production: /var/log/postgresql/postgresql-error.log
 #   debug:      /var/log/postgresql/postgresql-debug.log
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="

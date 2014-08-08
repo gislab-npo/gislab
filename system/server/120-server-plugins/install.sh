@@ -1,6 +1,8 @@
 #
 ### SERVER PLUGINS ###
 #
+# Run GIS.lab server plugins.
+
 
 for plugin in $GISLAB_ROOT/user/plugins/server/*.*; do
 	gislab_print_info "Running server plugin '$(basename $plugin)'"

@@ -1,6 +1,8 @@
 #
 ### LOGCHECK ###
 #
+# Install and configure services logs checking.
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="

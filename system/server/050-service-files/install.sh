@@ -1,6 +1,8 @@
 #
 ### FILE SERVER - NFS ###
 #
+# Install and configure file sharing server.
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="

@@ -1,10 +1,12 @@
 #
 ### MAPSERVER ###
 #
+# Install and configure OWS server (mapserver).
 
 # Logging: 
 #   production: /var/log/apache2/mapserver-access.log /var/log/apache2/mapserver-error.log
 #   debug:      /var/log/apache2/mapserver-access.log /var/log/apache2/mapserver-error.log
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="
