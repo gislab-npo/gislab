@@ -1,6 +1,12 @@
 #
 ### MAPSERVER WORKER ###
 #
+# Create a package for mapserver worker instances installation in cloud environment. Installation
+# package consist from installation script and other files needed for server configuration. To use it
+# run following commands on newly launched instance (in Amazon AWS use 'clod-data' for commands injection):
+# $ mkdir /tmp/install-worker && cd /tmp/install-worker && \
+#   curl http://<GISLAB_SERVER_IP>/worker.tar.gz | tar xz -C /tmp/install-worker && \
+#   bash ./install.sh && rm -rf /tmp/install-worker
 
 
 GISLAB_WORKER_IMAGE_ROOT=/opt/worker
@@ -22,8 +28,10 @@ GISLAB_WORKER_INSTALL_PACKAGES="
     ntp
     python-gdal
     python-qgis
+    pwgen
     qgis
     qgis-mapserver
+    unzip
     vim
 "
 GISLAB_WORKER_INSTALL_PACKAGES=$(echo $GISLAB_WORKER_INSTALL_PACKAGES) # this is needed to remove newlines
@@ -51,6 +59,15 @@ cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
 if [ -f "/var/lib/gislab/installation.done" ]; then
 	gislab_print_error "Installation is already done"
 fi
+
+EOF
+
+
+# hostname
+cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
+echo "w\$(date +%N | md5sum | cut -f 1 -d " " | cut -c1-6)" > /etc/hostname
+service hostname start
+service rsyslog restart
 
 EOF
 
@@ -176,6 +193,42 @@ service apache2 restart
 EOF
 
 
+# serf
+mkdir -p $GISLAB_WORKER_IMAGE_BASE/etc/init
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/serf/serf.conf $GISLAB_WORKER_IMAGE_BASE/etc/init/
+
+mkdir -p $GISLAB_WORKER_IMAGE_BASE/usr/local/bin
+cp $GISLAB_INSTALL_CURRENT_ROOT/bin/serf-member-*.sh $GISLAB_WORKER_IMAGE_BASE/usr/local/bin/
+cat << EOF > $GISLAB_WORKER_IMAGE_BASE/etc/init/serf-join.conf
+description "Join a GIS.lab network"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+task
+respawn
+
+script
+sleep 5
+exec /usr/local/bin/serf join $GISLAB_SERVER_IP
+end script
+EOF
+
+cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
+gislab_serf_install
+
+cp usr/local/bin/serf-member-*.sh /usr/local/bin/
+chmod +x /usr/local/bin/serf-member-*.sh
+
+cp etc/init/serf.conf /etc/init/serf.conf
+service serf restart
+
+cp etc/init/serf-join.conf /etc/init/serf-join.conf
+service serf-join restart
+
+EOF
+
+
 # installation done
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
 mkdir -p /var/lib/gislab
@@ -185,8 +238,6 @@ EOF
 
 
 # image creation
-# to download and install use: 
-# $ mkdir /tmp/install-worker && cd /tmp/install-worker && curl http://192.168.149.5/worker.tar.gz | tar xz -C /tmp/install-worker && bash ./install.sh && rm -rf /tmp/install-worker
 tar czf $GISLAB_WORKER_IMAGE_ROOT/worker.tar.gz -C $GISLAB_WORKER_IMAGE_BASE .
 ln -sf $GISLAB_WORKER_IMAGE_ROOT/worker.tar.gz /var/www/default/worker.tar.gz
 

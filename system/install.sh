@@ -28,8 +28,11 @@ export GISLAB_SERVER_PROVIDER
 GISLAB_INSTALL_DATETIME=$(date +"%Y-%m-%d-%T")
 export GISLAB_INSTALL_DATETIME
 
-# get server architecture - 32 bit (i386) or 64 bit (x86_64)
+# get server architecture - 32 bit (i386) or 64 bit (x86_64 -> amd64)
 GISLAB_SERVER_ARCHITECTURE=$(uname -i)
+if [ "$GISLAB_SERVER_ARCHITECTURE" == "x86_64" ]; then
+	GISLAB_SERVER_ARCHITECTURE="amd64"
+fi
 export GISLAB_SERVER_ARCHITECTURE
 
 # get provisioning user name and ID

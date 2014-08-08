@@ -63,4 +63,22 @@ gislab_require_root () {
 }
 
 
+gislab_serf_install () {
+	# download and install Serf
+	if [ "$(uname -i)" == "i386" ]; then
+		serf_arch="386"
+	else
+		serf_arch="amd64"
+	fi
+
+	until wget -O /tmp/serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_$serf_arch.zip; do
+		sleep 1
+	done
+
+	unzip -d /tmp /tmp/serf.zip
+	mv /tmp/serf /usr/local/bin/serf
+	rm -f /tmp/serf.zip
+}
+
+
 # vim: set ts=4 sts=4 sw=4 noet:
