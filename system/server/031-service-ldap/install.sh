@@ -3,9 +3,8 @@
 #
 # Install and configure authentication server.
 
-# Logging: 
-#   production: /var/log/ldap-error.log
-#   debug:      /var/log/ldap-debug.log
+# Logging: /var/log/syslog
+
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="
@@ -65,26 +64,6 @@ add: olcLogLevel
 olcLogLevel: stats
 EOL
 fi
-
-if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
-cat << EOF >> /etc/rsyslog.d/50-default.conf
-local4.* /var/log/ldap-error.log
-EOF
-else
-cat << EOF >> /etc/rsyslog.d/50-default.conf
-local4.* /var/log/ldap-debug.log
-EOF
-fi
-
-# create default log file
-touch /var/log/ldap-error.log
-chmod 0640 /var/log/ldap-error.log
-chown syslog:adm /var/log/ldap-error.log
-
-# check logs with logcheck
-echo "/var/log/ldap-error.log" >> /etc/logcheck/logcheck.logfiles
-
-service rsyslog restart
 
 
 ### DO NOT CONTINUE ON UPGRADE ###

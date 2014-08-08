@@ -28,7 +28,7 @@
 		</files>
 	</Directory>
 
-	ErrorLog ${APACHE_LOG_DIR}/mapserver-error.log
+	ErrorLog "|/usr/bin/logger -t apache-mapserver -p daemon.warn"
 	CustomLog ${APACHE_LOG_DIR}/mapserver-access.log combined
 
 #	RewriteLog ${APACHE_LOG_DIR}/error.log

@@ -49,6 +49,15 @@ log_directory = '/var/log/postgresql'
 log_filename = 'postgresql-error.log'
 log_min_messages = FATAL
 EOF
+
+	# create log file
+	touch /var/log/postgresql/postgresql-error.log
+	chmod 0640 /var/log/postgresql/postgresql-error.log
+	chown postgres:adm /var/log/postgresql/postgresql-error.log
+	rm -f /var/log/postgresql/postgresql-debug.log
+
+	# check logs with logcheck
+	echo "/var/log/postgresql/postgresql-error.log" >> /etc/logcheck/logcheck.logfiles
 else
 	cat << EOF >> /etc/postgresql/9.1/main/postgresql.conf
 logging_collector = on
@@ -58,20 +67,21 @@ log_min_messages = 'DEBUG1'
 log_min_error_statement = 'DEBUG1'
 log_min_duration_statement = 0
 EOF
+
+	# create log file
+	touch /var/log/postgresql/postgresql-debug.log
+	chmod 0640 /var/log/postgresql/postgresql-debug.log
+	chown postgres:adm /var/log/postgresql/postgresql-debug.log
+	rm -f /var/log/postgresql/postgresql-error.log
+
+	# check logs with logcheck
+	echo "/var/log/postgresql/postgresql-debug.log" >> /etc/logcheck/logcheck.logfiles
 fi
+
+service postgresql restart
 
 # remove default log file
 rm -f /var/log/postgresql/postgresql-9.1-main.log
-
-# create default log file
-touch /var/log/postgresql/postgresql-error.log
-chmod 0640 /var/log/postgresql/postgresql-error.log
-chown postgres:adm /var/log/postgresql/postgresql-error.log
-
-# check logs with logcheck
-echo "/var/log/postgresql/postgresql-error.log" >> /etc/logcheck/logcheck.logfiles
-
-service postgresql restart
 
 
 ### DO NOT CONTINUE ON UPGRADE ###

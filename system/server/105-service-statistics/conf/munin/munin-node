@@ -1,6 +1,3 @@
-[apache_request_mapserver]
-user root
-
 [cpu_by_process]
 env.procs nbd-server postgres
 
@@ -9,11 +6,3 @@ env.exclude none unknown iso9660 squashfs udf romfs ramfs debugfs
 
 [multips_memory]
 env.names nbd-server postgres
-
-[nginx_request_webgis]
-user root
-
-[postgres_*]
-user postgres
-env.PGUSER postgres
-env.PGPORT 5432

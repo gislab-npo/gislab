@@ -3,9 +3,7 @@
 #
 # Install and configure GIS.lab's internal DNS records 'gis.lab'.
 
-# Logging: 
-#   production: /var/log/named-error.log
-#   debug:      /var/log/named/named-debug.log
+# Logging: /var/log/syslog
 
 # packages installation
 GISLAB_SERVER_INSTALL_PACKAGES="
@@ -34,23 +32,15 @@ include "/etc/bind/named.conf.default-zones";
 
 logging {
 	channel default_syslog {
-		null;
+		syslog;
 	};
 
 	channel default_debug {
 		null;
 	};
 
-	channel debug_log {
-		syslog local5;
-		severity info;
-		print-time yes;
-		print-severity yes;
-		print-category yes;
-	};
-
 	category default {
-		debug_log;
+		default_syslog;
 	};
 
 	category unmatched {
@@ -62,12 +52,9 @@ if [ "$GISLAB_DEBUG_SERVICES" == "yes" ]; then
 	cat << EOF >> /etc/bind/named.conf
 
 	category queries {
-		debug_log;
+		default_syslog;
 	};
 EOF
-	echo "local5.* /var/log/named-debug.log" >> /etc/rsyslog.d/50-default.conf
-else
-	echo "local5.* /var/log/named-error.log" >> /etc/rsyslog.d/50-default.conf
 fi
 
 echo "};" >> /etc/bind/named.conf
@@ -141,18 +128,6 @@ $(gislab_config_header)
 nameserver 127.0.0.1
 EOF
 resolvconf -u
-
-
-### LOGGING ###
-# create default log file
-touch /var/log/named-error.log
-chmod 0640 /var/log/named-error.log
-chown syslog:adm /var/log/named-error.log
-
-# check logs with logcheck
-echo "/var/log/named-error.log" >> /etc/logcheck/logcheck.logfiles
-
-service rsyslog restart
 
 
 # vim: set syntax=sh ts=4 sts=4 sw=4 noet:

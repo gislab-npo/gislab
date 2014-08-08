@@ -59,6 +59,11 @@ fi
 
 
 ### LOGGING ###
+
+# enable remote logging
+sed -i 's/#\$ModLoad imudp/\$ModLoad imudp/' /etc/rsyslog.conf
+sed -i 's/#\$UDPServerRun 514/\$UDPServerRun 514/' /etc/rsyslog.conf
+
 if [ "$GISLAB_DEBUG_SERVICES" == "no" ]; then
 	sed -i '/^\$SystemLogRateLimitInterval 0$/d' /etc/rsyslog.conf
 else
@@ -70,7 +75,7 @@ gislab_config_header_to_file /etc/rsyslog.conf
 cat << EOF > /etc/rsyslog.d/50-default.conf
 $(gislab_config_header)
 auth,authpriv.*			/var/log/auth.log
-*.*;auth,authpriv.none,mail.none,local4.none,local5.none,local7.none		-/var/log/syslog
+*.*;auth,authpriv,local7.none	-/var/log/syslog
 kern.*					-/var/log/kern.log
 news.crit				/var/log/news/news.crit
 news.err				/var/log/news/news.err
@@ -91,8 +96,8 @@ if [ -f "/var/lib/gislab/$GISLAB_INSTALL_CURRENT_SERVICE.done" ]; then return; f
 # set GIS.lab root directory variable
 echo "GISLAB_ROOT=$GISLAB_ROOT" >> /etc/environment
 
-# create empty local aliases table
-echo > /etc/aliases
+# create custom local aliases table
+echo "nobody: root" > /etc/aliases
 gislab_config_header_to_file /etc/aliases
 
 # add admin scripts on PATH

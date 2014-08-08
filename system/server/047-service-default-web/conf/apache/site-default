@@ -13,7 +13,7 @@
 		Allow from all
 	</Directory>
 
-	ErrorLog ${APACHE_LOG_DIR}/error.log
+	ErrorLog "|/usr/bin/logger -t apache-default -p daemon.warn"
 	LogLevel warn
 
 	CustomLog ${APACHE_LOG_DIR}/access.log combined
