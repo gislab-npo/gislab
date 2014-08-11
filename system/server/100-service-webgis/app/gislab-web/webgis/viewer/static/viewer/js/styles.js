@@ -65,7 +65,7 @@ var default_drwing_style_config = {
 		strokeWidth: 2,
 	}
 };
-drawing_style.styles.default.addRules([new OpenLayers.Rule({symbolizer: default_drwing_style_config})]);
+drawing_style.styles['default'].addRules([new OpenLayers.Rule({symbolizer: default_drwing_style_config})]);
 
 var WebgisStyles = {
 	drawing_style: drawing_style,
