@@ -5,11 +5,11 @@ case "$MODE" in
 
 			# apache
 			mkdir -p $ROOT/var/www/default
-			cp $GISLAB_ROOT/system/server/047-service-default-web/conf/index.html $ROOT/var/www/default/index.html
+			cp /var/www/default/index.html $ROOT/var/www/default/index.html
 
-			cp $GISLAB_ROOT/system/server/047-service-default-web/conf/apache/ports.conf $ROOT/etc/apache2/ports.conf
-			cp $GISLAB_ROOT/system/server/047-service-default-web/conf/apache/site-default $ROOT/etc/apache2/sites-available/default
-			cp $GISLAB_ROOT/system/server/090-service-mapserver/conf/apache/site-mapserver $ROOT/etc/apache2/sites-available/mapserver
+			cp /etc/apache2/ports.conf $ROOT/etc/apache2/ports.conf
+			cp /etc/apache2/sites-available/default $ROOT/etc/apache2/sites-available/default
+			cp /etc/apache2/sites-available/mapserver $ROOT/etc/apache2/sites-available/mapserver
 
 			# log error to syslog
 			sed -i 's/^ErrorLog .*/ErrorLog "|\/usr\/bin\/logger -t apache -p daemon.warn"/' $ROOT/etc/apache2/apache2.conf
