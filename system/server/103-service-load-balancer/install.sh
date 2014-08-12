@@ -23,13 +23,13 @@ fi
 # TODO: always start server (after restart) with empty list of workers
 cat << EOL > /etc/haproxy/haproxy.cfg
 global
-#   log 127.0.0.1 local0 warning
+   log 127.0.0.1 local0 warning
     maxconn 2000
     user haproxy
     group haproxy
 
 defaults
-#    log global
+    log global
     mode http
     option httplog
     option dontlognull

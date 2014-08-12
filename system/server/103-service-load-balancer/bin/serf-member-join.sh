@@ -12,7 +12,7 @@ while read line; do
 		continue
 	fi
 	echo $line | \
-		awk '{ printf "    server %s %s:91 check observe layer7\n", $1, $2 }' >> /etc/haproxy/haproxy.cfg
+		awk '{ printf "    server %s %s:91 check observe layer7  # Managed by Serf\n", $1, $2 }' >> /etc/haproxy/haproxy.cfg
 done
 
 /etc/init.d/haproxy reload

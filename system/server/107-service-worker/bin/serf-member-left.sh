@@ -9,7 +9,7 @@
 while read line; do
 	ROLE=`echo $line | awk '{print \$3 }'`
 	if [ "x${ROLE}" == "xserver" ]; then
-		halt
+		poweroff
 	fi
 done
 
