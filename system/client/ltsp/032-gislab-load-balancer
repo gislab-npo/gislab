@@ -21,10 +21,10 @@ case "$MODE" in
 
 			# serf
 			chroot $ROOT /bin/bash -c "source /usr/local/gislab/functions.sh; gislab_serf_install"
-			cp $GISLAB_ROOT/system/server/107-service-worker/bin/serf-member-*.sh $ROOT/usr/local/bin/
+			cp $GISLAB_INSTALL_SERVER_ROOT/107-service-worker/bin/serf-member-*.sh $ROOT/usr/local/bin/
 			chmod +x $ROOT/usr/local/bin/serf-member-*.sh
 
-			cp $GISLAB_ROOT/system/server/107-service-worker/conf/serf/serf.conf $ROOT/etc/init/serf.conf
+			cp $GISLAB_INSTALL_SERVER_ROOT/107-service-worker/conf/serf/serf.conf $ROOT/etc/init/serf.conf
 			cat << EOF > $ROOT/etc/init/serf-join.conf
 description "Join a GIS.lab network"
 
