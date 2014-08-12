@@ -70,6 +70,14 @@ source /etc/gislab_version
 EOF
 
 
+# syslog
+cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
+echo "*.* @$GISLAB_SERVER_IP" > /etc/rsyslog.d/gislab.conf
+service rsyslog restart
+
+EOF
+
+
 # locales
 cp --parents /etc/default/locale $GISLAB_WORKER_IMAGE_BASE
 
