@@ -109,7 +109,6 @@ apt-get --assume-yes --force-yes upgrade
 GISLAB_SERVER_INSTALL_PACKAGES="
   htop
   mc
-  ntp
   tmux
   vim
 "

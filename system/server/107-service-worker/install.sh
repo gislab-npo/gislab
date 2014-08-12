@@ -25,7 +25,6 @@ GISLAB_WORKER_INSTALL_PACKAGES="
     libgdal1h
     mc
     nfs-common
-    ntp
     python-gdal
     python-qgis
     pwgen
@@ -63,15 +62,6 @@ fi
 EOF
 
 
-# hostname
-cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
-echo "w\$(date +%N | md5sum | cut -f 1 -d " " | cut -c1-6)" > /etc/hostname
-service hostname start
-service rsyslog restart
-
-EOF
-
-
 # version
 cp --parents /etc/gislab_version $GISLAB_WORKER_IMAGE_BASE
 
@@ -97,10 +87,28 @@ locale-gen en_US.UTF-8
 EOF
 
 
+# hostname
+cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
+echo "w\$(date +%N | md5sum | cut -f 1 -d " " | cut -c1-6)" > /etc/hostname
+service hostname start
+service rsyslog restart
+
+EOF
+
+
 # default DNS server
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
 echo "nameserver $GISLAB_SERVER_IP" > /etc/resolv.conf
 echo "search gista.lan" >> /etc/resolv.conf
+
+EOF
+
+
+# time
+cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
+sed -i "s/^NTPDATE_USE_NTP_CONF=.*/NTPDATE_USE_NTP_CONF=no/" $ROOT/etc/default/ntpdate
+sed -i "s/^NTPSERVERS=.*/NTPSERVERS='server.gis.lab'/" $ROOT/etc/default/ntpdate
+ntpdate-debian
 
 EOF
 
