@@ -19,10 +19,8 @@ mkdir -p $GISLAB_WORKER_IMAGE_ROOT $GISLAB_WORKER_IMAGE_BASE
 GISLAB_WORKER_INSTALL_PACKAGES="
     apache2
     apache2-mpm-worker
-    gdal-bin
     htop
     libapache2-mod-fastcgi
-    libgdal1h
     mc
     nfs-common
     python-gdal
