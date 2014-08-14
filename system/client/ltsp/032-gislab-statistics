@@ -3,7 +3,7 @@ case "$MODE" in
 		chroot $ROOT apt-get --assume-yes --force-yes install munin-node
 
 		# copy configuration file
-		cp -a $GISLAB_INSTALL_SERVER_ROOT/107-service-worker/conf/munin-node/munin-node.conf $ROOT/etc/munin/munin-node.conf
+		cp -a $GISLAB_INSTALL_WORKER_ROOT/munin-node/munin-node.conf $ROOT/etc/munin/munin-node.conf
 
 		# disable all plugins
 		rm -f $ROOT/etc/munin/plugins/*

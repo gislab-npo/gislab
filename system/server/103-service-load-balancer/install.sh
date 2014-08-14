@@ -67,7 +67,7 @@ service haproxy restart
 
 
 # configure Serf
-cp $GISLAB_INSTALL_CURRENT_ROOT/bin/serf-member-*.sh /usr/local/bin/
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/serf/bin/serf-member-*.sh /usr/local/bin/
 chmod +x /usr/local/bin/serf-member-*.sh
 
 cp $GISLAB_INSTALL_CURRENT_ROOT/conf/serf/serf.conf /etc/init/serf.conf
