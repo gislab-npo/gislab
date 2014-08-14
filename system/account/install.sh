@@ -29,14 +29,13 @@ mkdir -p /etc/skel/.config/xfce4/panel
 cp -a $GISLAB_ROOT/system/account/desktop-session/xfce4/panel/* /etc/skel/.config/xfce4/panel
 
 # keyboard languages
-languages="us" # english is always active
-variants=""
-for lang in ${!GISLAB_CLIENT_LANGUAGES[*]}
-do
-	languages+=",${GISLAB_CLIENT_LANGUAGES[$lang]}"
-	variants+=","
-done
-sed -i "s/^layouts=/layouts=$languages/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
+GISLAB_CLIENT_LANGUAGES="en, $GISLAB_CLIENT_LANGUAGES" # english language is alway available
+GISLAB_CLIENT_LANGUAGES=$(echo $GISLAB_CLIENT_LANGUAGES | sed "s/ //g") # remove spaces
+
+langcount=$(grep -o "," <<< "$GISLAB_CLIENT_LANGUAGES" | wc -l)
+variants=$(printf '%0.s,' $(seq 1 $langcount)) # set empty strings separated by comas to get variants working
+
+sed -i "s/^layouts=/layouts=$GISLAB_CLIENT_LANGUAGES/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
 sed -i "s/^variants=/variants=$variants/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
 
 

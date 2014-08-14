@@ -59,7 +59,8 @@ export GISLAB_INSTALL_ACTION
 
 # test if all required plugins are available
 if [ -n "$GISLAB_PLUGINS_REQUIRE" ]; then
-	for plugin in "${GISLAB_PLUGINS_REQUIRE[@]}"; do
+	IFS=', ' read -a plugins <<< "$GISLAB_PLUGINS_REQUIRE"
+	for plugin in "${plugins[@]}"; do
 		if [ ! -f "$GISLAB_ROOT/user/plugins/$plugin" ]; then
 			gislab_print_error "Missing required plugin '$plugin'"
 		fi

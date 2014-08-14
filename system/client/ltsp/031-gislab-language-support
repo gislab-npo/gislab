@@ -2,7 +2,8 @@
 
 case "$MODE" in
     finalization)
-	for lang in "${GISLAB_CLIENT_LANGUAGES[@]}"
+	IFS=', ' read -a languages <<< "$GISLAB_CLIENT_LANGUAGES"
+	for lang in "${languages[@]}"
 	do
 		packages=""
 		
