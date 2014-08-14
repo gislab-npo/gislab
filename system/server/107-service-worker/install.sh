@@ -22,6 +22,7 @@ GISLAB_WORKER_INSTALL_PACKAGES="
     htop
     libapache2-mod-fastcgi
     mc
+    munin-node
     nfs-common
     python-gdal
     python-qgis
@@ -203,6 +204,33 @@ a2enmod expires
 a2ensite default
 a2ensite mapserver
 service apache2 restart
+
+EOF
+
+
+# statistics
+mkdir -p $GISLAB_WORKER_IMAGE_BASE/etc/munin
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/munin-node/munin-node.conf $GISLAB_WORKER_IMAGE_BASE/etc/munin/munin-node.conf
+
+cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
+cp etc/munin/munin-node.conf /etc/munin/munin-node.conf
+GISLAB_SERVER_IP_REGEX=\$(echo "$GISLAB_SERVER_IP" | sed -E 's/\./\\\\\\\./g')
+sed -i "s/###HOSTNAME###/\$(hostname)/" /etc/munin/munin-node.conf
+sed -i "s/###GISLAB_SERVER_IP_REGEX###/\$GISLAB_SERVER_IP_REGEX/" /etc/munin/munin-node.conf
+
+# disable all plugins
+rm -f /etc/munin/plugins/*
+echo > /etc/munin/plugin-conf.d/munin-node
+
+# enable only required plugins
+ln -fs /usr/share/munin/plugins/cpu /etc/munin/plugins/cpu
+ln -fs /usr/share/munin/plugins/load /etc/munin/plugins/load
+ln -fs /usr/share/munin/plugins/memory /etc/munin/plugins/memory
+ln -fs /usr/share/munin/plugins/processes /etc/munin/plugins/processes
+ln -fs /usr/share/munin/plugins/uptime /etc/munin/plugins/uptime
+ln -fs /usr/share/munin/plugins/vmstat /etc/munin/plugins/vmstat
+
+service munin-node restart
 
 EOF
 

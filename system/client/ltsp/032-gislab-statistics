@@ -3,7 +3,7 @@ case "$MODE" in
 		chroot $ROOT apt-get --assume-yes --force-yes install munin-node
 
 		# copy configuration file
-		cp -a $GISLAB_INSTALL_CLIENT_ROOT/munin-node/munin-node.conf $ROOT/etc/munin/munin-node.conf
+		cp -a $GISLAB_INSTALL_SERVER_ROOT/107-service-worker/conf/munin-node/munin-node.conf $ROOT/etc/munin/munin-node.conf
 
 		# disable all plugins
 		rm -f $ROOT/etc/munin/plugins/*
@@ -21,7 +21,7 @@ case "$MODE" in
 		cat << EOL > $ROOT/etc/rc.local
 #!/bin/sh -e
 
-GISLAB_SERVER_IP_REGEX=\$(host server.gis.lab | awk '{ print \$4 }' | sed -E 's/\./\\\\\\\./g')
+GISLAB_SERVER_IP_REGEX=\$(echo "$GISLAB_SERVER_IP" | sed -E 's/\./\\\\\\\./g')
 sed -i "s/###HOSTNAME###/\$(hostname)/" /etc/munin/munin-node.conf
 sed -i "s/###GISLAB_SERVER_IP_REGEX###/\$GISLAB_SERVER_IP_REGEX/" /etc/munin/munin-node.conf
 service munin-node restart

@@ -58,7 +58,7 @@ listen ms.gis.lab 0.0.0.0:90
     fullconn 150
     maxconn 1000
     default-server error-limit 1 on-error fail-check fall 1 inter 10s fastinter 5s downinter 120s rise 2 maxconn 100 maxqueue 25 minconn 25 weight 128
-    server localhost 127.0.0.1:91 maxconn 0
+    server server 127.0.0.1:91 maxconn 0
 
     # list of load balancer workers and clients in automaticaly managed by Serf below this line
 EOL

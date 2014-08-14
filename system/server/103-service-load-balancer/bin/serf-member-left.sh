@@ -8,10 +8,11 @@
 
 while read line; do
 	NAME=`echo $line | awk '{print \$1 }'`
-	sed -i'' "/${NAME} /d" /etc/haproxy/haproxy.cfg
+	sed -i'' "/server ${NAME} .*Managed by Serf$/d" /etc/haproxy/haproxy.cfg
+	rm -f /etc/munin/munin-conf.d/$NAME-gislab.conf
 done
 
-/etc/init.d/haproxy reload
+service haproxy reload
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

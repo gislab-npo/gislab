@@ -22,19 +22,10 @@ includedir /etc/munin/munin-conf.d
 
 [gis.lab;]
 
-[gis.lab;server.gis.lab]
+[gis.lab;server]
 	address 127.0.0.1
 	use_node_name yes
 EOL
-
-for i in $(seq 50 149); do
-	cat << EOL >> /etc/munin/munin.conf
-
-[gis.lab;c$i]
-	address $GISLAB_NETWORK.$i
-	use_node_name yes
-EOL
-done
 
 gislab_config_header_to_file /etc/munin/munin.conf
 
@@ -45,7 +36,7 @@ cp $GISLAB_INSTALL_CURRENT_ROOT/conf/munin/munin-node /etc/munin/plugin-conf.d/m
 gislab_config_header_to_file /etc/munin/plugin-conf.d/munin-node
 
 # install munin plugin for graphing cpu usage by process
-cp $GISLAB_INSTALL_CURRENT_ROOT/bin/cpu_by_process /usr/share/munin/plugins/cpu_by_process
+cp $GISLAB_INSTALL_CURRENT_ROOT/conf/munin/plugins/cpu_by_process /usr/share/munin/plugins/cpu_by_process
 chmod +x /usr/share/munin/plugins/cpu_by_process
 
 # disable all plugins
