@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # The member leave script is invoked when a member leaves or fails out
-# of the GIS.lab network. Script removes the node from the load balancer.
+# of the GIS.lab network. Script removes the node from the load balancer
+# and statistics monitoring.
 
 # Taken from https://github.com/hashicorp/serf/tree/master/demo/web-load-balancer
 

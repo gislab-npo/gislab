@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # The member join script is invoked when a member joins the GIS.lab network.
-# Script simply adds the node to the load balancer
+# Script simply adds the node to the load balancer and statistics monitoring.
 
 # Taken from https://github.com/hashicorp/serf/tree/master/demo/web-load-balancer
 
