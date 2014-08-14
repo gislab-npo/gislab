@@ -81,7 +81,8 @@ cp -a /etc/skel.clean /etc/skel
 
 
 # launch account configuration script
-source $GISLAB_ROOT/system/account/install.sh
+GISLAB_INSTALL_ACCOUNT_ROOT=$GISLAB_ROOT/system/account
+source $GISLAB_INSTALL_ACCOUNT_ROOT/install.sh
 
 
 # add shared directories
