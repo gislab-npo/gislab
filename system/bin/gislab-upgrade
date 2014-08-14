@@ -42,13 +42,16 @@ done
 shift $(($OPTIND - 1))
 
 if [ "$FORCE" != "yes" ]; then
-	gislab_print_warning "This command will upgrade GIS.lab system. Please check if all users are disconnected"
+	gislab_print_warning "This command will upgrade GIS.lab system"
+	gislab_print_warning "All client and worker machines will be automatically turned off"
 	echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
 	read
 fi
 
 
 # perform upgrade
+service serf stop # stop Serf to invoke shutdown of client and worker machines
+
 if [ "$SERVER_ONLY" == "no" ]; then
 	bash $GISLAB_ROOT/system/install.sh
 else
