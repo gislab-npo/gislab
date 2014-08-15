@@ -72,7 +72,7 @@ gislab_serf_install () {
 			serf_arch="amd64"
 		fi
 
-		until wget -O /tmp/serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_$serf_arch.zip; do
+		until wget --no-verbose -O /tmp/serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_$serf_arch.zip; do
 			sleep 1
 		done
 

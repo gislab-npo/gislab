@@ -33,14 +33,14 @@ fi
 # create and activate Python virtualenv
 mkdir -p /usr/local/python-virtualenvs
 rm -rf /usr/local/python-virtualenvs/webgis
-virtualenv --clear --system-site-packages /usr/local/python-virtualenvs/webgis
+virtualenv --clear --quiet --system-site-packages /usr/local/python-virtualenvs/webgis
 source /usr/local/python-virtualenvs/webgis/bin/activate
 
 
 # install requirements and webgis itself
 GISLAB_INSTALL_WEBGIS_DIR=/tmp/gislab-install-webgis-$(date +%s)
 cp -a $GISLAB_INSTALL_CURRENT_ROOT/app/gislab-web $GISLAB_INSTALL_WEBGIS_DIR
-pip install --download-cache=/var/cache/pip --requirement=$GISLAB_INSTALL_WEBGIS_DIR/requirements.txt
+pip install --quiet --download-cache=/var/cache/pip --requirement=$GISLAB_INSTALL_WEBGIS_DIR/requirements.txt
 pip install gunicorn
 python $GISLAB_INSTALL_WEBGIS_DIR/setup.py install > /dev/null
 rm -r $GISLAB_INSTALL_WEBGIS_DIR
