@@ -42,6 +42,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "precise-canonical"
   
   config.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+  config.vm.synced_folder '.', '/opt/gislab', :rsync_excludes => ['tmp', 'mnt', 'http-boot']
 
   config.ssh.forward_agent = true
   if not CONFIG['GISLAB_SSH_PRIVATE_KEY'].empty?
@@ -71,8 +73,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     override.vm.provision "shell",
       path: "system/install.sh",
       args: "aws"
-
-    config.vm.synced_folder '.', '/vagrant', :rsync_excludes => ['tmp', 'mnt', 'http-boot']
 
     override.ssh.username = "ubuntu"
     override.ssh.private_key_path = CONFIG['GISLAB_SSH_PRIVATE_KEY']

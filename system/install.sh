@@ -10,7 +10,7 @@
 set -e
 
 # get root directory of GIS.lab installation package
-GISLAB_ROOT=/vagrant
+GISLAB_ROOT=/opt/gislab
 export GISLAB_ROOT
 
 # load utility functions

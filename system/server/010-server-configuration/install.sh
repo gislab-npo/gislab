@@ -40,13 +40,13 @@ LANGUAGE="en_US:en"
 EOF
 
 
-# add path to management scripts for sudo users. Configuration in 'vagrant-secure-path' is losing
-# effect once sudo-ldap is installed
-cat << EOF > /etc/sudoers.d/vagrant-secure-path
+# Add path to management scripts for sudo users. 'secure_path' configuration in 'gislab' file is losing
+# effect once sudo-ldap is installed, hence it must be configured again.
+cat << EOF > /etc/sudoers.d/gislab
 $(gislab_config_header)
 Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$GISLAB_ROOT/system/bin"
 EOF
-chmod 0440 /etc/sudoers.d/vagrant-secure-path
+chmod 0440 /etc/sudoers.d/gislab
 
 
 # save public SSH key
