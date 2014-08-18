@@ -64,7 +64,7 @@ div.scale-control {
 	border-bottom: 1px dotted #BBB;
 }
 
-.x-grid3-row-selected, dl.x-list-selected {
+.x-tree-selected, .x-grid3-row-selected, dl.x-list-selected {
 	background-image: none !important;
 	background-color: #E0FFFF !important;
 	border-top: 1px dotted #BBB;
