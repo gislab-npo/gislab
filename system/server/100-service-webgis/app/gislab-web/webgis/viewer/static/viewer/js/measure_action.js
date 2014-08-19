@@ -122,41 +122,59 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 			defaults: {
 				border: false
 			},
-			items: [{
-				title: gettext('Measured values'),
-				columnWidth: 1,
-				items: [{
+			items: [
+				{
+					title: gettext('Measured values'),
+					columnWidth: .75,
+					items: [{
+							xtype: 'form',
+							ref: '/pointForm',
+							labelWidth: 100,
+							frame: false,
+							border: false,
+							defaults: {
+								anchor: "100%",
+							},
+							defaultType: 'textfield',
+							items: [{
+									fieldLabel: gettext('Coordinate 1'),
+									name: 'coord1',
+									readOnly: true,
+									listeners: {
+										focus: function(field) {
+											field.selectText();
+										}
+									}
+								}, {
+									fieldLabel: gettext('Coordinate 2'),
+									name: 'coord2',
+									readOnly: true,
+									listeners: {
+										focus: function(field) {
+											field.selectText();
+										}
+									}
+								},
+							]
+					}]
+				}, {
+					title: '&nbsp;',
+					columnWidth: .25,
+					items: [{
 						xtype: 'form',
-						ref: '/pointForm',
-						labelWidth: 100,
+						labelWidth: 1,
 						frame: false,
 						border: false,
 						defaults: {
 							anchor: "100%",
 						},
-						defaultType: 'textfield',
 						items: [{
-								fieldLabel: gettext('Coordinate 1'),
-								name: 'coord1',
-								readOnly: true,
-								listeners: {
-									focus: function(field) {
-										field.selectText();
-									}
-								}
-							}, {
-								fieldLabel: gettext('Coordinate 2'),
-								name: 'coord2',
-								readOnly: true,
-								listeners: {
-									focus: function(field) {
-										field.selectText();
-									}
-								}
-							},
-						]
-				}]
-			}],
+							xtype: 'box',
+							height: 26,
+						}]
+					}]
+				}
+			],
 			clearMeasurements: function() {
 				this.pointForm.getForm().reset();
 			}
