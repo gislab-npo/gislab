@@ -626,22 +626,24 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					drawAction: this,
 					initDrawTool: function() {
 						var draw_control = this.drawAction.window.drawPanel.activeTab.control;
-						draw_control.setMap(this.drawAction.map);
-						// sync select mode and snapping tools with previous drawing geometry type settings (drawing tab)
-						if (this.drawAction.isSelectModeActivated === this.drawAction.window.drawPanel.activeTab.selectMode.pressed) {
-							if (!this.drawAction.isSelectModeActivated) {
-								draw_control.activate();
+						if (draw_control) { // if not history tab is active
+							draw_control.setMap(this.drawAction.map);
+							// sync select mode and snapping tools with previous drawing geometry type settings (drawing tab)
+							if (this.drawAction.isSelectModeActivated === this.drawAction.window.drawPanel.activeTab.selectMode.pressed) {
+								if (!this.drawAction.isSelectModeActivated) {
+									draw_control.activate();
+								}
+							} else {
+								this.drawAction.window.drawPanel.activeTab.selectMode.toggle(this.drawAction.isSelectModeActivated);
 							}
-						} else {
-							this.drawAction.window.drawPanel.activeTab.selectMode.toggle(this.drawAction.isSelectModeActivated);
+							this.drawAction.window.drawPanel.activeTab.snapAction.toggle(this.drawAction.isSnappingActivated);
+							if (this.drawAction.isSnappingActivated) {
+								this.drawAction.enableSnapping();
+							} else {
+								this.drawAction.disableSnapping();
+							}
+							this.drawAction.enableFeatureModify(draw_control);
 						}
-						this.drawAction.window.drawPanel.activeTab.snapAction.toggle(this.drawAction.isSnappingActivated);
-						if (this.drawAction.isSnappingActivated) {
-							this.drawAction.enableSnapping();
-						} else {
-							this.drawAction.disableSnapping();
-						}
-						this.drawAction.enableFeatureModify(draw_control);
 					},
 					listeners: {
 						beforetabchange: function(tabPanel, newTab, currentTab) {
