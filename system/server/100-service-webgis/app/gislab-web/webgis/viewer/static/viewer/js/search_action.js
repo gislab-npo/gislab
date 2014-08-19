@@ -585,6 +585,6 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 			items: []
 		});
 		this.window.show();
-		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tl-bl', [70, 5]);
+		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tl-bl', [70, 0]);
 	}
 });

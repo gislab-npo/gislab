@@ -271,7 +271,6 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 			if (this.collapsed) {
 				this.expand(false);
 			}
-			console.log(this);
 			this.featuresTabPanel.ownerCt.tools.zoom.setOpacity(0.5);
 		}
 	},

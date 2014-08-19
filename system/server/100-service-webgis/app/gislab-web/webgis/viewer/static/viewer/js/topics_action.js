@@ -27,7 +27,7 @@ WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 					ref: 'topicDetailsPanel',
 					cls: 'topic-detail-panel',
 					width: 330,
-					title: gettext('Topic details'),
+					header: false,
 					collapsible: true,
 					collapsed: true,
 					animCollapse: false,
@@ -173,6 +173,6 @@ WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 		});
 
 		this.window.show();
-		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tl-bl', [5, 5]);
+		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tl-bl', [5, 0]);
 	}
 });
