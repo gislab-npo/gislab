@@ -6,18 +6,6 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 	layout: 'fit',
 	autoPanMapOnSelection: false,
 	styleMap: null,
-	tools: [{
-		id: 'zoom',
-		qtip: gettext('Zoom to all features'),
-		handler: function(event, toolEl, panel, tc) {
-			if (panel.featuresTabPanel.activeTab) {
-				var features_extent = panel.featuresTabPanel.activeTab.features_extent;
-				if (features_extent) {
-					panel.map.zoomToExtent(features_extent, true);
-				}
-			}
-		}
-	}],
 
 	initComponent: function() {
 		this.on('render', function(panel) {
@@ -41,7 +29,10 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 					Ext.each(this.map.getLayersByName(new RegExp('^_featureinfolayer_.+')), function(layer) {
 						layer.setVisibility(layer.name == tab_layer_name);
 					});
-					tabPanel.ownerCt.tools.zoom.setOpacity(tab.features_extent? 1.0 : 0.5);
+					var zoom_to_features_btn = Ext.fly("zoom-to-features");
+					if (zoom_to_features_btn) {
+						zoom_to_features_btn.setOpacity(tab.features_extent? 1.0 : 0.5);
+					}
 				}
 			}
 		});
@@ -134,6 +125,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 				if (layer_features[0].geometry) {
 					columns.push({
 						xtype : 'actioncolumn',
+						header: String.format('<div id="zoom-to-features" class="x-tool x-tool-zoom" ext:qtip="{0}"></div>', gettext('Zoom to all features')),
 						width: 52,
 						scope: this,
 						sortable: false,
@@ -256,7 +248,15 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 						autoPanMapOnSelection: this.autoPanMapOnSelection
 					}),
 					listeners: {
-						'removed': function (grid, ownerCt ) {
+						headerclick: function(grid, columnIndex, e) {
+							if (e.target.id === 'zoom-to-features') {
+								var features_extent = grid.features_extent;
+								if (features_extent) {
+									grid.ownerCt.map.zoomToExtent(features_extent, true);
+								}
+							}
+						},
+						removed: function (grid, ownerCt ) {
 							grid.getSelectionModel().selectControl.map.removeControl(grid.getSelectionModel().selectControl);
 							grid.getSelectionModel().unbind();
 						}
@@ -271,7 +271,6 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 			if (this.collapsed) {
 				this.expand(false);
 			}
-			this.featuresTabPanel.ownerCt.tools.zoom.setOpacity(0.5);
 		}
 	},
 	listeners: {
