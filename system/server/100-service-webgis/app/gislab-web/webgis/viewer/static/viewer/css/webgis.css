@@ -581,6 +581,17 @@ img.export-feature {
 	margin-left: 4px;
 }
 
+img.export-feature-disabled {
+	opacity: 0.4;
+	filter: alpha(opacity=40);
+	cursor: default;
+	background-image: url('../images/toolbar/export.png')!important;
+	background: no-repeat;
+	width: 16px;
+	height: 16px;
+	margin-left: 4px;
+}
+
 span.x-panel-header-text {
 	display: table;
 	margin: 0 auto;
