@@ -7,7 +7,8 @@ from django.db import models
 class Ball(models.Model):
 	id = models.CharField(u"id", max_length=8, primary_key=True)
 	data = models.TextField(u"data")
-	mime_type = models.CharField(u"MIME type", max_length=50, blank=True)
+	sender = models.CharField(u"sender", max_length=100, blank=False)
+	mime_type = models.CharField(u"MIME type", max_length=50, blank=False)
 	timestamp = models.DateTimeField("time stamp", auto_now_add=True)
 
 	class Meta:
@@ -26,3 +27,22 @@ class Ball(models.Model):
 				random_id = self._random_id()
 			self.id = random_id
 		return super(Ball, self).save(*args, **kwargs)
+
+
+class Drawing(models.Model):
+	user = models.CharField(u"user", max_length=100, blank=False)
+	project = models.TextField(u"project")
+	title = models.CharField(u"title", max_length=255, blank=False)
+	timestamp = models.DateTimeField(u"time stamp", auto_now_add=True)
+	ball = models.ForeignKey(Ball, verbose_name=u"ball")
+	permalink = models.TextField(u"permalink")
+	statistics = models.TextField(u"statistics")
+
+	def __unicode__(self):
+		return self.title
+
+	class Meta:
+		index_together = [
+			["user", "project"],
+		]
+		ordering = ["-timestamp"]

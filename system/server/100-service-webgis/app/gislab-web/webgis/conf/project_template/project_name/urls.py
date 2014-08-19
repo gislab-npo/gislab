@@ -11,7 +11,7 @@ js_info_dict = {
 
 urlpatterns = patterns('',
 	url(r'', include('webgis.viewer.urls', namespace='viewer')),
-	url(r'^ball/$', include('webgis.storage.urls', namespace='storage')),
+	url(r'', include('webgis.storage.urls', namespace='storage')),
 	url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
 	url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
 	url(r'^jsi18n/$', javascript_catalog, js_info_dict),
