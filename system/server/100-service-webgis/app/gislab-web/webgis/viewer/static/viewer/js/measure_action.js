@@ -231,7 +231,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 							ref: '../../lengthUnits',
 							store: new Ext.data.SimpleStore({
 								data: [
-									['', '&nbsp;'],
+									['', 'auto'],
 									['m', 'm'],
 									['km', 'km'],
 									['mi', 'mi'],
@@ -246,9 +246,13 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 							forceSelection: true,
 							measureAction: this,
 							listeners: {
+								afterrender: function(combo) {
+									var recordSelected = combo.getStore().getAt(0);
+									combo.setValue(recordSelected.get('value'));
+								},
 								select: function (combo, record, index) {
 									var units = record.get('value');
-									if (units !== '') {
+									if (units) {
 										var last_measurement = combo.measureAction.measureLengthPanel.lastMeasurement;
 										if (last_measurement) {
 											var total_value = combo.measureAction.convertUnits(last_measurement['total']['value'], last_measurement['total']['units'], units);
@@ -259,7 +263,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 											});
 										}
 									} else {
-										combo.setValue(null);
+										combo.setValue('');
 									}
 								}
 							}
@@ -337,7 +341,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 							ref: '../../areaUnits',
 							store: new Ext.data.SimpleStore({
 								data: [
-									['', '&nbsp;'],
+									['', 'auto'],
 									['m2', 'm²'],
 									['km2', 'km²'],
 									['ha', 'ha'],
@@ -353,6 +357,10 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 							forceSelection: true,
 							measureAction: this,
 							listeners: {
+								afterrender: function(combo) {
+									var recordSelected = combo.getStore().getAt(0);
+									combo.setValue(recordSelected.get('value'));
+								},
 								select: function (combo, record, index) {
 									var units = record.get('value');
 									if (units) {
@@ -364,7 +372,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 											});
 										}
 									} else {
-										combo.setValue(null);
+										combo.setValue('');
 									}
 								}
 							}
@@ -373,7 +381,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 							ref: '../../perimeterUnits',
 							store: new Ext.data.SimpleStore({
 								data: [
-									['', '&nbsp;'],
+									['', 'auto'],
 									['m', 'm'],
 									['km', 'km'],
 									['mi', 'mi'],
@@ -388,6 +396,10 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 							forceSelection: true,
 							measureAction: this,
 							listeners: {
+								afterrender: function(combo) {
+									var recordSelected = combo.getStore().getAt(0);
+									combo.setValue(recordSelected.get('value'));
+								},
 								select: function (combo, record, index) {
 									var units = record.get('value');
 									if (units) {
@@ -399,7 +411,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 											});
 										}
 									} else {
-										combo.setValue(null);
+										combo.setValue('');
 									}
 								}
 							}
