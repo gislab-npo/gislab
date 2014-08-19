@@ -5,23 +5,112 @@ Ext.override(Ext.grid.GridView, {
 	scrollToTop: Ext.emptyFn
 });
 
+WebGIS.DrawingsLocalStorageProxy = Ext.extend(Ext.data.MemoryProxy, {
+
+	memoryDrawings: [],
+	constructor: function(config) {
+		this.storagePrefix = config.storagePrefix;
+		WebGIS.DrawingsLocalStorageProxy.superclass.constructor.apply(this, arguments);
+		this.hasPersistentStorage = typeof(Storage) !== "undefined";
+		this.on('beforeload', this.loadPageRecords);
+	},
+	saveRecord: function(record) {
+		if (this.hasPersistentStorage) {
+			var encoded_record = [
+				parseInt(record.time.getTime()/1000),
+				record.title,
+				record.permalink,
+				record.drawing,
+				record.statistics].join(";");
+
+			var count_key = String.format('{0}-drawings-count', this.storagePrefix);
+			var count = parseInt(localStorage.getItem(count_key)) || 0;
+			var storage_key = String.format('{0}-drawing-{1}', this.storagePrefix, count);
+			localStorage.setItem(storage_key, encoded_record);
+			count++;
+			localStorage.setItem(count_key, count);
+		} else {
+			record.time = parseInt(record.time.getTime()/1000);
+			this.memoryDrawings.unshift(record);
+		}
+	},
+	loadPageRecords: function(proxy, params) {
+		if (this.hasPersistentStorage) {
+			var count_key = String.format('{0}-drawings-count', this.storagePrefix);
+			var count = parseInt(localStorage.getItem(count_key)) || 0;
+			var drawings = [];
+			if (count > 0) {
+				for (var index = params.start; index < params.start+params.limit && index < count; index++) {
+					var record_key = String.format('{0}-drawing-{1}', proxy.storagePrefix, count-index-1); // fetch in reversed order
+					var encoded_record = localStorage.getItem(record_key);
+					if (encoded_record) {
+						var record_data = encoded_record.split(";");
+						drawings.push({
+							time: parseInt(record_data[0]),
+							title: record_data[1],
+							permalink: record_data[2],
+							drawing: record_data[3],
+							statistics: record_data[4]
+						});
+					}
+				}
+			}
+			proxy.data = {
+				count: count,
+				drawings: drawings
+			};
+		} else {
+			proxy.data = {
+				count: this.memoryDrawings.length,
+				drawings: this.memoryDrawings.slice(params.start, params.start+params.limit)
+			};
+		}
+	}
+});
+
+WebGIS.DrawingsHttpProxy = Ext.extend(Ext.data.HttpProxy, {
+	constructor: function(config) {
+		this.user = config.user;
+		this.project = config.project;
+		config.method = 'GET';
+		WebGIS.DrawingsHttpProxy.superclass.constructor.apply(this, arguments);
+	},
+	saveRecord: function(record) {
+		Ext.Ajax.request({
+			method: 'POST',
+			url: this.url,
+			params: {
+				user: this.user,
+				project: this.project,
+				title: record.title,
+				ball: record.drawing,
+				permalink: record.permalink,
+				statistics: record.statistics
+			}
+		});
+	}
+});
+
 WebGIS.DrawAction = Ext.extend(Ext.Action, {
 	controls: null,
 	saveHandler: function(drawAction, title, features) {},
-	storagePrefix: '',
+	drawingsHistoryProxy: null,
 
 	layers: null,
 	window: null,
 	snapControl: null,
 	modifyControl: null,
+	isSnappingActivated: false,
+	isSelectModeActivated: false,
 
 	constructor: function(config) {
-		if (config.hasOwnProperty('saveHandler')) {
+		if (config.saveHandler) {
 			this.saveHandler = config.saveHandler;
 		}
-		if (config.hasOwnProperty('storagePrefix')) {
-			this.storagePrefix = config.storagePrefix;
+		if (config.drawingsHistoryProxy) {
+			this.drawingsHistoryProxy = config.drawingsHistoryProxy;
 		}
+		this.drawingUrl = config.drawingUrl;
 		this.controls = config.controls;
 		this.controls[0].control.deactivate();
 		this.map = config.map;
@@ -31,32 +120,6 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 		});
 		this.layers = layers;
 		WebGIS.DrawAction.superclass.constructor.apply(this, arguments);
-	},
-
-	addRecordsToStorage: function(records) {
-		var record = records[0];
-		var encoded_record = [
-			record.data.time.getTime(),
-			record.data.title,
-			record.data.permalink,
-			record.data.download,
-			record.data.info].join(";")
-		var storage_key = this.storagePrefix+'drawing_history';
-		var history_data = localStorage.getItem(storage_key)? localStorage.getItem(storage_key)+'$'+encoded_record : encoded_record;
-		localStorage.setItem(storage_key, history_data);
-	},
-	loadRecordsFromStorage: function() {
-		var encoded_records = localStorage.getItem(this.storagePrefix+'drawing_history');
-		if (encoded_records) {
-			var history_data = [];
-			encoded_records = encoded_records.split('$');
-			Ext.each(encoded_records, function(encoded_record) {
-				var record_data = encoded_record.split(";");
-				record_data[0] = new Date(parseInt(record_data[0]));
-				history_data.push(record_data);
-			});
-			this.historyStore.loadData(history_data, true);
-		}
 	},
 
 	onFeatureSelected: function(evt) {
@@ -132,7 +195,10 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 
 	enableSnapping: function() {
 		var draw_control = this.window.drawPanel.activeTab.control;
-		this.disableSnapping();
+		if (this.isSnappingActivated) {
+			this.disableSnapping();
+		}
+		this.isSnappingActivated = true;
 		// configure the snapping agent
 		this.snapControl = new OpenLayers.Control.Snapping({
 			layer: draw_control.layer,
@@ -151,6 +217,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			this.snapControl.destroy()
 			this.snapControl = null;
 		}
+		this.isSnappingActivated = false;
 	},
 
 	showDrawingToolbar: function() {
@@ -215,7 +282,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							handler: function(grid, rowIndex, colIndex) {
 								grid.getSelectionModel().selectRow(rowIndex);
 								var feature = grid.getStore().getAt(rowIndex).get('feature');
-								if (feature.geometry.CLASS_NAME == 'OpenLayers.Geometry.Point') {
+								if (feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point') {
 									this.map.setCenter(feature.geometry.bounds.getCenterLonLat());
 								} else {
 									this.map.zoomToExtent(feature.geometry.bounds, true);
@@ -273,115 +340,6 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					multiple: false,
 					layerFromStore: true
 				}),
-			});
-			features_editors.push(features_editor);
-		}, this);
-
-		this.historyStore = new Ext.data.ArrayStore({
-			drawAction: this,
-			fields: [
-				{name: 'time', type: 'date'},
-				{name: 'title', type: 'string'},
-				{name: 'permalink', type: 'string'},
-				{name: 'download', type: 'string'},
-				{name: 'info', type: 'string'},
-			],
-		});
-		if (typeof(Storage) !== "undefined") {
-			this.loadRecordsFromStorage();
-			this.historyStore.on('add', function(store, records, index) {
-				store.drawAction.addRecordsToStorage(records);
-			});
-		}
-
-		function tooltip_renderer(val, meta, record, rowIndex, colIndex, store) {
-			var info = record.get('info');
-			meta.attr = String.format('ext:qtip="{0}"',  info);
-			return val;
-		};
-		var history_grid = new Ext.grid.GridPanel({
-			id: 'save-history-grid',
-			title: gettext('History'),
-			store: this.historyStore,
-			viewConfig: {
-				templates: {
-					cell: new Ext.Template(
-						'<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} x-selectable {css}" style="{style}" tabIndex="0" {cellAttr}>\
-							<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>\
-						</td>'
-					)
-				}
-			},
-			columns: [{
-					id       : 'time',
-					header   : gettext('Time'),
-					dataIndex: 'time',
-					width    : 60,
-					sortable : false,
-					menuDisabled: true,
-					renderer : Ext.util.Format.dateRenderer('H:i:s'),
-				}, {
-					id       : 'title',
-					header   : gettext('Title'),
-					dataIndex: 'title',
-					sortable : false,
-					menuDisabled: true,
-					renderer:  tooltip_renderer
-				}, {
-					id       : 'permalink',
-					header   : gettext('Permalink'),
-					dataIndex: 'permalink',
-					width    : 72,
-					sortable : false,
-					menuDisabled: true,
-				}, {
-					id       : 'permalink',
-					header   : gettext('Download'),
-					dataIndex: 'download',
-					width    : 72,
-					sortable : false,
-					menuDisabled: true,
-				},
-
-			],
-			//stripeRows: true,
-			autoExpandColumn: 'title',
-			// config options for stateful behavior
-			stateful: true,
-			stateId: 'grid'
-		});
-
-		this.window = new Ext.Window({
-			id: 'drawing-window',
-			header: false,
-			closable: false,
-			minWidth: 300,
-			width: 400,
-			height: 400,
-			layout: 'border',
-			xtbar: {
-				xtype: 'toolbar',
-				dock: 'top',
-				layout: {
-					type: 'hbox',
-					pack: 'start',
-				},
-				items: [{
-						xtype: 'tbtext',
-						text: gettext('Title')+':',
-						hideMode: 'visibility',
-						flex: 0
-					}, {
-						xtype: 'tbspacer',
-						width: 10
-					}, {
-						xtype: 'textfield',
-						ref: '/drawingTitle',
-						hideMode: 'visibility',
-						flex: 1
-					}
-				]
-			},
 			bbar: [
 				new Ext.Action({
 					ref: '/selectMode',
@@ -396,6 +354,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 						} else {
 							draw_control.activate();
 						}
+						this.isSelectModeActivated = toggled;
 					}
 				}), ' ', new Ext.Action({
 					ref: '/snapAction',
@@ -450,6 +409,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							id: 'drawing-save-window',
 							header: false,
 							closable: false,
+							modal: true,
 							width: 450,
 							height: 110,
 							layout: 'fit',
@@ -468,7 +428,13 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 									items: [{
 											fieldLabel: gettext('Title'),
 											name: 'title',
-											ref: '/titleField'
+											ref: '/titleField',
+											allowBlank: false,
+											listeners: {
+												afterrender: function(field) {
+													field.focus(false, 200);
+												}
+											}
 									}]
 								}
 							],
@@ -480,26 +446,176 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 										window.close();
 									}
 								}, {
+									ref: '/save',
 									text: gettext('Save'),
 									scope: save_action,
 									handler: function(button, evt) {
 										var window = button.ownerCt.ownerCt;
-										var title = window.titleField.getValue();
-										var features = [];
-										var currentTab = this.drawAction.window.drawPanel.getActiveTab();
-										this.drawAction.clearFeaturesSelection();
-										Ext.each(this.drawAction.layers, function(layer) {
-											features = features.concat(layer.features);
-										});
-										this.drawAction.saveHandler(this.drawAction, title, features);
-										window.close();
+										if (window.titleField.validate()) {
+											var title = window.titleField.getValue();
+											var features = [];
+											var currentTab = this.drawAction.window.drawPanel.getActiveTab();
+											this.drawAction.clearFeaturesSelection();
+											Ext.each(this.drawAction.layers, function(layer) {
+												features = features.concat(layer.features);
+											});
+											this.drawAction.saveHandler(this.drawAction, title, features);
+											window.close();
+										}
 									}
-							}]
+							}],
+							listeners: {
+								render: function(window) {
+									var map = new Ext.KeyMap(window.getEl(), [
+										{
+											key: [10, 13],
+											fn: function() {
+												window.save.handler.call(window.save.scope, window.save, Ext.EventObject);
+											}
+										}
+									]);
+								}
+							}
 						});
 						save_window.show();
 					}
 				})
 			],
+			});
+			features_editors.push(features_editor);
+		}, this);
+
+		this.historyStore = new Ext.data.JsonStore({
+			drawAction: this,
+			fields: [
+				{
+					name: 'time',
+					type: 'date',
+					convert: function(v) {
+						return new Date(1000*parseInt(v));
+					}
+				}, {
+					name: 'title',
+					type: 'string'
+				}, {
+					name: 'permalink',
+					type: 'string',
+					convert: function(v) {
+						return String.format('<a target="_blank" href="?{0}">{1}</a>', v, Ext.urlDecode(v)['DRAWINGS']);
+					}
+				}, {
+					name: 'drawing',
+					type: 'string',
+					drawingUrl: this.drawingUrl,
+					convert: function(v) {
+						var link = Ext.urlAppend(this.drawingUrl, Ext.urlEncode({ID: v}));
+						return String.format('<a target="_blank" href="{0}">{1}</a>', link, gettext('Download'));
+					}
+				}, {
+					name: 'statistics',
+					type: 'string'
+				},
+			],
+			proxy: this.drawingsHistoryProxy,
+			totalProperty: 'count',
+			root: 'drawings',
+		});
+
+		function tooltip_renderer(val, meta, record, rowIndex, colIndex, store) {
+			var statistics = record.get('statistics');
+			meta.attr = String.format('ext:qtip="{0}"',  statistics);
+			return val;
+		};
+		var history_grid = new Ext.grid.GridPanel({
+			id: 'save-history-grid',
+			title: gettext('History'),
+			store: this.historyStore,
+			viewConfig: {
+				templates: {
+					cell: new Ext.Template(
+						'<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} x-selectable {css}" style="{style}" tabIndex="0" {cellAttr}>\
+							<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>\
+						</td>'
+					)
+				}
+			},
+			columns: [{
+					id       : 'time',
+					header   : gettext('Time'),
+					dataIndex: 'time',
+					width    : 82,
+					sortable : false,
+					menuDisabled: true,
+					renderer : Ext.util.Format.dateRenderer('H:i d/m/y'),
+				}, {
+					id       : 'title',
+					header   : gettext('Title'),
+					dataIndex: 'title',
+					sortable : false,
+					menuDisabled: true,
+					renderer:  tooltip_renderer
+				}, {
+					id       : 'permalink',
+					header   : gettext('Permalink'),
+					dataIndex: 'permalink',
+					width    : 72,
+					sortable : false,
+					menuDisabled: true,
+				}, {
+					id       : 'drawing',
+					header   : gettext('Download'),
+					dataIndex: 'drawing',
+					width    : 72,
+					sortable : false,
+					menuDisabled: true,
+				},
+
+			],
+			//stripeRows: true,
+			autoExpandColumn: 'title',
+			// config options for stateful behavior
+			stateful: true,
+			stateId: 'grid',
+			bbar: new Ext.PagingToolbar({
+				store: this.historyStore,
+				pageSize: 20,
+				displayInfo: true,
+				displayMsg: gettext('Drawings {0} - {1} of {2}'),
+				emptyMsg: gettext('No drawings to display'),
+			})
+		});
+
+		this.window = new Ext.Window({
+			id: 'drawing-window',
+			header: false,
+			closable: false,
+			minWidth: 300,
+			width: 400,
+			height: 400,
+			layout: 'border',
+			xtbar: {
+				xtype: 'toolbar',
+				dock: 'top',
+				layout: {
+					type: 'hbox',
+					pack: 'start',
+				},
+				items: [{
+						xtype: 'tbtext',
+						text: gettext('Title')+':',
+						hideMode: 'visibility',
+						flex: 0
+					}, {
+						xtype: 'tbspacer',
+						width: 10
+					}, {
+						xtype: 'textfield',
+						ref: '/drawingTitle',
+						hideMode: 'visibility',
+						flex: 1
+					}
+				]
+			},
 			items: [
 				{
 					xtype: 'tabpanel',
@@ -511,19 +627,21 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					initDrawTool: function() {
 						var draw_control = this.drawAction.window.drawPanel.activeTab.control;
 						draw_control.setMap(this.drawAction.map);
-						if (this.drawAction.window.selectMode.pressed) {
-							draw_control.deactivate();
+						// sync select mode and snapping tools with previous drawing geometry type settings (drawing tab)
+						if (this.drawAction.isSelectModeActivated === this.drawAction.window.drawPanel.activeTab.selectMode.pressed) {
+							if (!this.drawAction.isSelectModeActivated) {
+								draw_control.activate();
+							}
 						} else {
-							draw_control.activate();
+							this.drawAction.window.drawPanel.activeTab.selectMode.toggle(this.drawAction.isSelectModeActivated);
 						}
-						this.drawAction.disableSnapping();
-						if (this.drawAction.window.snapAction.pressed) {
+						this.drawAction.window.drawPanel.activeTab.snapAction.toggle(this.drawAction.isSnappingActivated);
+						if (this.drawAction.isSnappingActivated) {
 							this.drawAction.enableSnapping();
+						} else {
+							this.drawAction.disableSnapping();
 						}
 						this.drawAction.enableFeatureModify(draw_control);
-						this.drawAction.window.getBottomToolbar().items.each(function(item) {
-							item.show();
-						});
 					},
 					listeners: {
 						beforetabchange: function(tabPanel, newTab, currentTab) {
@@ -536,9 +654,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							if (tab && tab.control) {
 								tabPanel.initDrawTool();
 							} else { // history tab
-								this.drawAction.window.getBottomToolbar().items.each(function(item) {
-									item.hide();
-								});
+								tab.getBottomToolbar().doRefresh();
 							}
 						}
 					}

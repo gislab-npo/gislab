@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import re
 import json
 import os.path
@@ -366,6 +365,7 @@ def page(request):
 			raise
 	else:
 		context.update({
+			'project': 'empty',
 			'root_title': 'Empty Project',
 			'project_extent': [-20037508.34, -20037508.34, 20037508.34, 20037508.34],
 			'projection': 'EPSG:3857',

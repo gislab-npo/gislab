@@ -25,7 +25,7 @@ permalink_provider.on({
 	statechange: function(provider, name, value) {
 		var map = mappanel.map;
 
-		var parameters = { {% if project %}PROJECT: '{{ project }}'{% endif %} };
+		var parameters = { {% if project != "empty" %}PROJECT: '{{ project }}'{% endif %} };
 
 		var baselayers_combo = Ext.getCmp('base-layer-combo');
 		if (baselayers_combo) {

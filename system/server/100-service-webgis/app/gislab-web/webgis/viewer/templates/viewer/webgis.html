@@ -283,7 +283,7 @@
 
 
 				var ctrl, action;
-				{% if project %}
+				{% if project != "empty" %}
 				//featureinfo panel
 				var featureinfo_panel = new WebGIS.FeatureInfoPanel({
 					id: 'featureinfo-panel',
@@ -426,7 +426,7 @@
 							<p><label>{% trans "GIS.lab ID" %}: </label>{{ gislab_unique_id }}</p> \
 							<p><label>{% trans "GIS.lab version" %}: </label>{{ gislab_version }}</p> \
 							<p><label>{% trans "Home page" %}: </label><a href="http://imincik.github.io/gis-lab" target="_blank">http://imincik.github.io/gis-lab</a></p> \
-							<p><label>{% trans "Documentation page" %}: </label><a href="https://github.com/imincik/gis-lab/wiki" target="_blank">https://github.com/imincik/gis-lab/wiki</a></p></div>'
+							<p><label>{% trans "Documentation" %}: </label><a href="https://github.com/imincik/gis-lab/wiki" target="_blank">https://github.com/imincik/gis-lab/wiki</a></p></div>'
 				});
 
 				// legend and properties panel
@@ -459,19 +459,19 @@
 					items: [
 						baselayer_panel,
 						layer_treepanel,
-						{% if project %} info_panel {% endif %}
+						{% if project != "empty" %} info_panel {% endif %}
 					]
 				});
 
 				// Toolbar Actions
 
-				{% if project %}
+				{% if project != "empty" %}
 				{% include "viewer/actions/topics.js" %}
 				mappanel.getTopToolbar().add(' ', '-', ' ');
 				{% endif %}
 				{% include "viewer/actions/basic.js" %}
 
-				{% if project %}
+				{% if project != "empty" %}
 				mappanel.getTopToolbar().add(' ', '-', ' ');
 					{% if print_composers %}
 					{% include "viewer/actions/print.js" %}

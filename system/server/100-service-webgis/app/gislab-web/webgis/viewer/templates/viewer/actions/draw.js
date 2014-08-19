@@ -76,7 +76,19 @@ action = new WebGIS.DrawAction({
 	enableToggle: true,
 	toggleGroup: 'measure-draw',
 	tooltip: '{% trans "Draw on map" %}',
-	storagePrefix: 'gislab-{{ project }}-',
+	{% if user.is_guest %}
+	drawingsHistoryProxy: new WebGIS.DrawingsLocalStorageProxy({
+		data: {count: 0, drawings: []},
+		storagePrefix: 'gislab-{{ project }}'
+	}),
+	{% else %}
+	drawingsHistoryProxy: new WebGIS.DrawingsHttpProxy({
+		url: Ext.urlAppend('{% url "storage:drawing" %}', Ext.urlEncode({user: '{{ user.username }}', project: '{{ project }}'})),
+		user: '{{ user.username }}',
+		project: '{{ project }}'
+	}),
+	{% endif %}
+	drawingUrl: '{% url "storage:ball" %}',
 	toggleHandler: function(action, toggled) {
 		action.baseAction.toggleHandler(action, toggled);
 	},
@@ -108,11 +120,14 @@ action = new WebGIS.DrawAction({
 					}]);
 
 					// Add record into saving history
-					var permalink = String.format('<a target="_blank" href="{0}">{1}</a>', Ext.get('permalink').dom.children[0].href, response.responseText);
-					var download_link = String.format('<a href="{0}">{1}</a>', Ext.urlAppend('{% url "storage:ball" %}', Ext.urlEncode({ID: response.responseText})), '{% trans "Download" %}');
-					var drawing_info = String.format('{% trans "Points" %}: {0}<br />{% trans "Lines" %}: {1}<br />{% trans "Polygons" %}: {2}', points_layer.features.length, lines_layer.features.length, polygons_layer.features.length);
-					var data = [[new Date(), title, permalink, download_link, drawing_info]];
-					this.historyStore.loadData(data, true);
+					var data = {
+						time: new Date(),
+						title: title,
+						permalink: Ext.get('permalink').dom.children[0].href.split('?')[1],
+						drawing: response.responseText,
+						statistics: String.format('{0} POINTS, {1} LINESTRINGS, {2} POLYGONS', points_layer.features.length, lines_layer.features.length, polygons_layer.features.length)
+					};
+					this.historyStore.proxy.saveRecord(data);
 				}.bind(drawAction),
 				failure: function(response, opts) {
 					Ext.MessageBox.show({
