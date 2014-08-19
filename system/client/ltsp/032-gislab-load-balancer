@@ -21,7 +21,7 @@ case "$MODE" in
 
 			# serf
 			chroot $ROOT /bin/bash -c "source /usr/local/gislab/functions.sh; gislab_serf_install"
-			mkdir -p /etc/serf/bin
+			mkdir -p $ROOT/etc/serf/bin
 			cp $GISLAB_INSTALL_WORKER_ROOT/serf/bin/serf-member-*.sh $ROOT/etc/serf/bin/
 			chmod +x $ROOT/etc/serf/bin/serf-member-*.sh
 
