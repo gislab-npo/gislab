@@ -432,7 +432,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 			header: false,
 			closable: false,
 			resizable: false,
-			width: 400,
+			width: 430,
 			layout: 'fit',
 			items: [
 				{

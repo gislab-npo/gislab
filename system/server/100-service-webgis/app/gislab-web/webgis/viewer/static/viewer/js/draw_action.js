@@ -590,7 +590,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 			header: false,
 			closable: false,
 			minWidth: 300,
-			width: 400,
+			width: 430,
 			height: 400,
 			layout: 'border',
 			xtbar: {
