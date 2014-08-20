@@ -574,6 +574,10 @@ div.overlays-root {
 	padding-left: 2px;
 	padding-right: 2px;
 }
+.x-grid3-col-drawing {
+	padding-top: 2px;
+	padding-bottom: 0px;
+}
 
 td.x-grid3-td-drawing.x-grid3-col {
 	text-align: center;
