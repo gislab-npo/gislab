@@ -49,7 +49,7 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 						{
 							key: [10, 13],
 							fn: function() {
-								window.search.handler(window.search);
+								window.search.handler.call(window.search.scope, window.search, Ext.EventObject);
 							}
 						}
 					]);
