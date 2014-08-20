@@ -570,6 +570,22 @@ div.overlays-root {
 	float: left;
 }
 
+.x-grid3-hd-inner, .x-grid3-cell-inner {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+td.x-grid3-td-drawing.x-grid3-col {
+	text-align: center;
+}
+
+.x-tool-download {
+	background-image: url('../images/toolbar/download.png')!important;
+	background: no-repeat;
+	width: 16px;
+	height: 16px;
+}
+
 img.zoom-to-feature, .x-tool-zoom {
 	background-image: url('../images/toolbar/zoom_to.png')!important;
 	background: no-repeat;

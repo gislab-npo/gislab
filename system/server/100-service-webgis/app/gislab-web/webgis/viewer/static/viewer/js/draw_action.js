@@ -236,9 +236,14 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				],
 				listeners: {
 					load: function(store, records, options) {
-						// scroll to last item
-						if (this.drawAction.window && this.getCount() > 5) {
-							this.drawAction.window.drawPanel.activeTab.getView().focusRow(this.getCount()-1);
+						if (this.drawAction.window) {
+							var grid = this.drawAction.window.drawPanel.activeTab;
+							// scroll to last item
+							grid.getView().focusRow(this.getCount()-1);
+							// focus on title field
+							if (records.length === 1 && records[0].get('title') === '') {
+								grid.startEditing(this.getCount()-1, 1);
+							}
 						}
 					}
 				}
@@ -511,7 +516,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					drawingUrl: this.drawingUrl,
 					convert: function(v) {
 						var link = Ext.urlAppend(this.drawingUrl, Ext.urlEncode({ID: v}));
-						return String.format('<a target="_blank" href="{0}">{1}</a>', link, gettext('Download'));
+						return String.format('<a target="_blank" href="{0}"><img class="x-tool-download" src="{1}" /></a>', link, Ext.BLANK_IMAGE_URL);
 					}
 				}, {
 					name: 'statistics',
@@ -560,18 +565,17 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					id       : 'permalink',
 					header   : gettext('Permalink'),
 					dataIndex: 'permalink',
-					width    : 72,
+					width    : 68,
 					sortable : false,
 					menuDisabled: true,
 				}, {
 					id       : 'drawing',
 					header   : gettext('Download'),
 					dataIndex: 'drawing',
-					width    : 72,
+					width    : 55,
 					sortable : false,
 					menuDisabled: true,
 				},
-
 			],
 			//stripeRows: true,
 			autoExpandColumn: 'title',
