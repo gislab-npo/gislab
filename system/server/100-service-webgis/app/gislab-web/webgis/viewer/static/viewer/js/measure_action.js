@@ -108,7 +108,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 		}
 		this.measurePointPanel = new Ext.Panel({
 			xtype: 'panel',
-			title: gettext('Point'),
+			title: gettext('Coordinates'),
 			autoScroll: true,
 			cls: 'measure-panel',
 			iconCls: 'measure-point-icon',
@@ -181,7 +181,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 		});
 		this.measureLengthPanel = new Ext.Panel({
 			xtype: 'panel',
-			title: gettext('Length'),
+			title: gettext('Distance'),
 			autoScroll: false,
 			cls: 'measure-panel',
 			iconCls: 'measure-line-icon',

@@ -75,7 +75,7 @@ action = new WebGIS.DrawAction({
 	iconCls: 'draw-icon',
 	enableToggle: true,
 	toggleGroup: 'measure-draw',
-	tooltip: '{% trans "Draw on map" %}',
+	tooltip: '{% trans "Draw points, lines or polygons" %}',
 	{% if user.is_guest %}
 	drawingsHistoryProxy: new WebGIS.DrawingsLocalStorageProxy({
 		data: {count: 0, drawings: []},

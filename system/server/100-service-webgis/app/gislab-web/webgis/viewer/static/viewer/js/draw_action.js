@@ -344,6 +344,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				new Ext.Action({
 					ref: '/selectMode',
 					iconCls: 'select-mode-icon',
+					tooltip: 'Select and modify',
 					pressed: false,
 					enableToggle: true,
 					scope: this,
@@ -359,6 +360,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				}), ' ', new Ext.Action({
 					ref: '/snapAction',
 					iconCls: 'snapping-icon',
+					tooltip: 'Snapping on points',
 					enableToggle: true,
 					pressed: false,
 					scope: this,
@@ -410,7 +412,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							header: false,
 							closable: false,
 							modal: true,
-							width: 450,
+							width: 400,
 							height: 110,
 							layout: 'fit',
 							buttonAlign: 'right',
@@ -419,14 +421,14 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 									xtype: 'form',
 									region: 'center',
 									cls: 'save-drawings-form',
-									labelWidth: 80,
+									labelWidth: 90,
 									frame: true,
 									defaults: {
 										anchor: "100%",
 									},
 									defaultType: 'textfield',
 									items: [{
-											fieldLabel: gettext('Title'),
+											fieldLabel: gettext('Title of drawing'),
 											name: 'title',
 											ref: '/titleField',
 											allowBlank: false,
