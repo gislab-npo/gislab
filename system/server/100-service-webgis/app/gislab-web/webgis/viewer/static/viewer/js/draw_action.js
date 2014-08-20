@@ -544,7 +544,8 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>\
 						</td>'
 					)
-				}
+				},
+				forceFit: true
 			},
 			columns: [{
 					id       : 'time',

@@ -768,8 +768,8 @@ table.x-btn-noicon {
 }
 
 ::-webkit-scrollbar {
-	width:11px;
-	height:11px;
+	width:10px;
+	height:10px;
 	background-color:#F7F7F7;
 }
 
