@@ -236,9 +236,14 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				],
 				listeners: {
 					load: function(store, records, options) {
-						// scroll to last item
-						if (this.drawAction.window && this.getCount() > 5) {
-							this.drawAction.window.drawPanel.activeTab.getView().focusRow(this.getCount()-1);
+						if (this.drawAction.window) {
+							var grid = this.drawAction.window.drawPanel.activeTab;
+							// scroll to last item
+							grid.getView().focusRow(this.getCount()-1);
+							// focus on title field
+							if (records.length === 1 && records[0].get('title') === '') {
+								grid.startEditing(this.getCount()-1, 1);
+							}
 						}
 					}
 				}
@@ -344,6 +349,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				new Ext.Action({
 					ref: '/selectMode',
 					iconCls: 'select-mode-icon',
+					tooltip: 'Select and modify',
 					pressed: false,
 					enableToggle: true,
 					scope: this,
@@ -359,6 +365,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				}), ' ', new Ext.Action({
 					ref: '/snapAction',
 					iconCls: 'snapping-icon',
+					tooltip: 'Snapping on points',
 					enableToggle: true,
 					pressed: false,
 					scope: this,
@@ -410,7 +417,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							header: false,
 							closable: false,
 							modal: true,
-							width: 450,
+							width: 400,
 							height: 110,
 							layout: 'fit',
 							buttonAlign: 'right',
@@ -419,14 +426,14 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 									xtype: 'form',
 									region: 'center',
 									cls: 'save-drawings-form',
-									labelWidth: 80,
+									labelWidth: 90,
 									frame: true,
 									defaults: {
 										anchor: "100%",
 									},
 									defaultType: 'textfield',
 									items: [{
-											fieldLabel: gettext('Title'),
+											fieldLabel: gettext('Title of drawing'),
 											name: 'title',
 											ref: '/titleField',
 											allowBlank: false,
@@ -509,7 +516,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					drawingUrl: this.drawingUrl,
 					convert: function(v) {
 						var link = Ext.urlAppend(this.drawingUrl, Ext.urlEncode({ID: v}));
-						return String.format('<a target="_blank" href="{0}">{1}</a>', link, gettext('Download'));
+						return String.format('<a target="_blank" href="{0}"><img class="x-tool-download" src="{1}" /></a>', link, Ext.BLANK_IMAGE_URL);
 					}
 				}, {
 					name: 'statistics',
@@ -537,7 +544,8 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>\
 						</td>'
 					)
-				}
+				},
+				forceFit: true
 			},
 			columns: [{
 					id       : 'time',
@@ -558,18 +566,17 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					id       : 'permalink',
 					header   : gettext('Permalink'),
 					dataIndex: 'permalink',
-					width    : 72,
+					width    : 68,
 					sortable : false,
 					menuDisabled: true,
 				}, {
 					id       : 'drawing',
 					header   : gettext('Download'),
 					dataIndex: 'drawing',
-					width    : 72,
+					width    : 55,
 					sortable : false,
 					menuDisabled: true,
 				},
-
 			],
 			//stripeRows: true,
 			autoExpandColumn: 'title',

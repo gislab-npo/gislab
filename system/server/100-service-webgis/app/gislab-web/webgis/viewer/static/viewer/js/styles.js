@@ -1,7 +1,6 @@
 var measure_style_config = {
 	"Point": {
 		pointRadius: 4,
-		graphicName: "square",
 		fillColor: "white",
 		fillOpacity: 1,
 		strokeWidth: 2,
@@ -87,6 +86,13 @@ var WebgisStyles = {
 			pointRadius: 6,
 			fontColor: '#306060',
 		},
+	}),
+	print_style: new OpenLayers.Symbolizer.Polygon({
+			pointRadius: 0,
+			strokeWidth: 2,
+			strokeColor: "#66CCCC",
+			strokeOpacity: 1,
+			fillOpacity: 0.5,
 	}),
 	measure_style: new OpenLayers.StyleMap({"default": measure_style})
 }

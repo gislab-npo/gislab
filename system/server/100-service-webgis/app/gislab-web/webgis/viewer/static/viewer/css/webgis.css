@@ -105,6 +105,10 @@ div.scale-control {
 	font-weight: bold !important;
 }
 
+div.x-border-panel.layers-panel {
+	border-left: 3px solid #D0D0D0;
+}
+
 .layers-panel {
 	background-color: #D0D0D0 !important;
 }
@@ -119,7 +123,7 @@ div.scale-control {
 	border-top: 1px solid;
 	border-color: #FFFFFF;
 	margin: 2px 2px 1px 2px;
-	padding: 6px 5px 2px 2px;
+	padding: 1px 5px 1px 2px;
 }
 
 .measure-panel .x-panel-header {
@@ -164,6 +168,7 @@ div.scale-control {
 
 .layers-panel .x-panel-header-text {
 	display: block;
+	padding-top: 6px;
 }
 
 .olControlNoSelect {
@@ -565,6 +570,26 @@ div.overlays-root {
 	float: left;
 }
 
+.x-grid3-hd-inner, .x-grid3-cell-inner {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+.x-grid3-col-drawing {
+	padding-top: 2px;
+	padding-bottom: 0px;
+}
+
+td.x-grid3-td-drawing.x-grid3-col {
+	text-align: center;
+}
+
+.x-tool-download {
+	background-image: url('../images/toolbar/download.png')!important;
+	background: no-repeat;
+	width: 16px;
+	height: 16px;
+}
+
 img.zoom-to-feature, .x-tool-zoom {
 	background-image: url('../images/toolbar/zoom_to.png')!important;
 	background: no-repeat;
@@ -600,7 +625,7 @@ span.x-panel-header-text {
 span#featureinfo-status {
 	position: absolute;
 	top: 6px;
-	left: 32px;
+	left: 7px;
 }
 
 div.x-layout-split-south {
@@ -689,6 +714,7 @@ label.layer-group {
 	background-position: 0 -165px;
 	margin: 6px 0px 0px 0px;
 }
+
 .x-tool-collapse-east {
 	background-position: 0 -180px;
 }
@@ -732,9 +758,18 @@ table.x-btn-noicon {
 	margin-bottom: 3px !important;
 }
 
+.x-tab-with-icon {
+	min-width: 80px;
+}
+
+.topic-detail-panel label {
+	padding-top: 6px;
+	padding-bottom: 3px;
+}
+
 ::-webkit-scrollbar {
-	width:11px;
-	height:11px;
+	width:10px;
+	height:10px;
 	background-color:#F7F7F7;
 }
 

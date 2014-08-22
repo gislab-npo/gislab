@@ -40,7 +40,7 @@ WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 					items: [
 						{
 							xtype: 'label',
-							text: gettext('Abstract'),
+							text: gettext('Abstract')+':',
 						}, {
 							xtype: 'textarea',
 							ref: '/abstractField',
@@ -48,11 +48,8 @@ WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 							height: 70,
 							text: ''
 						}, {
-							xtype: 'box',
-							height: 10
-						}, {
 							xtype: 'label',
-							text: gettext('Layers'),
+							text: gettext('Layers')+':',
 						}, {
 							xtype: 'box',
 							id: 'topic-visible-layers',

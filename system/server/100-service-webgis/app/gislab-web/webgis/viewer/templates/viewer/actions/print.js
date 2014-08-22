@@ -22,6 +22,7 @@ var printWindow = new Ext.Window({
 				}
 			}.bind(this));
 			//window.setWidth(toolbar.getWidth());
+			printExtent.control.renderIntent = WebgisStyles.print_style;
 			printExtent.show();
 		},
 		beforeshow: function(window) {
@@ -37,7 +38,7 @@ var printWindow = new Ext.Window({
 				{
 					key: [10, 13],
 					fn: function() {
-						window.print.handler(window.print);
+						window.print.handler.call(window.print.scope, window.print, Ext.EventObject);
 					}
 				}
 			]);
