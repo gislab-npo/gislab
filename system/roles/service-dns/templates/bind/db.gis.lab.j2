@@ -1,0 +1,23 @@
+$TTL    604800
+$ORIGIN gis.lab.
+@  3600  IN    SOA       ns.gis.lab. root.gis.lab. (
+               2013112203     ; Serial
+               604800         ; Refresh
+               86400          ; Retry
+               2419200        ; Expire
+               604800         ; Negative Cache TTL
+               )
+
+         IN    NS       ns.gis.lab.
+
+ns       IN    A        {{ GISLAB_SERVER_IP }}
+ns1      IN    A        {{ GISLAB_SERVER_IP }}
+ns1      IN    AAAA     ::1
+
+server   IN    A        {{ GISLAB_SERVER_IP }}
+boot     IN    CNAME    server
+db       IN    CNAME    server
+ms       IN    CNAME    server
+web      IN    CNAME    server
+chat     IN    CNAME    server
+stats    IN    CNAME    server

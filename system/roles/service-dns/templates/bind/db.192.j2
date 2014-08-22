@@ -1,0 +1,12 @@
+$TTL    604800
+$ORIGIN {{ GISLAB_SERVER_IP|reverse_ip }}.IN-ADDR.ARPA.
+@  3600  IN    SOA       ns.gis.lab. root.gis.lab. (
+               2013112103     ; Serial
+               604800         ; Refresh
+               86400          ; Retry
+               2419200        ; Expire
+               604800         ; Negative Cache TTL
+               )
+
+         NS              ns.gis.lab.
+5        IN    PTR       server.gis.lab.

@@ -1,0 +1,30 @@
+dn: olcDatabase={1}hdb,cn=config
+add: olcDbIndex
+olcDbIndex: default eq,sub
+-
+add: olcDbIndex
+olcDbIndex: cn,sn,uid,mail,gn pres,eq,sub,subany
+-
+add: olcDbIndex
+olcDbIndex: dc,ou eq
+-
+add: olcDbIndex
+olcDbIndex: uidNumber,gidNumber eq
+-
+add: olcDbIndex
+olcDbIndex: memberUid eq,pres,sub
+-
+add: olcDbIndex
+olcDbIndex: displayName pres,sub,eq
+-
+add: olcDbIndex
+olcDbIndex: uniqueMember pres,eq
+-
+add: olcDbIndex
+olcDbIndex: sudoUser eq,sub,subany
+-
+add: olcDbIndex
+olcDbIndex: mailacceptinggeneralid pres,eq
+-
+add: olcDbIndex
+olcDbIndex: maildrop pres,eq

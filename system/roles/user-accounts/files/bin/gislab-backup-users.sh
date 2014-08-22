@@ -2,7 +2,7 @@
 # Backup all GIS.lab user's accounts.
 
 
-source $GISLAB_ROOT/system/functions.sh
+source /opt/gislab/functions.sh
 
 # require root privileges
 gislab_require_root

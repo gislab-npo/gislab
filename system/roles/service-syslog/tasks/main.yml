@@ -1,0 +1,16 @@
+---
+#
+### SYSLOG ###
+#
+# Install and configure logs logging service.
+
+
+- name: rsyslog configuration
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'rsyslog/rsyslog.conf.j2', dest: '/etc/rsyslog.conf' }
+    - { src: 'rsyslog/50-default.conf.j2', dest: '/etc/rsyslog.d/50-default.conf' }
+  notify:
+    - service rsyslog restart
+
+- meta: flush_handlers

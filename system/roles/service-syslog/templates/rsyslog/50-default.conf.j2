@@ -1,0 +1,12 @@
+auth,authpriv.*			/var/log/auth.log
+*.*;auth,authpriv,local7.none	-/var/log/syslog
+kern.*				-/var/log/kern.log
+news.crit			/var/log/news/news.crit
+news.err			/var/log/news/news.err
+news.notice			-/var/log/news/news.notice
+*.emerg				:omusrmsg:*
+
+daemon.*;mail.*;\
+	news.err;\
+	*.=debug;*.=info;\
+	*.=notice;*.=warn	|/dev/xconsole

@@ -1,0 +1,28 @@
+###### Main Ubuntu repositories
+deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ precise main universe multiverse 
+deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ precise-updates main universe multiverse 
+
+###### Ubuntu security updates
+deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ precise-security main universe multiverse 
+
+###### Ubuntu partner repository
+deb http://archive.canonical.com/ubuntu precise partner
+
+#### GIS.lab GIS repository
+deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main
+
+{% if GISLAB_QGIS_REPOSITORY %}
+#### QGIS
+deb http://ppa.launchpad.net/{{ GISLAB_QGIS_REPOSITORY }}/ubuntu precise main
+{% endif %}
+
+# JOSM repository
+#### JOSM
+deb http://josm.openstreetmap.de/apt precise universe
+
+# Google repositories
+#### Google Chrome Browser - http://www.google.com/linuxrepositories/
+deb http://dl.google.com/linux/chrome/deb/ stable main
+
+#### Google Earth - http://www.google.com/linuxrepositories/
+deb http://dl.google.com/linux/earth/deb/ stable main

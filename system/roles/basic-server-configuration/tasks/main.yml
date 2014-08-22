@@ -1,0 +1,137 @@
+---
+#
+### BASIC SERVER CONFIGURATION ###
+#
+# Run basic server configuration.
+
+
+# FACTS
+- name: Set GIS.lab installation root directory
+  set_fact:
+    GISLAB_ROOT: /opt/gislab
+
+- name: Detect current date and time
+  set_fact:
+    GISLAB_INSTALL_DATETIME: "{{ ansible_date_time.date }} {{ ansible_date_time.time }}"
+
+- name: Detect provisioning user name
+  set_fact:
+    GISLAB_PROVISIONING_USER: "{{ ansible_ssh_user }}"
+
+- name: Detect architecture
+  set_fact:
+    GISLAB_SERVER_ARCHITECTURE: "{{ ansible_architecture }}"
+
+- name: Set GISLAB_SERVER_IP from eth0 if this is only one network device
+  set_fact:
+    GISLAB_SERVER_IP: "{{ ansible_eth0.ipv4.address }}"
+  when: not ansible_eth1.ipv4.address
+
+- name: Set GISLAB_SERVER_IP from eth1 if exists
+  set_fact:
+    GISLAB_SERVER_IP: "{{ ansible_eth1.ipv4.address }}"
+  when: ansible_eth1.ipv4.address
+
+
+# TASKS
+- name: Set GIS.lab version
+  template: src=gislab_version.j2 dest=/etc/gislab_version
+
+- name: Set hostname
+  hostname: name=server
+
+- name: Update hosts
+  template: src=hosts.j2 dest=/etc/hosts
+  notify:
+    - service rsyslog restart
+
+- name: Generate en_US.UTF-8 locale
+  locale_gen: name=en_US.UTF-8 state=present
+
+- name: Set timezone
+  template: src=timezone.j2 dest=/etc/timezone
+  notify:
+    - reconfigure timezone
+
+- name: Set local aliases table
+  template: src=aliases.j2 dest=/etc/aliases
+
+- meta: flush_handlers
+
+- name: Create GIS.lab root installation directory
+  file: path={{ GISLAB_ROOT }} state=directory
+
+- name: Create GIS.lab done logs directory
+  file: path=/var/lib/gislab state=directory
+
+- name: Install GIS.lab shell functions library
+  copy: src=functions.sh dest={{ GISLAB_ROOT }}/functions.sh
+
+- name: Install GIS.lab management scripts
+  copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0744
+
+- name: Configure apt repositories
+  template: src=apt/sources.list.j2 dest=/etc/apt/sources.list
+
+- name: Add imincik PPA signing key
+  apt_key: id=6CD44B55 url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x25B546906CD44B55 state=present
+
+- name: Add other apt signing keys
+  apt_key: url="{{ item }}" state=present
+  with_items:
+    - http://josm.openstreetmap.de/josm-apt.key
+    - https://dl-ssl.google.com/linux/linux_signing_key.pub
+
+- name: Activate apt cache server if configured
+  lineinfile: dest=/etc/apt.conf.d/02proxy line='Acquire::http { Proxy "{{ GISLAB_APT_HTTP_PROXY }}"; };' state=present create=yes
+  when: GISLAB_APT_HTTP_PROXY|default(None) != None 
+
+- name: Deactivate apt cache server if none configured
+  lineinfile: dest=/etc/apt.conf.d/02proxy regexp="." state=absent
+  when: GISLAB_APT_HTTP_PROXY|default(None) == None
+
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Upgrade system
+  apt: upgrade=full force=yes
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - htop
+    - mc
+    - pwgen
+    - tmux
+    - vim
+
+- name: Create GIS.lab configuration directory for SSH keys
+  file: path={{ GISLAB_ROOT }}/ssh state=directory
+
+- name: Install insecure SSH key if no secure one found
+  copy: src=insecure_ssh_key.pub dest={{ GISLAB_ROOT }}/ssh/gislab_ssh_public_key
+  when: GISLAB_SSH_PRIVATE_KEY|default(None) == None or GISLAB_SSH_PUBLIC_KEY|default(None) == None
+
+- name: Install secure SSH key
+  copy: src={{ GISLAB_SSH_PUBLIC_KEY }} dest={{ GISLAB_ROOT }}/ssh/gislab_ssh_public_key
+  when: GISLAB_SSH_PRIVATE_KEY|default(None) != None and GISLAB_SSH_PUBLIC_KEY|default(None) != None
+
+- name: Configure shell prompt system wide
+  lineinfile: dest=/etc/profile \
+    regexp="^PS1=.*h\.GIS.lab(.*).*$" \
+    line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "' \
+    state=present
+
+- name: Set MOTD welcome message
+  template: src=motd/00-header.j2 dest=/etc/update-motd.d/00-header
+
+- name: Remove not needed MOTD messages
+  shell: rm -f {{ item }}
+  with_items:
+    - /etc/update-motd.d/*-help-text
+    - /etc/update-motd.d/*-cloudguest
+    - /etc/update-motd.d/*-release-upgrade
+    - /etc/update-motd.d/*-hwe-eol
+
+- name: Update MOTD
+  shell: run-parts /etc/update-motd.d

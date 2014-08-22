@@ -1,0 +1,18 @@
+---
+#
+### NTP SERVER ###
+#
+# Install and configure time server for all network members.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - ntp
+
+- name: NTP server configuration
+  template: src=ntp/ntp.conf.j2 dest=/etc/ntp.conf
+  notify:
+    - service ntp restart
+
+- meta: flush_handlers

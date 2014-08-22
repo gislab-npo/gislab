@@ -1,0 +1,12 @@
+---
+
+- hosts: all
+  sudo: yes
+  roles:
+    - basic-server-configuration
+    - user-accounts
+    - service-syslog
+    - service-logcheck
+    - service-time
+    - service-dns
+    - service-ldap

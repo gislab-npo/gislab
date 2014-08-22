@@ -1,0 +1,7 @@
+---
+
+- name: service bind9 restart
+  service: name=bind9 state=restarted
+
+- name: resolvconf update
+  shell: resolvconf -u

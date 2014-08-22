@@ -1,0 +1,9 @@
+zone "gis.lab" {
+	type master;
+	file "/etc/bind/db.gis.lab";
+};
+
+zone "{{ GISLAB_SERVER_IP|reverse_ip }}.in-addr.arpa" {
+	type master;
+	file "/etc/bind/db.192";
+};

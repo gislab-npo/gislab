@@ -1,0 +1,30 @@
+---
+#
+### DNS SERVER - BIND ###
+#
+# Install and configure GIS.lab's internal DNS records 'gis.lab'.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - bind9
+    - resolvconf
+
+- name: Bind server configuration
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: "bind/bind9.j2", dest: "/etc/default/bind9" }
+    - { src: "bind/named.conf.j2", dest: "/etc/bind/named.conf" }
+    - { src: "bind/named.conf.local.j2", dest: "/etc/bind/named.conf.local" }
+    - { src: "bind/db.gis.lab.j2", dest: "/etc/bind/db.gis.lab" }
+    - { src: "bind/db.192.j2", dest: "/etc/bind/db.192" }
+  notify:
+    - service bind9 restart
+
+- name: Resolvconf configuration
+  template: src=resolvconf/head.j2 dest=/etc/resolvconf/resolv.conf.d/head
+  notify:
+    - resolvconf update
+
+- meta: flush_handlers

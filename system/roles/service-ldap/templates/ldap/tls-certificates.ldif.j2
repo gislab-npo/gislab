@@ -1,0 +1,9 @@
+dn: cn=config
+add: olcTLSCACertificateFile
+olcTLSCACertificateFile: /etc/ssl/certs/cacert.pem
+-
+add: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/ssl/certs/server_slapd_cert.pem
+-
+add: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: /etc/ssl/private/server_slapd_key.pem

@@ -1,0 +1,21 @@
+---
+#
+### LOGCHECK ###
+#
+# Install and configure services logs checking.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - logcheck
+    - logcheck-database
+
+- name: Configure logcheck
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'logcheck/logcheck.conf.j2', dest: '/etc/logcheck/logcheck.conf' }
+    - { src: 'logcheck/logcheck.logfiles.j2', dest: '/etc/logcheck/logcheck.logfiles' }
+
+- name: Activate logcheck
+  template: src=cron/logcheck.j2 dest=/etc/cron.d/logcheck
