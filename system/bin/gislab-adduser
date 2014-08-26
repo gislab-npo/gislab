@@ -2,7 +2,7 @@
 
 set -e
 
-source $GISLAB_ROOT/system/functions.sh
+source $GISLAB_ROOT/functions.sh
 
 # load_configuration
 gislab_config
