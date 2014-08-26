@@ -67,7 +67,7 @@
 - name: Configure certificate authority
   template: src=ssl/ca.info.j2 dest=/etc/ssl/ca.info
 
-- name: Secure LDAP with TLS (run only once)
+- name: Create self signed certificates and private key for encrypted LDAP communication (run only once)
   shell: "{{ item }}"
   with_items:
     - certtool --generate-privkey > /etc/ssl/private/cakey.pem
@@ -84,7 +84,7 @@
 - name: Configure server
   template: src=ssl/server.info.j2 dest=/etc/ssl/server.info
 
-- name: Secure LDAP with TLS (run only once)
+- name: Create certificate for encrypted LDAP communication (run only once)
   shell: certtool --generate-certificate
          --load-privkey /etc/ssl/private/server_slapd_key.pem
          --load-ca-certificate /etc/ssl/certs/cacert.pem
