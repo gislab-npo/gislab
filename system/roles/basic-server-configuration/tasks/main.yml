@@ -22,18 +22,31 @@
   set_fact:
     GISLAB_SERVER_ARCHITECTURE: "{{ ansible_architecture }}"
 
+- name: Detect if GIS.lab server network device is eth0
+  set_fact:
+    GISLAB_SERVER_NETWORK_DEVICE: eth0
+  when: ansible_eth0.active and not ansible_eth1.active
+
+- name: Detect if GIS.lab server network device is eth1
+  set_fact:
+    GISLAB_SERVER_NETWORK_DEVICE: eth1
+  when: ansible_eth0.active and ansible_eth1.active
+
 - name: Set GISLAB_SERVER_IP from eth0 if this is only one network device
   set_fact:
     GISLAB_SERVER_IP: "{{ ansible_eth0.ipv4.address }}"
-  when: not ansible_eth1.ipv4.address
+  when: ansible_eth0.active and not ansible_eth1.active
 
 - name: Set GISLAB_SERVER_IP from eth1 if exists
   set_fact:
     GISLAB_SERVER_IP: "{{ ansible_eth1.ipv4.address }}"
-  when: ansible_eth1.ipv4.address
+  when: ansible_eth0.active and ansible_eth1.active
 
 
 # TASKS
+- name: Add GISLAB_ROOT variable to server's environment
+  lineinfile: dest=/etc/environment line="GISLAB_ROOT={{ GISLAB_ROOT }}" state=present
+
 - name: Set GIS.lab version
   template: src=gislab_version.j2 dest=/etc/gislab_version
 
@@ -69,6 +82,9 @@
 
 - name: Install GIS.lab management scripts
   copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0744
+
+- name: Add GIS.lab management scripts on path
+  lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present
 
 - name: Configure apt repositories
   template: src=apt/sources.list.j2 dest=/etc/apt/sources.list
