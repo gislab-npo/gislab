@@ -47,7 +47,7 @@
 
 
 - name: Add service user mail alias
-  lineinfile: "dest=/etc/aliases line='postmaster: root'"
+  lineinfile: "dest=/etc/aliases line='postmaster: root' state=present"
 
 - name: Activate new mail alias
   command: newaliases
