@@ -1,0 +1,56 @@
+---
+#
+### MAIL SERVER - POSTFIX ###
+#
+# Install and configure email server.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - bsd-mailx
+    - mutt
+    - postfix
+    - postfix-ldap
+    - sasl2-bin
+
+
+- name: Install main Postfix configuration file
+  template: src=postfix/main.cf.j2 dest=/etc/postfix/main.cf
+  notify:
+    - service postfix restart
+
+- name: Install local LDAP aliases search table
+  template: src=postfix/ldap-aliases.cf.j2 dest=/etc/postfix/ldap-aliases.cf
+
+
+- name: Remove existing SMTP relay server credentials
+  command: rm -f {{ item }}
+  with_items:
+    - /etc/postfix/sasl_passwd
+    - /etc/postfix/sasl_passwd.db
+
+- name: Set SMTP relay server credentials if available
+  template: src=postfix/sasl_passwd.j2 dest=/etc/postfix/sasl_passwd
+  when: GISLAB_SERVER_EMAIL_RELAY_LOGIN|default(None) != None
+        and GISLAB_SERVER_EMAIL_RELAY_PASSWORD|default(None) != None
+        and GISLAB_SERVER_EMAIL_RELAY_SERVER|default(None) != None
+
+- name: Activate SMTP relay server credentials if available
+  command: "{{ item }}"
+  with_items:
+    - chmod 0600 /etc/postfix/sasl_passwd
+    - postmap /etc/postfix/sasl_passwd
+  when: GISLAB_SERVER_EMAIL_RELAY_LOGIN|default(None) != None
+        and GISLAB_SERVER_EMAIL_RELAY_PASSWORD|default(None) != None
+        and GISLAB_SERVER_EMAIL_RELAY_SERVER|default(None) != None
+
+
+- name: Add service user mail alias
+  lineinfile: "dest=/etc/aliases line='postmaster: root'"
+
+- name: Activate new mail alias
+  command: newaliases
+
+
+- meta: flush_handlers

@@ -12,10 +12,21 @@ alias_maps = hash:/etc/aliases, ldap:/etc/postfix/ldap-aliases.cf
 alias_database = hash:/etc/aliases
 myorigin = /etc/mailname
 mydestination = server.gis.lab, localhost.gis.lab, localhost
-relayhost = 
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
 inet_protocols = ipv4
 message_size_limit = 52428800
+
+{% if GISLAB_SERVER_EMAIL_RELAY_LOGIN|default(None) != None and
+      GISLAB_SERVER_EMAIL_RELAY_PASSWORD|default(None) != None and
+      GISLAB_SERVER_EMAIL_RELAY_SERVER|default(None) != None %}
+relayhost = {{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}:587
+smtp_tls_security_level = encrypt
+smtp_sasl_security_options = noanonymous
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+{% else %}
+relayhost = 
+{% endif %}
