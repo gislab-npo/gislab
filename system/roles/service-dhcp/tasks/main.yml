@@ -1,0 +1,39 @@
+---
+#
+### DHCP SERVER ###
+#
+# Install and configure DHCP server.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - isc-dhcp-server
+
+
+- name: Activate network device for DHCP service
+  template: src=dhcp/isc-dhcp-server.j2 dest=/etc/default/isc-dhcp-server
+  notify:
+    - service isc-dhcp-server restart
+
+- name: Configure DHCP server
+  template: src=dhcp/dhcpd.conf.j2 dest=/etc/dhcp/dhcpd.conf
+  notify:
+    - service isc-dhcp-server restart
+
+
+- name: Allow including of allowed MACs file (/etc/dhcp/dhcpd-machines-allowed.conf)
+  template: src=apparmor/usr.sbin.dhcpd.j2 dest=/etc/apparmor.d/local/usr.sbin.dhcpd
+  notify:
+    - service apparmor restart
+
+- name: Creating empty MACs file (must always exist)
+  template: src=dhcp/dhcpd-machines-allowed.conf.j2 dest=/etc/dhcp/dhcpd-machines-allowed.conf
+
+# TODO: fix loading list of MACs from gislab-allowmachines
+#- name: Allow GIS.lab client's MAC addresses
+#  shell: "GISLAB_ROOT={{ GISLAB_ROOT }} {{ GISLAB_ROOT }}/bin/gislab-allowmachines"
+#  when: GISLAB_UNKNOWN_MAC_POLICY == "deny"
+
+
+- meta: flush_handlers

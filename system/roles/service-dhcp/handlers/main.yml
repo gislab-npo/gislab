@@ -1,0 +1,7 @@
+---
+
+- name: service apparmor restart
+  service: name=apparmor state=restarted
+
+- name: service isc-dhcp-server restart
+  service: name=isc-dhcp-server state=restarted
