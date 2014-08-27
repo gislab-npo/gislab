@@ -1,2 +1,5 @@
 group {
+{% for mac in GISLAB_CLIENTS_ALLOWED %}
+  host {{ mac|replace(":", "") }} { hardware ethernet {{ mac }}; }
+{% endfor %}
 }

@@ -27,13 +27,10 @@
   notify:
     - service apparmor restart
 
-- name: Creating empty MACs file (must always exist)
+- name: Creating allowed client's MACs list file
   template: src=dhcp/dhcpd-machines-allowed.conf.j2 dest=/etc/dhcp/dhcpd-machines-allowed.conf
-
-# TODO: fix loading list of MACs from gislab-allowmachines
-#- name: Allow GIS.lab client's MAC addresses
-#  shell: "GISLAB_ROOT={{ GISLAB_ROOT }} {{ GISLAB_ROOT }}/bin/gislab-allowmachines"
-#  when: GISLAB_UNKNOWN_MAC_POLICY == "deny"
+  notify:
+    - service isc-dhcp-server restart
 
 
 - meta: flush_handlers
