@@ -1,0 +1,4 @@
+---
+
+- name: service ircd-hybrid restart
+  service: name=ircd-hybrid state=restarted

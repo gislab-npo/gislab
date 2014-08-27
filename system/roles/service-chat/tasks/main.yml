@@ -1,0 +1,24 @@
+---
+#
+### IRC SERVER ###
+#
+# Install and configure IRC chat server.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - ircd-hybrid
+    - irssi
+
+
+- name: Configure IRC server
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: ircd/ircd.conf.j2, dest: /etc/ircd-hybrid/ircd.conf }
+    - { src: ircd/ircd.motd.j2, dest: /etc/ircd-hybrid/ircd.motd }
+  notify:
+    - service ircd-hybrid restart
+
+
+- meta: flush_handlers

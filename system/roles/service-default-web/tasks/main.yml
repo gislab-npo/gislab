@@ -1,0 +1,68 @@
+---
+#
+###  DEFAULT WEB PAGE ###
+#
+# Install web server and configure default web page content.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - apache2
+    - apache2-mpm-worker
+    - nginx
+
+
+# Apache 
+- name: Configure Apache
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: "apache2/apache2.conf.j2", dest: "/etc/apache2/apache2.conf" }
+    - { src: "apache2/ports.conf.j2", dest: "/etc/apache2/ports.conf" }
+  notify:
+    - service apache2 restart
+
+
+- name: Configure default Apache virtualhost
+  template: src=apache2/site-default.j2 dest=/etc/apache2/sites-available/default
+  notify:
+    - service apache2 restart
+
+- name: Create default web page root directory
+  file: path=/var/www/default state=directory
+
+- name: Install default web page content
+  copy: src=index.html dest=/var/www/default/index.html
+
+- name: Enable default Apache virtualhost
+  command: a2ensite default
+  notify:
+    - service apache2 restart
+
+
+# Nginx
+- name: Configure Nginx
+  template: src=nginx/proxy-parameters.j2 dest=/etc/nginx/proxy-parameters
+  notify:
+    - service nginx restart
+
+- name: Configure default Nginx virtualhost
+  template: src=nginx/site-default.j2 dest=/etc/nginx/sites-available/default
+  notify:
+    - service nginx restart
+
+
+# Logging
+- name: Activate Nginx error logs checking
+  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/var/log/nginx/error.log" state=present
+
+
+# Email
+- name: Add service user mail alias
+  lineinfile: "dest=/etc/aliases line='www-data: root' state=present"
+
+- name: Activate new mail alias
+  command: newaliases
+
+
+- meta: flush_handlers

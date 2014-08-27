@@ -1,0 +1,7 @@
+---
+
+- name: service nfs-kernel-server restart
+  service: name=nfs-kernel-server state=restarted
+
+- name: service idmapd restart
+  service: name=idmapd state=restarted

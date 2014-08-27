@@ -13,15 +13,13 @@ admin {
     email = "root@server.gis.lab";
 };
 
+listen {
+	host = "0.0.0.0";
+	port = 6665 .. 6669;
+};
 
 log {
-	use_logging = yes;
-	fname_userlog = "logs/userlog";
-	fname_operlog = "logs/operlog";
-	fname_killlog = "logs/kill";
-	fname_klinelog = "logs/kline";
-	fname_glinelog = "logs/gline";
-	log_level = L_INFO;
+       use_logging = no;
 };
 
 class {
@@ -54,11 +52,6 @@ class {
 	connectfreq = 5 minutes;
 	max_number = 1;
 	sendq=2 megabytes;
-};
-
-listen {
-	host = "0.0.0.0";
-	port = 6665 .. 6669;
 };
 
 auth {

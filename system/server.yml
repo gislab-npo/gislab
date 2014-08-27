@@ -10,3 +10,8 @@
     - service-time
     - service-dns
     - service-ldap
+    - service-mail
+    - service-dhcp
+    - service-default-web
+    - service-files
+    - service-chat
