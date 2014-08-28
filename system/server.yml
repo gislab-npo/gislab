@@ -16,3 +16,4 @@
     - service-files
     - service-chat
     - service-database
+    - service-mapserver
