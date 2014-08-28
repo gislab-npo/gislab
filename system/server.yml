@@ -19,3 +19,4 @@
     - service-mapserver
     - service-load-balancer
     - service-statistics
+    - connection-forwarding

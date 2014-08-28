@@ -1,0 +1,4 @@
+---
+
+- name: service connection-forwarding restart
+  service: name=connection-forwarding state=restarted

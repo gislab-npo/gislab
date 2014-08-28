@@ -1,0 +1,14 @@
+---
+#
+### CONNECTION FORWARDING ###
+#
+# Activate Internet connection routing from GIS.lab network
+
+
+- name: Enable IP forwarding for client machines after each server start
+  template: src=init/connection-forwarding.conf.j2 dest=/etc/init/connection-forwarding.conf
+  notify:
+    - service connection-forwarding restart
+
+
+- meta: flush_handlers
