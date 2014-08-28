@@ -1,0 +1,13 @@
+---
+#
+### INSTALLATION DONE ###
+#
+# Print messages after installation is done and mark successful installation by
+# creating file in '/var/lib/gislab' directory.
+
+
+- name: Mark successful installation by creating file in '/var/lib/gislab' directory
+  command: touch /var/lib/gislab/installation.done
+
+- name: Print installation summary
+  debug: msg="GIS.lab ID -> {{ GISLAB_UNIQUE_ID }}, GIS.lab version -> {{ GISLAB_VERSION }}"
