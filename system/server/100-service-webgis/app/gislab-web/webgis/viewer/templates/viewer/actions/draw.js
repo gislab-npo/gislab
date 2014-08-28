@@ -11,8 +11,8 @@ var draw_controls = [
 				type: OpenLayers.Control.TYPE_TOOL,
 				featureAdded: function(feature) {
 					feature.attributes = {
-						title: '-',
-						description: '-'
+						title: '',
+						description: ''
 					};
 					// update feature on map
 					feature.layer.drawFeature(feature);
@@ -33,8 +33,8 @@ var draw_controls = [
 				type: OpenLayers.Control.TYPE_TOOL,
 				featureAdded: function(feature) {
 					feature.attributes = {
-						title: '-',
-						description: '-'
+						title: '',
+						description: ''
 					};
 					// update feature on map
 					feature.layer.drawFeature(feature);
@@ -55,8 +55,8 @@ var draw_controls = [
 				type: OpenLayers.Control.TYPE_TOOL,
 				featureAdded: function(feature) {
 					feature.attributes = {
-						title: '-',
-						description: '-'
+						title: '',
+						description: ''
 					};
 					// update feature on map
 					feature.layer.drawFeature(feature);
