@@ -18,3 +18,4 @@
     - service-database
     - service-mapserver
     - service-load-balancer
+    - service-statistics

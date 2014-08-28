@@ -1,0 +1,83 @@
+---
+#
+### SERVER STATISTICS - MUNIN ###
+#
+# Install statistics monitoring system.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - munin
+    - munin-node
+
+
+# Munin
+- name: Configure Munin master
+  template: src=munin/munin.conf.j2 dest=/etc/munin/munin.conf
+  notify:
+    - service munin-node restart
+
+- name: Configure Munin node
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: "munin/munin-node.conf.j2", dest: "/etc/munin/munin-node.conf" }
+    - { src: "munin/munin-node.j2", dest: "/etc/munin/plugin-conf.d/munin-node" }
+  notify:
+    - service munin-node restart
+
+
+# Munin plugins
+- name: Install munin plugin for graphing cpu usage by process
+  copy: src=munin-plugins/cpu_by_process dest=/usr/share/munin/plugins/cpu_by_process
+
+- name: Enable only required Munin plugins
+  shell: "{{ item }}"
+  with_items:
+    - rm -f /etc/munin/plugins/*
+    - ln -fs /usr/share/munin/plugins/cpu /etc/munin/plugins/cpu
+    - ln -fs /usr/share/munin/plugins/cpu_by_process /etc/munin/plugins/cpu_by_process
+    - ln -fs /usr/share/munin/plugins/df /etc/munin/plugins/df
+    - ln -fs /usr/share/munin/plugins/diskstats /etc/munin/plugins/diskstats
+    - ln -fs /usr/share/munin/plugins/iostat /etc/munin/plugins/iostat
+    - ln -fs /usr/share/munin/plugins/iostat_ios /etc/munin/plugins/iostat_ios
+    - ln -fs /usr/share/munin/plugins/load /etc/munin/plugins/load
+    - ln -fs /usr/share/munin/plugins/memory /etc/munin/plugins/memory
+    - ln -fs /usr/share/munin/plugins/multips_memory /etc/munin/plugins/multips_memory
+    - ln -fs /usr/share/munin/plugins/processes /etc/munin/plugins/processes
+    - ln -fs /usr/share/munin/plugins/swap /etc/munin/plugins/swap
+    - ln -fs /usr/share/munin/plugins/uptime /etc/munin/plugins/uptime
+    - ln -fs /usr/share/munin/plugins/vmstat /etc/munin/plugins/vmstat
+
+- name: Remove unnecessary Munin configuration
+  file: path={{ item }} state=absent
+  with_items:
+    - /etc/apache2/conf.d/munin
+    - /etc/cron.d/munin-node
+  notify:
+    - service apache2 restart
+
+
+# Nginx
+- name: Create NGINX virtualhost stats.gis.lab
+  template: src=nginx/site-stats.j2 dest=/etc/nginx/sites-available/stats
+  notify:
+    - service nginx restart
+
+- name: Activate NGINX virtualhost stats.gis.lab
+  file: src=/etc/nginx/sites-available/stats dest=/etc/nginx/sites-enabled/stats state=link
+  notify:
+    - service nginx restart
+
+
+# Cron
+- name: Activate Munin cron job
+  template: src=cron/munin.j2 dest=/etc/cron.d/munin
+
+
+# Email
+- name: Add service user mail alias
+  lineinfile: "dest=/etc/aliases line='munin: root' state=present"
+
+
+- meta: flush_handlers
