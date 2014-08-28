@@ -1,0 +1,18 @@
+-- Create PostGIS template database
+
+CREATE EXTENSION postgis;
+CREATE EXTENSION postgis_topology;
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+GRANT USAGE ON SCHEMA public TO PUBLIC;
+GRANT ALL ON SCHEMA public TO postgres;
+
+GRANT SELECT, UPDATE, INSERT, DELETE ON geometry_columns TO PUBLIC;
+GRANT SELECT, UPDATE, INSERT, DELETE ON geography_columns TO PUBLIC;
+GRANT SELECT, UPDATE, INSERT, DELETE ON spatial_ref_sys TO PUBLIC;
+GRANT USAGE ON SCHEMA topology TO PUBLIC;
+GRANT SELECT, UPDATE, INSERT, DELETE ON topology.layer TO PUBLIC;
+GRANT SELECT, UPDATE, INSERT, DELETE ON topology.topology TO PUBLIC;
+
+
+-- vim: set ts=2 sts=2 sw=2 noet:

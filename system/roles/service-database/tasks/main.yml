@@ -1,0 +1,128 @@
+---
+#
+### DATABASE SERVER - POSTGRESQL/POSTGIS ###
+#
+# Install and configure database server and create GIS template database.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - libpq-dev
+    - pgtune
+    - postgis
+    - postgresql
+    - postgresql-9.1-postgis-2.1
+    - postgresql-comparator
+    - postgresql-contrib
+    - python-psycopg2
+
+- name: Detect PostgreSQL shared dir
+  command: pg_config --sharedir
+  register: pg_sharedir
+
+- name: Install Audit trigger
+  copy: src=audit-trigger/audit.sql dest="{{ pg_sharedir.stdout }}/contrib/audit.sql"
+
+- name: Install PostGIS template script
+  copy: src=template-postgis/template-postgis.sql dest="{{ pg_sharedir.stdout }}/contrib/template-postgis.sql"
+
+
+- name: Adjust system shmmax value to one fourth of system memory size
+  sysctl: name=kernel.shmmax value="{{ ansible_memtotal_mb|postgresql_shm }}" state=present sysctl_set=yes
+
+
+- name: Configure PostgreSQL
+  template: src=postgresql/postgresql.conf.j2 dest=/etc/postgresql/9.1/main/postgresql.conf
+  notify:
+    - service postgresql restart
+
+- name: Configure PostgreSQL access policy
+  template: src=postgresql/pg_hba.conf.j2 dest=/etc/postgresql/9.1/main/pg_hba.conf
+  notify:
+    - service postgresql restart
+
+
+- name: Fine tune database configuration
+  command: pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
+
+
+- name: Create database superusers group (labadmins)
+  postgresql_user: name=labadmins role_attr_flags=CREATEDB,CREATEROLE,SUPERUSER,NOLOGIN state=present
+  sudo_user: postgres
+
+- name: Create database users group
+  postgresql_user: name=labusers role_attr_flags=NOCREATEDB,NOCREATEROLE,NOSUPERUSER,NOLOGIN state=present
+  sudo_user: postgres
+
+
+# PostGIS template database
+- name: Remove template status from PostGIS template database if exists
+  command: psql -c "UPDATE pg_database SET datistemplate='false' WHERE datname='template_postgis';"
+  sudo_user: postgres
+
+- name: Drop PostGIS template database if exists
+  postgresql_db: name=template_postgis state=absent
+  sudo_user: postgres
+
+- name: Create PostGIS template database
+  postgresql_db: name=template_postgis encoding='UTF-8' template=template0 state=present
+  sudo_user: postgres
+
+- name: Add PostGIS support to PostGIS template database
+  command: psql -d template_postgis -f {{ pg_sharedir.stdout }}/contrib/template-postgis.sql
+  sudo_user: postgres
+
+- name: Add PostgreSQL Comparator support to PostGIS template database
+  command: "{{ item }}"
+  with_items:
+    - psql -d template_postgis -f {{ pg_sharedir.stdout }}/contrib/pgc_checksum.sql
+    - psql -d template_postgis -f {{ pg_sharedir.stdout }}/contrib/pgc_casts.sql
+    - psql -d template_postgis -f {{ pg_sharedir.stdout }}/contrib/xor_aggregate.sql
+  sudo_user: postgres
+
+- name: Add History Audit support to PostGIS template database (run SELECT audit.audit_table('<schema>.<table>'); to enable)
+  command: psql -d template_postgis -f {{ pg_sharedir.stdout }}/contrib/audit.sql
+  sudo_user: postgres
+
+- name: Vacuum FULL PostGIS template database
+  command: psql -d template_postgis -c "VACUUM FULL;"
+  sudo_user: postgres
+
+- name: Vacuum FREEZE PostGIS template database
+  command: psql -d template_postgis -c "VACUUM FREEZE;"
+  sudo_user: postgres
+
+- name: Set template status to PostGIS template database
+  command: psql -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
+  sudo_user: postgres
+
+- name: Do not accept any connections to PostGIS template database
+  command: psql -c "UPDATE pg_database SET datallowconn='false' WHERE datname='template_postgis';"
+  sudo_user: postgres
+
+
+# Production database 'gislab'
+- name: Create production database 'gislab'
+  postgresql_db: name=gislab template=template_postgis state=present
+  sudo_user: postgres
+
+- name: Grant connection to 'gislab' database for 'labusers'
+  command: psql -c "GRANT CONNECT ON DATABASE gislab TO labusers;"
+  sudo_user: postgres
+
+
+# Logging
+- name: Activate PostgreSQL error logs checking
+  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/var/log/postgresql/postgresql-error.log" state=present
+
+
+# Email
+- name: Add service user mail alias
+  lineinfile: "dest=/etc/aliases line='postgres: root' state=present"
+
+- name: Activate new mail alias
+  command: newaliases
+
+
+- meta: flush_handlers
