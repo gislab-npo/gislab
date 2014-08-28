@@ -112,4 +112,4 @@ action = new GeoExt.Action({
 		identify_layer_combobox.setDisabled(!toggled);
 	}
 })
-mappanel.getTopToolbar().add(action, identify_layer_combobox);
+mappanel.getTopToolbar().add(action, ' ', identify_layer_combobox);

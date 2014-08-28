@@ -465,6 +465,7 @@
 
 				// Toolbar Actions
 
+				mappanel.getTopToolbar().add(' ');
 				{% if project != "empty" %}
 				{% include "viewer/actions/topics.js" %}
 				mappanel.getTopToolbar().add(' ', '-', ' ');
@@ -475,6 +476,7 @@
 				mappanel.getTopToolbar().add(' ', '-', ' ');
 					{% if print_composers %}
 					{% include "viewer/actions/print.js" %}
+					mappanel.getTopToolbar().add(' ', '-', ' ');
 					{% endif %}
 				{% include "viewer/actions/search.js" %}
 				mappanel.getTopToolbar().add(' ');
