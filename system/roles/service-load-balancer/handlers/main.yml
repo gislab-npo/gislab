@@ -1,0 +1,7 @@
+---
+
+- name: service serf restart
+  service: name=serf state=restarted
+
+- name: service haproxy restart
+  service: name=haproxy state=restarted

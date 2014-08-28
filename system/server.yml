@@ -17,3 +17,4 @@
     - service-chat
     - service-database
     - service-mapserver
+    - service-load-balancer

@@ -1,0 +1,47 @@
+---
+#
+### HAPROXY SERVER ###
+#
+# Install OWS server load balancer.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no
+  with_items:
+    - haproxy
+    - unzip
+
+
+# Serf
+- name: Install Serf
+  shell: . {{ GISLAB_ROOT }}/functions.sh && gislab_serf_install executable=/bin/bash
+
+- name: Create Serf configuration directory
+  file: path=/etc/serf/bin state=directory
+
+- name: Configure Serf
+  template: src=serf/serf.conf.j2 dest=/etc/init/serf.conf
+  notify:
+    - service serf restart
+
+- name: Install Serf handlers scripts 
+  copy: src={{ item.src }} dest={{ item.dest }} mode=0774
+  with_items:
+    - { src: bin/serf-member-join.sh, dest: /etc/serf/bin/serf-member-join.sh}
+    - { src: bin/serf-member-left.sh, dest: /etc/serf/bin/serf-member-left.sh}
+  notify:
+    - service serf restart
+
+
+# HAProxy
+- name: Activate HAProxy server
+  template: src=haproxy/haproxy.j2 dest=/etc/default/haproxy
+
+# TODO: always start server (after restart) with empty list of workers
+- name: Configure HAProxy server
+  template: src=haproxy/haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
+  notify:
+    - service haproxy restart
+
+
+- meta: flush_handlers
