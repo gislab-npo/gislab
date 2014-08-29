@@ -27,8 +27,8 @@
 - name: Install Serf handlers scripts 
   copy: src={{ item.src }} dest={{ item.dest }} mode=0774
   with_items:
-    - { src: bin/serf-member-join.sh, dest: /etc/serf/bin/serf-member-join.sh}
-    - { src: bin/serf-member-left.sh, dest: /etc/serf/bin/serf-member-left.sh}
+    - { src: serf/bin/serf-member-join.sh, dest: /etc/serf/bin/serf-member-join.sh}
+    - { src: serf/bin/serf-member-left.sh, dest: /etc/serf/bin/serf-member-left.sh}
   notify:
     - service serf restart
 

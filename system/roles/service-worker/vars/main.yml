@@ -1,0 +1,23 @@
+---
+
+GISLAB_INSTALL_WORKER_ROOT: "{{ GISLAB_ROOT }}/system/worker"
+
+GISLAB_WORKER_IMAGE_ROOT: /opt/worker
+
+GISLAB_WORKER_IMAGE_BASE: "{{ GISLAB_WORKER_IMAGE_ROOT }}/base"
+
+GISLAB_WORKER_INSTALL_PACKAGES:
+  - apache2
+  - apache2-mpm-worker
+  - htop
+  - libapache2-mod-fastcgi
+  - mc
+  - munin-node
+  - nfs-common
+  - python-gdal
+  - python-qgis
+  - pwgen
+  - qgis
+  - qgis-mapserver
+  - unzip
+  - vim

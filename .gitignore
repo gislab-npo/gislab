@@ -8,3 +8,4 @@ config-user.cfg
 http-boot/gislab-client-loader.iso
 user/plugins/
 user/id_*.pub
+system/host_vars/gislab

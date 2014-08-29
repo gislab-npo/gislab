@@ -1,0 +1,68 @@
+---
+#
+### MAPSERVER WORKER ###
+#
+# Create a package for mapserver worker instances installation in cloud environment. Installation
+# package consist from installation script and other files needed for server configuration. To use it
+# run following commands on newly launched instance (in Amazon AWS use 'clod-data' for commands injection):
+# $ mkdir /tmp/install-worker && cd /tmp/install-worker && \
+#   curl http://<GISLAB_SERVER_IP>/worker.tar.gz | tar xz -C /tmp/install-worker && \
+#   bash ./install.sh && rm -rf /tmp/install-worker
+
+
+- name: Create worker install directory
+  file: path={{ GISLAB_INSTALL_WORKER_ROOT }} state=directory
+
+
+- name: Remove worker image directory if exists
+  file: path={{ GISLAB_WORKER_IMAGE_ROOT }} state=absent
+
+- name: Create new worker image directory
+  file: path={{ GISLAB_WORKER_IMAGE_ROOT }} state=directory
+
+- name: Create new worker image base directory
+  file: path={{ GISLAB_WORKER_IMAGE_BASE }} state=directory
+
+
+# NTPdate
+- name: Create directory for NTPdate files
+  file: path={{ GISLAB_INSTALL_WORKER_ROOT }}/ntpdate state=directory
+
+- name: Copy NTPdate configuration
+  template: src=ntpdate/ntpdate.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/ntpdate/ntpdate
+
+
+# Serf
+- name: Create directory for Serf files
+  file: path={{ GISLAB_INSTALL_WORKER_ROOT }}/serf state=directory
+
+- name: Copy Serf init file
+  template: src=serf/serf.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/serf/serf.conf
+
+- name: Create directory for Serf handler scripts
+  file: path={{ GISLAB_INSTALL_WORKER_ROOT }}/serf/bin state=directory
+
+- name: Copy Serf handler scripts
+  copy: src=serf/bin/serf-member-left.sh dest={{ GISLAB_INSTALL_WORKER_ROOT }}/serf/bin/serf-member-left.sh
+
+
+# Munin
+- name: Create directory for Munin files
+  file: path={{ GISLAB_INSTALL_WORKER_ROOT }}/munin-node state=directory
+
+- name: Copy Munin configuration
+  template: src=munin-node/munin-node.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/munin-node/munin-node.conf
+
+
+- name: Copy worker installation script
+  copy: src=install.sh dest={{ GISLAB_INSTALL_WORKER_ROOT }}/install.sh mode=0774
+
+- name: Create worker image file
+  shell: GISLAB_ROOT={{ GISLAB_ROOT }}
+         GISLAB_INSTALL_WORKER_ROOT={{ GISLAB_INSTALL_WORKER_ROOT }}
+         GISLAB_WORKER_IMAGE_ROOT={{ GISLAB_WORKER_IMAGE_ROOT }}
+         GISLAB_WORKER_IMAGE_BASE={{ GISLAB_WORKER_IMAGE_BASE }}
+         GISLAB_WORKER_INSTALL_PACKAGES="{{ GISLAB_WORKER_INSTALL_PACKAGES|join(' ') }}"
+         GISLAB_SERVER_IP={{ GISLAB_SERVER_IP }}
+         {{ GISLAB_INSTALL_WORKER_ROOT }}/install.sh
+         executable=/bin/bash

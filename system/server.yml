@@ -19,5 +19,6 @@
     - service-mapserver
     - service-load-balancer
     - service-statistics
+    - service-worker
     - connection-forwarding
     - installation-done

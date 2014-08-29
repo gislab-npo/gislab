@@ -1,8 +1,12 @@
+#!/bin/bash
 # GIS.lab worker installation script
+
+set -e
+set -u
 
 
 # installation script start
-cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
+cat << EOF > $GISLAB_WORKER_IMAGE_BASE/install.sh
 #!/bin/bash
 set -e
 
@@ -10,7 +14,7 @@ EOF
 
 
 # functions
-cp $GISLAB_ROOT/system/functions.sh $GISLAB_WORKER_IMAGE_BASE
+cp $GISLAB_ROOT/functions.sh $GISLAB_WORKER_IMAGE_BASE
 
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
 source ./functions.sh
@@ -78,9 +82,11 @@ EOF
 
 
 # time
+mkdir -p $GISLAB_WORKER_IMAGE_BASE/etc/default
+cp $GISLAB_INSTALL_WORKER_ROOT/ntpdate/ntpdate $GISLAB_WORKER_IMAGE_BASE/etc/default/ntpdate
+
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
-sed -i "s/^NTPDATE_USE_NTP_CONF=.*/NTPDATE_USE_NTP_CONF=no/" /etc/default/ntpdate
-sed -i "s/^NTPSERVERS=.*/NTPSERVERS='server.gis.lab'/" /etc/default/ntpdate
+cp etc/default/ntpdate /etc/default/ntpdate
 ntpdate-debian
 
 EOF
@@ -180,9 +186,7 @@ cp $GISLAB_INSTALL_WORKER_ROOT/munin-node/munin-node.conf $GISLAB_WORKER_IMAGE_B
 
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
 cp etc/munin/munin-node.conf /etc/munin/munin-node.conf
-GISLAB_SERVER_IP_REGEX=\$(echo "$GISLAB_SERVER_IP" | sed -E 's/\./\\\\\\\./g')
-sed -i "s/###HOSTNAME###/\$(hostname)/" /etc/munin/munin-node.conf
-sed -i "s/###GISLAB_SERVER_IP_REGEX###/\$GISLAB_SERVER_IP_REGEX/" /etc/munin/munin-node.conf
+echo "host_name $(hostname)" >> /etc/munin/munin-node.conf
 
 # disable all plugins
 rm -f /etc/munin/plugins/*
@@ -240,7 +244,7 @@ EOF
 # installation done
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
 mkdir -p /var/lib/gislab
-echo "\$(gislab_config_header)" >> /var/lib/gislab/installation.done
+touch /var/lib/gislab/installation.done
 
 EOF
 
