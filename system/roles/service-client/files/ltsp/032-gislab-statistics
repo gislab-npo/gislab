@@ -17,13 +17,11 @@ case "$MODE" in
 		ln -fs /usr/share/munin/plugins/uptime $ROOT/etc/munin/plugins/uptime
 		ln -fs /usr/share/munin/plugins/vmstat $ROOT/etc/munin/plugins/vmstat
 
-		# set node name and allow connection only from IP address of server.gis.lab
+		# set Munin node name on each boot
 		cat << EOL > $ROOT/etc/rc.local
 #!/bin/sh -e
 
-GISLAB_SERVER_IP_REGEX=\$(echo "$GISLAB_SERVER_IP" | sed -E 's/\./\\\\\\\./g')
-sed -i "s/###HOSTNAME###/\$(hostname)/" /etc/munin/munin-node.conf
-sed -i "s/###GISLAB_SERVER_IP_REGEX###/\$GISLAB_SERVER_IP_REGEX/" /etc/munin/munin-node.conf
+echo "host_name $(hostname)" >> /etc/munin/munin-node.conf
 service munin-node restart
 
 exit 0

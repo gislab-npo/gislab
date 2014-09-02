@@ -2,7 +2,7 @@
 
 case "$MODE" in
     finalization)
-	if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
+	if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "True" ]; then
 		chroot $ROOT apt-get --assume-yes --force-yes --no-install-recommends install build-essential bison cmake doxygen flex \
 		git qgit graphviz grass-dev libexpat1-dev libfcgi-dev libgdal1-dev libgeos-dev libgsl0-dev libpq-dev libproj-dev libqt4-dev \
 		libqt4-opengl-dev libqtwebkit-dev libqwt5-qt4-dev libspatialindex-dev libspatialite-dev libsqlite3-dev pkg-config \

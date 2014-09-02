@@ -1,0 +1,15 @@
+---
+#
+### DATA ###
+#
+# Install user data placed in 'user' directory.
+
+
+- name: Install user data
+  copy: src=../user dest={{ GISLAB_ROOT }}
+
+- name: Install user data in to 'Repository' share
+  shell: "{{ item }}"
+  with_items:
+    - cp -a {{ GISLAB_INSTALL_USER_DATA_ROOT }}/data /storage/repository/
+    - chown -R :labadmins /storage/repository/*

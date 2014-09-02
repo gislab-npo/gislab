@@ -1,0 +1,4 @@
+---
+
+- name: service nbd-server restart
+  service: name=nbd-server state=restarted

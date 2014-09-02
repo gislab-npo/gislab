@@ -2,7 +2,7 @@
 
 case "$MODE" in
     finalization)
-	if [ "$GISLAB_CLIENT_VIRTUALBOX_SUPPORT" == "yes" ]; then
+	if [ "$GISLAB_CLIENT_VIRTUALBOX_SUPPORT" == "True" ]; then
 		# purge all installed kernel packages
 		chroot $ROOT dpkg-query -W -f='${Package}\n' linux-image-* | xargs  apt-get --assume-yes --force-yes purge
 

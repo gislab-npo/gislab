@@ -19,6 +19,8 @@
     - service-mapserver
     - service-load-balancer
     - service-statistics
+    - user-data
     - service-worker
+    - { role: service-client, when: "'{{ GISLAB_SUITE }}' == 'lab'" }
     - connection-forwarding
     - installation-done

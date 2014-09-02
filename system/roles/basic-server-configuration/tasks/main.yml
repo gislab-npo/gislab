@@ -10,9 +10,22 @@
   set_fact:
     GISLAB_ROOT: /opt/gislab
 
+- name: Set GIS.lab worker installation root directory
+  set_fact:
+    GISLAB_INSTALL_WORKER_ROOT: "{{ GISLAB_ROOT }}/system/worker"
+
+- name: Set GIS.lab client installation root directory
+  set_fact:
+    GISLAB_INSTALL_CLIENT_ROOT: "{{ GISLAB_ROOT }}/system/client"
+
+- name: Set GIS.lab user data installation root directory
+  set_fact:
+    GISLAB_INSTALL_USER_DATA_ROOT: "{{ GISLAB_ROOT }}/user"
+
+
 - name: Detect current date and time
   set_fact:
-    GISLAB_INSTALL_DATETIME: "{{ ansible_date_time.date }} {{ ansible_date_time.time }}"
+    GISLAB_INSTALL_DATETIME: "{{ ansible_date_time.date }}-{{ ansible_date_time.time }}"
 
 - name: Detect provisioning user name
   set_fact:

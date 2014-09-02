@@ -156,7 +156,7 @@ ip_param=${ip:+"-r $ip"}
 interfaces=${interface:-$interfaces}
 
 # DHCP server IP address as regexpress
-gislab_server_ip="###GISLAB_SERVER_IP_REGEX###"
+gislab_server_ip="{{ GISLAB_SERVER_IP_REGEX }}"
 
 # Clear screen when quiet to dampen some noise
 [ "$quiet" = "y" ] && clear
@@ -164,7 +164,7 @@ gislab_server_ip="###GISLAB_SERVER_IP_REGEX###"
 [ "$quiet" != "y" ] && echo "DHCP request for $i..."
 while [ -z "$configured" ]; do
     for i in $interfaces; do    # Make a DHCP request for each interface...
-        while udhcpc -n -C -s /tmp/dhcp-script.sh -i $i -x nisdomain:###GISLAB_UNIQUE_ID###-client $hostname_param $ip_param >/dev/null 2>&1; do
+        while udhcpc -n -C -s /tmp/dhcp-script.sh -i $i -x nisdomain:{{ GISLAB_UNIQUE_ID }}-client $hostname_param $ip_param >/dev/null 2>&1; do
             # ... until we get an offer from a proper GIS.lab server
             grep -q "^serverid=\"$gislab_server_ip\"$" /tmp/dhcp-info.conf && configured="true" && break 2
             kill $(pidof udhcpc)

@@ -7,6 +7,7 @@ case "$MODE" in
 
 	cp $GISLAB_ROOT/$GISLAB_WALLPAPER $ROOT/usr/share/xfce4/backdrops/gislab-wallpaper.png
 
-	cp $GISLAB_INSTALL_SERVER_ROOT/100-service-webgis/app/gislab-web/webgis/viewer/static/viewer/images/webgis.xpm $ROOT/usr/share/pixmaps/webgis.xpm
+	# TODO: load icon from files on server
+	# cp $GISLAB_INSTALL_SERVER_ROOT/100-service-webgis/app/gislab-web/webgis/viewer/static/viewer/images/webgis.xpm $ROOT/usr/share/pixmaps/webgis.xpm
     ;;
 esac
