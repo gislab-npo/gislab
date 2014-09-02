@@ -664,6 +664,24 @@
 				{% endif %}
 
 				{% include "viewer/permalink.js" %}
+				var expand_button = new Ext.Toolbar.Button({
+					id: 'featureinfo-expand-button',
+					html: '<div class="x-tool x-tool-collapse-north" ext:qtip="{% trans "Open attribute table" %}" />',
+					cls: 'x-btn-icon',
+					iconCls: 'x-tool-collapse-north',
+					featureInfoPanel: featureinfo_panel,
+					listeners: {
+						click: function(button) {
+							button.featureInfoPanel.expand();
+							button.addClass('invisible');
+						}
+					}
+				})
+				mappanel.getBottomToolbar().add(' ', expand_button);
+				featureinfo_panel.on('collapse', function(panel) {
+					this.removeClass('invisible');
+					console.log(this);
+				}.bind(expand_button));
 
 				// startup message
 				{% if message %}

@@ -915,6 +915,12 @@ label.layer-group {
 	width: 15px;
 }
 
+#featureinfo-expand-button.x-btn-over .x-tool-collapse-north {
+	background-position: -15px -210px;
+	background-position-x: -15px;
+	background-position-y: -210px;
+}
+
 .topic-detail-panel .x-panel-body {
 	background-color: #f0f0f0;
 	padding: 4px;
