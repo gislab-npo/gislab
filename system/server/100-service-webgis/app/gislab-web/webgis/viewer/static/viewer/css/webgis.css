@@ -6,6 +6,16 @@
 	width: 1in;
 }
 
+ #webgis-panel .x-panel-header.app-header {
+	height: 29px;
+}
+.app-header div.x-box-item {
+	padding-top: 6px !important;
+}
+.app-header table.x-box-item {
+	padding-top: 4px !important;
+}
+
 button.layer-info {
 	position: absolute;
 	cursor: pointer;
