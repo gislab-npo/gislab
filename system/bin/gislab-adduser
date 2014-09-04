@@ -2,10 +2,9 @@
 
 set -e
 
+source /etc/gislab_version
 source $GISLAB_ROOT/functions.sh
 
-# load_configuration
-gislab_config
 
 # require root privileges
 gislab_require_root
@@ -29,7 +28,7 @@ function usage() {
 
 
 # options
-GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overriden by --password option 
+GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overridden by --password option 
 
 while getopts "d:g:l:m:p:sh" OPTION
 do
@@ -81,7 +80,6 @@ cp -a /etc/skel.clean /etc/skel
 
 
 # launch account configuration script
-GISLAB_INSTALL_ACCOUNT_ROOT=$GISLAB_ROOT/system/account
 source $GISLAB_INSTALL_ACCOUNT_ROOT/install.sh
 
 
@@ -90,7 +88,7 @@ ln -s /mnt/repository /etc/skel/Repository
 ln -s /mnt/share /etc/skel/Share
 ln -s /mnt/barrel /etc/skel/Barrel
 
-# add temporary filesystem
+# add temporary file system
 ln -s /mnt/temporary /etc/skel/Temporary
 
 
@@ -148,8 +146,10 @@ fi
 
 
 # forward system mails to user if creating superuser account
-if [ "$SUDO" == "yes" -a -n "$GISLAB_SERVER_EMAIL_RELAY_SERVER" \
-  -a -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" -a -n "$GISLAB_SERVER_EMAIL_RELAY_PASSWORD" ]; then
+if [ "$SUDO" == "yes" \
+		-a -n "$GISLAB_SERVER_EMAIL_RELAY_SERVER" \
+		-a -n "$GISLAB_SERVER_EMAIL_RELAY_LOGIN" \
+		-a -n "$GISLAB_SERVER_EMAIL_RELAY_PASSWORD" ]; then
 	ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
 dn: cn=root,ou=MailAliases,dc=gis,dc=lab
 changetype: modify
@@ -168,20 +168,20 @@ chown $GISLAB_USER:labusers /storage/share/$GISLAB_USER
 # copy administrator public SSH key
 mkdir -p /home/$GISLAB_USER/.ssh
 chmod 700 /home/$GISLAB_USER/.ssh
-cp /etc/gislab/ssh/gislab_ssh_public_key /home/$GISLAB_USER/.ssh/authorized_keys
+cp /opt/gislab/ssh/gislab_ssh_public_key /home/$GISLAB_USER/.ssh/authorized_keys
 chown $GISLAB_USER:labusers -R /home/$GISLAB_USER/.ssh
 
 
 # replace user name and password placeholders with real user values
-find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER##/$GISLAB_USER/g" "{}" \;
-find /home/$GISLAB_USER -type f -exec sed -i "s/##GISLAB_USER_PASSWORD##/$GISLAB_USER_PASSWORD/g" "{}" \;
+find /home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER }}/$GISLAB_USER/g" "{}" \;
+find /home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER_PASSWORD }}/$GISLAB_USER_PASSWORD/g" "{}" \;
 
 
 # run account hooks
 for hook in $GISLAB_ROOT/user/plugins/account/*.*; do
 	gislab_print_info "Running account hook '$(basename $hook)'"
 	GISLAB_ACCOUNT_ACTION="add" GISLAB_USER=$GISLAB_USER $hook
-	echo "$(gislab_config_header)" >> /var/lib/gislab/account-hook-$(basename $hook).done
+	touch /var/lib/gislab/account-hook-$(basename $hook).done
 done
 
 

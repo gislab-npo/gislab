@@ -4,8 +4,6 @@ set -e
 
 source $GISLAB_ROOT/functions.sh
 
-# load configuration
-gislab_config
 
 # require root privileges
 gislab_require_root
