@@ -163,7 +163,7 @@
   apt: upgrade=full force=yes
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - htop
     - mc
@@ -215,7 +215,7 @@
   copy: src=functions.sh dest={{ GISLAB_ROOT }}/functions.sh
 
 - name: Install GIS.lab management scripts
-  copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0774 group={{ GISLAB_PROVISIONING_USER }}
+  copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0775 group={{ GISLAB_PROVISIONING_USER }}
 
 - name: Add GIS.lab management scripts on path
   lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present

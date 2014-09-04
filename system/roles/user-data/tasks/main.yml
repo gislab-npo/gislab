@@ -8,6 +8,12 @@
 - name: Install user data
   copy: src=../user dest={{ GISLAB_ROOT }}
 
+- name: Set executable permissions for plugins
+  shell: "{{ item }}"
+  with_items:
+    - chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/server
+    - chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/account
+
 - name: Install user data in to 'Repository' share
   shell: "{{ item }}"
   with_items:

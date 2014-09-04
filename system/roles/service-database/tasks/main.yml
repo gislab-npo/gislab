@@ -6,7 +6,7 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - libpq-dev
     - pgtune
@@ -17,6 +17,8 @@
     - postgresql-contrib
     - python-psycopg2
 
+
+# Installation of additional tools
 - name: Detect PostgreSQL shared dir
   command: pg_config --sharedir
   register: pg_sharedir
@@ -28,10 +30,12 @@
   copy: src=static/template-postgis/template-postgis.sql dest="{{ pg_sharedir.stdout }}/contrib/template-postgis.sql"
 
 
+# Kernel tuning
 - name: Adjust system shmmax value to one fourth of system memory size
   sysctl: name=kernel.shmmax value="{{ ansible_memtotal_mb|postgresql_shm }}" state=present sysctl_set=yes
 
 
+# PostgreSQL configuration
 - name: Configure PostgreSQL
   template: src=postgresql/postgresql.conf.j2 dest=/etc/postgresql/9.1/main/postgresql.conf
   notify:
@@ -43,10 +47,14 @@
     - service postgresql restart
 
 
+# PostgreSQL tuning
 - name: Fine tune database configuration
   command: pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
+  notify:
+    - service postgresql restart
 
 
+# User groups
 - name: Create database superusers group (labadmins)
   postgresql_user: name=labadmins role_attr_flags=CREATEDB,CREATEROLE,SUPERUSER,NOLOGIN state=present
   sudo_user: postgres

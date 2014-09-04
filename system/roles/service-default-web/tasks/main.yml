@@ -6,7 +6,7 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - apache2
     - apache2-mpm-worker

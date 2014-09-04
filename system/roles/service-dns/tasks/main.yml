@@ -6,10 +6,11 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - bind9
     - resolvconf
+
 
 - name: Bind server configuration
   template: src={{ item.src }} dest={{ item.dest }}
@@ -26,5 +27,6 @@
   template: src=resolvconf/head.j2 dest=/etc/resolvconf/resolv.conf.d/head
   notify:
     - resolvconf update
+
 
 - meta: flush_handlers

@@ -6,7 +6,7 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - ltsp-server-standalone
     - tftpd-hpa
@@ -16,12 +16,12 @@
   service: name=serf state=stopped
 
 
-# SYSTEM
+# System
 - name: Install client files
   copy: src=static/system/ dest="{{ GISLAB_INSTALL_CLIENT_ROOT }}"
 
 
-# IMAGE BACKUP
+# Image backup
 - name: Create backup of existing client image
   command: cp /opt/ltsp/images/i386.img /opt/ltsp/images/i386-backup-{{ GISLAB_INSTALL_DATETIME }}.img
   args:
@@ -31,7 +31,7 @@
   shell: find /opt/ltsp/images/ -iname "i386-backup-*.img" -mtime 7 | xargs rm -vf
 
 
-# CLIENT INSTALLATION SCRIPTS
+# Client installation scripts
 - name: Create clean copy of default Ubuntu client installation scripts
   command: cp -a /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean
   args:
@@ -50,7 +50,7 @@
     - cp -a {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
 
-# IMAGE
+# Image
 - name: Build GIS.lab client image (can take very long time)
   shell: set -a; source /etc/gislab_version;
          GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT="{{ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT|join(' ') }}"
@@ -68,13 +68,14 @@
     - ltsp-update-kernels
 
 
+# Client's DHCP client
 - name: Modify client's DHCP client to be sure that client will always get IP from correct server
   script: scripts/generate-initrd.sh
 
 
-- name: Configure GIS.lab client (LTSP)
+# LTSP
+- name: Configure LTSP server
   template: src=lts/lts.conf.j2 dest=/var/lib/tftpboot/ltsp/i386/lts.conf
-
 
 - name: Do not allow overriding of DHCP server configuration by LTSP (keep using configuration in /etc/dhcp)
   file: path=/etc/ltsp/dhcpd.conf state=absent

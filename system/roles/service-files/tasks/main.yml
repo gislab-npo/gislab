@@ -6,11 +6,12 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - nfs-kernel-server
 
 
+# Shared directories
 - name: Create 'repository' mount directory (readable for all, writable only for labadmins)
   file: path=/storage/repository state=directory owner=root group=labadmins mode=0775
 
@@ -21,6 +22,7 @@
   file: path=/storage/barrel state=directory owner=root group=nogroup mode=0775
 
 
+# NFS configuration
 - name: Configure NFS exports
   template: src=nfs/exports.j2 dest=/etc/exports
   notify:
@@ -32,6 +34,7 @@
     - service idmapd restart
 
 
+# Bind mount
 - name: Configure to mount shares also to /mnt directory to keep the same paths as on clients
   lineinfile: dest=/etc/fstab line="/storage  /mnt  none  bind  0  0" state=present
 

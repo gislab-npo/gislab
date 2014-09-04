@@ -6,7 +6,7 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - haproxy
     - unzip
@@ -14,22 +14,20 @@
 
 # Serf
 - name: Install Serf
-  shell: . {{ GISLAB_ROOT }}/functions.sh && gislab_serf_install
+  shell: source {{ GISLAB_ROOT }}/functions.sh && gislab_serf_install
   args:
     executable: /bin/bash
-
-- name: Create Serf configuration directory
-  file: path=/etc/serf/bin state=directory
 
 - name: Configure Serf
   template: src=serf/serf.conf.j2 dest=/etc/init/serf.conf
   notify:
     - service serf restart
 
+- name: Create Serf configuration directory
+  file: path=/etc/serf/bin state=directory
+
 - name: Install Serf handlers scripts 
   copy: src=static/serf/bin/ dest=/etc/serf/bin mode=0774
-  notify:
-    - service serf restart
 
 
 # HAProxy

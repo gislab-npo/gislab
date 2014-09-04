@@ -6,7 +6,7 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - apache2
     - apache2-mpm-worker
@@ -14,13 +14,17 @@
     - qgis-mapserver
 
 
+# Apache modules
 - name: Enable 'rewrite' and 'exipres' Apache modules
   command: "{{ item }}"
   with_items:
     - a2enmod rewrite
     - a2enmod expires
+  notify:
+    - service apache2 restart
 
 
+# Mapserver
 - name: Configure Mapserver virtualhost
   template: src=apache2/site-mapserver.j2 dest=/etc/apache2/sites-available/mapserver
   notify:

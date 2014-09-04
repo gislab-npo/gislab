@@ -6,5 +6,6 @@ case "$MODE" in
 	cp $GISLAB_ROOT/functions.sh $ROOT/usr/local/gislab/
 
 	cp -a $GISLAB_INSTALL_CLIENT_ROOT/bin/* $ROOT/usr/local/bin/
+	chmod 0775 $ROOT/usr/local/bin/*
     ;;
 esac

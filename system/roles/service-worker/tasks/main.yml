@@ -14,12 +14,12 @@
   service: name=serf state=stopped
 
 
-# SYSTEM
+# System
 - name: Install worker files
   copy: src=static/system/ dest="{{ GISLAB_INSTALL_WORKER_ROOT }}"
 
 
-# DIRECTORIES STRUCTURE
+# Directories structure
 - name: Remove worker image directory if exists
   file: path={{ GISLAB_WORKER_IMAGE_ROOT }} state=absent
 

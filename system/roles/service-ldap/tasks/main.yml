@@ -6,7 +6,7 @@
 
 
 - name: Install packages
-  apt: pkg={{ item }} force=yes install_recommends=no
+  apt: pkg={{ item }} force=yes install_recommends=no state=latest
   with_items:
     - gnutls-bin
     - ldapscripts
@@ -18,6 +18,7 @@
     - ssl-cert
 
 
+# PAM
 - name: Configure PAM to use Unix and LDAP authentication 
   shell: DEBIAN_FRONTEND=noninteractive {{ item }}
   with_items:
@@ -27,15 +28,17 @@
 - name: Configure PAM to use LDAP
   template: src=ldap/ldap-pam.conf.j2 dest=/etc/ldap.conf
 
+
 - name: LDAP clients configuration
 # configure base DN and URI and disable certificates verification
   template: src=ldap/ldap.conf.j2 dest=/etc/ldap/ldap.conf
+  notify:
+    - service slapd restart
 
 - name: Configure nsswitch
   template: src=ldap/nsswitch.conf.j2 dest=/etc/nsswitch.conf
-
-- name: Configure LDAP scripts
-  template: src=ldapscripts/ldapscripts.conf.j2 dest=/etc/ldapscripts/ldapscripts.conf
+  notify:
+    - service slapd restart
 
 
 - name: Generate LDAP admin password (run only once)
@@ -57,13 +60,8 @@
   args:
     creates: /var/lib/gislab/ldap-configuration.done
 
-- name: Save LDAP admin password to LDAP scripts (run only once)
-  shell: printf "{{ ldap_admin_pass.stdout }}" > /etc/ldapscripts/ldapscripts.passwd && chmod 0600 /etc/ldapscripts/ldapscripts.passwd
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
 
-
-# ssl
+# SSL
 - name: Configure certificate authority
   template: src=ssl/ca.info.j2 dest=/etc/ssl/ca.info
 
@@ -113,6 +111,8 @@
     - chmod o-r /etc/ssl/private/server_slapd_key.pem
   args:
     creates: /var/lib/gislab/ldap-configuration.done
+  notify:
+    - service slapd restart
 
 
 - name: Allow only encrypted connection (run only once)
@@ -122,10 +122,13 @@
     creates: /var/lib/gislab/ldap-configuration.done
 
 
+# LDAP sudo
 - name: Install LDAP sudo support (run only once)
   shell: DEBIAN_FRONTEND=noninteractive SUDO_FORCE_REMOVE=yes apt-get -y install sudo-ldap
   args:
     creates: /var/lib/gislab/ldap-configuration.done
+  notify:
+    - service slapd restart
 
 - name: Load sudo LDAP schema
   template: src=ldap/sudo.schema.j2 dest=/tmp/i.ldif
@@ -136,6 +139,7 @@
     creates: /var/lib/gislab/ldap-configuration.done
 
 
+# LDAP Postfix schema
 - name: Load Postfix LDAP schema
   template: src=ldap/postfix.schema.j2 dest=/tmp/i.ldif
 
@@ -145,6 +149,7 @@
     creates: /var/lib/gislab/ldap-configuration.done
 
 
+# LDAP indexes
 - name: Load LDAP indexes
   template: src=ldap/indexes.ldif.j2 dest=/tmp/i.ldif
 
@@ -152,29 +157,9 @@
   shell: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif
   args:
     creates: /var/lib/gislab/ldap-configuration.done
-  notify:
-    - service slapd restart
-
-- meta: flush_handlers
 
 
-- name: Install LDAP scripts user's and group's templates
-  template: src={{ item.src }} dest={{ item.dest }}
-  with_items:
-    - { src: "ldapscripts/adduser.template.j2", dest: "/etc/ldapscripts/adduser.template" }
-    - { src: "ldapscripts/addgroup.template.j2", dest: "/etc/ldapscripts/addgroup.template" }
-
-
-- name: Load LDAP scripts runtime patch
-# fix ldapscripts runtime script (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=719295)
-  copy: src=static/ldapscripts/runtime-fix.patch dest=/tmp/runtime-fix.patch
-
-- name: Install LDAP scripts runtime patch (run only once)
-  shell: patch /usr/share/ldapscripts/runtime /tmp/runtime-fix.patch; rm -f /tmp/runtime-fix.patch
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
-
-
+# GIS.lab LDAP tree
 - name: Load GIS.lab LDAP tree
   template: src=ldap/gislab-tree.ldif.j2 dest=/tmp/i.ldif
 
@@ -183,8 +168,34 @@
   args:
     creates: /var/lib/gislab/ldap-configuration.done
 
+- meta: flush_handlers
 
-# logging
+
+# LDAPscripts
+- name: Configure LDAP scripts
+  template: src=ldapscripts/ldapscripts.conf.j2 dest=/etc/ldapscripts/ldapscripts.conf
+
+- name: Install LDAP scripts user's and group's templates
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: "ldapscripts/adduser.template.j2", dest: "/etc/ldapscripts/adduser.template" }
+    - { src: "ldapscripts/addgroup.template.j2", dest: "/etc/ldapscripts/addgroup.template" }
+
+- name: Load LDAP scripts runtime patch (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=719295)
+  copy: src=static/ldapscripts/runtime-fix.patch dest=/tmp/runtime-fix.patch
+
+- name: Install LDAP scripts runtime patch (run only once)
+  shell: patch /usr/share/ldapscripts/runtime /tmp/runtime-fix.patch; rm -f /tmp/runtime-fix.patch
+  args:
+    creates: /var/lib/gislab/ldap-configuration.done
+
+- name: Save LDAP admin password to LDAP scripts (run only once)
+  shell: printf "{{ ldap_admin_pass.stdout }}" > /etc/ldapscripts/ldapscripts.passwd && chmod 0600 /etc/ldapscripts/ldapscripts.passwd
+  args:
+    creates: /var/lib/gislab/ldap-configuration.done
+
+
+# Logging
 - name: Configure LDAP logging
   shell: 'printf "dn: cn=config\nchangetype: modify\ndelete: olcLogLevel\n" > /tmp/i.ldif;
          ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
@@ -194,7 +205,7 @@
          ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
 
 
-# the end
+# The end
 - name: Finally, mark successful LDAP configuration and remove temporary files
   shell: rm -f /tmp/i.ldif; touch /var/lib/gislab/ldap-configuration.done
   args:

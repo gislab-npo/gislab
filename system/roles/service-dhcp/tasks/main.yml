@@ -6,7 +6,7 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - isc-dhcp-server
 
@@ -27,7 +27,7 @@
   notify:
     - service apparmor restart
 
-- name: Creating allowed client's MACs list file
+- name: Create allowed client's MACs list file
   template: src=dhcp/dhcpd-machines-allowed.conf.j2 dest=/etc/dhcp/dhcpd-machines-allowed.conf
   notify:
     - service isc-dhcp-server restart

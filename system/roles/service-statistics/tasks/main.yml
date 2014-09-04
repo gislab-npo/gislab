@@ -6,7 +6,7 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - munin
     - munin-node
@@ -30,6 +30,8 @@
 # Munin plugins
 - name: Install custom Munin plugins
   copy: src=static/munin-plugins/ dest=/usr/share/munin/plugins
+  notify:
+    - service munin-node restart
 
 - name: Enable only required Munin plugins
   shell: "{{ item }}"
@@ -48,6 +50,9 @@
     - ln -fs /usr/share/munin/plugins/swap /etc/munin/plugins/swap
     - ln -fs /usr/share/munin/plugins/uptime /etc/munin/plugins/uptime
     - ln -fs /usr/share/munin/plugins/vmstat /etc/munin/plugins/vmstat
+  notify:
+    - service munin-node restart
+
 
 - name: Remove unnecessary Munin configuration
   file: path={{ item }} state=absent
