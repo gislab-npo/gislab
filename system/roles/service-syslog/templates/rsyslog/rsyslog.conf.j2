@@ -16,6 +16,9 @@ $Umask 0022
 $PrivDropToUser syslog
 $PrivDropToGroup syslog
 
-$WorkDirectory /var/spool/rsyslog
+{% if GISLAB_DEBUG_SERVICES %}
+$SystemLogRateLimitInterval 0
+{% endif %}
 
+$WorkDirectory /var/spool/rsyslog
 $IncludeConfig /etc/rsyslog.d/*.conf

@@ -18,4 +18,10 @@ logging {
 	category unmatched {
 		null;
 	};
+
+{% if GISLAB_DEBUG_SERVICES %}
+	category queries {
+		default_syslog;
+	};
+{% endif %}
 };

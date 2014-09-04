@@ -22,7 +22,15 @@ default_text_search_config = 'pg_catalog.english'
 # logging
 logging_collector = on
 log_directory = '/var/log/postgresql'
+
+{% if not GISLAB_DEBUG_SERVICES %}
 log_filename = 'postgresql-error.log'
 log_min_messages = FATAL
+{% else %}
+log_filename = 'postgresql-debug.log'
+log_min_messages = 'DEBUG1'
+log_min_error_statement = 'DEBUG1'
+log_min_duration_statement = 0
+{% endif %}
 
 # configuration created by pgtune wizard will be placed below

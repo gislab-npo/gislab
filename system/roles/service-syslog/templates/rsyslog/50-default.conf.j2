@@ -11,4 +11,8 @@ daemon.*;mail.*;\
 	*.=debug;*.=info;\
 	*.=notice;*.=warn	|/dev/xconsole
 
+{% if not GISLAB_DEBUG_SERVICES %}
 local7.err			/var/log/syslog
+{% else %}
+local7.*			/var/log/syslog
+{% endif%}

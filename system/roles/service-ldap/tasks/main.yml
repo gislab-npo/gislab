@@ -203,6 +203,12 @@
 - name: Configure LDAP logging
   shell: 'printf "dn: cn=config\nchangetype: modify\nadd: olcLogLevel\nolcLogLevel: none\n" > /tmp/i.ldif;
          ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
+  when: not GISLAB_DEBUG_SERVICES 
+
+- name: Configure LDAP logging (debug mode)
+  shell: 'printf "dn: cn=config\nchangetype: modify\nadd: olcLogLevel\nolcLogLevel: stats\n" > /tmp/i.ldif;
+         ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
+  when: GISLAB_DEBUG_SERVICES 
 
 
 # The end
