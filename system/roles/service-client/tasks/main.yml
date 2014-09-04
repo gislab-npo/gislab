@@ -12,14 +12,16 @@
     - tftpd-hpa
 
 
-- name: Create client install directory
-  file: path="{{ GISLAB_INSTALL_CLIENT_ROOT }}" state=directory
+- name: Stop GIS.lab network machines before updating client image
+  service: name=serf state=stopped
 
+
+# SYSTEM
 - name: Install client files
-  copy: src=./ dest="{{ GISLAB_INSTALL_CLIENT_ROOT }}"
+  copy: src=static/system/ dest="{{ GISLAB_INSTALL_CLIENT_ROOT }}"
 
 
-
+# IMAGE BACKUP
 - name: Create backup of existing client image
   command: cp /opt/ltsp/images/i386.img /opt/ltsp/images/i386-backup-{{ GISLAB_INSTALL_DATETIME }}.img
   args:
@@ -29,11 +31,11 @@
   shell: find /opt/ltsp/images/ -iname "i386-backup-*.img" -mtime 7 | xargs rm -vf
 
 
+# CLIENT INSTALLATION SCRIPTS
 - name: Create clean copy of default Ubuntu client installation scripts
   command: cp -a /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean
   args:
     creates: /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean/000-basic-configuration
-
 
 - name: Clean client installation scripts
   command: "{{ item }}"
@@ -48,25 +50,14 @@
     - cp -a {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
 
 
+# IMAGE
 - name: Build GIS.lab client image (can take very long time)
-  shell: GISLAB_ROOT={{ GISLAB_ROOT }}
-         GISLAB_INSTALL_WORKER_ROOT={{ GISLAB_INSTALL_WORKER_ROOT }}
-         GISLAB_INSTALL_CLIENT_ROOT={{ GISLAB_INSTALL_CLIENT_ROOT }}
-         GISLAB_INSTALL_USER_DATA_ROOT={{ GISLAB_INSTALL_USER_DATA_ROOT }}
-         GISLAB_NETWORK={{ GISLAB_NETWORK }}
-         GISLAB_SERVER_IP={{ GISLAB_SERVER_IP }}
-         GISLAB_LOGO={{ GISLAB_LOGO }}
-         GISLAB_WALLPAPER={{ GISLAB_WALLPAPER }}
+  shell: set -a; source /etc/gislab_version;
          GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT="{{ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT|join(' ') }}"
-         GISLAB_CLIENT_INSTALL_PACKAGES="{{ GISLAB_CLIENT_INSTALL_PACKAGES|join(' ') }}"
          GISLAB_CLIENT_REMOVE_PACKAGES="{{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}"
-         GISLAB_CLIENT_LANGUAGES={{ GISLAB_CLIENT_LANGUAGES }}
-         GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT={{ GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT }}
-         GISLAB_CLIENT_VIRTUALBOX_SUPPORT={{ GISLAB_CLIENT_VIRTUALBOX_SUPPORT }}
-         GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO={{ GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO }}
-         GISLAB_CLIENT_LOAD_BALANCER_ENABLED={{ GISLAB_CLIENT_LOAD_BALANCER_ENABLED }}
          ltsp-build-client {{ gislab_build_client_opts }} > /var/log/gislab-build-client.log
-         executable=/bin/bash
+  args:
+    executable: /bin/bash
   notify:
     - service nbd-server restart
 
@@ -78,7 +69,7 @@
 
 
 - name: Modify client's DHCP client to be sure that client will always get IP from correct server
-  script: udhcp/generate-initrd.sh
+  script: scripts/generate-initrd.sh
 
 
 - name: Configure GIS.lab client (LTSP)
@@ -107,6 +98,10 @@
 
 - name: Install HTTP boot script
   template: src=boot-http/i386.j2 dest=/var/www/default/i386
+
+
+- name: Start GIS.lab network machines again
+  service: name=serf state=started
 
 
 - meta: flush_handlers

@@ -29,8 +29,7 @@ mkdir -p /etc/skel/.config/xfce4/panel
 cp -a $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/xfce4/panel/* /etc/skel/.config/xfce4/panel
 
 # keyboard languages
-GISLAB_CLIENT_LANGUAGES="en, $GISLAB_CLIENT_LANGUAGES" # english language is alway available
-GISLAB_CLIENT_LANGUAGES=$(echo $GISLAB_CLIENT_LANGUAGES | sed "s/ //g") # remove spaces
+GISLAB_CLIENT_LANGUAGES="en,$GISLAB_CLIENT_LANGUAGES" # English language is always available
 
 langcount=$(grep -o "," <<< "$GISLAB_CLIENT_LANGUAGES" | wc -l)
 variants=$(printf '%0.s,' $(seq 1 $langcount)) # set empty strings separated by comas to get variants working

@@ -32,7 +32,7 @@
   file: path=/var/www/default state=directory
 
 - name: Install default web page content
-  copy: src=index.html dest=/var/www/default/index.html
+  copy: src=static/index.html dest=/var/www/default/index.html
 
 - name: Enable default Apache virtualhost
   command: a2ensite default

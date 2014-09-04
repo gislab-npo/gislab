@@ -15,4 +15,5 @@
   notify:
     - service ntp restart
 
+
 - meta: flush_handlers

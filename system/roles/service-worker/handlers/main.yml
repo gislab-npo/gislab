@@ -1,4 +1,0 @@
----
-
-- name: service xxx restart
-  service: name=xxx state=restarted

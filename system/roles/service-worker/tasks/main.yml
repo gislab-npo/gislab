@@ -10,10 +10,16 @@
 #   bash ./install.sh && rm -rf /tmp/install-worker
 
 
-- name: Create worker install directory
-  file: path={{ GISLAB_INSTALL_WORKER_ROOT }} state=directory
+- name: Stop GIS.lab network machines before updating worker image
+  service: name=serf state=stopped
 
 
+# SYSTEM
+- name: Install worker files
+  copy: src=static/system/ dest="{{ GISLAB_INSTALL_WORKER_ROOT }}"
+
+
+# DIRECTORIES STRUCTURE
 - name: Remove worker image directory if exists
   file: path={{ GISLAB_WORKER_IMAGE_ROOT }} state=absent
 
@@ -42,9 +48,6 @@
 - name: Create directory for Serf handler scripts
   file: path={{ GISLAB_INSTALL_WORKER_ROOT }}/serf/bin state=directory
 
-- name: Copy Serf handler scripts
-  copy: src=serf/bin/serf-member-left.sh dest={{ GISLAB_INSTALL_WORKER_ROOT }}/serf/bin/serf-member-left.sh
-
 
 # Munin
 - name: Create directory for Munin files
@@ -54,15 +57,15 @@
   template: src=munin-node/munin-node.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/munin-node/munin-node.conf
 
 
-- name: Copy worker installation script
-  copy: src=install.sh dest={{ GISLAB_INSTALL_WORKER_ROOT }}/install.sh mode=0774
-
 - name: Create worker image file
-  shell: GISLAB_ROOT={{ GISLAB_ROOT }}
-         GISLAB_INSTALL_WORKER_ROOT={{ GISLAB_INSTALL_WORKER_ROOT }}
+  shell: set -a; source /etc/gislab_version;
          GISLAB_WORKER_IMAGE_ROOT={{ GISLAB_WORKER_IMAGE_ROOT }}
          GISLAB_WORKER_IMAGE_BASE={{ GISLAB_WORKER_IMAGE_BASE }}
          GISLAB_WORKER_INSTALL_PACKAGES="{{ GISLAB_WORKER_INSTALL_PACKAGES|join(' ') }}"
-         GISLAB_SERVER_IP={{ GISLAB_SERVER_IP }}
-         {{ GISLAB_INSTALL_WORKER_ROOT }}/install.sh
-         executable=/bin/bash
+         bash {{ GISLAB_INSTALL_WORKER_ROOT }}/install.sh
+  args:
+    executable: /bin/bash
+
+
+- name: Start GIS.lab network machines again
+  service: name=serf state=started

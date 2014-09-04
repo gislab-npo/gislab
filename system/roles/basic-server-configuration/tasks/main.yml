@@ -5,7 +5,7 @@
 # Run basic server configuration.
 
 
-# FACTS
+# Facts
 - name: Set GIS.lab installation root directory
   set_fact:
     GISLAB_ROOT: /opt/gislab
@@ -17,6 +17,10 @@
 - name: Set GIS.lab client installation root directory
   set_fact:
     GISLAB_INSTALL_CLIENT_ROOT: "{{ GISLAB_ROOT }}/system/client"
+
+- name: Set GIS.lab user account installation root directory
+  set_fact:
+    GISLAB_INSTALL_ACCOUNT_ROOT : "{{ GISLAB_ROOT }}/system/account"
 
 - name: Set GIS.lab user data installation root directory
   set_fact:
@@ -56,17 +60,63 @@
   when: ansible_eth0.active and ansible_eth1.active
 
 
-# TASKS
+# Configuration and basic directory structure
+- name: Save current GIS.lab configuration to '/etc/gislab_version' file
+  copy: content='
+    GISLAB_ROOT="{{ GISLAB_ROOT }}"\n
+    GISLAB_UNIQUE_ID="{{ GISLAB_UNIQUE_ID }}"\n
+    GISLAB_SUITE="{{ GISLAB_SUITE }}"\n
+    GISLAB_TIMEZONE="{{ GISLAB_TIMEZONE }}"\n
+    GISLAB_APT_REPOSITORY_COUNTRY_MIRROR="{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}"\n
+    GISLAB_APT_HTTP_PROXY="{{ GISLAB_APT_HTTP_PROXY }}"\n
+    GISLAB_LOGO="{{ GISLAB_LOGO }}"\n
+    GISLAB_WALLPAPER="{{ GISLAB_WALLPAPER }}"\n
+    GISLAB_NETWORK="{{ GISLAB_NETWORK }}"\n
+    GISLAB_SERVER_IP="{{ GISLAB_SERVER_IP }}"\n
+    GISLAB_SERVER_EMAIL_RELAY_SERVER="{{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}"\n
+    GISLAB_CLIENT_LANGUAGES="{{ GISLAB_CLIENT_LANGUAGES|join(",") }}"\n
+    GISLAB_UNKNOWN_MAC_POLICY="{{ GISLAB_UNKNOWN_MAC_POLICY }}"\n
+    GISLAB_CLIENTS_ALLOWED="{{ GISLAB_CLIENTS_ALLOWED|join(",") }}"\n
+    GISLAB_CLIENT_INSTALL_PACKAGES="{{ GISLAB_CLIENT_INSTALL_PACKAGES|join(" ") }}"\n
+    GISLAB_CLIENT_VIRTUALBOX_SUPPORT="{{ GISLAB_CLIENT_VIRTUALBOX_SUPPORT }}"\n
+    GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO="{{ GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO }}"\n
+    GISLAB_CLIENT_NETWORK_STORAGE="{{ GISLAB_CLIENT_NETWORK_STORAGE }}"\n
+    GISLAB_CLIENT_LOAD_BALANCER_ENABLED="{{ GISLAB_CLIENT_LOAD_BALANCER_ENABLED }}"\n
+    GISLAB_VERSION="{{ GISLAB_VERSION }}"\n
+    GISLAB_SERVER_GUI_CONSOLE="{{ GISLAB_SERVER_GUI_CONSOLE }}"\n
+    GISLAB_DEBUG_INSTALL="{{ GISLAB_DEBUG_INSTALL }}"\n
+    GISLAB_DEBUG_SERVICES="{{ GISLAB_DEBUG_SERVICES }}"\n
+    GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT="{{ GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT }}"\n
+    GISLAB_QGIS_REPOSITORY="{{ GISLAB_QGIS_REPOSITORY }}"\n
+    GISLAB_INSTALL_WORKER_ROOT="{{ GISLAB_INSTALL_WORKER_ROOT }}"\n
+    GISLAB_INSTALL_CLIENT_ROOT="{{ GISLAB_INSTALL_CLIENT_ROOT }}"\n
+    GISLAB_INSTALL_ACCOUNT_ROOT="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"\n
+    GISLAB_INSTALL_USER_DATA_ROOT="{{ GISLAB_INSTALL_USER_DATA_ROOT }}"\n
+    GISLAB_INSTALL_DATETIME="{{ GISLAB_INSTALL_DATETIME }}"\n
+    GISLAB_PROVISIONING_USER="{{ GISLAB_PROVISIONING_USER }}"\n
+    GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"\n
+    GISLAB_SERVER_NETWORK_DEVICE="{{ GISLAB_SERVER_NETWORK_DEVICE }}"'
+    dest="/etc/gislab_version"
+
+- name: Create main GIS.lab installation directories structure
+  file: path="{{ item }}" state=directory
+  with_items:
+    - "{{ GISLAB_ROOT }}"
+    - "{{ GISLAB_INSTALL_WORKER_ROOT }}"
+    - "{{ GISLAB_INSTALL_CLIENT_ROOT }}"
+    - "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"
+    - "{{ GISLAB_INSTALL_USER_DATA_ROOT }}"
+    - /var/lib/gislab
+
+
+# Basic server configuration
 - name: Add GISLAB_ROOT variable to server's environment
   lineinfile: dest=/etc/environment line="GISLAB_ROOT={{ GISLAB_ROOT }}" state=present
-
-- name: Set GIS.lab version
-  template: src=gislab_version.j2 dest=/etc/gislab_version
 
 - name: Set hostname
   hostname: name=server
 
-- name: Update hosts
+- name: Update hosts file
   template: src=hosts.j2 dest=/etc/hosts
   notify:
     - service rsyslog restart
@@ -84,21 +134,8 @@
 
 - meta: flush_handlers
 
-- name: Create GIS.lab root installation directory
-  file: path={{ GISLAB_ROOT }} state=directory
 
-- name: Create GIS.lab done logs directory
-  file: path=/var/lib/gislab state=directory
-
-- name: Install GIS.lab shell functions library
-  copy: src=functions.sh dest={{ GISLAB_ROOT }}/functions.sh
-
-- name: Install GIS.lab management scripts
-  copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0744
-
-- name: Add GIS.lab management scripts on path
-  lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present
-
+# Apt
 - name: Configure apt repositories
   template: src=apt/sources.list.j2 dest=/etc/apt/sources.list
 
@@ -134,23 +171,30 @@
     - tmux
     - vim
 
+
+# SSH
 - name: Create GIS.lab configuration directory for SSH keys
   file: path={{ GISLAB_ROOT }}/ssh state=directory
 
 - name: Install insecure SSH key if no secure one found
-  copy: src=insecure_ssh_key.pub dest={{ GISLAB_ROOT }}/ssh/gislab_ssh_public_key
+  copy: src=insecure_ssh_key.pub dest={{ GISLAB_ROOT }}/ssh/gislab_ssh_public_key mode=0600
   when: GISLAB_SSH_PRIVATE_KEY|default(None) == None or GISLAB_SSH_PUBLIC_KEY|default(None) == None
 
 - name: Install secure SSH key
-  copy: src={{ GISLAB_SSH_PUBLIC_KEY }} dest={{ GISLAB_ROOT }}/ssh/gislab_ssh_public_key
+  copy: src={{ GISLAB_SSH_PUBLIC_KEY }} dest={{ GISLAB_ROOT }}/ssh/gislab_ssh_public_key mode=0600
   when: GISLAB_SSH_PRIVATE_KEY|default(None) != None and GISLAB_SSH_PUBLIC_KEY|default(None) != None
 
+
+# Shell
 - name: Configure shell prompt system wide
-  lineinfile: dest=/etc/profile \
-    regexp="^PS1=.*h\.GIS.lab(.*).*$" \
-    line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "' \
+  lineinfile:
+    dest=/etc/profile
+    regexp="^PS1=.*h\.GIS.lab(.*).*$"
+    line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "'
     state=present
 
+
+# MOTD
 - name: Set MOTD welcome message
   template: src=motd/00-header.j2 dest=/etc/update-motd.d/00-header
 
@@ -164,3 +208,14 @@
 
 - name: Update MOTD
   shell: run-parts /etc/update-motd.d
+
+
+# GIS.lab management tools
+- name: Install GIS.lab shell functions library
+  copy: src=functions.sh dest={{ GISLAB_ROOT }}/functions.sh
+
+- name: Install GIS.lab management scripts
+  copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0774 group={{ GISLAB_PROVISIONING_USER }}
+
+- name: Add GIS.lab management scripts on path
+  lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present

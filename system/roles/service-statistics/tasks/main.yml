@@ -28,8 +28,8 @@
 
 
 # Munin plugins
-- name: Install munin plugin for graphing cpu usage by process
-  copy: src=munin-plugins/cpu_by_process dest=/usr/share/munin/plugins/cpu_by_process
+- name: Install custom Munin plugins
+  copy: src=static/munin-plugins/ dest=/usr/share/munin/plugins
 
 - name: Enable only required Munin plugins
   shell: "{{ item }}"

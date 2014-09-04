@@ -167,7 +167,7 @@
 
 - name: Load LDAP scripts runtime patch
 # fix ldapscripts runtime script (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=719295)
-  copy: src=ldapscripts/runtime-fix.patch dest=/tmp/runtime-fix.patch
+  copy: src=static/ldapscripts/runtime-fix.patch dest=/tmp/runtime-fix.patch
 
 - name: Install LDAP scripts runtime patch (run only once)
   shell: patch /usr/share/ldapscripts/runtime /tmp/runtime-fix.patch; rm -f /tmp/runtime-fix.patch

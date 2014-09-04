@@ -12,12 +12,12 @@
     - pwgen
 
 
+# User accounts cleanup and security
 - name: Remove not required user accounts
 # this task can run only once, otherwise it can remove GIS.lab user's accounts once they are created
   shell: for userid in {1000..1010}; do username=$(getent passwd $userid | awk -F ':' '{print $1}'); \
          if [ "$username" != "" -a "$username" != "{{ GISLAB_PROVISIONING_USER }}" ]; then \
            deluser --remove-home $username; \
-           echo -e "User account '$username' was removed."; \
          fi; \
          done > /var/lib/gislab/user-accounts-clean.done
   args:
@@ -35,27 +35,37 @@
     - /home/{{ GISLAB_PROVISIONING_USER }}/.ssh
 
 - name: Set SSH key for provisioning user account
-  command: cp {{ GISLAB_ROOT }}/ssh/gislab_ssh_public_key /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys
+  command: "{{ item }}"
+  with_items:
+    - "cp -a {{ GISLAB_ROOT }}/ssh/gislab_ssh_public_key /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys"
+    - "chown {{ GISLAB_PROVISIONING_USER }}:{{ GISLAB_PROVISIONING_USER }} /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys" 
 
 
+# Shell
 - name: Configure shell prompt for provisioning user
   lineinfile: dest=/home/{{ GISLAB_PROVISIONING_USER }}/.bashrc \
     regexp="^PS1=.*h\.GIS.lab(.*).*$" \
     line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "' \
     state=present
 
-- name: Configure shell prompt in new user account skeleton
+- name: Configure shell prompt for new user accounts
   lineinfile: dest=/etc/skel/.bashrc \
     regexp="^PS1=.*h\.GIS.lab(.*).*$" \
     line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "' \
     state=present
 
 
+# System
+- name: Install user account files
+  copy: src=static/system/ dest="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"
+
+
+# Backup
 - name: Create directory for user data backup script
   file: path=/etc/cron.d.bin state=directory
 
 - name: Install user data backup script
-  copy: src=bin/gislab-backup-users.sh dest=/etc/cron.d.bin/gislab-backup-users.sh
+  copy: src=static/bin/gislab-backup-users.sh dest=/etc/cron.d.bin/gislab-backup-users.sh
 
 - name: Activate user data backup
   template: src=cron/gislab-backup-users.j2 dest=/etc/cron.d/gislab-backup-users

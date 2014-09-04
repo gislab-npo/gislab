@@ -22,10 +22,10 @@
   register: pg_sharedir
 
 - name: Install Audit trigger
-  copy: src=audit-trigger/audit.sql dest="{{ pg_sharedir.stdout }}/contrib/audit.sql"
+  copy: src=static/audit-trigger/audit.sql dest="{{ pg_sharedir.stdout }}/contrib/audit.sql"
 
 - name: Install PostGIS template script
-  copy: src=template-postgis/template-postgis.sql dest="{{ pg_sharedir.stdout }}/contrib/template-postgis.sql"
+  copy: src=static/template-postgis/template-postgis.sql dest="{{ pg_sharedir.stdout }}/contrib/template-postgis.sql"
 
 
 - name: Adjust system shmmax value to one fourth of system memory size

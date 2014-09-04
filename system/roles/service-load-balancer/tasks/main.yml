@@ -14,7 +14,9 @@
 
 # Serf
 - name: Install Serf
-  shell: . {{ GISLAB_ROOT }}/functions.sh && gislab_serf_install executable=/bin/bash
+  shell: . {{ GISLAB_ROOT }}/functions.sh && gislab_serf_install
+  args:
+    executable: /bin/bash
 
 - name: Create Serf configuration directory
   file: path=/etc/serf/bin state=directory
@@ -25,10 +27,7 @@
     - service serf restart
 
 - name: Install Serf handlers scripts 
-  copy: src={{ item.src }} dest={{ item.dest }} mode=0774
-  with_items:
-    - { src: serf/bin/serf-member-join.sh, dest: /etc/serf/bin/serf-member-join.sh}
-    - { src: serf/bin/serf-member-left.sh, dest: /etc/serf/bin/serf-member-left.sh}
+  copy: src=static/serf/bin/ dest=/etc/serf/bin mode=0774
   notify:
     - service serf restart
 
