@@ -41,7 +41,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   CONFIG['GISLAB_NETWORK'] = "192.168.111"
   config.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
-#  config.vm.synced_folder '.', '/vagrant', disabled: true
+  config.vm.synced_folder '.', '/vagrant', disabled: true
 
   config.ssh.forward_agent = true
   if not CONFIG['GISLAB_SSH_PRIVATE_KEY'].nil?
