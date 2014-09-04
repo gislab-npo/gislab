@@ -169,11 +169,14 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 ######################### CLIENT ##########################
 # ******************************************************* #
 
-# Comma separated list of country codes of languages which should be installed on client
+# List of country codes of languages which should be installed on client
 # beside English language.
-# Example: "sk, cz"
+# Example:
+# - sk
+# - cz
 # Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
-GISLAB_CLIENT_LANGUAGES: sk
+GISLAB_CLIENT_LANGUAGES:
+  - sk
 
 # Determines if client access will be restricted by MAC address configuration
 # placed in 'GISLAB_CLIENTS_ALLOWED'.
