@@ -99,36 +99,101 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 		});
 	},
 	showMeasureToolbar: function() {
-		if (this.window) {
-			this.window.show();
-			var activeTab = this.window.get(0).getActiveTab();
-			activeTab.clearMeasurements();
-			activeTab.control.activate();
-			return;
-		}
-		this.measurePointPanel = new Ext.Panel({
-			xtype: 'panel',
-			title: gettext('Coordinates'),
-			autoScroll: true,
-			cls: 'measure-panel',
-			iconCls: 'measure-point-icon',
-			control: this.pointMeasureControl,
-			viewConfig: {
-				forceFit: true,
-			},
-			layout: 'column',
-			autoScroll: false,
-			border: false,
-			defaults: {
-				border: false
-			},
-			items: [
-				{
-					title: gettext('Measured values'),
-					columnWidth: .75,
-					items: [{
+		if (!this.window) {
+			this.measurePointPanel = new Ext.Panel({
+				xtype: 'panel',
+				title: gettext('Coordinates'),
+				autoScroll: true,
+				cls: 'measure-panel',
+				iconCls: 'measure-point-icon',
+				control: this.pointMeasureControl,
+				viewConfig: {
+					forceFit: true,
+				},
+				layout: 'column',
+				autoScroll: false,
+				border: false,
+				defaults: {
+					border: false
+				},
+				items: [
+					{
+						title: gettext('Measured values'),
+						columnWidth: .75,
+						items: [{
+								xtype: 'form',
+								ref: '/pointForm',
+								labelWidth: 100,
+								frame: false,
+								border: false,
+								defaults: {
+									anchor: "100%",
+								},
+								defaultType: 'textfield',
+								items: [{
+										fieldLabel: gettext('Coordinate 1'),
+										name: 'coord1',
+										readOnly: true,
+										listeners: {
+											focus: function(field) {
+												field.selectText();
+											}
+										}
+									}, {
+										fieldLabel: gettext('Coordinate 2'),
+										name: 'coord2',
+										readOnly: true,
+										listeners: {
+											focus: function(field) {
+												field.selectText();
+											}
+										}
+									},
+								]
+						}]
+					}, {
+						title: '&nbsp;',
+						columnWidth: .25,
+						items: [{
 							xtype: 'form',
-							ref: '/pointForm',
+							labelWidth: 1,
+							frame: false,
+							border: false,
+							defaults: {
+								anchor: "100%",
+							},
+							items: [{
+								xtype: 'box',
+								height: 26,
+							}]
+						}]
+					}
+				],
+				clearMeasurements: function() {
+					this.pointForm.getForm().reset();
+				}
+			});
+			this.measureLengthPanel = new Ext.Panel({
+				xtype: 'panel',
+				title: gettext('Distance'),
+				autoScroll: false,
+				cls: 'measure-panel',
+				iconCls: 'measure-line-icon',
+				control: this.lengthMeasureControl,
+				viewConfig: {
+					forceFit: true,
+				},
+				layout: 'column',
+				border: false,
+				defaults: {
+					border: false
+				},
+				items: [{
+						title: gettext('Measured values'),
+						columnWidth: .75,
+						items: [{
+							xtype: 'form',
+							ref: '/lengthForm',
 							labelWidth: 100,
 							frame: false,
 							border: false,
@@ -136,9 +201,10 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 								anchor: "100%",
 							},
 							defaultType: 'textfield',
-							items: [{
-									fieldLabel: gettext('Coordinate 1'),
-									name: 'coord1',
+							items: [
+								{
+									fieldLabel: gettext('Last segment'),
+									name: 'last_segment',
 									readOnly: true,
 									listeners: {
 										focus: function(field) {
@@ -146,60 +212,101 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 										}
 									}
 								}, {
-									fieldLabel: gettext('Coordinate 2'),
-									name: 'coord2',
+									fieldLabel: gettext('Total length'),
+									name: 'total',
 									readOnly: true,
 									listeners: {
 										focus: function(field) {
 											field.selectText();
 										}
 									}
-								},
+								}
 							]
-					}]
-				}, {
-					title: '&nbsp;',
-					columnWidth: .25,
-					items: [{
-						xtype: 'form',
-						labelWidth: 1,
-						frame: false,
-						border: false,
-						defaults: {
-							anchor: "100%",
-						},
+						}]
+					}, {
+						title: gettext('Units'),
+						columnWidth: .25,
 						items: [{
-							xtype: 'box',
-							height: 26,
+							xtype: 'form',
+							labelWidth: 1,
+							frame: false,
+							border: false,
+							defaults: {
+								anchor: "100%",
+							},
+							items: [{
+								xtype: 'box',
+								height: 26,
+							}, {
+								xtype: 'combo',
+								name: 'units',
+								ref: '../../lengthUnits',
+								store: new Ext.data.SimpleStore({
+									data: [
+										['', 'auto'],
+										['m', 'm'],
+										['km', 'km'],
+										['mi', 'mi'],
+									],
+									id: 0,
+									fields: ['value', 'display']
+								}),
+								valueField: 'value',
+								displayField: 'display',
+								mode: 'local',
+								triggerAction: 'all',
+								forceSelection: true,
+								measureAction: this,
+								listeners: {
+									afterrender: function(combo) {
+										var recordSelected = combo.getStore().getAt(0);
+										combo.setValue(recordSelected.get('value'));
+									},
+									select: function (combo, record, index) {
+										var units = record.get('value');
+										if (units) {
+											var last_measurement = combo.measureAction.measureLengthPanel.lastMeasurement;
+											if (last_measurement) {
+												var total_value = combo.measureAction.convertUnits(last_measurement['total']['value'], last_measurement['total']['units'], units);
+												var last_segment_value = combo.measureAction.convertUnits(last_measurement['last_segment']['value'], last_measurement['last_segment']['units'], units);
+												combo.measureAction.measureLengthPanel.lengthForm.getForm().setValues({
+													'total': total_value.toFixed(3) +' '+units,
+													'last_segment': last_segment_value.toFixed(3) +' '+units,
+												});
+											}
+										} else {
+											combo.setValue('');
+										}
+									}
+								}
 						}]
 					}]
+				}],
+				clearMeasurements: function() {
+					this.lengthForm.getForm().reset();
 				}
-			],
-			clearMeasurements: function() {
-				this.pointForm.getForm().reset();
-			}
-		});
-		this.measureLengthPanel = new Ext.Panel({
-			xtype: 'panel',
-			title: gettext('Distance'),
-			autoScroll: false,
-			cls: 'measure-panel',
-			iconCls: 'measure-line-icon',
-			control: this.lengthMeasureControl,
-			viewConfig: {
-				forceFit: true,
-			},
-			layout: 'column',
-			border: false,
-			defaults: {
-				border: false
-			},
-			items: [{
+			});
+			this.measureAreaPanel = new Ext.Panel({
+				xtype: 'panel',
+				title: gettext('Area'),
+				autoScroll: false,
+				cls: 'measure-panel',
+				iconCls: 'measure-polygon-icon',
+				control: this.areaMeasureControl,
+				viewConfig: {
+					forceFit: true,
+				},
+				layout: 'column',
+				border: false,
+				defaults: {
+					border: false
+				},
+				items: [{
 					title: gettext('Measured values'),
 					columnWidth: .75,
 					items: [{
 						xtype: 'form',
-						ref: '/lengthForm',
+						ref: '/areaForm',
 						labelWidth: 100,
 						frame: false,
 						border: false,
@@ -209,8 +316,8 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 						defaultType: 'textfield',
 						items: [
 							{
-								fieldLabel: gettext('Last segment'),
-								name: 'last_segment',
+								fieldLabel: gettext('Area'),
+								name: 'area',
 								readOnly: true,
 								listeners: {
 									focus: function(field) {
@@ -218,8 +325,8 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 									}
 								}
 							}, {
-								fieldLabel: gettext('Total length'),
-								name: 'total',
+								fieldLabel: gettext('Perimeter'),
+								name: 'perimeter',
 								readOnly: true,
 								listeners: {
 									focus: function(field) {
@@ -241,249 +348,140 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 							anchor: "100%",
 						},
 						items: [{
-							xtype: 'box',
-							height: 26,
-						}, {
-							xtype: 'combo',
-							name: 'units',
-							ref: '../../lengthUnits',
-							store: new Ext.data.SimpleStore({
-								data: [
-									['', 'auto'],
-									['m', 'm'],
-									['km', 'km'],
-									['mi', 'mi'],
-								],
-								id: 0,
-								fields: ['value', 'display']
-							}),
-							valueField: 'value',
-							displayField: 'display',
-							mode: 'local',
-							triggerAction: 'all',
-							forceSelection: true,
-							measureAction: this,
-							listeners: {
-								afterrender: function(combo) {
-									var recordSelected = combo.getStore().getAt(0);
-									combo.setValue(recordSelected.get('value'));
-								},
-								select: function (combo, record, index) {
-									var units = record.get('value');
-									if (units) {
-										var last_measurement = combo.measureAction.measureLengthPanel.lastMeasurement;
-										if (last_measurement) {
-											var total_value = combo.measureAction.convertUnits(last_measurement['total']['value'], last_measurement['total']['units'], units);
-											var last_segment_value = combo.measureAction.convertUnits(last_measurement['last_segment']['value'], last_measurement['last_segment']['units'], units);
-											combo.measureAction.measureLengthPanel.lengthForm.getForm().setValues({
-												'total': total_value.toFixed(3) +' '+units,
-												'last_segment': last_segment_value.toFixed(3) +' '+units,
-											});
+								xtype: 'combo',
+								name: 'units',
+								ref: '../../areaUnits',
+								store: new Ext.data.SimpleStore({
+									data: [
+										['', 'auto'],
+										['m2', 'm²'],
+										['km2', 'km²'],
+										['ha', 'ha'],
+										['are', 'are']
+									],
+									id: 0,
+									fields: ['value', 'display']
+								}),
+								valueField: 'value',
+								displayField: 'display',
+								mode: 'local',
+								triggerAction: 'all',
+								forceSelection: true,
+								measureAction: this,
+								listeners: {
+									afterrender: function(combo) {
+										var recordSelected = combo.getStore().getAt(0);
+										combo.setValue(recordSelected.get('value'));
+									},
+									select: function (combo, record, index) {
+										var units = record.get('value');
+										if (units) {
+											var last_measurement = combo.measureAction.measureAreaPanel.lastMeasurement;
+											if (last_measurement) {
+												var area_value = combo.measureAction.convertUnits(last_measurement['area']['value'], last_measurement['area']['units'], units);
+												combo.measureAction.measureAreaPanel.areaForm.getForm().setValues({
+													'area': area_value.toFixed(3) +' '+units,
+												});
+											}
+										} else {
+											combo.setValue('');
 										}
-									} else {
-										combo.setValue('');
+									}
+								}
+							}, {
+								xtype: 'combo',
+								ref: '../../perimeterUnits',
+								store: new Ext.data.SimpleStore({
+									data: [
+										['', 'auto'],
+										['m', 'm'],
+										['km', 'km'],
+										['mi', 'mi'],
+									],
+									id: 0,
+									fields: ['value', 'display']
+								}),
+								valueField: 'value',
+								displayField: 'display',
+								mode: 'local',
+								triggerAction: 'all',
+								forceSelection: true,
+								measureAction: this,
+								listeners: {
+									afterrender: function(combo) {
+										var recordSelected = combo.getStore().getAt(0);
+										combo.setValue(recordSelected.get('value'));
+									},
+									select: function (combo, record, index) {
+										var units = record.get('value');
+										if (units) {
+											var last_measurement = combo.measureAction.measureAreaPanel.lastMeasurement;
+											if (last_measurement) {
+												var perimeter_value = combo.measureAction.convertUnits(last_measurement['perimeter']['value'], last_measurement['perimeter']['units'], units);
+												combo.measureAction.measureAreaPanel.areaForm.getForm().setValues({
+													'perimeter': perimeter_value.toFixed(3) +' '+units,
+												});
+											}
+										} else {
+											combo.setValue('');
+										}
 									}
 								}
 							}
+						]
 					}]
-				}]
-			}],
-			clearMeasurements: function() {
-				this.lengthForm.getForm().reset();
-			}
-		});
-		this.measureAreaPanel = new Ext.Panel({
-			xtype: 'panel',
-			title: gettext('Area'),
-			autoScroll: false,
-			cls: 'measure-panel',
-			iconCls: 'measure-polygon-icon',
-			control: this.areaMeasureControl,
-			viewConfig: {
-				forceFit: true,
-			},
-			layout: 'column',
-			border: false,
-			defaults: {
-				border: false
-			},
-			items: [{
-				title: gettext('Measured values'),
-				columnWidth: .75,
-				items: [{
-					xtype: 'form',
-					ref: '/areaForm',
-					labelWidth: 100,
-					frame: false,
-					border: false,
-					defaults: {
-						anchor: "100%",
-					},
-					defaultType: 'textfield',
-					items: [
-						{
-							fieldLabel: gettext('Area'),
-							name: 'area',
-							readOnly: true,
-							listeners: {
-								focus: function(field) {
-									field.selectText();
-								}
-							}
-						}, {
-							fieldLabel: gettext('Perimeter'),
-							name: 'perimeter',
-							readOnly: true,
-							listeners: {
-								focus: function(field) {
-									field.selectText();
-								}
-							}
-						}
-					]
-				}]
-			}, {
-				title: gettext('Units'),
-				columnWidth: .25,
-				items: [{
-					xtype: 'form',
-					labelWidth: 1,
-					frame: false,
-					border: false,
-					defaults: {
-						anchor: "100%",
-					},
-					items: [{
-							xtype: 'combo',
-							name: 'units',
-							ref: '../../areaUnits',
-							store: new Ext.data.SimpleStore({
-								data: [
-									['', 'auto'],
-									['m2', 'm²'],
-									['km2', 'km²'],
-									['ha', 'ha'],
-									['are', 'are']
-								],
-								id: 0,
-								fields: ['value', 'display']
-							}),
-							valueField: 'value',
-							displayField: 'display',
-							mode: 'local',
-							triggerAction: 'all',
-							forceSelection: true,
-							measureAction: this,
-							listeners: {
-								afterrender: function(combo) {
-									var recordSelected = combo.getStore().getAt(0);
-									combo.setValue(recordSelected.get('value'));
-								},
-								select: function (combo, record, index) {
-									var units = record.get('value');
-									if (units) {
-										var last_measurement = combo.measureAction.measureAreaPanel.lastMeasurement;
-										if (last_measurement) {
-											var area_value = combo.measureAction.convertUnits(last_measurement['area']['value'], last_measurement['area']['units'], units);
-											combo.measureAction.measureAreaPanel.areaForm.getForm().setValues({
-												'area': area_value.toFixed(3) +' '+units,
-											});
-										}
-									} else {
-										combo.setValue('');
-									}
-								}
-							}
-						}, {
-							xtype: 'combo',
-							ref: '../../perimeterUnits',
-							store: new Ext.data.SimpleStore({
-								data: [
-									['', 'auto'],
-									['m', 'm'],
-									['km', 'km'],
-									['mi', 'mi'],
-								],
-								id: 0,
-								fields: ['value', 'display']
-							}),
-							valueField: 'value',
-							displayField: 'display',
-							mode: 'local',
-							triggerAction: 'all',
-							forceSelection: true,
-							measureAction: this,
-							listeners: {
-								afterrender: function(combo) {
-									var recordSelected = combo.getStore().getAt(0);
-									combo.setValue(recordSelected.get('value'));
-								},
-								select: function (combo, record, index) {
-									var units = record.get('value');
-									if (units) {
-										var last_measurement = combo.measureAction.measureAreaPanel.lastMeasurement;
-										if (last_measurement) {
-											var perimeter_value = combo.measureAction.convertUnits(last_measurement['perimeter']['value'], last_measurement['perimeter']['units'], units);
-											combo.measureAction.measureAreaPanel.areaForm.getForm().setValues({
-												'perimeter': perimeter_value.toFixed(3) +' '+units,
-											});
-										}
-									} else {
-										combo.setValue('');
-									}
-								}
-							}
-						}
-					]
-				}]
-			}],
-			clearMeasurements: function() {
-				this.areaForm.getForm().reset();
-			}
-		});
-		this.pointMeasureControl.events.register('measure', this, this.onPointMeasure);
-		this.lengthMeasureControl.events.register('measurepartial', this, this.onLengthMeasurePartial);
-		this.areaMeasureControl.events.register('measurepartial', this, this.onAreaMeasurePartial);
+				}],
+				clearMeasurements: function() {
+					this.areaForm.getForm().reset();
+				}
+			});
+			this.pointMeasureControl.events.register('measure', this, this.onPointMeasure);
+			this.lengthMeasureControl.events.register('measurepartial', this, this.onLengthMeasurePartial);
+			this.areaMeasureControl.events.register('measurepartial', this, this.onAreaMeasurePartial);
 
-		this.window = new Ext.Window({
-			id: 'measure-window',
-			header: false,
-			closable: false,
-			resizable: false,
-			width: 430,
-			layout: 'fit',
-			items: [
-				{
-					xtype: 'tabpanel',
-					activeTab: 0,
-					items: [
-						this.measurePointPanel,
-						this.measureLengthPanel,
-						this.measureAreaPanel
-					],
-					measureAction: this,
-					listeners: {
-						beforetabchange: function(tabPanel, newTab, currentTab) {
-							if (currentTab) {
-								currentTab.control.deactivate();
-							}
-							if (newTab) {
-								newTab.clearMeasurements();
-								newTab.control.activate();
-							}
-						},
+			this.window = new Ext.Window({
+				id: 'measure-window',
+				header: false,
+				closable: false,
+				resizable: false,
+				width: 430,
+				layout: 'fit',
+				items: [
+					{
+						xtype: 'tabpanel',
+						activeTab: 0,
+						items: [
+							this.measurePointPanel,
+							this.measureLengthPanel,
+							this.measureAreaPanel
+						],
+						measureAction: this,
+						listeners: {
+							beforetabchange: function(tabPanel, newTab, currentTab) {
+								if (currentTab) {
+									currentTab.control.deactivate();
+								}
+								if (newTab) {
+									newTab.clearMeasurements();
+									newTab.control.activate();
+								}
+							},
+						}
+					}
+				],
+				listeners: {
+					beforehide: function(window) {
+						var activeTab = window.get(0).getActiveTab();
+						activeTab.control.deactivate();
 					}
 				}
-			],
-			listeners: {
-				beforehide: function(window) {
-					var activeTab = window.get(0).getActiveTab();
-					activeTab.control.deactivate();
-				}
-			}
-		});
+			});
+		}
 		this.window.show();
 		this.window.alignTo(Ext.getCmp('map-panel').getTopToolbar().getId(), 'tr-br', [-5, 0]);
+		var activeTab = this.window.get(0).getActiveTab();
+		activeTab.clearMeasurements();
+		activeTab.control.activate();
 	},
 
 	toggleHandler: function(action, toggled) {

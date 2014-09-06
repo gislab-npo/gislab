@@ -465,6 +465,7 @@
 
 				// Toolbar Actions
 
+				mappanel.getTopToolbar().add(' ');
 				{% if project != "empty" %}
 				{% include "viewer/actions/topics.js" %}
 				mappanel.getTopToolbar().add(' ', '-', ' ');
@@ -475,6 +476,7 @@
 				mappanel.getTopToolbar().add(' ', '-', ' ');
 					{% if print_composers %}
 					{% include "viewer/actions/print.js" %}
+					mappanel.getTopToolbar().add(' ', '-', ' ');
 					{% endif %}
 				{% include "viewer/actions/search.js" %}
 				mappanel.getTopToolbar().add(' ');
@@ -491,6 +493,7 @@
 					id: 'webgis-viewer',
 					layout: 'fit',
 					items: [{
+						id: 'webgis-panel',
 						xtype: 'panel',
 						layout: "border",
 						tbar: {
@@ -661,6 +664,24 @@
 				{% endif %}
 
 				{% include "viewer/permalink.js" %}
+				var expand_button = new Ext.Toolbar.Button({
+					id: 'featureinfo-expand-button',
+					html: '<div class="x-tool x-tool-collapse-north" ext:qtip="{% trans "Open attribute table" %}" />',
+					cls: 'x-btn-icon',
+					iconCls: 'x-tool-collapse-north',
+					featureInfoPanel: featureinfo_panel,
+					listeners: {
+						click: function(button) {
+							button.featureInfoPanel.expand();
+							button.addClass('invisible');
+						}
+					}
+				})
+				mappanel.getBottomToolbar().add(' ', expand_button);
+				featureinfo_panel.on('collapse', function(panel) {
+					this.removeClass('invisible');
+					console.log(this);
+				}.bind(expand_button));
 
 				// startup message
 				{% if message %}
@@ -680,7 +701,7 @@
 						});
 					}
 				{% endif %}
-
+				mappanel.map.getControlsByClass('OpenLayers.Control.NavigationHistory')[0].clear();
 			}; // end of main function
 
 			Ext.QuickTips.init();

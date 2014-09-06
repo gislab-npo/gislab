@@ -176,7 +176,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 					}
 				},
 				click: function(node, evt) {
-					if (evt.getTarget().className == "layer-info") {
+					if (evt.getTarget().className === "layer-info") {
 						if (node.root.layerInfoWindow) {
 							node.root.layerInfoWindow.destroy();
 						}
@@ -193,6 +193,15 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 						layer_data_parts.push([gettext('Maximal scale'), layer_info.visibility_scale_max? layer_info.visibility_scale_max : Math.round(node.root.layer.minScale)]);
 						if (layer_info.hasOwnProperty('labels')) {
 							layer_data_parts.push([gettext('Labels'), layer_info.labels? gettext("Yes") : gettext("No")]);
+						}
+						if (layer_info.attribution) {
+							if (layer_info.attribution.url) {
+								var title = layer_info.attribution.title || layer_info.attribution.url;
+								attribution = String.format('<a href="{0}" target="_blank">{1}</a>', layer_info.attribution.url, title);
+							} else {
+								attribution = layer_info.attribution.title;
+							}
+							layer_data_parts.push([gettext('Attribution'), attribution]);
 						}
 						// skip empty records and format to html
 						var formatted_data_parts = [];

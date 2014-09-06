@@ -229,6 +229,7 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 					store: store,
 					autoExpandColumn: fields[fields.length-1].name,
 					autoExpandMax: 2000,
+					columnLines: true,
 					viewConfig: {
 						templates: {
 							cell: new Ext.Template(
