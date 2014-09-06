@@ -55,7 +55,7 @@
   shell: set -a; source /etc/gislab_version;
          GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT="{{ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT|join(' ') }}"
          GISLAB_CLIENT_REMOVE_PACKAGES="{{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}"
-         ltsp-build-client {{ gislab_build_client_opts }} > /var/log/gislab-build-client.log
+         bash {{ GISLAB_INSTALL_CLIENT_ROOT }}/install.sh {{ gislab_build_client_opts }} > /var/log/gislab-build-client.log
   args:
     executable: /bin/bash
   notify:
