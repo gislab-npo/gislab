@@ -39,13 +39,6 @@ export GISLAB_SERVER_ARCHITECTURE
 GISLAB_PROVISIONING_USER=$(stat -c %U $GISLAB_ROOT/config.cfg)
 export GISLAB_PROVISIONING_USER
 
-# Re-read IP from running server and update GISLAB_NETWORK. This is done because some 
-# providers (like AWS) are setting this value by their own.
-GISLAB_SERVER_IP=$(hostname  -I | awk -F" " '{print $NF}')
-GISLAB_NETWORK=$(echo $GISLAB_SERVER_IP | awk -F "." '{ print $1 "." $2 "." $3 }')
-export GISLAB_SERVER_IP
-export GISLAB_NETWORK
-
 # Distinguish if we are running initial installation or upgrade.
 # More granular check could be provided by checking individual touch files (/var/lib/gislab/*.done)
 # created for each installation script when finished.
