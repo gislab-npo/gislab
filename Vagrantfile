@@ -39,7 +39,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box
   config.vm.box = "precise-canonical"
   
-  CONFIG['GISLAB_NETWORK'] = "192.168.111"
   config.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
   config.vm.synced_folder '.', '/vagrant', disabled: true
 
