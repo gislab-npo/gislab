@@ -1,0 +1,4 @@
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$GISLAB_ROOT/bin
+MAILTO=root
+
+15 0	* * *  www-data  nice /usr/local/python-virtualenvs/webgis/bin/python /var/www/webgis/manage.py mapcache_clean > /dev/null

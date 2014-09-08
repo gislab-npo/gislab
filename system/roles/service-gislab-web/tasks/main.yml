@@ -1,0 +1,163 @@
+---
+#
+### GIS.LAB WEB ###
+#
+# Install and configure GIS.lab Web application
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
+  with_items:
+    - gcc
+    - nginx
+    - python-dateutil
+    - python-dev
+    - python-pip
+    - python-psycopg2
+    - python-virtualenv
+    - pwgen
+
+
+# PostgreSQL
+- name: Generate webgis database user password (run only once)
+  shell: "{{item }}"
+  with_items:
+    - pwgen -s -N 1 10 > /etc/gislab/webgis_db_user_password
+    - chmod 600 /etc/gislab/webgis_db_user_password
+  args:
+    creates: /etc/gislab/webgis_db_user_password
+
+- name: Get webgis database user password
+  shell: cat /etc/gislab/webgis_db_user_password
+  register: webgis_db_user_password
+
+
+- name: Create database 'webgis' if not exists
+  postgresql_db: name=webgis encoding='UTF-8' template=template0 state=present
+  sudo_user: postgres
+
+- name: Create database user 'webgis' if not exists
+  postgresql_user: name=webgis role_attr_flags=NOCREATEDB,NOCREATEROLE,NOSUPERUSER password={{ webgis_db_user_password.stdout }} state=present
+  sudo_user: postgres
+
+
+# Python virtual environment
+- name: Re-create Python virtual environment
+  shell: rm -rf /usr/local/python-virtualenvs/webgis;
+    virtualenv --clear --quiet --system-site-packages /usr/local/python-virtualenvs/webgis
+
+- name: Install Gunicorn
+  pip: name=gunicorn version=19.1.1
+       virtualenv=/usr/local/python-virtualenvs/webgis
+       virtualenv_site_packages=yes
+       state=present
+
+
+# GIS.lab Web installation
+- name: Copy GIS.lab Web installation files to temporary dir on server
+  copy: src=static/gislab-web dest=/tmp/
+
+- name: Install Web requirements
+  pip: requirements=/tmp/gislab-web/requirements.txt
+       virtualenv=/usr/local/python-virtualenvs/webgis
+       extra_args="--download-cache=/var/cache/pip"
+       virtualenv_site_packages=yes
+       state=present
+
+- name: Install GIS.lab Web
+  shell: source /usr/local/python-virtualenvs/webgis/bin/activate;
+    python /tmp/gislab-web/setup.py install
+
+
+# GIS.lab Web project
+- name: Re-create Web project directory
+  shell: rm -rf /var/www/webgis; mkdir -p /var/www/webgis
+
+- name: Create media directory
+  file: path=/storage/webgis-media state=directory owner=www-data group=www-data
+
+
+- name: Generate secret key (run only once)
+  shell: "{{item }}"
+  with_items:
+    - pwgen -sy 50 1 > /etc/gislab/webgis_secret_key
+    - chmod 600 /etc/gislab/webgis_secret_key
+  args:
+    creates: /etc/gislab/webgis_secret_key
+
+- name: Get secret key
+  shell: cat /etc/gislab/webgis_secret_key
+  register: webgis_secret_key
+
+
+- name: Deploy GIS.lab Web project
+# we do not use Ansible django_manage module because of missing 'template' option
+  shell: source /usr/local/python-virtualenvs/webgis/bin/activate;
+    django-admin.py startproject --template=/tmp/gislab-web/webgis/conf/project_template/ djproject /var/www/webgis
+  args:
+    executable: /bin/bash
+
+- name: Install secrets
+  template: src=gislab-web/settings_secret.py.j2 dest=/var/www/webgis/djproject/settings_secret.py
+
+- name: Sync database
+  django_manage: command=syncdb app_path=/var/www/webgis settings=djproject.settings virtualenv=/usr/local/python-virtualenvs/webgis
+
+- name: Collect static files
+  django_manage: command=collectstatic app_path=/var/www/webgis settings=djproject.settings virtualenv=/usr/local/python-virtualenvs/webgis
+
+
+- name: Remove GIS.lab Web installation files from temporary dir on server
+  file: path=/tmp/gislab-web state=absent
+
+
+# Web servers
+- name: Install Gunicorn startup script
+  template: src=gunicorn/gunicorn.sh.j2 dest=/var/www/webgis/gunicorn.sh
+
+- name: Add executable permissions for Gunicorn startup script
+  command: chmod 755 /var/www/webgis/gunicorn.sh
+
+
+- name: Configure Nginx virtualhost
+  template: src=nginx/site-webgis.j2 dest=/etc/nginx/sites-available/webgis
+  notify:
+    - service nginx restart
+
+- name: Activate Nginx virtualhost web.gis.lab
+  file: src=/etc/nginx/sites-available/webgis dest=/etc/nginx/sites-enabled/webgis state=link
+  notify:
+    - service nginx restart
+
+
+- name: Configure GIS.lab Web service
+  template: src=init/webgis.conf.j2 dest=/etc/init/webgis.conf
+  notify:
+    - service webgis restart
+    - service nginx restart
+
+- name: Activate GIS.lab Web service
+  file: src=/lib/init/upstart-job dest=/etc/init.d/webgis state=link
+  notify:
+    - service webgis restart
+    - service nginx restart
+
+
+- name: Activate cache cleaning
+  template: src=cron/webgis-mapcache-clean.j2 dest=/etc/cron.d/webgis-mapcache-clean
+
+
+# Logging
+- name: Activate GIS.lab Web error logs checking
+  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/var/log/nginx/webgis-error.log" state=present
+
+
+# Backup
+- name: Install storage backup script
+  copy: src=static/bin/gislab-backup-webgis.sh dest=/etc/cron.d.bin/gislab-backup-webgis.sh mode=0755
+
+- name: Activate user data backup
+  template: src=cron/gislab-backup-webgis.j2 dest=/etc/cron.d/gislab-backup-webgis
+
+
+- meta: flush_handlers

@@ -17,6 +17,7 @@
     - service-chat
     - service-database
     - service-mapserver
+    - service-gislab-web
     - service-load-balancer
     - service-statistics
     - user-data

@@ -110,7 +110,11 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'media/')
+
+if os.path.exists('/storage/webgis-media'):
+	MEDIA_ROOT = '/storage/webgis-media'
+else:
+	MEDIA_ROOT =  os.path.join(BASE_DIR, 'media/')
 
 MIDDLEWARE_CLASSES = (
 	'django.contrib.sessions.middleware.SessionMiddleware',

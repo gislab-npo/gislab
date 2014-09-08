@@ -5,11 +5,17 @@ DJANGODIR=/var/www/webgis
 SOCKFILE=/var/www/webgis/gunicorn.sock
 USER=www-data
 GROUP=www-data
-NUM_WORKERS=3
 DJANGO_SETTINGS_MODULE=djproject.settings
 DJANGO_WSGI_MODULE=djproject.wsgi
+NUM_WORKERS={{ ansible_processor_vcpus * 2 + 1 }}
+
+{% if GISLAB_DEBUG_SERVICES %}
+LOG_LEVEL=debug
+{% else %}
 LOG_LEVEL=error
- 
+{% endif %}
+
+
 cd $DJANGODIR
 source /usr/local/python-virtualenvs/webgis/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
