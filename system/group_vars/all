@@ -1,24 +1,40 @@
-# GIS.lab configuration file sourced by installation scripts.
-# Modify as needed. All settings should work by default.
+# This file contains default values of GIS.lab configuration variables.
+# Do not modify this file, rather create a new overriding file in
+# 'host_vars' directory with name matching host name in your Ansible
+# inventory.
+# If using local Vagrant provisioner (VirtualBox or VMWare), create
+# 'gislab' file in 'host_vars' dir and fill it with your configuration.
 
-# It is recommended to create custom configuration file 'config-user.cfg' and place all changes
-# there, rather than modifying this file. File 'config-user.cfg' is always loaded after 'config.cfg'
-# and thus it always overrides its values.
+# Changing configuration once GIS.lab is installed mostly requires
+# server provisioning upgrade. Each configuration variable contains
+# information what to do. Few changes require server restart and
+# some require complete GIS.lab re-installation.
+
+# Here is a list of commands used when local Vagrant provisioner:
+# * provisioning upgrade:          $ vagrant provision
+# * GIS.lab server restart:        $ vagrant reload
+# * GIS.lab re-installation:       # vagrant destroy && vagrant up
 
 
 # ******************************************************* #
-################ VIRTUAL MACHINE PROVIDERS ################
+################ LOCAL VAGRANT PROVISIONER ################
 # ******************************************************* #
-# Configuration specific to local VirtualBox provider
+# Configuration specific to local Vagrant provisioner.
 
 # First three network octets of GIS.lab network number.
 # Example: 192.168.1
-# Change requires new installation ($ vagrant destroy && vagrant up).
+# Change requires GIS.lab re-installation.
 GISLAB_NETWORK: 192.168.50
 
-# Server memory size in MB. Cloud providers (AWS) will silently ignore this option.
-# Change requires server restart ($ vagrant reload).
+# Server memory size in MB.
+# Change requires GIS.lab server restart.
 GISLAB_SERVER_MEMORY: 1024
+
+# Determines if GIS.lab server should start with graphical console. This is useful to
+# gain more control with server boot process.
+# * no: do not launch GUI console
+# * yes: launch GUI console
+GISLAB_SERVER_GUI_CONSOLE: no
 
 
 
@@ -79,53 +95,53 @@ GISLAB_SERVER_MEMORY: 1024
 ################## GENERAL CONFIGURATION ##################
 # ******************************************************* #
 
-# Unique string (without spaces) used to distinguish GIS.lab installations managed
-# by one administrator or company.
+# Unique string (without spaces) used to identify multiple GIS.lab
+# installations managed by one administrator or company.
 # Example: "my_company_gislab1"
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_UNIQUE_ID: gislab1
 
-# Type of GIS.lab infrastructure to install.
+# Type of GIS.lab infrastructure suite to install.
 # Possible options are:
-# * lab: complete lab infrastructure for LAN. Includes server and client
 # * server: only server installed
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# * lab: complete lab infrastructure for LAN. Includes server and client
+# Change requires running provisioning upgrade.
 GISLAB_SUITE: lab
 
 # Absolute path to private SSH key which will be used for accessing GIS.lab server.
-# WARNING: GIS.lab server will use Vagrant insecure SSH key if no value specified.
+# WARNING: GIS.lab may use insecure SSH key if no value specified.
 # Example: /home/user/.ssh/id_rsa
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_SSH_PRIVATE_KEY:
 
-# Relative path public SSH key which will be used for accessing GIS.lab server.
-# WARNING: GIS.lab server will use Vagrant insecure SSH key if no value specified.
+# Relative path to public SSH key which will be used for accessing GIS.lab server.
+# WARNING: GIS.lab may use insecure SSH key if no value specified.
 # Example: user/id_rsa.pub
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_SSH_PUBLIC_KEY:
 
 # Time zone. Check list of time zones here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_TIMEZONE: Europe/Bratislava
 
 # Ubuntu packages repository country code. For Amazon AWS provider use
 # value <region-name>.ec2
 # Example: sk             - Slovak Ubuntu mirror
 # Example: eu-west-1.ec2  - AWS mirror running in eu-west-1 region
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_APT_REPOSITORY_COUNTRY_MIRROR: sk
 
-# Apt-cacher-ng proxy URL. Leave as is for none.
+# Apt-cacher-ng proxy URL.
 # Example: http://192.168.49.5:3142
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_APT_HTTP_PROXY:
 
-# Relative path to file containing GIS.lab logo used on client user login screen
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Relative path to file containing GIS.lab logo.
+# Change requires running provisioning upgrade.
 GISLAB_LOGO: user/graphic/gislab-logo.png
 
-# Relative path to file containing GIS.lab client wallpaper
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Relative path to file containing GIS.lab client wallpaper.
+# Change requires running provisioning upgrade.
 GISLAB_WALLPAPER: user/graphic/gislab-wallpaper.png
 
 # Comma separated list of required GIS.lab plugins and account hooks. GIS.lab
@@ -148,7 +164,7 @@ GISLAB_PLUGINS_REQUIRE:
 # SMTP server must support TLS encryption on port 587. If no account configured
 # email messages from GIS.lab server will be delivered locally to Linux user
 # on server (vagrant or ubuntu).
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 
 # SMTP address
 # Example: smtp.gmail.com
@@ -174,7 +190,7 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 # Example:
 # - sk
 # - cz
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_CLIENT_LANGUAGES:
   - sk
 
@@ -183,7 +199,7 @@ GISLAB_CLIENT_LANGUAGES:
 # Possible options are:
 # * deny:  only MAC addresses specified in 'GISLAB_CLIENTS_ALLOWED' can connect. Safe default, recommended
 # * allow: all MAC addresses can connect. DO NOT USE this configuration if connected to corporate LAN (possible DHCP servers conflict)
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_UNKNOWN_MAC_POLICY: deny
 
 # List of GIS.lab client's MAC addressed allowed to connect.
@@ -194,16 +210,15 @@ GISLAB_UNKNOWN_MAC_POLICY: deny
 GISLAB_CLIENTS_ALLOWED:
   - 00:00:00:00:00:00
 
-# List of extra packages to install to client images. Do not use <tab> for indentation.
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
-
+# List of extra packages to install to client images.
+# Change requires running provisioning upgrade.
 GISLAB_CLIENT_INSTALL_PACKAGES:
   - bc
 
 # Determines if client image should provide full support for VirtualBox client
 # * no: do not support VirtualBox client
 # * yes: provide support for VirtualBox client (VirtualBox guest additions installed)
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_CLIENT_VIRTUALBOX_SUPPORT: yes
 
 # Relative path to VBoxGuestAdditions.iso file which should be used for VirtualBox guest
@@ -212,13 +227,13 @@ GISLAB_CLIENT_VIRTUALBOX_SUPPORT: yes
 # a potential of compatibility problems. You can copy VBoxGuestAdditions.iso file
 # from VirtualBox installation directory (/usr/share/virtualbox/ on Linux).
 # Example: user/VBoxGuestAdditions.iso
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO:
 
 # Mount external network storage on client machines. Place here a line in same format
 # as in '/etc/fstab' file.
 # Example: 192.168.1.200:/ /media/storage nfs4 user,bg,exec 0 0
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_CLIENT_NETWORK_STORAGE:
 
 # Allow usage of GIS.lab clients as mapserver load balancer worker nodes, which
@@ -226,7 +241,7 @@ GISLAB_CLIENT_NETWORK_STORAGE:
 # from time to time.
 # * yes: enable to use GIS.lab clients as worker node
 # * no : disable to use GIS.lab clients as worker node
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_CLIENT_LOAD_BALANCER_ENABLED: yes
 
 
@@ -236,15 +251,8 @@ GISLAB_CLIENT_LOAD_BALANCER_ENABLED: yes
 #################### DEVELOPER SECTION ####################
 # ******************************************************* #
 
-# GIS.lab version value. In master Git branch it should be always set to 'dev' and it
-# will be dynamically substituted with current Git stamp at installation.  
+# GIS.lab version value. In master Git branch it should be always set to 'dev'.  
 GISLAB_VERSION: dev
-
-# Determines if GIS.lab server should start with graphical console. This is useful to
-# gain more control with server boot process.
-# * no: do not launch GUI console
-# * yes: launch GUI console
-GISLAB_SERVER_GUI_CONSOLE: no
 
 # Determines if enable installation in debug mode.
 # Possible values are:
@@ -262,13 +270,12 @@ GISLAB_DEBUG_SERVICES: no
 # QGIS build dependencies and other software, libraries and helper scripts.
 # * no: do not support GIS development
 # * yes: provide support for GIS development
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
+# Change requires running provisioning upgrade.
 GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT: no
 
 # Name of PPA repository containing QGIS version to install on server and client. If no value specified,
 # QGIS will be installed from the same repository as other GIS packages. Value 'imincik/qgis-master'
 # means, that QGIS will be installed from ppa:imincik/qgis-master. Repository must contain higher QGIS
 # version than exists in standard GIS.lab repository.
-# Change requires running upgrade ($ vagrant ssh -c "sudo gislab-upgrade -f").
-GISLAB_QGIS_REPOSITORY: 
-
+# Change requires running provisioning upgrade.
+GISLAB_QGIS_REPOSITORY:
