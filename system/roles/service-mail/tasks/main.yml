@@ -3,6 +3,8 @@
 ### MAIL SERVER - POSTFIX ###
 #
 # Install and configure email server.
+#
+# Logging: /var/log/syslog
 
 
 - name: Install packages

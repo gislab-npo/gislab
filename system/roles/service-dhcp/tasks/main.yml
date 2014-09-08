@@ -3,6 +3,8 @@
 ### DHCP SERVER ###
 #
 # Install and configure DHCP server.
+#
+# Logging: /var/log/syslog
 
 
 - name: Install packages

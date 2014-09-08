@@ -3,6 +3,8 @@
 ### DNS SERVER - BIND ###
 #
 # Install and configure GIS.lab's internal DNS records 'gis.lab'.
+#
+# Logging: /var/log/syslog
 
 
 - name: Install packages

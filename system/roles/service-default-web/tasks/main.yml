@@ -3,6 +3,13 @@
 ###  DEFAULT WEB PAGE ###
 #
 # Install web server and configure default web page content.
+#
+# Logging: 
+#   production: /var/log/apache2/access.log /var/log/syslog
+#               /var/log/nginx/access.log /var/log/nginx/error.log
+
+#   debug:      /var/log/apache2/access.log /var/log/syslog
+#               /var/log/nginx/access.log /var/log/nginx/error.log
 
 
 - name: Install packages

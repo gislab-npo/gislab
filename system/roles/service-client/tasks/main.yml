@@ -3,6 +3,8 @@
 ### CLIENT INSTALLATION ###
 #
 # Install GIS.lab client image and configure LAN boot system.
+#
+# Logging: /var/log/syslog
 
 
 - name: Install packages

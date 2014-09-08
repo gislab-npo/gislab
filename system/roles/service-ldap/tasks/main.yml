@@ -3,6 +3,8 @@
 ###  LDAP DATABASE ###
 #
 # Install and configure authentication server.
+#
+# Logging: /var/log/syslog
 
 
 - name: Install packages

@@ -3,6 +3,9 @@
 ### DATABASE SERVER - POSTGRESQL/POSTGIS ###
 #
 # Install and configure database server and create GIS template database.
+#
+#   production: /var/log/postgresql/postgresql-error.log
+#   debug:      /var/log/postgresql/postgresql-debug.log
 
 
 - name: Install packages
