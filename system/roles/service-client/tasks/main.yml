@@ -23,16 +23,6 @@
   copy: src=static/system/ dest="{{ GISLAB_INSTALL_CLIENT_ROOT }}"
 
 
-# Image backup
-- name: Create backup of existing client image
-  command: cp /opt/ltsp/images/i386.img /opt/ltsp/images/i386-backup-{{ GISLAB_INSTALL_DATETIME }}.img
-  args:
-    removes: /opt/ltsp/images/i386.img
-
-- name: Remove obsolete client image backups
-  shell: find /opt/ltsp/images/ -iname "i386-backup-*.img" -mtime 7 | xargs rm -vf
-
-
 # Client installation scripts
 - name: Create clean copy of default Ubuntu client installation scripts
   command: cp -a /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean
