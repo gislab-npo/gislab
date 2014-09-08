@@ -1,15 +1,8 @@
-# Install VirtualBox support (guest additions).
+# Install VirtualBox Guest additions. Latest kernel supported by VirtualBox Guest additions on Ubuntu 12.04 is 3.8.
 
 case "$MODE" in
     finalization)
 	if [ "$GISLAB_CLIENT_VIRTUALBOX_SUPPORT" == "True" ]; then
-		# purge all installed kernel packages
-		chroot $ROOT dpkg-query -W -f='${Package}\n' linux-image-* | xargs  apt-get --assume-yes --force-yes purge
-
-		# install kernel package matching version on server
-		chroot $ROOT apt-get --assume-yes --force-yes --no-install-recommends install linux-image-$(uname -r) \
-			linux-headers-$(uname -r)
-
 		# install VirtualBox additions from ISO
 		if [ -n "${GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO}" ]; then
 			mkdir -p $ROOT/tmp/virtualbox/{iso,mnt}

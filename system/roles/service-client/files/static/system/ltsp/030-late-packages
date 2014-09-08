@@ -1,8 +1,12 @@
 # Force late packages installation with '--no-install-recommends' option (it is switched off
-# in '030-fat-client'). This script overrides one provided by LTSP.
+# in '030-fat-client'). LATE_PACKAGES variable contains kernel version to install which is
+# provided by 'kernel-selection' script.
+# This script overrides one provided by LTSP.
 
 case "$MODE" in
     finalization)
-        chroot $ROOT apt-get --no-install-recommends --assume-yes --force-yes install $GISLAB_CLIENT_INSTALL_PACKAGES
+        chroot $ROOT apt-get --no-install-recommends --assume-yes --force-yes install \
+		$LATE_PACKAGES \
+		$GISLAB_CLIENT_INSTALL_PACKAGES
         ;;
 esac
