@@ -212,6 +212,9 @@
 
 
 # The end
+- name: Remove temporary 'ldif' file
+  file: path=/tmp/i.ldif state=absent
+
 - name: Finally, mark successful LDAP configuration and remove temporary files
   shell: rm -f /tmp/i.ldif; touch /var/lib/gislab/ldap-configuration.done
   args:
