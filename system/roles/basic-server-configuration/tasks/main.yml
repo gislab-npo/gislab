@@ -106,7 +106,10 @@
     - "{{ GISLAB_INSTALL_CLIENT_ROOT }}"
     - "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"
     - "{{ GISLAB_INSTALL_USER_DATA_ROOT }}"
+    - /etc/gislab
     - /var/lib/gislab
+    - /etc/cron.d.bin
+    - /usr/local/python-virtualenvs
 
 
 # Basic server configuration
