@@ -6,6 +6,21 @@
 
 
 # Facts
+- name: Detect GIS.lab install action (new installation or upgrade)
+  stat: path=/var/lib/gislab/installation.done
+  register: installation_done
+
+- name: Set GIS.lab install action variable (install)
+  set_fact:
+    GISLAB_INSTALL_ACTION: install
+  when: installation_done.stat.exists == false
+
+- name: Set GIS.lab install action variable (upgrade)
+  set_fact:
+    GISLAB_INSTALL_ACTION: upgrade
+  when: installation_done.stat.exists == true
+
+
 - name: Set GIS.lab installation root directory
   set_fact:
     GISLAB_ROOT: /opt/gislab
