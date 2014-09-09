@@ -20,8 +20,8 @@
     - service-gislab-web
     - service-load-balancer
     - service-statistics
+    - connection-forwarding
     - user-data
     - service-worker
     - { role: service-client, when: "'{{ GISLAB_SUITE }}' == 'lab'" }
-    - connection-forwarding
     - installation-done
