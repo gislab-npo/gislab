@@ -22,7 +22,7 @@
          done > /var/lib/gislab/user-accounts-clean.done
   args:
     executable: /bin/bash
-    creates: /var/lib/gislab/user-accounts-clean.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 
 - name: Set strong password for provisioning user account

@@ -47,20 +47,17 @@
 # generally we don't need to know it, but we can find it in '/etc/ldapscripts/ldapscripts.passwd'
   shell: pwgen -s -N 1 10
   register: ldap_admin_pass
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 - name: Generate hash of LDAP admin password (run only once)
   shell: slappasswd -s {{ ldap_admin_pass.stdout }} -h {SSHA}
   register: ldap_admin_pass_hash
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 - name: Save LDAP admin password to LDAP db (run only once)
   shell: 'printf "dn: olcDatabase={1}hdb,cn=config\nreplace: olcRootPW\nolcRootPW: {{ ldap_admin_pass_hash.stdout }}\n" > /tmp/i.ldif;
          ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 
 # SSL
@@ -78,8 +75,7 @@
     - certtool --generate-privkey
       --bits 1024
       --outfile /etc/ssl/private/server_slapd_key.pem
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 - name: Configure server
   template: src=ssl/server.info.j2 dest=/etc/ssl/server.info
@@ -91,8 +87,7 @@
          --load-ca-privkey /etc/ssl/private/cakey.pem
          --template /etc/ssl/server.info
          --outfile /etc/ssl/certs/server_slapd_cert.pem
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 
 - name: Load TLS certificates configuration
@@ -100,8 +95,7 @@
 
 - name: Install TLS certificates configuration (run only once)
   shell: ldapmodify -Q -Y EXTERNAL -H ldapi:// -f /tmp/i.ldif
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 
 - name: Create 'openldap' user account (run only once)
@@ -111,8 +105,7 @@
     - chgrp ssl-cert /etc/ssl/private/server_slapd_key.pem
     - chmod g+r /etc/ssl/private/server_slapd_key.pem
     - chmod o-r /etc/ssl/private/server_slapd_key.pem
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
   notify:
     - service slapd restart
 
@@ -120,15 +113,13 @@
 - name: Allow only encrypted connection (run only once)
   shell: 'printf "dn: cn=config\nchangetype: modify\nadd: olcSecurity\nolcSecurity: ssf=64\n" > /tmp/i.ldif;
          ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 
 # LDAP sudo
 - name: Install LDAP sudo support (run only once)
   shell: DEBIAN_FRONTEND=noninteractive SUDO_FORCE_REMOVE=yes apt-get -y install sudo-ldap
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
   notify:
     - service slapd restart
 
@@ -137,8 +128,7 @@
 
 - name: Install sudo LDAP schema (run only once)
   shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 
 # LDAP Postfix schema
@@ -147,8 +137,7 @@
 
 - name: Install Postfix LDAP schema (run only once)
   shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 
 # LDAP indexes
@@ -157,8 +146,7 @@
 
 - name: Install LDAP indexes (run only once)
   shell: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 
 # GIS.lab LDAP tree
@@ -167,8 +155,7 @@
 
 - name: Install GIS.lab LDAP tree (run only once)
   shell: 'ldapadd -Z -w {{ ldap_admin_pass.stdout }} -D "cn=admin,dc=gis,dc=lab" -f /tmp/i.ldif'
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 - meta: flush_handlers
 
@@ -188,13 +175,11 @@
 
 - name: Install LDAP scripts runtime patch (run only once)
   shell: patch /usr/share/ldapscripts/runtime /tmp/runtime-fix.patch; rm -f /tmp/runtime-fix.patch
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 - name: Save LDAP admin password to LDAP scripts (run only once)
   shell: printf "{{ ldap_admin_pass.stdout }}" > /etc/ldapscripts/ldapscripts.passwd && chmod 0600 /etc/ldapscripts/ldapscripts.passwd
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
+  when: GISLAB_INSTALL_ACTION == "install"
 
 
 # Logging
@@ -216,8 +201,3 @@
 # The end
 - name: Remove temporary 'ldif' file
   file: path=/tmp/i.ldif state=absent
-
-- name: Finally, mark successful LDAP configuration and remove temporary files
-  shell: rm -f /tmp/i.ldif; touch /var/lib/gislab/ldap-configuration.done
-  args:
-    creates: /var/lib/gislab/ldap-configuration.done
