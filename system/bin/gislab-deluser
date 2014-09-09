@@ -90,10 +90,11 @@ rm -rf /storage/share/$GISLAB_USER # NFS directory
 
 
 # run account hooks
+GISLAB_ACCOUNT_ACTION="remove"
 for hook in $GISLAB_ROOT/user/plugins/account/*.*; do
 	gislab_print_info "Running account hooks '$(basename $hook)'"
-	GISLAB_ACCOUNT_ACTION="remove" GISLAB_USER=$GISLAB_USER $hook
-	echo "$(gislab_config_header)" >> /var/lib/gislab/account-hook-$(basename $hook).done
+	GISLAB_USER=$GISLAB_USER $hook
+	echo "$(date +'%Y-%m-%d-%T') $GISLAB_ACCOUNT_ACTION" >> /var/lib/gislab/account-hook-$(basename $hook).done
 done
 
 gislab_print_info "Account '$GISLAB_USER' removed"

@@ -178,10 +178,11 @@ find /home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER_PASSWORD }}/$GISL
 
 
 # run account hooks
+GISLAB_ACCOUNT_ACTION="add" 
 for hook in $GISLAB_ROOT/user/plugins/account/*.*; do
 	gislab_print_info "Running account hook '$(basename $hook)'"
-	GISLAB_ACCOUNT_ACTION="add" GISLAB_USER=$GISLAB_USER $hook
-	touch /var/lib/gislab/account-hook-$(basename $hook).done
+	GISLAB_USER=$GISLAB_USER $hook
+	echo "$(date +'%Y-%m-%d-%T') $GISLAB_ACCOUNT_ACTION" >> /var/lib/gislab/account-hook-$(basename $hook).done
 done
 
 

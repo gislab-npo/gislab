@@ -15,11 +15,11 @@
 # User accounts cleanup and security
 - name: Remove not required user accounts
 # this task can run only once, otherwise it can remove GIS.lab user's accounts once they are created
-  shell: for userid in {1000..1010}; do username=$(getent passwd $userid | awk -F ':' '{print $1}'); \
-         if [ "$username" != "" -a "$username" != "{{ GISLAB_PROVISIONING_USER }}" ]; then \
-           deluser --remove-home $username; \
-         fi; \
-         done > /var/lib/gislab/user-accounts-clean.done
+  shell: for userid in {1000..1010}; do username=$(getent passwd $userid | awk -F ':' '{print $1}');
+         if [ "$username" != "" -a "$username" != "{{ GISLAB_PROVISIONING_USER }}" ]; then
+           deluser --remove-home $username;
+         fi;
+         done
   args:
     executable: /bin/bash
   when: GISLAB_INSTALL_ACTION == "install"
