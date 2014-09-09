@@ -17,7 +17,7 @@ objectClass: sudoRole
 cn: defaults
 description: Default sudoOption's go here
 sudoOption: env_reset
-sudoOption: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:{{ GISLAB_ROOT }}/system/bin:"
+sudoOption: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:{{ GISLAB_ROOT }}/bin:"
 
 dn: cn=%labadmins,ou=SUDOers,dc=gis,dc=lab
 objectClass: top
