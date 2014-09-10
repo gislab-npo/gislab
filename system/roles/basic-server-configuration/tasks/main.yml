@@ -75,6 +75,18 @@
   when: ansible_eth0.active and ansible_eth1.active
 
 
+# Sanity checks
+- name: Test if all defined plugins exists
+  command: file "{{ GISLAB_ROOT }}/user/plugins/{{ item }}"
+  with_items: GISLAB_PLUGINS_REQUIRE
+  ignore_errors: True
+  register: plugins_exists
+
+- name: Fail if some defined plugin does not exist
+  fail: msg="One or more plugins defined in GISLAB_PLUGINS_REQUIRE does not exist"
+  when: plugins_exists.msg != "All items completed"
+
+
 # Configuration and basic directory structure
 - name: Save current GIS.lab configuration to '/etc/gislab_version' file
   copy: content='
@@ -112,6 +124,14 @@
     GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"\n
     GISLAB_SERVER_NETWORK_DEVICE="{{ GISLAB_SERVER_NETWORK_DEVICE }}"'
     dest="/etc/gislab_version"
+
+- name: Flush some GIS.lab installation directories
+  file: path="{{ item }}" state=absent
+  with_items:
+    - "{{ GISLAB_INSTALL_WORKER_ROOT }}"
+    - "{{ GISLAB_INSTALL_CLIENT_ROOT }}"
+    - "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"
+    - "{{ GISLAB_INSTALL_USER_DATA_ROOT }}"
 
 - name: Create main GIS.lab installation directories structure
   file: path="{{ item }}" state=directory

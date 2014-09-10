@@ -35,11 +35,8 @@
     - rm -rf /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu
     - cp -a /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu.clean /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu
 
-- name: Install custom client installation scripts including user plugins
-  shell: "{{ item }}"
-  with_items:
-    - cp -a {{ GISLAB_INSTALL_CLIENT_ROOT }}/ltsp/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
-    - cp -a {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/client/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/
+- name: Install custom client installation scripts
+  shell: "cp -a {{ GISLAB_INSTALL_CLIENT_ROOT }}/ltsp/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/"
 
 
 # Image

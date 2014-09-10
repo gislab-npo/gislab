@@ -12,6 +12,7 @@
   shell: "{{ item }}"
   with_items:
     - chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/server
+    - chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/client
     - chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/account
 
 - name: Install user data in to 'Repository' share

@@ -150,7 +150,7 @@ GISLAB_WALLPAPER: user/graphic/gislab-wallpaper.png
 # Example: "server/gislab-example-plugin.sh, client/031-gislab-example-plugin, account/gislab-example-hook.sh"
 GISLAB_PLUGINS_REQUIRE:
   - server/gislab-example-plugin.sh
-  - client/031-gislab-example-plugin
+  - client/gislab-example-plugin.sh
   - account/gislab-example-hook.sh
 
 
