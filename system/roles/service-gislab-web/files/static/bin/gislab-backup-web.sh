@@ -12,6 +12,7 @@ gislab_require_root
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
 
 # backup
+mkdir -p /storage/backup
 BACKUP_FILE=/storage/backup/gislab-web-storage-backup-$DATE.json
 
 source /usr/local/python-virtualenvs/webgis/bin/activate
