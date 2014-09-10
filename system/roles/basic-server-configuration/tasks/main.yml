@@ -76,11 +76,21 @@
 
 
 # Sanity checks
+# GISLAB_PLUGINS_REQUIRE
+- name: Create temporary directory for user plugins check
+  file: path=/tmp/gislab-user-plugins state=directory
+
+- name: Copy user plugins to temporary directory
+  copy: src=../user/plugins/ dest=/tmp/gislab-user-plugins
+
 - name: Test if all defined plugins exists
-  command: file "{{ GISLAB_ROOT }}/user/plugins/{{ item }}"
+  command: file "/tmp/gislab-user-plugins/{{ item }}"
   with_items: GISLAB_PLUGINS_REQUIRE
   ignore_errors: True
   register: plugins_exists
+
+- name: Remove temporary directory for user plugins check
+  file: path=/tmp/gislab-user-plugins state=absent
 
 - name: Fail if some defined plugin does not exist
   fail: msg="One or more plugins defined in GISLAB_PLUGINS_REQUIRE does not exist"
