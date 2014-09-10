@@ -148,7 +148,7 @@
 
 
 - name: Activate cache cleaning
-  template: src=cron/webgis-mapcache-clean.j2 dest=/etc/cron.d/webgis-mapcache-clean
+  template: src=cron/gislab-clean-web.j2 dest=/etc/cron.d/gislab-clean-web
 
 
 # Logging
@@ -158,10 +158,10 @@
 
 # Backup
 - name: Install storage backup script
-  copy: src=static/bin/gislab-backup-webgis.sh dest=/etc/cron.d.bin/gislab-backup-webgis.sh mode=0755
+  copy: src=static/bin/gislab-backup-web.sh dest=/etc/cron.d.bin/gislab-backup-web.sh mode=0755
 
 - name: Activate user data backup
-  template: src=cron/gislab-backup-webgis.j2 dest=/etc/cron.d/gislab-backup-webgis
+  template: src=cron/gislab-backup-web.j2 dest=/etc/cron.d/gislab-backup-web
 
 
 - meta: flush_handlers
