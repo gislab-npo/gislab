@@ -37,7 +37,6 @@ class "third-party-clients" {
 }
 
 subnet $GISLAB_NETWORK.0 netmask 255.255.255.0 {
-    next-server $GISLAB_SERVER_IP;
     option routers $GISLAB_SERVER_IP;
 
     pool {

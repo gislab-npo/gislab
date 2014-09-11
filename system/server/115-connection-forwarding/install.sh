@@ -14,7 +14,7 @@ stop on runlevel [06]
 script
 iptables --table nat --flush
 sysctl -w net.ipv4.ip_forward=1
-iptables --table nat --append POSTROUTING --source $GISLAB_NETWORK.0/24 ! --destination $GISLAB_NETWORK.0/24 --jump MASQUERADE
+iptables --table nat --append POSTROUTING --jump MASQUERADE --source $GISLAB_NETWORK.0/24
 end script
 EOF
 
