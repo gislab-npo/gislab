@@ -3,25 +3,25 @@
 - hosts: all
   sudo: yes
   roles:
-    - basic-server-configuration
-    - user-accounts
-    - service-syslog
-    - service-logcheck
-    - service-time
-    - service-dns
-    - service-ldap
-    - service-mail
-    - service-dhcp
-    - service-default-web
-    - service-files
-    - service-chat
-    - service-database
-    - service-mapserver
-    - service-gislab-web
-    - service-load-balancer
-    - service-statistics
-    - connection-forwarding
-    - user-data
-    - service-worker
-    - { role: service-client, when: "'{{ GISLAB_SUITE }}' == 'lab'" }
-    - installation-done
+    - { role: basic-server-configuration, tags: ['basic-server-configuration'] }
+    - { role: user-accounts, tags: ['user-accounts'] }
+    - { role: service-syslog, tags: ['service-syslog'] }
+    - { role: service-logcheck, tags: ['service-logcheck'] }
+    - { role: service-time, tags: ['service-time'] }
+    - { role: service-dns, tags: ['service-dns,'] }
+    - { role: service-ldap, tags: ['service-ldap'] }
+    - { role: service-mail, tags: ['service-mail'] }
+    - { role: service-dhcp, tags: ['service-dhcp'] }
+    - { role: service-default-web, tags: ['service-default-web'] }
+    - { role: service-files, tags: ['service-files'] }
+    - { role: service-chat, tags: ['service-chat'] }
+    - { role: service-database, tags: ['service-database'] }
+    - { role: service-mapserver, tags: ['service-mapserver'] }
+    - { role: service-gislab-web, tags: ['service-gislab-web'] }
+    - { role: service-load-balancer, tags: ['service-load-balancer'] }
+    - { role: service-statistics, tags: ['service-statistics'] }
+    - { role: connection-forwarding, tags: ['connection-forwarding'] }
+    - { role: user-data, tags: ['user-data'] }
+    - { role: service-worker, tags: ['service-worker'] }
+    - { role: service-client, tags: ['service-client'], when: "'{{ GISLAB_SUITE }}' == 'lab'" }
+    - { role: installation-done, tags: ['installation-done'] }
