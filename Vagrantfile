@@ -48,7 +48,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "system/gislab.yml"
+    ansible.playbook = "system/provider-vagrant.yml"
     if CONFIG['GISLAB_DEBUG_INSTALL'] == true
       ansible.verbose = "vv"
     end
