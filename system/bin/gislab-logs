@@ -117,12 +117,12 @@ fi
 
 if [ "$WEB" == "yes" ]; then
 	$tail_cmd -f /var/log/syslog | grep ' apache:\| apache-default:' &
-	$tail_cmd -f /var/log/syslog | grep ' gunicorn\.webgis\.error:' &
-	$tail_cmd -f /var/log/nginx/error.log -f /var/log/nginx/webgis-error.log &
+	$tail_cmd -f /var/log/syslog | grep ' gunicorn\.gislab-web\.error:' &
+	$tail_cmd -f /var/log/nginx/error.log -f /var/log/nginx/gislab-web-error.log &
 fi
 
 if [ "$WEB_ACCESS" == "yes" ]; then
-	$tail_cmd -f /var/log/nginx/access.log -f /var/log/nginx/webgis-access.log &
+	$tail_cmd -f /var/log/nginx/access.log -f /var/log/nginx/gislab-web-access.log &
 fi
 
 

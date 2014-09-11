@@ -1,5 +1,5 @@
-upstream webgis {
-	server unix:/var/www/webgis/gunicorn.sock fail_timeout=0;
+upstream gislab-web {
+	server unix:/var/www/gislab-web/gunicorn.sock fail_timeout=0;
 }
  
 server {
@@ -7,11 +7,11 @@ server {
 	server_name web.*;
 	client_max_body_size 4G;
  
-	access_log /var/log/nginx/webgis-access.log;
-	error_log /var/log/nginx/webgis-error.log;
+	access_log /var/log/nginx/gislab-web-access.log;
+	error_log /var/log/nginx/gislab-web-error.log;
 	
 	location /static/ {
-		alias /var/www/webgis/static/;
+		alias /var/www/gislab-web/static/;
 
 		expires 1h;
 		add_header Pragma public;
@@ -19,7 +19,7 @@ server {
 	}
 
 	location /media/ {
-		alias /storage/webgis-media/;
+		alias /storage/gislab-web-media/;
 
 		expires 1h;
 		add_header Pragma public;
@@ -27,7 +27,7 @@ server {
 	}
 
 	location ~ ^/tile/(?<tile_path>.*)$ {
-		alias /storage/webgis-media/cache/;
+		alias /storage/gislab-web-media/cache/;
 
 		add_header X-Static super;
 		expires 365d;
@@ -38,7 +38,7 @@ server {
 	}
 
 	location ~ ^/legend/(?<legend_path>.*)$ {
-		alias /storage/webgis-media/cache/;
+		alias /storage/gislab-web-media/cache/;
 
 		add_header X-Static super;
 		expires 365d;
@@ -53,7 +53,7 @@ server {
 		proxy_redirect off;
 
 		if (!-f $request_filename) {
-			proxy_pass http://webgis;
+			proxy_pass http://gislab-web;
 			break;
 		}
 	}
@@ -62,11 +62,11 @@ server {
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 		proxy_set_header Host $http_host;
 		proxy_redirect off;
-		proxy_pass http://webgis;
+		proxy_pass http://gislab-web;
 	}
 
 	error_page 500 502 503 504 /500.html;
 	location = /500.html {
-		root /var/www/webgis/static/;
+		root /var/www/gislab-web/static/;
 	}
 }

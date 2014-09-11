@@ -24,9 +24,9 @@ TEMPLATE_DEBUG = False
 
 
 ### GIS.lab Web SETTINGS ###
-WEBGIS_PROJECT_ROOT = '/mnt/share/'
-WEBGIS_MAPSERVER_URL = 'http://ms.gis.lab:90/cgi-bin/qgis_mapserv.fcgi'
-WEBGIS_GUEST_USERNAME = 'guest'
+GISLAB_WEB_PROJECT_ROOT = '/mnt/share/'
+GISLAB_WEB_MAPSERVER_URL = 'http://ms.gis.lab:90/cgi-bin/qgis_mapserv.fcgi'
+GISLAB_WEB_GUEST_USERNAME = 'guest'
 
 # Dictionary of <MIME Type>: <File extension> pairs
 FILE_EXTENSIONS_TABLE = {
@@ -111,8 +111,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/media/'
 
-if os.path.exists('/storage/webgis-media'):
-	MEDIA_ROOT = '/storage/webgis-media'
+if os.path.exists('/storage/gislab-web-media'):
+	MEDIA_ROOT = '/storage/gislab-web-media'
 else:
 	MEDIA_ROOT =  os.path.join(BASE_DIR, 'media/')
 

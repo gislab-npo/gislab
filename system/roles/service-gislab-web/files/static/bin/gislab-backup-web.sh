@@ -15,8 +15,8 @@ DATE=$(date '+%Y-%m-%d:%H-%M-%S')
 mkdir -p /storage/backup
 BACKUP_FILE=/storage/backup/gislab-web-storage-backup-$DATE.json
 
-source /usr/local/python-virtualenvs/webgis/bin/activate
-/var/www/webgis/manage.py dumpdata storage > $BACKUP_FILE
+source /usr/local/python-virtualenvs/gislab-web/bin/activate
+/var/www/gislab-web/manage.py dumpdata storage > $BACKUP_FILE
 gzip $BACKUP_FILE
 chmod 400 $BACKUP_FILE.gz
 

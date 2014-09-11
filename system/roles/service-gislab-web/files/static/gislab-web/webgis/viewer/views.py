@@ -97,7 +97,7 @@ def get_project_layers_info(project_key, publish, project=None):
 	if data:
 		return { param.replace(prefix, ''): value for param, value in data.iteritems() }
 	elif project:
-		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, os.path.splitext(project)[0] + '.meta')
+		metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, os.path.splitext(project)[0] + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
 			if int(metadata.publish_date_unix) == int(publish):
@@ -114,7 +114,7 @@ def get_project_layers_info(project_key, publish, project=None):
 
 @login_required
 def ows_request(request):
-	url = "{0}?{1}".format(settings.WEBGIS_MAPSERVER_URL.rstrip("/"), request.environ['QUERY_STRING'])
+	url = "{0}?{1}".format(settings.GISLAB_WEB_MAPSERVER_URL.rstrip("/"), request.environ['QUERY_STRING'])
 	owsrequest = urllib2.Request(url)
 	owsrequest.add_header("User-Agent", "GIS.lab Web")
 	with contextlib.closing(urllib2.urlopen(owsrequest)) as resp:
@@ -134,7 +134,7 @@ def tile(request, project_hash, publish, layers_hash=None, z=None, x=None, y=Non
 			publish=publish,
 			name=layers_hash,
 			provider_layers=request.GET['layers'].encode("utf-8"),
-			provider_url=set_query_parameters(settings.WEBGIS_MAPSERVER_URL, {'map': project}),
+			provider_url=set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'map': project}),
 			image_format=format,
 			tile_size=256,
 			metasize=5,
@@ -154,7 +154,7 @@ def legend(request, project_hash, publish, layer_hash=None, zoom=None, format=No
 			publish=publish,
 			name=layer_hash,
 			provider_layers=params['LAYER'].encode('utf-8'),
-			provider_url=set_query_parameters(settings.WEBGIS_MAPSERVER_URL, {'map': project}),
+			provider_url=set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'map': project}),
 			image_format=format,
 		)
 		params.pop('PROJECT')
@@ -220,7 +220,7 @@ def page(request):
 
 	if project:
 		project = os.path.splitext(project)[0]
-		metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, project + '.meta')
+		metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, project + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
 		except:
@@ -326,7 +326,7 @@ def page(request):
 		context.update({
 			'project': project,
 			'ows_url': ows_url,
-			'wms_url': set_query_parameters(settings.WEBGIS_MAPSERVER_URL, {'map': project+'.qgs'}),
+			'wms_url': set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'map': project+'.qgs'}),
 			'project_extent': metadata.extent,
 			'zoom_extent': form.cleaned_data['extent'] or metadata.zoom_extent,
 			'print_composers': metadata.composer_templates if not context['user'].is_guest else None,
@@ -404,9 +404,9 @@ def user_projects(request, username):
 	if username != request.user.username and not request.user.is_superuser:
 		return HttpResponse("You don't have permissions to display published projects of other users", content_type='text/plain', status=403)
 
-	projects_root = os.path.join(settings.WEBGIS_PROJECT_ROOT, username)
+	projects_root = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, username)
 	projects = []
-	start_index = len(settings.WEBGIS_PROJECT_ROOT)
+	start_index = len(settings.GISLAB_WEB_PROJECT_ROOT)
 	for root, dirs, files in os.walk(projects_root):
 		if files:
 			for filename in files:

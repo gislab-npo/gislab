@@ -5,7 +5,7 @@ from webgis.viewer import models as viewer_models
 
 
 def _post_syncdb_routines(sender, app, **kwargs):
-	guest_username = getattr(settings, 'WEBGIS_GUEST_USERNAME', '')
+	guest_username = getattr(settings, 'GISLAB_WEB_GUEST_USERNAME', '')
 	if guest_username:
 		user, created = viewer_models.GislabUser.objects.get_or_create(username=guest_username, first_name=guest_username.title())
 		user.set_unusable_password()

@@ -3,5 +3,5 @@
 - name: service nginx restart
   service: name=nginx state=restarted
 
-- name: service webgis restart
-  service: name=webgis state=restarted
+- name: service gislab-web restart
+  service: name=gislab-web state=restarted

@@ -7,6 +7,6 @@ case "$MODE" in
 
 	cp $GISLAB_ROOT/$GISLAB_WALLPAPER $ROOT/usr/share/xfce4/backdrops/gislab-wallpaper.png
 
-	cp /var/www/webgis/static/viewer/images/webgis.xpm $ROOT/usr/share/pixmaps/webgis.xpm
+	cp /var/www/gislab-web/static/viewer/images/gislab-web.xpm $ROOT/usr/share/pixmaps/gislab-web.xpm
     ;;
 esac

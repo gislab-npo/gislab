@@ -8,11 +8,11 @@ class GislabUser(AbstractUser):
 
 	@classmethod
 	def get_guest_user(cls):
-		if getattr(settings, 'WEBGIS_GUEST_USERNAME', None):
+		if getattr(settings, 'GISLAB_WEB_GUEST_USERNAME', None):
 			if not hasattr(cls, 'guest_user'):
 				guest_user = None
 				try:
-					guest_user = GislabUser.objects.get(username=settings.WEBGIS_GUEST_USERNAME)
+					guest_user = GislabUser.objects.get(username=settings.GISLAB_WEB_GUEST_USERNAME)
 					guest_user.backend = "django.contrib.auth.backends.ModelBackend"
 				except GislabUser.DoesNotExist:
 					pass
@@ -21,7 +21,7 @@ class GislabUser(AbstractUser):
 
 	@property
 	def is_guest(self):
-		return self.username == getattr(settings, 'WEBGIS_GUEST_USERNAME', '')
+		return self.username == getattr(settings, 'GISLAB_WEB_GUEST_USERNAME', '')
 
 	def get_profile(self):
 		return None

@@ -38,14 +38,14 @@ for dirpath, dirnames, filenames in os.walk(package_root_dir):
 			data_files.append(os.path.join(prefix, f))
 
 # setup
-setup(name='gislab-webgis',
+setup(name='gislab-web',
 	version=".".join(map(str, __import__('webgis').VERSION)),
 	description='GIS.lab Web application',
 	author='Marcel Dancak, Ivan Mincik',
 	author_email='dancakm@gmail.com, ivan.mincik@gmail.com',
 	url='https://github.com/imincik/gis-lab/',
 	long_description=file('README.md','rb').read(),
-	package_dir={'gislab-webgis': '.'},
+	package_dir={'gislab-web': '.'},
 	packages=packages,
 	package_data={'webgis': data_files},
 	classifiers=classifiers

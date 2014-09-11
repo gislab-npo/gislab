@@ -21,7 +21,7 @@ class Command(BaseCommand):
 			project = project_record.project
 			project_hash = hashlib.md5(project).hexdigest()
 			project_dir = os.path.join(cache.basedir, project_hash)
-			metadata_filename = os.path.join(settings.WEBGIS_PROJECT_ROOT, project+'.meta')
+			metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, project+'.meta')
 			if os.path.exists(metadata_filename):
 				try:
 					metadata = MetadataParser(metadata_filename)
