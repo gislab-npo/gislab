@@ -23,10 +23,9 @@ function usage() {
 	-e  print email service logs
 	-l  print ldap service logs
 	-d  print database service logs
-	-m  print mapserver service logs (include error logs from load-balancer servers)
+	-m  print mapserver service logs (include error logs from load-balancer workers)
 	-w  print web services error logs
-	-W  print web services access and error logs
-	-c  print chat service logs 
+	-W  print web services access logs
 	-h  display this help
 	"
 	exit 255
@@ -50,7 +49,6 @@ do
 			w) WEB="yes" ;;
 			W) WEB="yes"
 			   WEB_ACCESS="yes" ;;
-			c) CHAT="yes" ;;
 			h) usage ;;
 			\?) exit 1 ;;
         esac
@@ -67,8 +65,7 @@ if [ "$ALL" == "yes" \
   -a "$DATABASE" != "yes" \
   -a "$MAPSERVER" != "yes" \
   -a "$WEB" != "yes" \
-  -a "$WEB_ACCESS" != "yes" \
-  -a "$CHAT" != "yes" ]; then
+  -a "$WEB_ACCESS" != "yes" ]; then
 	AUTH="yes"
 	DNS="yes"
 	DHCP="yes"
@@ -78,7 +75,6 @@ if [ "$ALL" == "yes" \
 	MAPSERVER="yes"
 	WEB="yes"
 	WEB_ACCESS="yes"
-	CHAT="yes"
 fi
 
 tail_cmd="tail -n $LOGLINES"
@@ -126,12 +122,9 @@ if [ "$WEB" == "yes" ]; then
 fi
 
 if [ "$WEB_ACCESS" == "yes" ]; then
-	$tail_cmd -f /var/log/apache2/access.log -f /var/log/nginx/access.log -f /var/log/nginx/webgis-access.log &
+	$tail_cmd -f /var/log/nginx/access.log -f /var/log/nginx/webgis-access.log &
 fi
 
-if [ "$CHAT" == "yes" ]; then
-	$tail_cmd -f /var/log/ircd/ircd-hybrid.log &
-fi
 
 # wait for Ctrl+C
 wait

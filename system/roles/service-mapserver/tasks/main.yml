@@ -4,8 +4,7 @@
 #
 # Install and configure OWS server (mapserver).
 #
-#   production: /var/log/apache2/mapserver-access.log /var/log/apache2/mapserver-error.log
-#   debug:      /var/log/apache2/mapserver-access.log /var/log/apache2/mapserver-error.log
+# Logging: /var/log/syslog /var/log/apache2/mapserver-access.log
 
 
 - name: Install packages
