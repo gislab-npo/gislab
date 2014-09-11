@@ -9,5 +9,5 @@
 - name: Mark successful installation by creating file in '/var/lib/gislab' directory
   shell: "echo '{{ GISLAB_INSTALL_DATETIME }} {{ GISLAB_INSTALL_ACTION }}' >> /var/lib/gislab/installation.done"
 
-- name: Print installation summary
-  debug: msg="GIS.lab ID -> {{ GISLAB_UNIQUE_ID }}, GIS.lab version -> {{ GISLAB_VERSION }}"
+- name: Print GIS. lab installation summary
+  debug: msg="ID -> {{ GISLAB_UNIQUE_ID }}, version -> {{ GISLAB_VERSION }}"
