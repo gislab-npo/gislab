@@ -656,7 +656,10 @@ class WebGisPlugin:
 				layer_data['attributes'] = attributes_data
 				layer_data['pk_attributes'] = [fields[index].name() for index in layer.dataProvider().pkAttributeIndexes()]
 				return layer_data
-		metadata['overlays'] = create_overlays_data(self.overlay_layers_tree).get('layers')
+		if self.overlay_layers_tree:
+			metadata['overlays'] = create_overlays_data(self.overlay_layers_tree).get('layers')
+		else:
+			metadata['overlays'] = []
 
 		composer_templates = []
 		for composer in self.iface.activeComposers():
@@ -1195,7 +1198,8 @@ class WebGisPlugin:
 				widget.setCheckState(1, Qt.Unchecked)
 				widget.setCheckState(2, Qt.Checked)
 			return widget
-		dialog.overlaysTree.addTopLevelItems(create_layer_widget(self.overlay_layers_tree).takeChildren())
+		if self.overlay_layers_tree:
+			dialog.overlaysTree.addTopLevelItems(create_layer_widget(self.overlay_layers_tree).takeChildren())
 
 		metadata_filename = os.path.splitext(self.project.fileName())[0] + '.meta'
 		self.current_metadata = None
