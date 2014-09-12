@@ -965,11 +965,11 @@ table.x-btn-noicon {
 	padding-bottom: 3px;
 }
 
-.invisible .x-tool {
+.x-tool.invisible {
 	background-image: none;
 	cursor: default !important;
 }
-.x-btn.invisible {
+.invisible .x-btn {
 	cursor: default !important;
 }
 #featureinfo-panel-xcollapsed {
