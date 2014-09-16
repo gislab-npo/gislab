@@ -1038,7 +1038,10 @@ class WebGisPlugin:
 				project_extent[2]-extent_buffer,
 				project_extent[3]-extent_buffer
 			]
-		dialog.extent_layer.setCurrentIndex(dialog.extent_layer.findData(project_extent))
+		extent_index = dialog.extent_layer.findData(project_extent)
+		if extent_index < 0:
+			extent_index = 0
+		dialog.extent_layer.setCurrentIndex(extent_index)
 		dialog.use_mapcache.setChecked(metadata.get('use_mapcache') is True)
 		dialog.extent_buffer.setValue(extent_buffer)
 		# create list of all layers from layers metadata tree structure
