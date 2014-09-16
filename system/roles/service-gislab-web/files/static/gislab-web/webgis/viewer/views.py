@@ -401,8 +401,14 @@ def user_projects(request, username):
 	if not username:
 		redirect_url = reverse('viewer:user_projects', kwargs={'username': request.user.username})
 		return HttpResponseRedirect(redirect_url)
-	if username != request.user.username and not request.user.is_superuser:
-		return HttpResponse("You don't have permissions to display published projects of other users", content_type='text/plain', status=403)
+	if username != request.user.username:
+		if not request.user.is_superuser:
+			return HttpResponse("Access Denied", content_type='text/plain', status=403)
+		else:
+			try:
+				request.user = models.GislabUser.objects.get(username=username)
+			except models.GislabUser.DoesNotExist:
+				return HttpResponse("User does not exist.", content_type='text/plain', status=403)
 
 	projects_root = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, username)
 	projects = []
@@ -419,6 +425,7 @@ def user_projects(request, username):
 						projects.append({
 							'title': metadata.title,
 							'url': url,
+							'decoded_url': urllib.unquote(url),
 							'publication_time_unix': int(metadata.publish_date_unix),
 							'expiration_time_unix': int(time.mktime(time.strptime(metadata.expiration, "%d.%m.%Y"))) if metadata.expiration else None
 						})

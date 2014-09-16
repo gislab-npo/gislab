@@ -48,7 +48,7 @@
 									flex: 1
 								}, {
 									xtype: 'tbtext',
-									text: '{% trans "Published projects by user" %} {{ username }}',
+									text: '{% trans "Published projects by user" %} {% if user.get_full_name %} {{ user.get_full_name }} {% else %} {{ username }} {% endif %}',
 									cls: 'app-title'
 								}, {
 									xtype: 'tbspacer',
@@ -146,7 +146,7 @@
 									{% for project_info in projects %}{
 										title: '{{ project_info.title }}',
 										publication_time: new Date({{ project_info.publication_time_unix }}*1000),
-										url: '<a href="{{ project_info.url }}" target="_blank">{{ project_info.url }}</a>',
+										url: '<a href="{{ project_info.url }}" target="_blank">{{ project_info.decoded_url }}</a>',
 										{% if project_info.expiration_time_unix %}expiration_time: new Date({{ project_info.expiration_time_unix }}*1000),{% endif %}
 									},{% endfor %}
 								],
