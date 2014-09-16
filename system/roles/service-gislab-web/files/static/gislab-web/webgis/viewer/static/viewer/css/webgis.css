@@ -669,8 +669,11 @@ img.export-feature-disabled {
 	opacity: 0.4;
 	filter: alpha(opacity=40);
 	cursor: default;
-	background-image: url('../images/toolbar/export.png')!important;
+	background-image: url('../images/toolbar/tools.png')!important;
 	background: no-repeat;
+	background-position: 0 -48px;
+	background-position-x: 0px;
+	background-position-y: -48px;
 	width: 16px;
 	height: 16px;
 	margin-left: 4px;
