@@ -20,8 +20,8 @@ end
 # Configuration file for machine running under Vagrant provider.
 # Use this file to override default GIS.lab configuration when
 # using Vagrant provider.
-if File.exist?('system/host_vars/gislab')
-  conf = YAML.load_file('system/host_vars/gislab')
+if File.exist?('system/host_vars/gislab_vagrant')
+  conf = YAML.load_file('system/host_vars/gislab_vagrant')
   conf.each do |key, value|
     if not value.nil?
       CONFIG[key] = value
@@ -31,7 +31,7 @@ end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # set GIS.lab server machine name in VBox environment
-  config.vm.define :gislab do |t|
+  config.vm.define :gislab_vagrant do |t|
   end
 
   # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box

@@ -1,9 +1,10 @@
 # This file contains default values of GIS.lab configuration variables.
 # Do not modify this file, rather create a new overriding file in
-# 'host_vars' directory with name matching host name in your Ansible
+# 'host_vars' directory with name matching a host name in your Ansible
 # inventory.
 # If using local Vagrant provider (VirtualBox or VMWare), create
-# 'gislab' file in 'host_vars' dir and fill it with your configuration.
+# 'gislab_vagrant' file in 'host_vars' dir and fill it with your
+# configuration. It will be automatically loaded by Vagrant.
 
 # Changing configuration once GIS.lab is installed mostly requires
 # server upgrade. Each configuration variable contains information
