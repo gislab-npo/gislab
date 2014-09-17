@@ -128,9 +128,9 @@ GISLAB_NETWORK: 192.168.50
 # Change requires running upgrade.
 GISLAB_SSH_PRIVATE_KEY:
 
-# Relative path to public SSH key which will be used for accessing GIS.lab server.
+# Absolute path to public SSH key which will be used for accessing GIS.lab server.
 # WARNING: GIS.lab may use insecure SSH key if no value specified.
-# Example: user/id_rsa.pub
+# Example: /home/user/.ssh/id_rsa.pub
 # Change requires running upgrade.
 GISLAB_SSH_PUBLIC_KEY:
 
