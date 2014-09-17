@@ -3,9 +3,8 @@ tmp
 .vagrant/*
 barrel
 install.log
-config-user.cfg
-*.pyc
 http-boot/gislab-client-loader.iso
 user/plugins/
 user/id_*.pub
-system/host_vars/gislab
+system/host_vars/*
+*.pyc
