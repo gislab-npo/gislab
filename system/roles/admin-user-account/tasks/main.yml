@@ -1,0 +1,17 @@
+---
+#
+### ADMINISTRATOR USER ACCOUNT ###
+#
+# Create administrator user 'gislab' account if any password given on installation start. Update password
+# if 'gislab' account already exists.
+
+
+- name: Create GIS.lab administrator user 'gislab'
+  shell: "gislab-adduser -s -g {{ GISLAB_ADMIN_FIRST_NAME }} -l {{ GISLAB_ADMIN_SURNAME }} -m {{ GISLAB_ADMIN_EMAIL }} -p {{ gislab_admin_user_password }} gislab && touch /var/lib/gislab/administrator-account.done"
+  when: gislab_admin_user_password != ""
+  args:
+    creates: /var/lib/gislab/administrator-account.done
+
+- name: Update GIS.lab administrator user password
+  shell: "gislab-password -p {{ gislab_admin_user_password }} gislab"
+  when: gislab_admin_user_password != ""
