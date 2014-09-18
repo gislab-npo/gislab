@@ -196,13 +196,8 @@
     - http://josm.openstreetmap.de/josm-apt.key
     - https://dl-ssl.google.com/linux/linux_signing_key.pub
 
-- name: Activate apt cache server if configured
-  lineinfile: dest=/etc/apt/apt.conf.d/02proxy line='Acquire::http { Proxy "{{ GISLAB_APT_HTTP_PROXY }}"; };' state=present create=yes
-  when: GISLAB_APT_HTTP_PROXY|default(None) != None 
-
-- name: Deactivate apt cache server if none configured
-  lineinfile: dest=/etc/apt/apt.conf.d/02proxy regexp="." state=absent
-  when: GISLAB_APT_HTTP_PROXY|default(None) == None
+- name: Configure apt cache proxy server
+  template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
 
 - name: Update apt cache
   apt: update_cache=yes
