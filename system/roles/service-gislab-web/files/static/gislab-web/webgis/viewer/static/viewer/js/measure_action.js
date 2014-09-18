@@ -131,7 +131,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 								},
 								defaultType: 'textfield',
 								items: [{
-										fieldLabel: gettext('Coordinate 1'),
+										fieldLabel: gettext('First coordinate'),
 										name: 'coord1',
 										readOnly: true,
 										listeners: {
@@ -140,7 +140,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 											}
 										}
 									}, {
-										fieldLabel: gettext('Coordinate 2'),
+										fieldLabel: gettext('Second coordinate'),
 										name: 'coord2',
 										readOnly: true,
 										listeners: {
@@ -175,7 +175,7 @@ WebGIS.MeasureAction = Ext.extend(Ext.Action, {
 			});
 			this.measureLengthPanel = new Ext.Panel({
 				xtype: 'panel',
-				title: gettext('Distance'),
+				title: gettext('Length'),
 				autoScroll: false,
 				cls: 'measure-panel',
 				iconCls: 'measure-line-icon',

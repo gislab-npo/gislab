@@ -9,7 +9,7 @@ action = new WebGIS.SearchAction({
 	iconCls: 'search-icon',
 	enableToggle: true,
 	toggleGroup: 'tools',
-	tooltip: '{% trans "Search" %}',
+	tooltip: '{% trans "Search features by attributes" %}',
 	toggleHandler: function(action, toggled) {
 		if (toggled) {
 			action.baseAction.showSearchToolbar();

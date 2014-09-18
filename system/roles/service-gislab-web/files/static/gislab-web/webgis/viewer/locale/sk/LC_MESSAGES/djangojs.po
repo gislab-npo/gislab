@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-05 09:20+0200\n"
+"POT-Creation-Date: 2014-09-18 11:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,64 +18,267 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: static/viewer/js/baselayers_combo.js:100
+#: static/viewer/js/baselayers_combo.js:185
 msgid "Blank"
 msgstr "Prázdna vrstva"
 
-#: static/viewer/js/draw_action.js:117
-#: static/viewer/js/featureinfo_panel.js:130
+#: static/viewer/js/draw_action.js:253 static/viewer/js/measure_action.js:105
+msgid "Coordinates"
+msgstr "Súradnice"
+
+#: static/viewer/js/draw_action.js:256 static/viewer/js/measure_action.js:178
+msgid "Length"
+msgstr "Dĺžka"
+
+#: static/viewer/js/draw_action.js:261 static/viewer/js/measure_action.js:291
+#: static/viewer/js/measure_action.js:319
+msgid "Area"
+msgstr "Plocha"
+
+#: static/viewer/js/draw_action.js:262 static/viewer/js/measure_action.js:328
+msgid "Perimeter"
+msgstr "Obvod"
+
+#: static/viewer/js/draw_action.js:280
+#: static/viewer/js/featureinfo_panel.js:136
 msgid "Zoom to feature"
 msgstr "Priblížiť na objekt"
 
-#: static/viewer/js/draw_action.js:132 static/viewer/js/draw_action.js.c:228
-#: static/viewer/js/draw_action.js:275
+#: static/viewer/js/draw_action.js:295 static/viewer/js/draw_action.js.c:560
+#: static/viewer/js/draw_action.js:612 static/viewer/js/wms_layers_node.js:187
 msgid "Title"
 msgstr "Názov"
 
-#: static/viewer/js/draw_action.js:146
+#: static/viewer/js/draw_action.js:310
 msgid "Description"
 msgstr "Popis"
 
-#: static/viewer/js/draw_action.js:207
-msgid "History"
-msgstr "História"
+#: static/viewer/js/draw_action.js:350
+msgid "Edit features"
+msgstr "Úprava objektov"
 
-#: static/viewer/js/draw_action.js:220
-msgid "Time"
-msgstr "Čas"
+#: static/viewer/js/draw_action.js:367
+msgid "Snapping"
+msgstr "Prichytávanie"
 
-#: static/viewer/js/draw_action.js:235
-msgid "Permalink"
-msgstr "Permalink"
-
-#: static/viewer/js/draw_action.js:242
-msgid "Download"
-msgstr "Stiahnuť"
-
-#: static/viewer/js/draw_action.js:292 static/viewer/js/draw_action.js.c:293
+#: static/viewer/js/draw_action.js:381 static/viewer/js/draw_action.js.c:382
 msgid "Delete selected"
 msgstr "Odstrániť vybraný"
 
-#: static/viewer/js/draw_action.js:310 static/viewer/js/draw_action.js.c:311
+#: static/viewer/js/draw_action.js:399 static/viewer/js/draw_action.js.c:400
 msgid "Delete all"
 msgstr "Odstrániť všetky"
 
-#: static/viewer/js/draw_action.js:321
+#: static/viewer/js/draw_action.js:409 static/viewer/js/draw_action.js.c:456
 msgid "Save"
 msgstr "Uložiť"
 
-#: static/viewer/js/draw_action.js:322
+#: static/viewer/js/draw_action.js:410
 msgid "Save drawing"
 msgstr "Uložiť kreslenie"
 
-#: static/viewer/js/featureinfo_panel.js:86
+#: static/viewer/js/draw_action.js:435
+msgid "Title of drawing"
+msgstr "Názov kreslenia"
+
+#: static/viewer/js/draw_action.js:448
+msgid "Cancel"
+msgstr "Zrušiť"
+
+#: static/viewer/js/draw_action.js:537
+msgid "History"
+msgstr "História"
+
+#: static/viewer/js/draw_action.js:552
+msgid "Time"
+msgstr "Čas"
+
+#: static/viewer/js/draw_action.js:567
+msgid "Permalink"
+msgstr "Permalink"
+
+#: static/viewer/js/draw_action.js:574
+msgid "Download"
+msgstr "Stiahnuť"
+
+#: static/viewer/js/draw_action.js:590
+msgid "Drawings {0} - {1} of {2}"
+msgstr "Kreslenia {0} - {1} z {2}"
+
+#: static/viewer/js/draw_action.js:591
+msgid "No drawings"
+msgstr "Žiadne kreslenia"
+
+#: static/viewer/js/featureinfo_panel.js:91
 msgid "Number of results: %(count)s"
 msgstr "Počet výsledkov: %(count)s"
 
-#: static/viewer/js/featureinfo_panel.js:144
+#: static/viewer/js/featureinfo_panel.js:128
+msgid "Zoom to all features"
+msgstr "Priblížiť na všetky objekty"
+
+#: static/viewer/js/featureinfo_panel.js:150
 msgid "Export to drawings"
 msgstr "Exportovať do kreslenia"
 
-#: static/viewer/js/featureinfo_panel.js:165
+#: static/viewer/js/featureinfo_panel.js:176
 msgid "Copy of feature #%(pk)s from layer %(layer)s"
 msgstr "Kópia objektu #%(pk)s z vrstvy %(layer)s"
+
+#: static/viewer/js/measure_action.js:121
+#: static/viewer/js/measure_action.js:192
+#: static/viewer/js/measure_action.js:305
+msgid "Measured values"
+msgstr "Namerané hodnoty"
+
+#: static/viewer/js/measure_action.js:134
+msgid "First coordinate"
+msgstr "Prvá súradníca"
+
+#: static/viewer/js/measure_action.js:143
+msgid "Second coordinate"
+msgstr "Druhá súradníca"
+
+#: static/viewer/js/measure_action.js:206
+msgid "Last segment"
+msgstr "Posledný segment"
+
+#: static/viewer/js/measure_action.js:215
+msgid "Total length"
+msgstr "Celková dĺžka"
+
+#: static/viewer/js/measure_action.js:227
+#: static/viewer/js/measure_action.js:340
+msgid "Units"
+msgstr "Jednotky"
+
+#: static/viewer/js/search_action.js:116
+msgid "Attribute"
+msgstr "Atribút"
+
+#: static/viewer/js/search_action.js:187
+msgid "Comparison operator"
+msgstr "Operátor porovnávania"
+
+#: static/viewer/js/search_action.js:246
+msgid "Incorrect value of comma-separated list of integers"
+msgstr "Neplatná hodnota pre čiarkou oddelený zoznam celých čísel"
+
+#: static/viewer/js/search_action.js:247
+msgid "Comma-separated list of integer numbers"
+msgstr "Zoznam čiarkou oddelených celých čísel"
+
+#: static/viewer/js/search_action.js:254
+msgid "Integer number"
+msgstr "Celé číslo"
+
+#: static/viewer/js/search_action.js:262
+msgid "Incorrect value of comma-separated list of decimal numbers"
+msgstr "Neplatná hodnota pre čiarkou oddelený zoznam desatinných čísel"
+
+#: static/viewer/js/search_action.js:263
+msgid "Comma-separated list of decimal numbers"
+msgstr "Zoznam čiarkou oddelených desatinných čísel"
+
+#: static/viewer/js/search_action.js:271
+msgid "Decimal number"
+msgstr "Desatinné číslo"
+
+#: static/viewer/js/search_action.js:278
+msgid "Comma-separated list of text values"
+msgstr "Zoznam čiarkou oddelených textových hodnôt"
+
+#: static/viewer/js/search_action.js:278
+msgid "Text value"
+msgstr "Textová hodnota"
+
+#: static/viewer/js/search_action.js:304
+msgid "Add another attribute filter"
+msgstr "Pridať ďalší filter podľa atribútu"
+
+#: static/viewer/js/search_action.js:318
+msgid "Remove attribute filter"
+msgstr "Odstrániť filter podľa atribútu"
+
+#: static/viewer/js/search_action.js:343
+msgid "Layer"
+msgstr "Vrstva"
+
+#: static/viewer/js/search_action.js:422 static/viewer/js/search_action.js:431
+msgid "Logical operator"
+msgstr "Logický operátor"
+
+#: static/viewer/js/search_action.js:455
+msgid "Limit"
+msgstr "Limit"
+
+#: static/viewer/js/search_action.js:477
+msgid "Restrict on visible area"
+msgstr "Obmedziť na zobrazené územie"
+
+#: static/viewer/js/search_action.js:479 static/viewer/js/search_action.js:481
+msgid "Search"
+msgstr "Vyhľadať"
+
+#: static/viewer/js/search_action.js:565
+msgid "More than %(count)s features are matching search condition"
+msgstr "Vyhľadávaniu vyhovuje viac ako %(count)s objektov"
+
+#: static/viewer/js/search_action.js:573
+msgid "Error"
+msgstr "Chyba"
+
+#: static/viewer/js/search_action.js:574
+msgid "Searching failed"
+msgstr "Vyhľadávanie zlyhalo"
+
+#: static/viewer/js/topics_action.js:40
+#: static/viewer/js/wms_layers_node.js:188
+msgid "Abstract"
+msgstr "Abstrakt"
+
+#: static/viewer/js/topics_action.js:49
+msgid "Layers"
+msgstr "Vrstvy"
+
+#: static/viewer/js/topics_action.js:72
+msgid "Topics"
+msgstr "Témy"
+
+#: static/viewer/js/topics_action.js:90
+msgid "Load"
+msgstr "Zobraziť"
+
+#: static/viewer/js/wms_layers_node.js:189
+msgid "Keywords list"
+msgstr "Kľúčové slová"
+
+#: static/viewer/js/wms_layers_node.js:191
+msgid "Identification"
+msgstr "Identifikácia"
+
+#: static/viewer/js/wms_layers_node.js:191
+#: static/viewer/js/wms_layers_node.js:195
+msgid "Yes"
+msgstr "Áno"
+
+#: static/viewer/js/wms_layers_node.js:191
+#: static/viewer/js/wms_layers_node.js:195
+msgid "No"
+msgstr "Nie"
+
+#: static/viewer/js/wms_layers_node.js:192
+msgid "Minimal scale"
+msgstr "Minimálna mierka"
+
+#: static/viewer/js/wms_layers_node.js:193
+msgid "Maximal scale"
+msgstr "Maximálne mierka"
+
+#: static/viewer/js/wms_layers_node.js:195
+msgid "Labels"
+msgstr "Popisky"
+
+#: static/viewer/js/wms_layers_node.js:204
+msgid "Attribution"
+msgstr "Pripojená informácia"

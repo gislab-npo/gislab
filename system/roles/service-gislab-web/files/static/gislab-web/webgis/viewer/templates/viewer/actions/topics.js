@@ -15,7 +15,7 @@ var action = new WebGIS.TopicsAction({
 	iconCls: 'topics-icon',
 	enableToggle: true,
 	toggleGroup: 'topics',
-	tooltip: '{% trans "Map topics" %}',
+	tooltip: '{% trans "Topics" %}',
 	toggleHandler: function(action, toggled) {
 		if (toggled) {
 			action.baseAction.showTopics();

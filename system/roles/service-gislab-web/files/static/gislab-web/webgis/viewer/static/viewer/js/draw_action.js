@@ -347,7 +347,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					new Ext.Action({
 						ref: '/selectMode',
 						iconCls: 'select-mode-icon',
-						tooltip: 'Select and modify',
+						tooltip: gettext('Edit features'),
 						pressed: false,
 						width: 20,
 						enableToggle: true,
@@ -364,7 +364,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					}), ' ', new Ext.Action({
 						ref: '/snapAction',
 						iconCls: 'snapping-icon',
-						tooltip: 'Snapping on points',
+						tooltip: gettext('Snapping'),
 						enableToggle: true,
 						pressed: false,
 						scope: this,
@@ -588,7 +588,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					pageSize: 20,
 					displayInfo: true,
 					displayMsg: gettext('Drawings {0} - {1} of {2}'),
-					emptyMsg: gettext('No drawings to display'),
+					emptyMsg: gettext('No drawings'),
 				})
 			});
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-09 10:58+0200\n"
+"POT-Creation-Date: 2014-09-18 11:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,262 +34,237 @@ msgstr "Používateľské meno"
 msgid "Password"
 msgstr "Heslo"
 
-#: templates/registration/login.html:106 templates/viewer/webgis.html:489
+#: templates/registration/login.html:106
+#: templates/viewer/user_projects.html:66 templates/viewer/webgis.html:530
 msgid "Log in"
 msgstr "Prihlásiť sa"
 
-#: templates/viewer/webgis.html:244
-msgid "Scale"
-msgstr "Mierka"
+#: templates/viewer/user_projects.html:24
+msgid "Published projects"
+msgstr "Vypublikované projekty"
 
-#: templates/viewer/webgis.html:244
-msgid "Resolution"
-msgstr "Rozlíšenie"
+#: templates/viewer/user_projects.html:52
+msgid "Published projects by user"
+msgstr "Projekty vypublikované používateľom"
 
-#: templates/viewer/webgis.html:365
-msgid "Overlay Layers"
-msgstr "Prekladové vrstvy"
-
-#: templates/viewer/webgis.html:372
-msgid "Legend"
-msgstr "Legenda"
-
-#: templates/viewer/webgis.html:401
-msgid "Properties"
-msgstr "Vlastnosti"
-
-#: templates/viewer/webgis.html:404
-msgid "Author"
-msgstr "Autor"
-
-#: templates/viewer/webgis.html:405
-msgid "E-mail"
-msgstr "E-mail"
-
-#: templates/viewer/webgis.html:406
-msgid "Organization"
-msgstr "Organizácia"
-
-#: templates/viewer/webgis.html:407
-msgid "Abstract"
-msgstr "O projekte"
-
-#: templates/viewer/webgis.html:408
-msgid "Publish date"
-msgstr "Čas publikácie"
-
-#: templates/viewer/webgis.html:409
-msgid "WMS URL"
-msgstr ""
-
-#: templates/viewer/webgis.html:414
-msgid "About"
-msgstr "O aplikácii"
-
-#: templates/viewer/webgis.html:417
-msgid "GIS.lab ID"
-msgstr ""
-
-#: templates/viewer/webgis.html:418
-msgid "GIS.lab version"
-msgstr "GIS.lab verzia"
-
-#: templates/viewer/webgis.html:419
-msgid "Home page"
-msgstr "Domovská stránka"
-
-#: templates/viewer/webgis.html:434
-msgid "Base Layers"
-msgstr "Podkladové vrstvy"
-
-#: templates/viewer/webgis.html:482
+#: templates/viewer/user_projects.html:59 templates/viewer/webgis.html:523
 msgid "Guest"
 msgstr "Neprihlásený"
 
-#: templates/viewer/webgis.html:502
+#: templates/viewer/user_projects.html:79 templates/viewer/webgis.html:543
 msgid "Log out"
 msgstr "Odhlásiť sa"
 
-#: templates/viewer/webgis.html:608 templates/viewer/actions/draw.js:119
-#: templates/viewer/actions/draw.js:130 templates/viewer/actions/search.js:528
+#: templates/viewer/user_projects.html:121
+msgid "Title"
+msgstr "Názov"
+
+#: templates/viewer/user_projects.html:126
+msgid "Publication time"
+msgstr "Čas publikácie"
+
+#: templates/viewer/user_projects.html:132
+msgid "Expiration time"
+msgstr "Platnosť projektu"
+
+#: templates/viewer/user_projects.html:138
+msgid "URL"
+msgstr "URL"
+
+#: templates/viewer/webgis.html:271
+msgid "Scale"
+msgstr "Mierka"
+
+#: templates/viewer/webgis.html:271 templates/viewer/actions/print.js:137
+msgid "Resolution"
+msgstr "Rozlíšenie"
+
+#: templates/viewer/webgis.html:370
+msgid "Layers"
+msgstr "Vrstvy"
+
+#: templates/viewer/webgis.html:377
+msgid "Legend"
+msgstr "Legenda"
+
+#: templates/viewer/webgis.html:406
+msgid "Properties"
+msgstr "Vlastnosti"
+
+#: templates/viewer/webgis.html:409
+msgid "Author"
+msgstr "Autor"
+
+#: templates/viewer/webgis.html:410
+msgid "E-mail"
+msgstr "E-mail"
+
+#: templates/viewer/webgis.html:411
+msgid "Phone"
+msgstr "Telefón"
+
+#: templates/viewer/webgis.html:412
+msgid "Organization"
+msgstr "Organizácia"
+
+#: templates/viewer/webgis.html:413
+msgid "Abstract"
+msgstr "Abstrakt"
+
+#: templates/viewer/webgis.html:414
+msgid "Online resource"
+msgstr "Webový zdroj"
+
+#: templates/viewer/webgis.html:415
+msgid "Fees"
+msgstr "Poplatky"
+
+#: templates/viewer/webgis.html:416
+msgid "Access constraints"
+msgstr "Obmedzenia prístupu"
+
+#: templates/viewer/webgis.html:417
+msgid "Keywords list"
+msgstr "Kľúčové slová"
+
+#: templates/viewer/webgis.html:418
+msgid "Publish date"
+msgstr "Čas publikácie"
+
+#: templates/viewer/webgis.html:419
+msgid "WMS URL"
+msgstr "WMS URL"
+
+#: templates/viewer/webgis.html:424
+msgid "GIS.lab"
+msgstr "GIS.lab"
+
+#: templates/viewer/webgis.html:427
+msgid "GIS.lab ID"
+msgstr "GIS.lab ID"
+
+#: templates/viewer/webgis.html:428
+msgid "Version"
+msgstr "Verzia"
+
+#: templates/viewer/webgis.html:429
+msgid "Home page"
+msgstr "Domovská stránka"
+
+#: templates/viewer/webgis.html:430
+msgid "Documentation"
+msgstr "Dokumentácia"
+
+#: templates/viewer/webgis.html:445
+msgid "Base Layers"
+msgstr "Podkladové vrstvy"
+
+#: templates/viewer/webgis.html:654 templates/viewer/actions/draw.js:134
+#: templates/viewer/actions/draw.js:145
 msgid "Error"
 msgstr "Chyba"
 
-#: templates/viewer/webgis.html:609
+#: templates/viewer/webgis.html:655
 #, python-format
 msgid "Failed to fetch vector data (drawing: %(drawing_id)s)"
 msgstr "Nepodarilo sa načítať vektorové dáta (kreslenie: %(drawing_id)s)"
 
-#: templates/viewer/webgis.html:626
+#: templates/viewer/webgis.html:671 templates/viewer/webgis.html.py:683
+msgid "Open attribute table"
+msgstr "Otvoriť atribútovú tabuľku"
+
+#: templates/viewer/webgis.html:694
 msgid "Message"
 msgstr "Správa"
 
 #: templates/viewer/actions/basic.js:8
 msgid "Zoom to max extent"
-msgstr "Oddialiť na maximálnu oblasť"
+msgstr "Zobraziť celé územie"
 
 #: templates/viewer/actions/basic.js:21
-msgid "Previous in history"
-msgstr "Predchádzajúca poloha"
+msgid "Previous view"
+msgstr "Predchádzajúce zobrazenie"
 
 #: templates/viewer/actions/basic.js:30
-msgid "Next in history"
-msgstr "Nasledujúca poloha"
+msgid "Next view"
+msgstr "Nasledujúce zobrazenie"
 
-#: templates/viewer/actions/basic.js:42
-msgid "Map pan"
-msgstr "Posun po mape"
-
-#: templates/viewer/actions/draw.js:5 templates/viewer/actions/draw.js:113
+#: templates/viewer/actions/draw.js:5
 msgid "Points"
 msgstr "Body"
 
-#: templates/viewer/actions/draw.js:27 templates/viewer/actions/draw.js:113
+#: templates/viewer/actions/draw.js:27
 msgid "Lines"
 msgstr "Línie"
 
-#: templates/viewer/actions/draw.js:49 templates/viewer/actions/draw.js:113
+#: templates/viewer/actions/draw.js:49
 msgid "Polygons"
 msgstr "Polygóny"
 
 #: templates/viewer/actions/draw.js:78
-msgid "Draw on map"
-msgstr "Kreslenie"
+msgid "Draw points, lines and polygons"
+msgstr "Kreslenie bodov, línií a polygónov"
 
-#: templates/viewer/actions/draw.js:112
-msgid "Download"
-msgstr "Stiahnuť"
-
-#: templates/viewer/actions/draw.js:120
+#: templates/viewer/actions/draw.js:135
 msgid "Failed to save data"
 msgstr "Nepodarilo sa uložiť dáta"
 
-#: templates/viewer/actions/draw.js:131
+#: templates/viewer/actions/draw.js:146
 msgid "There is no data to be saved"
-msgstr "Musíte mať nakreslené nejaké objekty"
+msgstr "Neexistujú žiadne dáta na uloženie"
 
 #: templates/viewer/actions/featureinfo.js:9
-#: templates/viewer/actions/search.js:326
-msgid "Active layer"
-msgstr "Aktívna vrstva"
+msgid "Layer"
+msgstr "Vrstva"
 
 #: templates/viewer/actions/featureinfo.js:24
 msgid "All visible layers"
 msgstr "Všetky viditeľné vrstvy"
 
 #: templates/viewer/actions/featureinfo.js:110
-msgid "Object identification"
-msgstr "Identifikácia objektov"
+msgid "Identify features by mouse click"
+msgstr "Identifikácia objektov kliknutím myšou"
 
-#: templates/viewer/actions/measurement.js:13
-#: templates/viewer/actions/measurement.js:16
-msgid "Length"
-msgstr "Dĺžka"
+#: templates/viewer/actions/measurement.js:42
+msgid "Measure coordinates, length and area"
+msgstr "Meranie súradníc, dĺžok a plôch"
 
-#: templates/viewer/actions/measurement.js:31
-#: templates/viewer/actions/measurement.js:34
-msgid "Area"
-msgstr "Plocha"
-
-#: templates/viewer/actions/measurement.js:54
-msgid "Measure length"
-msgstr "Meranie dĺžky"
-
-#: templates/viewer/actions/measurement.js:69
-msgid "Measure area"
-msgstr "Meranie plochy"
-
-#: templates/viewer/actions/print.js:74
+#: templates/viewer/actions/print.js:75
 msgid "Print layout"
 msgstr "Šablóna pre tlač"
 
-#: templates/viewer/actions/print.js:136
-msgid "DPI resolution"
-msgstr "PDI rozlíšenie"
-
-#: templates/viewer/actions/print.js:172
+#: templates/viewer/actions/print.js:173
 msgid "Output file format"
 msgstr "Formát tlačového výstupu"
 
-#: templates/viewer/actions/print.js:198
+#: templates/viewer/actions/print.js:199
 msgid "Rotation"
 msgstr "Natočenie"
 
-#: templates/viewer/actions/print.js:230 templates/viewer/actions/print.js:231
-#: templates/viewer/actions/print.js:279
-msgid "Print"
-msgstr "Tlačiť"
+#: templates/viewer/actions/print.js:230
+msgid "Create"
+msgstr "Vytvoriť"
 
-#: templates/viewer/actions/search.js:101
-msgid "Attribute"
-msgstr "Atribút"
+#: templates/viewer/actions/print.js:231
+msgid "Create print output"
+msgstr "Vytvoriť tlačový výstup"
 
-#: templates/viewer/actions/search.js:172
-#: templates/viewer/actions/search.js:405
-msgid "Logical operator"
-msgstr "Logický operátor"
+#: templates/viewer/actions/print.js:278
+msgid "Print output creation"
+msgstr "Tvorba tlačových výstupov"
 
-#: templates/viewer/actions/search.js:231
-msgid "Incorrect comma-separated list of integers"
-msgstr "Nesprávne zadaný zoznam celých čísel"
+#: templates/viewer/actions/search.js:12
+msgid "Search features by attributes"
+msgstr "Vyhľadávanie objektov podľa atribútov"
 
-#: templates/viewer/actions/search.js:232
-msgid "Comma-separated list of integer numbers"
-msgstr "zoznam celých čísel (oddelených čiarkou)"
+#: templates/viewer/actions/topics.js:6
+msgid "Default topic"
+msgstr "Predvolená téma"
 
-#: templates/viewer/actions/search.js:238
-msgid "Integer number value"
-msgstr "Celočíselná hodnota"
+#: templates/viewer/actions/topics.js:7
+msgid "Default layers configuration"
+msgstr "Predvolené vrstvy"
 
-#: templates/viewer/actions/search.js:246
-msgid "Incorrect comma-separated list of decimal numbers"
-msgstr "Nesprávne zadaný zoznam destinných čísel"
-
-#: templates/viewer/actions/search.js:247
-msgid "Comma-separated list of decimal numbers"
-msgstr "Zoznam destinných čísel (oddelených čiarkou)"
-
-#: templates/viewer/actions/search.js:254
-msgid "Decimal number value"
-msgstr "Desatinné číslo"
-
-#: templates/viewer/actions/search.js:261
-msgid "Comma-separated list of text values"
-msgstr "Zoznam textových hodnôt (oddelených čiarkou)"
-
-#: templates/viewer/actions/search.js:261
-msgid "Text value"
-msgstr "Textová hodnota"
-
-#: templates/viewer/actions/search.js:287
-msgid "Add another attribute filter"
-msgstr "Pridať filter podľa atribútu"
-
-#: templates/viewer/actions/search.js:301
-msgid "Remove attribute filter"
-msgstr "Odstrániť filter atribútu"
-
-#: templates/viewer/actions/search.js:414
-msgid "Logical operator between attributes"
-msgstr "Logický operátor medzi atribútmi"
-
-#: templates/viewer/actions/search.js:438
-msgid "Limit"
-msgstr "Limit"
-
-#: templates/viewer/actions/search.js:456
-#: templates/viewer/actions/search.js:458
-#: templates/viewer/actions/search.js:548
-msgid "Search"
-msgstr "Vyhľadať"
-
-#: templates/viewer/actions/search.js:521
-msgid "More than {0} features are matching search condition"
-msgstr "Viac ako {0} objektov vyhovuje vyhľadávaniu"
-
-#: templates/viewer/actions/search.js:529
-msgid "Searching failed"
-msgstr "Vyhľadávanie zlyhalo"
-
-#~ msgid "User"
-#~ msgstr "Používateľ"
+#: templates/viewer/actions/topics.js:18
+msgid "Topics"
+msgstr "Témy"

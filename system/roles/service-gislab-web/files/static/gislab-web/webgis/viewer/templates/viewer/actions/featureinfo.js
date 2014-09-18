@@ -6,7 +6,7 @@ var identify_layer_combobox = new Ext.form.ComboBox({
 	mode: 'local',
 	disabled: true,
 	editable: false,
-	tooltip: '{% trans "Active layer" %}',
+	tooltip: '{% trans "Layer" %}',
 	triggerAction: 'all',
 	forceSelection: true,
 	store: new Ext.data.JsonStore({
@@ -107,7 +107,7 @@ action = new GeoExt.Action({
 	enableToggle: true,
 	toggleGroup: 'tools',
 	group: 'tools',
-	tooltip: '{% trans "Object identification" %}',
+	tooltip: '{% trans "Identify features by mouse click" %}',
 	toggleHandler: function(action, toggled) {
 		identify_layer_combobox.setDisabled(!toggled);
 	}

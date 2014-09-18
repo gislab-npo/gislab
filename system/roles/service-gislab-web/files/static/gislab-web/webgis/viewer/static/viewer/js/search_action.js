@@ -184,7 +184,7 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 								ref: 'attributeOperator',
 								width: 55,
 								editable: false,
-								tooltip: gettext('Logical operator'),
+								tooltip: gettext('Comparison operator'),
 								mode: 'local',
 								triggerAction: 'all',
 								forceSelection: true,
@@ -243,14 +243,15 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 											comp = {
 												xtype: 'textfield',
 												regex: /^\d+(\s*,\s*\d+)*$/,
-												regexText: gettext('Incorrect comma-separated list of integers'),
-												tooltip: gettext('Comma-separated list of integer numbers')
+												regexText: gettext('Incorrect value of comma-separated list of integers'),
+												tooltip: gettext('Comma-separated list of integer numbers'),
+												msgTarget: 'under'
 											}
 										} else {
 											comp = {
 												xtype: 'numberfield',
 												allowDecimals: false,
-												tooltip: gettext('Integer number value')
+												tooltip: gettext('Integer number')
 											}
 										}
 									} else if (this.type == 'DOUBLE') {
@@ -258,15 +259,16 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 											comp = {
 												xtype: 'textfield',
 												regex: /^\d+(\.\d+)?(\s*,\s*\d+(\.\d+)?)*$/,
-												regexText: gettext('Incorrect comma-separated list of decimal numbers'),
-												tooltip: gettext('Comma-separated list of decimal numbers')
+												regexText: gettext('Incorrect value of comma-separated list of decimal numbers'),
+												tooltip: gettext('Comma-separated list of decimal numbers'),
+												msgTarget: 'under'
 											}
 										} else {
 											comp = {
 												xtype: 'numberfield',
 												allowDecimals: true,
 												decimalSeparator: '.',
-												tooltip: gettext('Decimal number value')
+												tooltip: gettext('Decimal number')
 											}
 										}
 									} else {
@@ -338,7 +340,7 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 						ref: '/activeLayer',
 						width: 150,
 						editable: false,
-						tooltip: gettext('Active layer'),
+						tooltip: gettext('Layer'),
 						mode: 'local',
 						triggerAction: 'all',
 						forceSelection: true,
@@ -426,7 +428,7 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 						width: 55,
 						editable: false,
 						mode: 'local',
-						tooltip: gettext('Logical operator between attributes'),
+						tooltip: gettext('Logical operator'),
 						triggerAction: 'all',
 						forceSelection: true,
 						store: new Ext.data.ArrayStore({
@@ -472,7 +474,7 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 						ref: '/restrictByExtent'
 					}, {
 						xtype: 'label',
-						text: gettext('On visible area only')
+						text: gettext('Restrict on visible area')
 					}, '->', new Ext.Action({
 						text: gettext('Search'),
 						ref: '/search',

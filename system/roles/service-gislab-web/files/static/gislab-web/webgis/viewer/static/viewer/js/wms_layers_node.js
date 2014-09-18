@@ -186,7 +186,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 						if (layer_info.metadata) {
 							layer_data_parts.push([gettext('Title'), layer_info.metadata.title]);
 							layer_data_parts.push([gettext('Abstract'), layer_info.metadata.abstract]);
-							layer_data_parts.push([gettext('Keyword list'), layer_info.metadata.keyword_list]);
+							layer_data_parts.push([gettext('Keywords list'), layer_info.metadata.keyword_list]);
 						}
 						layer_data_parts.push([gettext('Identification'), layer_info.queryable? gettext("Yes") : gettext("No")]);
 						layer_data_parts.push([gettext('Minimal scale'), layer_info.visibility_scale_min? layer_info.visibility_scale_min : Math.round(node.root.layer.maxScale)]);

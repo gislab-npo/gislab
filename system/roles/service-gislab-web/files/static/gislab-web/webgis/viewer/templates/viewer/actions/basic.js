@@ -18,7 +18,7 @@ action = new GeoExt.Action({
 	disabled: true,
 	cls: 'x-btn-icon',
 	iconCls: 'previous-icon',
-	tooltip: '{% trans "Previous in history" %}',
+	tooltip: '{% trans "Previous view" %}',
 });
 mappanel.getTopToolbar().add(' ', action);
 
@@ -27,6 +27,6 @@ action = new GeoExt.Action({
 	disabled: true,
 	cls: 'x-btn-icon',
 	iconCls: 'next-icon',
-	tooltip: '{% trans "Next in history" %}',
+	tooltip: '{% trans "Next view" %}',
 });
 mappanel.getTopToolbar().add(' ', action);

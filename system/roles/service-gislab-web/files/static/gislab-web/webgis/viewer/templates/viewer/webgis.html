@@ -366,7 +366,7 @@
 					cmargins: '0 0 0 0',
 					autoScroll: true,
 					{% if layers %}
-					title: '{% trans "Overlay Layers" %}',
+					title: '{% trans "Layers" %}',
 					{% endif %}
 				});
 
@@ -413,18 +413,18 @@
 							{% if online_resource %}<p><label>{% trans "Online resource" %}: </label><a href="{{ online_resource }}" target="_blank">{{ online_resource }}</a></p>{% endif %}\
 							{% if fees %}<p><label>{% trans "Fees" %}: </label>{{ fees }}</p>{% endif %}\
 							{% if access_constrains %}<p><label>{% trans "Access constraints" %}: </label>{{ access_constrains }}</p>{% endif %}\
-							{% if keyword_list %}<p><label>{% trans "Keyword list" %}: </label>{{ keyword_list|join:", " }}</p>{% endif %}\
+							{% if keyword_list %}<p><label>{% trans "Keywords list" %}: </label>{{ keyword_list|join:", " }}</p>{% endif %}\
 							<p><label>{% trans "Publish date" %}: </label>{{ publish_date }}</p> \
 							{% if not user.is_guest %}<p><label>{% trans "WMS URL" %}: </label><a href="{{ wms_url }}" target="_blank">copy link location</a></p>{% endif %}</div>'
 				});
 
 				// properties
 				var about_panel = new Ext.Panel({
-					title: '{% trans "About" %}',
+					title: '{% trans "GIS.lab" %}',
 					autoScroll: true,
 					html: '<div class="x-panel-body-text"> \
 							<p><label>{% trans "GIS.lab ID" %}: </label>{{ gislab_unique_id }}</p> \
-							<p><label>{% trans "GIS.lab version" %}: </label>{{ gislab_version }}</p> \
+							<p><label>{% trans "Version" %}: </label>{{ gislab_version }}</p> \
 							<p><label>{% trans "Home page" %}: </label><a href="http://imincik.github.io/gis-lab" target="_blank">http://imincik.github.io/gis-lab</a></p> \
 							<p><label>{% trans "Documentation" %}: </label><a href="https://github.com/imincik/gis-lab/wiki" target="_blank">https://github.com/imincik/gis-lab/wiki</a></p></div>'
 				});

@@ -134,7 +134,7 @@ var printWindow = new Ext.Window({
 			id: 'print-dpi-combobox',
 			width: 70,
 			editable: false,
-			tooltip: '{% trans "DPI resolution" %}',
+			tooltip: '{% trans "Resolution" %}',
 			mode: 'local',
 			triggerAction: 'all',
 			forceSelection: true,
@@ -227,8 +227,8 @@ var printWindow = new Ext.Window({
 	],
 	bbar: ['->', new Ext.Action({
 			ref: '/print',
-			text: '{% trans "Print" %}',
-			tooltip: '{% trans "Print" %}',
+			text: '{% trans "Create" %}',
+			tooltip: '{% trans "Create print output" %}',
 			tooltipType: 'qtip',
 			iconCls: '',
 			handler: function(action) {
@@ -275,7 +275,7 @@ action = new Ext.Action({
 	iconCls: 'print-icon',
 	enableToggle: true,
 	toggleGroup: 'tools',
-	tooltip: '{% trans "Print" %}',
+	tooltip: '{% trans "Print output creation" %}',
 	toggleHandler: function(button, toggled) {
 		if (toggled) {
 			printWindow.show();
