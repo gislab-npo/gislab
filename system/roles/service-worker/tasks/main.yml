@@ -15,6 +15,12 @@
 
 
 # System
+- name: Flush worker installation directory
+  shell: path="{{ GISLAB_INSTALL_WORKER_ROOT }}" state=absent
+
+- name: Create worker installation directory
+  shell: path="{{ GISLAB_INSTALL_WORKER_ROOT }}" state=present
+
 - name: Install worker files
   copy: src=static/system/ dest="{{ GISLAB_INSTALL_WORKER_ROOT }}"
 

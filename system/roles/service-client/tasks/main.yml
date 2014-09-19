@@ -19,6 +19,12 @@
 
 
 # System
+- name: Flush client installation directory
+  shell: path="{{ GISLAB_INSTALL_CLIENT_ROOT }}" state=absent
+
+- name: Create client installation directory
+  shell: path="{{ GISLAB_INSTALL_CLIENT_ROOT }}" state=present
+
 - name: Install client files
   copy: src=static/system/ dest="{{ GISLAB_INSTALL_CLIENT_ROOT }}"
 

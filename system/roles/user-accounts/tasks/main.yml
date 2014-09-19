@@ -56,6 +56,12 @@
 
 
 # System
+- name: Flush user account installation directory
+  shell: path="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}" state=absent
+
+- name: Create user account installation directory
+  shell: path="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}" state=present
+
 - name: Install user account files
   copy: src=static/system/ dest="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"
 

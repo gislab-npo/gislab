@@ -5,8 +5,16 @@
 # Install user data placed in 'user' directory.
 
 
+# System
+- name: Flush user data directory
+  shell: path="{{ GISLAB_INSTALL_USER_DATA_ROOT }}" state=absent
+
+- name: Create user data directory
+  shell: path="{{ GISLAB_INSTALL_USER_DATA_ROOT }}" state=present
+
 - name: Install user data
-  copy: src=../user dest={{ GISLAB_ROOT }}
+  copy: src=../user/ dest={{ GISLAB_INSTALL_USER_DATA_ROOT }}
+
 
 - name: Set executable permissions for plugins
   shell: "{{ item }}"

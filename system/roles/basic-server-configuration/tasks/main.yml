@@ -135,22 +135,10 @@
     GISLAB_SERVER_NETWORK_DEVICE="{{ GISLAB_SERVER_NETWORK_DEVICE }}"'
     dest="/etc/gislab_version"
 
-- name: Flush some GIS.lab installation directories
-  file: path="{{ item }}" state=absent
-  with_items:
-    - "{{ GISLAB_INSTALL_WORKER_ROOT }}"
-    - "{{ GISLAB_INSTALL_CLIENT_ROOT }}"
-    - "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"
-    - "{{ GISLAB_INSTALL_USER_DATA_ROOT }}"
-
 - name: Create main GIS.lab installation directories structure
   file: path="{{ item }}" state=directory
   with_items:
     - "{{ GISLAB_ROOT }}"
-    - "{{ GISLAB_INSTALL_WORKER_ROOT }}"
-    - "{{ GISLAB_INSTALL_CLIENT_ROOT }}"
-    - "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"
-    - "{{ GISLAB_INSTALL_USER_DATA_ROOT }}"
     - /etc/gislab
     - /var/lib/gislab
     - /etc/cron.d.bin
