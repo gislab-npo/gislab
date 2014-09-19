@@ -273,7 +273,7 @@ msgstr "Minimálna mierka"
 
 #: static/viewer/js/wms_layers_node.js:193
 msgid "Maximal scale"
-msgstr "Maximálne mierka"
+msgstr "Maximálna mierka"
 
 #: static/viewer/js/wms_layers_node.js:195
 msgid "Labels"

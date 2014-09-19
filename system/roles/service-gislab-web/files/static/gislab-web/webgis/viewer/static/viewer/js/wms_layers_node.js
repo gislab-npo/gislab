@@ -189,8 +189,8 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 							layer_data_parts.push([gettext('Keywords list'), layer_info.metadata.keyword_list]);
 						}
 						layer_data_parts.push([gettext('Identification'), layer_info.queryable? gettext("Yes") : gettext("No")]);
-						layer_data_parts.push([gettext('Minimal scale'), layer_info.visibility_scale_min? layer_info.visibility_scale_min : Math.round(node.root.layer.maxScale)]);
-						layer_data_parts.push([gettext('Maximal scale'), layer_info.visibility_scale_max? layer_info.visibility_scale_max : Math.round(node.root.layer.minScale)]);
+						layer_data_parts.push([gettext('Maximal scale'), String.format('1: {0}', layer_info.visibility_scale_min? layer_info.visibility_scale_min : Math.round(node.root.layer.maxScale))]);
+						layer_data_parts.push([gettext('Minimal scale'), String.format('1: {0}', layer_info.visibility_scale_max? layer_info.visibility_scale_max : Math.round(node.root.layer.minScale))]);
 						if (layer_info.hasOwnProperty('labels')) {
 							layer_data_parts.push([gettext('Labels'), layer_info.labels? gettext("Yes") : gettext("No")]);
 						}
@@ -207,7 +207,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 						var formatted_data_parts = [];
 						Ext.each(layer_data_parts, function(data) {
 							if (data[1]) {
-								formatted_data_parts.push(String.format('<p><label>{0}:</label>{1}</p>', data[0], data[1]));
+								formatted_data_parts.push(String.format('<p><label>{0}:</label> {1}</p>', data[0], data[1]));
 							}
 						});
 						var t = new Ext.ToolTip({
