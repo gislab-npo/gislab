@@ -64,9 +64,10 @@
        state=present
 
 - name: Install GIS.lab Web
-  shell: source /usr/local/python-virtualenvs/gislab-web/bin/activate;
-    python /tmp/gislab-web/setup.py install
-
+  shell: source /usr/local/python-virtualenvs/gislab-web/bin/activate
+         && python /tmp/gislab-web/setup.py install
+  args:
+    executable: /bin/bash
 
 # GIS.lab Web project
 - name: Re-create Web project directory
@@ -88,8 +89,8 @@
 
 - name: Deploy GIS.lab Web project
 # we do not use Ansible django_manage module because of missing 'template' option
-  shell: source /usr/local/python-virtualenvs/gislab-web/bin/activate;
-    django-admin.py startproject --template=/tmp/gislab-web/webgis/conf/project_template/ djproject /var/www/gislab-web
+  shell: source /usr/local/python-virtualenvs/gislab-web/bin/activate
+         && django-admin.py startproject --template=/tmp/gislab-web/webgis/conf/project_template/ djproject /var/www/gislab-web
   args:
     executable: /bin/bash
 
