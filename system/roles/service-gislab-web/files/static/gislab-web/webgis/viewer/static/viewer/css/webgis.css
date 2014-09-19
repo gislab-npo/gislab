@@ -156,7 +156,7 @@ div.x-border-panel.layers-panel {
 	color: #222222;
 }
 
-.x-panel-body label {
+.x-combo-list-item, .layers-toolbar .x-form-text, .x-form-text.x-form-field, .x-panel-body label, .x-toolbar label {
 	font-family: tahoma,arial,verdana,sans-serif;
 	font-size: 11px;
 	font-weight: normal;
@@ -523,14 +523,6 @@ div.x-border-panel.layers-panel {
 	-moz-user-select: text !important;
 	-khtml-user-select: text !important;
 	-webkit-user-select: text !important;
-}
-
-.x-combo-list-item {
-	font: 11px arial,tahoma,helvetica,sans-serif;
-}
-
-.layers-toolbar .x-form-text {
-	font: 11px arial,tahoma,helvetica,sans-serif;
 }
 
 .layer-category-item {

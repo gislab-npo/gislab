@@ -101,7 +101,7 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 						width: this.getTopToolbar().getWidth(),
 						height: 28,
 						style: {
-							padding: '3px 1px 3px 1px'
+							padding: '3px 1px 3px 4px'
 						},
 						layout : {
 							type: 'hbox',
@@ -111,7 +111,7 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 							{
 								xtype: 'combo',
 								ref: 'attributeName',
-								width: 153,
+								width: 150,
 								editable: false,
 								tooltip: gettext('Attribute'),
 								mode: 'local',
