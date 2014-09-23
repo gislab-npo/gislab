@@ -4,9 +4,13 @@ upstream gislab-web {
  
 server {
 	listen 80;
+	listen 443 ssl;
 	server_name web.*;
 	client_max_body_size 4G;
- 
+
+	ssl_certificate /etc/nginx/ssl/gislab-web.crt;
+	ssl_certificate_key /etc/nginx/ssl/gislab-web.key;
+
 	access_log /var/log/nginx/gislab-web-access.log;
 	error_log /var/log/nginx/gislab-web-error.log;
 	

@@ -50,6 +50,8 @@
        virtualenv=/usr/local/python-virtualenvs/gislab-web
        virtualenv_site_packages=yes
        state=present
+  notify:
+    - service gislab-web restart
 
 
 # GIS.lab Web installation
@@ -62,12 +64,16 @@
        extra_args="--download-cache=/var/cache/pip"
        virtualenv_site_packages=yes
        state=present
+  notify:
+    - service gislab-web restart
 
 - name: Install GIS.lab Web
   shell: source /usr/local/python-virtualenvs/gislab-web/bin/activate
          && python /tmp/gislab-web/setup.py install
   args:
     executable: /bin/bash
+  notify:
+    - service gislab-web restart
 
 # GIS.lab Web project
 - name: Re-create Web project directory
@@ -93,15 +99,23 @@
          && django-admin.py startproject --template=/tmp/gislab-web/webgis/conf/project_template/ djproject /var/www/gislab-web
   args:
     executable: /bin/bash
+  notify:
+    - service gislab-web restart
 
 - name: Install secrets
   template: src=gislab-web/settings_secret.py.j2 dest=/var/www/gislab-web/djproject/settings_secret.py
+  notify:
+    - service gislab-web restart
 
 - name: Sync database
   django_manage: command=syncdb app_path=/var/www/gislab-web settings=djproject.settings virtualenv=/usr/local/python-virtualenvs/gislab-web
+  notify:
+    - service gislab-web restart
 
 - name: Collect static files
   django_manage: command=collectstatic app_path=/var/www/gislab-web settings=djproject.settings virtualenv=/usr/local/python-virtualenvs/gislab-web
+  notify:
+    - service gislab-web restart
 
 
 - name: Remove GIS.lab Web installation files from temporary dir on server
@@ -111,9 +125,30 @@
 # Web servers
 - name: Install Gunicorn startup script
   template: src=gunicorn/gunicorn.sh.j2 dest=/var/www/gislab-web/gunicorn.sh
+  notify:
+    - service gislab-web restart
 
 - name: Add executable permissions for Gunicorn startup script
   command: chmod 755 /var/www/gislab-web/gunicorn.sh
+
+
+- name: Generate self signed SSL certificate (run only once)
+  shell: openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout /etc/gislab/gislab-web.key -out /etc/gislab/gislab-web.crt
+         -subj "/C=GL/ST=GIS.lab/L=GIS.lab/O=GIS.lab/OU=GIS.lab/CN=GIS.lab"
+         && chmod 600 /etc/gislab/gislab-web.key
+         && chmod 600 /etc/gislab/gislab-web.crt
+  args:
+    executable: /bin/bash
+    creates: /etc/gislab/gislab-web.crt
+
+- name: Install SSL certificate
+  shell: "{{ item }}"
+  with_items:
+    - mkdir -p /etc/nginx/ssl
+    - cp /etc/gislab/gislab-web.key /etc/nginx/ssl/gislab-web.key
+    - cp /etc/gislab/gislab-web.crt /etc/nginx/ssl/gislab-web.crt
+  args:
+    executable: /bin/bash
 
 
 - name: Configure Nginx virtualhost
@@ -131,13 +166,11 @@
   template: src=init/gislab-web.conf.j2 dest=/etc/init/gislab-web.conf
   notify:
     - service gislab-web restart
-    - service nginx restart
 
 - name: Activate GIS.lab Web service
   file: src=/lib/init/upstart-job dest=/etc/init.d/gislab-web state=link
   notify:
     - service gislab-web restart
-    - service nginx restart
 
 
 - name: Activate cache cleaning
