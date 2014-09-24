@@ -1,0 +1,6 @@
+# variable DISPLAY enables Xvfb support for QGIS GetPrint requests
+<IfModule mod_fcgid.c>
+  AddHandler    fcgid-script .fcgi
+  FcgidConnectTimeout 20
+  FcgidInitialEnv DISPLAY ":99"
+</IfModule>

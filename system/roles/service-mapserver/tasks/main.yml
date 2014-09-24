@@ -40,6 +40,12 @@
   notify:
     - service apache2 restart
 
+- name: Configure Apache FCGI
+# Xvfb Xvfb support for QGIS GetPrint requests is enabled here by DISPLAY variable
+  template: src=apache2/fcgid.conf.j2 dest=/etc/apache2/mods-enabled/fcgid.conf
+  notify:
+    - service apache2 restart
+
 
 # Mapserver
 - name: Configure Mapserver virtualhost
