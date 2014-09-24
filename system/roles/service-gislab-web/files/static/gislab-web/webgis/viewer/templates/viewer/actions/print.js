@@ -105,11 +105,13 @@ var printWindow = new Ext.Window({
 					if (layout.json.labels.length > 0) {
 						var form_fields = [];
 						Ext.each(layout.json.labels, function(label) {
-							form_fields.push({
-								fieldLabel: label,
-								name: label,
-								allowBlank: true
-							});
+							if (!label.startsWith("gislab_")) {
+								form_fields.push({
+									fieldLabel: label,
+									name: label,
+									allowBlank: true
+								});
+							}
 						});
 						window.add({
 							xtype: 'form',
@@ -256,9 +258,27 @@ var printWindow = new Ext.Window({
 				if (print_window.items.length > 0) {
 					var labels_data = print_window.get(0).getForm().getValues();
 					for (label in labels_data) {
-						params[label] = labels_data[label];
+						params[label] = labels_data[label] || ' ';
 					}
 				}
+				// layers copyrights
+				var attributions = [];
+				overlays_root.root.cascade(function(node) {
+					if (node.isLeaf() && node.attributes.checked) {
+						var attribution = node.attributes.config.attribution;
+						if (attribution && attribution.title) {
+							if (attributions.indexOf(attribution.title) == -1) {
+								attributions.push(attribution.title);
+							}
+						}
+					}
+				});
+				Ext.applyIf(params, {
+					gislab_project: '{{ root_title }}',
+					gislab_author: '{{ user.get_full_name }}',
+					gislab_contact: '<div style="position:absolute;bottom:0;right:0;font-family:Liberation Sans;"><span>{{ organization }}<br />{{ email }}</span></div>',
+					gislab_copyrights: String.format('<div style="background-color:rgba(255,255,255,0.3);position:absolute;bottom:0;right:0;padding-left:8px;padding-right:8px;font-family:Liberation Sans;">{0}</div>', Ext.util.Format.htmlEncode(attributions.join(', ')))
+				});
 
 				var printUrl = Ext.urlAppend('{% autoescape off %}{{ ows_url }}{% endautoescape %}', Ext.urlEncode(params))
 				window.open(printUrl, '_blank');

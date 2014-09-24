@@ -1,14 +1,14 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="Countries of Central Europe" version="2.2.1-Valmiera (ppa:imincik)">
+<qgis projectname="Countries of Central Europe" version="2.2.99-Valmiera (ppa:imincik)">
     <title>Countries of Central Europe</title>
     <relations/>
     <mapcanvas>
         <units>meters</units>
         <extent>
-            <xmin>63898.9278289417270571</xmin>
-            <ymin>5357967.83299362380057573</ymin>
-            <xmax>3057881.03960678726434708</xmax>
-            <ymax>7608187.45087905135005713</ymax>
+            <xmin>231620.82726860410184599</xmin>
+            <ymin>5646310.4788717357441783</ymin>
+            <xmax>3107479.23818338941782713</xmax>
+            <ymax>7416708.86478170473128557</ymax>
         </extent>
         <projections>1</projections>
         <destinationsrs>
@@ -38,7 +38,7 @@
             <layer_coordinate_transform destAuthId="EPSG:3857" srcAuthId="EPSG:4326" srcDatumTransform="-1" destDatumTransform="-1" layerid="countries_copy_copy_copy20140315175659607"/>
         </layer_coordinate_transform_info>
     </mapcanvas>
-    <legend updateDrawingOrder="false" activeLayer="places20131111135858795">
+    <legend updateDrawingOrder="false">
         <legendgroup open="true" checked="Qt::Checked" name="Places and roads">
             <legendlayer drawingOrder="0" open="true" checked="Qt::Checked" name="Places" showFeatureCount="0">
                 <filegroup open="true" hidden="false">
@@ -70,7 +70,7 @@
         </legendgroup>
     </legend>
     <Composer title="A4" visible="0">
-        <Composition snapGridTolerance="2" gridVisible="0" printResolution="300" paperWidth="297" snapGridOffsetX="0" guidesVisible="1" snapGridResolution="10" snapGridOffsetY="0" alignmentSnap="1" snapping="0" numPages="1" paperHeight="210" alignmentSnapTolerance="2" smartGuides="1" printAsRaster="1" generateWorldFile="0">
+        <Composition snapGridTolerance="2" gridVisible="1" printResolution="400" paperWidth="297" snapGridOffsetX="0" guidesVisible="1" snapGridResolution="10" snapGridOffsetY="0" alignmentSnap="1" snapping="1" numPages="1" paperHeight="210" alignmentSnapTolerance="2" smartGuides="1" printAsRaster="0" generateWorldFile="0">
             <symbol alpha="1" type="fill" name="">
                 <layer pass="0" class="SimpleFill" locked="0">
                     <prop k="border_width_unit" v="MM"/>
@@ -83,278 +83,91 @@
                     <prop k="width_border" v="0.26"/>
                 </layer>
             </symbol>
-            <ComposerLabel valign="128" labelText="Created at: [% $now%]" htmlState="0" halign="1" margin="1">
-                <LabelFont description="Droid Sans,10,-1,5,50,0,0,0,0,0"/>
+            <ComposerPicture pictureRotation="0" pictureWidth="11" file="../../../system/roles/service-client/files/static/system/qgis/composer_templates/north-arrow.svg" pictureHeight="11" mapId="0">
+                <ComposerItem width="11" x="275" transparency="0" y="20" height="11" positionMode="0" frame="false" outlineWidth="0.3" zValue="10" itemRotation="0" lastValidViewScaleFactor="6.46253" uuid="{e5dc6b97-1c74-492f-b9e3-d9468f72aab4}" id="" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="150" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerPicture>
+            <ComposerShape shapeType="1" cornerRadius="0">
+                <symbol alpha="1" type="fill" name="">
+                    <layer pass="0" class="SimpleFill" locked="0">
+                        <prop k="border_width_unit" v="MM"/>
+                        <prop k="color" v="255,255,255,130"/>
+                        <prop k="color_border" v="0,0,0,255"/>
+                        <prop k="offset" v="0,0"/>
+                        <prop k="offset_unit" v="MM"/>
+                        <prop k="style" v="solid"/>
+                        <prop k="style_border" v="no"/>
+                        <prop k="width_border" v="0"/>
+                    </layer>
+                </symbol>
+                <ComposerItem width="11" x="274.98" transparency="0" y="20.05" height="11" positionMode="0" frame="false" outlineWidth="0.3" zValue="9" itemRotation="0" lastValidViewScaleFactor="3.06018" uuid="{0c83b094-6de8-4d2a-afd5-0759999a5351}" id="" background="true" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerShape>
+            <ComposerLabel valign="32" labelText="Project title" htmlState="0" halign="1" margin="0">
+                <LabelFont description="Liberation Sans,9,-1,5,50,0,0,0,0,0"/>
                 <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="70.0068" x="7.24264" transparency="0" y="193.659" height="11.9" positionMode="0" frame="false" outlineWidth="0.3" zValue="5" itemRotation="0" lastValidViewScaleFactor="1.52404" uuid="{77f9adc3-b434-402c-a28e-0c8b7d0f6847}" id="" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="210" x="10" transparency="0" y="14.5317" height="4.6459" positionMode="0" frame="false" outlineWidth="0.3" zValue="8" itemRotation="0" lastValidViewScaleFactor="3.01482" uuid="{fa4ff81d-3085-4f4c-994f-69675ab9ebf1}" id="gislab_project" background="true" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerLabel>
-            <ComposerLegend symbolWidth="7" title="Legend" boxSpace="2" splitLayer="0" equalColumnWidth="0" map="0" symbolHeight="4" wmsLegendHeight="25" wrapChar="" fontColor="#000000" columnSpace="2" wmsLegendWidth="50" columnCount="1">
-                <styles>
-                    <style marginBottom="2" name="title" font="Droid Sans,16,-1,5,75,0,0,0,0,0"/>
-                    <style marginTop="2" name="group" font="Droid Sans,14,-1,5,50,0,0,0,0,0"/>
-                    <style marginTop="2" name="subgroup" font="Droid Sans,12,-1,5,50,0,0,0,0,0"/>
-                    <style marginTop="2" name="symbol" font="Droid Sans,10,-1,5,50,0,0,0,0,0"/>
-                    <style marginTop="2" marginLeft="2" name="symbolLabel" font="Droid Sans,12,-1,5,50,0,0,0,0,0"/>
-                </styles>
-                <Model autoUpdate="1">
-                    <LayerItem layerId="places20131111135858795" userText="" style="hidden" text="Places" showFeatureCount="0">
-                        <VectorClassificationItemNg userText="" text="Places">
-                            <symbols>
-                                <symbol alpha="1" type="marker" name="classificationSymbol">
-                                    <layer pass="0" class="SimpleMarker" locked="0">
-                                        <prop k="angle" v="0"/>
-                                        <prop k="color" v="170,0,127,255"/>
-                                        <prop k="color_border" v="0,0,0,255"/>
-                                        <prop k="horizontal_anchor_point" v="1"/>
-                                        <prop k="name" v="circle"/>
-                                        <prop k="offset" v="0,0"/>
-                                        <prop k="offset_unit" v="MM"/>
-                                        <prop k="outline_style" v="solid"/>
-                                        <prop k="outline_width" v="0"/>
-                                        <prop k="outline_width_unit" v="MM"/>
-                                        <prop k="scale_method" v="area"/>
-                                        <prop k="size" v="2"/>
-                                        <prop k="size_unit" v="MM"/>
-                                        <prop k="vertical_anchor_point" v="1"/>
-                                    </layer>
-                                </symbol>
-                            </symbols>
-                        </VectorClassificationItemNg>
-                    </LayerItem>
-                    <LayerItem layerId="roads20131111135915389" userText="" style="hidden" text="Roads" showFeatureCount="0">
-                        <VectorClassificationItemNg userText="" text="Roads">
-                            <symbols>
-                                <symbol alpha="1" type="line" name="classificationSymbol">
-                                    <layer pass="0" class="SimpleLine" locked="0">
-                                        <prop k="capstyle" v="square"/>
-                                        <prop k="color" v="170,0,0,255"/>
-                                        <prop k="customdash" v="5;2"/>
-                                        <prop k="customdash_unit" v="MM"/>
-                                        <prop k="draw_inside_polygon" v="0"/>
-                                        <prop k="joinstyle" v="bevel"/>
-                                        <prop k="offset" v="0"/>
-                                        <prop k="offset_unit" v="MM"/>
-                                        <prop k="penstyle" v="solid"/>
-                                        <prop k="use_custom_dash" v="0"/>
-                                        <prop k="width" v="0.26"/>
-                                        <prop k="width_unit" v="MM"/>
-                                    </layer>
-                                </symbol>
-                            </symbols>
-                        </VectorClassificationItemNg>
-                    </LayerItem>
-                    <GroupItem userText="Countries" style="group" text="Countries">
-                        <LayerItem layerId="countries20131111135847187" userText="" style="hidden" text="Austria" showFeatureCount="0">
-                            <VectorClassificationItemNg userText="" text="Austria">
-                                <symbols>
-                                    <symbol alpha="0.396078" type="fill" name="classificationSymbol">
-                                        <layer pass="0" class="SimpleFill" locked="0">
-                                            <prop k="border_width_unit" v="MM"/>
-                                            <prop k="color" v="170,0,0,255"/>
-                                            <prop k="color_border" v="0,0,0,255"/>
-                                            <prop k="offset" v="0,0"/>
-                                            <prop k="offset_unit" v="MM"/>
-                                            <prop k="style" v="solid"/>
-                                            <prop k="style_border" v="solid"/>
-                                            <prop k="width_border" v="0.26"/>
-                                        </layer>
-                                    </symbol>
-                                </symbols>
-                            </VectorClassificationItemNg>
-                        </LayerItem>
-                        <LayerItem layerId="countries_copy20140315175242746" userText="" style="hidden" text="Czech rep." showFeatureCount="0">
-                            <VectorClassificationItemNg userText="" text="Czech rep.">
-                                <symbols>
-                                    <symbol alpha="0.396078" type="fill" name="classificationSymbol">
-                                        <layer pass="0" class="SimpleFill" locked="0">
-                                            <prop k="border_width_unit" v="MM"/>
-                                            <prop k="color" v="0,85,0,255"/>
-                                            <prop k="color_border" v="0,0,0,255"/>
-                                            <prop k="offset" v="0,0"/>
-                                            <prop k="offset_unit" v="MM"/>
-                                            <prop k="style" v="solid"/>
-                                            <prop k="style_border" v="solid"/>
-                                            <prop k="width_border" v="0.26"/>
-                                        </layer>
-                                    </symbol>
-                                </symbols>
-                            </VectorClassificationItemNg>
-                        </LayerItem>
-                        <LayerItem layerId="countries_copy20140315175246137" userText="" style="hidden" text="Germany" showFeatureCount="0">
-                            <VectorClassificationItemNg userText="" text="Germany">
-                                <symbols>
-                                    <symbol alpha="0.396078" type="fill" name="classificationSymbol">
-                                        <layer pass="0" class="SimpleFill" locked="0">
-                                            <prop k="border_width_unit" v="MM"/>
-                                            <prop k="color" v="170,85,0,255"/>
-                                            <prop k="color_border" v="0,0,0,255"/>
-                                            <prop k="offset" v="0,0"/>
-                                            <prop k="offset_unit" v="MM"/>
-                                            <prop k="style" v="solid"/>
-                                            <prop k="style_border" v="solid"/>
-                                            <prop k="width_border" v="0.26"/>
-                                        </layer>
-                                    </symbol>
-                                </symbols>
-                            </VectorClassificationItemNg>
-                        </LayerItem>
-                        <LayerItem layerId="countries_copy20140315175248369" userText="" style="hidden" text="Hungary" showFeatureCount="0">
-                            <VectorClassificationItemNg userText="" text="Hungary">
-                                <symbols>
-                                    <symbol alpha="0.396078" type="fill" name="classificationSymbol">
-                                        <layer pass="0" class="SimpleFill" locked="0">
-                                            <prop k="border_width_unit" v="MM"/>
-                                            <prop k="color" v="170,170,0,255"/>
-                                            <prop k="color_border" v="0,0,0,255"/>
-                                            <prop k="offset" v="0,0"/>
-                                            <prop k="offset_unit" v="MM"/>
-                                            <prop k="style" v="solid"/>
-                                            <prop k="style_border" v="solid"/>
-                                            <prop k="width_border" v="0.26"/>
-                                        </layer>
-                                    </symbol>
-                                </symbols>
-                            </VectorClassificationItemNg>
-                        </LayerItem>
-                        <LayerItem layerId="countries_copy20140315175250105" userText="" style="hidden" text="Liechtenstein" showFeatureCount="0">
-                            <VectorClassificationItemNg userText="" text="Liechtenstein">
-                                <symbols>
-                                    <symbol alpha="0.396078" type="fill" name="classificationSymbol">
-                                        <layer pass="0" class="SimpleFill" locked="0">
-                                            <prop k="border_width_unit" v="MM"/>
-                                            <prop k="color" v="170,0,127,255"/>
-                                            <prop k="color_border" v="0,0,0,255"/>
-                                            <prop k="offset" v="0,0"/>
-                                            <prop k="offset_unit" v="MM"/>
-                                            <prop k="style" v="solid"/>
-                                            <prop k="style_border" v="solid"/>
-                                            <prop k="width_border" v="0.26"/>
-                                        </layer>
-                                    </symbol>
-                                </symbols>
-                            </VectorClassificationItemNg>
-                        </LayerItem>
-                        <LayerItem layerId="countries_copy20140315175251849" userText="" style="hidden" text="Poland" showFeatureCount="0">
-                            <VectorClassificationItemNg userText="" text="Poland">
-                                <symbols>
-                                    <symbol alpha="0.396078" type="fill" name="classificationSymbol">
-                                        <layer pass="0" class="SimpleFill" locked="0">
-                                            <prop k="border_width_unit" v="MM"/>
-                                            <prop k="color" v="0,0,127,255"/>
-                                            <prop k="color_border" v="0,0,0,255"/>
-                                            <prop k="offset" v="0,0"/>
-                                            <prop k="offset_unit" v="MM"/>
-                                            <prop k="style" v="solid"/>
-                                            <prop k="style_border" v="solid"/>
-                                            <prop k="width_border" v="0.26"/>
-                                        </layer>
-                                    </symbol>
-                                </symbols>
-                            </VectorClassificationItemNg>
-                        </LayerItem>
-                        <LayerItem layerId="countries_copy20140315175257305" userText="" style="hidden" text="Slovakia" showFeatureCount="0">
-                            <VectorClassificationItemNg userText="" text="Slovakia">
-                                <symbols>
-                                    <symbol alpha="0.396078" type="fill" name="classificationSymbol">
-                                        <layer pass="0" class="SimpleFill" locked="0">
-                                            <prop k="border_width_unit" v="MM"/>
-                                            <prop k="color" v="170,0,255,255"/>
-                                            <prop k="color_border" v="0,0,0,255"/>
-                                            <prop k="offset" v="0,0"/>
-                                            <prop k="offset_unit" v="MM"/>
-                                            <prop k="style" v="solid"/>
-                                            <prop k="style_border" v="solid"/>
-                                            <prop k="width_border" v="0.26"/>
-                                        </layer>
-                                    </symbol>
-                                </symbols>
-                            </VectorClassificationItemNg>
-                        </LayerItem>
-                        <LayerItem layerId="countries_copy_copy20140315175656247" userText="" style="hidden" text="Slovenia" showFeatureCount="0">
-                            <VectorClassificationItemNg userText="" text="Slovenia">
-                                <symbols>
-                                    <symbol alpha="0.396078" type="fill" name="classificationSymbol">
-                                        <layer pass="0" class="SimpleFill" locked="0">
-                                            <prop k="border_width_unit" v="MM"/>
-                                            <prop k="color" v="255,0,127,255"/>
-                                            <prop k="color_border" v="0,0,0,255"/>
-                                            <prop k="offset" v="0,0"/>
-                                            <prop k="offset_unit" v="MM"/>
-                                            <prop k="style" v="solid"/>
-                                            <prop k="style_border" v="solid"/>
-                                            <prop k="width_border" v="0.26"/>
-                                        </layer>
-                                    </symbol>
-                                </symbols>
-                            </VectorClassificationItemNg>
-                        </LayerItem>
-                        <LayerItem layerId="countries_copy_copy_copy20140315175659607" userText="" style="hidden" text="Switzerland" showFeatureCount="0">
-                            <VectorClassificationItemNg userText="" text="Switzerland">
-                                <symbols>
-                                    <symbol alpha="0.396078" type="fill" name="classificationSymbol">
-                                        <layer pass="0" class="SimpleFill" locked="0">
-                                            <prop k="border_width_unit" v="MM"/>
-                                            <prop k="color" v="255,255,0,255"/>
-                                            <prop k="color_border" v="0,0,0,255"/>
-                                            <prop k="offset" v="0,0"/>
-                                            <prop k="offset_unit" v="MM"/>
-                                            <prop k="style" v="solid"/>
-                                            <prop k="style_border" v="solid"/>
-                                            <prop k="width_border" v="0.26"/>
-                                        </layer>
-                                    </symbol>
-                                </symbols>
-                            </VectorClassificationItemNg>
-                        </LayerItem>
-                    </GroupItem>
-                    <LayerItem layerId="Western_Countries_copy20140530160007167" userText="" style="hidden" text="Western Countries copy" showFeatureCount="0">
-                        <VectorClassificationItemNg userText="" text="Western Countries copy">
-                            <symbols>
-                                <symbol alpha="1" type="fill" name="classificationSymbol">
-                                    <layer pass="0" class="SimpleFill" locked="0">
-                                        <prop k="border_width_unit" v="MM"/>
-                                        <prop k="color" v="119,193,185,255"/>
-                                        <prop k="color_border" v="0,0,0,255"/>
-                                        <prop k="offset" v="0,0"/>
-                                        <prop k="offset_unit" v="MM"/>
-                                        <prop k="style" v="solid"/>
-                                        <prop k="style_border" v="solid"/>
-                                        <prop k="width_border" v="0.26"/>
-                                    </layer>
-                                </symbol>
-                            </symbols>
-                        </VectorClassificationItemNg>
-                    </LayerItem>
-                </Model>
-                <ComposerItem width="57.85" x="245.4" transparency="0" y="35.4639" height="92.1" positionMode="0" frame="true" outlineWidth="0.3" zValue="4" itemRotation="0" lastValidViewScaleFactor="1.99577" uuid="{a6a9face-dde0-41ad-ab7e-7287c4855d3b}" id="" background="true" blendMode="0" positionLock="false">
-                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
-                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
-                </ComposerItem>
-            </ComposerLegend>
-            <ComposerLabel valign="128" labelText="Central Europe" htmlState="0" halign="4" margin="1">
-                <LabelFont description="Droid Sans,24,-1,5,75,0,0,0,0,0"/>
+            <ComposerLabel valign="32" labelText="Author&#xa;" htmlState="0" halign="2" margin="0">
+                <LabelFont description="Liberation Sans,8,-1,5,50,0,0,0,0,0"/>
                 <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="277.299" x="7.39264" transparency="0" y="13.204" height="18.9036" positionMode="0" frame="true" outlineWidth="0.3" zValue="3" itemRotation="0" lastValidViewScaleFactor="1.52404" uuid="{d8ed4f3c-0f36-47e6-95a8-10aa748503d6}" id="Title" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="86.7889" x="180" transparency="0" y="198" height="3.4" positionMode="0" frame="false" outlineWidth="0.3" zValue="7" itemRotation="0" lastValidViewScaleFactor="3.01482" uuid="{5700747c-2faa-4608-9c12-b67599e17d39}" id="gislab_author" background="false" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerLabel>
-            <ComposerScaleBar penColor="#000000" style="Numeric" numMapUnitsPerScaleBarUnit="1000" alignment="1" brushColor="#000000" numSegments="4" segmentMillimeters="11.4295" fontColor="#000000" font="Droid Sans,12,-1,5,75,0,0,0,0,0" numUnitsPerSegment="100000" units="1" labelBarSpace="3" outlineWidth="1" numSegmentsLeft="2" height="3" mapId="0" boxContentSpace="1" unitLabel="km">
-                <ComposerItem width="41.0326" x="243.809" transparency="0" y="193.659" height="11.9" positionMode="0" frame="false" outlineWidth="0.3" zValue="2" itemRotation="0" lastValidViewScaleFactor="1.52404" uuid="{b7fec8b4-6468-4bf4-82e3-251cc4bc5dcc}" id="" background="true" blendMode="0" positionLock="false">
+            <ComposerLabel valign="64" labelText="&lt;div style=&quot;background-color:rgba(255,255,255,0.3);position:absolute;bottom:0;right:0;padding-left:8px;padding-right:8px;font-family:Liberation Sans;&quot;>copyrights&lt;/div>" htmlState="2" halign="2" margin="0">
+                <LabelFont description="Cadastra Cn,5,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="275.6" x="10.2" transparency="0" y="159" height="38.5747" positionMode="0" frame="false" outlineWidth="0.3" zValue="6" itemRotation="0" lastValidViewScaleFactor="3.06018" uuid="{b5fa0127-8f4d-4738-86ee-240958dd7280}" id="gislab_copyrights" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="100" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerLabel valign="64" labelText="&lt;div style=&quot;position:absolute;bottom:0;right:0;font-family:Liberation Sans;&quot;>&lt;span>Organization&lt;br />e-mail&lt;/span>&lt;/div>" htmlState="2" halign="2" margin="0">
+                <LabelFont description="Liberation Sans,8,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="60.6942" x="225.456" transparency="0" y="7" height="12.5" positionMode="0" frame="false" outlineWidth="0.3" zValue="5" itemRotation="0" lastValidViewScaleFactor="3.06018" uuid="{67e504ef-7534-40dd-ba90-5ccfe0ab2ada}" id="gislab_contact" background="false" blendMode="0" positionLock="true">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="0" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerLabel valign="32" labelText="Title" htmlState="0" halign="1" margin="0">
+                <LabelFont description="Liberation Sans,11,-1,5,75,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="210" x="10" transparency="0" y="9" height="5.53172" positionMode="0" frame="false" outlineWidth="0.3" zValue="4" itemRotation="0" lastValidViewScaleFactor="3.01482" uuid="{cceee9e3-0a75-4d75-9865-79d3fc710605}" id="Title" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="0" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerScaleBar penColor="#000000" style="Numeric" numMapUnitsPerScaleBarUnit="1" alignment="0" brushColor="#000000" numSegments="2" segmentMillimeters="3" fontColor="#000000" font="Liberation Sans,8,-1,5,50,0,0,0,0,0" numUnitsPerSegment="30" units="0" labelBarSpace="0" outlineWidth="1" numSegmentsLeft="0" height="5" mapId="0" boxContentSpace="0" unitLabel="">
+                <ComposerItem width="23.92" x="10" transparency="0" y="198" height="4.8666" positionMode="0" frame="false" outlineWidth="0.3" zValue="3" itemRotation="0" lastValidViewScaleFactor="12.0593" uuid="{b66d3b22-c800-4640-816d-0d4241d15b19}" id="" background="false" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerScaleBar>
-            <ComposerMap mapRotation="0" keepLayerSet="false" overviewFrameMap="-1" id="0" previewMode="Render" drawCanvasItems="true">
+            <ComposerLabel valign="32" labelText="$CURRENT_DATE(dd.MM.yyyy)" htmlState="0" halign="2" margin="0">
+                <LabelFont description="Liberation Sans,8,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="14.82" x="271.33" transparency="0" y="198" height="3.4" positionMode="0" frame="false" outlineWidth="0.3" zValue="2" itemRotation="0" lastValidViewScaleFactor="12.0593" uuid="{e5ec33b3-1ac7-4cb6-8cd0-0a5f01320356}" id="" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerMap mapRotation="0" keepLayerSet="false" overviewFrameMap="-1" id="0" previewMode="Render" drawCanvasItems="false">
                 <overviewFrame overviewBlendMode="0" overviewFrameMap="-1" overviewCentered="false" overviewInverted="false">
                     <symbol alpha="0.3" type="fill" name="">
                         <layer pass="0" class="SimpleFill" locked="0">
                             <prop k="border_width_unit" v="MM"/>
-                            <prop k="color" v="255,0,0,255"/>
-                            <prop k="color_border" v="0,0,0,255"/>
+                            <prop k="color" v="255,0,0,76"/>
+                            <prop k="color_border" v="0,0,0,76"/>
                             <prop k="offset" v="0,0"/>
                             <prop k="offset_unit" v="MM"/>
                             <prop k="style" v="solid"/>
@@ -363,15 +176,15 @@
                         </layer>
                     </symbol>
                 </overviewFrame>
-                <Extent ymin="5646310.45253756362944841" xmin="239911.16076776618137956" ymax="7564487.17400963790714741" xmax="3099188.9046842297539115"/>
+                <Extent ymin="244086.99999910659971647" xmin="695113.99999859242234379" ymax="245867.00000092218397185" xmax="697874.00000140757765621"/>
                 <LayerSet/>
-                <Grid gridStyle="0" crossLength="3" gridFramePenThickness="0.5" intervalX="0" offsetX="0" intervalY="0" offsetY="0" gridFrameStyle="0" gridFrameWidth="2" gridBlendMode="0" show="0">
+                <Grid gridStyle="1" crossLength="1" gridFramePenThickness="0.5" intervalX="500" offsetX="0" intervalY="500" offsetY="0" gridFrameStyle="0" gridFrameWidth="2" gridBlendMode="0" show="0">
                     <framePenColor alpha="255" red="0" blue="0" green="0"/>
                     <frameFillColor1 alpha="255" red="255" blue="255" green="255"/>
                     <frameFillColor2 alpha="255" red="0" blue="0" green="0"/>
                     <symbol alpha="1" type="line" name="">
                         <layer pass="0" class="SimpleLine" locked="0">
-                            <prop k="capstyle" v="flat"/>
+                            <prop k="capstyle" v="square"/>
                             <prop k="color" v="0,0,0,255"/>
                             <prop k="customdash" v="5;2"/>
                             <prop k="customdash_unit" v="MM"/>
@@ -381,16 +194,157 @@
                             <prop k="offset_unit" v="MM"/>
                             <prop k="penstyle" v="solid"/>
                             <prop k="use_custom_dash" v="0"/>
-                            <prop k="width" v="0.3"/>
+                            <prop k="width" v="0.1"/>
                             <prop k="width_unit" v="MM"/>
                         </layer>
                     </symbol>
-                    <Annotation rightDirection="0" bottomDirection="0" format="0" topPosition="1" precision="3" leftDirection="0" rightPosition="1" bottomPosition="1" frameDistance="1" show="0" font="Droid Sans,10,-1,5,50,0,0,0,0,0" leftPosition="1" topDirection="0">
+                    <Annotation rightDirection="1" bottomDirection="0" format="0" topPosition="1" precision="0" leftDirection="1" rightPosition="1" bottomPosition="1" frameDistance="0.6" show="1" font="Cadastra,5,-1,5,50,0,0,0,0,0" leftPosition="1" topDirection="0">
                         <fontColor alpha="255" red="0" blue="0" green="0"/>
                     </Annotation>
                 </Grid>
                 <AtlasMap fixedScale="0" atlasDriven="0" margin="0.10000000000000001"/>
-                <ComposerItem width="229.857" x="7.39264" transparency="0" y="35.4639" height="154.202" positionMode="0" frame="true" outlineWidth="0.3" zValue="1" itemRotation="0" lastValidViewScaleFactor="1.99577" uuid="{4c970761-c80a-4f3a-8c8f-18df45ee5323}" id="" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="276" x="10.075" transparency="0" y="20" height="178" positionMode="0" frame="true" outlineWidth="0.15" zValue="1" itemRotation="0" lastValidViewScaleFactor="3.06018" uuid="{83d1b455-4761-4ba0-8d0e-6ab4a1656a84}" id="" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerMap>
+        </Composition>
+    </Composer>
+    <Composer title="A3" visible="0">
+        <Composition snapGridTolerance="2" gridVisible="1" printResolution="400" paperWidth="420" snapGridOffsetX="0" guidesVisible="1" snapGridResolution="10" snapGridOffsetY="0" alignmentSnap="1" snapping="1" numPages="1" paperHeight="297" alignmentSnapTolerance="2" smartGuides="1" printAsRaster="0" generateWorldFile="0">
+            <symbol alpha="1" type="fill" name="">
+                <layer pass="0" class="SimpleFill" locked="0">
+                    <prop k="border_width_unit" v="MM"/>
+                    <prop k="color" v="255,255,255,255"/>
+                    <prop k="color_border" v="0,0,0,255"/>
+                    <prop k="offset" v="0,0"/>
+                    <prop k="offset_unit" v="MM"/>
+                    <prop k="style" v="solid"/>
+                    <prop k="style_border" v="no"/>
+                    <prop k="width_border" v="0.26"/>
+                </layer>
+            </symbol>
+            <ComposerPicture pictureRotation="0" pictureWidth="11" file="../../../system/roles/service-client/files/static/system/qgis/composer_templates/north-arrow.svg" pictureHeight="11" mapId="0">
+                <ComposerItem width="11" x="398" transparency="0" y="20" height="11" positionMode="0" frame="false" outlineWidth="0.3" zValue="10" itemRotation="0" lastValidViewScaleFactor="2.13948" uuid="{9016a108-1a88-4e34-8a0c-c41acbab4828}" id="" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="150" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerPicture>
+            <ComposerShape shapeType="1" cornerRadius="0">
+                <symbol alpha="1" type="fill" name="">
+                    <layer pass="0" class="SimpleFill" locked="0">
+                        <prop k="border_width_unit" v="MM"/>
+                        <prop k="color" v="255,255,255,130"/>
+                        <prop k="color_border" v="0,0,0,255"/>
+                        <prop k="offset" v="0,0"/>
+                        <prop k="offset_unit" v="MM"/>
+                        <prop k="style" v="solid"/>
+                        <prop k="style_border" v="no"/>
+                        <prop k="width_border" v="0"/>
+                    </layer>
+                </symbol>
+                <ComposerItem width="11" x="397.9" transparency="0" y="20.1" height="11" positionMode="0" frame="false" outlineWidth="0.3" zValue="9" itemRotation="0" lastValidViewScaleFactor="2.17167" uuid="{75f44ff8-4f49-47db-88ed-5d1ef6bb5ba0}" id="" background="true" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerShape>
+            <ComposerLabel valign="32" labelText="Project title" htmlState="0" halign="1" margin="0">
+                <LabelFont description="Liberation Sans,9,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="330" x="10" transparency="0" y="14.5317" height="4.6459" positionMode="0" frame="false" outlineWidth="0.3" zValue="8" itemRotation="0" lastValidViewScaleFactor="2.17167" uuid="{86352be7-9692-4ac5-8a9d-df6786b8ac6a}" id="gislab_project" background="true" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerLabel valign="32" labelText="Author&#xa;" htmlState="0" halign="2" margin="0">
+                <LabelFont description="Liberation Sans,8,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="86.7889" x="303.33" transparency="0" y="285" height="3.4" positionMode="0" frame="false" outlineWidth="0.3" zValue="7" itemRotation="0" lastValidViewScaleFactor="34.2318" uuid="{8390e9c8-7895-4f84-bba5-203ea617b4c8}" id="gislab_author" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerLabel valign="64" labelText="&lt;div style=&quot;background-color:rgba(255,255,255,0.3);position:absolute;bottom:0;right:0;padding-left:8px;padding-right:8px;font-family:Liberation Sans;&quot;>copyrights&lt;/div>" htmlState="2" halign="2" margin="0">
+                <LabelFont description="Cadastra Cn,5,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="398.6" x="10.2" transparency="0" y="246" height="38.5747" positionMode="0" frame="false" outlineWidth="0.3" zValue="6" itemRotation="0" lastValidViewScaleFactor="2.17167" uuid="{b360684f-5732-40aa-ac22-b034524f34ef}" id="gislab_copyrights" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="100" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerLabel valign="32" labelText="&lt;div style=&quot;position:absolute;bottom:0;right:0;font-family:Liberation Sans;&quot;>&lt;span>Organization&lt;br />e-mail&lt;/span>&lt;/div>" htmlState="2" halign="2" margin="0">
+                <LabelFont description="Liberation Sans,8,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="60.6942" x="348.2" transparency="0" y="7" height="12.5" positionMode="0" frame="false" outlineWidth="0.3" zValue="5" itemRotation="0" lastValidViewScaleFactor="2.17167" uuid="{36bcdfe5-5d8c-4f7a-bd6a-ca8772b2e40d}" id="gislab_contact" background="false" blendMode="0" positionLock="true">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="0" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerLabel valign="32" labelText="Title" htmlState="0" halign="1" margin="0">
+                <LabelFont description="Liberation Sans,11,-1,5,75,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="330" x="10" transparency="0" y="9" height="5.53172" positionMode="0" frame="false" outlineWidth="0.3" zValue="4" itemRotation="0" lastValidViewScaleFactor="2.13948" uuid="{d8735568-c098-4829-86af-7e1b9ceead6e}" id="Title" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="0" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerScaleBar penColor="#000000" style="Numeric" numMapUnitsPerScaleBarUnit="1" alignment="0" brushColor="#000000" numSegments="2" segmentMillimeters="4.33696" fontColor="#000000" font="Liberation Sans,8,-1,5,50,0,0,0,0,0" numUnitsPerSegment="30" units="0" labelBarSpace="0" outlineWidth="1" numSegmentsLeft="0" height="5" mapId="0" boxContentSpace="0" unitLabel="">
+                <ComposerItem width="23.92" x="10" transparency="0" y="285" height="4.8666" positionMode="0" frame="false" outlineWidth="0.3" zValue="3" itemRotation="0" lastValidViewScaleFactor="2.13948" uuid="{e15555d0-5f11-4532-9953-8b20c4c284c6}" id="" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerScaleBar>
+            <ComposerLabel valign="32" labelText="$CURRENT_DATE(dd.MM.yyyy)" htmlState="0" halign="2" margin="0">
+                <LabelFont description="Liberation Sans,8,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="14.82" x="394.33" transparency="0" y="285" height="3.4" positionMode="0" frame="false" outlineWidth="0.3" zValue="2" itemRotation="0" lastValidViewScaleFactor="6.3591" uuid="{b9b4c352-3df8-424a-a76d-ff855601d518}" id="" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerMap mapRotation="0" keepLayerSet="false" overviewFrameMap="-1" id="0" previewMode="Render" drawCanvasItems="false">
+                <overviewFrame overviewBlendMode="0" overviewFrameMap="-1" overviewCentered="false" overviewInverted="false">
+                    <symbol alpha="0.3" type="fill" name="">
+                        <layer pass="0" class="SimpleFill" locked="0">
+                            <prop k="border_width_unit" v="MM"/>
+                            <prop k="color" v="255,0,0,76"/>
+                            <prop k="color_border" v="0,0,0,76"/>
+                            <prop k="offset" v="0,0"/>
+                            <prop k="offset_unit" v="MM"/>
+                            <prop k="style" v="solid"/>
+                            <prop k="style_border" v="no"/>
+                            <prop k="width_border" v="0.26"/>
+                        </layer>
+                    </symbol>
+                </overviewFrame>
+                <Extent ymin="244086.99999910659971647" xmin="695113.99999859242234379" ymax="245920.08270774321863428" xmax="697874.00000140757765621"/>
+                <LayerSet/>
+                <Grid gridStyle="1" crossLength="1" gridFramePenThickness="0.5" intervalX="500" offsetX="0" intervalY="500" offsetY="0" gridFrameStyle="0" gridFrameWidth="2" gridBlendMode="0" show="0">
+                    <framePenColor alpha="255" red="0" blue="0" green="0"/>
+                    <frameFillColor1 alpha="255" red="255" blue="255" green="255"/>
+                    <frameFillColor2 alpha="255" red="0" blue="0" green="0"/>
+                    <symbol alpha="1" type="line" name="">
+                        <layer pass="0" class="SimpleLine" locked="0">
+                            <prop k="capstyle" v="square"/>
+                            <prop k="color" v="0,0,0,255"/>
+                            <prop k="customdash" v="5;2"/>
+                            <prop k="customdash_unit" v="MM"/>
+                            <prop k="draw_inside_polygon" v="0"/>
+                            <prop k="joinstyle" v="bevel"/>
+                            <prop k="offset" v="0"/>
+                            <prop k="offset_unit" v="MM"/>
+                            <prop k="penstyle" v="solid"/>
+                            <prop k="use_custom_dash" v="0"/>
+                            <prop k="width" v="0.1"/>
+                            <prop k="width_unit" v="MM"/>
+                        </layer>
+                    </symbol>
+                    <Annotation rightDirection="1" bottomDirection="0" format="0" topPosition="1" precision="0" leftDirection="1" rightPosition="1" bottomPosition="1" frameDistance="0.6" show="1" font="Cadastra,5,-1,5,50,0,0,0,0,0" leftPosition="1" topDirection="0">
+                        <fontColor alpha="255" red="0" blue="0" green="0"/>
+                    </Annotation>
+                </Grid>
+                <AtlasMap fixedScale="0" atlasDriven="0" margin="0.10000000000000001"/>
+                <ComposerItem width="399" x="10" transparency="0" y="20" height="265" positionMode="0" frame="true" outlineWidth="0.15" zValue="1" itemRotation="0" lastValidViewScaleFactor="2.17167" uuid="{f3d8179a-45c3-4cc9-8aff-1ff5a968911a}" id="" background="false" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
@@ -401,10 +355,10 @@
         <maplayer minimumScale="-4.65661e-10" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
             <id>Western_Countries_copy20140530160007167</id>
             <datasource>dbname='./natural-earth.sqlite' table="countries" (geom) sql="NAME" = 'Slovenia'</datasource>
-            <title></title>
-            <abstract></abstract>
+            <title>Other Countries</title>
+            <abstract>The other countries of central Europe</abstract>
             <keywordList>
-                <value></value>
+                <value>slovenia</value>
             </keywordList>
             <attribution href="http://www.naturalearthdata.com">Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.</attribution>
             <layername>Other</layername>
@@ -455,8 +409,6 @@
                         </layer>
                     </symbol>
                 </source-symbol>
-                <colorramp type="randomcolors" name="[source]"/>
-                <invertedcolorramp value="0"/>
                 <rotation/>
                 <sizescale scalemethod="area"/>
             </renderer-v2>
@@ -691,31 +643,31 @@
                 <attribute>WB_A3</attribute>
                 <attribute>LONG_LEN</attribute>
                 <attribute>TINY</attribute>
+                <attribute>CONTINENT</attribute>
                 <attribute>BRK_A3</attribute>
                 <attribute>MAPCOLOR7</attribute>
-                <attribute>CONTINENT</attribute>
                 <attribute>MAPCOLOR8</attribute>
                 <attribute>SUBUNIT</attribute>
                 <attribute>MAPCOLOR9</attribute>
                 <attribute>PK_UID</attribute>
                 <attribute>GEOU_DIF</attribute>
                 <attribute>REGION_WB</attribute>
-                <attribute>GEOUNIT</attribute>
                 <attribute>WOE_ID</attribute>
-                <attribute>GU_A3</attribute>
+                <attribute>GEOUNIT</attribute>
                 <attribute>WOE_NOTE</attribute>
+                <attribute>GU_A3</attribute>
                 <attribute>SOVEREIGNT</attribute>
-                <attribute>BRK_GROUP</attribute>
                 <attribute>NAME_LEN</attribute>
+                <attribute>BRK_GROUP</attribute>
                 <attribute>featurecla</attribute>
-                <attribute>WIKIPEDIA</attribute>
                 <attribute>UN_A3</attribute>
+                <attribute>WIKIPEDIA</attribute>
                 <attribute>TYPE</attribute>
                 <attribute>scalerank</attribute>
                 <attribute>BRK_DIFF</attribute>
                 <attribute>NAME_LONG</attribute>
-                <attribute>GDP_YEAR</attribute>
                 <attribute>ISO_A2</attribute>
+                <attribute>GDP_YEAR</attribute>
                 <attribute>POSTAL</attribute>
                 <attribute>INCOME_GRP</attribute>
                 <attribute>ISO_A3</attribute>
@@ -759,10 +711,14 @@
         <maplayer minimumScale="-4.65661e-10" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
             <id>countries_copy20140315175257305</id>
             <datasource>dbname='./natural-earth.sqlite' table="countries" (geom) sql="NAME" IN ('Czech Rep.', 'Slovakia', 'Poland', 'Hungary')</datasource>
-            <title></title>
-            <abstract></abstract>
+            <title>Visegrad Four</title>
+            <abstract>The Visegrad Four (also called the Visegrad Group, or V4) is an alliance of four Central European states – Czech Republic, Hungary, Poland and Slovakia – for the purposes of furthering their European integration as well as advancing their military, economic and energy cooperation with one another.</abstract>
             <keywordList>
-                <value></value>
+                <value>visegrad</value>
+                <value>czech</value>
+                <value>hungary</value>
+                <value>poland</value>
+                <value>slovakia</value>
             </keywordList>
             <attribution href="http://www.naturalearthdata.com">Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.</attribution>
             <layername>Visegrad Four</layername>
@@ -1093,31 +1049,31 @@
                 <attribute>WB_A3</attribute>
                 <attribute>LONG_LEN</attribute>
                 <attribute>TINY</attribute>
+                <attribute>CONTINENT</attribute>
                 <attribute>BRK_A3</attribute>
                 <attribute>MAPCOLOR7</attribute>
-                <attribute>CONTINENT</attribute>
                 <attribute>MAPCOLOR8</attribute>
                 <attribute>SUBUNIT</attribute>
                 <attribute>MAPCOLOR9</attribute>
                 <attribute>PK_UID</attribute>
                 <attribute>GEOU_DIF</attribute>
                 <attribute>REGION_WB</attribute>
-                <attribute>GEOUNIT</attribute>
                 <attribute>WOE_ID</attribute>
-                <attribute>GU_A3</attribute>
+                <attribute>GEOUNIT</attribute>
                 <attribute>WOE_NOTE</attribute>
+                <attribute>GU_A3</attribute>
                 <attribute>SOVEREIGNT</attribute>
-                <attribute>BRK_GROUP</attribute>
                 <attribute>NAME_LEN</attribute>
+                <attribute>BRK_GROUP</attribute>
                 <attribute>featurecla</attribute>
-                <attribute>WIKIPEDIA</attribute>
                 <attribute>UN_A3</attribute>
+                <attribute>WIKIPEDIA</attribute>
                 <attribute>TYPE</attribute>
                 <attribute>scalerank</attribute>
                 <attribute>BRK_DIFF</attribute>
                 <attribute>NAME_LONG</attribute>
-                <attribute>GDP_YEAR</attribute>
                 <attribute>ISO_A2</attribute>
+                <attribute>GDP_YEAR</attribute>
                 <attribute>POSTAL</attribute>
                 <attribute>INCOME_GRP</attribute>
                 <attribute>ISO_A3</attribute>
@@ -1158,13 +1114,17 @@
             </attributeEditorForm>
             <attributeactions/>
         </maplayer>
-        <maplayer minimumScale="-4.65661e-10" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+        <maplayer minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
             <id>countries_copy_copy_copy20140315175659607</id>
             <datasource>dbname='./natural-earth.sqlite' table="countries" (geom) sql="NAME" IN ('Austria','Germany','Liechtenstein','Switzerland')</datasource>
-            <title></title>
-            <abstract></abstract>
+            <title>Western Countries</title>
+            <abstract>The countries of western Europe - Austria, Germany, Liechtenstein and Switzerland</abstract>
             <keywordList>
-                <value></value>
+                <value>western</value>
+                <value>austria</value>
+                <value>germany</value>
+                <value>liechtenstein</value>
+                <value>switzerland</value>
             </keywordList>
             <attribution href="http://www.naturalearthdata.com">Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.</attribution>
             <layername>Western Countries</layername>
@@ -1495,31 +1455,31 @@
                 <attribute>WB_A3</attribute>
                 <attribute>LONG_LEN</attribute>
                 <attribute>TINY</attribute>
+                <attribute>CONTINENT</attribute>
                 <attribute>BRK_A3</attribute>
                 <attribute>MAPCOLOR7</attribute>
-                <attribute>CONTINENT</attribute>
                 <attribute>MAPCOLOR8</attribute>
                 <attribute>SUBUNIT</attribute>
                 <attribute>MAPCOLOR9</attribute>
                 <attribute>PK_UID</attribute>
                 <attribute>GEOU_DIF</attribute>
                 <attribute>REGION_WB</attribute>
-                <attribute>GEOUNIT</attribute>
                 <attribute>WOE_ID</attribute>
-                <attribute>GU_A3</attribute>
+                <attribute>GEOUNIT</attribute>
                 <attribute>WOE_NOTE</attribute>
+                <attribute>GU_A3</attribute>
                 <attribute>SOVEREIGNT</attribute>
-                <attribute>BRK_GROUP</attribute>
                 <attribute>NAME_LEN</attribute>
+                <attribute>BRK_GROUP</attribute>
                 <attribute>featurecla</attribute>
-                <attribute>WIKIPEDIA</attribute>
                 <attribute>UN_A3</attribute>
+                <attribute>WIKIPEDIA</attribute>
                 <attribute>TYPE</attribute>
                 <attribute>scalerank</attribute>
                 <attribute>BRK_DIFF</attribute>
                 <attribute>NAME_LONG</attribute>
-                <attribute>GDP_YEAR</attribute>
                 <attribute>ISO_A2</attribute>
+                <attribute>GDP_YEAR</attribute>
                 <attribute>POSTAL</attribute>
                 <attribute>INCOME_GRP</attribute>
                 <attribute>ISO_A3</attribute>
@@ -1563,10 +1523,11 @@
         <maplayer minimumScale="0" maximumScale="1e+07" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
             <id>places20131111135858795</id>
             <datasource>dbname='./natural-earth.sqlite' table="places" (geom) sql=</datasource>
-            <title></title>
-            <abstract></abstract>
+            <title>Places</title>
+            <abstract>The capitals of central Europe</abstract>
             <keywordList>
-                <value></value>
+                <value>place</value>
+                <value>capital</value>
             </keywordList>
             <attribution href="">Places made with Natural Earth data.</attribution>
             <layername>Places</layername>
@@ -1863,8 +1824,8 @@
                 <attribute>NOTE</attribute>
                 <attribute>MAX_BBYMAX</attribute>
                 <attribute>MAX_PERMI</attribute>
-                <attribute>CHANGED</attribute>
                 <attribute>POP1960</attribute>
+                <attribute>CHANGED</attribute>
                 <attribute>SCALERANK</attribute>
                 <attribute>MAX_POP50</attribute>
                 <attribute>UN_ADM0</attribute>
@@ -1910,8 +1871,8 @@
                 <attribute>MAX_POP10</attribute>
                 <attribute>MIN_PERMI</attribute>
                 <attribute>GN_POP</attribute>
-                <attribute>SOV_A3</attribute>
                 <attribute>POP2050</attribute>
+                <attribute>SOV_A3</attribute>
                 <attribute>CAPIN</attribute>
                 <attribute>FEATURECLA</attribute>
                 <attribute>UN_LAT</attribute>
@@ -1963,10 +1924,11 @@
         <maplayer minimumScale="0" maximumScale="1e+07" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Line" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
             <id>roads20131111135915389</id>
             <datasource>dbname='./natural-earth.sqlite' table="roads" (geom) sql=</datasource>
-            <title></title>
-            <abstract></abstract>
+            <title>Roads</title>
+            <abstract>The roads of central europe</abstract>
             <keywordList>
-                <value></value>
+                <value>road</value>
+                <value>highway</value>
             </keywordList>
             <attribution href="">Roads made with Natural Earth data.</attribution>
             <layername>Roads</layername>
@@ -2195,8 +2157,8 @@
             <excludeAttributesWMS>
                 <attribute>ignore</attribute>
                 <attribute>ne_part</attribute>
-                <attribute>add</attribute>
                 <attribute>rwdb_rd_id</attribute>
+                <attribute>add</attribute>
                 <attribute>local</attribute>
                 <attribute>scalerank</attribute>
                 <attribute>sov_a3</attribute>
@@ -2234,7 +2196,7 @@
     </projectlayers>
     <properties>
         <WMSContactPerson type="QString">Ivan Minčík</WMSContactPerson>
-        <WMSOnlineResource type="QString"></WMSOnlineResource>
+        <WMSOnlineResource type="QString">https://github.com/imincik/gis-lab/tree/version-0.5/user/data/natural-earth</WMSOnlineResource>
         <WMSContactOrganization type="QString">GIS.lab</WMSContactOrganization>
         <WMSExtent type="QStringList">
             <value>362227.38120885426178575</value>
@@ -2243,7 +2205,7 @@
             <value>7416708.8647817000746727</value>
         </WMSExtent>
         <WMSKeywordList type="QStringList">
-            <value></value>
+            <value>europe</value>
         </WMSKeywordList>
         <WFSUrl type="QString"></WFSUrl>
         <Paths>
@@ -2258,7 +2220,7 @@
             <DegreeFormat type="QString">D</DegreeFormat>
         </PositionPrecision>
         <WCSUrl type="QString"></WCSUrl>
-        <WMSContactPhone type="QString"></WMSContactPhone>
+        <WMSContactPhone type="QString">+421 999 123 456</WMSContactPhone>
         <WMSServiceCapabilities type="bool">true</WMSServiceCapabilities>
         <WMSServiceAbstract type="QString">GIS.lab demonstration project</WMSServiceAbstract>
         <WMSAddWktGeometry type="bool">true</WMSAddWktGeometry>
@@ -2299,7 +2261,7 @@
         <Macros>
             <pythonCode type="QString"></pythonCode>
         </Macros>
-        <WMSAccessConstraints type="QString"></WMSAccessConstraints>
+        <WMSAccessConstraints type="QString">Public</WMSAccessConstraints>
         <WCSLayers type="QStringList"/>
         <SpatialRefSys>
             <ProjectCRSProj4String type="QString">+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs</ProjectCRSProj4String>
@@ -2315,7 +2277,7 @@
             <AlphaInt type="int">255</AlphaInt>
             <ColorRamp type="QString"></ColorRamp>
         </DefaultStyles>
-        <WMSFees type="QString"></WMSFees>
+        <WMSFees type="QString">Free</WMSFees>
         <WMSUrl type="QString"></WMSUrl>
     </properties>
 </qgis>

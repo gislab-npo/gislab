@@ -48,7 +48,7 @@
 									flex: 1
 								}, {
 									xtype: 'tbtext',
-									text: '{% trans "Published projects by user" %} {% if user.get_full_name %} {{ user.get_full_name }} {% else %} {{ username }} {% endif %}',
+									text: '{% trans "Published projects by user" %} {{ user.get_full_name }}',
 									cls: 'app-title'
 								}, {
 									xtype: 'tbspacer',
