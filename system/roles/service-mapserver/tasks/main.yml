@@ -14,6 +14,21 @@
     - apache2-mpm-worker
     - libapache2-mod-fcgid
     - qgis-mapserver
+    - xvfb
+
+
+# Xvfb
+# to enable more advanced print capabilities in QGIS, we need to launch fake X server
+# see: http://hub.qgis.org/issues/9295 and http://www.itopen.it/2014/03/13/qgis-server-setup-notes
+- name: Configure Xvfb service
+  template: src=init/xvfb.conf.j2 dest=/etc/init/xvfb.conf
+  notify:
+    - service xvfb restart
+
+- name: Activate Xvfb service
+  file: src=/lib/init/upstart-job dest=/etc/init.d/xvfb state=link
+  notify:
+    - service xvfb restart
 
 
 # Apache modules
