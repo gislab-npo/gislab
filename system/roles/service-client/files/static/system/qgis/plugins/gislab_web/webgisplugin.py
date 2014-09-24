@@ -120,7 +120,7 @@ def get_scales_from_resolutions(resolutions, units, dpi=96):
 	return [int(round(resolution * dpi * factor[units])) for resolution in resolutions]
 
 
-GISLAB_WEB_URL = 'http://web.gis.lab/'
+GISLAB_WEB_URL = 'https://web.gis.lab'
 
 DEFAULT_PROJECT_SCALES = (10000000,5000000,2500000,1000000,500000,250000,100000,50000,25000,10000,5000,2500,1000,500)
 
@@ -954,7 +954,7 @@ class WebGisPlugin:
 			<head>{0}</head>
 			<body>
 				<p><h4>Project '{1}' was successfully published.</h4></p>
-				<p>In order to load this project in GIS.lab Web, do not forget to copy all files to 'Share/GISLAB_USER' folder and visit <a href="http://web.gis.lab/share">http://web.gis.lab/share</a> page.</p>
+				<p>Copy all project files to '~/Share/{5}' folder and visit <a href="{6}/share">{6}/share</a> page to load this project in GIS.lab Web.</p>
 
 				<p><h4>Project files:</h4></p>
 				<ul>
@@ -969,7 +969,9 @@ class WebGisPlugin:
 				self.metadata['title'],
 				self.project.fileName(),
 				os.path.splitext(self.project.fileName())[0] + '.meta',
-				''.join(['<li>{0}</li>'.format(datasource) for datasource in datasources])
+				''.join(['<li>{0}</li>'.format(datasource) for datasource in datasources]),
+				os.environ['USER'],
+				GISLAB_WEB_URL
 		)
 		self.dialog.confirmation_info.setHtml(html)
 
