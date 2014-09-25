@@ -1097,6 +1097,7 @@ class WebGisPlugin:
 		self.project = QgsProject.instance()
 		dialog_filename = os.path.join(self.plugin_dir, "publish_dialog.ui")
 		dialog = PyQt4.uic.loadUi(dialog_filename)
+		dialog.tabWidget.setCurrentIndex(0)
 		dialog.setButtonText(QWizard.CommitButton, "Publish")
 		#dialog.wizard_page4.setButtonText(QWizard.FinishButton, "Ok")
 		dialog.wizard_page3.setCommitPage(True)
