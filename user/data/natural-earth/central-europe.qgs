@@ -38,7 +38,7 @@
             <layer_coordinate_transform destAuthId="EPSG:3857" srcAuthId="EPSG:4326" srcDatumTransform="-1" destDatumTransform="-1" layerid="countries_copy_copy_copy20140315175659607"/>
         </layer_coordinate_transform_info>
     </mapcanvas>
-    <legend updateDrawingOrder="false">
+    <legend updateDrawingOrder="false" activeLayer="roads20131111135915389">
         <legendgroup open="true" checked="Qt::Checked" name="Places and roads">
             <legendlayer drawingOrder="0" open="true" checked="Qt::Checked" name="Places" showFeatureCount="0">
                 <filegroup open="true" hidden="false">
@@ -1520,7 +1520,7 @@
             </attributeEditorForm>
             <attributeactions/>
         </maplayer>
-        <maplayer minimumScale="0" maximumScale="1e+07" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+        <maplayer minimumScale="-4.65661e-10" maximumScale="1e+07" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
             <id>places20131111135858795</id>
             <datasource>dbname='./natural-earth.sqlite' table="places" (geom) sql=</datasource>
             <title>Places</title>
@@ -1824,8 +1824,8 @@
                 <attribute>NOTE</attribute>
                 <attribute>MAX_BBYMAX</attribute>
                 <attribute>MAX_PERMI</attribute>
-                <attribute>POP1960</attribute>
                 <attribute>CHANGED</attribute>
+                <attribute>POP1960</attribute>
                 <attribute>SCALERANK</attribute>
                 <attribute>MAX_POP50</attribute>
                 <attribute>UN_ADM0</attribute>
@@ -1871,8 +1871,8 @@
                 <attribute>MAX_POP10</attribute>
                 <attribute>MIN_PERMI</attribute>
                 <attribute>GN_POP</attribute>
-                <attribute>POP2050</attribute>
                 <attribute>SOV_A3</attribute>
+                <attribute>POP2050</attribute>
                 <attribute>CAPIN</attribute>
                 <attribute>FEATURECLA</attribute>
                 <attribute>UN_LAT</attribute>
@@ -1925,7 +1925,7 @@
             <id>roads20131111135915389</id>
             <datasource>dbname='./natural-earth.sqlite' table="roads" (geom) sql=</datasource>
             <title>Roads</title>
-            <abstract>The roads of central europe</abstract>
+            <abstract>The roads of central Europe</abstract>
             <keywordList>
                 <value>road</value>
                 <value>highway</value>
@@ -2157,8 +2157,8 @@
             <excludeAttributesWMS>
                 <attribute>ignore</attribute>
                 <attribute>ne_part</attribute>
-                <attribute>rwdb_rd_id</attribute>
                 <attribute>add</attribute>
+                <attribute>rwdb_rd_id</attribute>
                 <attribute>local</attribute>
                 <attribute>scalerank</attribute>
                 <attribute>sov_a3</attribute>

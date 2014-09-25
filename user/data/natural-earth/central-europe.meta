@@ -23,7 +23,35 @@
   ], 
   "fees": "Free", 
   "canvas_color": "#ffffffff", 
-  "topics": [], 
+  "topics": [
+    {
+      "abstract": "Visegrad Four countries", 
+      "visible_overlays": [
+        "Places", 
+        "Roads", 
+        "Visegrad Four"
+      ], 
+      "title": "Visegrad Four"
+    }, 
+    {
+      "abstract": "Western Countries", 
+      "visible_overlays": [
+        "Places", 
+        "Roads", 
+        "Western Countries"
+      ], 
+      "title": "Western Countries"
+    }, 
+    {
+      "abstract": "Other Central European countries", 
+      "visible_overlays": [
+        "Places", 
+        "Roads", 
+        "Other"
+      ], 
+      "title": "Other Countries"
+    }
+  ], 
   "message": {
     "valid_until": "01.01.2099", 
     "text": "Welcome to GIS.lab demonstration project ! Please note that print composer is not available for guest user."
@@ -39,7 +67,7 @@
           "projection": "EPSG:4326", 
           "labels": true, 
           "visible": true, 
-          "visibility_scale_min": 0.0, 
+          "visibility_scale_min": -4.656612873077393e-10, 
           "extent": [
             683504.7942115112, 
             5780410.452177983, 
@@ -130,7 +158,7 @@
           "queryable": true, 
           "metadata": {
             "keyword_list": "road, highway", 
-            "abstract": "The roads of central europe", 
+            "abstract": "The roads of central Europe", 
             "title": "Roads"
           }
         }
@@ -286,23 +314,6 @@
   ], 
   "composer_templates": [
     {
-      "width": 420.0, 
-      "map": {
-        "width": 399.0, 
-        "name": "map0", 
-        "height": 265.0
-      }, 
-      "labels": [
-        "gislab_project", 
-        "gislab_author", 
-        "gislab_copyrights", 
-        "gislab_contact", 
-        "Title"
-      ], 
-      "name": "A3", 
-      "height": 297.0
-    }, 
-    {
       "width": 297.0, 
       "map": {
         "width": 276.0, 
@@ -318,6 +329,23 @@
       ], 
       "name": "A4", 
       "height": 210.0
+    }, 
+    {
+      "width": 420.0, 
+      "map": {
+        "width": 399.0, 
+        "name": "map0", 
+        "height": 265.0
+      }, 
+      "labels": [
+        "gislab_project", 
+        "gislab_author", 
+        "gislab_copyrights", 
+        "gislab_contact", 
+        "Title"
+      ], 
+      "name": "A3", 
+      "height": 297.0
     }
   ], 
   "tile_resolutions": [
@@ -337,9 +365,9 @@
   "title": "Countries of Central Europe", 
   "extent_buffer": 0.0, 
   "gislab_unique_id": "gislab1", 
-  "publish_date_unix": 1411555338, 
+  "publish_date_unix": 1411650729, 
   "authentication": "all", 
-  "publish_date": "Wed Sep 24 12:42:18 2014", 
+  "publish_date": "Thu Sep 25 15:12:09 2014", 
   "base_layers": [
     {
       "name": "BLANK", 
