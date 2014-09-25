@@ -690,7 +690,7 @@ class WebGisPlugin:
 		gislab_version_data = {}
 		try:
 			with open(GISLAB_VERSION_FILE) as f:
-				param_pattern = re.compile("\s*(\w+)\s*\=\s*'([^']*)'")
+				param_pattern = re.compile('\s*(\w+)\s*\=\s*"([^"]*)"')
 				for line in f:
 					match = param_pattern.match(line)
 					if match:
