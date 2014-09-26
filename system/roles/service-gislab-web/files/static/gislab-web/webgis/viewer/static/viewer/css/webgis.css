@@ -19,20 +19,27 @@
 button.layer-info {
 	position: absolute;
 	cursor: pointer;
-	background-color: rgba(0, 0, 0, 0);
 	background-image: url('../images/glyphicons-halflings.png') !important;
 	background: no-repeat;
 	background-position: -119px -95px !important;
 	background-position-x: -119px !important;
 	background-position-y: -95px !important;
-	opacity: 0.8;
-	filter: alpha(opacity=80);
-	border: 0 none;
-	right: 1px;
+	right: 0px;
 	width: 16px;
 	height: 16px;
 	margin-top: 2px;
+	padding-left: 6px;
+	padding-right: 10px;
+	border-top: none;
+	border-bottom: none;
+	border-right: none;
+	border-left: 3px solid #FFFFE0;
+	background-color: #FFFFE0 !important;
 	display: none;
+}
+.x-tree-selected button.layer-info {
+	border-left: 3px solid #E0FFFF;
+	background-color: #E0FFFF !important;
 }
 
 div.x-tree-node-el {
