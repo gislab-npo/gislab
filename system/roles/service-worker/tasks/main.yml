@@ -6,7 +6,7 @@
 # package consist from installation script and other files needed for server configuration. To use it
 # run following commands on newly launched instance (in Amazon AWS use 'clod-data' for commands injection):
 # $ mkdir /tmp/install-worker && cd /tmp/install-worker && \
-#   curl http://<GISLAB_SERVER_IP>/worker.tar.gz | tar xz -C /tmp/install-worker && \
+#   curl http://<GIS.lab server IP>/worker.tar.gz | tar xz -C /tmp/install-worker && \
 #   bash ./install.sh && rm -rf /tmp/install-worker
 
 
@@ -16,10 +16,10 @@
 
 # System
 - name: Flush worker installation directory
-  shell: path="{{ GISLAB_INSTALL_WORKER_ROOT }}" state=absent
+  file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}" state=absent
 
 - name: Create worker installation directory
-  shell: path="{{ GISLAB_INSTALL_WORKER_ROOT }}" state=present
+  file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}" state=directory
 
 - name: Install worker files
   copy: src=static/system/ dest="{{ GISLAB_INSTALL_WORKER_ROOT }}"

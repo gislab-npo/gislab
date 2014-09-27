@@ -1,31 +1,32 @@
 # This file contains default values of GIS.lab configuration variables.
-# Do not modify this file, rather create a new overriding file in
-# 'host_vars' directory with name matching a host name in your Ansible
-# inventory.
-# If using local Vagrant provider (VirtualBox or VMWare), create
-# 'gislab_vagrant' file in 'host_vars' dir and fill it with your
-# configuration. It will be automatically loaded by Vagrant.
+# Do not modify this file directly, rather create a new host file in
+# 'host_vars' directory containing variables which you want to override.
+# File name of host file in 'host_vars' directory must match host name in
+# your Ansible inventory file.
 
-# Changing configuration once GIS.lab is installed mostly requires
-# server upgrade. Each configuration variable contains information
-# what to do. Few changes require server restart and
-# some require complete GIS.lab re-installation.
+# If using local Vagrant provisioner (with VirtualBox or VMWare provider),
+# create 'gislab_vagrant' file in 'host_vars' directory and fill it with your
+# configuration. It will be automatically loaded by Vagrant without needing
+# to create the Ansible inventory file.
 
-# Here is a list of commands used when using various providers:
+# In most cases, changing configuration once GIS.lab is installed requires
+# performing server upgrade.
 
-# Local Vagrant provider
+# Here is a list of useful commands:
+
+# Vagrant provisioner
 # ----------------------
-# * GIS.lab installation:          $ vagrant up
-# * GIS.lab upgrade:               $ vagrant provision
-# * GIS.lab server restart:        $ vagrant reload
-# * GIS.lab re-installation:       $ vagrant destroy && vagrant up
+# * GIS.lab installation:     $ vagrant up
+# * GIS.lab upgrade:          $ vagrant provision
+# * GIS.lab server restart:   $ vagrant reload
+# * GIS.lab re-installation:  $ vagrant destroy && vagrant up
 
-# AWS provider
+# Ansible provisioner
 # ------------
-# * GIS.lab installation:          $ ansible-playbook -i <INVENTORY-FILE> -l <HOST-NAME> --private-key=<PRIVATE-KEY> system/provider-aws.yml
-# * GIS.lab upgrade:               $ ansible-playbook -i <INVENTORY-FILE> -l <HOST-NAME> --private-key=<PRIVATE-KEY> system/provider-aws.yml
-# * GIS.lab server restart:        $ ansible -i <INVENTORY-FILE> <HOST-NAME> --private-key=<PRIVATE-KEY> -m shell -a 'sudo reboot'
-# * GIS.lab server shutdown:       $ ansible -i <INVENTORY-FILE> <HOST-NAME> --private-key=<PRIVATE-KEY> -m shell -a 'sudo halt'
+# * GIS.lab installation:     $ ansible-playbook --inventory=<INVENTORY-FILE> --limit=<HOST-NAME> --private-key=<PRIVATE-KEY> system/gislab.yml
+# * GIS.lab upgrade:          $ ansible-playbook --inventory=<INVENTORY-FILE> --limit=<HOST-NAME> --private-key=<PRIVATE-KEY> system/gislab.yml
+# * GIS.lab server restart:   $ ansible --inventory=<INVENTORY-FILE> --private-key=<PRIVATE-KEY> --module-name=shell --args='sudo reboot' <HOST-NAME> 
+# * GIS.lab server shutdown:  $ ansible --inventory=<INVENTORY-FILE> --private-key=<PRIVATE-KEY> --module-name=shell --args='sudo halt' <HOST-NAME> 
 
 
 
@@ -33,7 +34,7 @@
 # ******************************************************* #
 ################ LOCAL VAGRANT PROVIDER ###################
 # ******************************************************* #
-# Configuration specific to local Vagrant provider.
+# Configuration specific to local Vagrant provisioner.
 
 # Server memory size in MB.
 # Change requires GIS.lab server restart.
@@ -85,6 +86,13 @@ GISLAB_UNIQUE_ID: gislab1
 # * lab: complete lab infrastructure for LAN. Includes server and client
 # Change requires running upgrade.
 GISLAB_SUITE: lab
+
+# Network device on server, to which GIS.lab network IP address is attached
+# in case, when GIS.lab network IP address (GISLAB_NETWORK.5) is not directly
+# received from provider.
+# Example: eth0
+# Change requires running upgrade.
+GISLAB_NETWORK_DEVICE: eth0
 
 # First three network octets of GIS.lab network number.
 # Example: 192.168.1

@@ -1,7 +1,7 @@
 log-facility local7;
 authoritative;
 
-# custom DHCP option to distinguish more GIS.lab servers in shared LAN
+# custom DHCP option to distinguish between multiple GIS.lab servers in LAN
 option gislab-unique-id code 224 = text;
 
 class "gislab-clients" {
@@ -13,7 +13,8 @@ class "third-party-clients" {
 }
 
 subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
-    option routers {{ GISLAB_SERVER_IP }};
+    next-server {{ GISLAB_NETWORK_SERVER_IP }};
+    option routers {{ GISLAB_NETWORK_SERVER_IP }};
 
     pool {
         allow members of "gislab-clients";
@@ -24,7 +25,7 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         # return specified DHCP options in offer
         option dhcp-parameter-request-list 1,3,6,14,15,17,51,54,224;
         option domain-name "gis.lab";
-        option domain-name-servers {{ GISLAB_SERVER_IP }};
+        option domain-name-servers {{ GISLAB_NETWORK_SERVER_IP }};
         option broadcast-address {{ GISLAB_NETWORK }}.255;
         option subnet-mask 255.255.255.0;
         option root-path "/opt/ltsp/i386";
@@ -43,7 +44,7 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         {{ GISLAB_UNKNOWN_MAC_POLICY }} unknown clients;
         range {{ GISLAB_NETWORK }}.150 {{ GISLAB_NETWORK }}.250;
         option domain-name "gis.lab";
-        option domain-name-servers {{ GISLAB_SERVER_IP }};
+        option domain-name-servers {{ GISLAB_NETWORK_SERVER_IP }};
         option broadcast-address {{ GISLAB_NETWORK }}.255;
         option subnet-mask 255.255.255.0;
         option root-path "/opt/ltsp/i386";

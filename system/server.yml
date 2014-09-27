@@ -7,7 +7,7 @@
   # fix: export PYTHONIOENCODING='utf-8'
   vars_prompt:
     - name: gislab_admin_user_password
-      prompt: "*** Enter new password for GIS.lab administrator user account 'gislab'. If 'gislab' account does not exists, it will be created. If 'gislab' account already exists, it will be updated with given password. If none password given, none of these actions will be performed"
+      prompt: "Enter new password for GIS.lab administrator user account 'gislab'. If 'gislab' account does not exists, it will be created. If 'gislab' account already exists, it will be updated with given password. If none password given, none of these actions will be performed"
       private: yes
       confirm: yes
 

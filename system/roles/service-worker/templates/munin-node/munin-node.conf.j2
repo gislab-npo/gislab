@@ -1,6 +1,6 @@
 # "host_name" parameter is dynamically added by worker install script
 
-allow ^{{ GISLAB_SERVER_IP|replace(".", "\.") }}$
+allow ^{{ GISLAB_NETWORK_SERVER_IP|replace(".", "\.") }}$
 host *
 port 4949
 background 1

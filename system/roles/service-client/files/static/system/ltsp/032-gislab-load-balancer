@@ -37,7 +37,7 @@ respawn
 
 script
 sleep 5
-exec /usr/local/bin/serf join $GISLAB_SERVER_IP
+exec /usr/local/bin/serf join $GISLAB_NETWORK_SERVER_IP
 end script
 EOF
 		fi

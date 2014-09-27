@@ -13,6 +13,13 @@
     - isc-dhcp-server
 
 
+# DHCP server
+- name: Detect network device used for GIS.lab network
+  shell: "ip -oneline -family inet addr list | grep '{{ GISLAB_NETWORK_SERVER_IP }}' | awk '{print $2}'"
+  args:
+    executable: /bin/bash
+  register: gislab_network_dhcp_device
+
 - name: Activate network device for DHCP service
   template: src=dhcp/isc-dhcp-server.j2 dest=/etc/default/isc-dhcp-server
   notify:
@@ -24,6 +31,7 @@
     - service isc-dhcp-server restart
 
 
+# MAC addresses
 - name: Allow including of allowed MACs file (/etc/dhcp/dhcpd-machines-allowed.conf)
   template: src=apparmor/usr.sbin.dhcpd.j2 dest=/etc/apparmor.d/local/usr.sbin.dhcpd
   notify:

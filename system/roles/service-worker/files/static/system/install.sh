@@ -43,7 +43,7 @@ EOF
 
 # syslog
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
-echo "*.* @$GISLAB_SERVER_IP" > /etc/rsyslog.d/gislab.conf
+echo "*.* @$GISLAB_NETWORK_SERVER_IP" > /etc/rsyslog.d/gislab.conf
 service rsyslog restart
 
 EOF
@@ -75,7 +75,7 @@ EOF
 
 # default DNS server
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
-echo "nameserver $GISLAB_SERVER_IP" > /etc/resolv.conf
+echo "nameserver $GISLAB_NETWORK_SERVER_IP" > /etc/resolv.conf
 echo "search gista.lan" >> /etc/resolv.conf
 
 EOF
@@ -222,7 +222,7 @@ respawn
 
 script
 sleep 5
-exec /usr/local/bin/serf join $GISLAB_SERVER_IP
+exec /usr/local/bin/serf join $GISLAB_NETWORK_SERVER_IP
 end script
 EOF
 

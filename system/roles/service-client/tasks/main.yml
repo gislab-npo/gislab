@@ -20,10 +20,10 @@
 
 # System
 - name: Flush client installation directory
-  shell: path="{{ GISLAB_INSTALL_CLIENT_ROOT }}" state=absent
+  file: path="{{ GISLAB_INSTALL_CLIENT_ROOT }}" state=absent
 
 - name: Create client installation directory
-  shell: path="{{ GISLAB_INSTALL_CLIENT_ROOT }}" state=present
+  file: path="{{ GISLAB_INSTALL_CLIENT_ROOT }}" state=directory
 
 - name: Install client files
   copy: src=static/system/ dest="{{ GISLAB_INSTALL_CLIENT_ROOT }}"
@@ -63,7 +63,13 @@
     - ltsp-update-kernels
 
 
-# Client's DHCP client
+# Custom GIS.lab client DHCP client
+- name: Create directory for DHCP client script
+  file: path="{{ GISLAB_INSTALL_CLIENT_ROOT }}/udhcp" state=directory
+
+- name: Install DHCP client script
+  template: src=udhcp/udhcp.j2 dest="{{ GISLAB_INSTALL_CLIENT_ROOT }}/udhcp/udhcp"
+
 - name: Modify client's DHCP client to be sure that client will always get IP from correct server
   script: scripts/generate-initrd.sh
 

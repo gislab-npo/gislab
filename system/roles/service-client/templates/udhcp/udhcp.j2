@@ -155,8 +155,8 @@ ip_param=${ip:+"-r $ip"}
 # TODO: it would be nice if we could prefer the interface with the connected cable, though
 interfaces=${interface:-$interfaces}
 
-# DHCP server IP address as regexpress
-gislab_server_ip="{{ GISLAB_SERVER_IP_REGEX }}"
+# DHCP server IP address as regular expression
+gislab_network_server_ip_regex=$(echo "{{ GISLAB_NETWORK_SERVER_IP }}" | sed 's/\./\\./g')
 
 # Clear screen when quiet to dampen some noise
 [ "$quiet" = "y" ] && clear
@@ -165,8 +165,13 @@ gislab_server_ip="{{ GISLAB_SERVER_IP_REGEX }}"
 while [ -z "$configured" ]; do
     for i in $interfaces; do    # Make a DHCP request for each interface...
         while udhcpc -n -C -s /tmp/dhcp-script.sh -i $i -x nisdomain:{{ GISLAB_UNIQUE_ID }}-client $hostname_param $ip_param >/dev/null 2>&1; do
+            grep "=" /tmp/dhcp-info.conf # print response provided by the DHCP server
+
             # ... until we get an offer from a proper GIS.lab server
-            grep -q "^serverid=\"$gislab_server_ip\"$" /tmp/dhcp-info.conf && configured="true" && break 2
+            grep -q "^siaddr=\"$gislab_network_server_ip_regex\"$" /tmp/dhcp-info.conf && configured="true" && break 2
+            echo "Received response from invalid DHCP server (response wanted from {{ GISLAB_NETWORK_SERVER_IP }}). Retrying ..."
+            echo
+            sleep 1
             kill $(pidof udhcpc)
         done
     done
