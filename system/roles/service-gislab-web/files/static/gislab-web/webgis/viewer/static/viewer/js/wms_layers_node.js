@@ -5,6 +5,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		POINT: 'point-layer-icon',
 		LINE: 'line-layer-icon',
 		POLYGON: 'polygon-layer-icon',
+		RASTER: 'raster-layer-icon'
 	},
 	constructor: function(config) {
 		config.checked = true;
@@ -136,12 +137,20 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 	},
 	createLayerNode: function(layer_config) {
 		var isGroup = layer_config.hasOwnProperty('layers');
+		var iconCls = '';
+		if (!isGroup) {
+			if (layer_config.geom_type) {
+				iconCls = this.layersIconClsMap[layer_config.geom_type]+(layer_config.queryable? '-queryable' : '');
+			} else {
+				iconCls = this.layersIconClsMap['RASTER'];
+			}
+		}
 		var node = new Ext.tree.TreeNode({
 			text: layer_config.name,
 			checked: true,
 			leaf: !isGroup,
 			hidden: !isGroup && layer_config.hidden,
-			iconCls: this.layersIconClsMap[layer_config.geom_type]+(layer_config.queryable? '-queryable' : ''),
+			iconCls: iconCls,
 			allowDrop: isGroup,
 			expanded: true,
 			listeners: {

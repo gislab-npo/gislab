@@ -273,7 +273,7 @@ class WebGisPlugin:
 		return (layer.type() == QgsMapLayer.VectorLayer or
 			(layer.type() == QgsMapLayer.RasterLayer and layer.providerType() != "wms"))
 
-	def _is_base_layer_for_publish(self, layer, resolutions=None):
+	def _is_base_layer_for_publish(self, layer):
 		"""Checks whether layer could be published as base layer."""
 		return layer.type() == QgsMapLayer.RasterLayer and layer.providerType() == "wms"
 
@@ -593,8 +593,7 @@ class WebGisPlugin:
 				layer_widget = dialog.overlaysTree.findItems(layer.name(), Qt.MatchExactly | Qt.MatchRecursive)[0]
 				if layer_widget.checkState(0) == Qt.Unchecked:
 					return None
-				layer_label_settings = QgsPalLayerSettings()
-				layer_label_settings.readFromLayer(layer)
+
 				layer_data = {
 					'name': layer.name(),
 					'provider_type': layer.providerType(),
@@ -602,7 +601,6 @@ class WebGisPlugin:
 					'projection': layer.crs().authid(),
 					'visible': legend_iface.isLayerVisible(layer),
 					'queryable': layer.id() not in non_identifiable_layers,
-					'labels': layer_label_settings.enabled,
 					'hidden': layer_widget.checkState(1) == Qt.Checked,
 					'export_to_drawings': layer_widget.checkState(2) == Qt.Checked,
 					'drawing_order': overlays_order.index(layer.id()),
@@ -620,41 +618,49 @@ class WebGisPlugin:
 				if layer.hasScaleBasedVisibility():
 					layer_data['visibility_scale_min'] = layer.minimumScale()
 					layer_data['visibility_scale_max'] = layer.maximumScale()
-				if layer.hasGeometryType():
-					layer_data['geom_type'] = ('POINT', 'LINE', 'POLYGON')[layer.geometryType()]
 
-				fields = layer.pendingFields()
-				attributes_data = []
-				attributes_indexes = []
-				for elem in layer.attributeEditorElements():
-					attribs_group = elem.toDomElement(QDomDocument())
-					attribs_elems = attribs_group.elementsByTagName('attributeEditorField')
-					for i in range(attribs_elems.count()):
-						attrib_elem = attribs_elems.item(i)
-						index = int(attrib_elem.attributes().namedItem('index').nodeValue())
-						name = attrib_elem.attributes().namedItem('name').nodeValue()
-						attributes_indexes.append(index)
-				if not attributes_indexes:
-					attributes_indexes = range(fields.count())
-				excluded_attributes = layer.excludeAttributesWMS()
-				for index in attributes_indexes:
-					field = fields.field(index)
-					if field.name() in excluded_attributes:
-						continue
-					attribute_data = {
-						'name': field.name(),
-						'type': field.typeName(),
-						#'length': field.length(),
-						#'precision': field.precision()
-					}
-					if field.comment():
-						attribute_data['comment'] = field.comment()
-					alias = layer.attributeAlias(index)
-					if alias:
-						attribute_data['alias'] = alias
-					attributes_data.append(attribute_data)
-				layer_data['attributes'] = attributes_data
-				layer_data['pk_attributes'] = [fields[index].name() for index in layer.dataProvider().pkAttributeIndexes()]
+				if layer.type() == QgsMapLayer.VectorLayer:
+					layer_data['type'] = 'vector'
+					layer_label_settings = QgsPalLayerSettings()
+					layer_label_settings.readFromLayer(layer)
+					layer_data['labels'] = layer_label_settings.enabled
+					if layer.hasGeometryType():
+						layer_data['geom_type'] = ('POINT', 'LINE', 'POLYGON')[layer.geometryType()]
+
+					fields = layer.pendingFields()
+					attributes_data = []
+					attributes_indexes = []
+					for elem in layer.attributeEditorElements():
+						attribs_group = elem.toDomElement(QDomDocument())
+						attribs_elems = attribs_group.elementsByTagName('attributeEditorField')
+						for i in range(attribs_elems.count()):
+							attrib_elem = attribs_elems.item(i)
+							index = int(attrib_elem.attributes().namedItem('index').nodeValue())
+							name = attrib_elem.attributes().namedItem('name').nodeValue()
+							attributes_indexes.append(index)
+					if not attributes_indexes:
+						attributes_indexes = range(fields.count())
+					excluded_attributes = layer.excludeAttributesWMS()
+					for index in attributes_indexes:
+						field = fields.field(index)
+						if field.name() in excluded_attributes:
+							continue
+						attribute_data = {
+							'name': field.name(),
+							'type': field.typeName(),
+							#'length': field.length(),
+							#'precision': field.precision()
+						}
+						if field.comment():
+							attribute_data['comment'] = field.comment()
+						alias = layer.attributeAlias(index)
+						if alias:
+							attribute_data['alias'] = alias
+						attributes_data.append(attribute_data)
+					layer_data['attributes'] = attributes_data
+					layer_data['pk_attributes'] = [fields[index].name() for index in layer.dataProvider().pkAttributeIndexes()]
+				else:
+					layer_data['type'] = 'raster'
 				return layer_data
 		if self.overlay_layers_tree:
 			metadata['overlays'] = create_overlays_data(self.overlay_layers_tree).get('layers')
@@ -841,9 +847,9 @@ class WebGisPlugin:
 					layer_data['queryable'],
 					layer_data['extent'],
 					layer_data['projection'],
-					layer_data['geom_type'],
+					layer_data.get('geom_type', ''),
 					scale_visibility,
-					layer_data['labels'],
+					layer_data.get('labels', False),
 					layer_data['provider_type'],
 					", ".join([attribute.get('title', attribute['name']) for attribute in layer_data.get('attributes', [])]),
 					layer_data['attribution']['title'] if 'attribution' in layer_data and 'title' in layer_data['attribution'] else '',
@@ -1079,7 +1085,8 @@ class WebGisPlugin:
 			if widget.data(0, Qt.UserRole):
 				widget.setCheckState(0, Qt.Checked if widget.text(0) in project_overlays else Qt.Unchecked)
 				widget.setCheckState(1, Qt.Checked if widget.text(0) in hidden_overlays else Qt.Unchecked)
-				widget.setCheckState(2, Qt.Checked if widget.text(0) in overlays_with_export_to_drawings else Qt.Unchecked)
+				if widget.data(2, Qt.CheckStateRole) != None:
+					widget.setCheckState(2, Qt.Checked if widget.text(0) in overlays_with_export_to_drawings else Qt.Unchecked)
 			else:
 				for index in range(widget.childCount()):
 					uncheck_excluded_layers(widget.child(index))
@@ -1202,7 +1209,8 @@ class WebGisPlugin:
 				widget.setData(0, Qt.UserRole, layer)
 				widget.setCheckState(0, Qt.Checked)
 				widget.setCheckState(1, Qt.Unchecked)
-				widget.setCheckState(2, Qt.Checked)
+				# remove 'Export to drawings' checkbox if raster layer
+				widget.setData(2, Qt.CheckStateRole, Qt.Checked if layer.type() == QgsMapLayer.VectorLayer else None);
 			return widget
 		if self.overlay_layers_tree:
 			dialog.overlaysTree.addTopLevelItems(create_layer_widget(self.overlay_layers_tree).takeChildren())

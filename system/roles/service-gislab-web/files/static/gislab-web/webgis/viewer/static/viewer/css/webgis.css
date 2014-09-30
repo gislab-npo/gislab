@@ -391,7 +391,7 @@ div.x-border-panel.layers-panel {
 	background-position-y: -48px !important;
 }
 
-.point-layer-icon, .point-layer-icon-queryable, .line-layer-icon, .line-layer-icon-queryable, .polygon-layer-icon, .polygon-layer-icon-queryable {
+.point-layer-icon, .point-layer-icon-queryable, .line-layer-icon, .line-layer-icon-queryable, .polygon-layer-icon, .polygon-layer-icon-queryable, .raster-layer-icon {
 	background-image: url('../images/toolbar/layer-geometry.png')!important;
 	background: no-repeat;
 }
@@ -424,6 +424,11 @@ div.x-border-panel.layers-panel {
 	background-position: 0px -90px !important;
 	background-position-x: 0px !important;
 	background-position-y: -90px !important;
+}
+.raster-layer-icon {
+	background-position: 0px -108px !important;
+	background-position-x: 0px !important;
+	background-position-y: -108px !important;
 }
 
 .draw-point-icon, .measure-point-icon , .draw-line-icon, .measure-line-icon, .draw-polygon-icon, .measure-polygon-icon {

@@ -360,7 +360,7 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 							Ext.getCmp('layers-tree-panel').root.cascade(function(node) {
 								if (node.isLeaf()) {
 									var layer_config = node.attributes.config;
-									if (layer_config.queryable) {
+									if (layer_config.queryable && layer_config.type !== 'raster') {
 										var attributes_data = [];
 										Ext.each(layer_config.attributes, function(attribute) {
 											attributes_data.push({

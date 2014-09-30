@@ -191,21 +191,34 @@ WebGIS.FeatureInfoPanel = Ext.extend(Ext.Panel, {
 					});
 				}
 
-				Ext.each(this.layersMetadata[layer_name].attributes, function(layer_attrib) {
-					var attr_name = layer_attrib.name;
-					var attr_type = layer_attrib.type == 'INTEGER'? 'int' : layer_attrib.type == 'DOUBLE'? 'float' : 'string';
-					if (attr_name == 'geometry' || attr_name == 'boundedBy') {return true;}
-					fields.push({
-						name: attr_name,
-						type: attr_type
+				if (this.layersMetadata[layer_name].attributes) {
+					Ext.each(this.layersMetadata[layer_name].attributes, function(layer_attrib) {
+						var attr_name = layer_attrib.name;
+						var attr_type = layer_attrib.type == 'INTEGER'? 'int' : layer_attrib.type == 'DOUBLE'? 'float' : 'string';
+						if (attr_name == 'geometry' || attr_name == 'boundedBy') {return true;}
+						fields.push({
+							name: attr_name,
+							type: attr_type
+						});
+						columns.push({
+							id: attr_name,
+							header: layer_attrib.alias? layer_attrib.alias : attr_name,
+							dataIndex: attr_name,
+							type: attr_type,
+						});
 					});
-					columns.push({
-						id: attr_name,
-						header: layer_attrib.alias? layer_attrib.alias : attr_name,
-						dataIndex: attr_name,
-						type: attr_type,
-					});
-				});
+				} else {
+					for (var attr_name in layer_features[0].attributes) {
+						fields.push({
+							name: attr_name,
+						});
+						columns.push({
+							id: attr_name,
+							header: attr_name,
+							dataIndex: attr_name,
+						});
+					}
+				}
 
 				var store = new GeoExt.data.FeatureStore({
 					layer: flayer,
