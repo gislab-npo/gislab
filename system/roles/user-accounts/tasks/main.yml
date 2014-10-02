@@ -13,8 +13,15 @@
 
 
 # User accounts cleanup and security
+- name: Detect if LDAP is installed
+  shell: dpkg-query -W -f='${Status}' slapd 2>/dev/null
+  args:
+    executable: /bin/bash
+  register: ldap_install_status
+
 - name: Remove not required user accounts
-# this task can run only once, otherwise it can remove GIS.lab user's accounts once they are created
+# this task can be performed only until GIS.lab users accounts can be created (LDAP service is installed),
+# otherwise it would remove GIS.lab user accounts
   shell: for userid in {1000..1010}; do username=$(getent passwd $userid | awk -F ':' '{print $1}');
          if [ "$username" != "" -a "$username" != "{{ GISLAB_PROVISIONING_USER }}" ]; then
            deluser --remove-home $username;
@@ -22,7 +29,7 @@
          done
   args:
     executable: /bin/bash
-  when: GISLAB_INSTALL_ACTION == "install"
+  when: ldap_install_status.stdout != "install ok installed"
 
 
 - name: Set strong password for provisioning user account
