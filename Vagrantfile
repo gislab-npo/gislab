@@ -52,6 +52,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if CONFIG['GISLAB_DEBUG_INSTALL'] == true
       ansible.verbose = "vv"
     end
+    if CONFIG.has_key? 'GISLAB_ADMIN_PASSWORD'
+      ansible.extra_vars = { GISLAB_ADMIN_PASSWORD: CONFIG['GISLAB_ADMIN_PASSWORD'] }
+    end
   end
 
   # VirtualBox provider

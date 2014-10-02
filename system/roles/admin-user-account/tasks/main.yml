@@ -7,11 +7,11 @@
 
 
 - name: Create GIS.lab administrator user 'gislab'
-  shell: "gislab-adduser -s -g {{ GISLAB_ADMIN_FIRST_NAME }} -l {{ GISLAB_ADMIN_SURNAME }} -m {{ GISLAB_ADMIN_EMAIL }} -p {{ gislab_admin_user_password }} gislab && touch /var/lib/gislab/administrator-account.done"
-  when: gislab_admin_user_password != ""
+  shell: "gislab-adduser -s -g {{ GISLAB_ADMIN_FIRST_NAME }} -l {{ GISLAB_ADMIN_SURNAME }} -m {{ GISLAB_ADMIN_EMAIL }} -p {{ GISLAB_ADMIN_PASSWORD }} gislab && touch /var/lib/gislab/administrator-account.done"
+  when: GISLAB_ADMIN_PASSWORD != ""
   args:
     creates: /var/lib/gislab/administrator-account.done
 
 - name: Update GIS.lab administrator user password
-  shell: "gislab-password -p {{ gislab_admin_user_password }} gislab"
-  when: gislab_admin_user_password != ""
+  shell: "gislab-password -p {{ GISLAB_ADMIN_PASSWORD }} gislab"
+  when: GISLAB_ADMIN_PASSWORD != ""
