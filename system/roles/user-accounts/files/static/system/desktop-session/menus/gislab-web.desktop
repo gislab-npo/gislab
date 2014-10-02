@@ -1,12 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Empty GIS.lab Web Project
-Comment=Empty GIS.lab Web project
-Exec=firefox http://web.gis.lab
+Name=GIS.lab Web
+Comment=GIS.lab Web projects list
+Exec=firefox "http://web.gis.lab/share"
 Icon=gislab-web
 Path=
 Terminal=false
 StartupNotify=false
-Name[sk]=Prázdny projekt GIS.lab Web
-Comment[sk]=Prázdny projekt GIS.lab Web
+Name[sk]=GIS.lab Web
+Comment[sk]=Zoznam projektov GIS.lab Web

@@ -87,7 +87,7 @@
 		<Name>gislab</Name>
 		<Directory>gislab.directory</Directory>
 		<Include>
-			<Filename>gislab-project-data-processing.desktop</Filename>
+			<Filename>gislab-desktop.desktop</Filename>
 		</Include>
 		<Include>
 			<Filename>gislab-postgresql.desktop</Filename>
@@ -114,7 +114,7 @@
 		</Include>
 		<Layout>
 			<Merge type="menus"/>
-			<Filename>gislab-project-data-processing.desktop</Filename>
+			<Filename>gislab-desktop.desktop</Filename>
 			<Filename>gislab-web.desktop</Filename>
 			<Filename>gislab-postgresql.desktop</Filename>
 			<Filename>gislab-spatialite.desktop</Filename>

@@ -1,13 +1,12 @@
-
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=GIS Project and Data Processing
+Name=GIS.lab Desktop
 Comment=GIS project creation, data processing, analysis and project publishing
 Exec=/usr/bin/qgis
 Icon=qgis-icon
 Path=
 Terminal=false
 StartupNotify=false
-Name[sk]=Tvorba projektov GIS a spracovanie dát
+Name[sk]=GIS.lab Desktop
 Comment[sk]=Tvorba projektov GIS, spracovanie dát, analýzy a publikovanie projektov
