@@ -1,3 +1,13 @@
+import re
+
+def split_string(string, seperator=' '):
+    """ Split string on separator """
+    return string.split(seperator)
+
+def split_regex(string, seperator_pattern):
+    """ Split string on regular expression """
+    return re.split(seperator_pattern, string)
+
 def postgresql_shm(mem):
     """ Get recommended value of kernel shmmax configuration
     based on total server RAM for running PostgreSQL db.
@@ -12,7 +22,9 @@ class FilterModule(object):
     ''' utility filters '''
     def filters(self):
         return {
-            'postgresql_shm' : postgresql_shm
+            'split_string': split_string,
+            'split_regex': split_regex,
+            'postgresql_shm': postgresql_shm
         }
 
 
