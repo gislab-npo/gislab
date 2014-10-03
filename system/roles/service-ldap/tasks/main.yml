@@ -20,6 +20,10 @@
     - ssl-cert
 
 
+- name: Add 'openldap' user to 'ssl-cert' group
+  shell: adduser openldap ssl-cert 2> /dev/null || true
+
+
 # PAM
 - name: Configure PAM to use Unix and LDAP authentication 
   shell: DEBIAN_FRONTEND=noninteractive {{ item }}
@@ -43,51 +47,74 @@
     - service slapd restart
 
 
+# LDAP admin credentials
 - name: Generate LDAP admin password (run only once)
-# generally we don't need to know it, but we can find it in '/etc/ldapscripts/ldapscripts.passwd'
-  shell: pwgen -s -N 1 10
-  register: ldap_admin_pass
-  when: GISLAB_INSTALL_ACTION == "install"
+  shell: pwgen -s -N 1 10 > /etc/gislab/gislab_ldap_admin_password && chmod 600 /etc/gislab/gislab_ldap_admin_password
+  args:
+    creates: /etc/gislab/gislab_ldap_admin_password
 
-- name: Generate hash of LDAP admin password (run only once)
-  shell: slappasswd -s {{ ldap_admin_pass.stdout }} -h {SSHA}
-  register: ldap_admin_pass_hash
-  when: GISLAB_INSTALL_ACTION == "install"
+- name: Get LDAP admin password
+  shell: cat /etc/gislab/gislab_ldap_admin_password
+  register: gislab_ldap_admin_password
 
-- name: Save LDAP admin password to LDAP db (run only once)
-  shell: 'printf "dn: olcDatabase={1}hdb,cn=config\nreplace: olcRootPW\nolcRootPW: {{ ldap_admin_pass_hash.stdout }}\n" > /tmp/i.ldif;
+- name: Generate hash of LDAP admin password
+  shell: slappasswd -s {{ gislab_ldap_admin_password.stdout }} -h {SSHA}
+  register: gislab_ldap_admin_password_hash
+
+- name: Save LDAP admin password to LDAP db
+  shell: 'printf "dn: olcDatabase={1}hdb,cn=config\nreplace: olcRootPW\nolcRootPW: {{ gislab_ldap_admin_password_hash.stdout }}\n" > /tmp/i.ldif;
          ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
-  when: GISLAB_INSTALL_ACTION == "install"
 
 
 # SSL
 - name: Configure certificate authority
   template: src=ssl/ca.info.j2 dest=/etc/ssl/ca.info
 
-- name: Create self signed certificates and private key for encrypted LDAP communication (run only once)
+
+- name: Generate self signed certificates and private key for encrypted LDAP communication (run only once)
   shell: "{{ item }}"
   with_items:
-    - certtool --generate-privkey > /etc/ssl/private/cakey.pem
+    - certtool --generate-privkey > /etc/gislab/gislab_ldap_private_cakey.pem
     - certtool --generate-self-signed
-      --load-privkey /etc/ssl/private/cakey.pem
+      --load-privkey /etc/gislab/gislab_ldap_private_cakey.pem
       --template /etc/ssl/ca.info
-      --outfile /etc/ssl/certs/cacert.pem
+      --outfile /etc/gislab/gislab_ldap_cert_cacert.pem
     - certtool --generate-privkey
       --bits 1024
-      --outfile /etc/ssl/private/server_slapd_key.pem
-  when: GISLAB_INSTALL_ACTION == "install"
+      --outfile /etc/gislab/gislab_ldap_private_server_slapd_key.pem
+  args:
+    creates: /etc/gislab/gislab_ldap_private_server_slapd_key.pem
+
+- name: Install self signed certificates and private key for encrypted LDAP communication
+  shell: "{{ item }}"
+  with_items:
+    - cp /etc/gislab/gislab_ldap_private_cakey.pem /etc/ssl/private/cakey.pem
+    - cp /etc/gislab/gislab_ldap_cert_cacert.pem /etc/ssl/certs/cacert.pem
+    - cp /etc/gislab/gislab_ldap_private_server_slapd_key.pem /etc/ssl/private/server_slapd_key.pem
+    - chgrp ssl-cert /etc/ssl/private/server_slapd_key.pem
+    - chmod g+r /etc/ssl/private/server_slapd_key.pem
+    - chmod o-r /etc/ssl/private/server_slapd_key.pem
+  notify:
+    - service slapd restart
 
 - name: Configure server
   template: src=ssl/server.info.j2 dest=/etc/ssl/server.info
 
-- name: Create certificate for encrypted LDAP communication (run only once)
+
+- name: Generate certificate for encrypted LDAP communication (run only once)
   shell: certtool --generate-certificate
          --load-privkey /etc/ssl/private/server_slapd_key.pem
          --load-ca-certificate /etc/ssl/certs/cacert.pem
          --load-ca-privkey /etc/ssl/private/cakey.pem
          --template /etc/ssl/server.info
-         --outfile /etc/ssl/certs/server_slapd_cert.pem
-  when: GISLAB_INSTALL_ACTION == "install"
+         --outfile /etc/gislab/gislab_ldap_cert_server_slapd_cert.pem
+  args:
+    creates: /etc/gislab/gislab_ldap_cert_server_slapd_cert.pem
+
+- name: Install certificate for encrypted LDAP communication
+  shell: cp /etc/gislab/gislab_ldap_cert_server_slapd_cert.pem /etc/ssl/certs/server_slapd_cert.pem
+  notify:
+    - service slapd restart
 
 
 - name: Load TLS certificates configuration
@@ -98,28 +125,17 @@
   when: GISLAB_INSTALL_ACTION == "install"
 
 
-- name: Create 'openldap' user account (run only once)
-  shell: "{{ item }}"
-  with_items:
-    - adduser openldap ssl-cert
-    - chgrp ssl-cert /etc/ssl/private/server_slapd_key.pem
-    - chmod g+r /etc/ssl/private/server_slapd_key.pem
-    - chmod o-r /etc/ssl/private/server_slapd_key.pem
+- name: Allow only encrypted connection (run only once)
+  shell: 'printf "dn: cn=config\nchangetype: modify\nadd: olcSecurity\nolcSecurity: ssf=64\n" > /tmp/i.ldif;
+         ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
   when: GISLAB_INSTALL_ACTION == "install"
   notify:
     - service slapd restart
 
 
-- name: Allow only encrypted connection (run only once)
-  shell: 'printf "dn: cn=config\nchangetype: modify\nadd: olcSecurity\nolcSecurity: ssf=64\n" > /tmp/i.ldif;
-         ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
-  when: GISLAB_INSTALL_ACTION == "install"
-
-
 # LDAP sudo
-- name: Install LDAP sudo support (run only once)
+- name: Install LDAP sudo support
   shell: DEBIAN_FRONTEND=noninteractive SUDO_FORCE_REMOVE=yes apt-get -y install sudo-ldap
-  when: GISLAB_INSTALL_ACTION == "install"
   notify:
     - service slapd restart
 
@@ -154,7 +170,7 @@
   template: src=ldap/gislab-tree.ldif.j2 dest=/tmp/i.ldif
 
 - name: Install GIS.lab LDAP tree (run only once)
-  shell: 'ldapadd -Z -w {{ ldap_admin_pass.stdout }} -D "cn=admin,dc=gis,dc=lab" -f /tmp/i.ldif'
+  shell: 'ldapadd -Z -w {{ gislab_ldap_admin_password.stdout }} -D "cn=admin,dc=gis,dc=lab" -f /tmp/i.ldif'
   when: GISLAB_INSTALL_ACTION == "install"
 
 - meta: flush_handlers
@@ -178,7 +194,7 @@
   when: GISLAB_INSTALL_ACTION == "install"
 
 - name: Save LDAP admin password to LDAP scripts (run only once)
-  shell: printf "{{ ldap_admin_pass.stdout }}" > /etc/ldapscripts/ldapscripts.passwd && chmod 0600 /etc/ldapscripts/ldapscripts.passwd
+  shell: printf "{{ gislab_ldap_admin_password.stdout }}" > /etc/ldapscripts/ldapscripts.passwd && chmod 0600 /etc/ldapscripts/ldapscripts.passwd
   when: GISLAB_INSTALL_ACTION == "install"
 
 
