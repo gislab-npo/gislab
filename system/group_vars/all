@@ -1,13 +1,15 @@
 # This file contains default values of GIS.lab configuration variables.
-# Do not modify this file directly, rather create a new host file in
-# 'host_vars' directory containing variables which you want to override.
-# File name of host file in 'host_vars' directory must match host name in
-# your Ansible inventory file.
+# Do not modify this file directly, rather create a new host variable file
+# 'system/host_vars/<GISLAB_UNIQUE_ID>' containing variables which you want
+# to override. Than add a host record with server name '<GISLAB_UNIQUE_ID>' in to
+# your inventory file.
+
+# Inventory file syntax: <GISLAB_UNIQUE_ID> ansible_ssh_host=<server-URL> ansible_ssh_user=<provisioning-user-account-name>
 
 # If using local Vagrant provisioner (with VirtualBox or VMWare provider),
-# create 'gislab_vagrant' file in 'host_vars' directory and fill it with your
-# configuration. It will be automatically loaded by Vagrant without needing
-# to create the Ansible inventory file.
+# create 'gislab_vagrant' variable file in 'host_vars' directory and fill
+# it with your configuration. It will be automatically loaded by Vagrant without
+# needing to create the inventory file.
 
 # In most cases, changing configuration once GIS.lab is installed requires
 # performing server upgrade.
