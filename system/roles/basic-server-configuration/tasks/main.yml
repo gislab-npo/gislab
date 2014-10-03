@@ -151,8 +151,11 @@
   notify:
     - reconfigure timezone
 
+
 - name: Set local aliases table
   template: src=aliases.j2 dest=/etc/aliases
+
+- meta: flush_handlers
 
 
 - name: Add GIS.lab network server IP address if not received from provider
@@ -164,8 +167,6 @@
   args:
     executable: /bin/bash
   when: GISLAB_NETWORK_SERVER_IP not in ansible_all_ipv4_addresses
-
-- meta: flush_handlers
 
 
 # Apt
