@@ -211,25 +211,25 @@ class WebGisPlugin:
 		generating all warnings/errors displayed to user."""
 		messages = []
 		if self.project.isDirty():
-			messages.append((MSG_ERROR, u"Project has been modified. Save it (Project > Save)."))
+			messages.append((MSG_ERROR, u"Project has been modified. Save it before continue (Project > Save)."))
+
+		crs_transformation, ok = self.project.readBoolEntry("SpatialRefSys", "/ProjectionsEnabled")
+		if not ok or not crs_transformation:
+			messages.append((
+				MSG_WARNING,
+				u"'On the fly' CRS transformation is disabled. Enable it when using layers with different CRSs ('Project > Project Properties > CRS')."
+			))
 
 		map_canvas = self.iface.mapCanvas()
 		if map_canvas.mapRenderer().destinationCrs().authid().startswith('USER:'):
 			messages.append((
 				MSG_ERROR,
-				u"Project use custom coordinate system"
+				u"Project is using custom coordinate system which is currently not supported."
 			))
 
 		all_layers = [layer.name() for layer in self.iface.legendInterface().layers()]
 		if len(all_layers) != len(set(all_layers)):
 			messages.append((MSG_ERROR, u"Project contains layers with the same names."))
-
-		crs_transformation, ok = self.project.readEntry("SpatialRefSys", "/ProjectionsEnabled")
-		if not ok or not crs_transformation:
-			messages.append((
-				MSG_ERROR,
-				u"'On the fly' CRS transformation not enabled ('Project > Project Properties > CRS')."
-			))
 
 		min_resolution = self.dialog.min_scale.itemData(self.dialog.min_scale.currentIndex())
 		max_resolution = self.dialog.max_scale.itemData(self.dialog.max_scale.currentIndex())
@@ -241,7 +241,7 @@ class WebGisPlugin:
 			if layer.crs().authid().startswith('USER:'):
 				messages.append((
 					MSG_ERROR,
-					u"Base layer '{0}' use custom coordinate system".format(layer.name())
+					u"Base layer '{0}' is using custom coordinate system which is currently not supported.".format(layer.name())
 				))
 			resolutions = self._wmsc_layer_resolutions(layer, self._map_units())
 			if resolutions is not None and not publish_resolutions(resolutions):
