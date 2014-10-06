@@ -259,7 +259,7 @@ class WebGisPlugin:
 					if layer.crs().authid().startswith('USER:'):
 						messages.append((
 							MSG_ERROR,
-							u"Overlay layer '{0}' use custom coordinate system".format(layer.name())
+							u"Overlay layer '{0}' is using custom coordinate system which is currently not supported.".format(layer.name())
 						))
 
 		self._show_messages(messages)
