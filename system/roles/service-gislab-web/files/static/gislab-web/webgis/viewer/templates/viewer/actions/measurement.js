@@ -2,7 +2,7 @@
 
 var pointControl = new OpenLayers.Control.Measure(OpenLayers.Handler.Point, {
 	persist: true,
-	geodesic: {{ projection.is_geographic|yesno:"true,false" }},
+	geodesic: false,
 	handlerOptions: {
 		layerOptions: {
 			styleMap: WebgisStyles.measure_style

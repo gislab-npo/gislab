@@ -248,15 +248,15 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 				function measurement_tooltip_renderer(val, meta, record, rowIndex, colIndex, store) {
 					var info = '';
 					var feature = record.get('feature');
-					var mc = feature.layer.map.getControlsByClass('OpenLayers.Control.Measure')[0];
 					if (feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point') {
 						info = String.format('{0}: {1} {2}', gettext('Coordinates'), feature.geometry.x, feature.geometry.y);
 					} else if (feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.LineString') {
-						var length_data = mc.getBestLength(feature.geometry);
+						var length_data = Ext.getCmp('measure-action').lengthMeasureControl.getBestLength(feature.geometry);
 						info = String.format('{0}: {1} {2}', gettext('Length'), length_data[0].toFixed(3), length_data[1]);
 					} else if (feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
-						var area_data = mc.getBestArea(feature.geometry);
-						var perimeter_data = mc.getBestLength(feature.geometry);
+						var measure_control = Ext.getCmp('measure-action').areaMeasureControl;
+						var area_data = measure_control.getBestArea(feature.geometry);
+						var perimeter_data = measure_control.getBestLength(feature.geometry);
 						info = String.format('{0}: {1} {2}<sup>2</sup><br />{3}: {4} {5}',
 							gettext('Area'), area_data[0].toFixed(3), area_data[1],
 							gettext('Perimeter'), perimeter_data[0].toFixed(3), perimeter_data[1]);
