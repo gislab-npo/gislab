@@ -327,7 +327,7 @@ def page(request):
 		context.update({
 			'project': project,
 			'ows_url': ows_url,
-			'wms_url': set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'map': project+'.qgs'}),
+			'wms_url': urllib.unquote(set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'map': project+'.qgs'})),
 			'project_extent': metadata.extent,
 			'zoom_extent': form.cleaned_data['extent'] or metadata.zoom_extent,
 			'print_composers': metadata.composer_templates if not context['user'].is_guest else None,
