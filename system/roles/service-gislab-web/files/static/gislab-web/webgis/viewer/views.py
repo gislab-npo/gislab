@@ -19,6 +19,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext as _
 
 from webgis.viewer import forms
 from webgis.viewer import models
@@ -366,7 +367,7 @@ def page(request):
 	else:
 		context.update({
 			'project': 'empty',
-			'root_title': 'Empty Project',
+			'root_title': _('Empty Project'),
 			'project_extent': [-20037508.34, -20037508.34, 20037508.34, 20037508.34],
 			'projection': 'EPSG:3857',
 			'units': 'dd'
@@ -411,7 +412,10 @@ def user_projects(request, username):
 				return HttpResponse("User does not exist.", content_type='text/plain', status=403)
 
 	projects_root = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, username)
-	projects = []
+	projects = [{
+		'title': _('Empty Project'),
+		'url': request.build_absolute_uri('/'),
+	}]
 	start_index = len(settings.GISLAB_WEB_PROJECT_ROOT)
 	for root, dirs, files in os.walk(projects_root):
 		if files:
@@ -425,7 +429,6 @@ def user_projects(request, username):
 						projects.append({
 							'title': metadata.title,
 							'url': url,
-							'decoded_url': urllib.unquote(url),
 							'publication_time_unix': int(metadata.publish_date_unix),
 							'expiration_time_unix': int(time.mktime(time.strptime(metadata.expiration, "%d.%m.%Y"))) if metadata.expiration else None
 						})

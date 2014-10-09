@@ -145,8 +145,8 @@
 								data: [
 									{% for project_info in projects %}{
 										title: '{{ project_info.title }}',
-										publication_time: new Date({{ project_info.publication_time_unix }}*1000),
-										url: '<a href="{{ project_info.url }}" target="_blank">{{ project_info.decoded_url }}</a>',
+										{% if project_info.publication_time_unix %}publication_time: new Date({{ project_info.publication_time_unix }}*1000),{% endif %}
+										url: String.format('<a href="{{ project_info.url }}" target="_blank"> {0}</a>', decodeURIComponent('{{ project_info.url }}')),
 										{% if project_info.expiration_time_unix %}expiration_time: new Date({{ project_info.expiration_time_unix }}*1000),{% endif %}
 									},{% endfor %}
 								],

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-18 11:01+0200\n"
+"POT-Creation-Date: 2014-10-02 14:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: views.py:380
+msgid "Empty Project"
+msgstr "Prázdny projekt"
 
 #: templates/registration/login.html:76
 msgid "Please correct the error below."
@@ -39,6 +43,16 @@ msgstr "Heslo"
 msgid "Log in"
 msgstr "Prihlásiť sa"
 
+#: templates/viewer/user_projects.html:59
+#: templates/viewer/webgis.html:523
+msgid "Guest"
+msgstr "Neprihlásený"
+
+#: templates/viewer/user_projects.html:79
+#: templates/viewer/webgis.html:543
+msgid "Log out"
+msgstr "Odhlásiť sa"
+
 #: templates/viewer/user_projects.html:24
 msgid "Published projects"
 msgstr "Vypublikované projekty"
@@ -46,14 +60,6 @@ msgstr "Vypublikované projekty"
 #: templates/viewer/user_projects.html:52
 msgid "Published projects by user"
 msgstr "Projekty vypublikované používateľom"
-
-#: templates/viewer/user_projects.html:59 templates/viewer/webgis.html:523
-msgid "Guest"
-msgstr "Neprihlásený"
-
-#: templates/viewer/user_projects.html:79 templates/viewer/webgis.html:543
-msgid "Log out"
-msgstr "Odhlásiť sa"
 
 #: templates/viewer/user_projects.html:121
 msgid "Title"
@@ -75,7 +81,7 @@ msgstr "URL"
 msgid "Scale"
 msgstr "Mierka"
 
-#: templates/viewer/webgis.html:271 templates/viewer/actions/print.js:137
+#: templates/viewer/webgis.html:271 templates/viewer/actions/print.js:139
 msgid "Resolution"
 msgstr "Rozlíšenie"
 
@@ -233,23 +239,23 @@ msgstr "Meranie súradníc, dĺžok a plôch"
 msgid "Print layout"
 msgstr "Šablóna pre tlač"
 
-#: templates/viewer/actions/print.js:173
+#: templates/viewer/actions/print.js:175
 msgid "Output file format"
 msgstr "Formát tlačového výstupu"
 
-#: templates/viewer/actions/print.js:199
+#: templates/viewer/actions/print.js:201
 msgid "Rotation"
 msgstr "Natočenie"
 
-#: templates/viewer/actions/print.js:230
+#: templates/viewer/actions/print.js:232
 msgid "Create"
 msgstr "Vytvoriť"
 
-#: templates/viewer/actions/print.js:231
+#: templates/viewer/actions/print.js:233
 msgid "Create print output"
 msgstr "Vytvoriť tlačový výstup"
 
-#: templates/viewer/actions/print.js:278
+#: templates/viewer/actions/print.js:298
 msgid "Print output creation"
 msgstr "Tvorba tlačových výstupov"
 
