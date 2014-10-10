@@ -63,6 +63,9 @@ def _get_tile_resolutions(scales, units, dpi=96):
 		resolutions.append(monitor_l * int(m))
 	return resolutions
 
+def secure_url(request, location=None):
+	return request.build_absolute_uri(location).replace('http:', 'https:')
+
 def set_query_parameters(url, params_dict):
 	"""Given a URL, set or replace a query parameters and return the
 	modified URL. Parameters are case insensitive.
@@ -250,8 +253,8 @@ def page(request):
 
 	if (not allow_anonymous and (not request.user.is_authenticated() or request.user.is_guest)):
 		# redirect to login page
-		login_url = reverse('login')
-		return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
+		login_url = secure_url(request, reverse('login'))
+		return HttpResponseRedirect(set_query_parameters(login_url, {'next': secure_url(request)}))
 	if owner_authentication and not request.user.is_superuser:
 		project_owner = project.split('/', 1)[0]
 		if project_owner != request.user.username:
@@ -397,10 +400,10 @@ def page(request):
 def user_projects(request, username):
 	if not request.user.is_authenticated() or request.user.is_guest:
 		# redirect to login page
-		login_url = reverse('login')
-		return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
+		login_url = secure_url(request, reverse('login'))
+		return HttpResponseRedirect(set_query_parameters(login_url, {'next': secure_url(request)}))
 	if not username:
-		redirect_url = reverse('viewer:user_projects', kwargs={'username': request.user.username})
+		redirect_url = secure_url(request, reverse('viewer:user_projects', kwargs={'username': request.user.username}))
 		return HttpResponseRedirect(redirect_url)
 	if username != request.user.username:
 		if not request.user.is_superuser:
@@ -425,7 +428,7 @@ def user_projects(request, username):
 					metadata_filename = os.path.splitext(project_filename)[0] + '.meta'
 					try:
 						metadata = MetadataParser(metadata_filename)
-						url = set_query_parameters(request.build_absolute_uri('/'), {'project': project_filename[start_index:]})
+						url = set_query_parameters(secure_url(request, '/'), {'project': project_filename[start_index:]})
 						projects.append({
 							'title': metadata.title,
 							'url': url,

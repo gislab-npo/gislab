@@ -528,7 +528,7 @@
 									iconCls: 'login-icon',
 									tooltip: '{% trans "Log in" %}',
 									handler: function(action) {
-										window.location.href = Ext.urlAppend('{% url "login" %}', Ext.urlEncode({next: window.location.href}));
+										window.location.href = Ext.urlAppend(String.format('https://{0}{% url "login" %}', location.host), Ext.urlEncode({next: window.location.href}));
 									}
 								}),{% else %} {
 									xtype: 'tbtext',
@@ -541,7 +541,7 @@
 									iconCls: 'logout-icon',
 									tooltip: '{% trans "Log out" %}',
 									handler: function(action) {
-										window.location.href = Ext.urlAppend('{% url "logout" %}', Ext.urlEncode({next: window.location.href}));
+										window.location.href = Ext.urlAppend(String.format('https://{0}{% url "logout" %}', location.host), Ext.urlEncode({next: window.location.href}));
 									}
 								}),
 								{% endif %}
