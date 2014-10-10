@@ -60,6 +60,12 @@
 
 
 # Sanity checks
+# UBUNTU VERSION
+- name: Fail if server is not running compatible OS version
+  fail: msg="Server is not running compatible OS version Ubuntu 12.04, {{ ansible_distribution }} {{ ansible_distribution_version }} detected"
+  when: ansible_distribution != "Ubuntu" or ansible_distribution_version != "12.04"
+
+
 # GISLAB_PLUGINS_REQUIRE
 - name: Create temporary directory for user plugins check
   file: path=/tmp/gislab-user-plugins state=directory
