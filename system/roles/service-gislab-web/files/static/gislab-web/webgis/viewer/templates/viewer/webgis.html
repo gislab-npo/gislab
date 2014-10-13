@@ -255,7 +255,8 @@
 						resolutions: config.tile_resolutions,
 						restrictedExtent: config.maxExtent,
 						maxExtent: config.maxExtent,
-						controls: []
+						controls: [],
+						{% if not mapcache_url %}tileManager: null{% endif %}
 					}),
 					layers: maplayers,
 					items: [{
