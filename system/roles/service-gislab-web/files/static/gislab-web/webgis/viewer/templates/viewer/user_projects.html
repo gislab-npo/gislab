@@ -139,6 +139,13 @@
 										sortable: false,
 										menuDisabled: true,
 										width: 400
+								}, {
+										id: 'wms_url',
+										header: '{% trans "WMS URL" %}',
+										dataIndex: 'wms_url',
+										sortable: false,
+										menuDisabled: true,
+										width: 400
 								}]
 							}),
 							store: new Ext.data.JsonStore({
@@ -147,6 +154,7 @@
 										title: '{{ project_info.title }}',
 										{% if project_info.publication_time_unix %}publication_time: new Date({{ project_info.publication_time_unix }}*1000),{% endif %}
 										url: String.format('<a href="{{ project_info.url }}" target="_blank"> {0}</a>', decodeURIComponent('{{ project_info.url }}')),
+										{% if project_info.wms_url %}wms_url: String.format('<a href="{0}" target="_blank"> {0}</a>', decodeURIComponent('{{ project_info.wms_url }}')),{% endif %}
 										{% if project_info.expiration_time_unix %}expiration_time: new Date({{ project_info.expiration_time_unix }}*1000),{% endif %}
 									},{% endfor %}
 								],
@@ -162,6 +170,9 @@
 										type: 'date'
 									}, {
 										name: 'url',
+										type: 'string'
+								}, {
+										name: 'wms_url',
 										type: 'string'
 								}]
 							}),

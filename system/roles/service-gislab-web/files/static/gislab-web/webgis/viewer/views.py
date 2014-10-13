@@ -429,10 +429,14 @@ def user_projects(request, username):
 					metadata_filename = os.path.splitext(project_filename)[0] + '.meta'
 					try:
 						metadata = MetadataParser(metadata_filename)
-						url = set_query_parameters(secure_url(request, '/'), {'project': project_filename[start_index:]})
+						project = project_filename[start_index:]
+						url = set_query_parameters(secure_url(request, '/'), {'project': project})
+						ows_url = secure_url(request, reverse('viewer:owsrequest'))
+						wms_url = set_query_parameters(ows_url, {'map': project+'.qgs'})
 						projects.append({
 							'title': metadata.title,
 							'url': url,
+							'wms_url': wms_url,
 							'publication_time_unix': int(metadata.publish_date_unix),
 							'expiration_time_unix': int(time.mktime(time.strptime(metadata.expiration, "%d.%m.%Y"))) if metadata.expiration else None
 						})
