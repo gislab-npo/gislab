@@ -662,10 +662,11 @@ class WebGisPlugin:
 				else:
 					layer_data['type'] = 'raster'
 				return layer_data
+		metadata['overlays'] = []
 		if self.overlay_layers_tree:
-			metadata['overlays'] = create_overlays_data(self.overlay_layers_tree).get('layers')
-		else:
-			metadata['overlays'] = []
+			overlays_data = create_overlays_data(self.overlay_layers_tree)
+			if overlays_data:
+				metadata['overlays'] = overlays_data.get('layers')
 
 		composer_templates = []
 		for composer in self.iface.activeComposers():
