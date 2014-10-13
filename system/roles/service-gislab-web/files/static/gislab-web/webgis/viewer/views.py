@@ -24,6 +24,7 @@ from django.utils.translation import ugettext as _
 from webgis.viewer import forms
 from webgis.viewer import models
 from webgis.viewer.metadata_parser import MetadataParser
+from webgis.libs.auth.decorators import basic_authentication
 from webgis.mapcache import get_tile_response, get_legendgraphic_response, WmsLayer, TileNotFoundException
 
 
@@ -116,7 +117,7 @@ def get_project_layers_info(project_key, publish, project=None):
 	return {}
 
 
-@login_required
+@basic_authentication(realm="OWS API")
 def ows_request(request):
 	url = "{0}?{1}".format(settings.GISLAB_WEB_MAPSERVER_URL.rstrip("/"), request.environ['QUERY_STRING'])
 	owsrequest = urllib2.Request(url)
@@ -330,7 +331,7 @@ def page(request):
 		context.update({
 			'project': project,
 			'ows_url': ows_url,
-			'wms_url': urllib.unquote(set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'map': project+'.qgs'})),
+			'wms_url': urllib.unquote(secure_url(request, ows_url)),
 			'project_extent': metadata.extent,
 			'zoom_extent': form.cleaned_data['extent'] or metadata.zoom_extent,
 			'print_composers': metadata.composer_templates if not context['user'].is_guest else None,
