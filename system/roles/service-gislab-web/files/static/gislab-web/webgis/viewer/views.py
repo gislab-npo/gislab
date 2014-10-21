@@ -24,6 +24,7 @@ from django.utils.translation import ugettext as _
 from webgis.viewer import forms
 from webgis.viewer import models
 from webgis.viewer.metadata_parser import MetadataParser
+from webgis.libs.auth.decorators import basic_authentication
 from webgis.mapcache import get_tile_response, get_legendgraphic_response, WmsLayer, TileNotFoundException
 
 
@@ -62,6 +63,9 @@ def _get_tile_resolutions(scales, units, dpi=96):
 	for m in scales:
 		resolutions.append(monitor_l * int(m))
 	return resolutions
+
+def secure_url(request, location=None):
+	return request.build_absolute_uri(location).replace('http:', 'https:')
 
 def set_query_parameters(url, params_dict):
 	"""Given a URL, set or replace a query parameters and return the
@@ -113,7 +117,7 @@ def get_project_layers_info(project_key, publish, project=None):
 	return {}
 
 
-@login_required
+@basic_authentication(realm="OWS API")
 def ows_request(request):
 	url = "{0}?{1}".format(settings.GISLAB_WEB_MAPSERVER_URL.rstrip("/"), request.environ['QUERY_STRING'])
 	owsrequest = urllib2.Request(url)
@@ -250,8 +254,8 @@ def page(request):
 
 	if (not allow_anonymous and (not request.user.is_authenticated() or request.user.is_guest)):
 		# redirect to login page
-		login_url = reverse('login')
-		return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
+		login_url = secure_url(request, reverse('login'))
+		return HttpResponseRedirect(set_query_parameters(login_url, {'next': secure_url(request)}))
 	if owner_authentication and not request.user.is_superuser:
 		project_owner = project.split('/', 1)[0]
 		if project_owner != request.user.username:
@@ -327,7 +331,7 @@ def page(request):
 		context.update({
 			'project': project,
 			'ows_url': ows_url,
-			'wms_url': urllib.unquote(set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'map': project+'.qgs'})),
+			'wms_url': urllib.unquote(secure_url(request, ows_url)),
 			'project_extent': metadata.extent,
 			'zoom_extent': form.cleaned_data['extent'] or metadata.zoom_extent,
 			'print_composers': metadata.composer_templates if not context['user'].is_guest else None,
@@ -397,10 +401,10 @@ def page(request):
 def user_projects(request, username):
 	if not request.user.is_authenticated() or request.user.is_guest:
 		# redirect to login page
-		login_url = reverse('login')
-		return HttpResponseRedirect(set_query_parameters(login_url, {'next': request.build_absolute_uri()}))
+		login_url = secure_url(request, reverse('login'))
+		return HttpResponseRedirect(set_query_parameters(login_url, {'next': secure_url(request)}))
 	if not username:
-		redirect_url = reverse('viewer:user_projects', kwargs={'username': request.user.username})
+		redirect_url = secure_url(request, reverse('viewer:user_projects', kwargs={'username': request.user.username}))
 		return HttpResponseRedirect(redirect_url)
 	if username != request.user.username:
 		if not request.user.is_superuser:
@@ -425,10 +429,14 @@ def user_projects(request, username):
 					metadata_filename = os.path.splitext(project_filename)[0] + '.meta'
 					try:
 						metadata = MetadataParser(metadata_filename)
-						url = set_query_parameters(request.build_absolute_uri('/'), {'project': project_filename[start_index:]})
+						project = project_filename[start_index:]
+						url = set_query_parameters(secure_url(request, '/'), {'project': project})
+						ows_url = secure_url(request, reverse('viewer:owsrequest'))
+						wms_url = set_query_parameters(ows_url, {'map': project+'.qgs'})
 						projects.append({
 							'title': metadata.title,
 							'url': url,
+							'wms_url': wms_url,
 							'publication_time_unix': int(metadata.publish_date_unix),
 							'expiration_time_unix': int(time.mktime(time.strptime(metadata.expiration, "%d.%m.%Y"))) if metadata.expiration else None
 						})
