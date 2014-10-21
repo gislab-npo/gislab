@@ -7,3 +7,8 @@ olcTLSCertificateFile: /etc/ssl/certs/server_slapd_cert.pem
 -
 add: olcTLSCertificateKeyFile
 olcTLSCertificateKeyFile: /etc/ssl/private/server_slapd_key.pem
+
+dn: cn=config
+changetype: modify
+add: olcSecurity
+olcSecurity: ssf=64

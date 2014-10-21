@@ -129,11 +129,6 @@
 - name: Install TLS certificates configuration (run only once)
   shell: ldapmodify -Q -Y EXTERNAL -H ldapi:// -f /tmp/ldap.ldif
   when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
-
-
-- name: Allow only encrypted connection (run only once)
-  shell: "printf 'dn: cn=config\nchangetype: modify\nadd: olcSecurity\nolcSecurity: ssf=64\n'| ldapmodify -Q -Y EXTERNAL -H ldapi:///"
-  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
   notify:
     - service slapd restart
 
