@@ -14,7 +14,7 @@
 
 # User accounts cleanup and security
 - name: Detect if LDAP is installed
-  shell: dpkg-query -W -f='${Status}' slapd 2>/dev/null
+  shell: "ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// '(o=gis.lab)' 2>/dev/null || echo 'LDAP NOT INSTALLED'"
   args:
     executable: /bin/bash
   register: ldap_install_status
@@ -29,7 +29,7 @@
          done
   args:
     executable: /bin/bash
-  when: ldap_install_status.stdout != "install ok installed"
+  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
 
 
 - name: Set strong password for provisioning user account

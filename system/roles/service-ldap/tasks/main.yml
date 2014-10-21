@@ -24,6 +24,13 @@
   shell: adduser openldap ssl-cert 2> /dev/null || true
 
 
+- name: Detect if LDAP is installed
+  shell: "ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// '(o=gis.lab)' 2>/dev/null || echo 'LDAP NOT INSTALLED'"
+  args:
+    executable: /bin/bash
+  register: ldap_install_status
+
+
 # PAM
 - name: Configure PAM to use Unix and LDAP authentication 
   shell: DEBIAN_FRONTEND=noninteractive {{ item }}
@@ -62,8 +69,7 @@
   register: gislab_ldap_admin_password_hash
 
 - name: Save LDAP admin password to LDAP db
-  shell: 'printf "dn: olcDatabase={1}hdb,cn=config\nreplace: olcRootPW\nolcRootPW: {{ gislab_ldap_admin_password_hash.stdout }}\n" > /tmp/i.ldif;
-         ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
+  shell: "printf 'dn: olcDatabase={1}hdb,cn=config\nreplace: olcRootPW\nolcRootPW: {{ gislab_ldap_admin_password_hash.stdout }}\n'| ldapmodify -Q -Y EXTERNAL -H ldapi:///"
 
 
 # SSL
@@ -118,17 +124,16 @@
 
 
 - name: Load TLS certificates configuration
-  template: src=ldap/tls-certificates.ldif.j2 dest=/tmp/i.ldif
+  template: src=ldap/tls-certificates.ldif.j2 dest=/tmp/ldap.ldif
 
 - name: Install TLS certificates configuration (run only once)
-  shell: ldapmodify -Q -Y EXTERNAL -H ldapi:// -f /tmp/i.ldif
-  when: GISLAB_INSTALL_ACTION == "install"
+  shell: ldapmodify -Q -Y EXTERNAL -H ldapi:// -f /tmp/ldap.ldif
+  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
 
 
 - name: Allow only encrypted connection (run only once)
-  shell: 'printf "dn: cn=config\nchangetype: modify\nadd: olcSecurity\nolcSecurity: ssf=64\n" > /tmp/i.ldif;
-         ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
-  when: GISLAB_INSTALL_ACTION == "install"
+  shell: "printf 'dn: cn=config\nchangetype: modify\nadd: olcSecurity\nolcSecurity: ssf=64\n'| ldapmodify -Q -Y EXTERNAL -H ldapi:///"
+  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
   notify:
     - service slapd restart
 
@@ -140,38 +145,38 @@
     - service slapd restart
 
 - name: Load sudo LDAP schema
-  template: src=ldap/sudo.schema.j2 dest=/tmp/i.ldif
+  template: src=ldap/sudo-schema.ldif.j2 dest=/tmp/ldap.ldif
 
 - name: Install sudo LDAP schema (run only once)
-  shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif
-  when: GISLAB_INSTALL_ACTION == "install"
+  shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
+  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
 
 
 # LDAP Postfix schema
 - name: Load Postfix LDAP schema
-  template: src=ldap/postfix.schema.j2 dest=/tmp/i.ldif
+  template: src=ldap/postfix-schema.ldif.j2 dest=/tmp/ldap.ldif
 
 - name: Install Postfix LDAP schema (run only once)
-  shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif
-  when: GISLAB_INSTALL_ACTION == "install"
+  shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
+  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
 
 
 # LDAP indexes
 - name: Load LDAP indexes
-  template: src=ldap/indexes.ldif.j2 dest=/tmp/i.ldif
+  template: src=ldap/indexes.ldif.j2 dest=/tmp/ldap.ldif
 
 - name: Install LDAP indexes (run only once)
-  shell: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif
-  when: GISLAB_INSTALL_ACTION == "install"
+  shell: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
+  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
 
 
 # GIS.lab LDAP tree
 - name: Load GIS.lab LDAP tree
-  template: src=ldap/gislab-tree.ldif.j2 dest=/tmp/i.ldif
+  template: src=ldap/gislab-tree.ldif.j2 dest=/tmp/ldap.ldif
 
 - name: Install GIS.lab LDAP tree (run only once)
-  shell: 'ldapadd -Z -w {{ gislab_ldap_admin_password.stdout }} -D "cn=admin,dc=gis,dc=lab" -f /tmp/i.ldif'
-  when: GISLAB_INSTALL_ACTION == "install"
+  shell: 'ldapadd -Z -w {{ gislab_ldap_admin_password.stdout }} -D "cn=admin,dc=gis,dc=lab" -f /tmp/ldap.ldif'
+  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
 
 - meta: flush_handlers
 
@@ -191,29 +196,20 @@
 
 - name: Install LDAP scripts runtime patch (run only once)
   shell: patch /usr/share/ldapscripts/runtime /tmp/runtime-fix.patch; rm -f /tmp/runtime-fix.patch
-  when: GISLAB_INSTALL_ACTION == "install"
+  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
 
 - name: Save LDAP admin password to LDAP scripts (run only once)
   shell: printf "{{ gislab_ldap_admin_password.stdout }}" > /etc/ldapscripts/ldapscripts.passwd && chmod 0600 /etc/ldapscripts/ldapscripts.passwd
-  when: GISLAB_INSTALL_ACTION == "install"
 
 
 # Logging
-- name: Configure LDAP logging
-  shell: 'printf "dn: cn=config\nchangetype: modify\ndelete: olcLogLevel\n" > /tmp/i.ldif;
-         ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
+- name: Load LDAP logging configuration
+  template: src=ldap/logging.ldif.j2 dest=/tmp/ldap.ldif
 
-- name: Configure LDAP logging
-  shell: 'printf "dn: cn=config\nchangetype: modify\nadd: olcLogLevel\nolcLogLevel: none\n" > /tmp/i.ldif;
-         ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
-  when: not GISLAB_DEBUG_SERVICES 
-
-- name: Configure LDAP logging (debug mode)
-  shell: 'printf "dn: cn=config\nchangetype: modify\nadd: olcLogLevel\nolcLogLevel: stats\n" > /tmp/i.ldif;
-         ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/i.ldif'
-  when: GISLAB_DEBUG_SERVICES 
+- name: Install LDAP logging configuration
+  shell: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
 
 
 # The end
 - name: Remove temporary 'ldif' file
-  file: path=/tmp/i.ldif state=absent
+  file: path=/tmp/ldap.ldif state=absent
