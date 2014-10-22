@@ -1,7 +1,0 @@
-# Install QGIS plugins living in GIS.lab tree
-
-case "$MODE" in
-    finalization)
-    	cp -a $GISLAB_INSTALL_CLIENT_ROOT/qgis/plugins/* $ROOT/usr/share/qgis/python/plugins
-        ;;
-esac

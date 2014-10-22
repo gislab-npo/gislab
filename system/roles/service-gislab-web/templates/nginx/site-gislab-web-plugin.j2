@@ -1,0 +1,11 @@
+server {
+	root /var/www/gislab-web-plugin;
+	index index.html index.htm;
+
+	listen 80;
+	server_name qgis.*;
+
+	location / {
+		try_files $uri $uri/ /index.html;
+		}
+}
