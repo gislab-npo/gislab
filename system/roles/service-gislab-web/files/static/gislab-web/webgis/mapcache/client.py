@@ -11,7 +11,7 @@ class WMS (object):
 	__slots__ = ("base_url", "params", "client", "data", "response", "base_url_params")
 
 	def __init__ (self, base):
-		base = urllib.unquote(base)
+		base = urllib.unquote_plus(base)
 		if base[-1] not in "?&":
 			if "?" in base:
 				base += "&"
