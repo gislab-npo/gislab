@@ -3,23 +3,14 @@
 # Publish your projects into GIS.lab Web application
 # ***************************************************************************/
 
-# CONFIGURATION
-QGISDIR=.qgis2
-
-GISLAB_BUILDDIR=build
-
-# Makefile for a PyQGIS plugin
-
-# global
+QGISDIR = .qgis2
+GISLAB_BUILDDIR = build
 PLUGINNAME = gislab_web
-
 PY_FILES = webgisplugin.py topics.py __init__.py
-
 EXTRAS = icon.png metadata.txt
-
 UI_FILES = publish_dialog.ui
-
 RESOURCE_FILES = resources_rc.py
+
 
 default: compile
 
@@ -27,7 +18,6 @@ compile: $(RESOURCE_FILES)
 
 %_rc.py : %.qrc
 	pyrcc4 -o $*_rc.py  $<
-
 
 # The deploy target only works on unix like operating system where
 # the Python plugin directory is located at:

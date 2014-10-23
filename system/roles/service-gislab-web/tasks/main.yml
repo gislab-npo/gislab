@@ -189,8 +189,19 @@
 - name: Re-create Web plugin directory
   shell: rm -rf /var/www/gislab-web-plugin; mkdir -p /var/www/gislab-web-plugin
 
-- name: Install GIS.lab Web plugin
-  shell: cd /tmp/gislab-web-plugin/gislab_web/; make zip
+- name: Build GIS.lab Web plugin package
+  shell: make zip
+  args:
+    executable: /bin/bash
+    chdir: /tmp/gislab-web-plugin/gislab_web
+
+- name: Install GIS.lab Web plugin package
+  shell: "{{ item }}"
+  with_items:
+    - cp /tmp/gislab-web-plugin/gislab_web/gislab_web.zip /var/www/gislab-web-plugin/
+    - cp /tmp/gislab-web-plugin/gislab_web/icon.png /var/www/gislab-web-plugin/
+  args:
+    executable: /bin/bash
 
 - name: Install GIS.lab Web plugin repository file
   template: src=gislab-web-plugin/plugins.xml.j2 dest=/var/www/gislab-web-plugin/plugins.xml
