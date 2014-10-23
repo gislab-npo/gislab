@@ -6,7 +6,7 @@
 # CONFIGURATION
 QGISDIR=.qgis2
 
-GISLAB_BUILDDIR=/tmp/gislab-web-plugin/build
+GISLAB_BUILDDIR=build
 
 # Makefile for a PyQGIS plugin
 
