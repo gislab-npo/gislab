@@ -18,6 +18,7 @@
     - python-psycopg2
     - python-virtualenv
     - pwgen
+    - zip
 
 
 # PostgreSQL
@@ -188,9 +189,8 @@
 - name: Re-create Web plugin directory
   shell: rm -rf /var/www/gislab-web-plugin; mkdir -p /var/www/gislab-web-plugin
 
-# TODO: install plugin package (in format gislab_web.{{ GISLAB_VERSION }}.zip) and icon to '/var/www/gislab-web-plugin' dir
-#- name: Install GIS.lab Web plugin
-#  shell: make -f /tmp/gislab-web-plugin/gislab_web/Makefile deploy-gislab
+- name: Install GIS.lab Web plugin
+  shell: cd /tmp/gislab-web-plugin/gislab_web/; make zip
 
 - name: Install GIS.lab Web plugin repository file
   template: src=gislab-web-plugin/plugins.xml.j2 dest=/var/www/gislab-web-plugin/plugins.xml
