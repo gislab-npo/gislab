@@ -59,6 +59,7 @@ cp $GISLAB_INSTALL_ACCOUNT_ROOT/pgadmin3/pgadmin3 /etc/skel/.pgadmin3
 mkdir -p /etc/skel/.config/QGIS
 mkdir -p /etc/skel/.qgis2
 cp $GISLAB_INSTALL_ACCOUNT_ROOT/qgis/QGIS2.conf /etc/skel/.config/QGIS/QGIS2.conf
+cp -a $GISLAB_INSTALL_ACCOUNT_ROOT/qgis/composer_templates /etc/skel/.qgis2/
 
 if [ "$GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT" == "yes" ]; then
 	mkdir -p /etc/skel/bin
