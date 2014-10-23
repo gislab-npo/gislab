@@ -23,12 +23,12 @@
 
 # PostgreSQL
 - name: Generate 'gislab_web' database user password (run only once)
-  shell: pwgen -s -N 1 10 > /etc/gislab/gislab_web_db_user_password && chmod 600 /etc/gislab/gislab_web_db_user_password
+  shell: pwgen -s -N 1 10 > /etc/gislab/gislab-web_db_user_password.txt && chmod 600 /etc/gislab/gislab-web_db_user_password.txt
   args:
-    creates: /etc/gislab/gislab_web_db_user_password
+    creates: /etc/gislab/gislab-web_db_user_password.txt
 
 - name: Get 'gislab_web' database user password
-  shell: cat /etc/gislab/gislab_web_db_user_password
+  shell: cat /etc/gislab/gislab-web_db_user_password.txt
   register: gislab_web_db_user_password
 
 
@@ -85,12 +85,12 @@
 
 
 - name: Generate secret key (run only once)
-  shell: pwgen -sy 50 1 | sed 's/"/_/g' > /etc/gislab/gislab_web_secret_key && chmod 600 /etc/gislab/gislab_web_secret_key
+  shell: pwgen -sy 50 1 | sed 's/"/_/g' > /etc/gislab/gislab-web_secret_key.txt && chmod 600 /etc/gislab/gislab-web_secret_key.txt
   args:
-    creates: /etc/gislab/gislab_web_secret_key
+    creates: /etc/gislab/gislab-web_secret_key.txt
 
 - name: Get secret key
-  shell: cat /etc/gislab/gislab_web_secret_key
+  shell: cat /etc/gislab/gislab-web_secret_key.txt
   register: gislab_web_secret_key
 
 

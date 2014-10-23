@@ -56,12 +56,12 @@
 
 # LDAP admin credentials
 - name: Generate LDAP admin password (run only once)
-  shell: pwgen -s -N 1 10 > /etc/gislab/gislab_ldap_admin_password && chmod 600 /etc/gislab/gislab_ldap_admin_password
+  shell: pwgen -s -N 1 10 > /etc/gislab/gislab_ldap_admin_password.txt && chmod 600 /etc/gislab/gislab_ldap_admin_password.txt
   args:
-    creates: /etc/gislab/gislab_ldap_admin_password
+    creates: /etc/gislab/gislab_ldap_admin_password.txt
 
 - name: Get LDAP admin password
-  shell: cat /etc/gislab/gislab_ldap_admin_password
+  shell: cat /etc/gislab/gislab_ldap_admin_password.txt
   register: gislab_ldap_admin_password
 
 - name: Generate hash of LDAP admin password

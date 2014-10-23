@@ -44,7 +44,7 @@
 - name: Set SSH key for provisioning user account
   command: "{{ item }}"
   with_items:
-    - "cp -a /etc/gislab/gislab_ssh_public_key /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys"
+    - "cp -a /etc/gislab/gislab_ssh_public_key.pub /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys"
     - "chown {{ GISLAB_PROVISIONING_USER }}:{{ GISLAB_PROVISIONING_USER }} /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys" 
 
 
