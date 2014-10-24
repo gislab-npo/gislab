@@ -78,7 +78,7 @@ color0 8C8C8C
 color1 white
 
 # Text alignment, other possible values are commented
-alignment top_middle
+alignment bottom_middle
 
 # Gap between borders of screen and text
 # same thing as passing -x at command line
