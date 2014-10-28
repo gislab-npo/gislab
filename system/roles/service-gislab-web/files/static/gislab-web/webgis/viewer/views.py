@@ -433,10 +433,18 @@ def user_projects(request, username):
 						url = set_query_parameters(secure_url(request, '/'), {'project': project})
 						ows_url = secure_url(request, reverse('viewer:owsrequest'))
 						wms_url = set_query_parameters(ows_url, {'map': project+'.qgs'})
+						authentication = metadata.authentication
+						# backward compatibility with older version
+						if type(authentication) is dict:
+							if authentication.get('allow_anonymous') and not authentication.get('require_superuser'):
+								authentication = 'all'
+							else:
+								authentication = 'authenticated'
 						projects.append({
 							'title': metadata.title,
 							'url': url,
 							'wms_url': wms_url,
+							'authentication': authentication,
 							'publication_time_unix': int(metadata.publish_date_unix),
 							'expiration_time_unix': int(time.mktime(time.strptime(metadata.expiration, "%d.%m.%Y"))) if metadata.expiration else None
 						})

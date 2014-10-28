@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-02 14:48+0200\n"
+"POT-Creation-Date: 2014-10-28 08:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: views.py:380
+#: views.py:383 views.py:429
 msgid "Empty Project"
 msgstr "Prázdny projekt"
 
@@ -39,19 +39,9 @@ msgid "Password"
 msgstr "Heslo"
 
 #: templates/registration/login.html:106
-#: templates/viewer/user_projects.html:66 templates/viewer/webgis.html:530
+#: templates/viewer/user_projects.html:66 templates/viewer/webgis.html:546
 msgid "Log in"
 msgstr "Prihlásiť sa"
-
-#: templates/viewer/user_projects.html:59
-#: templates/viewer/webgis.html:523
-msgid "Guest"
-msgstr "Neprihlásený"
-
-#: templates/viewer/user_projects.html:79
-#: templates/viewer/webgis.html:543
-msgid "Log out"
-msgstr "Odhlásiť sa"
 
 #: templates/viewer/user_projects.html:24
 msgid "Published projects"
@@ -60,6 +50,14 @@ msgstr "Vypublikované projekty"
 #: templates/viewer/user_projects.html:52
 msgid "Published projects by user"
 msgstr "Projekty vypublikované používateľom"
+
+#: templates/viewer/user_projects.html:59 templates/viewer/webgis.html:539
+msgid "Guest"
+msgstr "Neprihlásený"
+
+#: templates/viewer/user_projects.html:79 templates/viewer/webgis.html:559
+msgid "Log out"
+msgstr "Odhlásiť sa"
 
 #: templates/viewer/user_projects.html:121
 msgid "Title"
@@ -74,112 +72,116 @@ msgid "Expiration time"
 msgstr "Platnosť projektu"
 
 #: templates/viewer/user_projects.html:138
+msgid "Authentication"
+msgstr "Autentifikácia"
+
+#: templates/viewer/user_projects.html:143
 msgid "URL"
 msgstr "URL"
 
-#: templates/viewer/webgis.html:271
-msgid "Scale"
-msgstr "Mierka"
-
-#: templates/viewer/webgis.html:271 templates/viewer/actions/print.js:139
-msgid "Resolution"
-msgstr "Rozlíšenie"
-
-#: templates/viewer/webgis.html:370
-msgid "Layers"
-msgstr "Vrstvy"
-
-#: templates/viewer/webgis.html:377
-msgid "Legend"
-msgstr "Legenda"
-
-#: templates/viewer/webgis.html:406
-msgid "Properties"
-msgstr "Vlastnosti"
-
-#: templates/viewer/webgis.html:409
-msgid "Author"
-msgstr "Autor"
-
-#: templates/viewer/webgis.html:410
-msgid "E-mail"
-msgstr "E-mail"
-
-#: templates/viewer/webgis.html:411
-msgid "Phone"
-msgstr "Telefón"
-
-#: templates/viewer/webgis.html:412
-msgid "Organization"
-msgstr "Organizácia"
-
-#: templates/viewer/webgis.html:413
-msgid "Abstract"
-msgstr "Abstrakt"
-
-#: templates/viewer/webgis.html:414
-msgid "Online resource"
-msgstr "Webový zdroj"
-
-#: templates/viewer/webgis.html:415
-msgid "Fees"
-msgstr "Poplatky"
-
-#: templates/viewer/webgis.html:416
-msgid "Access constraints"
-msgstr "Obmedzenia prístupu"
-
-#: templates/viewer/webgis.html:417
-msgid "Keywords list"
-msgstr "Kľúčové slová"
-
-#: templates/viewer/webgis.html:418
-msgid "Publish date"
-msgstr "Čas publikácie"
-
-#: templates/viewer/webgis.html:419
+#: templates/viewer/user_projects.html:150 templates/viewer/webgis.html:435
 msgid "WMS URL"
 msgstr "WMS URL"
 
-#: templates/viewer/webgis.html:424
+#: templates/viewer/webgis.html:287
+msgid "Scale"
+msgstr "Mierka"
+
+#: templates/viewer/webgis.html:287 templates/viewer/actions/print.js:139
+msgid "Resolution"
+msgstr "Rozlíšenie"
+
+#: templates/viewer/webgis.html:386
+msgid "Layers"
+msgstr "Vrstvy"
+
+#: templates/viewer/webgis.html:393
+msgid "Legend"
+msgstr "Legenda"
+
+#: templates/viewer/webgis.html:422
+msgid "Properties"
+msgstr "Vlastnosti"
+
+#: templates/viewer/webgis.html:425
+msgid "Author"
+msgstr "Autor"
+
+#: templates/viewer/webgis.html:426
+msgid "E-mail"
+msgstr "E-mail"
+
+#: templates/viewer/webgis.html:427
+msgid "Phone"
+msgstr "Telefón"
+
+#: templates/viewer/webgis.html:428
+msgid "Organization"
+msgstr "Organizácia"
+
+#: templates/viewer/webgis.html:429
+msgid "Abstract"
+msgstr "Abstrakt"
+
+#: templates/viewer/webgis.html:430
+msgid "Online resource"
+msgstr "Webový zdroj"
+
+#: templates/viewer/webgis.html:431
+msgid "Fees"
+msgstr "Poplatky"
+
+#: templates/viewer/webgis.html:432
+msgid "Access constraints"
+msgstr "Obmedzenia prístupu"
+
+#: templates/viewer/webgis.html:433
+msgid "Keywords list"
+msgstr "Kľúčové slová"
+
+#: templates/viewer/webgis.html:434
+msgid "Publish date"
+msgstr "Čas publikácie"
+
+#: templates/viewer/webgis.html:440
 msgid "GIS.lab"
 msgstr "GIS.lab"
 
-#: templates/viewer/webgis.html:427
+#: templates/viewer/webgis.html:443
 msgid "GIS.lab ID"
 msgstr "GIS.lab ID"
 
-#: templates/viewer/webgis.html:428
+#: templates/viewer/webgis.html:444
 msgid "Version"
 msgstr "Verzia"
 
-#: templates/viewer/webgis.html:429
+#: templates/viewer/webgis.html:445
 msgid "Home page"
 msgstr "Domovská stránka"
 
-#: templates/viewer/webgis.html:430
+#: templates/viewer/webgis.html:446
 msgid "Documentation"
 msgstr "Dokumentácia"
 
-#: templates/viewer/webgis.html:445
+#: templates/viewer/webgis.html:461
 msgid "Base Layers"
 msgstr "Podkladové vrstvy"
 
-#: templates/viewer/webgis.html:654 templates/viewer/actions/draw.js:134
+#: templates/viewer/webgis.html:679 templates/viewer/actions/draw.js:134
 #: templates/viewer/actions/draw.js:145
 msgid "Error"
 msgstr "Chyba"
 
-#: templates/viewer/webgis.html:655
+#: templates/viewer/webgis.html:680
 #, python-format
 msgid "Failed to fetch vector data (drawing: %(drawing_id)s)"
 msgstr "Nepodarilo sa načítať vektorové dáta (kreslenie: %(drawing_id)s)"
 
-#: templates/viewer/webgis.html:671 templates/viewer/webgis.html.py:683
+#: templates/viewer/webgis.html:696 templates/viewer/webgis.html.py:708
 msgid "Open attribute table"
 msgstr "Otvoriť atribútovú tabuľku"
 
-#: templates/viewer/webgis.html:694
+#: templates/viewer/webgis.html:719
 msgid "Message"
 msgstr "Správa"
 
