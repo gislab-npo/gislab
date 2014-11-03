@@ -1,5 +1,6 @@
 #!/bin/bash
-# modify DHCP client to be sure that client will always get IP from correct server
+# Modify DHCP client in initrd image to ensure that IP address will be taken only
+# from correct GIS.lab server
 
 set -e
 set -u
@@ -17,6 +18,7 @@ cp -vf $INITRD_PATH/$INITRD ./$INITRD.gz
 gunzip $INITRD.gz
 cpio -id < $(ls)
 
+# change 'udhcp' script with our version
 cp -vf $GISLAB_INSTALL_CLIENT_ROOT/udhcp/udhcp scripts/init-premount/
 chmod 0775 scripts/init-premount/udhcp
 
