@@ -33,5 +33,5 @@
     - { role: user-data, tags: ['user-data'] }
     - { role: service-worker, tags: ['service-worker'] }
     - { role: service-client, tags: ['service-client'], when: "'{{ GISLAB_SUITE }}' == 'lab'" }
-    - { role: admin-user-account, tags: ['admin-user-account'] }
+    - { role: user-admin-account, tags: ['user-admin-account'] }
     - { role: installation-done, tags: ['installation-done'] }
