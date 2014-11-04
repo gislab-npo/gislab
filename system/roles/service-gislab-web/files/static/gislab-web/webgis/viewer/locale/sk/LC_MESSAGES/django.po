@@ -44,12 +44,12 @@ msgid "Log in"
 msgstr "Prihlásiť sa"
 
 #: templates/viewer/user_projects.html:24
-msgid "Published projects"
-msgstr "Vypublikované projekty"
+msgid "GIS.lab user page"
+msgstr "Stránka používateľa GIS.lab"
 
 #: templates/viewer/user_projects.html:52
-msgid "Published projects by user"
-msgstr "Projekty vypublikované používateľom"
+msgid "Projects"
+msgstr "Projekty"
 
 #: templates/viewer/user_projects.html:59 templates/viewer/webgis.html:539
 msgid "Guest"

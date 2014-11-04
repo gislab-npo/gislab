@@ -21,7 +21,7 @@
 		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/locale/ext-lang-' %}{{ LANGUAGE_CODE }}.js"></script>
 		{% endif %}
 
-		<title id="page-title">{% trans "Published projects" %}</title>
+		<title id="page-title">{% trans "GIS.lab user page" %}</title>
 
 		{% comment %} ##  CONFIGURATION  ## {% endcomment %}
 		<script type="text/javascript">
@@ -48,7 +48,7 @@
 									flex: 1
 								}, {
 									xtype: 'tbtext',
-									text: '{% trans "Published projects by user" %} {{ user.get_full_name }}',
+									text: '{% trans "Projects" %}',
 									cls: 'app-title'
 								}, {
 									xtype: 'tbspacer',
