@@ -31,8 +31,8 @@
     - { role: service-statistics, tags: ['service-statistics'] }
     - { role: service-connection-forwarding, tags: ['service-connection-forwarding'] }
     - { role: user-server-plugins, tags: ['user-server-plugins'] }
+    - { role: user-data, tags: ['user-data'] }
     - { role: service-worker, tags: ['service-worker'] }
     - { role: service-client, tags: ['service-client'], when: "'{{ GISLAB_SUITE }}' == 'lab'" }
-    - { role: user-data, tags: ['user-data'] }
     - { role: account-admin, tags: ['account-admin'] }
     - { role: installation-done, tags: ['installation-done'] }

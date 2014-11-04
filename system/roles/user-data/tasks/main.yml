@@ -5,8 +5,11 @@
 # Install user data placed in 'user' directory.
 
 
-- name: Install user data in to 'Repository' shared folder
-  copy: src=../user/data/ dest=/storage/repository/
+- name: Install user data
+  copy: src=../user/ dest={{ GISLAB_INSTALL_USER_DATA_ROOT }}/
 
-- name: Set permissions for 'Repository' shared folder
-  shell: chown -R :labadmins /storage/repository/*
+- name: Install user data in to 'Repository' share
+  shell: "{{ item }}"
+  with_items:
+    - cp -a {{ GISLAB_INSTALL_USER_DATA_ROOT }}/data/ /storage/repository/
+    - chown -R :labadmins /storage/repository/
