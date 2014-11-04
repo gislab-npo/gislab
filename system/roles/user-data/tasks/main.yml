@@ -5,34 +5,8 @@
 # Install user data placed in 'user' directory.
 
 
-# System
-- name: Flush user data directory
-  file: path="{{ GISLAB_INSTALL_USER_DATA_ROOT }}" state=absent
+- name: Install user data in to 'Repository' shared folder
+  copy: src=../user/data/ dest=/storage/repository/
 
-- name: Create user data directory
-  file: path="{{ GISLAB_INSTALL_USER_DATA_ROOT }}" state=directory
-
-- name: Install user data
-  copy: src=../user/ dest={{ GISLAB_INSTALL_USER_DATA_ROOT }}
-
-
-- name: Set executable permissions for plugins
-  shell: "{{ item }}"
-  with_items:
-    - chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/server
-    - chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/client
-    - chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/account
-
-- name: Install user data in to 'Repository' share
-  shell: "{{ item }}"
-  with_items:
-    - cp -a {{ GISLAB_INSTALL_USER_DATA_ROOT }}/data /storage/repository/
-    - chown -R :labadmins /storage/repository/*
-
-- name: Run user server plugins
-  shell: "for plugin in {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/server/*.*; do
-            GISLAB_INSTALL_ACTION={{ GISLAB_INSTALL_ACTION }} $plugin;
-            echo '{{ GISLAB_INSTALL_DATETIME }} {{ GISLAB_INSTALL_ACTION }}' >> /var/lib/gislab/server-plugin-$(basename $plugin).done;
-          done"
-  args:
-    executable: /bin/bash
+- name: Set permissions for 'Repository' shared folder
+  shell: chown -R :labadmins /storage/repository/*

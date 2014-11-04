@@ -13,7 +13,7 @@
 
   roles:
     - { role: basic-server-configuration, tags: ['basic-server-configuration'] }
-    - { role: user-accounts, tags: ['user-accounts'] }
+    - { role: account-users, tags: ['account-users'] }
     - { role: service-syslog, tags: ['service-syslog'] }
     - { role: service-logcheck, tags: ['service-logcheck'] }
     - { role: service-time, tags: ['service-time'] }
@@ -29,9 +29,10 @@
     - { role: service-gislab-web, tags: ['service-gislab-web'] }
     - { role: service-load-balancer, tags: ['service-load-balancer'] }
     - { role: service-statistics, tags: ['service-statistics'] }
-    - { role: connection-forwarding, tags: ['connection-forwarding'] }
-    - { role: user-data, tags: ['user-data'] }
+    - { role: service-connection-forwarding, tags: ['service-connection-forwarding'] }
+    - { role: user-server-plugins, tags: ['user-server-plugins'] }
     - { role: service-worker, tags: ['service-worker'] }
     - { role: service-client, tags: ['service-client'], when: "'{{ GISLAB_SUITE }}' == 'lab'" }
-    - { role: user-admin-account, tags: ['user-admin-account'] }
+    - { role: user-data, tags: ['user-data'] }
+    - { role: account-admin, tags: ['account-admin'] }
     - { role: installation-done, tags: ['installation-done'] }

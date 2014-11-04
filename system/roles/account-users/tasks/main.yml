@@ -73,6 +73,20 @@
   copy: src=static/system/ dest="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"
 
 
+# Plugins
+- name: Flush account plugins directory
+  file: path="{{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/account" state=absent
+
+- name: Create account plugins directory
+  file: path="{{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/account" state=directory
+
+- name: Install account plugins
+  copy: src=../user/plugins/account/ dest="{{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/account/"
+
+- name: Set executable permissions for account plugins
+  shell: chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/account/*.*
+
+
 # Backup
 - name: Install user data backup script
   copy: src=static/bin/gislab-backup-users.sh dest=/etc/cron.d.bin/gislab-backup-users.sh mode=0755

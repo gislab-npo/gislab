@@ -1,0 +1,28 @@
+---
+#
+### SERVER PLUGINS ###
+#
+# Install and run server plugins.
+
+
+- name: Flush server plugins directory
+  file: path="{{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/server" state=absent
+
+- name: Create server plugins directory
+  file: path="{{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/server" state=directory
+
+- name: Install server plugins
+  copy: src=../user/plugins/server/ dest="{{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/server/"
+
+- name: Set executable permissions for server plugins
+  shell: chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/server/*.*
+
+
+- name: Run server plugins
+  shell: "for plugin in {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/server/*.*; do
+            GISLAB_INSTALL_ACTION={{ GISLAB_INSTALL_ACTION }} $plugin;
+            echo '{{ GISLAB_INSTALL_DATETIME }} {{ GISLAB_INSTALL_ACTION }}'
+            >> /var/lib/gislab/server-plugin-$(basename $plugin).done;
+          done"
+  args:
+    executable: /bin/bash
