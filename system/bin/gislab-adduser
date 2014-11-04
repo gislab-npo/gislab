@@ -151,7 +151,7 @@ fi
 ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 maildrop_exists=$($ldapsearch_cmd -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$GISLAB_USER_MAIL)" 2>/dev/null)
 
-if [ "$SUDO" == "yes" -a -f /etc/postfix/sasl_passwd -a -z $maildrop_exists ]; then
+if [ "$SUDO" == "yes" -a -f /etc/postfix/sasl_passwd -a -z "$maildrop_exists" ]; then
 	ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
 dn: cn=root,ou=MailAliases,dc=gis,dc=lab
 changetype: modify
