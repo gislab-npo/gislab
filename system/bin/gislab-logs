@@ -27,6 +27,7 @@ function usage() {
 	-m  print mapserver service logs (include error logs from load-balancer workers)
 	-w  print web services error logs
 	-W  print web services access logs
+	-v  print vpn service logs
 	-h  display this help
 	"
 	exit 255
@@ -35,7 +36,7 @@ function usage() {
 
 # options
 LOGLINES=1
-while getopts "n:AabieldmwWch" OPTION
+while getopts "n:AabieldmwWchv" OPTION
 do
         case "$OPTION" in
 			n) LOGLINES="$OPTARG" ;;
@@ -50,6 +51,7 @@ do
 			w) WEB="yes" ;;
 			W) WEB="yes"
 			   WEB_ACCESS="yes" ;;
+			v) VPN="yes" ;;
 			h) usage ;;
 			\?) exit 1 ;;
         esac
@@ -66,7 +68,8 @@ if [ "$ALL" == "yes" \
   -a "$DATABASE" != "yes" \
   -a "$MAPSERVER" != "yes" \
   -a "$WEB" != "yes" \
-  -a "$WEB_ACCESS" != "yes" ]; then
+  -a "$WEB_ACCESS" != "yes" \
+  -a "$VPN" != "yes" ]; then
 	AUTH="yes"
 	DNS="yes"
 	DHCP="yes"
@@ -76,6 +79,7 @@ if [ "$ALL" == "yes" \
 	MAPSERVER="yes"
 	WEB="yes"
 	WEB_ACCESS="yes"
+	VPN="yes"
 fi
 
 tail_cmd="tail -n $LOGLINES"
@@ -126,6 +130,9 @@ if [ "$WEB_ACCESS" == "yes" ]; then
 	$tail_cmd -f /var/log/nginx/access.log -f /var/log/nginx/gislab-web-access.log &
 fi
 
+if [ "$VPN" == "yes" ]; then
+	$tail_cmd -f /var/log/syslog | grep -E ' ovpn-server\[[0-9]+\]:' &
+fi
 
 # wait for Ctrl+C
 wait

@@ -1,0 +1,117 @@
+---
+#
+###  VPN SERVER - OpenVPN ###
+#
+# Install and configure VPN server.
+#
+# Logging: /var/log/syslog
+
+
+- name: Install packages
+  apt: pkg={{ item }} force=yes install_recommends=no state=latest
+  with_items:
+    - openvpn
+    - openvpn-auth-ldap
+
+- name: Detect if OpenVPN is configured
+  stat: path=/etc/openvpn/server.gis.lab.key get_md5=no
+  register: openvpn_server_key_status
+
+- name: Create directory for 'easy-rsa' tools
+  file: path=/etc/openvpn/easy-rsa state=directory
+
+- name: Copy 'easy-rsa' tools
+  shell: cp -pR /usr/share/doc/openvpn/examples/easy-rsa/2.0/* /etc/openvpn/easy-rsa/
+  when: openvpn_server_key_status.stat.exists == false
+        or GISLAB_OPENVPN_UPGRADE_ENABLE
+  notify:
+    - service openvpn restart
+
+- name: Create configuration file with filled certificate fields
+  template: src=vars.j2 dest=/etc/openvpn/easy-rsa/vars
+  when: openvpn_server_key_status.stat.exists == false
+        or GISLAB_OPENVPN_UPGRADE_ENABLE
+  notify:
+    - service openvpn restart
+
+- name: Remove old keys
+  shell: source ./vars && ./clean-all
+  args:
+    chdir: /etc/openvpn/easy-rsa/
+    executable: /bin/bash
+  when: openvpn_server_key_status.stat.exists == false
+        or GISLAB_OPENVPN_UPGRADE_ENABLE
+  notify:
+    - service openvpn restart
+
+- name: Generate CA certificate
+  shell: source ./vars && ./pkitool --initca
+  args:
+    executable: /bin/bash
+    chdir: /etc/openvpn/easy-rsa/
+  when: openvpn_server_key_status.stat.exists == false
+        or GISLAB_OPENVPN_UPGRADE_ENABLE
+  notify:
+    - service openvpn restart
+
+- name: Generate server certificate and private key
+  shell: source ./vars && ./pkitool --server server.gis.lab
+  args:
+    executable: /bin/bash
+    chdir: /etc/openvpn/easy-rsa/
+  when: openvpn_server_key_status.stat.exists == false
+        or GISLAB_OPENVPN_UPGRADE_ENABLE
+  notify:
+    - service openvpn restart
+
+- name: Generate Diffie Hellman Parameters
+  shell: source ./vars && ./build-dh
+  args:
+    executable: /bin/bash
+    chdir: /etc/openvpn/easy-rsa/
+  when: openvpn_server_key_status.stat.exists == false
+        or GISLAB_OPENVPN_UPGRADE_ENABLE
+  notify:
+    - service openvpn restart
+
+- name: Generate private key for HMAC authentication
+  command: openvpn --genkey --secret ta.key
+  args:
+    chdir: /etc/openvpn/easy-rsa/keys/
+  when: openvpn_server_key_status.stat.exists == false
+        or GISLAB_OPENVPN_UPGRADE_ENABLE
+  notify:
+    - service openvpn restart
+
+- name: Copy certificates and keys
+  shell: cp /etc/openvpn/easy-rsa/keys/{{ item.file }} /etc/openvpn/{{ item.file }}
+  with_items:
+    - file: ca.crt
+    - file: ca.key
+    - file: dh1024.pem
+    - file: server.gis.lab.crt
+    - file: server.gis.lab.key
+    - file: ta.key
+  when: openvpn_server_key_status.stat.exists == false
+        or GISLAB_OPENVPN_UPGRADE_ENABLE
+  notify:
+    - service openvpn restart
+
+- name: Install OpenVPN configuration file
+  template: src=server.conf.j2 dest=/etc/openvpn/server.conf
+  when: openvpn_server_key_status.stat.exists == false
+  notify:
+    - service openvpn restart
+
+- name: Create directory for OpenVPN OpenLDAP configuration
+  file: path=/etc/openvpn/auth state=directory
+
+- name: Install OpenVPN OpenLDAP configuration file
+  template: src=auth-ldap.conf.j2 dest=/etc/openvpn/auth/auth-ldap.conf
+
+- name: Install OpenVPN default configuration file
+  template: src=openvpn.j2 dest=/etc/default/openvpn
+  notify:
+    - service openvpn restart
+
+- meta: flush_handlers

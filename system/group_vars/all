@@ -101,6 +101,25 @@ GISLAB_NETWORK_DEVICE: eth0
 # Change requires GIS.lab re-installation.
 GISLAB_NETWORK: 192.168.50
 
+# First three network octets of GIS.lab VPN network number.
+# NOTICE: due the inconvenient network configuration
+# VPN service is not working if provider is VirtualBox.
+# Change requires running upgrade.
+GISLAB_VPN_NETWORK: 172.168.50
+
+# Default values for fields which will be placed in the certificate.
+# Change requires running upgrade.
+GISLAB_OPENVPN_KEY_COUNTRY: sk
+GISLAB_OPENVPN_KEY_PROVINCE: Slovakia
+GISLAB_OPENVPN_KEY_CITY: Presov
+
+# Enable or disable regenerate OpenVPN keys and certificates on upgrade.
+# !!!!! WARNING !!!!!
+# On upgrade current TLS certificates and keys will be overwriten with the new ones
+# so you will need to redistribute new ca.crt and ta.key to all users.
+# Otherwise they will not be able to connect to OpenVPN server.
+GISLAB_OPENVPN_UPGRADE_ENABLE: no
+
 # Absolute path to private SSH key which will be used for accessing GIS.lab server.
 # WARNING: GIS.lab may use insecure SSH key if no value specified.
 # Example: /home/user/.ssh/id_rsa

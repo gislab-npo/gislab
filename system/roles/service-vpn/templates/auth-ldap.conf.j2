@@ -1,0 +1,18 @@
+<LDAP>
+	URL		ldapi://
+	TLSEnable	yes
+	Timeout		15
+</LDAP>
+
+<Authorization>
+	BaseDN		"ou=People,dc=gis,dc=lab"
+	SearchFilter	"uid=%u"
+	RequireGroup	true
+
+	<Group>
+		BaseDN		"dc=gis,dc=lab"
+		SearchFilter	"(cn=vpnusers)"
+		MemberAttribute	"member"
+	</Group>
+
+</Authorization>

@@ -1,0 +1,20 @@
+export EASY_RSA="`pwd`"
+export OPENSSL="openssl"
+export PKCS11TOOL="pkcs11-tool"
+export GREP="grep"
+export KEY_CONFIG=`$EASY_RSA/whichopensslcnf $EASY_RSA`
+export KEY_DIR="$EASY_RSA/keys"
+echo NOTE: If you run ./clean-all, I will be doing a rm -rf on $KEY_DIR
+export PKCS11_MODULE_PATH="dummy"
+export PKCS11_PIN="dummy"
+export KEY_SIZE=1024
+export CA_EXPIRE=3650
+export KEY_EXPIRE=3650
+export KEY_COUNTRY="{{ GISLAB_OPENVPN_KEY_COUNTRY }}"
+export KEY_PROVINCE="{{ GISLAB_OPENVPN_KEY_PROVINCE }}"
+export KEY_CITY="{{ GISLAB_OPENVPN_KEY_CITY }}"
+export KEY_ORG="GIS.lab ({{ GISLAB_UNIQUE_ID }})"
+export KEY_ORG="GIS.lab Administrators"
+export KEY_CN="server.gis.lab"
+export KEY_NAME=""
+export KEY_EMAIL="{{ GISLAB_ADMIN_EMAIL }}"

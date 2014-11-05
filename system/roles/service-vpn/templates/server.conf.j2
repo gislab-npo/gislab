@@ -1,0 +1,27 @@
+port 1194
+proto udp
+dev tun
+ca ca.crt
+cert server.gis.lab.crt
+key server.gis.lab.key
+dh dh1024.pem
+server {{ GISLAB_VPN_NETWORK }}.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+push "route {{ GISLAB_NETWORK }}.0 255.255.255.0"
+push "dhcp-option DOMAIN gis.lab"
+push "dhcp-option DNS {{ GISLAB_NETWORK_SERVER_IP }}"
+client-to-client
+keepalive 10 120
+tls-auth ta.key 0
+comp-lzo
+user nobody
+group nogroup
+persist-key
+persist-tun
+{% if not GISLAB_DEBUG_SERVICES %}
+verb 0
+{% else %}
+verb 3
+{% endif %}
+plugin /usr/lib/openvpn/openvpn-auth-ldap.so /etc/openvpn/auth/auth-ldap.conf
+client-cert-not-required

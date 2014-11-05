@@ -29,6 +29,7 @@
     - { role: service-gislab-web, tags: ['service-gislab-web'] }
     - { role: service-load-balancer, tags: ['service-load-balancer'] }
     - { role: service-statistics, tags: ['service-statistics'] }
+    - { role: service-vpn, tags: ['service-vpn'] }
     - { role: service-connection-forwarding, tags: ['service-connection-forwarding'] }
     - { role: user-server-plugins, tags: ['user-server-plugins'] }
     - { role: user-data, tags: ['user-data'] }

@@ -95,12 +95,13 @@ while read line; do
 			description) GISLAB_USER_DESC="$VAL" ;;
 			userPassword) GISLAB_USER_PASS_CRYPT="$VAL" ;;
 			\#superuser) SUDO_OPT="-s" ;;
+			\#vpnuser) VPN_OPT="-v"
 		esac
 done < $GISLAB_USER-ldap.dump
 
 # add user
 gislab-adduser -g "$GISLAB_USER_GIVEN_NAME" -l "$GISLAB_USER_SURNAME" \
-               -m "$GISLAB_USER_MAIL" -d "$GISLAB_USER_DESC" $SUDO_OPT $GISLAB_USER
+               -m "$GISLAB_USER_MAIL" -d "$GISLAB_USER_DESC" $SUDO_OPT $VPN_OPT $GISLAB_USER
 
 # setup old password
 ldapmodifyuser $GISLAB_USER > /dev/null << EOL

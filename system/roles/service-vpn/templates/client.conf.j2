@@ -1,0 +1,17 @@
+client
+dev tun
+proto udp
+remote <GIS.lab server public IP> 1194
+resolv-retry infinite
+nobind
+user nobody
+group nogroup
+persist-key
+persist-tun
+mute-replay-warnings
+ca gislab-vpn-ca.crt
+ns-cert-type server
+tls-auth gislab-vpn-ta.key 1
+auth-user-pass
+comp-lzo
+verb 0

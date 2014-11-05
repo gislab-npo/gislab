@@ -50,3 +50,9 @@ objectClass: posixGroup
 cn: labusers
 gidNumber: 3001
 description: GIS.lab Users Group
+
+dn: cn=vpnusers,ou=Groups,dc=gis,dc=lab
+objectClass: groupOfNames
+cn: vpnusers
+member: uid=nonexists
+description: GIS.lab VPN Users Group
