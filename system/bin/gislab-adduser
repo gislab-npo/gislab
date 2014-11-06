@@ -205,11 +205,12 @@ echo "$GISLAB_USER:$GISLAB_USER_PASSWORD" > /home/$GISLAB_USER/.gislab/gislab_${
 chown $GISLAB_USER:labusers -R /home/$GISLAB_USER/.gislab
 
 if [ "$VPN" == "yes" ]; then
-	cp /etc/openvpn/ca.crt /home/$GISLAB_USER/.gislab/gislab-vpn-ca.crt
-	chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab-vpn-ca.crt
-	cp /etc/openvpn/ta.key /home/$GISLAB_USER/.gislab/gislab-vpn-ta.key
-	chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab-vpn-ta.key
-	chmod 0600 /home/$GISLAB_USER/.gislab/gislab-vpn-ta.key
+	cp /etc/openvpn/ca.crt /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
+	chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
+
+	cp /etc/openvpn/ta.key /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
+	chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
+	chmod 0600 /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
 fi
 
 gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"
