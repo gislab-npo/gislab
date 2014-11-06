@@ -19,6 +19,7 @@
   with_items:
     - { src: "bind/bind9.j2", dest: "/etc/default/bind9" }
     - { src: "bind/named.conf.j2", dest: "/etc/bind/named.conf" }
+    - { src: "bind/named.conf.options.j2", dest: "/etc/bind/named.conf.options" }
     - { src: "bind/named.conf.local.j2", dest: "/etc/bind/named.conf.local" }
     - { src: "bind/db.gis.lab.j2", dest: "/etc/bind/db.gis.lab" }
     - { src: "bind/db.192.j2", dest: "/etc/bind/db.192" }

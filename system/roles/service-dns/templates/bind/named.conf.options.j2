@@ -1,0 +1,15 @@
+options {
+	directory "/var/cache/bind";
+
+	{% if GISLAB_DNS_SERVERS %}
+	{% for server in GISLAB_DNS_SERVERS %}
+	forwarders {
+		{{ server }};
+	};
+	{% endfor %}
+	{% endif %}
+
+	dnssec-validation no;
+	auth-nxdomain no;
+	listen-on-v6 { any; };
+};
