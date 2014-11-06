@@ -1,0 +1,73 @@
+---
+
+- hosts: gislab-unit
+  sudo: yes
+
+  handlers:
+  - name: service restart apt-cacher-ng
+    service: name=apt-cacher-ng state=restarted
+
+  - name: update grub
+    command: /usr/sbin/update-grub  
+
+  tasks:
+  - name: Install apt-cacher
+    apt: name=apt-cacher-ng state=latest update_cache=yes
+
+  - name: Create logs directory when apt-cacher is started
+    lineinfile: dest=/etc/default/apt-cacher-ng backup=yes state=present line='{{ item }}'
+    with_items:
+      - mkdir -p /var/log/apt-cacher-ng
+      - chown apt-cacher-ng:apt-cacher-ng /var/log/apt-cacher-ng
+    notify:
+      - service restart apt-cacher-ng
+
+  - name: Check if apt proxy is already configured
+    command: grep -qR '^Acquire::http::Proxy' /etc/apt
+    register: result_proxy
+    ignore_errors: yes    
+
+  - name: Configure apt cache proxy
+    copy: src=static/apt/02proxy dest=/etc/apt/apt.conf.d/02proxy
+    when: result_proxy|failed
+
+  - name: Upgrade system
+    apt: upgrade=full force=yes
+
+  - name: Add 'noatime' parameter to root partition in /etc/fstab
+    lineinfile: dest=/etc/fstab backup=yes state=present regexp='(.*)\/.*ext4.*' line='\1/ ext4 noatime,nodiratime,errors=remount-ro 0 1' backrefs=yes
+
+  - name: Move temporary files and logs to tmpfs
+    lineinfile: dest=/etc/fstab backup=yes state=present line='{{ item }}'
+    with_items:
+      - tmpfs   /tmp       tmpfs   defaults,noatime,mode=1777   0  0
+      - tmpfs   /var/spool tmpfs   defaults,noatime,mode=1777   0  0
+      - tmpfs   /var/tmp   tmpfs   defaults,noatime,mode=1777   0  0
+      - tmpfs   /var/log   tmpfs   defaults,noatime,mode=0755   0  0
+
+  - name: Set swappiness
+    lineinfile: dest=/etc/sysctl.conf state=present line='{{ item }}'
+    with_items:
+      - m.swappiness=1
+      - vm.vfs_cache_pressure=50
+
+  - name: Add 'fstrim' to daily cron job
+    copy: src=static/cron.daily/fstrim dest=/etc/cron.daily/fstrim mode=0755
+
+  - name: Configure I/O scheduler
+    lineinfile: dest=/etc/default/grub backup=yes state=present regexp='GRUB_CMDLINE_LINUX_DEFAULT=.*' line='GRUB_CMDLINE_LINUX_DEFAULT="elevator=deadline"'
+    notify:
+    - update grub
+
+  - name: Configure grub failed timeout
+    lineinfile: dest=/etc/default/grub state=present line="GRUB_RECORDFAIL_TIMEOUT=5"
+    notify:
+    - update grub
+
+  - name: Install base software
+    apt: name={{ item }} install_recommends=no state=latest
+    with_items:
+    - mc
+    - htop
+    - git
+    - tmux

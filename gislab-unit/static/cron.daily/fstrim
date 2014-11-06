@@ -1,0 +1,4 @@
+#!/bin/sh
+LOG=/var/log/fstrim.log
+echo "*** $(date -R) ***" >> $LOG
+fstrim -v / >> $LOG
