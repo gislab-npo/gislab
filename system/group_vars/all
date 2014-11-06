@@ -166,7 +166,10 @@ GISLAB_WALLPAPER: user/graphic/gislab-wallpaper.png
 # Comma separated list of required GIS.lab plugins and account hooks. GIS.lab
 # installation will fail if any of these plugins will be missing.
 # Some useful plugins are collected here: https://github.com/imincik/gis-lab-plugins
-# Example: "server/gislab-example-plugin.sh, client/031-gislab-example-plugin, account/gislab-example-hook.sh"
+# Example:
+# - server/gislab-example-plugin.sh
+# - client/gislab-example-plugin.sh
+# - account/gislab-example-hook.sh
 GISLAB_PLUGINS_REQUIRE:
   - server/gislab-example-plugin.sh
   - client/gislab-example-plugin.sh
