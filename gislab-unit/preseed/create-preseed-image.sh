@@ -5,34 +5,32 @@ set -e
 
 usage () {
 	echo
-	echo "This script configure GIS.lab Unit preseed file and regenerate installation ISO image with preseed configuration."
+	echo "This script creates GIS.lab Unit installation ISO image with custom preseed configuration."
 	echo
-	echo " USAGE: $(basename $0) -s <country code> [-p <apt proxy server>] -t <timezone> -i <ISO image> -m <mount point> -w <working directory>"
+	echo " USAGE: $(basename $0) -s <country code> -t <timezone> [-p <apt proxy server>] -i <ISO image> -w <working directory>"
 	echo
 	echo "  -s country code (e.g. SK)"
-	echo "  -p address of APT proxy server (e.g. http://192.168.1.10:3142) - optional"
 	echo "  -t timezone (e.g. Europe/Bratislava)"
-	echo "  -i installation ISO image"
-	echo "  -m mount point for installation ISO image (must exists)"
+	echo "  -p address of APT proxy server (e.g. http://192.168.1.10:3142) - optional"
+	echo "  -i source installation ISO image"
 	echo "  -w working directory with enough disk space (two and half time larger then ISO image size)"
 	echo
 	exit 1
 }
 
 clean_up () {
-	mount | grep -q " $MOUNT_DIR " && sudo umount $MOUNT_DIR
+	mount | grep -q " $MOUNT_DIR " && sudo umount $MOUNT_DIR && rm -rf $MOUNT_DIR
 	test -d $WORK_DIR && rm -rf $WORK_DIR
 }
 	
 
-while getopts "s:p:t:i:m:w:" OPTION; do
+while getopts "s:p:t:i:w:" OPTION; do
 
 	case "$OPTION" in
 		s) COUNTRY_CODE="$OPTARG" ;;
 		p) APT_PROXY="$OPTARG" ;;
 		t) TIMEZONE="$OPTARG" ;;
 		i) SRC_IMAGE="$OPTARG" ;;
-		m) MOUNT_DIR="$OPTARG" ;;
 		w) WORK_DIR="$OPTARG"
 		   ROOT_DIR="$WORK_DIR/root" ;;
 		\?) usage ;;
@@ -48,7 +46,9 @@ if [ $(id -u) -ne 0 ]; then
 fi
 
 PRESEED_CONF="$(dirname $(readlink -f $0))/gislab-unit.seed.template"
+MOUNT_DIR="/tmp/gislab-unit-iso-mnt"
 
+mkdir -p $MOUNT_DIR
 mkdir -p $WORK_DIR
 mkdir -p $ROOT_DIR
 

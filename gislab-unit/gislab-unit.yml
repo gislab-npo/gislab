@@ -4,35 +4,20 @@
   sudo: yes
 
   handlers:
-  - name: service restart apt-cacher-ng
-    service: name=apt-cacher-ng state=restarted
-
   - name: update grub
     command: /usr/sbin/update-grub  
 
   tasks:
-  - name: Install apt-cacher
-    apt: name=apt-cacher-ng state=latest update_cache=yes
-
-  - name: Create logs directory when apt-cacher is started
-    lineinfile: dest=/etc/default/apt-cacher-ng backup=yes state=present line='{{ item }}'
-    with_items:
-      - mkdir -p /var/log/apt-cacher-ng
-      - chown apt-cacher-ng:apt-cacher-ng /var/log/apt-cacher-ng
-    notify:
-      - service restart apt-cacher-ng
-
-  - name: Check if apt proxy is already configured
-    command: grep -qR '^Acquire::http::Proxy' /etc/apt
-    register: result_proxy
-    ignore_errors: yes    
-
-  - name: Configure apt cache proxy
-    copy: src=static/apt/02proxy dest=/etc/apt/apt.conf.d/02proxy
-    when: result_proxy|failed
-
   - name: Upgrade system
     apt: upgrade=full force=yes
+
+  - name: Install base software
+    apt: name={{ item }} install_recommends=no state=latest
+    with_items:
+    - mc
+    - htop
+    - tmux
+
 
   - name: Add 'noatime' parameter to root partition in /etc/fstab
     lineinfile: dest=/etc/fstab backup=yes state=present regexp='(.*)\/.*ext4.*' line='\1/ ext4 noatime,nodiratime,errors=remount-ro 0 1' backrefs=yes
@@ -63,11 +48,3 @@
     lineinfile: dest=/etc/default/grub state=present line="GRUB_RECORDFAIL_TIMEOUT=5"
     notify:
     - update grub
-
-  - name: Install base software
-    apt: name={{ item }} install_recommends=no state=latest
-    with_items:
-    - mc
-    - htop
-    - git
-    - tmux
