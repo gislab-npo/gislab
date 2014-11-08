@@ -10,7 +10,7 @@ kill timeout 90
 normal exit 0 TERM INT
 
 exec /usr/local/bin/serf agent \
-	-bind $(hostname  -I | awk -F" " '{print $NF}') \
+	-bind {{ GISLAB_NETWORK_SERVER_IP }} \
 	-event-handler "member-join=/etc/serf/bin/serf-member-join.sh" \
 	-event-handler "member-leave,member-failed=/etc/serf/bin/serf-member-left.sh" \
 	-tag role=server \

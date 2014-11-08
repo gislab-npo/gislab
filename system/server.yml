@@ -26,8 +26,8 @@
     - { role: service-chat, tags: ['service-chat'] }
     - { role: service-database, tags: ['service-database'] }
     - { role: service-mapserver, tags: ['service-mapserver'] }
-    - { role: service-gislab-web, tags: ['service-gislab-web'] }
     - { role: service-load-balancer, tags: ['service-load-balancer'] }
+    - { role: service-gislab-web, tags: ['service-gislab-web'] }
     - { role: service-statistics, tags: ['service-statistics'] }
     - { role: service-vpn, tags: ['service-vpn'] }
     - { role: service-connection-forwarding, tags: ['service-connection-forwarding'] }

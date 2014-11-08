@@ -51,6 +51,9 @@
 - name: Copy Serf init file
   template: src=serf/serf.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/serf/serf.conf
 
+- name: Copy Serf-join init file
+  template: src=serf/serf-join.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/serf/serf-join.conf
+
 - name: Create directory for Serf handler scripts
   file: path={{ GISLAB_INSTALL_WORKER_ROOT }}/serf/bin state=directory
 

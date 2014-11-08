@@ -208,27 +208,15 @@ EOF
 # serf
 mkdir -p $GISLAB_WORKER_IMAGE_BASE/etc/init
 cp $GISLAB_INSTALL_WORKER_ROOT/serf/serf.conf $GISLAB_WORKER_IMAGE_BASE/etc/init/
+cp $GISLAB_INSTALL_WORKER_ROOT/serf/serf-join.conf $GISLAB_WORKER_IMAGE_BASE/etc/init/
 
 mkdir -p $GISLAB_WORKER_IMAGE_BASE/etc/serf/bin
 cp $GISLAB_INSTALL_WORKER_ROOT/serf/bin/serf-member-*.sh $GISLAB_WORKER_IMAGE_BASE/etc/serf/bin/
-cat << EOF > $GISLAB_WORKER_IMAGE_BASE/etc/init/serf-join.conf
-description "Join a GIS.lab network"
-
-start on runlevel [2345]
-stop on runlevel [!2345]
-
-task
-respawn
-
-script
-sleep 5
-exec /usr/local/bin/serf join $GISLAB_NETWORK_SERVER_IP
-end script
-EOF
 
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
 gislab_serf_install
 
+mkdir -p /etc/serf/bin
 cp etc/serf/bin/serf-member-*.sh /etc/serf/bin/
 chmod +x /etc/serf/bin/serf-member-*.sh
 
