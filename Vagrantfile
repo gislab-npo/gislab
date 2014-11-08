@@ -59,7 +59,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # VirtualBox provider
   config.vm.provider "virtualbox" do |vb, override|
-    CONFIG['GISLAB_SERVER_MEMORY'] = 1024
     vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY']]
     vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
     vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
