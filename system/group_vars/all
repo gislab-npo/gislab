@@ -155,6 +155,11 @@ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR: sk
 # Change requires running upgrade.
 GISLAB_APT_HTTP_PROXY:
 
+# Number of OWS workers to start. Worker machines run OWS services such as WMS and WFS
+# and increase performance and reliability of GIS.lab network. Maximum number of worker
+# instances is 49 - do not start more.
+GISLAB_WORKERS_COUNT: 1
+
 # Relative path to file containing GIS.lab logo.
 # Change requires running upgrade.
 GISLAB_LOGO: user/graphic/gislab-logo.png

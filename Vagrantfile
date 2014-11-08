@@ -30,16 +30,11 @@ if File.exist?('system/host_vars/gislab_vagrant')
 end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # set GIS.lab server machine name in VBox environment
-  config.vm.define :gislab_vagrant do |t|
-  end
-
   # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box
   # or
   # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box
   config.vm.box = "precise-canonical"
   
-  config.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
   config.vm.synced_folder '.', '/vagrant', disabled: true
 
   config.ssh.forward_agent = true
@@ -47,24 +42,53 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.ssh.private_key_path = [CONFIG['GISLAB_SSH_PRIVATE_KEY'], File.join("system", "insecure_ssh_key")]
   end
 
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "system/gislab.yml"
-    if CONFIG['GISLAB_DEBUG_INSTALL'] == true
-      ansible.verbose = "vv"
+
+  # GIS.lab server
+  config.vm.define :gislab_vagrant do |server|
+    server.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
+
+    # provisioning
+    server.vm.provision "ansible" do |ansible|
+      ansible.playbook = "system/gislab.yml"
+      if CONFIG['GISLAB_DEBUG_INSTALL'] == true
+        ansible.verbose = "vv"
+      end
+      if CONFIG.has_key? 'GISLAB_ADMIN_PASSWORD'
+        ansible.extra_vars = { GISLAB_ADMIN_PASSWORD: CONFIG['GISLAB_ADMIN_PASSWORD'] }
+      end
     end
-    if CONFIG.has_key? 'GISLAB_ADMIN_PASSWORD'
-      ansible.extra_vars = { GISLAB_ADMIN_PASSWORD: CONFIG['GISLAB_ADMIN_PASSWORD'] }
+
+    # VirtualBox configuration
+    server.vm.provider "virtualbox" do |vb, override|
+      vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY']]
+      vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+      vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
+
+      if CONFIG['GISLAB_SERVER_GUI_CONSOLE'] == "yes"
+        vb.gui = true
+      end
     end
   end
 
-  # VirtualBox provider
-  config.vm.provider "virtualbox" do |vb, override|
-    vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY']]
-    vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
-    vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
 
-    if CONFIG['GISLAB_SERVER_GUI_CONSOLE'] == "yes"
-      vb.gui = true
+  # GIS.lab worker
+  (1..CONFIG['GISLAB_WORKERS_COUNT']).each do |i|
+    config.vm.define vm_name = "gislab_vagrant_worker_%02d" % i do |worker|
+      worker.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".#{9+i}"
+
+    # provisioning
+      worker.vm.provision "shell",
+        inline: "mkdir -p /tmp/install \
+	  && cd /tmp/install \
+	  && curl --silent http://%s.5/worker.tar.gz | tar xz \
+	  && bash ./install.sh > /var/log/gislab-install-worker.log" % [CONFIG['GISLAB_NETWORK']]
+
+      # VirtualBox configuration
+      worker.vm.provider "virtualbox" do |vb, override|
+        vb.customize ["modifyvm", :id, "--memory", 1024]
+        vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+      end
     end
   end
+
 end
