@@ -91,14 +91,6 @@ ldapfinger -u $GISLAB_USER > $LDAP_BACKUP_FILE
 # should be user added to 'labadmins' group when restoring?
 id $GISLAB_USER | grep -q '(labadmins)' && echo "#superuser" >> $LDAP_BACKUP_FILE
 
-# should be user added to 'vpnusers' group when restoring?
-ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
-is_member=$($ldapsearch_cmd -b "cn=vpnusers,ou=Groups,dc=gis,dc=lab" "member=uid=$GISLAB_USER,ou=People,dc=gis,dc=lab")
-
-if [ -n "$is_member" ]; then
-	echo "#vpnuser" >> $LDAP_BACKUP_FILE
-fi
-
 # create backup file and clean up
 tar -cf $BACKUP_FILE *
 chmod 400 $BACKUP_FILE

@@ -21,7 +21,6 @@ function usage() {
 	-p set password for user. If not given it will be automatically generated.
 	-d user description text
 	-s add user to 'labadmins' group to allow 'sudo'
-	-v add user to 'vpnusers' group to allow user connect to VPN network
 	-h display this help
 	"
 	exit 255
@@ -31,7 +30,7 @@ function usage() {
 # options
 GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overridden by --password option 
 
-while getopts "d:g:l:m:p:svh" OPTION
+while getopts "d:g:l:m:p:sh" OPTION
 do
         case "$OPTION" in
 			d) GISLAB_USER_DESC="$OPTARG" ;;
@@ -40,7 +39,6 @@ do
 			m) GISLAB_USER_MAIL=$OPTARG ;;
 			p) GISLAB_USER_PASSWORD=$OPTARG ;;
 			s) SUDO=yes ;;
-			v) VPN=yes ;;
 			h) usage ;;
 			\?) exit 1 ;;
         esac
@@ -125,20 +123,17 @@ description: $GISLAB_USER_DESC
 EOL
 fi
 
-
-# allow sudo for user if creating superuser account
-if [ "$SUDO" == "yes" ]; then
-	ldapaddusertogroup $GISLAB_USER labadmins
-fi
-
-# allow user connect to VPN network if requested
-if [ "$VPN" == "yes" ]; then
-	ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
+# add user to 'vpnusers' group
+ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
 dn: cn=vpnusers,ou=Groups,dc=gis,dc=lab
 changetype: modify
 add: member
 member: uid=$GISLAB_USER,ou=People,dc=gis,dc=lab
 EOL
+
+# allow sudo for user if creating superuser account
+if [ "$SUDO" == "yes" ]; then
+	ldapaddusertogroup $GISLAB_USER labadmins
 fi
 
 
@@ -204,14 +199,12 @@ chmod 700 /home/$GISLAB_USER/.gislab
 echo "$GISLAB_USER:$GISLAB_USER_PASSWORD" > /home/$GISLAB_USER/.gislab/gislab_${GISLAB_USER}_credentials.txt
 chown $GISLAB_USER:labusers -R /home/$GISLAB_USER/.gislab
 
-if [ "$VPN" == "yes" ]; then
-	cp /etc/openvpn/ca.crt /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
-	chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
+cp /etc/openvpn/ca.crt /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
+chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
 
-	cp /etc/openvpn/ta.key /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-	chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-	chmod 0600 /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-fi
+cp /etc/openvpn/ta.key /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
+chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
+chmod 0600 /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
 
 gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"
 
