@@ -8,7 +8,7 @@ GISLAB_WORKER_INSTALL_PACKAGES:
   - apache2
   - apache2-mpm-worker
   - htop
-  - libapache2-mod-fastcgi
+  - libapache2-mod-fcgid
   - mc
   - munin-node
   - nfs-common
@@ -18,4 +18,5 @@ GISLAB_WORKER_INSTALL_PACKAGES:
   - qgis
   - qgis-mapserver
   - unzip
+  - xvfb
   - vim
