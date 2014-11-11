@@ -5,10 +5,12 @@ set -e
 set -u
 
 
-# installation script start
+# installation script start (halt machine if something fails)
 cat << EOF > $GISLAB_WORKER_IMAGE_BASE/install.sh
 #!/bin/bash
 set -e
+
+trap "halt" EXIT
 
 EOF
 
@@ -76,7 +78,6 @@ EOF
 # default DNS server
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
 echo "nameserver $GISLAB_NETWORK_SERVER_IP" > /etc/resolv.conf
-echo "search gista.lan" >> /etc/resolv.conf
 
 EOF
 
