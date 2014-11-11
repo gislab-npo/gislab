@@ -1,10 +1,10 @@
 port 1194
 proto udp
 dev tun
-ca ca.crt
-cert server.gis.lab.crt
-key server.gis.lab.key
-dh dh1024.pem
+ca gislab_vpn_ca.crt
+cert gislab_vpn_server.crt
+key gislab_vpn_server.key
+dh gislab_vpn_dh1024.pem
 server {{ GISLAB_VPN_NETWORK }}.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "route {{ GISLAB_NETWORK }}.0 255.255.255.0"
@@ -12,7 +12,7 @@ push "dhcp-option DOMAIN gis.lab"
 push "dhcp-option DNS {{ GISLAB_NETWORK_SERVER_IP }}"
 client-to-client
 keepalive 10 120
-tls-auth ta.key 0
+tls-auth gislab_vpn_ta.key 0
 comp-lzo
 user nobody
 group nogroup

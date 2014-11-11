@@ -114,13 +114,6 @@ GISLAB_VPN_NETWORK: 172.168.50
 # - 192.168.0.9
 GISLAB_DNS_SERVERS:
 
-# Enable or disable regenerate OpenVPN keys and certificates on upgrade.
-# !!!!! WARNING !!!!!
-# On upgrade current TLS certificates and keys will be overwriten with the new ones
-# so you will need to redistribute new ca.crt and ta.key to all users.
-# Otherwise they will not be able to connect to OpenVPN server.
-GISLAB_OPENVPN_UPGRADE_ENABLE: no
-
 # Absolute path to private SSH key which will be used for accessing GIS.lab server.
 # WARNING: GIS.lab may use insecure SSH key if no value specified.
 # Example: /home/user/.ssh/id_rsa

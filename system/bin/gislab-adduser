@@ -199,10 +199,10 @@ chmod 700 /home/$GISLAB_USER/.gislab
 echo "$GISLAB_USER:$GISLAB_USER_PASSWORD" > /home/$GISLAB_USER/.gislab/gislab_${GISLAB_USER}_credentials.txt
 chown $GISLAB_USER:labusers -R /home/$GISLAB_USER/.gislab
 
-cp /etc/openvpn/ca.crt /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
+cp /etc/openvpn/gislab_vpn_ca.crt /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
 chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
 
-cp /etc/openvpn/ta.key /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
+cp /etc/openvpn/gislab_vpn_ta.key /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
 chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
 chmod 0600 /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
 
