@@ -18,4 +18,5 @@ GISLAB_WORKER_INSTALL_PACKAGES:
   - qgis
   - qgis-mapserver
   - unzip
+  - xvfb
   - vim

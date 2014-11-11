@@ -161,10 +161,24 @@ cp -a usr/share/gdal /usr/share
 EOF
 
 
+# Xvfb
+# to enable more advanced print capabilities in QGIS, we need to launch fake X server
+# see: http://hub.qgis.org/issues/9295 and http://www.itopen.it/2014/03/13/qgis-server-setup-notes
+cp --parents /etc/init/xvfb.conf $GISLAB_WORKER_IMAGE_BASE
+cp --parents /etc/init.d/xvfb $GISLAB_WORKER_IMAGE_BASE
+cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
+cp etc/init/xvfb.conf /etc/init/xvfb.conf
+cp etc/init.d/xvfb /etc/init.d/xvfb
+service xvfb restart
+
+EOF
+
+
 # mapserver
 cp --parents /var/www/default/index.html $GISLAB_WORKER_IMAGE_BASE
 
 cp --parents /etc/apache2/ports.conf $GISLAB_WORKER_IMAGE_BASE
+cp --parents /etc/apache2/mods-available/fcgid.conf $GISLAB_WORKER_IMAGE_BASE
 cp --parents /etc/apache2/sites-available/default $GISLAB_WORKER_IMAGE_BASE
 cp --parents /etc/apache2/sites-available/mapserver $GISLAB_WORKER_IMAGE_BASE
 
@@ -172,6 +186,7 @@ cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
 mkdir -p /var/www/default
 cp var/www/default/index.html /var/www/default/index.html
 cp etc/apache2/ports.conf /etc/apache2/ports.conf
+cp etc/apache2/mods-available/fcgid.conf /etc/apache2/mods-available/fcgid.conf
 cp etc/apache2/sites-available/default /etc/apache2/sites-available/default
 cp etc/apache2/sites-available/mapserver /etc/apache2/sites-available/mapserver
 
