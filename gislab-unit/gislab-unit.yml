@@ -8,8 +8,14 @@
     command: /usr/sbin/update-grub  
 
   tasks:
+  - name: Clean the contents of /var/lib/apt/lists
+    shell: "{{ item }}"
+    with_items:
+    - rm -f /var/lib/apt/lists/* || true
+    - rm -f /var/lib/apt/lists/partial/* || true
+
   - name: Upgrade system
-    apt: upgrade=full force=yes
+    apt: upgrade=full force=yes update_cache=yes
 
   - name: Install base software
     apt: name={{ item }} install_recommends=no state=latest
@@ -20,10 +26,10 @@
 
 
   - name: Add 'noatime' parameter to root partition in /etc/fstab
-    lineinfile: dest=/etc/fstab backup=yes state=present regexp='(.*)\/.*ext4.*' line='\1/ ext4 noatime,nodiratime,errors=remount-ro 0 1' backrefs=yes
+    lineinfile: dest=/etc/fstab state=present regexp='(.*)\/.*ext4.*' line='\1/ ext4 noatime,nodiratime,errors=remount-ro 0 1' backrefs=yes
 
   - name: Move temporary files and logs to tmpfs
-    lineinfile: dest=/etc/fstab backup=yes state=present line='{{ item }}'
+    lineinfile: dest=/etc/fstab state=present line='{{ item }}'
     with_items:
       - tmpfs   /tmp       tmpfs   defaults,noatime,mode=1777   0  0
       - tmpfs   /var/spool tmpfs   defaults,noatime,mode=1777   0  0
@@ -40,7 +46,7 @@
     copy: src=static/cron.daily/fstrim dest=/etc/cron.daily/fstrim mode=0755
 
   - name: Configure I/O scheduler
-    lineinfile: dest=/etc/default/grub backup=yes state=present regexp='GRUB_CMDLINE_LINUX_DEFAULT=.*' line='GRUB_CMDLINE_LINUX_DEFAULT="elevator=deadline"'
+    lineinfile: dest=/etc/default/grub state=present regexp='GRUB_CMDLINE_LINUX_DEFAULT=.*' line='GRUB_CMDLINE_LINUX_DEFAULT="elevator=deadline"'
     notify:
     - update grub
 
@@ -48,3 +54,6 @@
     lineinfile: dest=/etc/default/grub state=present line="GRUB_RECORDFAIL_TIMEOUT=5"
     notify:
     - update grub
+
+  - name: Disable APT proxy
+    lineinfile: dest=/etc/apt/apt.conf state=absent regexp="^Acquire::http::Proxy .*"
