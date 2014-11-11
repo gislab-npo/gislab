@@ -67,8 +67,9 @@
 
 
 - name: Create worker image file
-  shell: set -a; source /etc/gislab_version;
-         GISLAB_WORKER_IMAGE_ROOT={{ GISLAB_WORKER_IMAGE_ROOT }}
+  shell: set -a
+         && source /etc/gislab_version
+         && GISLAB_WORKER_IMAGE_ROOT={{ GISLAB_WORKER_IMAGE_ROOT }}
          GISLAB_WORKER_IMAGE_BASE={{ GISLAB_WORKER_IMAGE_BASE }}
          GISLAB_WORKER_INSTALL_PACKAGES="{{ GISLAB_WORKER_INSTALL_PACKAGES|join(' ') }}"
          bash {{ GISLAB_INSTALL_WORKER_ROOT }}/install.sh > /var/log/gislab-build-worker.log

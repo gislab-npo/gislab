@@ -10,7 +10,7 @@ cat << EOF > $GISLAB_WORKER_IMAGE_BASE/install.sh
 #!/bin/bash
 set -e
 
-trap "halt" EXIT
+if [ "$GISLAB_DEBUG_INSTALL" == "False" ]; then trap "halt" EXIT; fi
 
 EOF
 
@@ -68,7 +68,10 @@ EOF
 
 # hostname
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
-echo "w\$(date +%N | md5sum | cut -f 1 -d " " | cut -c1-6)" > /etc/hostname
+IFACE=\$(/sbin/route -n | grep "^$GISLAB_NETWORK.0" | awk -F " " '{print \$NF}')
+HOSTNUMBER=\$(ip addr | grep inet | grep \$IFACE | head -n 1 | awk -F " " '{print \$2}' | awk -F "/" '{print \$1}' | awk -F "." '{print \$4}')
+
+echo "w\$HOSTNUMBER" > /etc/hostname
 service hostname start
 service rsyslog restart
 
