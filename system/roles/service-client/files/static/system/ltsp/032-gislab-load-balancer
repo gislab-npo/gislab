@@ -1,7 +1,7 @@
 case "$MODE" in
 	finalization)
 		if [ "$GISLAB_CLIENT_LOAD_BALANCER_ENABLED" == "True" ]; then
-			chroot $ROOT apt-get --assume-yes --force-yes install apache2 apache2-mpm-worker libapache2-mod-fastcgi qgis-mapserver unzip
+			chroot $ROOT apt-get --assume-yes --force-yes install apache2 apache2-mpm-worker libapache2-mod-fcgid qgis-mapserver unzip
 
 			# apache
 			mkdir -p $ROOT/var/www/default
