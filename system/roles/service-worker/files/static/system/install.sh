@@ -5,10 +5,12 @@ set -e
 set -u
 
 
-# installation script start
+# installation script start (halt machine if something fails)
 cat << EOF > $GISLAB_WORKER_IMAGE_BASE/install.sh
 #!/bin/bash
 set -e
+
+trap "halt" EXIT
 
 EOF
 
