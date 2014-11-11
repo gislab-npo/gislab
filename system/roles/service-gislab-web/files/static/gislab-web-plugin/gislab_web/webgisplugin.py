@@ -594,10 +594,14 @@ class WebGisPlugin:
 				if layer_widget.checkState(0) == Qt.Unchecked:
 					return None
 
+				if layer.extent().isFinite() and not layer.extent().isEmpty():
+					layer_extent = map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords()
+				else:
+					layer_extent = project_extent
 				layer_data = {
 					'name': layer.name(),
 					'provider_type': layer.providerType(),
-					'extent': map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords(),
+					'extent': layer_extent,
 					'projection': layer.crs().authid(),
 					'visible': legend_iface.isLayerVisible(layer),
 					'queryable': layer.id() not in non_identifiable_layers,
