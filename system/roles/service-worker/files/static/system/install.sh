@@ -78,7 +78,6 @@ EOF
 # default DNS server
 cat << EOF >> $GISLAB_WORKER_IMAGE_BASE/install.sh
 echo "nameserver $GISLAB_NETWORK_SERVER_IP" > /etc/resolv.conf
-echo "search gista.lan" >> /etc/resolv.conf
 
 EOF
 
