@@ -42,6 +42,10 @@
 # Change requires GIS.lab server restart.
 GISLAB_SERVER_MEMORY: 1024
 
+# Worker memory size in MB.
+# Change requires GIS.lab worker restart.
+GISLAB_WORKER_MEMORY: 512
+
 # Determines if GIS.lab server should start with graphical console. This is useful to
 # gain more control with server boot process.
 # * no: do not launch GUI console
