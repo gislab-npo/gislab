@@ -111,8 +111,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/media/'
 
-if os.path.exists('/storage/gislab-web-media'):
-	MEDIA_ROOT = '/storage/gislab-web-media'
+if os.path.exists('/storage/applications/gislab-web/media'):
+	MEDIA_ROOT = '/storage/applications/gislab-web/media'
 else:
 	MEDIA_ROOT =  os.path.join(BASE_DIR, 'media/')
 

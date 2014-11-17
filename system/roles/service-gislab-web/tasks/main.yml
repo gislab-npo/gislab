@@ -81,7 +81,7 @@
   shell: rm -rf /var/www/gislab-web; mkdir -p /var/www/gislab-web
 
 - name: Create media directory
-  file: path=/storage/gislab-web-media state=directory owner=www-data group=www-data
+  file: path=/storage/applications/gislab-web/media state=directory owner=www-data group=www-data
 
 
 - name: Generate secret key (run only once)

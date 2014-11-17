@@ -23,7 +23,7 @@ server {
 	}
 
 	location /media/ {
-		alias /storage/gislab-web-media/;
+		alias /storage/applications/gislab-web/media/;
 
 		expires 1h;
 		add_header Pragma public;
@@ -31,7 +31,7 @@ server {
 	}
 
 	location ~ ^/tile/(?<tile_path>.*)$ {
-		alias /storage/gislab-web-media/cache/;
+		alias /storage/applications/gislab-web/media/cache/;
 
 		add_header X-Static super;
 		expires 365d;
@@ -42,7 +42,7 @@ server {
 	}
 
 	location ~ ^/legend/(?<legend_path>.*)$ {
-		alias /storage/gislab-web-media/cache/;
+		alias /storage/applications/gislab-web/media/cache/;
 
 		add_header X-Static super;
 		expires 365d;
