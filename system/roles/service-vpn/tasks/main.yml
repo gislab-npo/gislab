@@ -19,7 +19,7 @@
 - name: Copy 'easy-rsa' tools
   shell: cp -pR /usr/share/doc/openvpn/examples/easy-rsa/2.0/* /etc/openvpn/easy-rsa/
   args:
-    creates: /etc/openvpn/gislab_vpn_ta.key
+    creates: /etc/gislab/gislab_vpn_ta.key
 
 - name: Create configuration file with filled certificate fields
   template: src=vars.j2 dest=/etc/openvpn/easy-rsa/vars
@@ -29,34 +29,34 @@
   args:
     chdir: /etc/openvpn/easy-rsa/
     executable: /bin/bash
-    creates: /etc/openvpn/gislab_vpn_ta.key
+    creates: /etc/gislab/gislab_vpn_ta.key
 
 - name: Generate CA certificate
   shell: source ./vars && ./pkitool --initca
   args:
     executable: /bin/bash
     chdir: /etc/openvpn/easy-rsa/
-    creates: /etc/openvpn/gislab_vpn_ta.key
+    creates: /etc/gislab/gislab_vpn_ta.key
 
 - name: Generate server certificate and private key
   shell: source ./vars && ./pkitool --server server.gis.lab
   args:
     executable: /bin/bash
     chdir: /etc/openvpn/easy-rsa/
-    creates: /etc/openvpn/gislab_vpn_ta.key
+    creates: /etc/gislab/gislab_vpn_ta.key
 
 - name: Generate Diffie Hellman Parameters
   shell: source ./vars && ./build-dh
   args:
     executable: /bin/bash
     chdir: /etc/openvpn/easy-rsa/
-    creates: /etc/openvpn/gislab_vpn_ta.key
+    creates: /etc/gislab/gislab_vpn_ta.key
 
 - name: Generate private key for HMAC authentication
   shell: openvpn --genkey --secret ta.key
   args:
     chdir: /etc/openvpn/easy-rsa/keys/
-    creates: /etc/openvpn/gislab_vpn_ta.key
+    creates: /etc/gislab/gislab_vpn_ta.key
 
 - name: Copy certificates and keys to '/etc/gislab' directory
   shell: cp /etc/openvpn/easy-rsa/keys/{{ item.src }} /etc/gislab/{{ item.dest }}
@@ -68,7 +68,7 @@
     - { src: 'server.gis.lab.key', dest: 'gislab_vpn_server.key' }
     - { src: 'ta.key', dest: 'gislab_vpn_ta.key' }
   args:
-    creates: /etc/openvpn/gislab_vpn_ta.key
+    creates: /etc/gislab/gislab_vpn_ta.key
 
 - name: Install certificates and keys
   shell: cp /etc/gislab/{{ item }} /etc/openvpn/{{ item }}
