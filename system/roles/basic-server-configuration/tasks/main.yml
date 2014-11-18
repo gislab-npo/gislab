@@ -133,6 +133,7 @@
     - /var/lib/gislab
     - /etc/cron.d.bin
     - /usr/local/python-virtualenvs
+    - /storage/applications
 
 
 # Basic server configuration

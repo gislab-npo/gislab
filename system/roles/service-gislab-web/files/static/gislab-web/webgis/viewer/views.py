@@ -131,14 +131,15 @@ def ows_request(request):
 
 @login_required
 def tile(request, project_hash, publish, layers_hash=None, z=None, x=None, y=None, format=None):
-	project = request.GET['project']+'.qgs'
+	params = {key.upper(): request.GET[key] for key in request.GET.iterkeys()}
+	project = params['PROJECT']+'.qgs'
 	layer_params = get_project_layers_info(project_hash, publish, project=project)
 	try:
 		layer = WmsLayer(
 			project=project_hash,
 			publish=publish,
 			name=layers_hash,
-			provider_layers=request.GET['layers'].encode("utf-8"),
+			provider_layers=params['LAYERS'].encode("utf-8"),
 			provider_url=set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'map': project}),
 			image_format=format,
 			tile_size=256,
@@ -215,7 +216,7 @@ def parse_layers_param(layers_string, layers_capabilities):
 
 def page(request):
 	# make GET parameters not case sensitive
-	params = dict((k.lower(), v) for k, v in request.GET.iteritems()) # change GET parameters names to uppercase
+	params = {k.lower(): v for k, v in request.GET.iteritems()} # change GET parameters names to lowercase
 	form = forms.ViewerForm(params)
 	if not form.is_valid():
 		raise Http404
