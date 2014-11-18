@@ -14,6 +14,7 @@ ns       IN    A        {{ GISLAB_NETWORK_SERVER_IP }}
 ns1      IN    A        {{ GISLAB_NETWORK_SERVER_IP }}
 ns1      IN    AAAA     ::1
 
+; server
 server   IN    A        {{ GISLAB_NETWORK_SERVER_IP }}
 boot     IN    CNAME    server
 db       IN    CNAME    server
@@ -22,3 +23,13 @@ web      IN    CNAME    server
 chat     IN    CNAME    server
 stats    IN    CNAME    server
 qgis     IN    CNAME    server
+
+; workers
+{% for ip in range(10,50) %}
+w{{ ip }}  IN  A  {{ GISLAB_NETWORK }}.{{ ip }}
+{% endfor %}
+
+; clients
+{% for ip in range(50,150) %}
+c{{ ip }}  IN  A  {{ GISLAB_NETWORK }}.{{ ip }}
+{% endfor %}
