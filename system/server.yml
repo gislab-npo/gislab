@@ -17,7 +17,7 @@
     - { role: service-syslog, tags: ['service-syslog'] }
     - { role: service-logcheck, tags: ['service-logcheck'] }
     - { role: service-time, tags: ['service-time'] }
-    - { role: service-dns, tags: ['service-dns,'] }
+    - { role: service-dns, tags: ['service-dns'] }
     - { role: service-ldap, tags: ['service-ldap'] }
     - { role: service-mail, tags: ['service-mail'] }
     - { role: service-dhcp, tags: ['service-dhcp'] }
