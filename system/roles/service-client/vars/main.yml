@@ -191,6 +191,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - sshfs
   - vim-gnome
   - vlc
+  - x11vnc
 
 # List of packages to remove client images.
 # To find out the reason why package was installed use '$ aptitude why <package>'.
