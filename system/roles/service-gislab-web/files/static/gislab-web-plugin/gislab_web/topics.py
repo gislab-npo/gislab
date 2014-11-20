@@ -28,6 +28,43 @@ def _save_topic(dialog, topic_item):
 		'visible_overlays': visible_overlays
 	})
 
+def update_topics_layers(dialog):
+	# hide excluded layer items (it must be done after attaching of all widgets to the QTreeWidget)
+	def hide_excluded_layers(group_item):
+		for row in range(group_item.rowCount()):
+			item = group_item.child(row, 0)
+			if item.rowCount() > 0:
+				hide_excluded_layers(item)
+			else:
+				is_exported_as_vector = group_item.child(row, 1).checkState() == Qt.Checked
+				is_hidden = group_item.child(row, 3).checkState() == Qt.Checked
+				if item.checkState() == Qt.Unchecked or is_exported_as_vector or is_hidden:
+					for topic_layer_item in dialog.topicLayers.findItems(item.text(), Qt.MatchExactly | Qt.MatchRecursive):
+						if is_hidden:
+							topic_layer_item.setDisabled(True)
+						else:
+							topic_layer_item.setHidden(True)
+	def update_available_layers(widget):
+		for index in range(widget.childCount()):
+			child_widget = widget.child(index)
+			if child_widget.childCount() > 0:
+				update_available_layers(child_widget)
+				group_empty = True
+				for child_index in range(child_widget.childCount()):
+					if not child_widget.child(child_index).isHidden():
+						group_empty = False
+						break
+				child_widget.setHidden(group_empty)
+			else:
+				layers_model = dialog.treeView.model()
+				layer_item = layers_model.findItems(child_widget.text(0), Qt.MatchExactly | Qt.MatchRecursive)[0]
+				is_layer_visible = layer_item.checkState() == Qt.Unchecked
+				is_exported_as_vector = layers_model.columnItem(layer_item, 1).checkState() == Qt.Checked
+				is_hidden = layers_model.columnItem(layer_item, 3).checkState() == Qt.Checked
+				child_widget.setHidden(is_exported_as_vector or is_layer_visible)
+				child_widget.setDisabled(is_hidden)
+	update_available_layers(dialog.topicLayers.invisibleRootItem())
+
 def setup_topics_ui(dialog, overlay_layers_tree):
 	def add_topic():
 		item = QListWidgetItem("New topic")
@@ -42,45 +79,24 @@ def setup_topics_ui(dialog, overlay_layers_tree):
 	dialog.addTopic.released.connect(add_topic)
 	dialog.removeTopic.released.connect(remove_topic)
 
-	def copy_tree_widget(widget):
+	def copy_tree_widget(group_item):
 		new_widget = QTreeWidgetItem()
-		new_widget.setText(0, widget.text(0))
-		new_widget.setData(0, Qt.UserRole, widget.data(0, Qt.UserRole))
-		new_widget.setFlags(widget.flags())
-		is_hidden = widget.checkState(1) == Qt.Checked
-		if is_hidden:
-			new_widget.setDisabled(True)
-		for index in range(widget.childCount()):
-			child = widget.child(index)
-			new_widget.addChild(copy_tree_widget(child))
-		new_widget.setCheckState(0, Qt.Checked)
+		new_widget.setText(0, group_item.text())
+		for row in range(group_item.rowCount()):
+			item = group_item.child(row, 0)
+			if item.rowCount() > 0:
+				layer_widget = copy_tree_widget(item)
+			else:
+				layer_widget = QTreeWidgetItem()
+				layer_widget.setText(0, item.text())
+				layer_widget.setData(0, Qt.UserRole, item.data(Qt.UserRole))
+			layer_widget.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
+			layer_widget.setCheckState(0, Qt.Checked)
+			new_widget.addChild(layer_widget)
 		return new_widget
 
-	dialog.topicLayers.addTopLevelItems(copy_tree_widget(dialog.overlaysTree.invisibleRootItem()).takeChildren())
-
-	# hide excluded layer items, must be done after attaching of all widgets to the QTreeWidget
-	def hide_excluded_layers(widget):
-		for index in range(widget.childCount()):
-			hide_excluded_layers(widget.child(index))
-		if widget.checkState(0) == Qt.Unchecked:
-			for topic_layer_item in dialog.topicLayers.findItems(widget.text(0), Qt.MatchExactly | Qt.MatchRecursive):
-				topic_layer_item.setHidden(True)
-	hide_excluded_layers(dialog.overlaysTree.invisibleRootItem())
-
-	# setup synchronization of available and hidden layers in topics with with main layers tree widget
-	def itemchanged(item, column):
-		# layer visibility changed
-		topic_layer_item = dialog.topicLayers.findItems(item.text(0), Qt.MatchExactly | Qt.MatchRecursive)[0]
-		if column == 0:
-			topic_layer_item.setHidden(item.checkState(0) == Qt.Unchecked)
-			# this helps to avoid empty layers group to be visible in topics
-			if item.parent() and item.parent().checkState(0) == Qt.Unchecked:
-				topic_layer_item.parent().setHidden(True)
-		elif column == 1:
-			is_hidden = item.checkState(1) == Qt.Checked
-			topic_layer_item.setDisabled(is_hidden)
-
-	dialog.overlaysTree.itemChanged.connect(itemchanged)
+	dialog.topicLayers.addTopLevelItems(copy_tree_widget(dialog.treeView.model().invisibleRootItem()).takeChildren())
+	update_topics_layers(dialog)
 
 	dialog.topicWidget.setEnabled(False)
 

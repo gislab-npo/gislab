@@ -10,6 +10,7 @@ import os
 import re
 import json
 import time
+import types
 import datetime
 import subprocess
 from decimal import Decimal
@@ -25,7 +26,7 @@ from PyQt4.QtXml import QDomDocument
 
 # Initialize Qt resources from file resources.py
 import resources_rc
-from topics import setup_topics_ui, get_topics, load_topics_from_metadata
+from topics import setup_topics_ui, update_topics_layers, get_topics, load_topics_from_metadata
 
 
 GISLAB_VERSION_FILE = "/etc/gislab_version"
@@ -250,17 +251,18 @@ class WebGisPlugin:
 					u"Base layer '{0}' will not be visible in published project scales".format(layer.name())
 				))
 
-		overlay_layers = [layer for layer in self.iface.legendInterface().layers() if self._is_overlay_layer_for_publish(layer)]
-		for layer in overlay_layers:
-			layer_widget = self.dialog.overlaysTree.findItems(layer.name(), Qt.MatchExactly | Qt.MatchRecursive)
-			if layer_widget:
-				layer_widget = layer_widget[0]
-				if layer_widget.checkState(0) == Qt.Checked:
-					if layer.crs().authid().startswith('USER:'):
-						messages.append((
-							MSG_ERROR,
-							u"Overlay layer '{0}' is using custom coordinate system which is currently not supported.".format(layer.name())
-						))
+		if self.dialog.treeView.model():
+			overlay_layers = [layer for layer in self.iface.legendInterface().layers() if self._is_overlay_layer_for_publish(layer)]
+			for layer in overlay_layers:
+				layer_widget = self.dialog.treeView.model().findItems(layer.name(), Qt.MatchExactly | Qt.MatchRecursive)
+				if layer_widget:
+					layer_widget = layer_widget[0]
+					if layer_widget.checkState() == Qt.Checked:
+						if layer.crs().authid().startswith('USER:'):
+							messages.append((
+								MSG_ERROR,
+								u"Overlay layer '{0}' is using custom coordinate system which is currently not supported.".format(layer.name())
+							))
 
 		self._show_messages(messages)
 		for msg_type, msg_text in messages:
@@ -374,11 +376,26 @@ class WebGisPlugin:
 
 		return base_layers_tree, overlay_layers_tree
 
+	def _get_drawing_layers(self, node=None):
+		if node is None:
+			node = self.overlay_layers_tree
+		layers = []
+		for child in node.children:
+			layers.extend(self._get_drawing_layers(child))
+		if node.layer:
+			layer = node.layer
+			layers_model = self.dialog.treeView.model()
+			layer_widget = layers_model.findItems(layer.name(), Qt.MatchExactly | Qt.MatchRecursive)[0]
+			if layer_widget.checkState() == Qt.Checked and layers_model.columnItem(layer_widget, 1).checkState() == Qt.Checked:
+				layers.append(layer)
+		return layers
 
 	def publish_project(self):
 		"""Creates project metadata file."""
 		if not self.metadata:
 			return
+
+		self.publish_drawing_layers()
 
 		# create metadata file
 		metadata_filename = os.path.splitext(self.project.fileName())[0] + '.meta'
@@ -590,8 +607,9 @@ class WebGisPlugin:
 				}
 			elif node.layer:
 				layer = node.layer
-				layer_widget = dialog.overlaysTree.findItems(layer.name(), Qt.MatchExactly | Qt.MatchRecursive)[0]
-				if layer_widget.checkState(0) == Qt.Unchecked:
+				layers_model = dialog.treeView.model()
+				layer_widget = layers_model.findItems(layer.name(), Qt.MatchExactly | Qt.MatchRecursive)[0]
+				if layer_widget.checkState() == Qt.Unchecked or layers_model.columnItem(layer_widget, 1).checkState() == Qt.Checked:
 					return None
 
 				if layer.extent().isFinite() and not layer.extent().isEmpty():
@@ -605,8 +623,8 @@ class WebGisPlugin:
 					'projection': layer.crs().authid(),
 					'visible': legend_iface.isLayerVisible(layer),
 					'queryable': layer.id() not in non_identifiable_layers,
-					'hidden': layer_widget.checkState(1) == Qt.Checked,
-					'export_to_drawings': layer_widget.checkState(2) == Qt.Checked,
+					'hidden': layers_model.columnItem(layer_widget, 3).checkState() == Qt.Checked,
+					'export_to_drawings': layers_model.columnItem(layer_widget, 2).checkState() == Qt.Checked,
 					'drawing_order': overlays_order.index(layer.id()),
 					'metadata': {
 						'title': layer.title(),
@@ -698,6 +716,8 @@ class WebGisPlugin:
 				'valid_until': dialog.message_valid_until.date().toString("dd.MM.yyyy")
 			}
 
+		metadata['topics'] = get_topics(dialog)
+
 		gislab_version_data = {}
 		try:
 			with open(GISLAB_VERSION_FILE) as f:
@@ -715,21 +735,133 @@ class WebGisPlugin:
 		return metadata
 
 	def validate_config_page(self):
-		if not self._check_publish_constrains():
-			return False
+		return self._check_publish_constrains()
 
+	def init_topics_page(self):
 		if not self.topics_initialized:
 			setup_topics_ui(self.dialog, self.overlay_layers_tree)
 			if self.current_metadata is not None:
 				load_topics_from_metadata(self.dialog, self.current_metadata)
 			self.topics_initialized = True
-		return True
+		else:
+			update_topics_layers(self.dialog)
 
-	def validate_topics_page(self):
+	def init_drawing_layers_page(self):
+		vector_layers = [layer for layer in self.iface.legendInterface().layers() if layer.type() == QgsMapLayer.VectorLayer]
+		drawing_layers = self._get_drawing_layers()
+		if self.dialog.drawingLayers.widget().layout() is None:
+			last_config = self.current_metadata.get('drawing_layers', {})
+			layout = QVBoxLayout()
+			for layer in vector_layers:
+				layer_name = layer.name()
+				row_layout = QHBoxLayout()
+				row_layout.setObjectName(layer_name)
+				row_layout.setContentsMargins(0, 0, 0, 0)
+				title_attribute = QComboBox()
+				title_attribute.setObjectName('title')
+				description_attribute = QComboBox()
+				description_attribute.setObjectName('description')
+				title_attribute.addItem('-', '')
+				description_attribute.addItem('-', '')
+				fields = layer.pendingFields()
+				excluded_attributes = layer.excludeAttributesWMS()
+				for index in range(fields.count()):
+					field = fields.field(index)
+					if field.name() in excluded_attributes:
+						continue
+
+					name = field.name()
+					display = layer.attributeDisplayName(index)
+					title_attribute.addItem(display, name)
+					description_attribute.addItem(display, name)
+
+				if layer_name in last_config:
+					title_attribute.setCurrentIndex(title_attribute.findData(last_config[layer_name]['title_attribute']))
+					description_attribute.setCurrentIndex(description_attribute.findData(last_config[layer_name]['description_attribute']))
+
+				selected_only = QCheckBox()
+				#checkbox_layout = QVBoxLayout()
+				#checkbox_layout.setAlignment(Qt.AlignHCenter)
+				#checkbox_layout.addWidget(selected_only)
+
+				label = QLabel(layer_name)
+				row_layout.addWidget(label)
+				row_layout.addWidget(title_attribute)
+				row_layout.addWidget(description_attribute)
+				row_layout.addWidget(selected_only)
+				#row_layout.addLayout(checkbox_layout)
+				row_widget = QWidget()
+				row_widget.setObjectName(layer_name)
+				row_widget.setLayout(row_layout)
+				layout.addWidget(row_widget)
+
+			layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Expanding))
+			self.dialog.drawingLayers.widget().setLayout(layout)
+
+		for layer in vector_layers:
+			layer_widget = self.dialog.drawingLayers.findChild(QWidget, layer.name())
+			is_drawing_layer = layer in drawing_layers
+			layer_widget.setVisible(is_drawing_layer)
+			if is_drawing_layer and layer.selectedFeatureCount() == 0:
+				layer_widget.findChild(QCheckBox).setEnabled(False)
+
+	def init_summary_page(self):
 		self.metadata = None
 		self.metadata = self.generate_project_metadata()
 		self.generate_config_summary()
-		self.metadata['topics'] = get_topics(self.dialog)
+
+	def after_topics_page(self):
+		# skip page 'export of layers to drawing' when it is not needed
+		return 2 if self._get_drawing_layers() else 3
+
+	def publish_drawing_layers(self):
+		drawing_layers_info = {}
+
+		drawing_layers = self._get_drawing_layers()
+		if drawing_layers:
+			map_canvas = self.iface.mapCanvas()
+			layer_file = "{0}_{1}".format(os.path.splitext(self.project.fileName())[0], "drawing")
+			fields = QgsFields()
+			fields.append(QgsField("title", type=QVariant.String))
+			fields.append(QgsField("description", type=QVariant.String))
+			writer = QgsVectorFileWriter(layer_file, "utf-8", fields, QGis.WKBUnknown, map_canvas.mapRenderer().destinationCrs(), "GeoJSON")
+			for layer in drawing_layers:
+				layer_widget = self.dialog.drawingLayers.findChild(QWidget, layer.name())
+				title_combo = layer_widget.findChild(QComboBox, 'title')
+				description_combo = layer_widget.findChild(QComboBox, 'description')
+				title_attribute = title_combo.itemData(title_combo.currentIndex())
+				selected_features_only = layer_widget.findChild(QCheckBox).isChecked()
+				description_attribute = description_combo.itemData(description_combo.currentIndex())
+				drawing_layers_info[layer.name()] = {
+					'title_attribute': title_attribute,
+					'description_attribute': description_attribute
+				}
+
+				transform = None
+				if layer.crs() != map_canvas.mapRenderer().destinationCrs():
+					transform = QgsCoordinateTransform(layer.crs(), map_canvas.mapRenderer().destinationCrs())
+				# QgsVectorLayer.selectedFeaturesIterator is available since 2.6 version, so it is better
+				# to convert QgsFeatureIterator to generator and use for loop to iterate features
+				if selected_features_only:
+					features = layer.selectedFeatures()
+				else:
+					def features_generator(features_iterator):
+						feature = QgsFeature()
+						while features_iterator.nextFeature(feature):
+							yield feature
+					features = features_generator(layer.getFeatures())
+				for feature in features:
+					f = QgsFeature(fields)
+					f.setGeometry(feature.geometry())
+					if transform:
+						f.geometry().transform(transform)
+					f.setAttributes([
+						feature.attribute(title_attribute) if title_attribute else '',
+						feature.attribute(description_attribute) if description_attribute else ''
+					])
+					writer.addFeature(f)
+
+			self.metadata['drawing_layers'] = drawing_layers_info
 		return True
 
 	def generate_config_summary(self):
@@ -954,12 +1086,12 @@ class WebGisPlugin:
 	def generate_confirmation_page(self):
 		datasources = set()
 		def collect_datasources(layer_node):
-			for index in range(layer_node.childCount()):
+			for index in range(layer_node.rowCount()):
 				collect_datasources(layer_node.child(index))
-			layer = layer_node.data(0, Qt.UserRole)
-			if layer and layer_node.checkState(0) == Qt.Checked:
+			layer = layer_node.data(Qt.UserRole)
+			if layer and layer_node.checkState() == Qt.Checked:
 				datasources.add(layer.source())
-		collect_datasources(self.dialog.overlaysTree.invisibleRootItem())
+		collect_datasources(self.dialog.treeView.model().invisibleRootItem())
 
 		html = u"""<html>
 			<head>{0}</head>
@@ -1083,19 +1215,28 @@ class WebGisPlugin:
 					dialog.default_baselayer.setCurrentIndex(dialog.default_baselayer.findData(base_layer['name']))
 
 		overlays_data = extract_layers(metadata['overlays'])
+		geojson_overlays = metadata.get('drawing_layers', {}).keys()
 		project_overlays = [layer_data['name'] for layer_data in overlays_data]
+		project_overlays.extend(geojson_overlays)
 		hidden_overlays = [layer_data['name'] for layer_data in overlays_data if layer_data.get('hidden')]
 		overlays_with_export_to_drawings = [layer_data['name'] for layer_data in overlays_data if layer_data.get('export_to_drawings')]
-		def uncheck_excluded_layers(widget):
-			if widget.data(0, Qt.UserRole):
-				widget.setCheckState(0, Qt.Checked if widget.text(0) in project_overlays else Qt.Unchecked)
-				widget.setCheckState(1, Qt.Checked if widget.text(0) in hidden_overlays else Qt.Unchecked)
-				if widget.data(2, Qt.CheckStateRole) != None:
-					widget.setCheckState(2, Qt.Checked if widget.text(0) in overlays_with_export_to_drawings else Qt.Unchecked)
-			else:
-				for index in range(widget.childCount()):
-					uncheck_excluded_layers(widget.child(index))
-		uncheck_excluded_layers(dialog.overlaysTree.invisibleRootItem())
+		def load_layers_settings(group_item):
+			for index in range(group_item.rowCount()):
+				child_item = group_item.child(index)
+				if child_item.data(Qt.UserRole):
+					layer_name = child_item.text()
+					child_item.setCheckState(Qt.Checked if layer_name in project_overlays else Qt.Unchecked)
+					layers_model = child_item.model()
+					drawing_item = layers_model.columnItem(child_item, 1)
+					export_item = layers_model.columnItem(child_item, 2)
+					if drawing_item.isCheckable():
+						drawing_item.setCheckState(Qt.Checked if layer_name in geojson_overlays else Qt.Unchecked)
+					if export_item.isCheckable():
+						export_item.setCheckState(Qt.Checked if layer_name in overlays_with_export_to_drawings else Qt.Unchecked)
+					layers_model.columnItem(child_item, 3).setCheckState(Qt.Checked if layer_name in hidden_overlays else Qt.Unchecked)
+				else:
+					load_layers_settings(child_item)
+		load_layers_settings(dialog.treeView.model().invisibleRootItem())
 
 		max_res = metadata['tile_resolutions'][0]
 		min_res = metadata['tile_resolutions'][-1]
@@ -1111,12 +1252,16 @@ class WebGisPlugin:
 		dialog = PyQt4.uic.loadUi(dialog_filename)
 		dialog.tabWidget.setCurrentIndex(0)
 		dialog.setButtonText(QWizard.CommitButton, "Publish")
-		#dialog.wizard_page4.setButtonText(QWizard.FinishButton, "Ok")
-		dialog.wizard_page3.setCommitPage(True)
-		dialog.wizard_page4.setButtonText(QWizard.CancelButton, "Close")
+		#dialog.wizard_page5.setButtonText(QWizard.FinishButton, "Ok")
+		dialog.wizard_page4.setCommitPage(True)
+		dialog.wizard_page5.setButtonText(QWizard.CancelButton, "Close")
 		dialog.wizard_page1.validatePage = self.validate_config_page
-		dialog.wizard_page2.validatePage = self.validate_topics_page
-		dialog.wizard_page3.validatePage = self.publish_project
+		dialog.wizard_page2.initializePage = self.init_topics_page
+		dialog.wizard_page2.nextId = self.after_topics_page
+		dialog.wizard_page3.initializePage = self.init_drawing_layers_page
+		dialog.wizard_page4.initializePage = self.init_summary_page
+		dialog.wizard_page4.validatePage = self.publish_project
+
 		self.dialog = dialog
 		self.topics_initialized = False
 		map_canvas = self.iface.mapCanvas()
@@ -1192,33 +1337,76 @@ class WebGisPlugin:
 		dialog.message_valid_until.setDate(datetime.date.today() + datetime.timedelta(days=1))
 
 		self._check_publish_constrains()
-		dialog.overlaysTree.header().setResizeMode(0, QHeaderView.Stretch)
-		dialog.overlaysTree.header().setVisible(True)
 		self.base_layers_tree, self.overlay_layers_tree = self._get_project_layers()
 
 		def create_layer_widget(node):
-			widget = QTreeWidgetItem()
-			widget.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
 			sublayers_widgets = []
 			for child in node.children:
 				sublayer_widget = create_layer_widget(child)
 				if sublayer_widget:
 					sublayers_widgets.append(sublayer_widget)
 			if sublayers_widgets:
-				widget.setText(0, node.name)
-				widget.setCheckState(0, Qt.Unchecked)
-				widget.addChildren(sublayers_widgets)
+				group_item = QStandardItem(node.name)
+				for child in sublayers_widgets:
+					group_item.appendRow(child)
+				return group_item
 			elif node.layer:
 				layer = node.layer
-				widget.setText(0, layer.name())
-				widget.setData(0, Qt.UserRole, layer)
-				widget.setCheckState(0, Qt.Checked)
-				widget.setCheckState(1, Qt.Unchecked)
-				# remove 'Export to drawings' checkbox if raster layer
-				widget.setData(2, Qt.CheckStateRole, Qt.Checked if layer.type() == QgsMapLayer.VectorLayer else None);
-			return widget
+				is_vector_layer = layer.type() == QgsMapLayer.VectorLayer
+				layer_item = QStandardItem(layer.name())
+				layer_item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
+				layer_item.setData(layer, Qt.UserRole)
+				layer_item.setCheckState(Qt.Checked)
+				hidden = QStandardItem()
+				drawing = QStandardItem()
+				hidden.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
+				hidden.setCheckState(Qt.Unchecked)
+				export = QStandardItem()
+				if is_vector_layer:
+					export.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
+					export.setCheckState(Qt.Checked)
+					drawing.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
+					drawing.setCheckState(Qt.Unchecked)
+				else:
+					export.setFlags(Qt.ItemIsSelectable)
+					drawing.setFlags(Qt.ItemIsSelectable)
+				return [layer_item, drawing, export, hidden]
+
 		if self.overlay_layers_tree:
-			dialog.overlaysTree.addTopLevelItems(create_layer_widget(self.overlay_layers_tree).takeChildren())
+			layers_model = QStandardItemModel()
+			def columnItem(self, item, column):
+				""""Returns item from layers tree at the same row as given item (of any column) and given column index"""
+				row = item.row()
+				if item.parent():
+					return item.parent().child(row, column)
+				else:
+					return self.item(row, column)
+			layers_model.columnItem = types.MethodType(columnItem, layers_model)
+			layers_model.setHorizontalHeaderLabels(['Layer', 'Vector', 'Allow drawing', 'Hidden'])
+			dialog.treeView.setModel(layers_model)
+			layers_root = create_layer_widget(self.overlay_layers_tree)
+			while layers_root.rowCount():
+				layers_model.appendRow(layers_root.takeRow(0))
+			dialog.treeView.header().setResizeMode(0, QHeaderView.Stretch)
+			dialog.treeView.header().setVisible(True)
+
+			def layer_item_changed(item):
+				if item.model().columnItem(item, 0).data(Qt.UserRole): # check if item is layer item
+					dependent_items = None
+					if item.column() == 0:
+						enabled = item.checkState() == Qt.Checked
+						for index in (1, 2, 3):
+							item.model().columnItem(item, index).setEnabled(enabled)
+					# Enable/disable checkboxes of 'Allow drawing' and 'Hidden' columns when 'Vector' column change state
+					elif item.column() == 1 and item.isEnabled():
+						item.model().columnItem(item, 2).setEnabled(item.checkState() == Qt.Unchecked)
+						item.model().columnItem(item, 3).setEnabled(item.checkState() == Qt.Unchecked)
+					# Enable/disable checkboxes of 'Allow drawing' and 'Vector' columns when 'Hidden' column change state
+					elif item.column() == 3 and item.isEnabled():
+						item.model().columnItem(item, 1).setEnabled(item.checkState() == Qt.Unchecked)
+						item.model().columnItem(item, 2).setEnabled(item.checkState() == Qt.Unchecked)
+
+			layers_model.itemChanged.connect(layer_item_changed)
 
 		metadata_filename = os.path.splitext(self.project.fileName())[0] + '.meta'
 		self.current_metadata = None
