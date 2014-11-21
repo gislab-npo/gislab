@@ -85,7 +85,7 @@
   "canvas_color": "#ffffffff", 
   "message": {
     "valid_until": "01.01.2099", 
-    "text": "Welcome to GIS.lab demonstration project ! Please note that print composer is not available for guest user."
+    "text": "Welcome to GIS.lab example project ! Please note that print composer is not available for guest user."
   }, 
   "overlays": [
     {
@@ -333,5 +333,5 @@
   "units": "meters", 
   "selection_color": "#ffff00ff", 
   "contact_person": "Ivan Min\u010d\u00edk", 
-  "abstract": "GIS.lab demonstration project"
+  "abstract": "GIS.lab example project"
 }

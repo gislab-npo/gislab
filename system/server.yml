@@ -32,8 +32,8 @@
     - { role: service-vpn, tags: ['service-vpn'] }
     - { role: service-connection-forwarding, tags: ['service-connection-forwarding'] }
     - { role: user-server-plugins, tags: ['user-server-plugins'] }
-    - { role: user-data, tags: ['user-data'] }
     - { role: service-worker, tags: ['service-worker'] }
     - { role: service-client, tags: ['service-client'], when: "'{{ GISLAB_SUITE }}' == 'lab'" }
     - { role: account-admin, tags: ['account-admin'] }
+    - { role: example-data, tags: ['example-data'] }
     - { role: installation-done, tags: ['installation-done'] }

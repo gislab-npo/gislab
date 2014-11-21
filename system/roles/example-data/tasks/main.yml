@@ -1,0 +1,9 @@
+---
+#
+### EXAMPLE DATA ###
+#
+# Install example data.
+
+
+- name: Install example GIS.lab project to 'Repository' shared directory
+  copy: src=../gislab-project dest=/storage/repository/

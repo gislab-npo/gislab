@@ -151,14 +151,6 @@ GISLAB_APT_HTTP_PROXY:
 # instances is 49 - do not start more.
 GISLAB_WORKERS_COUNT: 1
 
-# Relative path to file containing GIS.lab logo.
-# Change requires running upgrade.
-GISLAB_LOGO: user/graphic/gislab-logo.png
-
-# Relative path to file containing GIS.lab client wallpaper.
-# Change requires running upgrade.
-GISLAB_WALLPAPER: user/graphic/gislab-wallpaper.png
-
 # Comma separated list of required GIS.lab plugins and account hooks. GIS.lab
 # installation will fail if any of these plugins will be missing.
 # Some useful plugins are collected here: https://github.com/imincik/gis-lab-plugins
