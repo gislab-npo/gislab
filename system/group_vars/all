@@ -254,13 +254,13 @@ GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO:
 # Change requires running upgrade.
 GISLAB_CLIENT_NETWORK_STORAGE:
 
-# Allow usage of GIS.lab clients as mapserver load balancer worker nodes, which
+# Allow usage of GIS.lab clients as OWS services worker nodes, which
 # in reality means that GIS.lab client will be requested by some OWS requests
 # from time to time.
 # * yes: enable to use GIS.lab clients as worker node
 # * no : disable to use GIS.lab clients as worker node
 # Change requires running upgrade.
-GISLAB_CLIENT_LOAD_BALANCER_ENABLED: yes
+GISLAB_CLIENT_WORKER_ENABLED: yes
 
 
 

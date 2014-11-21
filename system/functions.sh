@@ -31,18 +31,26 @@ gislab_require_root () {
 
 
 gislab_serf_install () {
+	# download and install Serf
 	if [ ! -f "/usr/local/bin/serf" ]; then
-		# download and install Serf
-		if [ "$(uname -i)" == "i386" ]; then
-			serf_arch="386"
+
+		# get arch from function parameter or autodetect
+		if [ "$1" != "" ]; then
+			serf_arch=$1
 		else
-			serf_arch="amd64"
+			if [ "$(uname -i)" == "i386" ]; then
+				serf_arch="386"
+			else
+				serf_arch="amd64"
+			fi
 		fi
 
+		# download Serf
 		until wget --no-verbose -O /tmp/serf.zip https://dl.bintray.com/mitchellh/serf/0.6.3_linux_$serf_arch.zip; do
 			sleep 1
 		done
 
+		# install Serf
 		unzip -d /tmp /tmp/serf.zip
 		mv /tmp/serf /usr/local/bin/serf
 		rm -f /tmp/serf.zip

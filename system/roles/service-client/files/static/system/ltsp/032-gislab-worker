@@ -1,6 +1,6 @@
 case "$MODE" in
 	finalization)
-		if [ "$GISLAB_CLIENT_LOAD_BALANCER_ENABLED" == "True" ]; then
+		if [ "$GISLAB_CLIENT_WORKER_ENABLED" == "True" ]; then
 			chroot $ROOT apt-get --assume-yes --force-yes install apache2 apache2-mpm-worker libapache2-mod-fcgid qgis-mapserver unzip
 
 			# apache
@@ -20,7 +20,7 @@ case "$MODE" in
 			chroot $ROOT a2ensite mapserver
 
 			# serf
-			chroot $ROOT /bin/bash -c "source /usr/local/gislab/functions.sh; gislab_serf_install"
+			chroot $ROOT /bin/bash -c "source /usr/local/gislab/functions.sh; gislab_serf_install 386"
 
 			mkdir -p $ROOT/etc/serf/bin
 			cp $GISLAB_INSTALL_WORKER_ROOT/serf/bin/serf-member-*.sh $ROOT/etc/serf/bin/
