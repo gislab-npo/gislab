@@ -79,7 +79,7 @@
 			<Filename>gislab-client-info.desktop</Filename>
 		</Include>
 		<Include>
-			<Filename>gislab-server-stats.desktop</Filename>
+			<Filename>gislab-stats.desktop</Filename>
 		</Include>
 	</Menu>
 	<DefaultLayout inline="false"/>
