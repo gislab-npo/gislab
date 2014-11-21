@@ -88,8 +88,8 @@ ln -s /mnt/repository /etc/skel/Repository
 ln -s /mnt/share /etc/skel/Share
 ln -s /mnt/barrel /etc/skel/Barrel
 
-# add temporary file system
-ln -s /mnt/temporary /etc/skel/Temporary
+# add quick, temporary in-memory file system
+ln -s /mnt/booster /etc/skel/Booster
 
 
 # create LDAP account
