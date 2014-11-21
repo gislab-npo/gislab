@@ -160,12 +160,6 @@
 - name: Add imincik PPA signing key
   apt_key: id=6CD44B55 url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x25B546906CD44B55 state=present
 
-- name: Add other apt signing keys
-  apt_key: url="{{ item }}" state=present
-  with_items:
-    - http://josm.openstreetmap.de/josm-apt.key
-    - https://dl-ssl.google.com/linux/linux_signing_key.pub
-
 - name: Configure apt cache proxy server
   template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
 
