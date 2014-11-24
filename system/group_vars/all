@@ -116,6 +116,7 @@ GISLAB_VPN_NETWORK: 172.168.50
 # Example:
 # - 192.168.0.8
 # - 192.168.0.9
+# Change requires running upgrade.
 GISLAB_DNS_SERVERS:
 
 # Absolute path to private SSH key which will be used for accessing GIS.lab server.
@@ -190,7 +191,6 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 # - cz
 # Change requires running upgrade.
 GISLAB_CLIENT_LANGUAGES:
-  - sk
 
 # Determines if client access will be restricted by MAC address configuration
 # placed in 'GISLAB_CLIENTS_ALLOWED'.
@@ -206,12 +206,14 @@ GISLAB_UNKNOWN_MAC_POLICY: deny
 # - 1c:75:08:7d:ce:e0
 # Adding additional MAC addresses is done by using "gislab-allowmachines" management script.
 GISLAB_CLIENTS_ALLOWED:
-  - 00:00:00:00:00:00
 
 # List of extra packages to install to client images.
 # Change requires running upgrade.
+# Example:
+# - bc
+# - htop
+# Change requires running upgrade.
 GISLAB_CLIENT_INSTALL_PACKAGES:
-  - bc
 
 # Determines if client image should provide full support for VirtualBox client
 # * no: do not support VirtualBox client

@@ -29,13 +29,17 @@ cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/xfce4/xfconf/xfce-perchannel-xml
 mkdir -p /etc/skel/.config/xfce4/panel
 cp -a $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/xfce4/panel/* /etc/skel/.config/xfce4/panel
 
-# keyboard languages
-GISLAB_CLIENT_LANGUAGES="en,$GISLAB_CLIENT_LANGUAGES" # English language is always available
+# add other keyboard languages then English if configured
+if [ "$GISLAB_CLIENT_LANGUAGES" != "" ]; then
+	languages="en,$GISLAB_CLIENT_LANGUAGES"
+else
+	languages="en"
+fi
 
-langcount=$(grep -o "," <<< "$GISLAB_CLIENT_LANGUAGES" | wc -l)
-variants=$(printf '%0.s,' $(seq 1 $langcount)) # set empty strings separated by comas to get variants working
+# set empty strings separated by comas to get variants working
+variants=$(echo $languages | grep -o "," | tr -d "\n")
 
-sed -i "s/^layouts=/layouts=$GISLAB_CLIENT_LANGUAGES/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
+sed -i "s/^layouts=/layouts=$languages/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
 sed -i "s/^variants=/variants=$variants/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
 
 
