@@ -6,12 +6,16 @@
 # if 'gislab' account already exists.
 
 
-- name: Create GIS.lab administrator user 'gislab'
-  shell: "gislab-adduser -s -g {{ GISLAB_ADMIN_FIRST_NAME }} -l {{ GISLAB_ADMIN_SURNAME }} -m {{ GISLAB_ADMIN_EMAIL }} -p {{ GISLAB_ADMIN_PASSWORD }} gislab && touch /var/lib/gislab/administrator-account.done"
-  when: GISLAB_ADMIN_PASSWORD != ""
+- name: Detect if GIS.lab administrator user account is already created
+  shell: "id gislab || echo 'USER DOES NOT EXIST'"
   args:
-    creates: /var/lib/gislab/administrator-account.done
+    executable: /bin/bash
+  register: admin_account_status
 
-- name: Update GIS.lab administrator user password
+- name: Create GIS.lab administrator user account 'gislab'
+  shell: "gislab-adduser -s -g {{ GISLAB_ADMIN_FIRST_NAME }} -l {{ GISLAB_ADMIN_SURNAME }} -m {{ GISLAB_ADMIN_EMAIL }} -p {{ GISLAB_ADMIN_PASSWORD }} gislab"
+  when: GISLAB_ADMIN_PASSWORD != "" and admin_account_status.stdout == 'USER DOES NOT EXIST'
+
+- name: Update GIS.lab administrator user account password
   shell: "gislab-password -p {{ GISLAB_ADMIN_PASSWORD }} gislab"
   when: GISLAB_ADMIN_PASSWORD != ""
