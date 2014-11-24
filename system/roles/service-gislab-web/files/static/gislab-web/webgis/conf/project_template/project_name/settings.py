@@ -57,7 +57,7 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=people,dc=gis,dc=lab", ldap.SCOPE_SUBTREE
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=groups,dc=gis,dc=lab", ldap.SCOPE_SUBTREE, "(objectClass=posixGroup)")
 AUTH_LDAP_GROUP_TYPE = PosixGroupType()
 # Only users in this group can log in.
-AUTH_LDAP_REQUIRE_GROUP = "cn=labusers,ou=groups,dc=gis,dc=lab"
+AUTH_LDAP_REQUIRE_GROUP = "cn=gislabusers,ou=groups,dc=gis,dc=lab"
 
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
@@ -66,9 +66,9 @@ AUTH_LDAP_USER_ATTR_MAP = {
 	"email": "mail"
 }
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-	"is_active": "cn=labusers,ou=groups,dc=gis,dc=lab",
-	"is_staff": "cn=labadmins,ou=groups,dc=gis,dc=lab",
-	"is_superuser": "cn=labadmins,ou=groups,dc=gis,dc=lab"
+	"is_active": "cn=gislabusers,ou=groups,dc=gis,dc=lab",
+	"is_staff": "cn=gislabadmins,ou=groups,dc=gis,dc=lab",
+	"is_superuser": "cn=gislabadmins,ou=groups,dc=gis,dc=lab"
 }
 
 AUTH_LDAP_GLOBAL_OPTIONS = {

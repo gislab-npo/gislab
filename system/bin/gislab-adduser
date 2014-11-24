@@ -18,9 +18,9 @@ function usage() {
 	-g first name (required)
 	-l last name (required)
 	-m email (required)
-	-p set password for user. If not given it will be automatically generated.
-	-d user description text
-	-s add user to 'labadmins' group to allow 'sudo'
+	-p password (optional - if not given, it will be automatically generated)
+	-d user description (optional)
+	-s add user to superuser's group
 	-h display this help
 	"
 	exit 255
@@ -28,7 +28,7 @@ function usage() {
 
 
 # options
-GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overridden by --password option 
+GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overridden by '-p' option 
 
 while getopts "d:g:l:m:p:sh" OPTION
 do
@@ -93,7 +93,7 @@ ln -s /mnt/booster /etc/skel/Booster
 
 
 # create LDAP account
-ldapadduser $GISLAB_USER labusers # LDAP account
+ldapadduser $GISLAB_USER gislabusers # LDAP account
 chmod go-rwx /home/$GISLAB_USER
 
 # add LDAP user attributes
@@ -133,7 +133,7 @@ EOL
 
 # allow sudo for user if creating superuser account
 if [ "$SUDO" == "yes" ]; then
-	ldapaddusertogroup $GISLAB_USER labadmins
+	ldapaddusertogroup $GISLAB_USER gislabadmins
 fi
 
 
@@ -143,12 +143,12 @@ gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
 
 # create PostgreSQL user account
 sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $GISLAB_USER" # PostgreSQL account
-sudo su - postgres -c "psql -c \"GRANT labusers TO $GISLAB_USER;\""
+sudo su - postgres -c "psql -c \"GRANT gislabusers TO $GISLAB_USER;\""
 sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $GISLAB_USER;\""
 
 # add user to the database superusers group if creating superuser account
 if [ "$SUDO" == "yes" ]; then
-	sudo su - postgres -c "psql -c \"GRANT labadmins TO $GISLAB_USER;\""
+	sudo su - postgres -c "psql -c \"GRANT gislabadmins TO $GISLAB_USER;\""
 fi
 
 
@@ -170,14 +170,14 @@ fi
 
 # create shared directories structure
 mkdir -p /storage/share/$GISLAB_USER # NFS directory
-chown $GISLAB_USER:labusers /storage/share/$GISLAB_USER
+chown $GISLAB_USER:gislabusers /storage/share/$GISLAB_USER
 
 
 # deploy administrator public SSH key
 mkdir -p /home/$GISLAB_USER/.ssh
 chmod 700 /home/$GISLAB_USER/.ssh
 cp /etc/gislab/gislab_ssh_public_key.pub /home/$GISLAB_USER/.ssh/authorized_keys
-chown $GISLAB_USER:labusers -R /home/$GISLAB_USER/.ssh
+chown $GISLAB_USER:gislabusers -R /home/$GISLAB_USER/.ssh
 
 
 # replace user name and password placeholders with real user values
@@ -197,13 +197,13 @@ done
 mkdir -p /home/$GISLAB_USER/.gislab
 chmod 700 /home/$GISLAB_USER/.gislab
 echo "$GISLAB_USER:$GISLAB_USER_PASSWORD" > /home/$GISLAB_USER/.gislab/gislab_${GISLAB_USER}_credentials.txt
-chown $GISLAB_USER:labusers -R /home/$GISLAB_USER/.gislab
+chown $GISLAB_USER:gislabusers -R /home/$GISLAB_USER/.gislab
 
 cp /etc/openvpn/gislab_vpn_ca.crt /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
-chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
+chown $GISLAB_USER:gislabusers /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
 
 cp /etc/openvpn/gislab_vpn_ta.key /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-chown $GISLAB_USER:labusers /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
+chown $GISLAB_USER:gislabusers /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
 chmod 0600 /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
 
 gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"

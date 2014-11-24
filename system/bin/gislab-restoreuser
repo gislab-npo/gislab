@@ -123,11 +123,11 @@ if [ -f home/$GISLAB_USER/.config/user-dirs.dirs ]; then
 	mkdir -p /home/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR)
 fi
 
-chown -R $GISLAB_USER:labusers /home/$GISLAB_USER
+chown -R $GISLAB_USER:gislabusers /home/$GISLAB_USER
 
 # restore share data
 cp -r storage/share/$GISLAB_USER /storage/share/
-chown -R $GISLAB_USER:labusers /storage/share/$GISLAB_USER
+chown -R $GISLAB_USER:gislabusers /storage/share/$GISLAB_USER
 
 # restore database
 sudo -u postgres pg_restore -n $GISLAB_USER -d gislab $GISLAB_USER-db.dump

@@ -67,7 +67,7 @@ fi
 ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 GISLAB_USER_MAIL=$($ldapsearch_cmd "uid=$GISLAB_USER" mail 2>/dev/null | awk '/^mail: / { print $2 }')
 
-if id $GISLAB_USER 2>/dev/null | grep -q '(labadmins)'; then
+if id $GISLAB_USER 2>/dev/null | grep -q '(gislabadmins)'; then
 	if [ -n "$($ldapsearch_cmd -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$GISLAB_USER_MAIL)" 2>/dev/null)" ]; then
 		ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
 dn: cn=root,ou=MailAliases,dc=gis,dc=lab

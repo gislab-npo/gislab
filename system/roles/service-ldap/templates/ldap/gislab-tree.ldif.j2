@@ -19,11 +19,11 @@ description: Default sudoOption's go here
 sudoOption: env_reset
 sudoOption: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:{{ GISLAB_ROOT }}/bin:"
 
-dn: cn=%labadmins,ou=SUDOers,dc=gis,dc=lab
+dn: cn=%gislabadmins,ou=SUDOers,dc=gis,dc=lab
 objectClass: top
 objectClass: sudoRole
-cn: %labadmins
-sudoUser: %labadmins
+cn: %gislabadmins
+sudoUser: %gislabadmins
 sudoHost: ALL
 sudoCommand: ALL
 sudoOption: !authenticate
@@ -39,15 +39,15 @@ cn: root
 mailacceptinggeneralid: root
 maildrop: {{ GISLAB_PROVISIONING_USER }}
 
-dn: cn=labadmins,ou=Groups,dc=gis,dc=lab
+dn: cn=gislabadmins,ou=Groups,dc=gis,dc=lab
 objectClass: posixGroup
-cn: labadmins
+cn: gislabadmins
 gidNumber: 3000
 description: GIS.lab Admins Group
 
-dn: cn=labusers,ou=Groups,dc=gis,dc=lab
+dn: cn=gislabusers,ou=Groups,dc=gis,dc=lab
 objectClass: posixGroup
-cn: labusers
+cn: gislabusers
 gidNumber: 3001
 description: GIS.lab Users Group
 

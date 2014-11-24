@@ -58,12 +58,12 @@
 
 
 # User groups
-- name: Create database superusers group (labadmins)
-  postgresql_user: name=labadmins role_attr_flags=CREATEDB,CREATEROLE,SUPERUSER,NOLOGIN state=present
+- name: Create database superusers group (gislabadmins)
+  postgresql_user: name=gislabadmins role_attr_flags=CREATEDB,CREATEROLE,SUPERUSER,NOLOGIN state=present
   sudo_user: postgres
 
 - name: Create database users group
-  postgresql_user: name=labusers role_attr_flags=NOCREATEDB,NOCREATEROLE,NOSUPERUSER,NOLOGIN state=present
+  postgresql_user: name=gislabusers role_attr_flags=NOCREATEDB,NOCREATEROLE,NOSUPERUSER,NOLOGIN state=present
   sudo_user: postgres
 
 
@@ -118,8 +118,8 @@
   postgresql_db: name=gislab template=template_postgis state=present
   sudo_user: postgres
 
-- name: Grant connection to 'gislab' database for 'labusers'
-  command: psql -c "GRANT CONNECT ON DATABASE gislab TO labusers;"
+- name: Grant connection to 'gislab' database for 'gislabusers'
+  command: psql -c "GRANT CONNECT ON DATABASE gislab TO gislabusers;"
   sudo_user: postgres
 
 

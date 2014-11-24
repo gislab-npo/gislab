@@ -12,13 +12,13 @@
 
 
 # Shared directories
-- name: Create 'repository' mount directory (readable for all, writable only for labadmins)
-  file: path=/storage/repository state=directory owner=root group=labadmins mode=0775
+- name: Create 'repository' mount directory (readable for all, writable only for gislabadmins)
+  file: path=/storage/repository state=directory owner=root group=gislabadmins mode=0775
 
-- name: Create 'share' mount directory (readable for all, writable for file owners or labadmins)
-  file: path=/storage/share state=directory owner=root group=labadmins mode=0775
+- name: Create 'share' mount directory (readable for all, writable for file owners or gislabadmins)
+  file: path=/storage/share state=directory owner=root group=gislabadmins mode=0775
 
-- name: Create 'barrel' mount directory (readable and writable for all labusers)
+- name: Create 'barrel' mount directory (readable and writable for all gislabusers)
   file: path=/storage/barrel state=directory owner=root group=nogroup mode=0775
 
 
