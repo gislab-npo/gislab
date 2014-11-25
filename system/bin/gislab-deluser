@@ -78,14 +78,6 @@ EOL
 	fi
 fi
 
-# remove user from 'vpnusers' group
-ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
-dn: cn=vpnusers,ou=Groups,dc=gis,dc=lab
-changetype: modify
-delete: member
-member: uid=$GISLAB_USER,ou=People,dc=gis,dc=lab
-EOL
-
 # manunaly delete user from additional groups (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
 for GROUP in $(id -nG $GISLAB_USER | grep '[[:space:]]' | sed -r 's/^[^ ]* //'); do
 	ldapdeleteuserfromgroup $GISLAB_USER $GROUP
@@ -97,7 +89,7 @@ sudo su - postgres -c "psql -d gislab -c \"DROP SCHEMA $GISLAB_USER CASCADE\"" #
 sudo su - postgres -c "psql -d gislab -c \"DROP OWNED BY $GISLAB_USER CASCADE\""
 sudo su - postgres -c "dropuser $GISLAB_USER"
 
-rm -rf /storage/share/$GISLAB_USER # NFS directory
+rm -rf /storage/publish/$GISLAB_USER # NFS directory
 
 
 # run account hooks

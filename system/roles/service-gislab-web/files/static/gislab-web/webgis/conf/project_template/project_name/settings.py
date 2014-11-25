@@ -24,7 +24,7 @@ TEMPLATE_DEBUG = False
 
 
 ### GIS.lab Web SETTINGS ###
-GISLAB_WEB_PROJECT_ROOT = '/mnt/share/'
+GISLAB_WEB_PROJECT_ROOT = '/mnt/publish/'
 GISLAB_WEB_MAPSERVER_URL = 'http://ms.gis.lab:90/cgi-bin/qgis_mapserv.fcgi'
 GISLAB_WEB_GUEST_USERNAME = 'guest'
 

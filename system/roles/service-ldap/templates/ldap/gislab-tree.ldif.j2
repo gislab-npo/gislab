@@ -51,8 +51,20 @@ cn: gislabusers
 gidNumber: 3001
 description: GIS.lab Users Group
 
-dn: cn=vpnusers,ou=Groups,dc=gis,dc=lab
-objectClass: groupOfNames
-cn: vpnusers
-member: uid=nonexists
-description: GIS.lab VPN Users Group
+dn: cn=gislabworkers,ou=Groups,dc=gis,dc=lab
+objectClass: posixGroup
+cn: gislabworkers
+gidNumber: 3002
+description: GIS.lab Workers Group
+
+dn: uid=gislabworker,ou=People,dc=gis,dc=lab
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: gislabworker
+cn: gislabworker
+sn: gislabworker
+uidNumber: 2900
+gidNumber: 3002
+homeDirectory: /var/www
+loginShell: /bin/sh

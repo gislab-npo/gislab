@@ -76,8 +76,8 @@ fi
 
 bzip2 $HOME_BACKUP_FILE
 
-# tar share data
-tar -cjf $SHARE_BACKUP_FILE /storage/share/$GISLAB_USER
+# tar published data
+tar -cjf $SHARE_BACKUP_FILE /storage/publish/$GISLAB_USER
 
 # leave root's home dir before sudo to postgres
 cd $TEMP_BACKUP_DIR

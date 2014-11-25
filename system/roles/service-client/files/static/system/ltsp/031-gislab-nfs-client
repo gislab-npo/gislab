@@ -5,7 +5,7 @@ case "$MODE" in
 	sed -i "s/^# Domain.*/Domain = gis.lab/" $ROOT/etc/idmapd.conf	# this is mandatory to set correct user id mapping
 									# also for /home directory
 	mkdir -p $ROOT/mnt/repository
-	mkdir -p $ROOT/mnt/share
 	mkdir -p $ROOT/mnt/barrel
+	mkdir -p $ROOT/mnt/publish
     ;;
 esac

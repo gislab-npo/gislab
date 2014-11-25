@@ -136,12 +136,12 @@ cp etc/idmapd.conf /etc/idmapd.conf
 service idmapd restart
 
 echo "server.gis.lab:/storage/repository /mnt/repository nfs defaults 0 0" >> /etc/fstab
-echo "server.gis.lab:/storage/share /mnt/share nfs defaults 0 0" >> /etc/fstab
 echo "server.gis.lab:/storage/barrel /mnt/barrel nfs defaults 0 0" >> /etc/fstab
+echo "server.gis.lab:/storage/publish /mnt/publish nfs defaults 0 0" >> /etc/fstab
 
 mkdir -p /mnt/repository && mount /mnt/repository
-mkdir -p /mnt/share && mount /mnt/share
 mkdir -p /mnt/barrel && mount /mnt/barrel
+mkdir -p /mnt/publish && mount /mnt/publish
 
 EOF
 	

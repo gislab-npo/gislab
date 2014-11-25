@@ -15,11 +15,11 @@
 - name: Create 'repository' mount directory (readable for all, writable only for gislabadmins)
   file: path=/storage/repository state=directory owner=root group=gislabadmins mode=0775
 
-- name: Create 'share' mount directory (readable for all, writable for file owners or gislabadmins)
-  file: path=/storage/share state=directory owner=root group=gislabadmins mode=0775
-
 - name: Create 'barrel' mount directory (readable and writable for all gislabusers)
   file: path=/storage/barrel state=directory owner=root group=nogroup mode=0775
+
+- name: Create 'publish' mount directory (readable for file owners and gislabworkers, writable for file owners)
+  file: path=/storage/publish state=directory owner=root group=gislabworkers mode=0750
 
 
 # NFS configuration

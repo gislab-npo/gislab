@@ -85,8 +85,8 @@ source $GISLAB_INSTALL_ACCOUNT_ROOT/install.sh
 
 # add shared directories
 ln -s /mnt/repository /etc/skel/Repository
-ln -s /mnt/share /etc/skel/Share
 ln -s /mnt/barrel /etc/skel/Barrel
+ln -s /mnt/publish /etc/skel/Publish
 
 # add quick, temporary in-memory file system
 ln -s /mnt/booster /etc/skel/Booster
@@ -122,14 +122,6 @@ add: description
 description: $GISLAB_USER_DESC
 EOL
 fi
-
-# add user to 'vpnusers' group
-ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
-dn: cn=vpnusers,ou=Groups,dc=gis,dc=lab
-changetype: modify
-add: member
-member: uid=$GISLAB_USER,ou=People,dc=gis,dc=lab
-EOL
 
 # allow sudo for user if creating superuser account
 if [ "$SUDO" == "yes" ]; then
@@ -168,9 +160,9 @@ EOL
 fi
 
 
-# create shared directories structure
-mkdir -p /storage/share/$GISLAB_USER # NFS directory
-chown $GISLAB_USER:gislabusers /storage/share/$GISLAB_USER
+# create publishing directory
+mkdir -p /storage/publish/$GISLAB_USER # NFS directory
+chown $GISLAB_USER:gislabworkers /storage/publish/$GISLAB_USER
 
 
 # deploy administrator public SSH key
