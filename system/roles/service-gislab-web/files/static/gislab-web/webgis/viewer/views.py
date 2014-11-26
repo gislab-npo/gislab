@@ -433,7 +433,7 @@ def user_projects(request, username):
 						project = project_filename[start_index:]
 						url = set_query_parameters(secure_url(request, '/'), {'project': project})
 						ows_url = secure_url(request, reverse('viewer:owsrequest'))
-						wms_url = set_query_parameters(ows_url, {'map': project+'.qgs'})
+						wms_url = set_query_parameters(ows_url, {'map': project})
 						authentication = metadata.authentication
 						# backward compatibility with older version
 						if type(authentication) is dict:
