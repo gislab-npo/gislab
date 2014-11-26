@@ -127,7 +127,7 @@ chown -R $GISLAB_USER:gislabusers /home/$GISLAB_USER
 
 # restore published data
 cp -r storage/publish/$GISLAB_USER /storage/publish/
-chown -R $GISLAB_USER:gislabworkers /storage/publish/$GISLAB_USER
+chown -R $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
 
 # restore database
 sudo -u postgres pg_restore -n $GISLAB_USER -d gislab $GISLAB_USER-db.dump

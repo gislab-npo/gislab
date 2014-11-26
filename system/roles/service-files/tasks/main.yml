@@ -18,8 +18,8 @@
 - name: Create 'barrel' mount directory (readable and writable for all gislabusers)
   file: path=/storage/barrel state=directory owner=root group=nogroup mode=0775
 
-- name: Create 'publish' mount directory (readable for file owners and gislabworkers, writable for file owners)
-  file: path=/storage/publish state=directory owner=root group=gislabworkers mode=0750
+- name: Create 'publish' mount directory (readable for file owners and www-data, writable for file owners)
+  file: path=/storage/publish state=directory owner=root group=root mode=0755
 
 
 # NFS configuration

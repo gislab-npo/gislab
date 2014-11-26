@@ -162,7 +162,8 @@ fi
 
 # create publishing directory
 mkdir -p /storage/publish/$GISLAB_USER # NFS directory
-chown $GISLAB_USER:gislabworkers /storage/publish/$GISLAB_USER
+chown $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
+chmod 750 /storage/publish/$GISLAB_USER
 
 
 # deploy administrator public SSH key

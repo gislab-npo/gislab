@@ -46,7 +46,7 @@ BACKUP_FILE=/storage/backup/gislab-backup-$GISLAB_USER-$DATE.tar
 GISLAB_USER_HOME=/home/$GISLAB_USER
 TEMP_BACKUP_DIR=/tmp/$GISLAB_USER-$DATE
 HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar
-SHARE_BACKUP_FILE=$TEMP_BACKUP_DIR/share.tar.bz2
+PUBLISH_BACKUP_FILE=$TEMP_BACKUP_DIR/publish.tar.bz2
 DB_BACKUP_FILE=$TEMP_BACKUP_DIR/$GISLAB_USER-db.dump
 LDAP_BACKUP_FILE=$TEMP_BACKUP_DIR/$GISLAB_USER-ldap.dump
 
@@ -77,7 +77,7 @@ fi
 bzip2 $HOME_BACKUP_FILE
 
 # tar published data
-tar -cjf $SHARE_BACKUP_FILE /storage/publish/$GISLAB_USER
+tar -cjf $PUBLISH_BACKUP_FILE /storage/publish/$GISLAB_USER
 
 # leave root's home dir before sudo to postgres
 cd $TEMP_BACKUP_DIR
