@@ -196,7 +196,7 @@ class ProjectPage(PublishPage):
 					dialog.default_baselayer.setCurrentIndex(dialog.default_baselayer.findData(base_layer['name']))
 
 		overlays_data = extract_layers(metadata['overlays'])
-		geojson_overlays = metadata.get('layers_drawing', {}).get('layers', {}).keys()
+		geojson_overlays = metadata.get('vector_layers', {}).get('layers', {}).keys()
 		project_overlays = [layer_data['name'] for layer_data in overlays_data]
 		project_overlays.extend(geojson_overlays)
 		hidden_overlays = [layer_data['name'] for layer_data in overlays_data if layer_data.get('hidden')]
@@ -208,10 +208,10 @@ class ProjectPage(PublishPage):
 					layer_name = child_item.text()
 					child_item.setCheckState(Qt.Checked if layer_name in project_overlays else Qt.Unchecked)
 					layers_model = child_item.model()
-					drawing_item = layers_model.columnItem(child_item, 1)
+					vector_item = layers_model.columnItem(child_item, 1)
 					export_item = layers_model.columnItem(child_item, 2)
-					if drawing_item.isCheckable():
-						drawing_item.setCheckState(Qt.Checked if layer_name in geojson_overlays else Qt.Unchecked)
+					if vector_item.isCheckable():
+						vector_item.setCheckState(Qt.Checked if layer_name in geojson_overlays else Qt.Unchecked)
 					if export_item.isCheckable():
 						export_item.setCheckState(Qt.Checked if layer_name in overlays_with_export_to_drawings else Qt.Unchecked)
 					layers_model.columnItem(child_item, 3).setCheckState(Qt.Checked if layer_name in hidden_overlays else Qt.Unchecked)
@@ -355,19 +355,19 @@ class ProjectPage(PublishPage):
 				layer_item.setData(layer, Qt.UserRole)
 				layer_item.setCheckState(Qt.Checked)
 				hidden = QStandardItem()
-				drawing = QStandardItem()
+				vector = QStandardItem()
 				hidden.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
 				hidden.setCheckState(Qt.Unchecked)
 				export = QStandardItem()
 				if is_vector_layer:
 					export.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
 					export.setCheckState(Qt.Checked)
-					drawing.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
-					drawing.setCheckState(Qt.Unchecked)
+					vector.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsTristate)
+					vector.setCheckState(Qt.Unchecked)
 				else:
 					export.setFlags(Qt.ItemIsSelectable)
-					drawing.setFlags(Qt.ItemIsSelectable)
-				return [layer_item, drawing, export, hidden]
+					vector.setFlags(Qt.ItemIsSelectable)
+				return [layer_item, vector, export, hidden]
 
 		if self.overlay_layers_tree:
 			layers_model = QStandardItemModel()

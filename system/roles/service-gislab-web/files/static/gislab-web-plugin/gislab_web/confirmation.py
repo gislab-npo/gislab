@@ -29,8 +29,8 @@ class ConfirmationPage(PublishPage):
 
 	def show(self):
 		datasources = []
-		if self.plugin.metadata.get('layers_drawing'):
-			datasources.append(os.path.join(os.path.dirname(self.plugin.project.fileName()), self.plugin.metadata['layers_drawing']['filename']))
+		if self.plugin.metadata.get('vector_layers'):
+			datasources.append(os.path.join(os.path.dirname(self.plugin.project.fileName()), self.plugin.metadata['vector_layers']['filename']))
 		def collect_layers_datasources(layer_node):
 			for index in range(layer_node.rowCount()):
 				collect_layers_datasources(layer_node.child(index))

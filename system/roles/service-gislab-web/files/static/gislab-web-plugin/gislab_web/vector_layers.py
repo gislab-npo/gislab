@@ -16,17 +16,17 @@ from PyQt4.QtCore import *
 from wizard import PublishPage
 
 
-class DrawingPage(PublishPage):
+class VectorLayersPage(PublishPage):
 
-	def get_drawing_filename(self):
-		return "{0}_{1}.geojson".format(os.path.splitext(self.plugin.project.fileName())[0], "drawing")
+	def get_geojson_filename(self):
+		return "{0}.geojson".format(os.path.splitext(self.plugin.project.fileName())[0])
 
-	def get_drawing_layers(self, node=None):
+	def get_vector_layers(self, node=None):
 		if node is None:
 			node = self.plugin.get_project_layers()
 		layers = []
 		for child in node.children:
-			layers.extend(self.get_drawing_layers(child))
+			layers.extend(self.get_vector_layers(child))
 		if node.layer:
 			layer = node.layer
 			layers_model = self.dialog.treeView.model()
@@ -37,7 +37,7 @@ class DrawingPage(PublishPage):
 
 	def initialize(self, metadata=None):
 		vector_layers = [layer for layer in self.plugin.iface.legendInterface().layers() if layer.type() == QgsMapLayer.VectorLayer]
-		last_config_layers = metadata.get('layers_drawing', {}).get('layers', {}) if metadata else {}
+		last_config_layers = metadata.get('vector_layers', {}).get('layers', {}) if metadata else {}
 		layout = QVBoxLayout()
 		for layer in vector_layers:
 			layer_name = layer.name()
@@ -85,47 +85,47 @@ class DrawingPage(PublishPage):
 			layout.addWidget(row_widget)
 
 		layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Expanding))
-		self.dialog.drawingLayers.widget().setLayout(layout)
+		self.dialog.vectorLayers.widget().setLayout(layout)
 
 	def show(self):
-		vector_layers = [layer for layer in self.plugin.iface.legendInterface().layers() if layer.type() == QgsMapLayer.VectorLayer]
-		drawing_layers = self.get_drawing_layers()
-		for layer in vector_layers:
-			layer_widget = self.dialog.drawingLayers.findChild(QWidget, layer.name())
-			is_drawing_layer = layer in drawing_layers
-			layer_widget.setVisible(is_drawing_layer)
-			if is_drawing_layer and layer.selectedFeatureCount() == 0:
+		all_vector_layers = [layer for layer in self.plugin.iface.legendInterface().layers() if layer.type() == QgsMapLayer.VectorLayer]
+		exported_vector_layers = self.get_vector_layers()
+		for layer in all_vector_layers:
+			layer_widget = self.dialog.vectorLayers.findChild(QWidget, layer.name())
+			is_geojson_layer = layer in exported_vector_layers
+			layer_widget.setVisible(is_geojson_layer)
+			if is_geojson_layer and layer.selectedFeatureCount() == 0:
 				layer_widget.findChild(QCheckBox).setEnabled(False)
 
 	def get_metadata(self):
-		drawing_layers_info = {}
-		drawing_layers = self.get_drawing_layers()
-		if drawing_layers:
-			for layer in drawing_layers:
-				layer_widget = self.dialog.drawingLayers.findChild(QWidget, layer.name())
+		vector_layers_info = {}
+		vector_layers = self.get_vector_layers()
+		if vector_layers:
+			for layer in vector_layers:
+				layer_widget = self.dialog.vectorLayers.findChild(QWidget, layer.name())
 				title_combo = layer_widget.findChild(QComboBox, 'title')
 				description_combo = layer_widget.findChild(QComboBox, 'description')
-				drawing_layers_info[layer.name()] = {
+				vector_layers_info[layer.name()] = {
 					'title_attribute': title_combo.itemData(title_combo.currentIndex()),
 					'description_attribute': description_combo.itemData(description_combo.currentIndex())
 				}
 			return {
-				'layers_drawing': {
-					'filename': self.get_drawing_filename(),
-					'layers': drawing_layers_info
+				'vector_layers': {
+					'filename': self.get_geojson_filename(),
+					'layers': vector_layers_info
 				}
 			}
 
 	def before_publish(self):
-		drawing_layers = self.get_drawing_layers()
-		if drawing_layers:
+		vector_layers = self.get_vector_layers()
+		if vector_layers:
 			map_canvas = self.plugin.iface.mapCanvas()
 			fields = QgsFields()
 			fields.append(QgsField("title", type=QVariant.String))
 			fields.append(QgsField("description", type=QVariant.String))
-			writer = QgsVectorFileWriter(self.get_drawing_filename(), "utf-8", fields, QGis.WKBUnknown, map_canvas.mapRenderer().destinationCrs(), "GeoJSON")
-			for layer in drawing_layers:
-				layer_widget = self.dialog.drawingLayers.findChild(QWidget, layer.name())
+			writer = QgsVectorFileWriter(self.get_geojson_filename(), "utf-8", fields, QGis.WKBUnknown, map_canvas.mapRenderer().destinationCrs(), "GeoJSON")
+			for layer in vector_layers:
+				layer_widget = self.dialog.vectorLayers.findChild(QWidget, layer.name())
 				title_combo = layer_widget.findChild(QComboBox, 'title')
 				description_combo = layer_widget.findChild(QComboBox, 'description')
 				title_attribute = title_combo.itemData(title_combo.currentIndex())
