@@ -1,11 +1,12 @@
 group {
 
+  # always enabled MAC address (doesn't exist in real world)
+  host 020000000000 { hardware ethernet 02:00:00:00:00:00; }
+
 {% if GISLAB_CLIENTS_ALLOWED %}
 {% for mac in GISLAB_CLIENTS_ALLOWED %}
   host {{ mac|replace(":", "") }} { hardware ethernet {{ mac }}; }
 {% endfor %}
-{% else %}
-  host 020000000000 { hardware ethernet 02:00:00:00:00:00; }
 {% endif %}
 
 }
