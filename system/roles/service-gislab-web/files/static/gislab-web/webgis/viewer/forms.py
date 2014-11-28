@@ -1,5 +1,6 @@
 from django import forms
 #from django.forms.widgets import SelectMultiple
+from webgis.libs.forms import CaseInsensitiveForm
 
 
 class MultipleStringsField(forms.CharField):
@@ -44,7 +45,7 @@ class ExtentField(forms.CharField):
 				raise forms.ValidationError("Invalid BBOX value!")
 		return None
 
-class ViewerForm(forms.Form):
+class ViewerForm(CaseInsensitiveForm):
 	project = forms.CharField(required=False)
 	base = forms.CharField(required=False)
 	overlay = forms.CharField(required=False)

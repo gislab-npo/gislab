@@ -140,7 +140,7 @@ def tile(request, project_hash, publish, layers_hash=None, z=None, x=None, y=Non
 			publish=publish,
 			name=layers_hash,
 			provider_layers=params['LAYERS'].encode("utf-8"),
-			provider_url=set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'map': project}),
+			provider_url=set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'MAP': project}),
 			image_format=format,
 			tile_size=256,
 			metasize=5,
@@ -160,7 +160,7 @@ def legend(request, project_hash, publish, layer_hash=None, zoom=None, format=No
 			publish=publish,
 			name=layer_hash,
 			provider_layers=params['LAYER'].encode('utf-8'),
-			provider_url=set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'map': project}),
+			provider_url=set_query_parameters(settings.GISLAB_WEB_MAPSERVER_URL, {'MAP': project}),
 			image_format=format,
 		)
 		params.pop('PROJECT')
@@ -213,16 +213,25 @@ def parse_layers_param(layers_string, layers_capabilities):
 			parent['layers'].append(layer)
 	return tree
 
+@login_required
+def vector_layers(request):
+	params = {k.upper(): v for k, v in request.GET.iteritems()}
+	project = params.get('PROJECT')
+	if project:
+		project = os.path.splitext(project)[0]
+		drawing_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, '{0}.geojson'.format(project))
+		if os.path.exists(drawing_filename):
+			return HttpResponse(open(drawing_filename, 'r').read(), content_type='application/json')
+	raise Http404
+
 
 def page(request):
-	# make GET parameters not case sensitive
-	params = {k.lower(): v for k, v in request.GET.iteritems()} # change GET parameters names to lowercase
-	form = forms.ViewerForm(params)
+	form = forms.ViewerForm(request.GET)
 	if not form.is_valid():
 		raise Http404
 
 	context = {'dpi': 96}
-	project = form.cleaned_data['project']
+	project = form.cleaned_data['PROJECT']
 
 	if project:
 		project = os.path.splitext(project)[0]
@@ -264,7 +273,7 @@ def page(request):
 	context['user'] = request.user
 
 	if project:
-		ows_url = set_query_parameters(reverse('viewer:owsrequest'), {'map': project+'.qgs'})
+		ows_url = set_query_parameters(reverse('viewer:owsrequest'), {'MAP': project+'.qgs'})
 		context['units'] = {'meters': 'm', 'feet': 'ft', 'miles': 'mi', 'degrees': 'dd' }[metadata.units] or 'dd'
 		use_mapcache = metadata.use_mapcache
 		project_tile_resolutions = metadata.tile_resolutions
@@ -286,7 +295,7 @@ def page(request):
 
 		# BASE LAYERS
 		baselayers_tree = None
-		base = form.cleaned_data['base']
+		base = form.cleaned_data['BASE']
 		if base:
 			base_layers_capabilities = collect_layers_capabilities(metadata.base_layers)
 			try:
@@ -302,7 +311,7 @@ def page(request):
 		context['base_layers'] = json.dumps(baselayers_tree)
 
 		# OVERLAYS LAYERS
-		layers = form.cleaned_data['overlay']
+		layers = form.cleaned_data['OVERLAY']
 		# override layers tree with LAYERS GET parameter if provided
 		if layers:
 			overlays_capabilities = collect_layers_capabilities(metadata.overlays) if metadata.overlays else {}
@@ -334,7 +343,7 @@ def page(request):
 			'ows_url': ows_url,
 			'wms_url': urllib.unquote(secure_url(request, ows_url)),
 			'project_extent': metadata.extent,
-			'zoom_extent': form.cleaned_data['extent'] or metadata.zoom_extent,
+			'zoom_extent': form.cleaned_data['EXTENT'] or metadata.zoom_extent,
 			'print_composers': metadata.composer_templates if not context['user'].is_guest else None,
 			'root_title': metadata.title,
 			'author': metadata.contact_person,
@@ -349,7 +358,8 @@ def page(request):
 			'publish_user': metadata.gislab_user,
 			'publish_date': metadata.publish_date,
 			'selection_color': metadata.selection_color[:-2], #strip alpha channel,
-			'topics': json.dumps(metadata.topics) if metadata.topics else ''
+			'topics': json.dumps(metadata.topics) if metadata.topics else '',
+			'vector_layers': metadata.vector_layers is not None
 		})
 		if metadata.message:
 			valid_until = datetime.datetime.strptime(metadata.message['valid_until'], "%d.%m.%Y").date()
@@ -377,7 +387,7 @@ def page(request):
 			'projection': 'EPSG:3857',
 			'units': 'dd'
 		})
-		context['zoom_extent'] = form.cleaned_data['extent'] or context['project_extent']
+		context['zoom_extent'] = form.cleaned_data['EXTENT'] or context['project_extent']
 		context['base_layers'] = json.dumps([OSM_LAYER, GOOGLE_LAYERS['GHYBRID']])
 
 	google = False
@@ -387,7 +397,7 @@ def page(request):
 				google = True
 				break
 	context['google'] = google
-	context['drawings'] = form.cleaned_data['drawings']
+	context['drawings'] = form.cleaned_data['DRAWINGS']
 
 	context['gislab_unique_id'] = GISLAB_VERSION.get('GISLAB_UNIQUE_ID', 'unknown')
 	context['gislab_version'] = GISLAB_VERSION.get('GISLAB_VERSION', 'unknown')
@@ -430,10 +440,10 @@ def user_projects(request, username):
 					metadata_filename = os.path.splitext(project_filename)[0] + '.meta'
 					try:
 						metadata = MetadataParser(metadata_filename)
-						project = project_filename[start_index:]
-						url = set_query_parameters(secure_url(request, '/'), {'project': project})
+						project = os.path.splitext(project_filename[start_index:])[0]
+						url = set_query_parameters(secure_url(request, '/'), {'PROJECT': project})
 						ows_url = secure_url(request, reverse('viewer:owsrequest'))
-						wms_url = set_query_parameters(ows_url, {'map': project})
+						wms_url = set_query_parameters(ows_url, {'MAP': project+'.qgs'})
 						authentication = metadata.authentication
 						# backward compatibility with older version
 						if type(authentication) is dict:

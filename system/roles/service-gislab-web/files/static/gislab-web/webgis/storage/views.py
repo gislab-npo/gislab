@@ -41,10 +41,10 @@ def drawing(request):
 	else:
 		form = forms.DrawingHistoryForm(request.GET)
 		if form.is_valid():
-			user = form.cleaned_data["user"]
-			project = form.cleaned_data["project"]
-			start = form.cleaned_data["start"] or 0
-			limit = form.cleaned_data["limit"] or 20
+			user = form.cleaned_data["USER"]
+			project = form.cleaned_data["PROJECT"]
+			start = form.cleaned_data["START"] or 0
+			limit = form.cleaned_data["LIMIT"] or 20
 			page = int(start/limit)+1
 			paginator = Paginator(Drawing.objects.filter(user=user, project=project) , limit)
 			try:

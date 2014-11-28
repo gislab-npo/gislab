@@ -1,23 +1,23 @@
 from django import forms
 
+from webgis.libs.forms import CaseInsensitiveForm, CaseInsensitiveModelForm
 from webgis.storage.models import Ball, Drawing
 
 
-class GetBallForm(forms.Form):
-	ID = forms.ModelChoiceField(queryset=Ball.objects.all(), help_text=u"Ball ID.")
+class GetBallForm(CaseInsensitiveForm):
+	id = forms.ModelChoiceField(queryset=Ball.objects.all(), help_text=u"Ball ID.")
 
-
-class BallDataForm(forms.ModelForm):
+class BallDataForm(CaseInsensitiveModelForm):
 	class Meta:
 		model = Ball
 		fields = ["data", "mime_type"]
 
 
-class DrawingRecordForm(forms.ModelForm):
+class DrawingRecordForm(CaseInsensitiveModelForm):
 	class Meta:
 		model = Drawing
 
-class DrawingHistoryForm(forms.Form):
+class DrawingHistoryForm(CaseInsensitiveForm):
 	user = forms.CharField(required=True)
 	project = forms.CharField(required=True)
 	start = forms.IntegerField(min_value=0, required=False)

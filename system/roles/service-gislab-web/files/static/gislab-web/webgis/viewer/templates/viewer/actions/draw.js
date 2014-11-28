@@ -83,7 +83,7 @@ action = new WebGIS.DrawAction({
 	}),
 	{% else %}
 	drawingsHistoryProxy: new WebGIS.DrawingsHttpProxy({
-		url: Ext.urlAppend('{% url "storage:drawing" %}', Ext.urlEncode({user: '{{ user.username }}', project: '{{ project }}'})),
+		url: Ext.urlAppend('{% url "storage:drawing" %}', Ext.urlEncode({USER: '{{ user.username }}', PROJECT: '{{ project }}'})),
 		user: '{{ user.username }}',
 		project: '{{ project }}'
 	}),
