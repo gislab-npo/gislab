@@ -5,7 +5,7 @@ group {
   host {{ mac|replace(":", "") }} { hardware ethernet {{ mac }}; }
 {% endfor %}
 {% else %}
-  host 000000000000 { hardware ethernet 00:00:00:00:00:00; }
+  host 020000000000 { hardware ethernet 02:00:00:00:00:00; }
 {% endif %}
 
 }
