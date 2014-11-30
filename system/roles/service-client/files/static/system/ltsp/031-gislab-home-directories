@@ -7,7 +7,6 @@ case "$MODE" in
 DESKTOP=Desktop
 DOWNLOAD=Downloads
 TEMPLATES=Templates
-PUBLICSHARE=Public
 DOCUMENTS=Documents
 MUSIC=Documents/Music
 PICTURES=Documents/Pictures
