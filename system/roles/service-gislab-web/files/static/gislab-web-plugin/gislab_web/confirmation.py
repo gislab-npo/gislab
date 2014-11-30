@@ -45,7 +45,7 @@ class ConfirmationPage(PublishPage):
 			<head>{0}</head>
 			<body>
 				<p><h4>Project '{1}' was successfully published.</h4></p>
-				<p>Copy all project files to '~/Share/{5}' folder and visit <a href="{6}/share">{6}/share</a> page to load this project in GIS.lab Web.</p>
+				<p>Copy all project files to '~/Publish/{5}' folder on GIS.lab server and visit GIS.lab User page <a href="{6}/user">{6}/user</a> to launch this project in GIS.lab Web.</p>
 
 				<p><h4>Project files:</h4></p>
 				<ul>
