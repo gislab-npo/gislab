@@ -15,6 +15,6 @@ case "$MODE" in
                 KERNEL_ARCH="generic-lts-raring"
             ;;
         esac
-        LATE_PACKAGES="$LATE_PACKAGES linux-image-$KERNEL_ARCH"
+        LATE_PACKAGES="$LATE_PACKAGES linux-image-$KERNEL_ARCH linux-headers-$KERNEL_ARCH"
     ;;
 esac
