@@ -14,7 +14,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 from wizard import PublishPage
-from summary import CSS_STYLE
+from publish import CSS_STYLE
 
 
 GISLAB_WEB_URL = 'https://web.gis.lab'
