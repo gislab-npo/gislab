@@ -1,17 +1,14 @@
 #!ipxe
 
-# get network configuration from DHCP
+# NETWORK CONFIGURATION FROM DHCP
 dhcp
 
-# configure network manually
+# MANUAL NETWORK CONFIGURATION
 # ifopen net0
 # set net0/ip 192.168.50.99
 # set net0/netmask 255.255.255.0
 # set net0/gateway 192.168.50.5
 # set dns 192.168.50.5
 
-# print network information
-# route
-# read foo
-
+# BOOT
 chain http://boot.gis.lab/i386?mac=${net0/mac}
