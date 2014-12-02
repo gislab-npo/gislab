@@ -48,7 +48,7 @@ if [ $(id -u) -ne 0 ]; then
 	exit 1
 fi
 
-PRESEED_CONF="$(dirname $(readlink -f $0))/gislab-unit.seed.template"
+PRESEED_CONF="$(dirname $(readlink -f $0))/preseed/gislab-unit.seed.template"
 MOUNT_DIR="/tmp/gislab-unit-iso-mnt"
 
 mkdir -p $MOUNT_DIR
