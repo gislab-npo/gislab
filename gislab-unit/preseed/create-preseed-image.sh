@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 
 set -e
@@ -56,7 +56,7 @@ mkdir -p $WORK_DIR
 mkdir -p $ROOT_DIR
 
 # clean up when something go wrong
-trap clean_up SIGHUP SIGINT SIGKILL ERR
+trap clean_up SIGHUP SIGINT SIGKILL
 
 sudo mount -o loop $SRC_IMAGE $MOUNT_DIR
 rsync -a $MOUNT_DIR/ $ROOT_DIR/
