@@ -30,13 +30,10 @@
   - name: Add 'noatime' parameter to root partition in /etc/fstab
     lineinfile: dest=/etc/fstab state=present regexp='(.*)\/.*ext4.*' line='\1/ ext4 noatime,nodiratime,errors=remount-ro 0 1' backrefs=yes
 
-  - name: Move temporary files and logs to tmpfs
+  - name: Move temporary files to tmpfs
     lineinfile: dest=/etc/fstab state=present line='{{ item }}'
     with_items:
       - tmpfs   /tmp       tmpfs   defaults,noatime,mode=1777   0  0
-      - tmpfs   /var/spool tmpfs   defaults,noatime,mode=1777   0  0
-      - tmpfs   /var/tmp   tmpfs   defaults,noatime,mode=1777   0  0
-      - tmpfs   /var/log   tmpfs   defaults,noatime,mode=0755   0  0
 
   - name: Adjust swappiness
     sysctl: name="{{ item.name }}" value="{{ item.value }}" state=present sysctl_set=yes
