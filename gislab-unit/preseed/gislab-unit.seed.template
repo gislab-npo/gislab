@@ -42,9 +42,9 @@ d-i partman-md/confirm boolean true
 
 ### Account setup
 d-i passwd/user-fullname string GIS.lab Unit Administrator
-d-i passwd/username string gislabunit
-d-i passwd/user-password password gislabunit
-d-i passwd/user-password-again password gislabunit
+d-i passwd/username string ubuntu
+d-i passwd/user-password password ubuntu
+d-i passwd/user-password-again password ubuntu
 d-i user-setup/allow-password-weak boolean true
 d-i user-setup/encrypt-home boolean false
 

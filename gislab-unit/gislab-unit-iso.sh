@@ -13,7 +13,7 @@ usage () {
 	echo "  -p APT proxy server (e.g. http://192.168.1.10:3142) - optional"
 	echo "  -i source installation ISO image"
 	echo "  -w working directory with enough disk space (two and half time larger then ISO image size)"
-	echo "  -k SSH public key for default admin account 'gislabunit' - optional"
+	echo "  -k SSH public key for default user account 'ubuntu' - optional"
 	echo
 	exit 1
 }
@@ -71,11 +71,11 @@ sed -i "s;###TIMEZONE###;$TIMEZONE;" preseed/gislab-unit.seed
 if [ -n "$SSH_PUBLIC_KEY" ]; then
 	cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_public_key
 
-	sed -i 's|.*###DUMMY_COMMAND###*.|mkdir /target/home/gislabunit/.ssh; \\\
-cp /cdrom/ssh_public_key /target/home/gislabunit/.ssh/authorized_keys; \\\
-chroot /target chown -R gislabunit:gislabunit /home/gislabunit/.ssh; \\\
-chroot /target chmod 0700 /home/gislabunit/.ssh; \\\
-chroot /target chmod 0600 /home/gislabunit/.ssh/authorized_keys|' preseed/gislab-unit.seed
+	sed -i 's|.*###DUMMY_COMMAND###*.|mkdir /target/home/ubuntu/.ssh; \\\
+cp /cdrom/ssh_public_key /target/home/ubuntu/.ssh/authorized_keys; \\\
+chroot /target chown -R ubuntu:ubuntu /home/ubuntu/.ssh; \\\
+chroot /target chmod 0700 /home/ubuntu/.ssh; \\\
+chroot /target chmod 0600 /home/ubuntu/.ssh/authorized_keys|' preseed/gislab-unit.seed
 fi
 
 sed -i 's/^timeout.*/timeout 3/' isolinux/isolinux.cfg
