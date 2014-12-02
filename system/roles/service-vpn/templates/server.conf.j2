@@ -5,7 +5,7 @@ ca gislab_vpn_ca.crt
 cert gislab_vpn_server.crt
 key gislab_vpn_server.key
 dh gislab_vpn_dh1024.pem
-server {{ GISLAB_VPN_NETWORK }}.0 255.255.255.0
+server 172.{{ GISLAB_NETWORK_AS_LIST[1] }}.{{ GISLAB_NETWORK_AS_LIST[2] }}.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "route {{ GISLAB_NETWORK }}.0 255.255.255.0"
 push "dhcp-option DOMAIN gis.lab"

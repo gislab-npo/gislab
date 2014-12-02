@@ -105,12 +105,6 @@ GISLAB_NETWORK_DEVICE: eth0
 # Change requires GIS.lab re-installation.
 GISLAB_NETWORK: 192.168.50
 
-# First three network octets of GIS.lab VPN network number.
-# NOTICE: due the inconvenient network configuration
-# VPN service is not working if provider is VirtualBox.
-# Change requires running upgrade.
-GISLAB_VPN_NETWORK: 172.168.50
-
 # List of DNS servers which will be used in addition to GIS.lab's internal DNS
 # server (for example for resolving local DNS records of your LAN).
 # Example:

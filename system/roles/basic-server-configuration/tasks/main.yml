@@ -53,6 +53,9 @@
   set_fact:
     GISLAB_SERVER_ARCHITECTURE: "{{ ansible_architecture }}"
 
+- name: Set GIS.lab network as list
+  set_fact:
+    GISLAB_NETWORK_AS_LIST: "{{ GISLAB_NETWORK|split_string('.') }}"
 
 - name: Set GIS.lab network server IP
   set_fact:
@@ -80,7 +83,6 @@
     GISLAB_APT_HTTP_PROXY="{{ GISLAB_APT_HTTP_PROXY }}"\n
     GISLAB_NETWORK_DEVICE="{{ GISLAB_NETWORK_DEVICE }}"\n
     GISLAB_NETWORK="{{ GISLAB_NETWORK }}"\n
-    GISLAB_VPN_NETWORK="{{ GISLAB_VPN_NETWORK }}"\n
     GISLAB_NETWORK_SERVER_IP="{{ GISLAB_NETWORK_SERVER_IP }}"\n
     GISLAB_DNS_SERVERS="{{ GISLAB_DNS_SERVERS }}"\n
     GISLAB_SERVER_EMAIL_RELAY_SERVER="{{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}"\n
