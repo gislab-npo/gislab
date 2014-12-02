@@ -1,14 +1,47 @@
 #!ipxe
 
-# NETWORK CONFIGURATION FROM DHCP
+# iPXE version: git+d644ad41f5a17315ab72f6ebeeecf895f7d41679
+# compile: make EMBED=../boot-gislab.ipxe
+
+### MENU
+:start
+menu GIS.lab client boot menu
+item
+item auto        Automatic GIS.lab detection
+item manual      Manual GIS.lab connection
+item
+item --gap -- ------------------------------ Utilities -----------------------------------
+item shell              iPXE shell
+item reboot             Reboot
+item exit               Exit (boot local disk)
+choose --default auto --timeout 5000 target && goto ${target}
+
+
+### GIS.lab
+:auto
 dhcp
-
-# MANUAL NETWORK CONFIGURATION
-# ifopen net0
-# set net0/ip 192.168.50.99
-# set net0/netmask 255.255.255.0
-# set net0/gateway 192.168.50.5
-# set dns 192.168.50.5
-
-# BOOT
+route
 chain http://boot.gis.lab/i386?mac=${net0/mac}
+
+:manual
+echo -n GIS.lab network (example: 192.168.50): && read gnetwork
+ifopen net0
+set net0/ip ${gnetwork}.251
+set net0/netmask 255.255.255.0
+set net0/gateway ${gnetwork}.5
+set dns ${gnetwork}.5
+chain http://${gnetwork}.5/i386?mac=${net0/mac}
+
+
+### UTILITIES
+:shell
+echo Type exit to get the back to the menu
+shell
+set menu-timeout 0
+goto start
+
+:reboot
+reboot
+
+:exit
+exit
