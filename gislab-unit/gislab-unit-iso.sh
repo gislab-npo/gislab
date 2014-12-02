@@ -1,17 +1,16 @@
 #!/bin/bash
-#
 
 set -e
 
 usage () {
 	echo
-	echo "This script creates GIS.lab Unit installation ISO image with custom preseed configuration."
+	echo "Create GIS.lab Unit installation ISO image."
 	echo
 	echo " USAGE: $(basename $0) -s <country code> -t <timezone> [-p <apt proxy server>] -i <ISO image> -w <working directory> [-k <SSH public key>]"
 	echo
 	echo "  -s country code (e.g. SK)"
 	echo "  -t timezone (e.g. Europe/Bratislava)"
-	echo "  -p address of APT proxy server (e.g. http://192.168.1.10:3142) - optional"
+	echo "  -p APT proxy server (e.g. http://192.168.1.10:3142) - optional"
 	echo "  -i source installation ISO image"
 	echo "  -w working directory with enough disk space (two and half time larger then ISO image size)"
 	echo "  -k SSH public key for default admin account 'gislabunit' - optional"
@@ -83,7 +82,7 @@ sed -i 's/^timeout.*/timeout 3/' isolinux/isolinux.cfg
 sed -i 's/^default.*/default gislab-unit/' isolinux/txt.cfg
 sed -i '/^default gislab-unit/a\
 label gislab-unit\
-  menu label ^Install GIS.lab Unit Server\
+  menu label ^Install GIS.lab Server\
   kernel /install/vmlinuz\
   append file=/cdrom/preseed/gislab-unit.seed vga=788 initrd=/install/initrd.gz debian-installer/locale=en_US.UTF-8 console-setup/ask_detect=false keyboard-configuration/layout="English (US)" keyboard-configuration/variant="English (US)" quiet --' isolinux/txt.cfg
 
@@ -99,5 +98,5 @@ rm -rf $MOUNT_DIR
 rm -rf $ROOT_DIR
 
 echo
-echo "GIS.lab Unit ISO Image: $WORK_DIR/gislab-unit.iso"
+echo "GIS.lab Unit ISO image: $WORK_DIR/gislab-unit.iso"
 echo
