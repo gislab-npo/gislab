@@ -91,7 +91,7 @@ cd ..
 
 rm -f isolinux/boot.cat
 
-genisoimage -o ubuntu-preseed.iso -b isolinux/isolinux.bin \
+genisoimage -o gislab-unit.iso -b isolinux/isolinux.bin \
             -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
             -boot-info-table -iso-level 2 -r root/
 
@@ -99,5 +99,5 @@ rm -rf $MOUNT_DIR
 rm -rf $ROOT_DIR
 
 echo
-echo "New ISO Image: $WORK_DIR/ubuntu-preseed.iso"
+echo "GIS.lab Unit ISO Image: $WORK_DIR/gislab-unit.iso"
 echo
