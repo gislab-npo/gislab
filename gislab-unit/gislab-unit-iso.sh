@@ -90,9 +90,13 @@ cd ..
 
 rm -f isolinux/boot.cat
 
-genisoimage -o gislab-unit.iso -b isolinux/isolinux.bin \
-            -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
-            -boot-info-table -iso-level 2 -r root/
+#genisoimage -o gislab-unit.iso -b isolinux/isolinux.bin \
+#            -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
+#            -boot-info-table -iso-level 2 -r root/
+
+mkisofs -D -r -V "GIS.lab Unit" -cache-inodes -J -l -b isolinux/isolinux.bin \
+	-c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table \
+	-o gislab-unit.iso root/
 
 rm -rf $MOUNT_DIR
 rm -rf $ROOT_DIR
