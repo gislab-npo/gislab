@@ -1,6 +1,9 @@
 ---
 
-- hosts: gislab-unit
+# gislab-unit.inventory: gislab-unit ansible_ssh_host=<IP-address> ansible_ssh_user=gislabunit
+# $ ansible-playbook --inventory=gislab-unit.inventory --private-key=<private-SSH-key-file> gislab-unit/gislab-unit.yml
+
+- hosts: all
   sudo: yes
 
   handlers:
@@ -23,7 +26,6 @@
     - mc
     - htop
     - tmux
-
 
   - name: Add 'noatime' parameter to root partition in /etc/fstab
     lineinfile: dest=/etc/fstab state=present regexp='(.*)\/.*ext4.*' line='\1/ ext4 noatime,nodiratime,errors=remount-ro 0 1' backrefs=yes
