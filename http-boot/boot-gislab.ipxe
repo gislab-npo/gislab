@@ -8,7 +8,7 @@
 menu GIS.lab client boot menu
 item
 item auto        Automatic GIS.lab detection
-item manual      Manual GIS.lab connection
+item manual      Manual GIS.lab detection
 item
 item --gap -- ------------------------------ Utilities -----------------------------------
 item shell              iPXE shell
