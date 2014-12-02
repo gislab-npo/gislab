@@ -1,20 +1,19 @@
-#!/bin/sh
-#
+#!/bin/bash
 
 set -e
 
 usage () {
 	echo
-	echo "This script creates GIS.lab Unit installation ISO image with custom preseed configuration."
+	echo "Create GIS.lab Unit installation ISO image."
 	echo
 	echo " USAGE: $(basename $0) -s <country code> -t <timezone> [-p <apt proxy server>] -i <ISO image> -w <working directory> [-k <SSH public key>]"
 	echo
 	echo "  -s country code (e.g. SK)"
 	echo "  -t timezone (e.g. Europe/Bratislava)"
-	echo "  -p address of APT proxy server (e.g. http://192.168.1.10:3142) - optional"
+	echo "  -p APT proxy server (e.g. http://192.168.1.10:3142) - optional"
 	echo "  -i source installation ISO image"
 	echo "  -w working directory with enough disk space (two and half time larger then ISO image size)"
-	echo "  -k SSH public key for default admin account 'gislabunit' - optional"
+	echo "  -k SSH public key for default user account 'ubuntu' - optional"
 	echo
 	exit 1
 }
@@ -48,7 +47,7 @@ if [ $(id -u) -ne 0 ]; then
 	exit 1
 fi
 
-PRESEED_CONF="$(dirname $(readlink -f $0))/gislab-unit.seed.template"
+PRESEED_CONF="$(dirname $(readlink -f $0))/preseed/gislab-unit.seed.template"
 MOUNT_DIR="/tmp/gislab-unit-iso-mnt"
 
 mkdir -p $MOUNT_DIR
@@ -56,7 +55,7 @@ mkdir -p $WORK_DIR
 mkdir -p $ROOT_DIR
 
 # clean up when something go wrong
-trap clean_up SIGHUP SIGINT SIGKILL ERR
+trap clean_up SIGHUP SIGINT SIGKILL
 
 sudo mount -o loop $SRC_IMAGE $MOUNT_DIR
 rsync -a $MOUNT_DIR/ $ROOT_DIR/
@@ -72,18 +71,18 @@ sed -i "s;###TIMEZONE###;$TIMEZONE;" preseed/gislab-unit.seed
 if [ -n "$SSH_PUBLIC_KEY" ]; then
 	cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_public_key
 
-	sed -i 's|.*###DUMMY_COMMAND###*.|mkdir /target/home/gislabunit/.ssh; \\\
-cp /cdrom/ssh_public_key /target/home/gislabunit/.ssh/authorized_keys; \\\
-chroot /target chown -R gislabunit:gislabunit /home/gislabunit/.ssh; \\\
-chroot /target chmod 0700 /home/gislabunit/.ssh; \\\
-chroot /target chmod 0600 /home/gislabunit/.ssh/authorized_keys|' preseed/gislab-unit.seed
+	sed -i 's|.*###DUMMY_COMMAND###*.|mkdir /target/home/ubuntu/.ssh; \\\
+cp /cdrom/ssh_public_key /target/home/ubuntu/.ssh/authorized_keys; \\\
+chroot /target chown -R ubuntu:ubuntu /home/ubuntu/.ssh; \\\
+chroot /target chmod 0700 /home/ubuntu/.ssh; \\\
+chroot /target chmod 0600 /home/ubuntu/.ssh/authorized_keys|' preseed/gislab-unit.seed
 fi
 
 sed -i 's/^timeout.*/timeout 3/' isolinux/isolinux.cfg
 sed -i 's/^default.*/default gislab-unit/' isolinux/txt.cfg
 sed -i '/^default gislab-unit/a\
 label gislab-unit\
-  menu label ^Install GIS.lab Unit Server\
+  menu label ^Install GIS.lab Server\
   kernel /install/vmlinuz\
   append file=/cdrom/preseed/gislab-unit.seed vga=788 initrd=/install/initrd.gz debian-installer/locale=en_US.UTF-8 console-setup/ask_detect=false keyboard-configuration/layout="English (US)" keyboard-configuration/variant="English (US)" quiet --' isolinux/txt.cfg
 
@@ -91,13 +90,17 @@ cd ..
 
 rm -f isolinux/boot.cat
 
-genisoimage -o ubuntu-preseed.iso -b isolinux/isolinux.bin \
-            -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
-            -boot-info-table -iso-level 2 -r root/
+#genisoimage -o gislab-unit.iso -b isolinux/isolinux.bin \
+#            -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
+#            -boot-info-table -iso-level 2 -r root/
+
+mkisofs -D -r -V "GIS.lab Unit" -cache-inodes -J -l -b isolinux/isolinux.bin \
+	-c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table \
+	-o gislab-unit.iso root/
 
 rm -rf $MOUNT_DIR
 rm -rf $ROOT_DIR
 
 echo
-echo "New ISO Image: $WORK_DIR/ubuntu-preseed.iso"
+echo "GIS.lab Unit ISO image: $WORK_DIR/gislab-unit.iso"
 echo

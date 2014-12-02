@@ -1,59 +1,60 @@
 ---
 
-- hosts: gislab-unit
+# gislab-unit.inventory: gislab-unit ansible_ssh_host=<IP-address> ansible_ssh_user=ubuntu
+# $ ansible-playbook --inventory=gislab-unit.inventory --private-key=<private-SSH-key-file> gislab-unit/gislab-unit.yml
+
+- hosts: all
   sudo: yes
 
-  handlers:
-  - name: update grub
-    command: /usr/sbin/update-grub  
 
   tasks:
-  - name: Clean the contents of /var/lib/apt/lists
-    shell: "{{ item }}"
-    with_items:
-    - rm -f /var/lib/apt/lists/* || true
-    - rm -f /var/lib/apt/lists/partial/* || true
+    - name: Clean the contents of /var/lib/apt/lists
+      shell: "{{ item }}"
+      with_items:
+        - rm -f /var/lib/apt/lists/* || true
+        - rm -f /var/lib/apt/lists/partial/* || true
 
-  - name: Upgrade system
-    apt: upgrade=full force=yes update_cache=yes
+    - name: Upgrade system
+      apt: upgrade=full force=yes update_cache=yes
 
-  - name: Install base software
-    apt: name={{ item }} install_recommends=no state=latest
-    with_items:
-    - mc
-    - htop
-    - tmux
+    - name: Add 'noatime' parameter to root partition in /etc/fstab
+      lineinfile: dest=/etc/fstab
+              regexp='(.*)\/.*ext4.*'
+              line='\1/ ext4 noatime,nodiratime,errors=remount-ro 0 1'
+              backrefs=yes
+              state=present
+
+    - name: Move temporary files to tmpfs
+      lineinfile: dest=/etc/fstab state=present line='{{ item }}'
+      with_items:
+        - tmpfs   /tmp       tmpfs   defaults,noatime,mode=1777   0  0
+
+    - name: Adjust swappiness
+      sysctl: name="{{ item.name }}" value="{{ item.value }}" state=present sysctl_set=yes
+      with_items:
+        - { name: "vm.swappiness", value: "1" }
+        - { name: "vm.vfs_cache_pressure", value: "50" }
+
+    - name: Add 'fstrim' to daily cron job
+      copy: src=static/cron.daily/fstrim dest=/etc/cron.daily/fstrim mode=0755
+
+    - name: Configure I/O scheduler
+      lineinfile: dest=/etc/default/grub
+              regexp='GRUB_CMDLINE_LINUX_DEFAULT=.*'
+              line='GRUB_CMDLINE_LINUX_DEFAULT="elevator=deadline"'
+              state=present
+      notify:
+        - update grub
+
+    - name: Configure grub failed timeout
+      lineinfile: dest=/etc/default/grub state=present line="GRUB_RECORDFAIL_TIMEOUT=5"
+      notify:
+        - update grub
+
+    - name: Disable APT proxy
+      lineinfile: dest=/etc/apt/apt.conf state=absent regexp="^Acquire::http::Proxy .*"
 
 
-  - name: Add 'noatime' parameter to root partition in /etc/fstab
-    lineinfile: dest=/etc/fstab state=present regexp='(.*)\/.*ext4.*' line='\1/ ext4 noatime,nodiratime,errors=remount-ro 0 1' backrefs=yes
-
-  - name: Move temporary files and logs to tmpfs
-    lineinfile: dest=/etc/fstab state=present line='{{ item }}'
-    with_items:
-      - tmpfs   /tmp       tmpfs   defaults,noatime,mode=1777   0  0
-      - tmpfs   /var/spool tmpfs   defaults,noatime,mode=1777   0  0
-      - tmpfs   /var/tmp   tmpfs   defaults,noatime,mode=1777   0  0
-      - tmpfs   /var/log   tmpfs   defaults,noatime,mode=0755   0  0
-
-  - name: Set swappiness
-    lineinfile: dest=/etc/sysctl.conf state=present line='{{ item }}'
-    with_items:
-      - m.swappiness=1
-      - vm.vfs_cache_pressure=50
-
-  - name: Add 'fstrim' to daily cron job
-    copy: src=static/cron.daily/fstrim dest=/etc/cron.daily/fstrim mode=0755
-
-  - name: Configure I/O scheduler
-    lineinfile: dest=/etc/default/grub state=present regexp='GRUB_CMDLINE_LINUX_DEFAULT=.*' line='GRUB_CMDLINE_LINUX_DEFAULT="elevator=deadline"'
-    notify:
-    - update grub
-
-  - name: Configure grub failed timeout
-    lineinfile: dest=/etc/default/grub state=present line="GRUB_RECORDFAIL_TIMEOUT=5"
-    notify:
-    - update grub
-
-  - name: Disable APT proxy
-    lineinfile: dest=/etc/apt/apt.conf state=absent regexp="^Acquire::http::Proxy .*"
+  handlers:
+    - name: update grub
+      command: /usr/sbin/update-grub  

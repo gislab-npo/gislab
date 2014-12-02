@@ -11,6 +11,7 @@
   apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - gcc
+    - make
     - nginx
     - python-dateutil
     - python-dev

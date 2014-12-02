@@ -1,7 +1,6 @@
 #### GIS.lab Unit pre-configuration file
 
 ### Network configuration
-
 d-i netcfg/choose_interface select eth0
 d-i netcfg/disable_autoconfig boolean false
 
@@ -12,7 +11,6 @@ d-i hw-detect/load_firmware boolean false
 
 
 ### Mirror settings
-
 d-i mirror/protocol select http
 d-i mirror/country string ###COUNTRY_CODE###
 d-i mirror/http/hostname string archive.ubuntu.com
@@ -22,14 +20,12 @@ d-i mirror/suite string precise
 
 
 ### Clock and time zone setup
-
 d-i clock-setup/utc boolean true
 d-i time/zone string ###TIMEZONE###
 d-i clock-setup/ntp boolean true
 
 
 ### Partitioning
-
 d-i partman-auto/disk string /dev/sda
 d-i partman-auto/method string regular
 d-i partman-lvm/device_remove_lvm boolean true
@@ -45,17 +41,15 @@ d-i partman-md/confirm boolean true
 
 
 ### Account setup
-
 d-i passwd/user-fullname string GIS.lab Unit Administrator
-d-i passwd/username string gislabunit
-d-i passwd/user-password password gislabunit
-d-i passwd/user-password-again password gislabunit
+d-i passwd/username string ubuntu
+d-i passwd/user-password password ubuntu
+d-i passwd/user-password-again password ubuntu
 d-i user-setup/allow-password-weak boolean true
 d-i user-setup/encrypt-home boolean false
 
 
 ### Apt setup
-
 d-i apt-setup/universe boolean true
 d-i apt-setup/universe/source boolean false
 d-i apt-setup/multiverse boolean true
@@ -68,7 +62,6 @@ d-i apt-setup/local0/source boolean true
 
 
 ### Package selection
-
 tasksel tasksel/first multiselect server
 d-i base-installer/kernel/altmeta string lts-trusty
 d-i pkgsel/language-pack-patterns string
@@ -83,14 +76,11 @@ d-i pkgsel/updatedb boolean false
 
 
 ### Boot loader installation
-
 d-i grub-installer/only_debian boolean true
 d-i grub-installer/with_other_os boolean false
 
 
-### Running custom commands
-
-# Postinstall modifications
+### Custom commands
 d-i preseed/late_command string \
 in-target sed -i '/^#.*/d' /etc/apt/sources.list; \
 in-target sed -i '/^deb-src.*/d' /etc/apt/sources.list; \
@@ -98,8 +88,8 @@ in-target sed -i '/^$/d' /etc/apt/sources.list; \
 in-target sed -i 's/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/' /etc/sudoers; \
 echo "###DUMMY_COMMAND###" >/dev/null
 
-### Finishing up the installation
 
+### Installation finish
 d-i finish-install/reboot_in_progress note
 d-i cdrom-detect/eject boolean false
 d-i debian-installer/exit/poweroff boolean true
