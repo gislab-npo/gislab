@@ -36,11 +36,11 @@
       - tmpfs   /var/tmp   tmpfs   defaults,noatime,mode=1777   0  0
       - tmpfs   /var/log   tmpfs   defaults,noatime,mode=0755   0  0
 
-  - name: Set swappiness
-    lineinfile: dest=/etc/sysctl.conf state=present line='{{ item }}'
+  - name: Adjust swappiness
+    sysctl: name="{{ item.name }}" value="{{ item.value }}" state=present sysctl_set=yes
     with_items:
-      - m.swappiness=1
-      - vm.vfs_cache_pressure=50
+      - { name: "vm.swappiness", value: "1" }
+      - { name: "vm.vfs_cache_pressure", value: "50" }
 
   - name: Add 'fstrim' to daily cron job
     copy: src=static/cron.daily/fstrim dest=/etc/cron.daily/fstrim mode=0755
