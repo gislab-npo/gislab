@@ -10,7 +10,7 @@ cat << EOF > $GISLAB_WORKER_IMAGE_BASE/install.sh
 #!/bin/bash
 set -e
 
-if [ "$GISLAB_DEBUG_INSTALL" == "False" ]; then trap "halt" EXIT; fi
+if [ "$GISLAB_DEBUG_INSTALL" == "False" ]; then trap "halt" SIGHUP SIGINT SIGKILL; fi
 
 EOF
 
