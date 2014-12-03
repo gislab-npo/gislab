@@ -33,6 +33,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box
   # or
   # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box
+
+  # fix for https://github.com/ansible/ansible/issues/8644
+  ENV['PYTHONIOENCODING'] = "utf-8"
+	
   config.vm.box = "precise-canonical"
   
   config.vm.synced_folder '.', '/vagrant', disabled: true
