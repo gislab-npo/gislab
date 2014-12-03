@@ -100,7 +100,8 @@ GISLAB_SUITE: lab
 # Change requires running upgrade.
 GISLAB_NETWORK_DEVICE: eth0
 
-# First three network octets of GIS.lab network number.
+# First three octets of private IP range 192.168.0.0 - 192.168.255.255,
+# which will define network number used for GIS.lab network.
 # Example: 192.168.1
 # Change requires GIS.lab re-installation.
 GISLAB_NETWORK: 192.168.50
