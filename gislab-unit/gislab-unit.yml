@@ -1,7 +1,7 @@
 ---
 
-# gislab-unit.inventory: gislab-unit ansible_ssh_host=<IP-address> ansible_ssh_user=ubuntu
 # $ ansible-playbook --inventory=gislab-unit.inventory --private-key=<private-SSH-key-file> gislab-unit/gislab-unit.yml
+
 
 - hosts: all
   sudo: yes
