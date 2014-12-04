@@ -181,6 +181,7 @@
   apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - htop
+    - iotop
     - mc
     - pwgen
     - tmux
