@@ -131,7 +131,7 @@ GISLAB_APT_HTTP_PROXY:
 
 # Number of OWS workers to start. Worker machines run OWS services such as WMS and WFS and increase performance and
 # reliability of GIS.lab network. Maximum number of worker instances is 49 - do not start more.
-GISLAB_WORKERS_COUNT: 1
+GISLAB_WORKERS_COUNT: 0
 
 
 
