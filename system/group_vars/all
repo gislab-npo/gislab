@@ -75,12 +75,6 @@ GISLAB_ADMIN_EMAIL: root@gis.lab
 ############################################# GENERAL CONFIGURATION ###################################################
 # ******************************************************************************************************************* #
 
-# Unique string (without spaces) used to identify multiple GIS.lab installations managed by one administrator or company.
-# By default it is set to default ID set by Vagrant, which is 'gislab_vagrant'.
-# Example: "my_company_gislab1"
-# Change requires running upgrade.
-GISLAB_UNIQUE_ID: gislab_vagrant
-
 # Type of GIS.lab infrastructure suite to install.
 # Possible options are:
 # * server: only server installed

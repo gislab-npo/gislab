@@ -5,6 +5,10 @@
 # Run basic server configuration.
 
 # Facts
+- name: Detect GIS.lab unique ID
+  set_fact:
+    GISLAB_UNIQUE_ID: "{{ inventory_hostname }}"
+
 - name: Detect GIS.lab install action (new installation or upgrade)
   stat: path=/var/lib/gislab/installation.done
   register: installation_done

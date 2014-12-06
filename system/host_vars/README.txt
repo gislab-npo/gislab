@@ -1,9 +1,8 @@
 Directory for host specific GIS.lab configuration.
-File names created here must match GIS.lab unique ID (GISLAB_UNIQUE_ID) specified in Ansible inventory file. Each
-configuration file must contain GISLAB_UNIQUE_ID configuration, which must equal to the file name.
+File names created here must match GIS.lab unique ID (unique host name) specified in Ansible inventory file.
 
-If using local Vagrant provisioner, create 'gislab_vagrant' configuration file here. It will be automatically loaded by
-Vagrant without needing to create the inventory file.
+If using local Vagrant provisioner, create file with name 'gislab_vagrant' here. It will be automatically loaded by
+Vagrant without need to manually create the inventory file.
 
 Ansible inventory file format:
-<GISLAB_UNIQUE_ID> ansible_ssh_host=<server-IP-address> ansible_ssh_user=<provisioning-user-name>
+<GIS.lab unique ID> ansible_ssh_host=<server-IP-address> ansible_ssh_user=<provisioning-user-name>
