@@ -248,9 +248,10 @@ GISLAB_DEBUG_SERVICES: no
 # Change requires running upgrade.
 GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT: no
 
-# Name of PPA repository containing QGIS version to install on server and client. If no value specified, QGIS will be
-# installed from the same repository as other GIS packages. Value 'imincik/qgis-master' means, that QGIS will be
-# installed from ppa:imincik/qgis-master. Repository must contain higher QGIS version than exists in standard GIS.lab
-# repository.
+# List of custom Apt repositories which should be enabled for server and client. Repositories must provide Ubuntu
+# Precise packages it is recommended that they use 'ppa:imincik/gis' as a build dependency.
+# Example:
+# - deb http://ppa.launchpad.net/my-ppa1/ubuntu precise main
+# - deb http://ppa.launchpad.net/my-ppa2/ubuntu precise main
 # Change requires running upgrade.
-GISLAB_QGIS_REPOSITORY:
+GISLAB_APT_CUSTOM_REPOSITORIES:

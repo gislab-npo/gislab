@@ -14,9 +14,11 @@ deb http://ppa.launchpad.net/imincik/general/ubuntu precise main
 #### GIS.lab GIS repository
 deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main
 
-{% if GISLAB_QGIS_REPOSITORY %}
-#### QGIS
-deb http://ppa.launchpad.net/{{ GISLAB_QGIS_REPOSITORY }}/ubuntu precise main
+{% if GISLAB_APT_CUSTOM_REPOSITORIES %}
+#### Custom repositories
+{% for repository in GISLAB_APT_CUSTOM_REPOSITORIES %}
+{{ repository }}
+{% endfor %}
 {% endif %}
 
 # JOSM repository
