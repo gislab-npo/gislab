@@ -3,5 +3,8 @@
 - name: service rsyslog restart
   service: name=rsyslog state=restarted
 
+- name: service ssh restart
+  service: name=ssh state=restarted
+
 - name: reconfigure timezone
   shell: dpkg-reconfigure --frontend noninteractive tzdata

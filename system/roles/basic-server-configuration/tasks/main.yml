@@ -151,6 +151,12 @@
 - name: Set local aliases table
   template: src=aliases.j2 dest=/etc/aliases
 
+
+- name: Configure SSH server
+  template: src=ssh/sshd_config.j2 dest=/etc/ssh/sshd_config
+  notify:
+    - service ssh restart
+
 - meta: flush_handlers
 
 
