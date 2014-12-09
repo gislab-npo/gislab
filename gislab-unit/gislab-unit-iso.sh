@@ -4,16 +4,18 @@ set -e
 
 usage () {
 	echo
-	echo "Create GIS.lab Unit installation ISO image."
+	echo "Create GIS.lab Unit installation ISO image from Ubuntu Server ISO. Script must be executed with superuser"
+	echo "privileges."
 	echo
-	echo " USAGE: $(basename $0) -s <country code> -t <timezone> [-p <apt proxy server>] -i <ISO image> -w <working directory> [-k <SSH public key>]"
+	echo "USAGE: $(basename $0) -s <country code> -t <timezone> [-p <apt proxy server>] -i <ISO image>"
+	echo "                          [-k <SSH public key>] -w <working directory>"
 	echo
-	echo "  -s country code (e.g. SK)"
+	echo "  -s country code used for choosing closest repository mirror (e.g. SK)"
 	echo "  -t timezone (e.g. Europe/Bratislava)"
-	echo "  -p APT proxy server (e.g. http://192.168.1.10:3142) - optional"
-	echo "  -i source installation ISO image"
-	echo "  -w working directory with enough disk space (two and half time larger then ISO image size)"
-	echo "  -k SSH public key for default user account 'ubuntu' - optional"
+	echo "  -p APT proxy server (e.g. http://192.168.1.10:3142) [optiona]"
+	echo "  -i path to Ubuntu Server installation ISO image"
+	echo "  -k path SSH public key which would be uploaded to default 'ubuntu' account [optional]"
+	echo "  -w working directory with enough disk space (2.5 x larger free space then ISO image size)"
 	echo
 	exit 1
 }
