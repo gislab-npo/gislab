@@ -8,13 +8,13 @@ usage () {
 	echo "privileges."
 	echo
 	echo "USAGE: $(basename $0) -s <country code> -t <timezone> [-p <apt proxy server>] -i <ISO image>"
-	echo "                          [-k <SSH public key>] -w <working directory>"
+	echo "                          -k <SSH public key> -w <working directory>"
 	echo
 	echo "  -s country code used for choosing closest repository mirror (e.g. SK)"
 	echo "  -t timezone (e.g. Europe/Bratislava)"
-	echo "  -p APT proxy server (e.g. http://192.168.1.10:3142) [optiona]"
+	echo "  -p APT proxy server (e.g. http://192.168.1.10:3142) [optional]"
 	echo "  -i path to Ubuntu Server installation ISO image"
-	echo "  -k path SSH public key which would be uploaded to default 'ubuntu' account [optional]"
+	echo "  -k path to SSH public key which would be uploaded to default 'ubuntu' account"
 	echo "  -w working directory with enough disk space (2.5 x larger free space then ISO image size)"
 	echo
 	exit 1
@@ -70,15 +70,12 @@ sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" preseed/gislab-unit.seed
 sed -i "s;###APT_PROXY###;$APT_PROXY;" preseed/gislab-unit.seed
 sed -i "s;###TIMEZONE###;$TIMEZONE;" preseed/gislab-unit.seed
 
-if [ -n "$SSH_PUBLIC_KEY" ]; then
-	cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_public_key
-
-	sed -i 's|.*###DUMMY_COMMAND###*.|mkdir /target/home/ubuntu/.ssh; \\\
+cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_public_key
+sed -i 's|.*###DUMMY_COMMAND###*.|mkdir /target/home/ubuntu/.ssh; \\\
 cp /cdrom/ssh_public_key /target/home/ubuntu/.ssh/authorized_keys; \\\
 chroot /target chown -R ubuntu:ubuntu /home/ubuntu/.ssh; \\\
 chroot /target chmod 0700 /home/ubuntu/.ssh; \\\
 chroot /target chmod 0600 /home/ubuntu/.ssh/authorized_keys|' preseed/gislab-unit.seed
-fi
 
 sed -i 's/^timeout.*/timeout 3/' isolinux/isolinux.cfg
 sed -i 's/^default.*/default gislab-unit/' isolinux/txt.cfg
