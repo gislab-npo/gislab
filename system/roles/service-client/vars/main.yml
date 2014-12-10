@@ -1,7 +1,7 @@
 ---
 
 GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
-  # list of XUbuntu required packages
+  # list of XUbuntu required packages (installed with recommended packages)
   - alsa-base
   - alsa-utils
   - anacron
@@ -151,7 +151,10 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - xfce4-xkb-plugin
   - xubuntu-docs
   - xul-ext-ubufox
-  # list of GIS.lab client extra packages
+
+
+GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
+  # list of GIS.lab client extra packages (installed without recommended packages)
   - aptitude
   - conky-std
   - eog
@@ -160,10 +163,12 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - gdal-bin
   - gimp
   - git
+  - git-core
   - google-earth-stable
   - gthumb
   - gtk-recordmydesktop
   - htop
+  - imagemagick
   - inkscape
   - ipython
   - josm
@@ -179,6 +184,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - pgadmin3
   - postgresql-client
   - postgresql-comparator
+  - proj-bin
   - python-pysqlite2
   - python-gdal
   - python-qgis
@@ -191,7 +197,9 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - sshfs
   - vim-gnome
   - vlc
+  - vlc-plugin-pulse
   - x11vnc
+
 
 # List of packages to remove client images.
 # To find out the reason why package was installed use '$ aptitude why <package>'.

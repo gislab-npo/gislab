@@ -14,5 +14,12 @@ case "$MODE" in
 
         # Restore original apt-get options 
         APT_GET_OPTS=$APT_GET_OPTS_ORIG
+
+
+	# Install GIS.lab packages
+        for package in $GISLAB_CLIENT_INSTALL_PACKAGES_GIS; do
+            echo "Installing $package"
+	chroot $ROOT apt-get --no-install-recommends --assume-yes --force-yes install $package
+        done
     ;;
 esac

@@ -63,6 +63,7 @@
 - name: Build GIS.lab client image (can take very long time)
   shell: set -a; source /etc/gislab_version;
          GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT="{{ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT|join(' ') }}"
+         GISLAB_CLIENT_INSTALL_PACKAGES_GIS="{{ GISLAB_CLIENT_INSTALL_PACKAGES_GIS|join(' ') }}"
          GISLAB_CLIENT_REMOVE_PACKAGES="{{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}"
          bash {{ GISLAB_INSTALL_CLIENT_ROOT }}/install.sh {{ gislab_build_client_opts }} > /var/log/gislab-build-client.log
   args:
