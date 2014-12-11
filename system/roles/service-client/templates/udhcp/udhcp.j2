@@ -179,7 +179,7 @@ while [ -z "$configured" ]; do
             grep -q "^siaddr=\"$gislab_network_server_ip_regex\"$" /tmp/dhcp-info.conf && configured="true" && break 2
             echo "Received response from invalid DHCP server (response wanted from {{ GISLAB_NETWORK_SERVER_IP }}). Retrying ..."
             echo
-            sleep 1
+            sleep 0.2
             kill $(pidof udhcpc)
         done
     done
