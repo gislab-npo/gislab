@@ -23,4 +23,10 @@
       </property>
     </property>
   </property>
+  <property name="startup" type="empty">
+    <property name="screensaver" type="empty">
+      <property name="type" type="empty"/>
+      <property name="enabled" type="bool" value="false"/>
+    </property>
+  </property>
 </channel>

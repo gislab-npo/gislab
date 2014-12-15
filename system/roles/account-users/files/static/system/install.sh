@@ -20,9 +20,6 @@ cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/menus/*.directory /etc/skel/.loc
 # GIS.lab desktop session and panel
 mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
 
-cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/xfce4/xinitrc /etc/skel/.config/xfce4/
-chmod 755 /etc/skel/.config/xfce4/xinitrc
-
 cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
 
