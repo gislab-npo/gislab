@@ -76,7 +76,8 @@
   with_items:
     - ltsp-update-sshkeys
     - ltsp-update-kernels
-
+  notify:
+    - service nbd-server restart
 
 # Custom GIS.lab client DHCP client
 - name: Create directory for DHCP client script
@@ -85,7 +86,7 @@
 - name: Install DHCP client script
   template: src=udhcp/udhcp.j2 dest="{{ GISLAB_INSTALL_CLIENT_ROOT }}/udhcp/udhcp"
 
-- name: Modify client's DHCP client to be sure that client will always get IP from correct server
+- name: Modify DHCP client to be sure that client will always get IP from correct server
   script: scripts/generate-initrd.sh
 
 
