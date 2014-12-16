@@ -32,15 +32,19 @@
 
 
 # MAC addresses
-- name: Allow including of allowed MACs file (/etc/dhcp/dhcpd-machines-allowed.conf)
+- name: Allow including MAC addresses list file (/etc/gislab/gislab_machines_allowed.conf)
   template: src=apparmor/usr.sbin.dhcpd.j2 dest=/etc/apparmor.d/local/usr.sbin.dhcpd
   notify:
     - service apparmor restart
 
-- name: Create allowed client's MACs list file
-  template: src=dhcp/dhcpd-machines-allowed.conf.j2 dest=/etc/dhcp/dhcpd-machines-allowed.conf
+- name: Detect if default MAC addresses list file is created
+  stat: path=/etc/gislab/gislab_machines_allowed.conf
+  register: gislab_machines_allowed_status
+
+- name: Create default MAC addresses list file
+  template: src=dhcp/dhcpd-machines-allowed.conf.j2 dest=/etc/gislab/gislab_machines_allowed.conf
+  when: not gislab_machines_allowed_status.stat.exists
   notify:
     - service isc-dhcp-server restart
-
 
 - meta: flush_handlers

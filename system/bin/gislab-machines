@@ -41,25 +41,25 @@ if [ $# -eq 0 -a "$ACTION" != "list" ]; then usage; fi
 # LIST
 if [ "$ACTION" == "list" ]; then
 	echo -e "List of currently enabled machines:"
-	grep "hardware ethernet" /etc/dhcp/dhcpd-machines-allowed.conf
+	grep "hardware ethernet" /etc/gislab/gislab_machines_allowed.conf
 
 # ADD
 elif [ "$ACTION" == "add" ]; then
 	IFS=', ' read -a maclist <<< "$1"
 
 	# remove closing bracket of MACs list
-	sed -i '/^}/ d' /etc/dhcp/dhcpd-machines-allowed.conf
+	sed -i '/^}/ d' /etc/gislab/gislab_machines_allowed.conf
 
 	for mac in "${maclist[@]}"
 	do
 		echo "Adding MAC $mac"
 		hostname=$(echo $mac | sed 's/://g')
-		sed -i "/hardware ethernet $mac/ d" /etc/dhcp/dhcpd-machines-allowed.conf # avoid duplicate records
-		echo -e "  host $hostname { hardware ethernet $mac; }"  >> /etc/dhcp/dhcpd-machines-allowed.conf
+		sed -i "/hardware ethernet $mac/ d" /etc/gislab/gislab_machines_allowed.conf # avoid duplicate records
+		echo -e "  host $hostname { hardware ethernet $mac; }"  >> /etc/gislab/gislab_machines_allowed.conf
 	done
 
 	# re-create closing bracket of MACs list
-	echo "}" >> /etc/dhcp/dhcpd-machines-allowed.conf
+	echo "}" >> /etc/gislab/gislab_machines_allowed.conf
 
 	service isc-dhcp-server restart
 	gislab_print_info "Machines added successfully"
@@ -71,7 +71,7 @@ elif [ "$ACTION" == "remove" ]; then
 	do
 		echo "Removing MAC $mac"
 		hostname=$(echo $mac | sed 's/://g')
-		sed -i "/hardware ethernet $mac/ d" /etc/dhcp/dhcpd-machines-allowed.conf
+		sed -i "/hardware ethernet $mac/ d" /etc/gislab/gislab_machines_allowed.conf
 	done
 
 	service isc-dhcp-server restart

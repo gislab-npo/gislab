@@ -65,5 +65,5 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
 }
 
 {% if GISLAB_UNKNOWN_MAC_POLICY == "deny" %}
-include "/etc/dhcp/dhcpd-machines-allowed.conf";
+include "/etc/gislab/gislab_machines_allowed.conf";
 {% endif %}
