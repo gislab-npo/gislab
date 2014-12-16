@@ -171,19 +171,13 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 # Change requires running upgrade.
 GISLAB_CLIENT_LANGUAGES:
 
-# Determines if client access will be restricted by MAC address configuration placed in 'GISLAB_CLIENTS_ALLOWED'.
+# Determines if client machines connection will be restricted by MAC addresses.
 # Possible options are:
-# * deny:  only MAC addresses specified in 'GISLAB_CLIENTS_ALLOWED' can connect. Safe default, recommended
-# * allow: all MAC addresses can connect. DO NOT USE this configuration if connected to corporate LAN (possible DHCP servers conflict)
+# * deny:  only machines with allowed MAC addresses can connect. Safe default, recommended
+# * allow: all machines can connect. Do NOT use this configuration, if connected to corporate LAN
+# To allow client machines connection use 'gislab-machines' management script.
 # Change requires running upgrade.
 GISLAB_UNKNOWN_MAC_POLICY: deny
-
-# List of GIS.lab client's MAC addressed allowed to connect.
-# Example:
-# - 00:00:00:00:00:00
-# - 1c:75:08:7d:ce:e0
-# Adding additional MAC addresses is done by using "gislab-allowmachines" management script.
-GISLAB_CLIENTS_ALLOWED:
 
 # List of extra packages to install to client images.
 # Change requires running upgrade.
