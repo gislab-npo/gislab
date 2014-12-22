@@ -736,7 +736,7 @@
 
 				// startup message
 				{% if message %}
-					if (typeof(Storage) === 'undefined' || localStorage.getItem( 'gislab-{{ project }}-notification_read') !== 'true') {
+					if (typeof(Storage) === 'undefined' || localStorage.getItem( 'gislab-{{ project }}-notification_read') !== '{{ publish_date_unix }}') {
 						Ext.MessageBox.show({
 							title: '{% trans "Message" %}',
 							msg: '{{ message|escapejs }}',
@@ -746,7 +746,7 @@
 							buttons: Ext.Msg.OK,
 							fn: function() {
 								if (!typeof(Storage) !== 'undefined') {
-									localStorage.setItem('gislab-{{ project }}-notification_read', 'true');
+									localStorage.setItem('gislab-{{ project }}-notification_read', '{{ publish_date_unix }}');
 								}
 							}
 						});

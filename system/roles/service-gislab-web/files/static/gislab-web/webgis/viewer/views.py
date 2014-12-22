@@ -357,6 +357,7 @@ def page(request):
 			'keyword_list': metadata.keyword_list,
 			'publish_user': metadata.gislab_user,
 			'publish_date': metadata.publish_date,
+			'publish_date_unix': int(metadata.publish_date_unix),
 			'selection_color': metadata.selection_color[:-2], #strip alpha channel,
 			'topics': json.dumps(metadata.topics) if metadata.topics else '',
 			'vector_layers': metadata.vector_layers is not None
