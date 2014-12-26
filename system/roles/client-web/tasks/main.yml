@@ -1,8 +1,8 @@
 ---
 #
-### GIS.LAB WEB ###
+### GIS.lab WEB CLIENT ###
 #
-# Install and configure GIS.lab Web application.
+# Install and configure GIS.lab Web client.
 #
 # Logging: /var/log/nginx/gislab-web-access.log /var/log/nginx/gislab-web-error.log /var/log/syslog
 

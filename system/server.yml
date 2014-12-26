@@ -28,11 +28,11 @@
     - { role: service-mapserver, tags: ['service-mapserver'] }
     - { role: service-load-balancer, tags: ['service-load-balancer'] }
     - { role: service-statistics, tags: ['service-statistics'] }
-    - { role: service-gislab-web, tags: ['service-gislab-web'] }
     - { role: service-connection-forwarding, tags: ['service-connection-forwarding'] }
     - { role: service-vpn, tags: ['service-vpn'] }
-    - { role: service-worker, tags: ['service-worker'] }
-    - { role: service-client, tags: ['service-client'], when: "'{{ GISLAB_SUITE }}' == 'lab'" }
+    - { role: client-web, tags: ['client-web'] }
+    - { role: client-worker, tags: ['client-worker'] }
+    - { role: client-desktop, tags: ['client-desktop'], when: "'{{ GISLAB_SUITE }}' == 'lab'" }
     - { role: account-admin, tags: ['account-admin'] }
     - { role: example-data, tags: ['example-data'] }
     - { role: installation-done, tags: ['installation-done'] }

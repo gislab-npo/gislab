@@ -1,8 +1,8 @@
 ---
 #
-### CLIENT INSTALLATION ###
+### GIS.lab DESKTOP CLIENT ###
 #
-# Install GIS.lab client image and configure LAN boot system.
+# Install and configure GIS.lab desktop client.
 #
 # Logging: /var/log/syslog
 

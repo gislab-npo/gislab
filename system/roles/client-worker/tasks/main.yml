@@ -1,11 +1,16 @@
 ---
 #
-### MAPSERVER WORKER ###
+### GIS.lab WORKER CLIENT ###
 #
-# Create a package for mapserver worker instances installation in cloud environment. Installation
-# package consist from installation script and other files needed for server configuration. To use it
-# run following commands on newly launched instance (in Amazon AWS use 'cloud-data' for commands injection):
-# See Vagrantfile for example on how to load and install package.
+# Install and configure worker client.
+# Worker client is useful for OWS services load balancing in environments, where no network boot is available
+# (for example in Amazon AWS). Worker client can be installed to basic server instance by downloading installation package
+# from GIS.lab server, unpacking it and running installation script. This process can be automatized by running
+# following commands (in Amazon AWS add this script to 'cloud-data'):
+
+# $ mkdir -p /tmp/install && cd /tmp/install \
+# curl --silent http://%s.5/worker.tar.gz | tar xz \
+# bash ./install.sh &> /var/log/gislab-install-worker.log
 
 
 - name: Stop GIS.lab network machines before updating worker image
