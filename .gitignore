@@ -4,7 +4,6 @@ tmp
 barrel
 install.log
 http-boot/gislab-client-loader.iso
-user/plugins/
-user/id_*.pub
+user/*
 system/host_vars/*
 *.pyc

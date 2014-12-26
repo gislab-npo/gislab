@@ -178,14 +178,6 @@ find /home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER }}/$GISLAB_USER/g
 find /home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER_PASSWORD }}/$GISLAB_USER_PASSWORD/g" "{}" \;
 
 
-# run account hooks
-for hook in $GISLAB_ROOT/user/plugins/account/*.*; do
-	gislab_print_info "Running account hook '$(basename $hook)'"
-	GISLAB_ACCOUNT_ACTION="add" GISLAB_USER=$GISLAB_USER $hook
-	echo "$(date +'%Y-%m-%d-%T') add $GISLAB_USER" >> /var/lib/gislab/account-hook-$(basename $hook).done
-done
-
-
 # save user credentials to hidden directory in home folder
 mkdir -p /home/$GISLAB_USER/.gislab
 chmod 700 /home/$GISLAB_USER/.gislab

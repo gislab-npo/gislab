@@ -45,20 +45,6 @@
   shell: "cp -a {{ GISLAB_INSTALL_CLIENT_ROOT }}/ltsp/* /usr/share/ltsp/plugins/ltsp-build-client/Ubuntu/"
 
 
-# Plugins
-- name: Flush client plugins directory
-  file: path="{{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/client" state=absent
-
-- name: Create client plugins directory
-  file: path="{{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/client" state=directory
-
-- name: Install client plugins
-  copy: src=../user/plugins/client/ dest="{{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/client/"
-
-- name: Set executable permissions for client plugins
-  shell: chmod -R 0775 {{ GISLAB_INSTALL_USER_DATA_ROOT }}/plugins/client/*.*
-
-
 # Image
 - name: Build GIS.lab client image (can take very long time)
   shell: set -a; source /etc/gislab_version;
