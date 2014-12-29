@@ -69,28 +69,28 @@
     </property>
     <property name="plugin-10" type="string" value="launcher">
       <property name="items" type="array">
-        <value type="string" value="13793389951.desktop"/>
+        <value type="string" value="firefox.desktop"/>
       </property>
     </property>
     <property name="plugin-11" type="string" value="separator"/>
     <property name="plugin-13" type="string" value="directorymenu"/>
     <property name="plugin-12" type="string" value="launcher">
       <property name="items" type="array">
-        <value type="string" value="13793390052.desktop"/>
+        <value type="string" value="exo-terminal-emulator.desktop"/>
       </property>
     </property>
     <property name="plugin-15" type="string" value="separator"/>
     <property name="plugin-16" type="string" value="separator"/>
     <property name="plugin-14" type="string" value="xkb-plugin"/>
+    <property name="plugin-8" type="string" value="separator"/>
     <property name="plugin-9" type="string" value="launcher">
       <property name="items" type="array">
-        <value type="string" value="13850411261.desktop"/>
+        <value type="string" value="gislab-desktop.desktop"/>
       </property>
     </property>
-    <property name="plugin-8" type="string" value="separator"/>
     <property name="plugin-18" type="string" value="launcher">
       <property name="items" type="array">
-        <value type="string" value="13934188152.desktop"/>
+        <value type="string" value="leafpad.desktop"/>
       </property>
     </property>
   </property>

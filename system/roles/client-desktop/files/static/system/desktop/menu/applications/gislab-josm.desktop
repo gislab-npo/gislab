@@ -7,6 +7,7 @@ Icon=josm.png
 StartupNotify=false
 Terminal=false
 Type=Application
+Categories=Gislab;
 StartupWMClass=org-openstreetmap-josm-Main
 Name[sk]=Databáza OpenStreetMap
 Comment[sk]=Správa databázy OpenStreetMap

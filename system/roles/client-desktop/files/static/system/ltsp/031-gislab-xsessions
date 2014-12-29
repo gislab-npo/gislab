@@ -1,0 +1,8 @@
+# Remove plain XFCE and XUbuntu sessions and install GIS.lab Desktop Client session.
+
+case "$MODE" in
+    finalization)
+	rm $ROOT/usr/share/xsessions/*.desktop
+	cp $GISLAB_INSTALL_CLIENT_ROOT/xsession/gislab-desktop-client.desktop $ROOT/usr/share/xsessions/
+    ;;
+esac

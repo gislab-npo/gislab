@@ -3,34 +3,17 @@
 
 # create main configuration directories first
 mkdir /etc/skel/.config
-mkdir /etc/skel/.local
 
 
-# applications menu
-mkdir -p /etc/skel/.config/menus
-cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/menus/xfce-applications.menu /etc/skel/.config/menus/
-
-mkdir -p /etc/skel/.local/share/applications
-cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/menus/*.desktop /etc/skel/.local/share/applications/
-
-mkdir -p /etc/skel/.local/share/desktop-directories
-cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/menus/*.directory /etc/skel/.local/share/desktop-directories/
-
-
-# GIS.lab desktop session and panel
-mkdir -p /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml
-
-cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
-
+# keyboard layout
 mkdir -p /etc/skel/.config/xfce4/panel
-cp -a $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/xfce4/panel/* /etc/skel/.config/xfce4/panel
+cp -a $GISLAB_INSTALL_ACCOUNT_ROOT/keyboard-layout/xkb-plugin-14.rc /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
 
-# add other keyboard languages then English if configured
+# add other keyboard languages then English (us) if requested
 if [ "$GISLAB_CLIENT_LANGUAGES" != "" ]; then
-	languages="en,$GISLAB_CLIENT_LANGUAGES"
+	languages="us,$GISLAB_CLIENT_LANGUAGES"
 else
-	languages="en"
+	languages="us"
 fi
 
 # set empty strings separated by comas to get variants working
@@ -42,8 +25,8 @@ sed -i "s/^variants=/variants=$variants/" /etc/skel/.config/xfce4/panel/xkb-plug
 
 # Conky
 mkdir -p /etc/skel/.config/autostart
-cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/conky/conkyrc /etc/skel/.conkyrc
-cp $GISLAB_INSTALL_ACCOUNT_ROOT/desktop-session/conky/conky.desktop /etc/skel/.config/autostart/conky.desktop
+cp $GISLAB_INSTALL_ACCOUNT_ROOT/conky/conkyrc /etc/skel/.conkyrc
+cp $GISLAB_INSTALL_ACCOUNT_ROOT/conky/conky.desktop /etc/skel/.config/autostart/conky.desktop
 
 
 # Pidgin

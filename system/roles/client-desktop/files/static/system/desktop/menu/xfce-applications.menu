@@ -1,0 +1,154 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+  "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
+
+<Menu>
+    <Name>Xfce</Name>
+
+    <DefaultAppDirs/>
+    <DefaultDirectoryDirs/>
+    <DefaultMergeDirs/>
+
+    <Include>
+        <Filename>exo-web-browser.desktop</Filename>
+        <Filename>xfce4-session-logout.desktop</Filename>
+    </Include>
+
+    <Layout>
+        <Filename>exo-web-browser.desktop</Filename>
+        <Menuname>Gislab</Menuname>
+        <Separator/>
+        <Menuname>Settings</Menuname>
+        <Separator/>
+        <Merge type="all"/>
+        <Separator/>
+        <Filename>xfce4-session-logout.desktop</Filename>
+    </Layout>
+
+    <Menu>
+        <Name>Gislab</Name>
+        <Directory>Gislab.directory</Directory>
+
+        <Layout>
+            <Merge type="files"/>
+            <Menuname>Gislab-documentation</Menuname>
+        </Layout>
+
+        <Menu>
+            <Name>Gislab-documentation</Name>
+            <Directory>Gislab-documentation.directory</Directory>
+            <Include>
+                <Category>Gislab-documentation</Category>
+            </Include>
+        </Menu>
+
+        <Include>
+            <Category>Gislab</Category>
+        </Include>
+    </Menu>
+
+    <Menu>
+        <Name>Settings</Name>
+        <Directory>xfce-settings.directory</Directory>
+
+        <Layout>
+            <Filename>xfce-settings-manager.desktop</Filename>
+        </Layout>
+
+        <Include>
+            <Filename>xfce-settings-manager.desktop</Filename>
+        </Include>
+    </Menu>
+
+    <Menu>
+        <Name>Accessories</Name>
+        <Directory>xfce-accessories.directory</Directory>
+        <Include>
+            <Or>
+                <Category>Accessibility</Category>
+                <Category>Core</Category>
+                <Category>Legacy</Category>
+                <Category>Utility</Category>
+            </Or>
+        </Include>
+        <Exclude>
+            <Or>
+                <Filename>xfce4-about.desktop</Filename>
+                <Filename>catfish.desktop</Filename>
+		<Filename>xfce4-appfinder.desktop</Filename>
+                <Category>Settings</Category>
+                <Category>System</Category>
+            </Or>
+        </Exclude>
+
+        <Layout>
+            <Filename>xfrun4.desktop</Filename>
+            <Separator/>
+            <Merge type="all"/>
+        </Layout>
+    </Menu>
+
+    <Menu>
+        <Name>Development</Name>
+        <Directory>xfce-development.directory</Directory>
+        <Include>
+            <Category>Development</Category>
+        </Include>
+    </Menu>
+
+    <Menu>
+        <Name>Games</Name>
+        <Directory>xfce-games.directory</Directory>
+        <Include>
+            <Category>Game</Category>
+        </Include>
+    </Menu>
+
+    <Menu>
+        <Name>Graphics</Name>
+        <Directory>xfce-graphics.directory</Directory>
+        <Include>
+            <Category>Graphics</Category>
+        </Include>
+    </Menu>
+
+    <Menu>
+        <Name>Multimedia</Name>
+        <Directory>xfce-multimedia.directory</Directory>
+        <Include>
+            <Category>Audio</Category>
+            <Category>Video</Category>
+            <Category>AudioVideo</Category>
+        </Include>
+    </Menu>
+
+    <Menu>
+        <Name>Network</Name>
+        <Directory>xfce-network.directory</Directory>
+        <Include>
+            <Category>Network</Category>
+        </Include>
+        <Exclude>
+            <Or>
+                <Filename>exo-mail-reader.desktop</Filename>
+                <Filename>exo-web-browser.desktop</Filename>
+            </Or>
+        </Exclude>
+    </Menu>
+
+    <Menu>
+        <Name>Office</Name>
+        <Directory>xfce-office.directory</Directory>
+        <Include>
+            <Category>Office</Category>
+        </Include>
+    </Menu>
+
+    <Menu>
+        <Name>Gislab-system</Name>
+        <Directory>xfce-system.directory</Directory>
+        <Include>
+            <Category>Gislab-system</Category>
+        </Include>
+    </Menu>
+
+</Menu>

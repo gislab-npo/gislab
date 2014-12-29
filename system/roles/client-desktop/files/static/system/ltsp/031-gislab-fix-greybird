@@ -1,8 +1,0 @@
-# Fix to Xubuntu Greybird theme which provides very thin window borders which are very
-# difficult to grab and resize (taken from OSGeo Live CD). 
-
-case "$MODE" in
-    finalization)
-	cp $GISLAB_INSTALL_CLIENT_ROOT/greybird-theme/*.* $ROOT/usr/share/themes/Greybird/xfwm4/
-    ;;
-esac

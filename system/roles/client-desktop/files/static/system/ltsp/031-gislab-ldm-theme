@@ -1,0 +1,7 @@
+# Install GIS.lab login screen graphic.
+
+case "$MODE" in
+    finalization)
+	cp -a $GISLAB_INSTALL_CLIENT_ROOT/ldm/themes/gislab $ROOT/usr/share/ldm/themes/
+    ;;
+esac
