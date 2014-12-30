@@ -54,6 +54,12 @@
     - name: Disable APT proxy
       lineinfile: dest=/etc/apt/apt.conf state=absent regexp="^Acquire::http::Proxy .*"
 
+    - name: Restart GIS.lab Unit machine
+      command: shutdown -r now "GIS.lab Unit pre-installation task done"
+      async: 0
+      poll: 0
+      ignore_errors: true
+
 
   handlers:
     - name: update grub
