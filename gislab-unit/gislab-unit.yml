@@ -1,5 +1,6 @@
 ---
 
+# GIS.lab Unit pre-installation tasks
 # $ ansible-playbook --inventory=gislab-unit.inventory --private-key=<private-SSH-key-file> gislab-unit/gislab-unit.yml
 
 
@@ -53,6 +54,8 @@
 
     - name: Disable APT proxy
       lineinfile: dest=/etc/apt/apt.conf state=absent regexp="^Acquire::http::Proxy .*"
+
+    - meta: flush_handlers
 
     - name: Restart GIS.lab Unit machine
       command: shutdown -r now "GIS.lab Unit pre-installation task done"
