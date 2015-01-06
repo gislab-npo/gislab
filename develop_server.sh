@@ -2,8 +2,8 @@
 ##
 # This section should match your Makefile
 ##
-PY=python
-PELICAN=pelican
+PY=${PY:-python}
+PELICAN=${PELICAN:-pelican}
 PELICANOPTS=
 
 BASEDIR=$(pwd)
@@ -20,10 +20,10 @@ PELICAN_PID=$BASEDIR/pelican.pid
 
 function usage(){
   echo "usage: $0 (stop) (start) (restart) [port]"
-  echo "This starts pelican in debug and reload mode and then launches"
-  echo "A pelican.server to help site development. It doesn't read"
-  echo "your pelican options so you edit any paths in your Makefile"
-  echo "you will need to edit it as well"
+  echo "This starts Pelican in debug and reload mode and then launches"
+  echo "an HTTP server to help site development. It doesn't read"
+  echo "your Pelican settings, so if you edit any paths in your Makefile"
+  echo "you will need to edit your settings as well."
   exit 3
 }
 
@@ -35,14 +35,14 @@ function shut_down(){
   PID=$(cat $SRV_PID)
   if [[ $? -eq 0 ]]; then
     if alive $PID; then
-      echo "Killing pelican.server"
+      echo "Stopping HTTP server"
       kill $PID
     else
       echo "Stale PID, deleting"
     fi
     rm $SRV_PID
   else
-    echo "pelican.server PIDFile not found"
+    echo "HTTP server PIDFile not found"
   fi
 
   PID=$(cat $PELICAN_PID)
@@ -61,7 +61,7 @@ function shut_down(){
 
 function start_up(){
   local port=$1
-  echo "Starting up Pelican and pelican.server"
+  echo "Starting up Pelican and HTTP server"
   shift
   $PELICAN --debug --autoreload -r $INPUTDIR -o $OUTPUTDIR -s $CONFFILE $PELICANOPTS &
   pelican_pid=$!
@@ -73,13 +73,13 @@ function start_up(){
   cd $BASEDIR
   sleep 1
   if ! alive $pelican_pid ; then
-    echo "Pelican didn't start. Is the pelican package installed?"
+    echo "Pelican didn't start. Is the Pelican package installed?"
     return 1
   elif ! alive $srv_pid ; then
-    echo "pelican.server didn't start. Is there something else which uses port 8000?"
+    echo "The HTTP server didn't start. Is there another service using port" $port "?"
     return 1
   fi
-  echo 'Pelican and pelican.server processes now running in background.'
+  echo 'Pelican and HTTP server processes now running in background.'
 }
 
 ###
@@ -96,7 +96,7 @@ elif [[ $1 == "restart" ]]; then
   start_up $port
 elif [[ $1 == "start" ]]; then
   if ! start_up $port; then
-    shut_down 
+    shut_down
   fi
 else
   usage
