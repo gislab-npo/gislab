@@ -1,0 +1,3 @@
+Markdown
+ghp-import
+pelican==3.5.0
