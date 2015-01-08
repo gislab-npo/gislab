@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 AUTHOR = u'Ivan Minčík'
 SITENAME = u'GIS.lab'
-SITESUBTITLE = u'... rapid GIS office deployment'
+SITESUBTITLE = u'... total reduction of deployment and maintenance costs of complete geospatial infrastructure'
 SITEURL = ''
 
 TIMEZONE = 'Europe/Bratislava'
@@ -18,8 +18,9 @@ TRANSLATION_FEED_ATOM = None
 
 # Blogroll
 LINKS =  (
-	('Contact: gislab@gista.sk', 'mailto:gislab@gista.sk'),
-	('Main sponsor: GISTA s.r.o.', 'http://www.gista.sk'),
+	('Sponsors: GISTA s.r.o.', 'http://www.gista.sk'),
+	('Partners: GISMentors.eu', 'http://www.gismentors.eu'),
+	('GIS.lab mailing list', 'http://lists.osgeo.org/cgi-bin/mailman/listinfo/gis.lab'),
 )
 
 # Social widget
