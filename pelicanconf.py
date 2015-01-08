@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 AUTHOR = u'Ivan Minčík'
 SITENAME = u'GIS.lab'
-SITESUBTITLE = u'... total reduction of deployment and maintenance costs of complete geospatial infrastructure'
+SITESUBTITLE = u'... total reduction of costs for complete geospatial infrastructure deployment and maintenance'
 SITEURL = ''
 
 TIMEZONE = 'Europe/Bratislava'
