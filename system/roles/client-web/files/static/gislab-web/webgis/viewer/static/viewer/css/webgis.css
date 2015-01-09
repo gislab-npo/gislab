@@ -628,12 +628,12 @@ div.overlays-root {
 	padding-left: 2px;
 	padding-right: 2px;
 }
-.x-grid3-col-drawing {
+.x-grid3-col-download {
 	padding-top: 2px;
 	padding-bottom: 0px;
 }
 
-td.x-grid3-td-drawing.x-grid3-col {
+.x-grid3-td-download {
 	text-align: center;
 }
 

@@ -343,156 +343,155 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 						multiple: false,
 						layerFromStore: true
 					}),
-				bbar: [
-					new Ext.Action({
-						ref: '/selectMode',
-						iconCls: 'select-mode-icon',
-						tooltip: gettext('Edit features'),
-						pressed: false,
-						width: 20,
-						enableToggle: true,
-						scope: this,
-						toggleHandler: function(action, toggled) {
-							var draw_control = this.window.drawPanel.activeTab.control;
-							if (toggled) {
-								draw_control.deactivate();
-							} else {
-								draw_control.activate();
+					bbar: [
+						new Ext.Action({
+							ref: '/selectMode',
+							iconCls: 'select-mode-icon',
+							tooltip: gettext('Edit features'),
+							pressed: false,
+							width: 20,
+							enableToggle: true,
+							scope: this,
+							toggleHandler: function(action, toggled) {
+								var draw_control = this.window.drawPanel.activeTab.control;
+								if (toggled) {
+									draw_control.deactivate();
+								} else {
+									draw_control.activate();
+								}
+								this.isSelectModeActivated = toggled;
 							}
-							this.isSelectModeActivated = toggled;
-						}
-					}), ' ', new Ext.Action({
-						ref: '/snapAction',
-						iconCls: 'snapping-icon',
-						tooltip: gettext('Snapping'),
-						enableToggle: true,
-						pressed: false,
-						scope: this,
-						toggleHandler: function(action, toggled) {
-							if (toggled) {
-								this.enableSnapping();
-							} else {
-								this.disableSnapping();
+						}), ' ', new Ext.Action({
+							ref: '/snapAction',
+							iconCls: 'snapping-icon',
+							tooltip: gettext('Snapping'),
+							enableToggle: true,
+							pressed: false,
+							scope: this,
+							toggleHandler: function(action, toggled) {
+								if (toggled) {
+									this.enableSnapping();
+								} else {
+									this.disableSnapping();
+								}
 							}
-						}
-					}), '->', {
-						xtype: 'tbbutton',
-						ref: '/deleteSelected',
-						text: gettext('Delete selected'),
-						tooltip: gettext('Delete selected'),
-						hideMode: 'visibility',
-						drawAction: this,
-						handler: function() {
-							var features_editor = this.drawAction.window.drawPanel.activeTab;
-							var layer = features_editor.getStore().layer;
-							// copy selected features
-							var selected_features = layer.selectedFeatures.slice(0);
-							if (selected_features.length > 0) {
-								this.drawAction.clearFeaturesSelection();
-								layer.destroyFeatures(selected_features[0]);
+						}), '->', {
+							xtype: 'tbbutton',
+							ref: '/deleteSelected',
+							text: gettext('Delete selected'),
+							tooltip: gettext('Delete selected'),
+							hideMode: 'visibility',
+							drawAction: this,
+							handler: function() {
+								var features_editor = this.drawAction.window.drawPanel.activeTab;
+								var layer = features_editor.getStore().layer;
+								// copy selected features
+								var selected_features = layer.selectedFeatures.slice(0);
+								if (selected_features.length > 0) {
+									this.drawAction.clearFeaturesSelection();
+									layer.destroyFeatures(selected_features[0]);
+								}
+								// update row numbers
+								features_editor.getView().refresh();
 							}
-							// update row numbers
-							features_editor.getView().refresh();
-						}
-					}, ' ', {
-						xtype: 'tbbutton',
-						text: gettext('Delete all'),
-						tooltip: gettext('Delete all'),
-						hideMode: 'visibility',
-						drawAction: this,
-						handler: function() {
-							var features_editor = this.drawAction.window.drawPanel.activeTab;
-							features_editor.getStore().layer.destroyFeatures();
-						}
-					}, ' ', new Ext.Action({
-						cls: 'x-btn-text',
-						text: gettext('Save'),
-						tooltip: gettext('Save drawing'),
-						hideMode: 'visibility',
-						drawAction: this,
-						handler: function(save_action) {
-							var save_window = new Ext.Window({
-								id: 'drawing-save-window',
-								header: false,
-								closable: false,
-								modal: true,
-								width: 400,
-								height: 110,
-								layout: 'fit',
-								buttonAlign: 'right',
-								scope: save_action,
-								items: [{
-										xtype: 'form',
-										region: 'center',
-										cls: 'save-drawings-form',
-										labelWidth: 90,
-										frame: true,
-										defaults: {
-											anchor: "100%",
-										},
-										defaultType: 'textfield',
-										items: [{
-												fieldLabel: gettext('Title of drawing'),
-												name: 'title',
-												ref: '/titleField',
-												allowBlank: false,
-												listeners: {
-													afterrender: function(field) {
-														field.focus(false, 200);
+						}, ' ', {
+							xtype: 'tbbutton',
+							text: gettext('Delete all'),
+							tooltip: gettext('Delete all'),
+							hideMode: 'visibility',
+							drawAction: this,
+							handler: function() {
+								var features_editor = this.drawAction.window.drawPanel.activeTab;
+								features_editor.getStore().layer.destroyFeatures();
+							}
+						}, ' ', new Ext.Action({
+							cls: 'x-btn-text',
+							text: gettext('Save'),
+							tooltip: gettext('Save drawing'),
+							hideMode: 'visibility',
+							drawAction: this,
+							handler: function(save_action) {
+								var save_window = new Ext.Window({
+									id: 'drawing-save-window',
+									header: false,
+									closable: false,
+									modal: true,
+									width: 400,
+									height: 110,
+									layout: 'fit',
+									buttonAlign: 'right',
+									scope: save_action,
+									items: [{
+											xtype: 'form',
+											region: 'center',
+											cls: 'save-drawings-form',
+											labelWidth: 90,
+											frame: true,
+											defaults: {
+												anchor: "100%",
+											},
+											defaultType: 'textfield',
+											items: [{
+													fieldLabel: gettext('Title of drawing'),
+													name: 'title',
+													ref: '/titleField',
+													allowBlank: false,
+													listeners: {
+														afterrender: function(field) {
+															field.focus(false, 200);
+														}
 													}
-												}
-										}]
-									}
-								],
-								buttons: [{
-										text: gettext('Cancel'),
-										scope: save_action,
-										handler: function(button, evt) {
-											var window = button.ownerCt.ownerCt;
-											window.close();
+											}]
 										}
-									}, {
-										ref: '/save',
-										text: gettext('Save'),
-										scope: save_action,
-										handler: function(button, evt) {
-											var window = button.ownerCt.ownerCt;
-											if (window.titleField.validate()) {
-												var title = window.titleField.getValue();
-												var features = [];
-												var currentTab = this.drawAction.window.drawPanel.getActiveTab();
-												this.drawAction.clearFeaturesSelection();
-												Ext.each(this.drawAction.layers, function(layer) {
-													features = features.concat(layer.features);
-												});
-												this.drawAction.saveHandler(this.drawAction, title, features);
+									],
+									buttons: [{
+											text: gettext('Cancel'),
+											scope: save_action,
+											handler: function(button, evt) {
+												var window = button.ownerCt.ownerCt;
 												window.close();
 											}
-										}
-								}],
-								listeners: {
-									render: function(window) {
-										var map = new Ext.KeyMap(window.getEl(), [
-											{
-												key: [10, 13],
-												fn: function() {
-													window.save.handler.call(window.save.scope, window.save, Ext.EventObject);
+										}, {
+											ref: '/save',
+											text: gettext('Save'),
+											scope: save_action,
+											handler: function(button, evt) {
+												var window = button.ownerCt.ownerCt;
+												if (window.titleField.validate()) {
+													var title = window.titleField.getValue();
+													var features = [];
+													var currentTab = this.drawAction.window.drawPanel.getActiveTab();
+													this.drawAction.clearFeaturesSelection();
+													Ext.each(this.drawAction.layers, function(layer) {
+														features = features.concat(layer.features);
+													});
+													this.drawAction.saveHandler(this.drawAction, title, features);
+													window.close();
 												}
 											}
-										]);
+									}],
+									listeners: {
+										render: function(window) {
+											var map = new Ext.KeyMap(window.getEl(), [
+												{
+													key: [10, 13],
+													fn: function() {
+														window.save.handler.call(window.save.scope, window.save, Ext.EventObject);
+													}
+												}
+											]);
+										}
 									}
-								}
-							});
-							save_window.show();
-						}
-					})
-				],
+								});
+								save_window.show();
+							}
+						})
+					],
 				});
 				features_editors.push(features_editor);
 			}, this);
 
 			this.historyStore = new Ext.data.JsonStore({
-				drawAction: this,
 				fields: [
 					{
 						name: 'time',
@@ -506,17 +505,9 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 					}, {
 						name: 'permalink',
 						type: 'string',
-						convert: function(v) {
-							return String.format('<a target="_blank" href="?{0}">{1}</a>', v, Ext.urlDecode(v)['DRAWINGS']);
-						}
 					}, {
 						name: 'drawing',
 						type: 'string',
-						drawingUrl: this.drawingUrl,
-						convert: function(v) {
-							var link = Ext.urlAppend(this.drawingUrl, Ext.urlEncode({ID: v}));
-							return String.format('<a target="_blank" href="{0}"><img class="x-tool-download" src="{1}" /></a>', link, Ext.BLANK_IMAGE_URL);
-						}
 					}, {
 						name: 'statistics',
 						type: 'string'
@@ -545,39 +536,47 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							</td>'
 						)
 					},
-					//forceFit: true
+					forceFit: false
 				},
-				columns: [{
-						id       : 'time',
-						header   : gettext('Time'),
-						dataIndex: 'time',
-						width    : 82,
-						sortable : false,
-						menuDisabled: true,
-						renderer : Ext.util.Format.dateRenderer('H:i d/m/y'),
-					}, {
-						id       : 'title',
-						header   : gettext('Title'),
-						dataIndex: 'title',
-						sortable : false,
-						menuDisabled: true,
-						renderer:  tooltip_renderer
-					}, {
-						id       : 'permalink',
-						header   : gettext('Permalink'),
-						dataIndex: 'permalink',
-						width    : 68,
-						sortable : false,
-						menuDisabled: true,
-					}, {
-						id       : 'drawing',
-						header   : gettext('Download'),
-						dataIndex: 'drawing',
-						width    : 55,
-						sortable : false,
+				cm: new Ext.grid.ColumnModel({
+					defaults: {
+						sortable: false,
 						menuDisabled: true,
 					},
-				],
+					columns: [{
+							id: 'time',
+							header: gettext('Time'),
+							dataIndex: 'time',
+							width: 82,
+							renderer: Ext.util.Format.dateRenderer('H:i d/m/y'),
+						}, {
+							id: 'title',
+							header: gettext('Title'),
+							dataIndex: 'title',
+							renderer:  tooltip_renderer
+						}, {
+							id: 'permalink',
+							header: gettext('Permalink'),
+							dataIndex: 'permalink',
+							width: 68,
+							renderer: function(val, meta, record, rowIndex, colIndex, store) {
+								return String.format('<a target="_blank" href="?{0}">{1}</a>', val, Ext.urlDecode(val)['DRAWINGS']);
+							}
+						}, {
+							id: 'download',
+							header: gettext('Download'),
+							dataIndex: 'drawing',
+							width: 55,
+							renderer: {
+								scope: this,
+								fn: function(val, meta, record, rowIndex, colIndex, store) {
+									var link = Ext.urlAppend(this.drawingUrl, Ext.urlEncode({ID: val}));
+									return String.format('<a target="_blank" href="{0}"><img class="x-tool-download" src="{1}" /></a>', link, Ext.BLANK_IMAGE_URL);
+								}
+							}
+						},
+					]
+				}),
 				//stripeRows: true,
 				autoExpandColumn: 'title',
 				// config options for stateful behavior
@@ -628,7 +627,6 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 						xtype: 'tabpanel',
 						ref: 'drawPanel',
 						activeTab: 0,
-						//tabWidth: 140,
 						region: 'center',
 						items: features_editors.concat(history_grid),
 						drawAction: this,
