@@ -46,7 +46,11 @@ def drawing(request):
 			start = form.cleaned_data["START"] or 0
 			limit = form.cleaned_data["LIMIT"] or 20
 			page = int(start/limit)+1
-			paginator = Paginator(Drawing.objects.filter(user=user, project=project) , limit)
+			if project:
+				query = Drawing.objects.filter(user=user, project=project)
+			else:
+				query = Drawing.objects.filter(user=user)
+			paginator = Paginator(query , limit)
 			try:
 				drawings = paginator.page(page)
 			except EmptyPage:
@@ -56,6 +60,7 @@ def drawing(request):
 			for drawing in drawings:
 				drawings_data .append({
 					'title': drawing.title,
+					'project': drawing.project,
 					'time': int(drawing.timestamp.strftime("%s")), #print time.mktime(drawing.timestamp.timetuple())
 					'drawing': drawing.ball_id,
 					'permalink': drawing.permalink,

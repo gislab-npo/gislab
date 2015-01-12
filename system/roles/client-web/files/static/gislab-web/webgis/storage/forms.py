@@ -19,6 +19,6 @@ class DrawingRecordForm(CaseInsensitiveModelForm):
 
 class DrawingHistoryForm(CaseInsensitiveForm):
 	user = forms.CharField(required=True)
-	project = forms.CharField(required=True)
+	project = forms.CharField(required=False)
 	start = forms.IntegerField(min_value=0, required=False)
 	limit = forms.IntegerField(min_value=1, required=False)

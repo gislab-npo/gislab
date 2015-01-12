@@ -458,6 +458,7 @@ def user_projects(request, username):
 						projects.append({
 							'title': metadata.title,
 							'url': url,
+							'project': project,
 							'wms_url': wms_url,
 							'authentication': authentication,
 							'publication_time_unix': int(metadata.publish_date_unix),
