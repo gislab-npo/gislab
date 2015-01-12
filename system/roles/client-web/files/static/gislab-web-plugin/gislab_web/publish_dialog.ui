@@ -45,7 +45,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -84,6 +84,12 @@ QGroupBox::title {
            </property>
            <item row="0" column="0">
             <widget class="QLabel" name="label_blank">
+             <property name="minimumSize">
+              <size>
+               <width>165</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text">
               <string>Blank</string>
              </property>
@@ -288,13 +294,41 @@ QScrollArea &gt; QWidget &gt; QWidget#scrollAreaWidgetContent {
              <x>0</x>
              <y>0</y>
              <width>766</width>
-             <height>496</height>
+             <height>530</height>
             </rect>
            </property>
            <property name="styleSheet">
             <string notr="true"/>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QWidget" name="widget_2" native="true">
+              <layout class="QFormLayout" name="formLayout_6">
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_title">
+                 <property name="minimumSize">
+                  <size>
+                   <width>165</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Title</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="project_title"/>
+               </item>
+              </layout>
+             </widget>
+            </item>
             <item>
              <widget class="QGroupBox" name="groupBox_4">
               <property name="styleSheet">
@@ -320,6 +354,12 @@ QGroupBox::title {
                </property>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_extent_layer">
+                 <property name="minimumSize">
+                  <size>
+                   <width>165</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string>Project extent by layer</string>
                  </property>
@@ -399,6 +439,12 @@ QGroupBox::title {
               <layout class="QFormLayout" name="formLayout_2">
                <item row="0" column="0">
                 <widget class="QLabel" name="label_3">
+                 <property name="minimumSize">
+                  <size>
+                   <width>165</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string>Text</string>
                  </property>
@@ -456,6 +502,12 @@ QGroupBox::title {
                </property>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_authentication">
+                 <property name="minimumSize">
+                  <size>
+                   <width>165</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string>Authentication</string>
                  </property>
@@ -876,8 +928,8 @@ QGroupBox::title {
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>801</width>
-         <height>497</height>
+         <width>98</width>
+         <height>28</height>
         </rect>
        </property>
       </widget>

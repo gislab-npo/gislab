@@ -77,6 +77,12 @@ class ProjectPage(PublishPage):
 		if self.plugin.project.isDirty():
 			messages.append((MSG_ERROR, u"Project has been modified. Save it before continue (Project > Save)."))
 
+		if not self.dialog.project_title.text():
+			messages.append((
+				MSG_ERROR,
+				u"Project title is required"
+			))
+
 		crs_transformation, ok = self.plugin.project.readBoolEntry("SpatialRefSys", "/ProjectionsEnabled")
 		if not ok or not crs_transformation:
 			messages.append((
@@ -135,6 +141,9 @@ class ProjectPage(PublishPage):
 
 	def setup_config_page_from_metadata(self, metadata):
 		dialog = self.dialog
+		title = metadata.get('title')
+		if title:
+			dialog.project_title.setText(title)
 		message = metadata.get('message')
 		if message:
 			dialog.message_text.insertPlainText(message.get('text', ''))
@@ -262,6 +271,9 @@ class ProjectPage(PublishPage):
 
 	def initialize(self, metadata=None):
 		dialog = self.dialog
+		title = self.plugin.project.title() or self.plugin.project.readEntry("WMSServiceTitle", "/")[0]
+		dialog.project_title.setText(title)
+
 		map_canvas = self.plugin.iface.mapCanvas()
 		self.base_layers_tree = self.plugin.get_project_base_layers()
 		self.overlay_layers_tree = self.plugin.get_project_layers()
@@ -419,7 +431,7 @@ class ProjectPage(PublishPage):
 
 		project_keyword_list = project.readListEntry("WMSKeywordList", "/")[0]
 		metadata = {
-			'title': project.readEntry("WMSServiceTitle", "/")[0] or project.title(),
+			'title': dialog.project_title.text(),
 			'abstract': project.readEntry("WMSServiceAbstract", "/")[0],
 			'contact_person': project.readEntry("WMSContactPerson", "/")[0],
 			'contact_organization': project.readEntry("WMSContactOrganization", "/")[0],
