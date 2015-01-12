@@ -385,8 +385,11 @@ def page(request):
 			'project': 'empty',
 			'root_title': _('Empty Project'),
 			'project_extent': [-20037508.34, -20037508.34, 20037508.34, 20037508.34],
-			'projection': 'EPSG:3857',
-			'units': 'dd'
+			'projection': {
+				'code': 'EPSG:3857',
+				'is_geographic': False
+			},
+			'units': 'm'
 		})
 		context['zoom_extent'] = form.cleaned_data['EXTENT'] or context['project_extent']
 		context['base_layers'] = json.dumps([OSM_LAYER, GOOGLE_LAYERS['GHYBRID']])
