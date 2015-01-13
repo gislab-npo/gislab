@@ -2,6 +2,7 @@ Title: GIS.lab server
 Submenu: yes
 Order: 10
 Slug: gislab-server
+Status: draft
 
 
 __GIS.lab server__ is a heart of whole system. It provides basic network services such as central user authentication, client networking configuration, domain names service or email. It also provides __file and geo-database storage__ service and dedicated services for GIS such as __Web Map Service (WMS)__, __Web Feature Service (WFS)__ and __GIS project publishing service GIS.lab Web__.

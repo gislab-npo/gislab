@@ -2,11 +2,11 @@ Title: GIS.lab Web
 Submenu: yes
 Order: 30
 Slug: gislab-web
+Status: draft
 
 
-All GIS projects created in GIS.lab desktop environment can be automatically published by __GIS.lab Web__ application which closely mimics project's configuration on desktop and works out-of-box without any additional configuration.
+__GIS.lab Web__ client is providing access to GIS projects created in GIS.lab Desktop via Internet browser.
 
-Try GIS.lab Web demonstration project [here.](http://web.gislab.gisplan.sk/?PROJECT=gista/natural-earth/central-europe)
 
 <div style="text-align:center;padding:10px" markdown="1">
 ![GIS project QGIS]({filename}/images/client-qgis.png)  
@@ -28,3 +28,5 @@ __Features__
 * map compositions sharing and collaboration
 
 Implemented by: QGIS Mapserver, QGIS GIS.lab Web plugin, GIS.lab Web
+
+GIS.lab Web [demo: ](http://web.gislab.gisplan.sk/?PROJECT=gista/natural-earth/central-europe)
