@@ -482,7 +482,7 @@
 				// Toolbar Actions
 
 				mappanel.getTopToolbar().add(' ');
-				{% if project != "empty" %}
+				{% if project != "empty" and topics %}
 				{% include "viewer/actions/topics.js" %}
 				mappanel.getTopToolbar().add(' ', '-', ' ');
 				{% endif %}

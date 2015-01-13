@@ -68,14 +68,12 @@ class TopicsPage(PublishPage):
 					child_widget.setDisabled(is_hidden)
 		update_available_layers(self.dialog.topicLayers.invisibleRootItem())
 
-	def load_topics_from_metadata(self, metadata):
-		"""load topics from previous version of published project"""
-		for topic_data in metadata.get('topics') or []:
+	def _create_topics_items(self, topics):
+		for topic_data in topics:
 			item = QListWidgetItem(topic_data.pop('title'))
 			item.setFlags(item.flags() | Qt.ItemIsEditable)
 			item.setData(Qt.UserRole, topic_data)
 			self.dialog.topicsList.addItem(item)
-		self.dialog.topicsList.setCurrentRow(0)
 
 	def initialize(self, metadata=None):
 		dialog = self.dialog
@@ -88,6 +86,9 @@ class TopicsPage(PublishPage):
 
 		def remove_topic():
 			dialog.topicsList.takeItem(dialog.topicsList.row(dialog.topicsList.selectedItems()[0]))
+			if dialog.topicsList.count() == 0:
+				dialog.topicWidget.setEnabled(False)
+				dialog.topicAbstract.setPlainText('')
 
 		dialog.addTopic.released.connect(add_topic)
 		dialog.removeTopic.released.connect(remove_topic)
@@ -137,9 +138,19 @@ class TopicsPage(PublishPage):
 		dialog.topicsList.currentItemChanged.connect(topic_changed)
 		if metadata:
 			try:
-				self.load_topics_from_metadata(metadata)
+				# load topics from previous version of published project
+				topics = metadata.get('topics') or []
+				self._create_topics_items(topics)
 			except:
 				QMessageBox.warning(None, 'Warning', 'Failed to load settings from last published version')
+		else:
+			# create default topic
+			default_topic = {
+				'title': 'Default topic',
+				'abstract': 'Default layers configuration',
+			}
+			self._create_topics_items([default_topic])
+		self.dialog.topicsList.setCurrentRow(0)
 
 	def show(self):
 		self.update_topics_layers()
