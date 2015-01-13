@@ -149,7 +149,7 @@
 							name: 'permalink',
 							type: 'string',
 							convert: function(v) {
-								return String.format('<a target="_blank" href="?{0}">{1}</a>', v, Ext.urlDecode(v)['DRAWINGS']);
+								return String.format('<a target="_blank" href="/?{0}">{1}</a>', v, Ext.urlDecode(v)['DRAWINGS']);
 							}
 						}, {
 							name: 'drawing',
@@ -259,13 +259,6 @@
 							items: [{
 									xtype: 'tbspacer',
 									width: 120,
-								}, {
-									xtype: 'tbspacer',
-									flex: 1
-								}, {
-									xtype: 'tbtext',
-									text: '{% trans "Projects" %}',
-									cls: 'app-title'
 								}, {
 									xtype: 'tbspacer',
 									flex: 1
