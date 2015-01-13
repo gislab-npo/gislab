@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=GIS.lab Web
-Comment=GIS.lab Web user page
+Comment=GIS.lab Web client
 Exec=firefox "http://web.gis.lab/user"
 Icon=gislab-web
 Path=
@@ -10,4 +10,4 @@ Terminal=false
 Categories=Gislab;
 StartupNotify=false
 Name[sk]=GIS.lab Web
-Comment[sk]=Stránka používateľa GIS.lab Web
+Comment[sk]=Klient GIS.lab Web
