@@ -1,5 +1,5 @@
 #!/bin/bash
-# Print informations about GIS.lab client
+# Print information about GIS.lab client
 
 source /etc/gislab_version
 
@@ -47,6 +47,6 @@ SOFTWARE\n
 This report was generated on $(date).
 "
 
-echo -e $INFO | zenity --title="GIS.lab client system informations" --text-info --height=300 --width=600
+echo -e $INFO | zenity --title="GIS.lab client system information" --text-info --height=300 --width=600
 
 # vim: set ts=4 sts=4 sw=4 noet:
