@@ -149,9 +149,6 @@
 						}, {
 							name: 'permalink',
 							type: 'string',
-							convert: function(v) {
-								return String.format('<a target="_blank" href="/?{0}">{1}</a>', v, Ext.urlDecode(v)['DRAWINGS']);
-							}
 						}, {
 							name: 'drawing',
 							type: 'string',
@@ -224,6 +221,18 @@
 								header: '{% trans "Permalink" %}',
 								dataIndex: 'permalink',
 								width: 85,
+								renderer: function(value, meta, record, rowIndex, colIndex, store) {
+									var index = projects_tab.store.find('project', record.get('project'));
+									if (index > -1) {
+										// use url from projects store and strip all GET parameters to create
+										// secure (https) permalink
+										var url = projects_tab.store.getAt(index).get('url').split("?")[0];
+										url = Ext.urlAppend(url, value);
+										return String.format('<a target="_blank" href="{0}">{1}</a>', url, Ext.urlDecode(value)['DRAWINGS']);
+									}
+									// project does not exists
+									return '-';
+								}
 							}, {
 								id: 'download',
 								header: '{% trans "Download" %}',
