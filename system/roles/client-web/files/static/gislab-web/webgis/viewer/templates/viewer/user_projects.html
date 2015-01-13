@@ -50,7 +50,10 @@
 								id: 'title',
 								header: '{% trans "Title" %}',
 								dataIndex: 'title',
-								width: 200
+								width: 200,
+								renderer: function(value, meta, record, rowIndex, colIndex, store) {
+									return String.format('<a target="_blank" href="{0}">{1}</a>', record.get('url'), value);
+								}
 							}, {
 								id: 'publication_time',
 								header: '{% trans "Publication time" %}',
@@ -75,14 +78,20 @@
 								dataIndex: 'url',
 								sortable: false,
 								menuDisabled: true,
-								width: 400
+								width: 400,
+								renderer: function(value, meta, record, rowIndex, colIndex, store) {
+									return String.format('<a href="{0}" target="_blank">{1}</a>', value, decodeURIComponent(value));
+								}
 						}, {
 								id: 'wms_url',
 								header: '{% trans "WMS URL" %}',
 								dataIndex: 'wms_url',
 								sortable: false,
 								menuDisabled: true,
-								width: 400
+								width: 400,
+								renderer: function(value, meta, record, rowIndex, colIndex, store) {
+									return String.format('<a href="{0}" target="_blank">{1}</a>', value, decodeURIComponent(value));
+								}
 						}]
 					}),
 					store: new Ext.data.JsonStore({
@@ -92,8 +101,8 @@
 								title: '{{ project_info.title }}',
 								{% if project_info.publication_time_unix %}publication_time: new Date({{ project_info.publication_time_unix }}*1000),{% endif %}
 								authentication: '{{ project_info.authentication }}',
-								url: String.format('<a href="{{ project_info.url }}" target="_blank"> {0}</a>', decodeURIComponent('{{ project_info.url }}')),
-								{% if project_info.wms_url %}wms_url: String.format('<a href="{0}" target="_blank"> {0}</a>', decodeURIComponent('{{ project_info.wms_url }}')),{% endif %}
+								url: '{{ project_info.url }}',
+								{% if project_info.wms_url %}wms_url: '{{ project_info.wms_url }}',{% endif %}
 								{% if project_info.expiration_time_unix %}expiration_time: new Date({{ project_info.expiration_time_unix }}*1000),{% endif %}
 							},{% endfor %}
 						],
@@ -128,14 +137,6 @@
 						{
 							name: 'project',
 							type: 'string',
-							convert: function(v) {
-								//v = 'marcel/'+v;
-								var index = projects_tab.store.find('project', v);
-								if (index > -1) {
-									return projects_tab.store.getAt(index).get('title');
-								}
-								return '?';
-							}
 						}, {
 							name: 'time',
 							type: 'date',
@@ -154,10 +155,6 @@
 						}, {
 							name: 'drawing',
 							type: 'string',
-							convert: function(v) {
-								var link = Ext.urlAppend('{% url "storage:ball" %}', Ext.urlEncode({ID: v}));
-								return String.format('<a target="_blank" href="{0}"><img class="x-tool-download" src="{1}" /></a>', link, Ext.BLANK_IMAGE_URL);
-							},
 						}, {
 							name: 'statistics',
 							type: 'string'
@@ -194,6 +191,16 @@
 								dataIndex: 'project',
 								width: 150,
 								sortable: true,
+								renderer: function(value, meta, record, rowIndex, colIndex, store) {
+									var index = projects_tab.store.find('project', value);
+									if (index > -1) {
+										var title = projects_tab.store.getAt(index).get('title');
+										var url = projects_tab.store.getAt(index).get('url');
+										return String.format('<a target="_blank" href="{0}">{1}</a>', url, title);
+									}
+									// project does not exists
+									return '-';
+								}
 							}, {
 								id: 'time',
 								header: '{% trans "Time" %}',
@@ -222,6 +229,10 @@
 								header: '{% trans "Download" %}',
 								dataIndex: 'drawing',
 								width: 60,
+								renderer: function(value, meta, record, rowIndex, colIndex, store) {
+									var link = Ext.urlAppend('{% url "storage:ball" %}', Ext.urlEncode({ID: value}));
+									return String.format('<a target="_blank" href="{0}"><img class="x-tool-download" src="{1}" /></a>', link, Ext.BLANK_IMAGE_URL);
+								}
 						}]
 					}),
 					autoExpandColumn: 'title',
