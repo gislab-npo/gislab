@@ -13,7 +13,7 @@ WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 				header: false,
 				closable: false,
 				resizable: false,
-				width: 260,
+				width: 590,
 				height: 450,
 				layout: 'border',
 				baseAction: this,
@@ -26,7 +26,7 @@ WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 						width: 330,
 						header: false,
 						collapsible: true,
-						collapsed: true,
+						collapsed: false,
 						animCollapse: false,
 						collapseMode: 'mini',
 						floatable: false,
@@ -71,7 +71,7 @@ WebGIS.TopicsAction = Ext.extend(Ext.Action, {
 						layout: 'fit',
 						title: gettext('Topics'),
 						region: 'center',
-						cls: 'topics-panel',
+						cls: 'topics-panel details-expanded',
 						tools: [{
 							id: 'right',
 							handler: function(event, toolEl, panel, tc) {
