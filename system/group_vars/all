@@ -1,16 +1,18 @@
 # This file contains default values of GIS.lab configuration variables.
-# Do not modify this file directly, rather create a new host variable file 'system/host_vars/<GISLAB_UNIQUE_ID>'
-# containing variables which you want to override. Than add a host record with server name '<GISLAB_UNIQUE_ID>' in to
-# your inventory file.
 
-# Inventory file syntax: <GISLAB_UNIQUE_ID> ansible_ssh_host=<server-URL> ansible_ssh_user=<provisioning-user-account-name>
+# Do not modify this file directly, rather create a new configuration file in 'system/host_vars' directory and place
+# there variables which you want to change. Than create Ansible inventory file, with the same 'unique-host-name' as
+# a file name in 'system/host_vars' directory.
+
+# Inventory file format:
+# <unique-host-name> ansible_ssh_host=<host-url> ansible_ssh_user=<provisioning-user-account-name>
 
 # If using local Vagrant provisioner (with VirtualBox or VMWare provider), create 'gislab_vagrant' variable file in
 # 'host_vars' directory and fill it with your configuration. It will be automatically loaded by Vagrant without needing
 # to create the inventory file.
 
-# In most cases, changing configuration once GIS.lab is installed requires performing server upgrade.
 
+# In most cases, changing configuration once GIS.lab is installed requires performing server upgrade.
 # Here is a list of useful commands:
 
 # Vagrant provisioner
@@ -22,8 +24,8 @@
 
 # Ansible provisioner
 # ------------
-# * GIS.lab installation:     $ ansible-playbook --inventory=<INVENTORY-FILE> --limit=<HOST-NAME> --private-key=<PRIVATE-KEY> system/gislab.yml
-# * GIS.lab upgrade:          $ ansible-playbook --inventory=<INVENTORY-FILE> --limit=<HOST-NAME> --private-key=<PRIVATE-KEY> system/gislab.yml
+# * GIS.lab installation:     $ ansible-playbook --inventory=<INVENTORY-FILE> --private-key=<PRIVATE-KEY> system/gislab.yml
+# * GIS.lab upgrade:          $ ansible-playbook --inventory=<INVENTORY-FILE> --private-key=<PRIVATE-KEY> system/gislab.yml
 # * GIS.lab server restart:   $ ansible --inventory=<INVENTORY-FILE> --private-key=<PRIVATE-KEY> --module-name=shell --args='sudo reboot' <HOST-NAME> 
 # * GIS.lab server shutdown:  $ ansible --inventory=<INVENTORY-FILE> --private-key=<PRIVATE-KEY> --module-name=shell --args='sudo halt' <HOST-NAME> 
 
