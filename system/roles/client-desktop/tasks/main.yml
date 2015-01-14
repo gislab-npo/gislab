@@ -19,7 +19,7 @@
 
 - name: Stop NBD server before updating client image
   # stopping NBD before updating image to prevent service crashing
-  service: name=nbd state=stopped
+service: name=nbd-server state=stopped
 
 # System
 - name: Flush client installation directory
@@ -57,16 +57,12 @@
          bash {{ GISLAB_INSTALL_CLIENT_ROOT }}/install.sh {{ gislab_build_client_opts }} > /var/log/gislab-build-client.log
   args:
     executable: /bin/bash
-  notify:
-    - service nbd-server restart
 
 - name: Update SSH keys and kernel
   command: "{{ item }}"
   with_items:
     - ltsp-update-sshkeys
     - ltsp-update-kernels
-  notify:
-    - service nbd-server restart
 
 # Custom GIS.lab client DHCP client
 - name: Create directory for DHCP client script
@@ -108,7 +104,7 @@
 
 
 - name: Start NBD server again
-  service: name=nbd state=started
+service: name=nbd-server state=started
 
 - name: Start GIS.lab network machines again
   service: name=serf state=started
