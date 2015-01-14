@@ -17,6 +17,9 @@
 - name: Stop GIS.lab network machines before updating client image
   service: name=serf state=stopped
 
+- name: Stop NBD server before updating client image
+  # stopping NBD before updating image to prevent service crashing
+  service: name=nbd state=stopped
 
 # System
 - name: Flush client installation directory
@@ -103,6 +106,9 @@
 - name: Install HTTP boot script
   template: src=boot-http/i386.j2 dest=/var/www/default/i386
 
+
+- name: Start NBD server again
+  service: name=nbd state=started
 
 - name: Start GIS.lab network machines again
   service: name=serf state=started
