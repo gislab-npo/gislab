@@ -2,4 +2,4 @@
 
 # $ ansible-playbook --inventory=gislab-unit.inventory --private-key=<private-SSH-key-file> system/gislab.yml
 
-  - include: server.yml
+  - include: system.yml
