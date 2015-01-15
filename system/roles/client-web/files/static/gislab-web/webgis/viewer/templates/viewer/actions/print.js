@@ -46,25 +46,12 @@ var printWindow = new Ext.Window({
 	},
 	updatePrintScales: function() {
 		var map_scale = Math.round(printExtent.map.getScale());
-		{% if scales %}
-		// find exact scale value
-		var exact_scale;
-		var closest_dist = null;
-		Ext.each([{{ scales|join:"," }}], function(scale) {
-			var dist = Math.abs(map_scale-scale);
-			if (closest_dist == null || dist < closest_dist) {
-				exact_scale = scale;
-				closest_dist = dist;
-			}
-		});
-		map_scale = exact_scale;
-		{% endif %}
 		printExtent.printProvider.capabilities.scales = [{"name":"1:"+Number(map_scale).toLocaleString(), "value": map_scale}]
 		printExtent.printProvider.scales.loadData(printExtent.printProvider.capabilities);
 		if (printExtent.pages.length == 0) {
 			printExtent.addPage();
 		}
-		printExtent.page.setScale(printExtent.printProvider.scales.getAt(0), 'm');
+		printExtent.page.setScale(printExtent.printProvider.scales.getAt(0), printExtent.map.getUnits());
 	},
 	tbar: [
 		{
@@ -252,7 +239,9 @@ var printWindow = new Ext.Window({
 					SRS: printExtent.map.projection.getCode(),
 					'map0:extent': printExtent.page.getPrintExtent(printExtent.map).toBBOX(1, false),
 					'map0:rotation': -printExtent.page.rotation,
-					'map0:scale': printExtent.page.scale.get("value")
+				}
+				if (printExtent.map.getUnits() != 'dd') {
+					params['map0:scale'] = printExtent.page.scale.get("value");
 				}
 				// labels
 				if (print_window.items.length > 0) {
