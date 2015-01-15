@@ -12,16 +12,8 @@
     - pwgen
 
 
-# User accounts cleanup and security
-- name: Detect if LDAP is installed
-  shell: "ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// '(o=gis.lab)' 2>/dev/null || echo 'LDAP NOT INSTALLED'"
-  args:
-    executable: /bin/bash
-  register: ldap_install_status
-
-- name: Remove not required user accounts
-# this task can be performed only until GIS.lab users accounts can be created (LDAP service is installed),
-# otherwise it would remove GIS.lab user accounts
+- name: Remove user accounts which doesn't belong to GIS.lab users
+  # this task is performed only for accounts with ID in range 1000-1010. GIS.lab user accounts IDs begin with 3000
   shell: for userid in {1000..1010}; do username=$(getent passwd $userid | awk -F ':' '{print $1}');
          if [ "$username" != "" -a "$username" != "{{ GISLAB_PROVISIONING_USER }}" ]; then
            deluser --remove-home $username;
@@ -29,7 +21,6 @@
          done
   args:
     executable: /bin/bash
-  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
 
 
 - name: Set strong password for provisioning user account
