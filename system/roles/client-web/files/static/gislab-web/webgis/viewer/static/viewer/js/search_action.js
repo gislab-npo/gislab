@@ -534,6 +534,7 @@ WebGIS.SearchAction = Ext.extend(Ext.Action, {
 							var query_params = {
 								SERVICE: 'WMS',
 								REQUEST: 'GetFeatureInfo',
+								VERSION: '1.1.1',
 								FEATURE_COUNT: features_count+1,
 								INFO_FORMAT: 'application/vnd.ogc.gml',
 								SRS: this.map.projection.projCode,
