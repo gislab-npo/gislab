@@ -1,5 +1,4 @@
-# GIS.lab - rapid GIS office deployment
-GIS.lab provides possibility to automatically deploy GIS server and unlimited number of client machines in a few moments.
+# GIS.lab - rapid deployment of free geospatial infrastructure
 
 ## See also
  * project page : http://imincik.github.io/gis-lab
@@ -12,6 +11,7 @@ GIS.lab provides possibility to automatically deploy GIS server and unlimited nu
 
 ## Contributors
  * Peter Kolenic, peter.kolenic@gmail.com
+ * Rastislav Micanik, rastomicanik@gmail.com
 
 ## License
 Unless stated otherwise, this project is released under terms and conditions of GNU GPL version 3 (see LICENSE.md).
