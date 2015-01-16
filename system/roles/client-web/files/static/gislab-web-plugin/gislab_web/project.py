@@ -80,7 +80,7 @@ class ProjectPage(PublishPage):
 		if not self.dialog.project_title.text():
 			messages.append((
 				MSG_ERROR,
-				u"Project title is required"
+				u"Project title is required. Enter project title in 'Project' tab."
 			))
 
 		crs_transformation, ok = self.plugin.project.readBoolEntry("SpatialRefSys", "/ProjectionsEnabled")
