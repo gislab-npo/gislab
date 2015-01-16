@@ -23,7 +23,7 @@
 		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/locale/ext-lang-' %}{{ LANGUAGE_CODE }}.js"></script>
 		{% endif %}
 
-		<title id="page-title">{% trans "GIS.lab user page" %}</title>
+		<title id="page-title">{% trans "GIS.lab User Page" %}</title>
 
 		{% comment %} ##  CONFIGURATION  ## {% endcomment %}
 		<script type="text/javascript">
@@ -279,6 +279,13 @@
 							items: [{
 									xtype: 'tbspacer',
 									width: 120,
+								}, {
+									xtype: 'tbspacer',
+									flex: 1
+								}, {
+									xtype: 'tbtext',
+									text: '{% trans "GIS.lab User Page" %}',
+									cls: 'app-title'
 								}, {
 									xtype: 'tbspacer',
 									flex: 1

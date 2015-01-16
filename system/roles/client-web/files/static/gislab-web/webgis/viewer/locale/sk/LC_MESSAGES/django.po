@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-28 08:10+0100\n"
+"POT-Creation-Date: 2015-01-16 16:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: views.py:383 views.py:429
+#: views.py:394 views.py:443
 msgid "Empty Project"
 msgstr "Prázdny projekt"
 
@@ -39,55 +39,89 @@ msgid "Password"
 msgstr "Heslo"
 
 #: templates/registration/login.html:106
-#: templates/viewer/user_projects.html:66 templates/viewer/webgis.html:546
+#: templates/viewer/user_projects.html:302 templates/viewer/webgis.html:546
 msgid "Log in"
 msgstr "Prihlásiť sa"
 
-#: templates/viewer/user_projects.html:24
-msgid "GIS.lab user page"
+#: templates/viewer/user_projects.html:26
+#: templates/viewer/user_projects.html:288
+msgid "GIS.lab User Page"
 msgstr "Stránka používateľa GIS.lab"
 
-#: templates/viewer/user_projects.html:52
+#: templates/viewer/user_projects.html:35
 msgid "Projects"
 msgstr "Projekty"
 
-#: templates/viewer/user_projects.html:59 templates/viewer/webgis.html:539
-msgid "Guest"
-msgstr "Neprihlásený"
-
-#: templates/viewer/user_projects.html:79 templates/viewer/webgis.html:559
-msgid "Log out"
-msgstr "Odhlásiť sa"
-
-#: templates/viewer/user_projects.html:121
+#: templates/viewer/user_projects.html:52
+#: templates/viewer/user_projects.html:211
 msgid "Title"
 msgstr "Názov"
 
-#: templates/viewer/user_projects.html:126
+#: templates/viewer/user_projects.html:60
 msgid "Publication time"
 msgstr "Čas publikácie"
 
-#: templates/viewer/user_projects.html:132
+#: templates/viewer/user_projects.html:67
 msgid "Expiration time"
 msgstr "Platnosť projektu"
 
-#: templates/viewer/user_projects.html:138
+#: templates/viewer/user_projects.html:73
 msgid "Authentication"
 msgstr "Autentifikácia"
 
-#: templates/viewer/user_projects.html:143
+#: templates/viewer/user_projects.html:78
 msgid "URL"
 msgstr "URL"
 
-#: templates/viewer/user_projects.html:150 templates/viewer/webgis.html:435
+#: templates/viewer/user_projects.html:88 templates/viewer/webgis.html:435
 msgid "WMS URL"
 msgstr "WMS URL"
+
+#: templates/viewer/user_projects.html:170
+msgid "Drawings"
+msgstr "Kreslenia"
+
+#: templates/viewer/user_projects.html:188
+msgid "Project"
+msgstr "Projekt"
+
+#: templates/viewer/user_projects.html:204
+msgid "Time"
+msgstr "Čas"
+
+#: templates/viewer/user_projects.html:217
+msgid "Statistics"
+msgstr "Štatistika"
+
+#: templates/viewer/user_projects.html:222
+msgid "Permalink"
+msgstr "Permalink"
+
+#: templates/viewer/user_projects.html:239
+msgid "Download"
+msgstr "Stiahnuť"
+
+#: templates/viewer/user_projects.html:256
+msgid "Drawings {0} - {1} of {2}"
+msgstr "Kreslenia {0} - {1} z {2}"
+
+#: templates/viewer/user_projects.html:257
+msgid "No drawings"
+msgstr "Žiadne kreslenia"
+
+#: templates/viewer/user_projects.html:295 templates/viewer/webgis.html:539
+msgid "Guest"
+msgstr "Neprihlásený"
+
+#: templates/viewer/user_projects.html:315 templates/viewer/webgis.html:559
+msgid "Log out"
+msgstr "Odhlásiť sa"
 
 #: templates/viewer/webgis.html:287
 msgid "Scale"
 msgstr "Mierka"
 
-#: templates/viewer/webgis.html:287 templates/viewer/actions/print.js:139
+#: templates/viewer/webgis.html:287 templates/viewer/actions/print.js:126
 msgid "Resolution"
 msgstr "Rozlíšenie"
 
@@ -167,21 +201,25 @@ msgstr "Dokumentácia"
 msgid "Base Layers"
 msgstr "Podkladové vrstvy"
 
-#: templates/viewer/webgis.html:679 templates/viewer/actions/draw.js:134
-#: templates/viewer/actions/draw.js:145
+#: templates/viewer/webgis.html:663 templates/viewer/webgis.html.py:703
+#: templates/viewer/actions/draw.js:134 templates/viewer/actions/draw.js:145
 msgid "Error"
 msgstr "Chyba"
 
-#: templates/viewer/webgis.html:680
+#: templates/viewer/webgis.html:664
+msgid "Failed to fetch vector layers data"
+msgstr "Nepodarilo sa načítať vektorové dáta"
+
+#: templates/viewer/webgis.html:704
 #, python-format
 msgid "Failed to fetch vector data (drawing: %(drawing_id)s)"
 msgstr "Nepodarilo sa načítať vektorové dáta (kreslenie: %(drawing_id)s)"
 
-#: templates/viewer/webgis.html:696 templates/viewer/webgis.html.py:708
+#: templates/viewer/webgis.html:720 templates/viewer/webgis.html.py:732
 msgid "Open attribute table"
 msgstr "Otvoriť atribútovú tabuľku"
 
-#: templates/viewer/webgis.html:719
+#: templates/viewer/webgis.html:743
 msgid "Message"
 msgstr "Správa"
 
@@ -237,27 +275,27 @@ msgstr "Identifikácia objektov kliknutím myšou"
 msgid "Measure coordinates, length and area"
 msgstr "Meranie súradníc, dĺžok a plôch"
 
-#: templates/viewer/actions/print.js:75
+#: templates/viewer/actions/print.js:62
 msgid "Print layout"
 msgstr "Šablóna pre tlač"
 
-#: templates/viewer/actions/print.js:175
+#: templates/viewer/actions/print.js:162
 msgid "Output file format"
 msgstr "Formát tlačového výstupu"
 
-#: templates/viewer/actions/print.js:201
+#: templates/viewer/actions/print.js:188
 msgid "Rotation"
 msgstr "Natočenie"
 
-#: templates/viewer/actions/print.js:232
+#: templates/viewer/actions/print.js:219
 msgid "Create"
 msgstr "Vytvoriť"
 
-#: templates/viewer/actions/print.js:233
+#: templates/viewer/actions/print.js:220
 msgid "Create print output"
 msgstr "Vytvoriť tlačový výstup"
 
-#: templates/viewer/actions/print.js:298
+#: templates/viewer/actions/print.js:287
 msgid "Print output creation"
 msgstr "Tvorba tlačových výstupov"
 
@@ -265,14 +303,6 @@ msgstr "Tvorba tlačových výstupov"
 msgid "Search features by attributes"
 msgstr "Vyhľadávanie objektov podľa atribútov"
 
-#: templates/viewer/actions/topics.js:6
-msgid "Default topic"
-msgstr "Predvolená téma"
-
-#: templates/viewer/actions/topics.js:7
-msgid "Default layers configuration"
-msgstr "Predvolené vrstvy"
-
-#: templates/viewer/actions/topics.js:18
+#: templates/viewer/actions/topics.js:11
 msgid "Topics"
 msgstr "Témy"
