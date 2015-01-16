@@ -262,6 +262,18 @@
 					}
 				};
 
+				var user_tab = new Ext.grid.PropertyGrid({
+					title: '{% trans "User account" %}',
+					autoHeight: true,
+					source: {
+						"Username": "{{ user.username }}",
+						"First name": "{{ user.first_name }}",
+						"Last name": "{{ user.last_name }}",
+						"E-mail": "{{ user.email }}",
+						"Superuser": "{{ user.is_superuser }}"
+					}
+				});
+
 				var webgis = new Ext.Viewport({
 					id: 'projects-viewer',
 					layout: 'fit',
@@ -337,7 +349,7 @@
 							xtype: 'tabpanel',
 							region: 'center',
 							activeTab: 0,
-							items: [projects_tab, drawings_tab]
+							items: [projects_tab, drawings_tab, user_tab]
 						}]
 					}]
 				});
