@@ -233,12 +233,12 @@
   shell: run-parts /etc/update-motd.d
 
 
-# GIS.lab management tools
+# GIS.lab administrator tools
 - name: Install GIS.lab shell functions library
   copy: src=functions.sh dest={{ GISLAB_ROOT }}/functions.sh
 
-- name: Install GIS.lab management scripts
-  copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0775 group={{ GISLAB_PROVISIONING_USER }}
+- name: Install GIS.lab administrator tools
+  copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0775 owner=root group=root
 
-- name: Add GIS.lab management scripts on path
+- name: Add GIS.lab administrator tools on path
   lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present
