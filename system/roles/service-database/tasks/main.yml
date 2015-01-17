@@ -25,6 +25,7 @@
 - name: Detect PostgreSQL shared dir
   command: pg_config --sharedir
   register: pg_sharedir
+  changed_when: False
 
 - name: Install Audit trigger
   copy: src=static/audit-trigger/audit.sql dest="{{ pg_sharedir.stdout }}/contrib/audit.sql"

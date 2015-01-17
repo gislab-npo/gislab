@@ -12,6 +12,7 @@
 - name: Detect GIS.lab install action (new installation or upgrade)
   stat: path=/var/lib/gislab/installation.done
   register: installation_done
+  changed_when: False
 
 - name: Set GIS.lab install action variable (install)
   set_fact:

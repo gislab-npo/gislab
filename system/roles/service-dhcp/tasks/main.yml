@@ -19,6 +19,7 @@
   args:
     executable: /bin/bash
   register: gislab_network_dhcp_device
+  changed_when: False
 
 - name: Activate network device for DHCP service
   template: src=dhcp/isc-dhcp-server.j2 dest=/etc/default/isc-dhcp-server
@@ -40,6 +41,7 @@
 - name: Detect if default MAC addresses list file is created
   stat: path=/etc/gislab/gislab_machines_allowed.conf
   register: gislab_machines_allowed_status
+  changed_when: False
 
 - name: Create default MAC addresses list file
   template: src=dhcp/dhcpd-machines-allowed.conf.j2 dest=/etc/gislab/gislab_machines_allowed.conf
