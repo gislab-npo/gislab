@@ -15,7 +15,7 @@ usage(){
 
 
 COUNT=$1
-for u in {1..$COUNT}; do
+for u in $(eval echo "{1..$COUNT}"); do
 
 	gislab-deluser -f lab$u || true
 	gislab-adduser -g "User $u" -l "GIS.lab" -m lab$u@gis.lab -p lab lab$u
