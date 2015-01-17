@@ -62,6 +62,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
     end
 
+    # tests
+    if CONFIG['GISLAB_TESTS_ENABLE'] == true
+      server.vm.provision "ansible" do |ansible|
+        ansible.playbook = "system/test.yml"
+        ansible.verbose = "vv"
+      end
+    end
+
     # VirtualBox configuration
     server.vm.provider "virtualbox" do |vb, override|
       vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY']]
@@ -96,5 +104,4 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
     end
   end
-
 end

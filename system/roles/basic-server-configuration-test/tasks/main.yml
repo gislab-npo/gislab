@@ -1,0 +1,36 @@
+---
+
+- name: Get value of GISLAB_ROOT variable
+  shell: echo $GISLAB_ROOT
+  register: test_gislab_root
+  changed_when: False
+
+- name: Test value of GISLAB_ROOT variable
+  assert:
+    that: "test_gislab_root.stdout == '/opt/gislab'"
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Get GIS.lab server FQDN
+  shell: hostname --fqdn
+  register: test_server_hostname
+  changed_when: False
+
+- name: Test GIS.lab server FQDN
+  assert:
+    that: "test_server_hostname.stdout == 'server.gis.lab'"
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Test if GIS.lab server network IP address is assigned
+  shell: ip addr show | grep "inet {{ GISLAB_NETWORK }}.5/24 brd {{ GISLAB_NETWORK }}.255 scope global"
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Test if GIS.lab administrator tools are on path
+  shell: which gislab-help
+  ignore_errors: yes
+  changed_when: False

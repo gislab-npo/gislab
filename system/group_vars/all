@@ -251,3 +251,9 @@ GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT: no
 # - deb http://ppa.launchpad.net/my-ppa2/ubuntu precise main
 # Change requires running upgrade.
 GISLAB_APT_CUSTOM_REPOSITORIES:
+
+# Run tests after installation is finished
+# # Possible values are:
+# * no: do not run tests
+# * yes: do run tests
+GISLAB_TESTS_ENABLE: no
