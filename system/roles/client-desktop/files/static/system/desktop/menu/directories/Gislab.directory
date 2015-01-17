@@ -3,6 +3,6 @@ Version=1.0
 Type=Directory
 Name=GIS.lab
 Comment=GIS.lab Applications
-Icon=epiphany
+Icon=gislab
 Name[sk]=GIS.lab
 Comment[sk]=Aplikácie GIS.lab

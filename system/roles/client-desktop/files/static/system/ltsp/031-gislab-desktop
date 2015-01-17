@@ -18,10 +18,10 @@ case "$MODE" in
 	# difficult to grab and resize. This is fixed version of Greybird (taken from OSGeo Live CD)
 	cp $GISLAB_INSTALL_CLIENT_ROOT/desktop/themes/greybird/* $ROOT/usr/share/themes/Greybird/xfwm4/
 
-	# wallpaper
-	cp $GISLAB_INSTALL_CLIENT_ROOT/desktop/wallpapers/gislab-wallpaper.png $ROOT/usr/share/xfce4/backdrops/gislab-wallpaper.png
+	# wallpapers
+	cp $GISLAB_INSTALL_CLIENT_ROOT/desktop/wallpapers/* $ROOT/usr/share/xfce4/backdrops/
 	
 	# icons
-	cp $GISLAB_INSTALL_CLIENT_ROOT/desktop/icons/gislab-web.xpm $ROOT/usr/share/pixmaps/gislab-web.xpm
+	cp $GISLAB_INSTALL_CLIENT_ROOT/desktop/icons/* $ROOT/usr/share/pixmaps/
     ;;
 esac
