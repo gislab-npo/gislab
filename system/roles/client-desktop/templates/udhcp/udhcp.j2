@@ -172,10 +172,12 @@ gislab_network_server_ip_regex=$(echo "{{ GISLAB_NETWORK_SERVER_IP }}" | sed 's/
 [ "$quiet" != "y" ] && echo "DHCP request for $i..."
 while [ -z "$configured" ]; do
     for i in $interfaces; do    # Make a DHCP request for each interface...
-        while udhcpc -n -C -s /tmp/dhcp-script.sh -i $i -x nisdomain:{{ GISLAB_UNIQUE_ID }}-client $hostname_param $ip_param >/dev/null 2>&1; do
+        while udhcpc -I {{ GISLAB_NETWORK_SERVER_IP }} -n -C -s /tmp/dhcp-script.sh -i $i -x nisdomain:{{ GISLAB_UNIQUE_ID }}-client $hostname_param $ip_param >/dev/null 2>&1; do
             grep "=" /tmp/dhcp-info.conf # print response provided by the DHCP server
 
-            # try until we get an offer from a proper GIS.lab server
+	    # try until we get an offer from a proper GIS.lab server - this should be unnecessary since we have server filter option in udhcpc '-I'
+	    # server filter option in udhcpc '-I' currently exists only as unofficial patch developed for GIS.lab
+	    # https://github.com/imincik/pkg-busybox/blob/master/debian/patches/server-filter.patch
             grep -q "^siaddr=\"$gislab_network_server_ip_regex\"$" /tmp/dhcp-info.conf && configured="true" && break 2
             echo "Received response from invalid DHCP server (response wanted from {{ GISLAB_NETWORK_SERVER_IP }}). Retrying ..."
             echo
