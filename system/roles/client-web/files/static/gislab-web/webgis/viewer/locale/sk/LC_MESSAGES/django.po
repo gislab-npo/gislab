@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-16 16:38+0100\n"
+"POT-Creation-Date: 2015-01-19 11:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,6 +31,7 @@ msgid "Please correct the errors below."
 msgstr "Opravte prosím nižšie uvedené chyby"
 
 #: templates/registration/login.html:89
+#: templates/viewer/user_projects.html:277
 msgid "Username"
 msgstr "Používateľské meno"
 
@@ -39,12 +40,12 @@ msgid "Password"
 msgstr "Heslo"
 
 #: templates/registration/login.html:106
-#: templates/viewer/user_projects.html:302 templates/viewer/webgis.html:546
+#: templates/viewer/user_projects.html:337 templates/viewer/webgis.html:546
 msgid "Log in"
 msgstr "Prihlásiť sa"
 
 #: templates/viewer/user_projects.html:26
-#: templates/viewer/user_projects.html:288
+#: templates/viewer/user_projects.html:323
 msgid "GIS.lab User Page"
 msgstr "Stránka používateľa GIS.lab"
 
@@ -109,11 +110,39 @@ msgstr "Kreslenia {0} - {1} z {2}"
 msgid "No drawings"
 msgstr "Žiadne kreslenia"
 
-#: templates/viewer/user_projects.html:295 templates/viewer/webgis.html:539
+#: templates/viewer/user_projects.html:267
+msgid "User account"
+msgstr "Používateľské konto"
+
+#: templates/viewer/user_projects.html:281
+msgid "First name"
+msgstr "Krstné meno"
+
+#: templates/viewer/user_projects.html:285
+msgid "Last name"
+msgstr "Priezvisko"
+
+#: templates/viewer/user_projects.html:289 templates/viewer/webgis.html:426
+msgid "E-mail"
+msgstr "E-mail"
+
+#: templates/viewer/user_projects.html:294
+msgid "Superuser"
+msgstr "Superpoužívateľ"
+
+#: templates/viewer/user_projects.html:296
+msgid "Yes"
+msgstr "Áno"
+
+#: templates/viewer/user_projects.html:296
+msgid "No"
+msgstr "Nie"
+
+#: templates/viewer/user_projects.html:330 templates/viewer/webgis.html:539
 msgid "Guest"
 msgstr "Neprihlásený"
 
-#: templates/viewer/user_projects.html:315 templates/viewer/webgis.html:559
+#: templates/viewer/user_projects.html:350 templates/viewer/webgis.html:559
 msgid "Log out"
 msgstr "Odhlásiť sa"
 
@@ -140,10 +169,6 @@ msgstr "Vlastnosti"
 #: templates/viewer/webgis.html:425
 msgid "Author"
 msgstr "Autor"
-
-#: templates/viewer/webgis.html:426
-msgid "E-mail"
-msgstr "E-mail"
 
 #: templates/viewer/webgis.html:427
 msgid "Phone"
