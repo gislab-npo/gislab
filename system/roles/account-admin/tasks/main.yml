@@ -11,6 +11,7 @@
   args:
     executable: /bin/bash
   register: admin_account_status
+  changed_when: False
 
 - name: Create GIS.lab administrator user account 'gislab'
   shell: "gislab-adduser -s -g {{ GISLAB_ADMIN_FIRST_NAME }} -l {{ GISLAB_ADMIN_SURNAME }} -m {{ GISLAB_ADMIN_EMAIL }} -p {{ GISLAB_ADMIN_PASSWORD }} gislab"

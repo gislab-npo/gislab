@@ -40,7 +40,7 @@
   <property name="plugins" type="empty">
     <property name="plugin-1" type="string" value="applicationsmenu">
       <property name="show-tooltips" type="bool" value="true"/>
-      <property name="button-icon" type="string" value="xubuntu-logo-menu"/>
+      <property name="button-icon" type="string" value="gislab"/>
       <property name="show-button-title" type="bool" value="false"/>
     </property>
     <property name="plugin-2" type="string" value="tasklist">

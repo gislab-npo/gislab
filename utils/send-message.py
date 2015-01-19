@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Send message to 'gislab' IRC chat room. Requires to run script 'utils/join-gislab-network.sh' first
+"""Send message to 'gislab' IRC chat room. Requires to run script 'utils/join-gislab-network.py' first
 to get connection with server.
 Usage: send-message.py <message>
 """

@@ -29,6 +29,7 @@
   args:
     executable: /bin/bash
   register: ldap_install_status
+  changed_when: False
 
 
 # PAM
@@ -63,10 +64,12 @@
 - name: Get LDAP admin password
   shell: cat /etc/gislab/gislab_ldap_admin_password.txt
   register: gislab_ldap_admin_password
+  changed_when: False
 
 - name: Generate hash of LDAP admin password
   shell: slappasswd -s {{ gislab_ldap_admin_password.stdout }} -h {SSHA}
   register: gislab_ldap_admin_password_hash
+  changed_when: False
 
 - name: Save LDAP admin password to LDAP db
   shell: "printf 'dn: olcDatabase={1}hdb,cn=config\nreplace: olcRootPW\nolcRootPW: {{ gislab_ldap_admin_password_hash.stdout }}\n'| ldapmodify -Q -Y EXTERNAL -H ldapi:///"

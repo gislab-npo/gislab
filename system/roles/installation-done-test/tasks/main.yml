@@ -1,0 +1,5 @@
+---
+
+- name: "Testing of GIS.lab is done"
+  shell: "date"
+  changed_when: False
