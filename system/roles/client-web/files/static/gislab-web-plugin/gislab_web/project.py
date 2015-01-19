@@ -232,8 +232,10 @@ class ProjectPage(PublishPage):
 		max_res = metadata['tile_resolutions'][0]
 		min_res = metadata['tile_resolutions'][-1]
 		min_scale, max_scale = self.plugin.resolutions_to_scales(to_decimal_array([min_res, max_res]))
-		dialog.min_scale.setCurrentIndex(dialog.min_scale.findText("1:{0}".format(min_scale)))
-		dialog.max_scale.setCurrentIndex(dialog.max_scale.findText("1:{0}".format(max_scale)))
+		min_scale_index = dialog.min_scale.findText("1:{0}".format(min_scale))
+		max_scale_index = dialog.max_scale.findText("1:{0}".format(max_scale))
+		dialog.min_scale.setCurrentIndex(min_scale_index if min_scale_index != -1 else dialog.min_scale.count()-1)
+		dialog.max_scale.setCurrentIndex(max_scale_index if min_scale_index != -1 else 0)
 
 
 	def _update_min_max_scales(self, resolutions):
