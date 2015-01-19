@@ -163,7 +163,8 @@ class ProjectPage(PublishPage):
 				if not authentication.get('allow_anonymous'):
 					dialog.authentication.setCurrentIndex(1)
 			else:
-				dialog.authentication.setCurrentIndex(AUTHENTICATION_OPTIONS.index(authentication) if authentication in AUTHENTICATION_OPTIONS else 1)
+				auth_index = AUTHENTICATION_OPTIONS.index(authentication) if authentication in AUTHENTICATION_OPTIONS else 1
+				dialog.authentication.setCurrentIndex(auth_index)
 		project_extent = list(metadata['extent'])
 		extent_buffer = metadata.get('extent_buffer', 0)
 		if extent_buffer != 0:
@@ -344,7 +345,8 @@ class ProjectPage(PublishPage):
 			if self.plugin.is_base_layer_for_publish(layer):
 				dialog.default_baselayer.addItem(layer.name(), layer.name())
 			if self.plugin.is_base_layer_for_publish(layer) or self.plugin.is_overlay_layer_for_publish(layer):
-				dialog.extent_layer.addItem(layer.name(), list(map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords()))
+				extent = list(map_canvas.mapRenderer().layerExtentToOutputExtent(layer, layer.extent()).toRectF().getCoords())
+				dialog.extent_layer.addItem(layer.name(), extent)
 
 		dialog.message_valid_until.setDate(datetime.date.today() + datetime.timedelta(days=1))
 
@@ -452,12 +454,6 @@ class ProjectPage(PublishPage):
 		selection_color = renderer_context.selectionColor()
 		canvas_color = map_canvas.canvasColor()
 
-		#if dialog.extent_layer.currentIndex() == 0:
-		#	project_extent = map_canvas.fullExtent()
-		#else:
-		#	extent_layer = dialog.extent_layer.itemData(dialog.extent_layer.currentIndex())
-		#	project_extent = map_canvas.mapRenderer().layerExtentToOutputExtent(extent_layer, extent_layer.extent())
-		#project_extent = project_extent.toRectF().getCoords()
 		project_extent = dialog.extent_layer.itemData(dialog.extent_layer.currentIndex())
 		extent_buffer = dialog.extent_buffer.value()
 		if extent_buffer != 0:
