@@ -262,16 +262,38 @@
 					}
 				};
 
-				var user_tab = new Ext.grid.PropertyGrid({
+				var user_tab = new Ext.FormPanel({
 					title: '{% trans "User account" %}',
+					cls: 'user-form',
 					autoHeight: true,
-					source: {
-						"Username": "{{ user.username }}",
-						"First name": "{{ user.first_name }}",
-						"Last name": "{{ user.last_name }}",
-						"E-mail": "{{ user.email }}",
-						"Superuser": "{{ user.is_superuser }}"
-					}
+					defaultType: 'textfield',
+					defaults: {
+						readOnly: true,
+						width: 300,
+					},
+					items: [{
+							fieldLabel: '{% trans "Username" %}',
+							name: 'username',
+							value: '{{ user.username }}'
+						}, {
+							fieldLabel: '{% trans "First name" %}',
+							name: 'first_name',
+							value: '{{ user.first_name }}'
+						}, {
+							fieldLabel: '{% trans "Last name" %}',
+							name: 'last_name',
+							value: '{{ user.last_name }}'
+						}, {
+							fieldLabel: '{% trans "E-mail" %}',
+							name: 'email',
+							value: '{{ user.email }}'
+						}, {
+							xtype: 'label',
+							fieldLabel: '{% trans "Superuser" %}',
+							name: 'superuser',
+							text: '{% if user.is_superuser %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}'
+						}
+					],
 				});
 
 				var webgis = new Ext.Viewport({
