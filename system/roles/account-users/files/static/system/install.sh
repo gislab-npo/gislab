@@ -9,17 +9,16 @@ mkdir /etc/skel/.config
 mkdir -p /etc/skel/.config/xfce4/panel
 cp -a $GISLAB_INSTALL_ACCOUNT_ROOT/keyboard-layout/xkb-plugin-14.rc /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
 
-# add other keyboard languages then English (us) if requested
-if [ "$GISLAB_CLIENT_LANGUAGES" != "" ]; then
-	languages="us,$GISLAB_CLIENT_LANGUAGES"
+# add other keyboard layouts then English (us) if requested
+if [ "$GISLAB_CLIENT_KEYBOARDS" != "" ]; then
+	layouts="us,$(echo $GISLAB_CLIENT_KEYBOARDS | awk -F ':' '{print $1}')"
+	variants=",$(echo $GISLAB_CLIENT_KEYBOARDS | awk -F ':' '{print $2}')"
 else
-	languages="us"
+	layouts="us"
+	variants=""
 fi
 
-# set empty strings separated by comas to get variants working
-variants=$(echo $languages | grep -o "," | tr -d "\n")
-
-sed -i "s/^layouts=/layouts=$languages/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
+sed -i "s/^layouts=/layouts=$layouts/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
 sed -i "s/^variants=/variants=$variants/" /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc
 
 
