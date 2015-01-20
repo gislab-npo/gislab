@@ -8,6 +8,25 @@ def split_regex(string, seperator_pattern):
     """ Split string on regular expression """
     return re.split(seperator_pattern, string)
 
+
+# Dedicated filters
+def keyboard_layouts_filter(values):
+    """ Return keyboards layout configuration as a string of comma separated layouts
+    and variants separated by colon.
+    """
+    layouts = []
+    variants = []
+    for keyboard in values:
+        layouts.append(keyboard['layout'])
+        try:
+            variants.append(keyboard['variant'])
+        except KeyError:
+            variants.append('')
+    ret = (',').join(i for i in layouts)
+    ret += ":"
+    ret += (',').join(i for i in variants)
+    return ret
+
 def postgresql_shm(mem):
     """ Get recommended value of kernel shmmax configuration
     based on total server RAM for running PostgreSQL db.
@@ -24,7 +43,8 @@ class FilterModule(object):
         return {
             'split_string': split_string,
             'split_regex': split_regex,
-            'postgresql_shm': postgresql_shm
+            'postgresql_shm': postgresql_shm,
+            'keyboard_layouts_filter': keyboard_layouts_filter
         }
 
 

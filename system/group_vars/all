@@ -173,6 +173,17 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 # Change requires running upgrade.
 GISLAB_CLIENT_LANGUAGES:
 
+# List of keyboard layout codes and their variants which should be installed on client beside English keyboard
+# layout. 'variant' value is optional and can be omitted.
+# Example: 
+# - layout: sk
+#   variant: qwerty
+# - layout: cs
+#   variant: qwerty
+# - layout: aa
+# - layout: bb
+GISLAB_CLIENT_KEYBOARDS:
+
 # Determines if client machines connection will be restricted by MAC addresses.
 # Possible options are:
 # * deny:  only machines with allowed MAC addresses can connect. Safe default, recommended
