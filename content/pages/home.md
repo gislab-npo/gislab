@@ -19,11 +19,12 @@ _GIS.lab infrastructure_
 
 ## Key benefits
 * fully automatic installation or immediate deployment with [__GIS.lab Unit__](pages/gislab-unit) appliance
+* central management of client machines, user accounts and backups
 * high performance, maintenance-free desktop interface
 * web and mobile _(in development)_ client interfaces
 * web administration interface _(in development)_
 * computing resources sharing across all connected machines
-* well known free software with high added value of seamless integration and additional features
+* well known free software with high added value of seamless integration, support and bug fixes
 * extensibility with Docker containers _(in development)_
 
 
