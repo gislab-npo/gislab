@@ -13,10 +13,6 @@
 # bash ./install.sh &> /var/log/gislab-install-worker.log
 
 
-- name: Stop GIS.lab network machines before updating worker image
-  service: name=serf state=stopped
-
-
 # System
 - name: Flush worker installation directory
   file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}" state=absent
@@ -78,7 +74,3 @@
          bash {{ GISLAB_INSTALL_WORKER_ROOT }}/install.sh > /var/log/gislab-build-worker.log
   args:
     executable: /bin/bash
-
-
-- name: Start GIS.lab network machines again
-  service: name=serf state=started
