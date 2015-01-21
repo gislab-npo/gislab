@@ -445,6 +445,7 @@ class ProjectPage(PublishPage):
 				self.setup_config_page_from_metadata(metadata)
 			except:
 				QMessageBox.warning(None, 'Warning', 'Failed to load settings from last published version')
+		self.validate()
 
 	def get_metadata(self):
 		"""Generated project's metadata (dictionary)."""
