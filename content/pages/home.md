@@ -33,3 +33,5 @@ _GIS.lab infrastructure_
 * rapid cartographic outputs creation
 * simple maps publishing using Web and Mobile client interfaces
 * collaboration tools
+
+_Want to know more ? Request a_ [__free workshop__](pages/workshops) _from GIS.lab developers !_

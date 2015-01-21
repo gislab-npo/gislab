@@ -16,10 +16,11 @@ __Date and place__: on demand (please send a request to ivan.mincik@gmail.com)
 __Duration__: 8 hours  
 __Target audience__: no constraints  
 __Technical requirements__: room with table and chair for each participant  
-__Language__: English, Slovak  
+__Language__: English, Slovak, Czech  
 __Number of participants__: 1 - 6  
-__Price__: 0 EUR (doesn't include travel and accommodation expenses for one lecturer)  
-__Acquired skills__: after this workshop, attendees will be able to deploy a complete GIS infrastructure using GIS.lab Unit technology on their own
+__Price__: free (doesn't include travel and accommodation expenses for one lecturer)  
+__Acquired skills__: after this workshop, attendees will be able to deploy a complete GIS infrastructure using GIS.lab Unit technology on their own  
+__Registration__: by email to _ivan.mincik@gmail.com_. Include a details about number of attendees, their location and proposed date
 
 
 # 2. Basic GIS skills
@@ -42,7 +43,8 @@ __Date and place__: on demand (please send a request to ivan.mincik@gmail.com)
 __Duration__: 8 hours  
 __Target audience__: no constraints  
 __Technical requirements__: room with table and chair for each participant  
-__Language__: English, Slovak  
+__Language__: English, Slovak, Czech  
 __Number of participants__: 1 - 6  
 __Price__: 720 EUR (doesn't include travel and accommodation expenses for one lecturer)  
-__Acquired skills__: after this workshop, attendees will be able to create maps from available data and publish them on web
+__Acquired skills__: after this workshop, attendees will be able to create maps from available data and publish them on web  
+__Registration__: by email to _ivan.mincik@gmail.com_. Include a details about number of attendees, their location and proposed date
