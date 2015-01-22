@@ -26,26 +26,55 @@
   notify:
     - service isc-dhcp-server restart
 
-- name: Configure DHCP server
-  template: src=dhcp/dhcpd.conf.j2 dest=/etc/dhcp/dhcpd.conf
+
+- name: Set unknown machines policy to 'deny' if not set
+  shell: echo 'deny' > /etc/gislab/gislab_unknown_machines_policy.conf
+  args:
+    executable: /bin/bash
+    creates: /etc/gislab/gislab_unknown_machines_policy.conf
+
+- name: Detect unknown machines policy
+  shell: cat /etc/gislab/gislab_unknown_machines_policy.conf
+  args:
+    executable: /bin/bash
+  register: gislab_unknown_machines_policy
+  changed_when: False
+
+
+- name: Install DHCP server configuration template
+  template: src=dhcp/dhcpd.conf.templ.j2 dest=/etc/dhcp/dhcpd.conf.templ
+
+- name: Install DHCP configuration with 'deny' unknown machines policy
+  shell: grep -v GISLAB_UNKNOWN_MACHINES_POLICY_ALLOW /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
+  args:
+    executable: /bin/bash
+  when: gislab_unknown_machines_policy.stdout == "deny"
+  notify:
+    - service isc-dhcp-server restart
+
+- name: Install DHCP configuration with 'allow' unknown machines policy
+  shell: grep -v GISLAB_UNKNOWN_MACHINES_POLICY_DENY /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
+  args:
+    executable: /bin/bash
+  when: gislab_unknown_machines_policy.stdout == "allow"
   notify:
     - service isc-dhcp-server restart
 
 
 # MAC addresses
-- name: Allow including MAC addresses list file (/etc/gislab/gislab_machines_allowed.conf)
+- name: Allow including known machines file (/etc/gislab/gislab_known_machines.conf)
   template: src=apparmor/usr.sbin.dhcpd.j2 dest=/etc/apparmor.d/local/usr.sbin.dhcpd
   notify:
     - service apparmor restart
 
-- name: Detect if default MAC addresses list file is created
-  stat: path=/etc/gislab/gislab_machines_allowed.conf
-  register: gislab_machines_allowed_status
+- name: Detect if known machines file is created
+  stat: path=/etc/gislab/gislab_known_machines.conf
+  register: gislab_known_machines_status
   changed_when: False
 
-- name: Create default MAC addresses list file
-  template: src=dhcp/dhcpd-machines-allowed.conf.j2 dest=/etc/gislab/gislab_machines_allowed.conf
-  when: not gislab_machines_allowed_status.stat.exists
+- name: Create empty known machines file if not created
+  template: src=dhcp/dhcpd-known-machines.conf.j2 dest=/etc/gislab/gislab_known_machines.conf
+  when: not gislab_known_machines_status.stat.exists
   notify:
     - service isc-dhcp-server restart
 

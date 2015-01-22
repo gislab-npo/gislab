@@ -11,13 +11,17 @@ gislab_require_root
 
 # usage
 function usage() {
-	echo "USAGE: $(basename $0) [OPTIONS] comma-separated-MAC-list"
-	echo "Add or remove GIS.lab client machines specified as list of MAC addresses."
+	echo "USAGE: $(basename $0) [OPTIONS] MAC,MAC,..."
+	echo "Add or remove GIS.lab client machines to/from list of known machines. If 'unknown machines' policy is set to"
+	echo "'deny', only known machines will be authorized for connection to GIS.lab network. If 'unknown machines' policy"
+	echo "is set to 'allow', all machines will be authorized to connect."
 	echo -e "\nOPTIONS
 	-h  display this help
-	-l  list currently enabled machines
-	-a  add machines
-	-r  remove machines
+	-l  print a list of known machines
+	-a  add machines to known list. If asterisk (*) is given instead of MAC address, 'unknown machines' policy will be
+            set to 'allow'
+	-r  remove machines from known list. If asterisk (*) is given instead of MAC address, 'unknown machines' policy will
+            be set to 'deny'
 	"
 	exit 255
 }
@@ -40,26 +44,34 @@ if [ $# -eq 0 -a "$ACTION" != "list" ]; then usage; fi
 
 # LIST
 if [ "$ACTION" == "list" ]; then
-	echo -e "List of currently enabled machines:"
-	grep "hardware ethernet" /etc/gislab/gislab_machines_allowed.conf
+	echo "Policy: $(cat /etc/gislab/gislab_unknown_machines_policy.conf)"
+	echo "Known machines: "
+	grep "hardware ethernet" /etc/gislab/gislab_known_machines.conf
 
 # ADD
 elif [ "$ACTION" == "add" ]; then
 	IFS=', ' read -a maclist <<< "$1"
 
 	# remove closing bracket of MACs list
-	sed -i '/^}/ d' /etc/gislab/gislab_machines_allowed.conf
+	sed -i '/^}/ d' /etc/gislab/gislab_known_machines.conf
 
-	for mac in "${maclist[@]}"
-	do
-		echo "Adding MAC $mac"
-		hostname=$(echo $mac | sed 's/://g')
-		sed -i "/hardware ethernet $mac/ d" /etc/gislab/gislab_machines_allowed.conf # avoid duplicate records
-		echo -e "  host $hostname { hardware ethernet $mac; }"  >> /etc/gislab/gislab_machines_allowed.conf
+	for mac in "${maclist[@]}"; do
+		if [ "$mac" == "*" ]; then
+			msg="Setting 'unknown machines' policy to 'allow'"
+			gislab_print_info "$msg"
+			logger -t gislab $msg
+			grep -v GISLAB_UNKNOWN_MACHINES_POLICY_DENY /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
+			echo "allow" > /etc/gislab/gislab_unknown_machines_policy.conf
+		else
+			echo "Adding MAC $mac"
+			hostname=$(echo $mac | sed 's/://g')
+			sed -i "/hardware ethernet $mac/ d" /etc/gislab/gislab_known_machines.conf # avoid duplicate records
+			echo -e "  host $hostname { hardware ethernet $mac; }"  >> /etc/gislab/gislab_known_machines.conf
+		fi
 	done
 
 	# re-create closing bracket of MACs list
-	echo "}" >> /etc/gislab/gislab_machines_allowed.conf
+	echo "}" >> /etc/gislab/gislab_known_machines.conf
 
 	service isc-dhcp-server restart
 	gislab_print_info "Machines added successfully"
@@ -67,11 +79,18 @@ elif [ "$ACTION" == "add" ]; then
 # REMOVE
 elif [ "$ACTION" == "remove" ]; then 
 	IFS=', ' read -a maclist <<< "$1"
-	for mac in "${maclist[@]}"
-	do
-		echo "Removing MAC $mac"
-		hostname=$(echo $mac | sed 's/://g')
-		sed -i "/hardware ethernet $mac/ d" /etc/gislab/gislab_machines_allowed.conf
+	for mac in "${maclist[@]}"; do
+		if [ "$mac" == "*" ]; then
+			msg="Setting 'unknown machines' policy to 'deny'"
+			gislab_print_info "$msg"
+			logger -t gislab $msg
+			grep -v GISLAB_UNKNOWN_MACHINES_POLICY_ALLOW /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
+			echo "deny" > /etc/gislab/gislab_unknown_machines_policy.conf
+		else
+			echo "Removing MAC $mac"
+			hostname=$(echo $mac | sed 's/://g')
+			sed -i "/hardware ethernet $mac/ d" /etc/gislab/gislab_known_machines.conf
+		fi
 	done
 
 	service isc-dhcp-server restart

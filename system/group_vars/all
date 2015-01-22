@@ -184,14 +184,6 @@ GISLAB_CLIENT_LANGUAGES:
 # - layout: bb
 GISLAB_CLIENT_KEYBOARDS:
 
-# Determines if client machines connection will be restricted by MAC addresses.
-# Possible options are:
-# * deny:  only machines with allowed MAC addresses can connect. Safe default, recommended
-# * allow: all machines can connect. Do NOT use this configuration, if connected to corporate LAN
-# To allow client machines connection use 'gislab-machines' management script.
-# Change requires running upgrade.
-GISLAB_UNKNOWN_MAC_POLICY: deny
-
 # List of extra packages to install to client images.
 # Change requires running upgrade.
 # Example:
