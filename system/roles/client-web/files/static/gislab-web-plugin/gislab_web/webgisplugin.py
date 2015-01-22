@@ -280,6 +280,31 @@ class WebGisPlugin:
 				raise TypeError
 			json.dump(self.metadata, f, indent=2, default=decimal_default)
 
+		# If published project contains SpatiaLite layers, make sure they have filled statistics info required to load
+		# layers by Mapserver. Without this procedure, newly created layers in DB Manager wouldn't be loaded by Mapserver
+		# properly and GetMap and GetLegendGraphics requests with such layers would cause server error.
+		# The only way to update required statistics info is to create a new SpatiaLite provider for every published
+		# SpatiaLite layer. (This is done automatically when opening QGIS project file again).
+		overlays_names = []
+		def collect_overlays_names(layer_data):
+			sublayers = layer_data.get('layers')
+			if sublayers:
+				for sublayer_data in sublayers:
+					collect_overlays_names(sublayer_data)
+			else:
+				overlays_names.append(layer_data['name'])
+
+		for layer_data in self.metadata['overlays']:
+			collect_overlays_names(layer_data)
+
+		layers_registry = QgsMapLayerRegistry.instance()
+		providers_registry = QgsProviderRegistry.instance()
+		for layer_name in overlays_names:
+			layer = layers_registry.mapLayersByName(layer_name)[0]
+			if layer.dataProvider().name() == "spatialite":
+				provider = providers_registry.provider("spatialite", layer.dataProvider().dataSourceUri())
+				del provider
+
 
 	def show_publish_dialog(self):
 		if self.dialog and self.dialog.isVisible():
