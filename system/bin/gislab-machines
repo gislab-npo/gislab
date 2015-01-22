@@ -58,7 +58,7 @@ elif [ "$ACTION" == "add" ]; then
 	for mac in "${maclist[@]}"; do
 		if [ "$mac" == "*" ]; then
 			msg="Setting 'unknown machines' policy to 'allow'"
-			gislab_print_info "$msg"
+			gislab_print_warning "$msg"
 			logger -t gislab $msg
 			grep -v GISLAB_UNKNOWN_MACHINES_POLICY_DENY /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
 			echo "allow" > /etc/gislab/gislab_unknown_machines_policy.conf
@@ -82,7 +82,7 @@ elif [ "$ACTION" == "remove" ]; then
 	for mac in "${maclist[@]}"; do
 		if [ "$mac" == "*" ]; then
 			msg="Setting 'unknown machines' policy to 'deny'"
-			gislab_print_info "$msg"
+			gislab_print_warning "$msg"
 			logger -t gislab $msg
 			grep -v GISLAB_UNKNOWN_MACHINES_POLICY_ALLOW /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
 			echo "deny" > /etc/gislab/gislab_unknown_machines_policy.conf
