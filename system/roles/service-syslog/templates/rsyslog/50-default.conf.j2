@@ -12,7 +12,9 @@ daemon.*;mail.*;\
 	*.=notice;*.=warn	|/dev/xconsole
 
 {% if not GISLAB_DEBUG_SERVICES %}
+local0.err			/var/log/syslog
 local7.err			/var/log/syslog
 {% else %}
+local0.*			/var/log/syslog
 local7.*			/var/log/syslog
 {% endif%}
