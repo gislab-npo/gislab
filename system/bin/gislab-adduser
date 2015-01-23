@@ -51,6 +51,7 @@ if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_US
 fi
 
 GISLAB_USER=$1
+
 # sanity checks
 if id -u $GISLAB_USER > /dev/null 2>&1; then
 	gislab_print_error "User '$GISLAB_USER' already exists"
