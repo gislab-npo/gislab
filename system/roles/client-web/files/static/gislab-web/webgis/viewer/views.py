@@ -87,6 +87,11 @@ def set_query_parameters(url, params_dict):
 	url_parts[3] = urllib.urlencode(params, doseq=True)
 	return urlunsplit(url_parts)
 
+def clean_project_name(project):
+	"""Returns project name without QGIS file extension ('.qgs')"""
+	if project.lower().endswith(".qgs"):
+		return os.path.splitext(project)[0]
+	return project
 
 def store_project_layers_info(project_key, publish, extent, resolutions, projection):
 	prefix = "{0}:{1}:".format(project_key, publish)
@@ -102,7 +107,7 @@ def get_project_layers_info(project_key, publish, project=None):
 	if data:
 		return { param.replace(prefix, ''): value for param, value in data.iteritems() }
 	elif project:
-		metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, os.path.splitext(project)[0] + '.meta')
+		metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, clean_project_name(project) + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
 			if int(metadata.publish_date_unix) == int(publish):
@@ -218,7 +223,7 @@ def vector_layers(request):
 	params = {k.upper(): v for k, v in request.GET.iteritems()}
 	project = params.get('PROJECT')
 	if project:
-		project = os.path.splitext(project)[0]
+		project = clean_project_name(project)
 		drawing_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, '{0}.geojson'.format(project))
 		if os.path.exists(drawing_filename):
 			return HttpResponse(open(drawing_filename, 'r').read(), content_type='application/json')
@@ -234,7 +239,7 @@ def page(request):
 	project = form.cleaned_data['PROJECT']
 
 	if project:
-		project = os.path.splitext(project)[0]
+		project = clean_project_name(project)
 		metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, project + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
@@ -441,10 +446,10 @@ def user_projects(request, username):
 			for filename in files:
 				if filename.endswith('.qgs'):
 					project_filename = os.path.join(root, filename)
-					metadata_filename = os.path.splitext(project_filename)[0] + '.meta'
+					metadata_filename = clean_project_name(project_filename) + '.meta'
 					try:
 						metadata = MetadataParser(metadata_filename)
-						project = os.path.splitext(project_filename[start_index:])[0]
+						project = clean_project_name(project_filename[start_index:])
 						url = set_query_parameters(secure_url(request, '/'), {'PROJECT': project})
 						ows_url = secure_url(request, reverse('viewer:owsrequest'))
 						wms_url = set_query_parameters(ows_url, {'MAP': project+'.qgs'})
