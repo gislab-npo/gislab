@@ -167,13 +167,6 @@ chown $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
 chmod 750 /storage/publish/$GISLAB_USER
 
 
-# deploy administrator public SSH key
-mkdir -p /home/$GISLAB_USER/.ssh
-chmod 700 /home/$GISLAB_USER/.ssh
-cp /etc/gislab/gislab_ssh_public_key.pub /home/$GISLAB_USER/.ssh/authorized_keys
-chown $GISLAB_USER:gislabusers -R /home/$GISLAB_USER/.ssh
-
-
 # replace user name and password placeholders with real user values
 find /home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER }}/$GISLAB_USER/g" "{}" \;
 find /home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER_PASSWORD }}/$GISLAB_USER_PASSWORD/g" "{}" \;

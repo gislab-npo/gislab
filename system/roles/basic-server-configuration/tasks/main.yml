@@ -199,16 +199,6 @@
     - vim
 
 
-# SSH
-- name: Install insecure SSH key if no secure one found
-  copy: src=insecure_ssh_key.pub dest=/etc/gislab/gislab_ssh_public_key.pub mode=0600
-  when: GISLAB_SSH_PRIVATE_KEY|default(None) == None or GISLAB_SSH_PUBLIC_KEY|default(None) == None
-
-- name: Install secure SSH key
-  copy: src={{ GISLAB_SSH_PUBLIC_KEY }} dest=/etc/gislab/gislab_ssh_public_key.pub mode=0600
-  when: GISLAB_SSH_PRIVATE_KEY|default(None) != None and GISLAB_SSH_PUBLIC_KEY|default(None) != None
-
-
 # Shell
 - name: Configure shell prompt system wide
   lineinfile:

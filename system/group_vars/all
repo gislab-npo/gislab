@@ -51,6 +51,16 @@ GISLAB_WORKER_MEMORY: 512
 # * yes: launch GUI console
 GISLAB_SERVER_GUI_CONSOLE: no
 
+# Absolute path to private SSH key, which is used for connection to GIS.lab server, when performing installation or
+# update. This key must match public key located on GIS.lab server. Public key located on server can be changed at any
+# time by updating content of '/home/vagrant/.ssh/authorized_keys' file with a new key.
+# This configuration is valid only for Vagrant provisioner (when using Ansible provisioner, public SSH key is specified
+# by '--private-key' option). Empty value means, that well known, insecure key is used for connection, which is
+# a potentially dangerous configuration.
+# Example: /home/user/.ssh/id_rsa
+GISLAB_SSH_PRIVATE_KEY:
+
+
 
 
 # ******************************************************************************************************************* #
@@ -103,18 +113,6 @@ GISLAB_NETWORK: 192.168.50
 # - 192.168.0.9
 # Change requires running upgrade.
 GISLAB_DNS_SERVERS:
-
-# Absolute path to private SSH key which will be used for accessing GIS.lab server.
-# WARNING: GIS.lab may use insecure SSH key if no value specified.
-# Example: /home/user/.ssh/id_rsa
-# Change requires running upgrade.
-GISLAB_SSH_PRIVATE_KEY:
-
-# Absolute path to public SSH key which will be used for accessing GIS.lab server.
-# WARNING: GIS.lab may use insecure SSH key if no value specified.
-# Example: /home/user/.ssh/id_rsa.pub
-# Change requires running upgrade.
-GISLAB_SSH_PUBLIC_KEY:
 
 # Time zone. Check list of time zones here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
 # Change requires running upgrade.
