@@ -7,4 +7,13 @@ if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
 	DISTRIB_DESCRIPTION=$(lsb_release -s -d)
 fi
 
-printf "Welcome to GIS.lab {{ GISLAB_VERSION }} ID: {{ GISLAB_UNIQUE_ID }}.\n"
+
+echo "
+   _____ _____  _____  _       _     
+  / ____|_   _|/ ____|| |     | |    
+ | |  __  | | | (___  | | __ _| |__  
+ | | |_ | | |  \___ \ | |/ _\` | '_ \ 
+ | |__| |_| |_ ____) || | (_| | |_) |
+  \_____|_____|_____(_)_|\__,_|_.__/   VERSION: {{ GISLAB_VERSION }}, ID: {{ GISLAB_UNIQUE_ID }}
+
+"

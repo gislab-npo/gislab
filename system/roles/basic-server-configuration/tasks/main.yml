@@ -219,7 +219,7 @@
 
 
 # MOTD
-- name: Set MOTD welcome message
+- name: Set MOTD header
   template: src=motd/00-header.j2 dest=/etc/update-motd.d/00-header
 
 - name: Remove not needed MOTD messages
@@ -228,7 +228,6 @@
     - /etc/update-motd.d/*-help-text
     - /etc/update-motd.d/*-cloudguest
     - /etc/update-motd.d/*-release-upgrade
-    - /etc/update-motd.d/*-hwe-eol
 
 - name: Update MOTD
   shell: run-parts /etc/update-motd.d
