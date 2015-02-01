@@ -2,6 +2,7 @@
 
 set -e
 
+source /etc/gislab_version
 source $GISLAB_ROOT/functions.sh
 
 
@@ -12,76 +13,60 @@ gislab_require_root
 # usage
 function usage() {
 	echo "USAGE: $(basename $0) [OPTIONS] username"
-	echo "Restore GIS.lab user data."
+	echo "Restore GIS.lab user account from backup archive."
 	echo -e "\nOPTIONS
-	-b  restore data from given file (optional)
-	-f  force deleting account - do not ask before deleting account
+	-f  backup archive file to restore account from
 	-h  display this help"
 	exit 255
 }
 
+
 # options
-while getopts "b:fh" OPTION
+while getopts "b:f:h" OPTION
 do
         case "$OPTION" in
-			b) BACKUP_FILE="$OPTARG" ;;
-			f) FORCE_FLAG="-f" ;;
+			f) BACKUP_FILE="$OPTARG" ;;
 			h) usage ;;
 			\?) exit 1 ;;
         esac
 done
-
 shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; fi
 
-GISLAB_USER=$1
-
-# if backup file was not given on command line create menu of previous backups
 if [ -z "$BACKUP_FILE" ]; then
-	echo
-
-	while true; do
-		i=0
-		for BACKUP in $(ls -tr /storage/backup/gislab-backup-$GISLAB_USER-* 2>/dev/null); do
-			echo " $(($i+1)): $BACKUP"
-			BACKUPS[$i]="$BACKUP"
-			let i=$i+1
-		done
-
-		if [ $i -eq 0 ]; then
-			gislab_print_error "Can not find any previous backup"
-			exit
-		fi
-
-		echo
-		read -p "Select backup file to restore data from: " SELECT
-
-		# check the selection
-		if ! echo $SELECT | grep -q '[0-9]' || [ $SELECT -lt 1 ] || [ $SELECT -gt $i ]; then
-			gislab_print_error "Wrong choice"
-		else
-			SELECT=$(($SELECT-1))
-			BACKUP_FILE=${BACKUPS[$SELECT]}
-			break
-		fi
-	done
+	usage
 fi
 
+GISLAB_USER=$1
+
+
+# sanity checks
 if [ ! -f "$BACKUP_FILE" ]; then
 	gislab_print_error "Backup file does not exist"
 	exit 1
 fi
 
-# delete user if exists
 if id $GISLAB_USER >/dev/null 2>&1; then
-	gislab-deluser $FORCE_FLAG $GISLAB_USER 
+	gislab_print_error "User account '$GISLAB_USER' already exist. Remove it first"
+	exit 1
 fi
+
+BACKUP_VERSION=$(tar --to-stdout -xf $BACKUP_FILE GISLAB_VERSION)
+if [ "$BACKUP_VERSION" != "$GISLAB_VERSION" ]; then
+	gislab_print_warning "Backup source version doesn't match target version ('$BACKUP_VERSION' != '$GISLAB_VERSION')"
+fi
+
 
 # untar backup file
 BACKUP_TEMP_DIR=/tmp/$GISLAB_USER.$$
 mkdir $BACKUP_TEMP_DIR
 tar -xf $BACKUP_FILE -C $BACKUP_TEMP_DIR
 cd $BACKUP_TEMP_DIR
+
+for file in *.bz2; do
+	tar -xjf $file
+done
+
 
 # get user LDAP attributes from backup
 while read line; do
@@ -98,11 +83,13 @@ while read line; do
 		esac
 done < $GISLAB_USER-ldap.dump
 
-# add user
+
+# create user account
 gislab-adduser -g "$GISLAB_USER_GIVEN_NAME" -l "$GISLAB_USER_SURNAME" \
                -m "$GISLAB_USER_MAIL" -d "$GISLAB_USER_DESC" $SUDO_OPT $GISLAB_USER
 
-# setup old password
+
+# restore password
 ldapmodifyuser $GISLAB_USER > /dev/null << EOL
 changetype: modify
 replace: userPassword
@@ -110,10 +97,6 @@ userPassword:: $GISLAB_USER_PASS_CRYPT
 EOL
 gislab_print_info "Original password restored from backup"
 
-# untar backups
-for file in *.bz2; do
-	tar -xjf $file
-done
 
 # restore home data
 cp -r home/$GISLAB_USER /home/
@@ -125,15 +108,19 @@ fi
 
 chown -R $GISLAB_USER:gislabusers /home/$GISLAB_USER
 
+
 # restore published data
 cp -r storage/publish/$GISLAB_USER /storage/publish/
 chown -R $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
 
+
 # restore database
 sudo -u postgres pg_restore -n $GISLAB_USER -d gislab $GISLAB_USER-db.dump
 
+
 # clean up
 rm -rf $BACKUP_TEMP_DIR
+
 
 gislab_print_info "Account '$GISLAB_USER' is restored"
 

@@ -18,9 +18,9 @@ function usage() {
 	-g first name (required)
 	-l last name (required)
 	-m email (required)
-	-p password (optional - if not given, it will be automatically generated)
+	-p password (optional, default: automatically generated)
 	-d user description (optional)
-	-s add user to superuser's group
+	-s add user to superuser's group (optional)
 	-h display this help
 	"
 	exit 255
@@ -51,6 +51,7 @@ if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_US
 fi
 
 GISLAB_USER=$1
+
 
 # sanity checks
 if id -u $GISLAB_USER > /dev/null 2>&1; then

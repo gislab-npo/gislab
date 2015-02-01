@@ -2,6 +2,7 @@
 
 set -e
 
+source /etc/gislab_version
 source $GISLAB_ROOT/functions.sh
 
 
@@ -12,55 +13,73 @@ gislab_require_root
 # usage
 function usage() {
 	echo "USAGE: $(basename $0) username"
-	echo "Backup GIS.lab user data."
+	echo "Backup GIS.lab user account."
 	echo -e "\nOPTIONS
+	-d backup directory (optional, default: /storage/backup)
 	-h display this help
 	"
 	exit 255
 }
 
-while getopts "h" OPTION
+
+# options
+BACKUP_DIR=/storage/backup
+
+while getopts "d:h" OPTION
 do
 	case "$OPTION" in
+		d) BACKUP_DIR="$OPTARG" ;;
 		h) usage ;;
 		\?) exit 1 ;;
 	esac
 done
-
-if [ $# -ne 1 ]; then usage; fi
-
+shift $(($OPTIND - 1))
+if [ $# -eq 0 ]; then usage; fi
 
 GISLAB_USER=$1
 
+
+# sanity checks
 if ! id $GISLAB_USER >/dev/null 2>&1; then
 	gislab_print_error "GIS.lab user '$GISLAB_USER' does not exists"
-	echo
 	exit 1
 fi
 
-mkdir -p /storage/backup
-chmod 700 /storage/backup
 
+# populate variables and prepare directories structure
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
-BACKUP_FILE=/storage/backup/gislab-backup-$GISLAB_USER-$DATE.tar
 GISLAB_USER_HOME=/home/$GISLAB_USER
+
 TEMP_BACKUP_DIR=/tmp/$GISLAB_USER-$DATE
 HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar
 PUBLISH_BACKUP_FILE=$TEMP_BACKUP_DIR/publish.tar.bz2
 DB_BACKUP_FILE=$TEMP_BACKUP_DIR/$GISLAB_USER-db.dump
 LDAP_BACKUP_FILE=$TEMP_BACKUP_DIR/$GISLAB_USER-ldap.dump
+BACKUP_FILE=$BACKUP_DIR/gislab-backup-$GISLAB_USER-$DATE.tar
 
-# load directory names from XDG
+mkdir -p $BACKUP_DIR
+chmod 700 $BACKUP_DIR
+
+mkdir $TEMP_BACKUP_DIR
+
+
+# write GIS.lab version
+echo $GISLAB_VERSION > $TEMP_BACKUP_DIR/GISLAB_VERSION
+
+
+# backup home directory
+# load home directory names from XDG
 if [ -f $GISLAB_USER_HOME/.config/user-dirs.dirs ]; then
 	source $GISLAB_USER_HOME/.config/user-dirs.dirs
 	EXCLUDE=" --exclude=$GISLAB_USER_HOME/$(basename $XDG_DOWNLOAD_DIR)"
 fi
 
-mkdir $TEMP_BACKUP_DIR
-
-# tar home dir
 tar -cvf $HOME_BACKUP_FILE \
-	--exclude="$GISLAB_USER_HOME/.*" --exclude=$GISLAB_USER_HOME/Booster $EXCLUDE $GISLAB_USER_HOME
+	--exclude="$GISLAB_USER_HOME/.*" \
+	--exclude=$GISLAB_USER_HOME/Barrel \
+	--exclude=$GISLAB_USER_HOME/Booster \
+	--exclude=$GISLAB_USER_HOME/Publish \
+	--exclude=$GISLAB_USER_HOME/Repository $EXCLUDE $GISLAB_USER_HOME
 
 if ls $GISLAB_USER_HOME/.config/user-dirs.* >/dev/null 2>&1; then
 	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.config/user-dirs.*
@@ -76,26 +95,28 @@ fi
 
 bzip2 $HOME_BACKUP_FILE
 
-# tar published data
+
+# backup published projects
 tar -cjf $PUBLISH_BACKUP_FILE /storage/publish/$GISLAB_USER
 
-# leave root's home dir before sudo to postgres
-cd $TEMP_BACKUP_DIR
 
-# dump and tar user's database data
-sudo -u postgres pg_dump -Fc -n $GISLAB_USER gislab > $DB_BACKUP_FILE
+# backup database data
+cd $TEMP_BACKUP_DIR # leave root's home dir before sudo to postgres
+sudo -u postgres pg_dump -Fc --schema=$GISLAB_USER gislab > $DB_BACKUP_FILE
 
-# dump user's LDAP data
+
+# backup LDAP data
 ldapfinger -u $GISLAB_USER > $LDAP_BACKUP_FILE
+id $GISLAB_USER | grep -q '(gislabadmins)' && echo "#superuser" >> $LDAP_BACKUP_FILE  # superuser permissions
 
-# should be user added to 'gislabadmins' group when restoring?
-id $GISLAB_USER | grep -q '(gislabadmins)' && echo "#superuser" >> $LDAP_BACKUP_FILE
 
 # create backup file and clean up
+cd $TEMP_BACKUP_DIR
 tar -cf $BACKUP_FILE *
 chmod 400 $BACKUP_FILE
 
 rm -rf $TEMP_BACKUP_DIR
+
 
 gislab_print_info "Backup of account '$GISLAB_USER' created in '$BACKUP_FILE'"
 
