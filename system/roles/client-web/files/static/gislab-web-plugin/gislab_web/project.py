@@ -6,6 +6,8 @@
  ***************************************************************************/
 """
 
+import os
+import re
 import time
 import types
 import datetime
@@ -139,6 +141,8 @@ class ProjectPage(PublishPage):
 					u"Base layer '{0}' will not be visible in published project scales".format(layer.name())
 				))
 
+		file_datasources = set()
+		dbname_pattern = re.compile("dbname='([^']+)'")
 		if self.dialog.treeView.model():
 			overlay_layers = [layer for layer in self.plugin.layers_list() if self.plugin.is_overlay_layer_for_publish(layer)]
 			for layer in overlay_layers:
@@ -146,11 +150,23 @@ class ProjectPage(PublishPage):
 				if layer_widget:
 					layer_widget = layer_widget[0]
 					if layer_widget.checkState() == Qt.Checked:
+						match = dbname_pattern.search(layer.source())
+						if match:
+							dbname = match.group(1)
+							if os.path.exists(dbname):
+								file_datasources.add(dbname)
 						if layer.crs().authid().startswith('USER:'):
 							messages.append((
 								MSG_ERROR,
 								u"Overlay layer '{0}' is using custom coordinate system which is currently not supported.".format(layer.name())
 							))
+		project_dir = os.path.dirname(self.plugin.project.fileName())+os.path.sep
+		for file_datasource in file_datasources:
+			if not file_datasource.startswith(project_dir):
+				messages.append((
+					MSG_ERROR,
+					u"Project data file '{0}' is located outside of QGIS project directory. ".format(file_datasource)
+				))
 
 		self._show_messages(messages)
 		for msg_type, msg_text in messages:
