@@ -57,11 +57,14 @@ if [ "$BACKUP_VERSION" != "$GISLAB_VERSION" ]; then
 fi
 
 
+# populate variables and prepare directories structure
+TEMP_BACKUP_DIR=/tmp/$GISLAB_USER.$$
+mkdir $TEMP_BACKUP_DIR
+
+
 # untar backup file
-BACKUP_TEMP_DIR=/tmp/$GISLAB_USER.$$
-mkdir $BACKUP_TEMP_DIR
-tar -xf $BACKUP_FILE -C $BACKUP_TEMP_DIR
-cd $BACKUP_TEMP_DIR
+tar -xf $BACKUP_FILE -C $TEMP_BACKUP_DIR
+cd $TEMP_BACKUP_DIR
 
 for file in *.bz2; do
 	tar -xjf $file
@@ -81,7 +84,7 @@ while read line; do
 			userPassword) GISLAB_USER_PASS_CRYPT="$VAL" ;;
 			\#superuser) SUDO_OPT="-s" ;;
 		esac
-done < $GISLAB_USER-ldap.dump
+done < ldap.dump
 
 
 # create user account
@@ -115,11 +118,11 @@ chown -R $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
 
 
 # restore database
-sudo -u postgres pg_restore -n $GISLAB_USER -d gislab $GISLAB_USER-db.dump
+sudo -u postgres pg_restore -n $GISLAB_USER -d gislab postgresql.dump
 
 
 # clean up
-rm -rf $BACKUP_TEMP_DIR
+rm -rf $TEMP_BACKUP_DIR
 
 
 gislab_print_info "Account '$GISLAB_USER' is restored"

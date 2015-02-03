@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: backup also Firefox and maybe other application's configs
+
 set -e
 
 source /etc/gislab_version
@@ -50,12 +52,12 @@ fi
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
 GISLAB_USER_HOME=/home/$GISLAB_USER
 
-TEMP_BACKUP_DIR=/tmp/$GISLAB_USER-$DATE
+TEMP_BACKUP_DIR=/tmp/gislab-$GISLAB_USER-$DATE
 HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar
 PUBLISH_BACKUP_FILE=$TEMP_BACKUP_DIR/publish.tar.bz2
-DB_BACKUP_FILE=$TEMP_BACKUP_DIR/$GISLAB_USER-db.dump
-LDAP_BACKUP_FILE=$TEMP_BACKUP_DIR/$GISLAB_USER-ldap.dump
-BACKUP_FILE=$BACKUP_DIR/gislab-backup-$GISLAB_USER-$DATE.tar
+DB_BACKUP_FILE=$TEMP_BACKUP_DIR/postgresql.dump
+LDAP_BACKUP_FILE=$TEMP_BACKUP_DIR/ldap.dump
+BACKUP_FILE=$BACKUP_DIR/gislab-$GISLAB_USER-$DATE.tar
 
 mkdir -p $BACKUP_DIR
 chmod 700 $BACKUP_DIR

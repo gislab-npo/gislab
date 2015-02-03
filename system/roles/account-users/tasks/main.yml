@@ -58,11 +58,3 @@
 
 - name: Install user account files
   copy: src=static/system/ dest="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"
-
-
-# Backup
-- name: Install user data backup script
-  copy: src=static/bin/gislab-backup-users.sh dest=/etc/cron.d.bin/gislab-backup-users.sh mode=0755
-
-- name: Activate user data backup
-  template: src=cron/gislab-backup-users.j2 dest=/etc/cron.d/gislab-backup-users

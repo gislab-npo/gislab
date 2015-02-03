@@ -232,3 +232,8 @@
 
 - name: Add GIS.lab administrator tools on path
   lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present
+
+
+# Backup
+- name: Activate user accounts and system files backup
+  template: src=cron/gislab-backupall.j2 dest=/etc/cron.d/gislab-backupall
