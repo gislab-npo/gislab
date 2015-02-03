@@ -9,6 +9,7 @@
 import os
 import re
 import json
+import codecs
 import subprocess
 from decimal import Decimal
 from urllib import urlencode
@@ -271,14 +272,24 @@ class WebGisPlugin:
 			page.handler.before_publish()
 			page_id = page.nextId()
 
+		publish_timestamp = str(self.metadata['publish_date_unix'])
 		# create metadata file
-		metadata_filename = os.path.splitext(self.project.fileName())[0] + '.meta'
+		project_filename = os.path.splitext(self.project.fileName())[0]
+		metadata_filename = "{0}_{1}.meta".format(project_filename, publish_timestamp)
 		with open(metadata_filename, "w") as f:
 			def decimal_default(obj):
 				if isinstance(obj, Decimal):
 					return float(obj)
 				raise TypeError
 			json.dump(self.metadata, f, indent=2, default=decimal_default)
+
+		with codecs.open(self.project.fileName(), 'r', 'utf-8') as fin,\
+				codecs.open("{0}_{1}.qgs".format(project_filename, publish_timestamp), 'w', 'utf-8') as fout:
+			project_data = fin.read()
+			for layer in self.iface.legendInterface().layers():
+				project_data = project_data.replace('"{0}"'.format(layer.id()), '"{0}_{1}"'.format(layer.id(), publish_timestamp))
+				project_data = project_data.replace('>{0}<'.format(layer.id()), '>{0}_{1}<'.format(layer.id(), publish_timestamp))
+			fout.write(project_data)
 
 		# If published project contains SpatiaLite layers, make sure they have filled statistics info required to load
 		# layers by Mapserver. Without this procedure, newly created layers in DB Manager wouldn't be loaded by Mapserver
@@ -310,11 +321,22 @@ class WebGisPlugin:
 		if self.dialog and self.dialog.isVisible():
 			return
 		self.project = QgsProject.instance()
+		project_filename = os.path.splitext(self.project.fileName())[0]
 		current_metadata = None
-		metadata_filename = os.path.splitext(self.project.fileName())[0] + '.meta'
-		if os.path.exists(metadata_filename):
-			with open(metadata_filename, "r") as f:
-				current_metadata = json.load(f)
+		metadata_pattern = re.compile(re.escape(os.path.basename(project_filename))+'_(\d{10})\.meta')
+		matched_metadata_files = []
+		for filename in os.listdir(os.path.dirname(self.project.fileName())):
+			if filename.endswith('.meta'):
+				match = metadata_pattern.match(filename)
+				if match:
+					matched_metadata_files.append((int(match.group(1)), filename))
+		if matched_metadata_files:
+			# load last published metadata file
+			metadata_filename = sorted(matched_metadata_files, reverse=True)[0][1]
+			metadata_filename = os.path.join(os.path.dirname(self.project.fileName()), metadata_filename)
+			if os.path.exists(metadata_filename):
+				with open(metadata_filename, "r") as f:
+					current_metadata = json.load(f)
 
 		dialog_filename = os.path.join(self.plugin_dir, "publish_dialog.ui")
 		dialog = PyQt4.uic.loadUi(dialog_filename)

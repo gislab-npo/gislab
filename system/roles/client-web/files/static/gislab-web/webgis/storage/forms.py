@@ -10,7 +10,7 @@ class GetBallForm(CaseInsensitiveForm):
 class BallDataForm(CaseInsensitiveModelForm):
 	class Meta:
 		model = Ball
-		fields = ["data", "mime_type"]
+		fields = ["user", "data", "mime_type"]
 
 
 class DrawingRecordForm(CaseInsensitiveModelForm):

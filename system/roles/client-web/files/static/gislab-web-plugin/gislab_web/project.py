@@ -150,11 +150,16 @@ class ProjectPage(PublishPage):
 				if layer_widget:
 					layer_widget = layer_widget[0]
 					if layer_widget.checkState() == Qt.Checked:
+						# try to parse filename from layer's source string (SpatiaLite vector layer)
 						match = dbname_pattern.search(layer.source())
 						if match:
 							dbname = match.group(1)
 							if os.path.exists(dbname):
 								file_datasources.add(dbname)
+						else:
+							# try layer's source string without parsing (image raster layer)
+							if os.path.exists(layer.source()):
+								file_datasources.add(layer.source())
 						if layer.crs().authid().startswith('USER:'):
 							messages.append((
 								MSG_ERROR,

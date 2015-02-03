@@ -41,6 +41,10 @@ class ConfirmationPage(PublishPage):
 					datasources.append(layer_datasource)
 		collect_layers_datasources(self.dialog.treeView.model().invisibleRootItem())
 
+		project_filename = os.path.splitext(self.plugin.project.fileName())[0]
+		publish_timestamp = str(self.plugin.metadata['publish_date_unix'])
+		published_project_filename = "{0}_{1}.qgs".format(project_filename, publish_timestamp)
+		published_metadata_filename = "{0}_{1}.meta".format(project_filename, publish_timestamp)
 		html = u"""<html>
 			<head>{0}</head>
 			<body>
@@ -58,8 +62,8 @@ class ConfirmationPage(PublishPage):
 		</html>
 		""".format(CSS_STYLE,
 				self.plugin.metadata['title'],
-				self.plugin.project.fileName(),
-				os.path.splitext(self.plugin.project.fileName())[0] + '.meta',
+				published_project_filename,
+				published_metadata_filename,
 				''.join(['<li>{0}</li>'.format(datasource) for datasource in datasources]),
 				os.environ['USER'],
 				GISLAB_WEB_URL
