@@ -38,6 +38,7 @@ if [ $# -eq 0 ]; then usage; fi
 
 GISLAB_USER=$1
 
+
 # sanity checks
 if ! id $GISLAB_USER >/dev/null 2>&1; then
 	gislab_print_error "GIS.lab user '$GISLAB_USER' does not exists"
@@ -69,6 +70,8 @@ if [ -d "$GISLAB_USER_HOME" ]; then
 	rm -rf $GISLAB_USER_HOME
 fi
 
+
+# LDAP
 # disable forwarding system mails to user if user was superuser
 ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 GISLAB_USER_MAIL=$($ldapsearch_cmd "uid=$GISLAB_USER" mail 2>/dev/null | awk '/^mail: / { print $2 }')
@@ -91,11 +94,19 @@ done
 
 ldapdeleteuser $GISLAB_USER # LDAP account
 
-sudo su - postgres -c "psql -d gislab -c \"DROP SCHEMA $GISLAB_USER CASCADE\"" # PostgreSQL account
-sudo su - postgres -c "psql -d gislab -c \"DROP OWNED BY $GISLAB_USER CASCADE\""
-sudo su - postgres -c "dropuser $GISLAB_USER"
 
-rm -rf /storage/publish/$GISLAB_USER # NFS directory
+# database
+sudo -u postgres psql -d gislab -c "DROP SCHEMA $GISLAB_USER CASCADE"
+sudo -u postgres psql -d gislab -c "DROP OWNED BY $GISLAB_USER CASCADE"
+
+sudo -u postgres psql -d gislab -c "DELETE FROM storage_drawing WHERE \"user\" = '$GISLAB_USER'"
+sudo -u postgres psql -d gislab -c "DELETE FROM storage_ball WHERE \"user\" = '$GISLAB_USER'"
+
+sudo -u postgres dropuser $GISLAB_USER
+
+
+# published data
+rm -rf /storage/publish/$GISLAB_USER
 
 
 gislab_print_info "Account '$GISLAB_USER' removed"
