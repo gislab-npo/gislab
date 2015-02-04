@@ -1,0 +1,13 @@
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+proc            /proc           proc    nodev,noexec,nosuid 0       0
+tmpfs           /mnt/booster    tmpfs   defaults,noatime,noexec,size=10% 0 0
+
+# NFS
+server.gis.lab:/home                  /home             nfs   defaults   0   0
+server.gis.lab:/storage/repository    /mnt/repository   nfs   defaults   0   0
+server.gis.lab:/storage/publish       /mnt/publish      nfs   defaults   0   0
+server.gis.lab:/storage/barrel        /mnt/barrel       nfs   defaults   0   0
+
+{% if GISLAB_CLIENT_NETWORK_STORAGE|default(None) != None %}
+{{ GISLAB_CLIENT_NETWORK_STORAGE }}
+{% endif %}

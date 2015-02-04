@@ -44,6 +44,12 @@ if ! id $GISLAB_USER >/dev/null 2>&1; then
 	exit 1
 fi
 
+if [ -f /home/${GISLAB_USER}/.gislab/login ]; then
+	gislab_print_error "GIS.lab user '$GISLAB_USER' is connected"
+	exit 1
+fi
+
+
 if [ "$FORCE" != "yes" ]; then
 	gislab_print_warning "This command will completely remove user account '$GISLAB_USER' including all data"
 	echo "Continue ? [ENTER to continue, CTRL-C to cancel]"

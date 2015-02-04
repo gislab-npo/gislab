@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Work around LP bug #696435
+if [ "$ROOT" = /dev/nbd0 ] && [ -z "$FSTYPE" ]; then
+    FSTYPE=$(blkid -s TYPE -o value "${ROOT}")
+    if [ -n "$FSTYPE" ]; then
+        echo "FSTYPE='$FSTYPE'" > /conf/param.conf
+    fi
+fi

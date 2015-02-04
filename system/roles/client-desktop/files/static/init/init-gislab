@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+
+/usr/share/gislab/gislab-init.sh
+
+exec /sbin/init

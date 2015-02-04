@@ -1,8 +1,5 @@
-default ltsp
+default gislab
 
-label ltsp
+label gislab
 kernel vmlinuz
-append ro initrd=initrd.img root=/dev/nbd0 init=/sbin/init-ltsp nbdroot=:ltsp_i386 
-
-label memtest86+
-kernel memtest86+.bin
+append ro initrd=initrd.img root=/dev/nbd0 init=/sbin/init-gislab nbdroot=:gislab_i386

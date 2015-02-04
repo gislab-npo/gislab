@@ -1,8 +1,0 @@
-# Implements possibility to remove not needed packages installed to a client image by previous commands.
-
-case "$MODE" in
-    finalization)
-        chroot $ROOT apt-get --assume-yes purge $GISLAB_CLIENT_REMOVE_PACKAGES
-        chroot $ROOT apt-get --assume-yes autoremove
-        ;;
-esac

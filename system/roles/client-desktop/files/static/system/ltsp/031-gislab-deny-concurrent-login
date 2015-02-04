@@ -1,7 +1,0 @@
-# Deny concurrent login from same user
-
-case "$MODE" in
-    finalization)
-	cp -a $GISLAB_INSTALL_CLIENT_ROOT/ldm/rc.d/S14-gislab-deny-concurrent-login $ROOT/usr/share/ldm/rc.d/
-    ;;
-esac

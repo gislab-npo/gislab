@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+
+set -e
+
+source /etc/gislab_version
+source $GISLAB_ROOT/functions.sh
+
+# require root privileges
+gislab_require_root
+
+#
+if [ "$GISLAB_SUITE" != "lab" ]; then
+	gislab_print_error "This command can only be run when GISLAB_SUITE is set to 'lab'."
+fi
+
+TFTP_DIR=/var/lib/tftpboot/gislab/i386
+IMAGE_PATH=$GISLAB_INSTALL_CLIENT_IMAGE/i386.img
+
+
+# usage
+function usage() {
+        echo "USAGE: $(basename $0)"
+        echo "Build GIS.lab client image."
+        echo -e "\nOPTIONS
+        -h display this help
+        "
+        exit 255
+}
+
+
+while getopts "h" OPTION
+do
+        case "$OPTION" in
+                h) usage ;;
+                \?) exit 255 ;;
+        esac
+done
+
+# Create directory for image
+mkdir -p $GISLAB_INSTALL_CLIENT_IMAGE
+
+
+# Generate NBI image
+gislab-client-chroot /usr/share/gislab/gislab-update-nbi
+
+
+# Copy /boot directory from client to server TFTP directory
+cp -a $GISLAB_INSTALL_CLIENT_ROOT/boot/. $TFTP_DIR/
+
+# Set permissions
+find $TFTP_DIR -mindepth 1 -type d -exec chmod 0755 "{}" \;
+find $TFTP_DIR -mindepth 1 \! -type d -exec chmod 0644 "{}" \;
+
+# Build image
+test -x /usr/bin/nice && nice=nice || unset nice
+test -x /usr/bin/ionice && /usr/bin/ionice -c3 true 2>/dev/null && ionice=ionice || unset ionice
+
+rm -f $IMAGE_PATH.tmp
+
+$nice $ionice mksquashfs $GISLAB_INSTALL_CLIENT_ROOT $IMAGE_PATH.tmp -e cdrom
+
+if [ $? -ne 0 ]; then
+	rm -f $IMAGE_PATH.tmp
+	gislab_print_error "'mksquashfs' failed to build the GIS.lab client image."
+fi
+
+mv $IMAGE_PATH.tmp $IMAGE_PATH
+

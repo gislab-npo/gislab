@@ -157,10 +157,12 @@ GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
   # list of GIS.lab client extra packages (installed without recommended packages)
   - aptitude
   - conky-std
+  - curl
   - eog
   - flashplugin-installer
   - freerdp-x11
   - gdal-bin
+  - gdisk
   - gimp
   - git
   - git-core
@@ -180,7 +182,10 @@ GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
   - libreoffice-calc
   - libreoffice-gtk
   - libreoffice-writer
+  - lightdm-gtk-greeter
   - mc
+  - mkelfimage
+  - nbd-client
   - nfs-common
   - openssh-server
   - pgadmin3
@@ -197,11 +202,56 @@ GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
   - spatialite-gui
   - sqlite3
   - sshfs
+  - syslinux-common
+  - ubuntu-standard
+  - udhcpc
   - vim-gnome
   - vlc
   - vlc-plugin-pulse
   - x11vnc
 
+# List of GIS.lab client development packages (installed without recommended packages)
+GISLAB_CLIENT_GIS_DEVELOPMENT_PACKAGES:
+  - bison
+  - build-essential
+  - ccache
+  - cmake
+  - doxygen
+  - flex
+  - git
+  - graphviz
+  - grass-dev
+  - libexpat1-dev
+  - libfcgi-dev
+  - libgdal1-dev
+  - libgeos-dev
+  - libgsl0-dev
+  - libpq-dev
+  - libproj-dev
+  - libqtwebkit-dev
+  - libqt4-dev
+  - libqt4-opengl-dev
+  - libqwt5-qt4-dev
+  - libspatialindex-dev
+  - libspatialite-dev
+  - libsqlite3-dev
+  - pkg-config
+  - pyqt4-dev-tools
+  - python
+  - python-dev
+  - python-gdal
+  - python-qscintilla2
+  - python-qt4
+  - python-qt4-dev
+  - python-sip
+  - python-sip-dev
+  - qgit
+  - qgit
+  - qt4-dev-tools
+  - txt2tags
+  - xauth
+  - xfonts-base
+  - xvfb
 
 # List of packages to remove client images.
 # To find out the reason why package was installed use '$ aptitude why <package>'.
@@ -212,13 +262,6 @@ GISLAB_CLIENT_REMOVE_PACKAGES:
   - network-manager-pptp-gnome
 
 
-# ltsp-build-client options:
-# use APT proxy for client image creation if configured or at least keep downloaded packages on server
-# enable debug if requested
-gislab_build_client_opts: "
-  --arch i386
-  --purge-chroot
-  --copy-sourceslist
-  --accept-unsigned-packages
-  {% if GISLAB_APT_HTTP_PROXY|default(None) != None %} --http-proxy {{ GISLAB_APT_HTTP_PROXY }} {% else %} --copy-package-cache {% endif %}
-  {% if GISLAB_DEBUG_INSTALL %} --debug {% endif %}"
+apt_get_opts: "
+ --assume-yes
+ --force-yes"

@@ -1,8 +1,0 @@
-# Configure client to use server.gis.lab for setting time at start
-
-case "$MODE" in
-    finalization)
-	sed -i "s/^NTPDATE_USE_NTP_CONF=.*/NTPDATE_USE_NTP_CONF=no/" $ROOT/etc/default/ntpdate
-	sed -i "s/^NTPSERVERS=.*/NTPSERVERS='server.gis.lab'/" $ROOT/etc/default/ntpdate
-    ;;
-esac

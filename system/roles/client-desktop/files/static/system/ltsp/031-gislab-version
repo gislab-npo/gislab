@@ -1,7 +1,0 @@
-# Add GIS.lab ID, version and client build information.
-
-case "$MODE" in
-    finalization)
-        cp /etc/gislab_version $ROOT/etc/gislab_version
-        ;;
-esac

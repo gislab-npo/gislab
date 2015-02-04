@@ -1,5 +1,0 @@
-case "$MODE" in
-	finalization)
-		sed -i "s/^\$SERVER server$/\$SERVER server.gis.lab server/" $ROOT/usr/share/ltsp/init-ltsp.d/09-hostname
-	;;
-esac

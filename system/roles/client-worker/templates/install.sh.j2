@@ -1,0 +1,149 @@
+#!/bin/sh
+# GIS.lab worker installation script
+#
+
+set -e
+
+export DEBIAN_FRONTEND=noninteractive
+
+# Determine if we are running worker or client
+test -z "$(grep 'init-gislab' /proc/cmdline 2>/dev/null)" && WORKER="yes"
+
+
+# halt machine if something fails
+if [ "$GISLAB_DEBUG_INSTALL" == "False" ]; then trap "halt" SIGHUP SIGINT SIGKILL; fi
+
+# functions
+source ./functions.sh
+
+# sanity check
+if [ -f "/var/lib/gislab/installation.done" ]; then
+	gislab_print_error "Installation is already done"
+fi
+
+# worker - create admin account, uninstall grub
+if [ -n "$WORKER" ]; then
+
+	# version
+	cp etc/gislab_version /etc/gislab_version
+
+	# create 'gislab' superuser account
+	if [ -z "$(id gislab 2>/dev/null)" ] ; then
+		adduser --disabled-password --gecos "GISLAB_ADMIN_FIRST_NAME GISLAB_ADMIN_SURNAME" gislab
+	fi
+
+	if [ -z "$(id -nG gislab 2>/dev/null | grep sudo)" ]; then
+		adduser gislab sudo
+	fi
+
+	# install SSH key
+	mkdir -p /home/gislab/.ssh
+
+	cat gislab_ssh_public_key.pub >> /home/gislab/.ssh/autorized_keys
+
+	chmod 0700 /home/gislab/.ssh
+	chown 0600 /home/gislab/.ssh/autorized_keys
+	chown -R gislab:gislab /home/gislab/.ssh
+
+	# apt repositories
+	cp -a etc/apt/* /etc/apt/
+
+	# purge grub otherwise upgrade will fail
+	apt-get --assume-yes purge grub-common grub-gfxpayload-lists grub-pc grub-pc-bin grub2-common
+	apt-get --assume-yes autoremove
+fi
+
+# source version
+source /etc/gislab_version
+
+# install packages
+apt-get update
+apt-get --assume-yes --force-yes upgrade
+apt-get --assume-yes --force-yes --no-install-recommends install {{ GISLAB_WORKER_INSTALL_PACKAGES|join(' ') }}
+
+# copy worker files tree
+cp -a ./ /
+
+
+# worker configuration
+if [ -n "$WORKER" ]; then
+
+	# locales
+	export LANGUAGE=en_US.UTF-8
+	export LANG=en_US.UTF-8
+	export LC_ALL=en_US.UTF-8
+	export LC_CTYPE=en_US.UTF-8
+	locale-gen en_US.UTF-8
+
+	# hostname
+	HOSTNUMBER="$(ip -o addr | grep " {{ GISLAB_NETWORK }}.[0-9]\+/[0-9]\+ " | awk '{ print $4 }' | sed -e 's;/.*$;;' -e 's/.*\.//')"
+
+	echo "w$HOSTNUMBER" > /etc/hostname
+	service hostname start
+	service rsyslog restart
+
+	# time
+	ntpdate-debian
+
+	# timezone
+	dpkg-reconfigure --frontend noninteractive tzdata
+
+	# network shares
+	service idmapd restart
+
+	echo "server.gis.lab:/storage/repository /mnt/repository nfs defaults 0 0" >> /etc/fstab
+	echo "server.gis.lab:/storage/barrel /mnt/barrel nfs defaults 0 0" >> /etc/fstab
+	echo "server.gis.lab:/storage/publish /mnt/publish nfs defaults 0 0" >> /etc/fstab
+
+	mkdir /mnt/repository && mount /mnt/repository
+	mkdir /mnt/barrel && mount /mnt/barrel
+	mkdir /mnt/publish && mount /mnt/publish
+fi
+
+# syslog
+service rsyslog restart
+
+# Xvfb
+service xvfb restart
+
+# log apache to syslog
+sed -i 's/^ErrorLog .*/ErrorLog "|\/usr\/bin\/logger -t apache -p daemon.warn"/' /etc/apache2/apache2.conf
+
+# mapserver
+a2enmod rewrite
+a2enmod expires
+a2ensite default
+a2ensite mapserver
+service apache2 restart
+
+
+# worker statistics
+if [ -n "$WORKER" ]; then
+
+	# statistics
+	echo "host_name $(hostname)" >> /etc/munin/munin-node.conf
+
+	# disable all plugins
+	rm -f /etc/munin/plugins/*
+	echo > /etc/munin/plugin-conf.d/munin-node
+
+	# enable only required plugins
+	ln -fs /usr/share/munin/plugins/cpu /etc/munin/plugins/cpu
+	ln -fs /usr/share/munin/plugins/load /etc/munin/plugins/load
+	ln -fs /usr/share/munin/plugins/memory /etc/munin/plugins/memory
+	ln -fs /usr/share/munin/plugins/processes /etc/munin/plugins/processes
+	ln -fs /usr/share/munin/plugins/uptime /etc/munin/plugins/uptime
+	ln -fs /usr/share/munin/plugins/vmstat /etc/munin/plugins/vmstat
+
+	service munin-node restart
+fi
+
+# serf
+gislab_serf_install
+service serf restart
+service serf-join restart
+
+
+# installation done
+mkdir -p /var/lib/gislab
+touch /var/lib/gislab/installation.done

@@ -1,4 +1,4 @@
 #!ipxe
-kernel http://{{ GISLAB_NETWORK }}.5/vmlinuz ro root=/dev/nbd0 init=/sbin/init-ltsp nbdroot={{ GISLAB_NETWORK }}.5:ltsp_i386
+kernel http://{{ GISLAB_NETWORK }}.5/vmlinuz ro root=/dev/nbd0 init=/sbin/init-gislab nbdroot={{ GISLAB_NETWORK }}.5:gislab_i386
 initrd http://{{ GISLAB_NETWORK }}.5/initrd.img
 boot

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+umount /mnt/repository
+umount /mnt/barrel
+umount /mnt/publish
+umount /mnt/booster
+umount /home
+/sbin/gislab/reboot -fp

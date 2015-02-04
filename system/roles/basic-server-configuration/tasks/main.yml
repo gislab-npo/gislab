@@ -31,11 +31,15 @@
 
 - name: Set GIS.lab worker installation root directory
   set_fact:
-    GISLAB_INSTALL_WORKER_ROOT: "{{ GISLAB_ROOT }}/system/worker"
+    GISLAB_INSTALL_WORKER_ROOT: "{{ GISLAB_ROOT }}/system/client-worker/root"
 
 - name: Set GIS.lab client installation root directory
   set_fact:
-    GISLAB_INSTALL_CLIENT_ROOT: "{{ GISLAB_ROOT }}/system/client"
+    GISLAB_INSTALL_CLIENT_ROOT: "{{ GISLAB_ROOT }}/system/client-desktop/root"
+
+- name: Set GIS.lab client image directory
+  set_fact:
+    GISLAB_INSTALL_CLIENT_IMAGE: "{{ GISLAB_ROOT }}/system/client-desktop/image"
 
 - name: Set GIS.lab user account installation root directory
   set_fact:
@@ -104,6 +108,7 @@
     GISLAB_APT_CUSTOM_REPOSITORIES="{% if GISLAB_APT_CUSTOM_REPOSITORIES %}{{ GISLAB_APT_CUSTOM_REPOSITORIES|join(",") }}{% else %}{% endif %}"\n
     GISLAB_INSTALL_WORKER_ROOT="{{ GISLAB_INSTALL_WORKER_ROOT }}"\n
     GISLAB_INSTALL_CLIENT_ROOT="{{ GISLAB_INSTALL_CLIENT_ROOT }}"\n
+    GISLAB_INSTALL_CLIENT_IMAGE="{{ GISLAB_INSTALL_CLIENT_IMAGE }}"\n
     GISLAB_INSTALL_ACCOUNT_ROOT="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"\n
     GISLAB_INSTALL_DATETIME="{{ GISLAB_INSTALL_DATETIME }}"\n
     GISLAB_PROVISIONING_USER="{{ GISLAB_PROVISIONING_USER }}"\n

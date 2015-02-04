@@ -1,0 +1,26 @@
+#!/bin/sh -e
+# initramfs hook for udhcpc
+
+MINKVER="2.6.17"
+PREREQ=""
+
+# Output pre-requisites
+prereqs()
+{
+    echo "$PREREQ"
+}
+
+case "$1" in
+    prereqs)
+        prereqs
+    exit 0
+    ;;
+esac
+
+
+. /usr/share/initramfs-tools/hook-functions
+
+# Copy across the binaries
+if [ -x /sbin/udhcpc ]; then
+    copy_exec /sbin/udhcpc /sbin
+fi

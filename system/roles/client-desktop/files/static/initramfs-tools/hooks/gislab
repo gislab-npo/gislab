@@ -1,0 +1,30 @@
+#!/bin/sh -e
+# initramfs hook for nbd
+
+MINKVER="2.6.17"
+PREREQ=""
+
+# Output pre-requisites
+prereqs()
+{
+    echo "$PREREQ"
+}
+
+case "$1" in
+    prereqs)
+        prereqs
+        exit 0
+    ;;
+esac
+
+
+. /usr/share/initramfs-tools/hook-functions
+
+# make sure all our modules are there
+force_load nbd
+force_load squashfs
+force_load overlayfs
+force_load aufs
+
+# Copy across the binary
+copy_exec /sbin/nbd-client /sbin

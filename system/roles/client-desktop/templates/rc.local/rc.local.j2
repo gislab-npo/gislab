@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+
+set -e
+
+source /etc/gislab_version
+
+# worker
+if [ "$GISLAB_CLIENT_WORKER_ENABLED" == "True" ]; then
+	mkdir -p /tmp/install && cd /tmp/install && \
+	curl --silent http://{{ GISLAB_NETWORK_SERVER_IP }}/worker.tar.gz | tar -xzf - && \
+	/bin/bash ./install.sh > /var/log/gislab-install-worker.log 2>&1
+fi
+
