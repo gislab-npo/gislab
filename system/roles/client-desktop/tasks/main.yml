@@ -220,6 +220,28 @@
   when: GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 
+# Remove not needed packages
+- name: Remove packages
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}"
+  args:
+    executable: /bin/bash
+  with_items:
+  - apt-get --assume-yes purge {{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}
+  - apt-get --assume-yes autoremove
+
+
+# Install kernel
+- name: Create configuration file for kernel setup
+  template: src=kernel/kernel-img.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/kernel-img.conf
+
+- name: Install kernel
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install linux-image-generic-lts-raring linux-headers-generic-lts-raring"
+  args:
+    executable: /bin/bash
+
+    
 # Install VirtualBox Guest additions.
 # Latest kernel supported by VirtualBox Guest additions on Ubuntu 12.04 is 3.8
 # else install VirtualBox additions from Ubuntu repository - could not match version used on client
@@ -279,28 +301,6 @@
     executable: /bin/bash
   when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
         and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) == None
-
-
-# Remove not needed packages
-- name: Remove packages
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}"
-  args:
-    executable: /bin/bash
-  with_items:
-  - apt-get --assume-yes purge {{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}
-  - apt-get --assume-yes autoremove
-
-
-# Install kernel
-- name: Create configuration file for kernel setup
-  template: src=kernel/kernel-img.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/kernel-img.conf
-
-- name: Install kernel
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install linux-image-generic-lts-raring linux-headers-generic-lts-raring"
-  args:
-    executable: /bin/bash
 
 
 # fstab
