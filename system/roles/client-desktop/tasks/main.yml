@@ -429,8 +429,9 @@
 - name: Remove plain XFCE and XUbuntu sessions
   shell: rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/*.desktop
 
-- name: Install GIS.lab desktop client session.
-  copy: src=static/xsession/gislab-desktop-client.desktop dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/gislab-desktop-client.desktop
+- name: Install GIS.lab desktop client session
+  # session file must be called 'xubuntu.desktop', otherwise LightDM will set variable DESKTOP_SESSION to invalid value
+  copy: src=static/xsession/gislab-desktop-client.desktop dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/xubuntu.desktop
 
 # Disable session services
 - name: Disable useless session services
