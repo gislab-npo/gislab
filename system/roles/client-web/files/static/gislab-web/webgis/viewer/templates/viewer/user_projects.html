@@ -83,9 +83,9 @@
 									return String.format('<a href="{0}" target="_blank">{1}</a>', value, decodeURIComponent(value));
 								}
 						}, {
-								id: 'wms_url',
-								header: '{% trans "WMS URL" %}',
-								dataIndex: 'wms_url',
+								id: 'ows_url',
+								header: '{% trans "OWS URL" %}',
+								dataIndex: 'ows_url',
 								sortable: false,
 								menuDisabled: true,
 								width: 400,
@@ -102,7 +102,7 @@
 								{% if project_info.publication_time_unix %}publication_time: new Date({{ project_info.publication_time_unix }}*1000),{% endif %}
 								authentication: '{{ project_info.authentication }}',
 								url: '{{ project_info.url }}',
-								{% if project_info.wms_url %}wms_url: '{{ project_info.wms_url }}',{% endif %}
+								{% if project_info.ows_url %}ows_url: '{{ project_info.ows_url }}',{% endif %}
 								{% if project_info.expiration_time_unix %}expiration_time: new Date({{ project_info.expiration_time_unix }}*1000),{% endif %}
 							},{% endfor %}
 						],
@@ -126,7 +126,7 @@
 								name: 'url',
 								type: 'string'
 							}, {
-								name: 'wms_url',
+								name: 'ows_url',
 								type: 'string'
 						}]
 					}),
