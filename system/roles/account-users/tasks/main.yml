@@ -50,11 +50,82 @@
 
 
 # System
-- name: Flush user account installation directory
-  file: path="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}" state=absent
+- name: Create backup of clean user account skeleton at first run
+  shell: cp -a /etc/skel /etc/skel.clean
+  args:
+    executable: /bin/bash
+    creates: /etc/skel.clean/.bashrc
 
-- name: Create user account installation directory
-  file: path="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}" state=directory
+- name: Re-create user account skeleton from clean backup
+  shell: rm -rf /etc/skel && cp -a /etc/skel.clean /etc/skel
+  args:
+    executable: /bin/bash
 
-- name: Install user account files
-  copy: src=static/system/ dest="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"
+
+- name: Prepare .config directory in skeleton
+  file: path=/etc/skel/.config state=directory owner=root group=root
+
+- name: Prepare autostart directory in skeleton
+  file: path=/etc/skel/.config/autostart state=directory owner=root group=root
+
+
+- name: Prepare keyboard layouts configuration directory in skeleton
+  file: path=/etc/skel/.config/xfce4/panel state=directory owner=root group=root
+
+- name: Install keyboard layouts configuration
+  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  with_items:
+          - { src: keyboard-layout/xkb-plugin-14.rc.j2, dest: /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc }
+
+
+- name: Install Conky configuration
+  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  with_items:
+    - { src: conky/conkyrc.j2, dest: /etc/skel/.conkyrc }
+    - { src: conky/conky.desktop.j2, dest: /etc/skel/.config/autostart/conky.desktop }
+
+
+- name: Prepare Pidgin directory in skeleton
+  file: path=/etc/skel/.purple state=directory owner=root group=root
+
+- name: Install Pidgin configuration
+  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  with_items:
+    - { src: pidgin/accounts.xml.j2, dest: /etc/skel/.purple/accounts.xml }
+    - { src: pidgin/blist.xml.j2, dest: /etc/skel/.purple/blist.xml }
+
+
+- name: Install PGAdmin configuration
+  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  with_items:
+    - { src: pgadmin3/pgadmin3.j2, dest: /etc/skel/.pgadmin3 }
+
+
+- name: Prepare QGIS directories
+  file: path={{ item }} state=directory owner=root group=root
+  with_items:
+    - /etc/skel/.config/QGIS
+    - /etc/skel/.qgis2
+    - /etc/skel/.qgis2/composer_templates
+
+- name: Install QGIS configuration
+  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  with_items:
+    - { src: qgis/QGIS2.conf.j2, dest: /etc/skel/.config/QGIS/QGIS2.conf }
+    - { src: qgis/composer_templates/north-arrow.svg.j2, dest: /etc/skel/.qgis2/composer_templates/north-arrow.svg }
+    - { src: qgis/composer_templates/print-template-a4.qpt.j2, dest: /etc/skel/.qgis2/composer_templates/print-template-a4.qpt }
+    - { src: qgis/composer_templates/print-template-a3.qpt.j2, dest: /etc/skel/.qgis2/composer_templates/print-template-a3.qpt }
+
+
+- name: Add symlinks to shared directories in skeleton
+  file: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root state=link force=yes
+  with_items:
+    - { src: /mnt/repository, dest: /etc/skel/Repository }
+    - { src: /mnt/barrel, dest: /etc/skel/Barrel }
+    - { src: /mnt/publish, dest: /etc/skel/Publish }
+
+- name: Add symlinks to fast, in-memory file system
+  file: src=/mnt/booster dest=/etc/skel/Booster owner=root group=root state=link force=yes
+
+
+# vim:ft=ansible:

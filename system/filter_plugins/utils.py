@@ -10,22 +10,31 @@ def split_regex(string, seperator_pattern):
 
 
 # Dedicated filters
-def keyboard_layouts_filter(values):
+def keyboard_layouts(keyboards, f=None):
     """ Return keyboards layout configuration as a string of comma separated layouts
-    and variants separated by colon.
+    and variants separated by colon or only as comma separated layouts or variants if
+    'f' (filter) is set. US keyboard is always available.
     """
-    layouts = []
-    variants = []
-    for keyboard in values:
+    layouts = ['us',]
+    variants = ['',]
+    for keyboard in keyboards:
         layouts.append(keyboard['layout'])
         try:
             variants.append(keyboard['variant'])
         except KeyError:
             variants.append('')
-    ret = (',').join(i for i in layouts)
-    ret += ":"
-    ret += (',').join(i for i in variants)
+
+    if not f:
+        ret = (',').join(i for i in layouts)
+        ret += ":"
+        ret += (',').join(i for i in variants)
+    elif f == 'layouts':
+        ret = (',').join(i for i in layouts)
+    elif f == 'variants':
+        ret = (',').join(i for i in variants)
+
     return ret
+
 
 def postgresql_shm(mem):
     """ Get recommended value of kernel shmmax configuration
@@ -33,7 +42,6 @@ def postgresql_shm(mem):
     System shmmax value which must be something little bit higher
     than one fourth of system memory size.
     """
-
     return int(round(mem * 1000000 / 3.5))
 
 
@@ -44,7 +52,7 @@ class FilterModule(object):
             'split_string': split_string,
             'split_regex': split_regex,
             'postgresql_shm': postgresql_shm,
-            'keyboard_layouts_filter': keyboard_layouts_filter
+            'keyboard_layouts': keyboard_layouts
         }
 
 
