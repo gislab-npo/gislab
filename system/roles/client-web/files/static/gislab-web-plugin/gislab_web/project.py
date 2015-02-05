@@ -6,6 +6,8 @@
  ***************************************************************************/
 """
 
+import os
+import re
 import time
 import types
 import datetime
@@ -139,6 +141,8 @@ class ProjectPage(PublishPage):
 					u"Base layer '{0}' will not be visible in published project scales".format(layer.name())
 				))
 
+		file_datasources = set()
+		dbname_pattern = re.compile("dbname='([^']+)'")
 		if self.dialog.treeView.model():
 			overlay_layers = [layer for layer in self.plugin.layers_list() if self.plugin.is_overlay_layer_for_publish(layer)]
 			for layer in overlay_layers:
@@ -146,11 +150,28 @@ class ProjectPage(PublishPage):
 				if layer_widget:
 					layer_widget = layer_widget[0]
 					if layer_widget.checkState() == Qt.Checked:
+						# try to parse filename from layer's source string (SpatiaLite vector layer)
+						match = dbname_pattern.search(layer.source())
+						if match:
+							dbname = match.group(1)
+							if os.path.exists(dbname):
+								file_datasources.add(dbname)
+						else:
+							# try layer's source string without parsing (image raster layer)
+							if os.path.exists(layer.source()):
+								file_datasources.add(layer.source())
 						if layer.crs().authid().startswith('USER:'):
 							messages.append((
 								MSG_ERROR,
 								u"Overlay layer '{0}' is using custom coordinate system which is currently not supported.".format(layer.name())
 							))
+		project_dir = os.path.dirname(self.plugin.project.fileName())+os.path.sep
+		for file_datasource in file_datasources:
+			if not file_datasource.startswith(project_dir):
+				messages.append((
+					MSG_ERROR,
+					u"Project data file '{0}' is located outside of QGIS project directory. ".format(file_datasource)
+				))
 
 		self._show_messages(messages)
 		for msg_type, msg_text in messages:
@@ -445,6 +466,7 @@ class ProjectPage(PublishPage):
 				self.setup_config_page_from_metadata(metadata)
 			except:
 				QMessageBox.warning(None, 'Warning', 'Failed to load settings from last published version')
+		self.validate()
 
 	def get_metadata(self):
 		"""Generated project's metadata (dictionary)."""
@@ -681,20 +703,8 @@ class ProjectPage(PublishPage):
 
 					fields = layer.pendingFields()
 					attributes_data = []
-					attributes_indexes = []
-					for elem in layer.attributeEditorElements():
-						attribs_group = elem.toDomElement(QDomDocument())
-						attribs_elems = attribs_group.elementsByTagName('attributeEditorField')
-						for i in range(attribs_elems.count()):
-							attrib_elem = attribs_elems.item(i)
-							index = int(attrib_elem.attributes().namedItem('index').nodeValue())
-							name = attrib_elem.attributes().namedItem('name').nodeValue()
-							attributes_indexes.append(index)
-					if not attributes_indexes:
-						attributes_indexes = range(fields.count())
 					excluded_attributes = layer.excludeAttributesWMS()
-					for index in attributes_indexes:
-						field = fields.field(index)
+					for field in fields:
 						if field.name() in excluded_attributes:
 							continue
 						attribute_data = {
@@ -705,12 +715,13 @@ class ProjectPage(PublishPage):
 						}
 						if field.comment():
 							attribute_data['comment'] = field.comment()
-						alias = layer.attributeAlias(index)
+						alias = layer.attributeAlias(fields.indexFromName(field.name()))
 						if alias:
 							attribute_data['alias'] = alias
 						attributes_data.append(attribute_data)
+
 					layer_data['attributes'] = attributes_data
-					layer_data['pk_attributes'] = [fields[index].name() for index in layer.dataProvider().pkAttributeIndexes()]
+					layer_data['pk_attributes'] = [fields.at(index).name() for index in layer.dataProvider().pkAttributeIndexes()]
 				else:
 					layer_data['type'] = 'raster'
 				return layer_data

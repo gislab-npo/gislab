@@ -560,7 +560,7 @@ WebGIS.DrawAction = Ext.extend(Ext.Action, {
 							dataIndex: 'permalink',
 							width: 68,
 							renderer: function(val, meta, record, rowIndex, colIndex, store) {
-								return String.format('<a target="_blank" href="?{0}">{1}</a>', val, Ext.urlDecode(val)['DRAWINGS']);
+								return String.format('<a target="_blank" href="?{0}">{1}</a>', val, Ext.urlDecode(val)['DRAWINGS'].split(':').pop());
 							}
 						}, {
 							id: 'download',

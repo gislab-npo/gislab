@@ -43,7 +43,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.ssh.forward_agent = true
   if not CONFIG['GISLAB_SSH_PRIVATE_KEY'].nil?
-    config.ssh.private_key_path = [CONFIG['GISLAB_SSH_PRIVATE_KEY'], File.join("system", "insecure_ssh_key")]
+    config.ssh.private_key_path = [CONFIG['GISLAB_SSH_PRIVATE_KEY']]
   end
 
 

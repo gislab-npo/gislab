@@ -33,10 +33,6 @@
   register: gislab_web_db_user_password
 
 
-- name: Create database 'gislab_web' if not exists
-  postgresql_db: name=gislab_web encoding='UTF-8' template=template0 state=present
-  sudo_user: postgres
-
 - name: Create database user 'gislab_web' if not exists
   postgresql_user: name=gislab_web role_attr_flags=NOCREATEDB,NOCREATEROLE,NOSUPERUSER password={{ gislab_web_db_user_password.stdout }} state=present
   sudo_user: postgres
@@ -94,7 +90,6 @@
   shell: cat /etc/gislab/gislab-web_secret_key.txt
   register: gislab_web_secret_key
 
-
 - name: Deploy GIS.lab Web project
 # we do not use Ansible django_manage module because of missing 'template' option
   shell: source /usr/local/python-virtualenvs/gislab-web/bin/activate
@@ -111,8 +106,31 @@
 
 - name: Sync database
   django_manage: command=syncdb app_path=/var/www/gislab-web settings=djproject.settings virtualenv=/usr/local/python-virtualenvs/gislab-web
+  sudo_user: postgres
   notify:
     - service gislab-web restart
+
+- name: Grant privileges to database tables
+  shell:  psql gislab -c "GRANT SELECT, INSERT, UPDATE, DELETE ON {{ item }} TO gislab_web"
+  sudo_user: postgres
+  with_items:
+    - auth_group
+    - auth_group_permissions
+    - auth_permission
+    - django_content_type
+    - django_session
+    - storage_ball
+    - storage_drawing
+    - viewer_gislabuser
+    - viewer_gislabuser_groups
+    - viewer_gislabuser_user_permissions
+    - viewer_project_registry
+  args:
+    executable: /bin/bash
+
+- name: Grant privileges to sequences
+  shell:  psql gislab -c "GRANT SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO gislab_web"
+  sudo_user: postgres
 
 - name: Collect static files
   django_manage: command=collectstatic app_path=/var/www/gislab-web settings=djproject.settings virtualenv=/usr/local/python-virtualenvs/gislab-web
@@ -227,12 +245,6 @@
   lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/var/log/nginx/gislab-web-error.log" state=present
 
 
-# Backup
-- name: Install storage backup script
-  copy: src=static/bin/gislab-backup-web.sh dest=/etc/cron.d.bin/gislab-backup-web.sh mode=0755
-
-- name: Activate user data backup
-  template: src=cron/gislab-backup-web.j2 dest=/etc/cron.d/gislab-backup-web
-
-
 - meta: flush_handlers
+
+# vim:ft=ansible:

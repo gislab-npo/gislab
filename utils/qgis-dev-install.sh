@@ -1,13 +1,13 @@
 #!/bin/bash
+# Download and compile latest development version of QGIS 
 
 set -e
 
 
-source /usr/local/gislab/functions.sh
-
-gislab_print_info "This script will download latest QGIS source code and make install"
+echo "This script will download latest QGIS source code and make install"
 echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
 read
+
 
 mkdir -p ~/apps
 
@@ -28,7 +28,8 @@ fi
 
 make && make install
 
-gislab_print_info "Done. Run command '$ gislab-dev-qgis' to start QGIS"
+
+echo  "Done. Run command '$ qgis-dev' to start QGIS"
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

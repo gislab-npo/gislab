@@ -9,6 +9,7 @@
 import os
 import re
 import json
+import codecs
 import subprocess
 from decimal import Decimal
 from urllib import urlencode
@@ -271,8 +272,10 @@ class WebGisPlugin:
 			page.handler.before_publish()
 			page_id = page.nextId()
 
+		publish_timestamp = str(self.metadata['publish_date_unix'])
 		# create metadata file
-		metadata_filename = os.path.splitext(self.project.fileName())[0] + '.meta'
+		project_filename = os.path.splitext(self.project.fileName())[0]
+		metadata_filename = "{0}_{1}.meta".format(project_filename, publish_timestamp)
 		with open(metadata_filename, "w") as f:
 			def decimal_default(obj):
 				if isinstance(obj, Decimal):
@@ -280,16 +283,60 @@ class WebGisPlugin:
 				raise TypeError
 			json.dump(self.metadata, f, indent=2, default=decimal_default)
 
+		with codecs.open(self.project.fileName(), 'r', 'utf-8') as fin,\
+				codecs.open("{0}_{1}.qgs".format(project_filename, publish_timestamp), 'w', 'utf-8') as fout:
+			project_data = fin.read()
+			for layer in self.iface.legendInterface().layers():
+				project_data = project_data.replace('"{0}"'.format(layer.id()), '"{0}_{1}"'.format(layer.id(), publish_timestamp))
+				project_data = project_data.replace('>{0}<'.format(layer.id()), '>{0}_{1}<'.format(layer.id(), publish_timestamp))
+			fout.write(project_data)
+
+		# If published project contains SpatiaLite layers, make sure they have filled statistics info required to load
+		# layers by Mapserver. Without this procedure, newly created layers in DB Manager wouldn't be loaded by Mapserver
+		# properly and GetMap and GetLegendGraphics requests with such layers would cause server error.
+		# The only way to update required statistics info is to create a new SpatiaLite provider for every published
+		# SpatiaLite layer. (This is done automatically when opening QGIS project file again).
+		overlays_names = []
+		def collect_overlays_names(layer_data):
+			sublayers = layer_data.get('layers')
+			if sublayers:
+				for sublayer_data in sublayers:
+					collect_overlays_names(sublayer_data)
+			else:
+				overlays_names.append(layer_data['name'])
+
+		for layer_data in self.metadata['overlays']:
+			collect_overlays_names(layer_data)
+
+		layers_registry = QgsMapLayerRegistry.instance()
+		providers_registry = QgsProviderRegistry.instance()
+		for layer_name in overlays_names:
+			layer = layers_registry.mapLayersByName(layer_name)[0]
+			if layer.dataProvider().name() == "spatialite":
+				provider = providers_registry.provider("spatialite", layer.dataProvider().dataSourceUri())
+				del provider
+
 
 	def show_publish_dialog(self):
 		if self.dialog and self.dialog.isVisible():
 			return
 		self.project = QgsProject.instance()
+		project_filename = os.path.splitext(self.project.fileName())[0]
 		current_metadata = None
-		metadata_filename = os.path.splitext(self.project.fileName())[0] + '.meta'
-		if os.path.exists(metadata_filename):
-			with open(metadata_filename, "r") as f:
-				current_metadata = json.load(f)
+		metadata_pattern = re.compile(re.escape(os.path.basename(project_filename))+'_(\d{10})\.meta')
+		matched_metadata_files = []
+		for filename in os.listdir(os.path.dirname(self.project.fileName())):
+			if filename.endswith('.meta'):
+				match = metadata_pattern.match(filename)
+				if match:
+					matched_metadata_files.append((int(match.group(1)), filename))
+		if matched_metadata_files:
+			# load last published metadata file
+			metadata_filename = sorted(matched_metadata_files, reverse=True)[0][1]
+			metadata_filename = os.path.join(os.path.dirname(self.project.fileName()), metadata_filename)
+			if os.path.exists(metadata_filename):
+				with open(metadata_filename, "r") as f:
+					current_metadata = json.load(f)
 
 		dialog_filename = os.path.join(self.plugin_dir, "publish_dialog.ui")
 		dialog = PyQt4.uic.loadUi(dialog_filename)

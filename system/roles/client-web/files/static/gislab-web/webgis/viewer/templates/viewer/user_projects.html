@@ -228,7 +228,7 @@
 										// secure (https) permalink
 										var url = projects_tab.store.getAt(index).get('url').split("?")[0];
 										url = Ext.urlAppend(url, value);
-										return String.format('<a target="_blank" href="{0}">{1}</a>', url, Ext.urlDecode(value)['DRAWINGS']);
+										return String.format('<a target="_blank" href="{0}">{1}</a>', url, Ext.urlDecode(value)['DRAWINGS'].split(':').pop());
 									}
 									// project does not exists
 									return '-';

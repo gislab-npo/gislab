@@ -4,7 +4,7 @@
 	<blist>
 		<group name='Chats'>
 			<setting name='collapsed' type='bool'>0</setting>
-			<chat proto='prpl-irc' account='{{ GISLAB_USER }}@chat.gis.lab'>
+			<chat proto='prpl-irc' account='{+ GISLAB_USER +}@chat.gis.lab'>
 				<component name='channel'>#gislab</component>
 				<setting name='gtk-persistent' type='bool'>1</setting>
 				<setting name='gtk-mute-sound' type='bool'>0</setting>
@@ -13,6 +13,6 @@
 		</group>
 	</blist>
 	<privacy>
-		<account proto='prpl-irc' name='{{ GISLAB_USER }}@chat.gis.lab' mode='1'/>
+		<account proto='prpl-irc' name='{+ GISLAB_USER +}@chat.gis.lab' mode='1'/>
 	</privacy>
 </purple>

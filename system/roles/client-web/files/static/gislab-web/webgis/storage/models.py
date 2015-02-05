@@ -5,7 +5,8 @@ from django.db import models
 
 
 class Ball(models.Model):
-	id = models.CharField(u"id", max_length=8, primary_key=True)
+	id = models.CharField(u"id", max_length=109, primary_key=True)
+	user = models.CharField(u"user", max_length=100, blank=False)
 	data = models.TextField(u"data")
 	sender = models.CharField(u"sender", max_length=100, blank=False)
 	mime_type = models.CharField(u"MIME type", max_length=50, blank=False)
@@ -25,7 +26,7 @@ class Ball(models.Model):
 			random_id = self._random_id()
 			while Ball.objects.filter(id=random_id).exists():
 				random_id = self._random_id()
-			self.id = random_id
+			self.id = "{0}:{1}".format(self.user, random_id)
 		return super(Ball, self).save(*args, **kwargs)
 
 

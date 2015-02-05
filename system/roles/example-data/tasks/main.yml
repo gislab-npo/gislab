@@ -7,3 +7,5 @@
 
 - name: Install example GIS.lab project to 'Repository' shared directory
   copy: src=../gislab-project dest=/storage/repository/
+
+# vim:ft=ansible:

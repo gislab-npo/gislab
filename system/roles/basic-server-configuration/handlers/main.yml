@@ -8,3 +8,5 @@
 
 - name: reconfigure timezone
   shell: dpkg-reconfigure --frontend noninteractive tzdata
+
+# vim:ft=ansible:

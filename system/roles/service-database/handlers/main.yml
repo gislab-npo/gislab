@@ -2,3 +2,5 @@
 
 - name: service postgresql restart
   service: name=postgresql state=restarted
+
+# vim:ft=ansible:

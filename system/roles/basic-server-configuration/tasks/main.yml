@@ -41,10 +41,6 @@
   set_fact:
     GISLAB_INSTALL_CLIENT_IMAGE: "{{ GISLAB_ROOT }}/system/client-desktop/image"
 
-- name: Set GIS.lab user account installation root directory
-  set_fact:
-    GISLAB_INSTALL_ACCOUNT_ROOT : "{{ GISLAB_ROOT }}/system/account"
-
 
 - name: Detect current date and time
   set_fact:
@@ -93,8 +89,7 @@
     GISLAB_SERVER_EMAIL_RELAY_SERVER="{{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}"\n
     GISLAB_WORKERS_COUNT="{{ GISLAB_WORKERS_COUNT }}"\n
     GISLAB_CLIENT_LANGUAGES="{% if GISLAB_CLIENT_LANGUAGES %}{{ GISLAB_CLIENT_LANGUAGES|join(",") }}{% else %}{% endif %}"\n
-    GISLAB_CLIENT_KEYBOARDS="{% if GISLAB_CLIENT_KEYBOARDS %}{{ GISLAB_CLIENT_KEYBOARDS|keyboard_layouts_filter }}{% else %}{% endif %}"\n
-    GISLAB_UNKNOWN_MAC_POLICY="{{ GISLAB_UNKNOWN_MAC_POLICY }}"\n
+    GISLAB_CLIENT_KEYBOARDS="{% if GISLAB_CLIENT_KEYBOARDS %}{{ GISLAB_CLIENT_KEYBOARDS|keyboard_layouts }}{% else %}{% endif %}"\n
     GISLAB_CLIENT_INSTALL_PACKAGES="{% if GISLAB_CLIENT_INSTALL_PACKAGES %}{{ GISLAB_CLIENT_INSTALL_PACKAGES|join(" ") }}{% else %}{% endif %}"\n
     GISLAB_CLIENT_VIRTUALBOX_SUPPORT="{{ GISLAB_CLIENT_VIRTUALBOX_SUPPORT }}"\n
     GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO="{{ GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO }}"\n
@@ -109,7 +104,6 @@
     GISLAB_INSTALL_WORKER_ROOT="{{ GISLAB_INSTALL_WORKER_ROOT }}"\n
     GISLAB_INSTALL_CLIENT_ROOT="{{ GISLAB_INSTALL_CLIENT_ROOT }}"\n
     GISLAB_INSTALL_CLIENT_IMAGE="{{ GISLAB_INSTALL_CLIENT_IMAGE }}"\n
-    GISLAB_INSTALL_ACCOUNT_ROOT="{{ GISLAB_INSTALL_ACCOUNT_ROOT }}"\n
     GISLAB_INSTALL_DATETIME="{{ GISLAB_INSTALL_DATETIME }}"\n
     GISLAB_PROVISIONING_USER="{{ GISLAB_PROVISIONING_USER }}"\n
     GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"'
@@ -205,16 +199,6 @@
     - vim
 
 
-# SSH
-- name: Install insecure SSH key if no secure one found
-  copy: src=insecure_ssh_key.pub dest=/etc/gislab/gislab_ssh_public_key.pub mode=0600
-  when: GISLAB_SSH_PRIVATE_KEY|default(None) == None or GISLAB_SSH_PUBLIC_KEY|default(None) == None
-
-- name: Install secure SSH key
-  copy: src={{ GISLAB_SSH_PUBLIC_KEY }} dest=/etc/gislab/gislab_ssh_public_key.pub mode=0600
-  when: GISLAB_SSH_PRIVATE_KEY|default(None) != None and GISLAB_SSH_PUBLIC_KEY|default(None) != None
-
-
 # Shell
 - name: Configure shell prompt system wide
   lineinfile:
@@ -225,7 +209,7 @@
 
 
 # MOTD
-- name: Set MOTD welcome message
+- name: Set MOTD header
   template: src=motd/00-header.j2 dest=/etc/update-motd.d/00-header
 
 - name: Remove not needed MOTD messages
@@ -234,7 +218,6 @@
     - /etc/update-motd.d/*-help-text
     - /etc/update-motd.d/*-cloudguest
     - /etc/update-motd.d/*-release-upgrade
-    - /etc/update-motd.d/*-hwe-eol
 
 - name: Update MOTD
   shell: run-parts /etc/update-motd.d
@@ -249,3 +232,10 @@
 
 - name: Add GIS.lab administrator tools on path
   lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present
+
+
+# Backup
+- name: Activate user accounts and system files backup
+  template: src=cron/gislab-backupall.j2 dest=/etc/cron.d/gislab-backupall
+
+# vim:ft=ansible:

@@ -2,3 +2,5 @@
 
 - name: service ircd-hybrid restart
   service: name=ircd-hybrid state=restarted
+
+# vim:ft=ansible:

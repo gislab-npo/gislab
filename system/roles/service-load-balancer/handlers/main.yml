@@ -5,3 +5,5 @@
 
 - name: service haproxy restart
   service: name=haproxy state=restarted
+
+# vim:ft=ansible:

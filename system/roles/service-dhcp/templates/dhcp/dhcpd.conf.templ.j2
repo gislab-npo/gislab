@@ -1,9 +1,11 @@
-# IP ranges in GIS.lab network
+# IP ranges of GIS.lab network
+# ----------------------------
 # 5         : server
 # 10 - 49   : workers
 # 50 - 149  : GIS.lab clients
 # 150 - 250 : third party clients
 # 251       : GIS.lab client HTTP boot
+
 
 log-facility local7;
 authoritative;
@@ -27,7 +29,8 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         allow members of "gislab-clients";
         deny members of "third-party-clients";
         allow known-clients;
-        {{ GISLAB_UNKNOWN_MAC_POLICY }} unknown clients;
+	deny unknown-clients;		# GISLAB_UNKNOWN_MACHINES_POLICY_DENY
+	allow unknown-clients;		# GISLAB_UNKNOWN_MACHINES_POLICY_ALLOW
         range {{ GISLAB_NETWORK }}.50 {{ GISLAB_NETWORK }}.149;
         # return specified DHCP options in offer
         option dhcp-parameter-request-list 1,3,6,14,15,17,51,54,224;
@@ -48,7 +51,8 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         allow members of "third-party-clients";
         deny members of "gislab-clients";
         allow known-clients;
-        {{ GISLAB_UNKNOWN_MAC_POLICY }} unknown clients;
+        deny unknown-clients;		# GISLAB_UNKNOWN_MACHINES_POLICY_DENY
+        allow unknown-clients;		# GISLAB_UNKNOWN_MACHINES_POLICY_ALLOW
         range {{ GISLAB_NETWORK }}.150 {{ GISLAB_NETWORK }}.250;
         option domain-name "gis.lab";
         option domain-name-servers {{ GISLAB_NETWORK_SERVER_IP }};
@@ -64,6 +68,4 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
     }
 }
 
-{% if GISLAB_UNKNOWN_MAC_POLICY == "deny" %}
-include "/etc/gislab/gislab_machines_allowed.conf";
-{% endif %}
+include "/etc/gislab/gislab_known_machines.conf";

@@ -14,7 +14,7 @@ usage () {
 	echo "  -p APT proxy server (e.g. http://192.168.1.10:3142) [optional]"
 	echo "  -t timezone (e.g. Europe/Bratislava)"
 	echo "  -i Ubuntu Server installation ISO image file"
-	echo "  -k SSH public key file, which would be uploaded to default 'ubuntu' account"
+	echo "  -k SSH public key file, which will be used for GIS.lab installation or update"
 	echo "  -w working directory with enough disk space (2.5 x larger free space then ISO image size)"
 	echo "  -h this help"
 	echo

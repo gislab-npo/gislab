@@ -17,7 +17,11 @@ def _get_file_extension(mime_type):
 @csrf_exempt
 def ball(request):
 	if request.method == "POST":
-		form = forms.BallDataForm({'data': request.body, 'mime_type': request.environ['CONTENT_TYPE']})
+		form = forms.BallDataForm({
+			'user': request.user.username,
+			'data': request.body,
+			'mime_type': request.environ['CONTENT_TYPE']
+		})
 		if form.is_valid():
 			ball = form.save()
 			return HttpResponse(ball.id)

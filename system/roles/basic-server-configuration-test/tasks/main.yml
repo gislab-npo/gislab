@@ -34,3 +34,5 @@
   shell: which gislab-help
   ignore_errors: yes
   changed_when: False
+
+# vim:ft=ansible:

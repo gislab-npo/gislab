@@ -18,9 +18,9 @@ function usage() {
 	-g first name (required)
 	-l last name (required)
 	-m email (required)
-	-p password (optional - if not given, it will be automatically generated)
+	-p password (optional, default: automatically generated)
 	-d user description (optional)
-	-s add user to superuser's group
+	-s add user to superuser's group (optional)
 	-h display this help
 	"
 	exit 255
@@ -51,6 +51,8 @@ if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_US
 fi
 
 GISLAB_USER=$1
+
+
 # sanity checks
 if id -u $GISLAB_USER > /dev/null 2>&1; then
 	gislab_print_error "User '$GISLAB_USER' already exists"
@@ -68,28 +70,6 @@ if ! [[ "$GISLAB_USER_MAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$
 fi
 
 GISLAB_USER_FULL_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
-
-
-# /etc/skel cleanup
-if [ ! -d "/etc/skel.clean" ]; then # create clean 'skel' backup at first run
-	cp -a /etc/skel /etc/skel.clean
-fi
-
-rm -rf /etc/skel
-cp -a /etc/skel.clean /etc/skel
-
-
-# launch account configuration script
-source $GISLAB_INSTALL_ACCOUNT_ROOT/install.sh
-
-
-# add shared directories
-ln -s /mnt/repository /etc/skel/Repository
-ln -s /mnt/barrel /etc/skel/Barrel
-ln -s /mnt/publish /etc/skel/Publish
-
-# add quick, temporary in-memory file system
-ln -s /mnt/booster /etc/skel/Booster
 
 
 # create LDAP account
@@ -166,16 +146,9 @@ chown $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
 chmod 750 /storage/publish/$GISLAB_USER
 
 
-# deploy administrator public SSH key
-mkdir -p /home/$GISLAB_USER/.ssh
-chmod 700 /home/$GISLAB_USER/.ssh
-cp /etc/gislab/gislab_ssh_public_key.pub /home/$GISLAB_USER/.ssh/authorized_keys
-chown $GISLAB_USER:gislabusers -R /home/$GISLAB_USER/.ssh
-
-
 # replace user name and password placeholders with real user values
-find /home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER }}/$GISLAB_USER/g" "{}" \;
-find /home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER_PASSWORD }}/$GISLAB_USER_PASSWORD/g" "{}" \;
+find /home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER +}/$GISLAB_USER/g" "{}" \;
+find /home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_PASSWORD +}/$GISLAB_USER_PASSWORD/g" "{}" \;
 
 
 # save user credentials to hidden directory in home folder

@@ -33,3 +33,5 @@
 
 
 - meta: flush_handlers
+
+# vim:ft=ansible:

@@ -265,3 +265,5 @@ GISLAB_CLIENT_REMOVE_PACKAGES:
 apt_get_opts: "
  --assume-yes
  --force-yes"
+
+# vim:ft=ansible:

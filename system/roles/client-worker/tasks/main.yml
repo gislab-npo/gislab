@@ -32,9 +32,6 @@
 - name: Add GIS.lab ID, version and client build information
   command: cp /etc/gislab_version {{ GISLAB_INSTALL_WORKER_ROOT }}/etc/gislab_version
 
-- name: Copy SSH public keys
-  command: cp /etc/gislab/gislab_ssh_public_key.pub {{ GISLAB_INSTALL_WORKER_ROOT }}/
-
 # syslog
 - name: Create directory for syslog configuration
   file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/etc/rsyslog.d state=directory
@@ -131,3 +128,4 @@
 - name: Create symlink for worker image file to webserver root directory
   file: src={{ GISLAB_INSTALL_WORKER_IMAGE }}/worker.tar.gz dest=/var/www/default/worker.tar.gz state=link force=yes
 
+# vim:ft=ansible:

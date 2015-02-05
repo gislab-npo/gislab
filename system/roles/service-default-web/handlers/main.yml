@@ -5,3 +5,5 @@
 
 - name: service nginx restart
   service: name=nginx state=restarted
+
+# vim:ft=ansible:

@@ -7,3 +7,5 @@
 
 - name: "Installation of GIS.lab is done"
   shell: "echo '{{ GISLAB_INSTALL_DATETIME }} {{ GISLAB_INSTALL_ACTION }}' >> /var/lib/gislab/installation.done"
+
+# vim:ft=ansible:
