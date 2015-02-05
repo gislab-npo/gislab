@@ -5,3 +5,5 @@
 
 - name: resolvconf update
   shell: resolvconf -u
+
+# vim:ft=ansible:

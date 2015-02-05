@@ -5,3 +5,5 @@
 
 - name: service idmapd restart
   service: name=idmapd state=restarted
+
+# vim:ft=ansible:

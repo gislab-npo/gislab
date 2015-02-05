@@ -211,3 +211,5 @@
 # The end
 - name: Remove temporary 'ldif' file
   file: path=/tmp/ldap.ldif state=absent
+
+# vim:ft=ansible:

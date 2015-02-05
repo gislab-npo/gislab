@@ -19,3 +19,5 @@
 
 - name: Activate logcheck
   template: src=cron/logcheck.j2 dest=/etc/cron.d/logcheck
+
+# vim:ft=ansible:

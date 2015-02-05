@@ -222,3 +222,5 @@ gislab_build_client_opts: "
   --accept-unsigned-packages
   {% if GISLAB_APT_HTTP_PROXY|default(None) != None %} --http-proxy {{ GISLAB_APT_HTTP_PROXY }} {% else %} --copy-package-cache {% endif %}
   {% if GISLAB_DEBUG_INSTALL %} --debug {% endif %}"
+
+# vim:ft=ansible:

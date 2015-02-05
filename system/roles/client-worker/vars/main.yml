@@ -20,3 +20,5 @@ GISLAB_WORKER_INSTALL_PACKAGES:
   - unzip
   - xvfb
   - vim
+
+# vim:ft=ansible:

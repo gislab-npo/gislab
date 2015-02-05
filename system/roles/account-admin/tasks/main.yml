@@ -20,3 +20,5 @@
 - name: Update GIS.lab administrator user account password
   shell: "gislab-password -p {{ GISLAB_ADMIN_PASSWORD }} gislab"
   when: GISLAB_ADMIN_PASSWORD != ""
+
+# vim:ft=ansible:

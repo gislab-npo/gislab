@@ -5,3 +5,5 @@
 
 - name: service gislab-web restart
   service: name=gislab-web state=restarted
+
+# vim:ft=ansible:

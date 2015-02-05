@@ -232,3 +232,5 @@
 # Backup
 - name: Activate user accounts and system files backup
   template: src=cron/gislab-backupall.j2 dest=/etc/cron.d/gislab-backupall
+
+# vim:ft=ansible:

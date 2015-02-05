@@ -2,3 +2,5 @@
 
 - name: service slapd restart
   service: name=slapd state=restarted
+
+# vim:ft=ansible:

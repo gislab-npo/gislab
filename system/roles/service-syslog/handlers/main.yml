@@ -2,3 +2,5 @@
 
 - name: service rsyslog restart
   service: name=rsyslog state=restarted
+
+# vim:ft=ansible:

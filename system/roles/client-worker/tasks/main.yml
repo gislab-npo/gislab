@@ -74,3 +74,5 @@
          bash {{ GISLAB_INSTALL_WORKER_ROOT }}/install.sh > /var/log/gislab-build-worker.log
   args:
     executable: /bin/bash
+
+# vim:ft=ansible:
