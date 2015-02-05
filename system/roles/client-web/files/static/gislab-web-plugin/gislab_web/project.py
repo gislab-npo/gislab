@@ -703,20 +703,8 @@ class ProjectPage(PublishPage):
 
 					fields = layer.pendingFields()
 					attributes_data = []
-					attributes_indexes = []
-					for elem in layer.attributeEditorElements():
-						attribs_group = elem.toDomElement(QDomDocument())
-						attribs_elems = attribs_group.elementsByTagName('attributeEditorField')
-						for i in range(attribs_elems.count()):
-							attrib_elem = attribs_elems.item(i)
-							index = int(attrib_elem.attributes().namedItem('index').nodeValue())
-							name = attrib_elem.attributes().namedItem('name').nodeValue()
-							attributes_indexes.append(index)
-					if not attributes_indexes:
-						attributes_indexes = range(fields.count())
 					excluded_attributes = layer.excludeAttributesWMS()
-					for index in attributes_indexes:
-						field = fields.field(index)
+					for field in fields:
 						if field.name() in excluded_attributes:
 							continue
 						attribute_data = {
@@ -727,12 +715,13 @@ class ProjectPage(PublishPage):
 						}
 						if field.comment():
 							attribute_data['comment'] = field.comment()
-						alias = layer.attributeAlias(index)
+						alias = layer.attributeAlias(fields.indexFromName(field.name()))
 						if alias:
 							attribute_data['alias'] = alias
 						attributes_data.append(attribute_data)
+
 					layer_data['attributes'] = attributes_data
-					layer_data['pk_attributes'] = [fields[index].name() for index in layer.dataProvider().pkAttributeIndexes()]
+					layer_data['pk_attributes'] = [fields.at(index).name() for index in layer.dataProvider().pkAttributeIndexes()]
 				else:
 					layer_data['type'] = 'raster'
 				return layer_data
