@@ -100,7 +100,7 @@
 
 # Apt
 - name: Purge apt configuration directory
-  file: {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt state=absent
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt state=absent
 
 - name: Copy apt configuration from server
   command: cp -a /etc/apt {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/
@@ -115,9 +115,8 @@
 
 
 # Daemons handling
-# TODO: move this file to templates
 - name: Avoid running daemons while installing
-  copy: src=static/bin/policy-rc.d dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/sbin/policy-rc.d mode=0755 force=yes
+  template: src=bin/policy-rc.d.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/sbin/policy-rc.d mode=0755
 
 
 # System upgrade
@@ -334,9 +333,8 @@
   args:
     executable: /bin/bash
 
-# TODO: install nsswitch.conf from template 
-- name: Configure sudo to use LDAP
-  lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/nsswitch.conf line='sudoers{{':'}} ldap files' state=present
+- name: Install NSS configuration file (configure sudo to use LDAP)
+  template: src=nsswitch/nsswitch.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/nsswitch.conf
 
 
 # NTP
@@ -361,9 +359,8 @@
 - name: Configure default home directories structure
   template: src=desktop/home-directories/user-dirs.defaults.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/user-dirs.defaults
 
-# TODO: install XFCE configs (xml) from template
 - name: Install XFCE desktop configuration file
-  copy: src=static/desktop/xfce/xfce4-desktop.xml dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+  template: src=desktop/xfce/xfce4-desktop.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
 - name: Install xfce panel configuration file
   copy: src=static/desktop/panel/default.xml dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/panel/default.xml
@@ -399,10 +396,9 @@
 - name: Remove plain XFCE and XUbuntu sessions
   shell: rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/*.desktop
 
-# TODO: install session file from template
 - name: Install GIS.lab desktop client session
   # session file must be called 'xubuntu.desktop', otherwise LightDM will set variable DESKTOP_SESSION to invalid value
-  copy: src=static/xsession/gislab-desktop-client.desktop dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/xubuntu.desktop
+  template: src=desktop/xsession/gislab-desktop-client.desktop.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/xubuntu.desktop
 
 # Disable session services
 - name: Disable useless session services
@@ -584,12 +580,6 @@
     executable: /bin/bash
 
 
-# TODO: add this line to rc.local template and remove this task
-# rc.local
-- name: Make sure that the rc.local script will "exit 0" on success
-  lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/rc.local line="exit 0" insertafter=EOF state=present
-
-
 # TFTP
 - name: Create TFTP directorier
   file: dest=/var/lib/tftpboot/gislab/i386 state=directory recurse=yes
@@ -605,9 +595,8 @@
     - { src: "nbd-server/config.j2", dest: "/etc/nbd-server/config" }
     - { src: "nbd-server/gislab_i386.conf.j2", dest: "/etc/nbd-server/conf.d/gislab_i386.conf" }
 
-# TODO: install this file from template
-- name: Enable keepalive option for nbdrootd
-  lineinfile: dest=/etc/hosts.allow line="nbdrootd{{':'}} ALL{{':'}} keepalive" state=present
+- name: Install hosts.allow file - enable keepalive option for nbdrootd
+  template: src=hosts.allow/hosts.allow.j2 dest=/etc/hosts.allow
 
 
 # PXE
