@@ -97,10 +97,6 @@
     - rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/resolvconf/resolv.conf.d/tail
     - ln -sf /dev/null {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/resolvconf/resolv.conf.d/tail
 
-- name: Create directory /var/lib/nfs
-# TODO: do we really need this directory created by hand ?
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/var/lib/nfs state=directory
-
 
 # Apt
 # TODO: copy whole /etc/apt from server to client. Remove apt/02proxy.j2 template from client
