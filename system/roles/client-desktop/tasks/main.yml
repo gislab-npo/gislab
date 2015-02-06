@@ -99,22 +99,11 @@
 
 
 # Apt
-# TODO: copy whole /etc/apt from server to client. Remove apt/02proxy.j2 template from client
-- name: Configure apt repositories
-  command: cp -a {{ item.src }} {{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
-  with_items:
-    - { src: "/etc/apt/sources.list", dest: "/etc/apt/sources.list" }
-    - { src: "/etc/apt/sources.list.d/*.list", dest: "/etc/apt/sources.list.d/" }
-  ignore_errors: yes
+- name: Purge apt configuration directory
+  file: {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt state=absent
 
-- name: Configure apt cache proxy server
-  template: src=apt/02proxy.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt/apt.conf.d/02proxy
-
-- name: Get imincik PPA signing key to temporary file
-  command: wget -q -O {{ GISLAB_INSTALL_CLIENT_ROOT }}/tmp/imincik-ppa-signing.pgp "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x25B546906CD44B55"
-
-- name: Add imincik PPA signing key
-  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-key add /tmp/imincik-ppa-signing.pgp
+- name: Copy apt configuration from server
+  command: cp -a /etc/apt {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/
 
 
 # Mount necessary filesystems in chroot

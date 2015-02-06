@@ -1,3 +1,0 @@
-{% if GISLAB_APT_HTTP_PROXY|default(None) != None %}
-Acquire::http { Proxy "{{ GISLAB_APT_HTTP_PROXY }}"; };
-{% endif %}
