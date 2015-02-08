@@ -253,14 +253,14 @@ class WebGisPlugin:
 		metadata['gislab_unique_id'] = gislab_version_data.get('GISLAB_UNIQUE_ID', 'unknown')
 		metadata['gislab_version'] = gislab_version_data.get('GISLAB_VERSION', 'unknown')
 		metadata['gislab_user'] = os.environ['USER']
+		self.metadata = metadata
 
 		page_id = 0
 		while page_id < self.dialog.currentId():
 			page = self.dialog.page(page_id)
-			metadata.update(page.handler.get_metadata() or {})
+			self.metadata.update(page.handler.get_metadata() or {})
 			page_id = page.nextId()
-		self.metadata = metadata
-		return metadata
+		return self.metadata
 
 	def publish_project(self):
 		if not self.metadata:

@@ -121,6 +121,21 @@ def get_project_layers_info(project_key, publish, project=None):
 			pass
 	return {}
 
+def get_last_project_version(project):
+	full_project = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, project)
+	project = clean_project_name(project)
+	project_pattern = re.compile(re.escape(os.path.basename(project))+'_(\d{10})\.qgs')
+	matched_project_versions = []
+	for filename in os.listdir(os.path.dirname(full_project)):
+		match = project_pattern.match(filename)
+		if match:
+			matched_project_versions.append((int(match.group(1)), filename))
+	if matched_project_versions:
+		# load last published project file
+		project_filename = sorted(matched_project_versions, reverse=True)[0][1]
+		project_filename = os.path.join(os.path.dirname(project), project_filename)
+		return clean_project_name(project_filename)
+	return project
 
 @basic_authentication(realm="OWS API")
 def ows_request(request):
@@ -239,8 +254,9 @@ def page(request):
 	project = form.cleaned_data['PROJECT']
 
 	if project:
+		ows_project_name = get_last_project_version(project)
 		project = clean_project_name(project)
-		metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, project + '.meta')
+		metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, ows_project_name + '.meta')
 		try:
 			metadata = MetadataParser(metadata_filename)
 		except:
@@ -278,7 +294,7 @@ def page(request):
 	context['user'] = request.user
 
 	if project:
-		ows_url = set_query_parameters(reverse('viewer:owsrequest'), {'MAP': project+'.qgs'})
+		ows_url = set_query_parameters(reverse('viewer:owsrequest'), {'MAP': ows_project_name+'.qgs'})
 		context['units'] = {'meters': 'm', 'feet': 'ft', 'miles': 'mi', 'degrees': 'dd' }[metadata.units] or 'dd'
 		use_mapcache = metadata.use_mapcache
 		project_tile_resolutions = metadata.tile_resolutions
@@ -345,6 +361,7 @@ def page(request):
 
 		context.update({
 			'project': project,
+			'ows_project': ows_project_name,
 			'ows_url': ows_url,
 			'wms_url': urllib.unquote(secure_url(request, ows_url)),
 			'project_extent': metadata.extent,
@@ -443,35 +460,59 @@ def user_projects(request, username):
 	start_index = len(settings.GISLAB_WEB_PROJECT_ROOT)
 	for root, dirs, files in os.walk(projects_root):
 		if files:
+			# analyze project filenames and group different publications of the same project into one record
+			projects_files = {}
+			project_pattern = re.compile('(.+)_(\d{10})\.qgs')
 			for filename in files:
-				if filename.endswith('.qgs'):
-					project_filename = os.path.join(root, filename)
-					metadata_filename = clean_project_name(project_filename) + '.meta'
-					try:
-						metadata = MetadataParser(metadata_filename)
-						project = clean_project_name(project_filename[start_index:])
-						url = set_query_parameters(secure_url(request, '/'), {'PROJECT': project})
-						ows_url = secure_url(request, reverse('viewer:owsrequest'))
-						wms_url = set_query_parameters(ows_url, {'MAP': project+'.qgs'})
-						authentication = metadata.authentication
-						# backward compatibility with older version
-						if type(authentication) is dict:
-							if authentication.get('allow_anonymous') and not authentication.get('require_superuser'):
-								authentication = 'all'
-							else:
-								authentication = 'authenticated'
-						projects.append({
-							'title': metadata.title,
-							'url': url,
-							'project': project,
-							'wms_url': wms_url,
-							'authentication': authentication,
-							'publication_time_unix': int(metadata.publish_date_unix),
-							'expiration_time_unix': int(time.mktime(time.strptime(metadata.expiration, "%d.%m.%Y"))) if metadata.expiration else None
-						})
-					except IOError:
-						# metadata file does not exists or not valid
-						pass
+				match = project_pattern.match(filename)
+				if match:
+					project_name = match.group(1)
+					project_timestamp = int(match.group(2))
+				elif filename.endswith('.qgs'):
+					project_name = filename[:-4]
+					project_timestamp = 0
+				else:
+					continue
+				metadata_filename = filename[:-4]+'.meta'
+				if metadata_filename in files:
+					if project_name not in projects_files:
+						projects_files[project_name] = [(project_timestamp, filename)]
+					else:
+						projects_files[project_name].append((project_timestamp, filename))
+
+			for project_name, info in projects_files.iteritems():
+				# select last project version by timestamp
+				ows_project = sorted(info, reverse=True)[0][1]
+
+				project_filename = os.path.join(root, project_name)
+				ows_project_filename = os.path.join(root, ows_project)
+				metadata_filename = clean_project_name(ows_project_filename) + '.meta'
+				try:
+					metadata = MetadataParser(metadata_filename)
+					project = clean_project_name(project_filename[start_index:])
+					url = set_query_parameters(secure_url(request, '/'), {'PROJECT': project})
+					ows_project = clean_project_name(ows_project_filename[start_index:])
+					ows_url = secure_url(request, reverse('viewer:owsrequest'))
+					ows_url = set_query_parameters(ows_url, {'MAP': ows_project+'.qgs'})
+					authentication = metadata.authentication
+					# backward compatibility with older version
+					if type(authentication) is dict:
+						if authentication.get('allow_anonymous') and not authentication.get('require_superuser'):
+							authentication = 'all'
+						else:
+							authentication = 'authenticated'
+					projects.append({
+						'title': metadata.title,
+						'url': url,
+						'project': project,
+						'ows_url': ows_url,
+						'authentication': authentication,
+						'publication_time_unix': int(metadata.publish_date_unix),
+						'expiration_time_unix': int(time.mktime(time.strptime(metadata.expiration, "%d.%m.%Y"))) if metadata.expiration else None
+					})
+				except IOError:
+					# metadata file does not exists or not valid
+					pass
 	context = {
 		'username': username,
 		'projects': projects,

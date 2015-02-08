@@ -19,7 +19,8 @@ from wizard import PublishPage
 class VectorLayersPage(PublishPage):
 
 	def get_geojson_filename(self):
-		return "{0}.geojson".format(os.path.splitext(self.plugin.project.fileName())[0])
+		timestamp = self.plugin.metadata['publish_date_unix']
+		return "{0}_{1}.geojson".format(os.path.splitext(self.plugin.project.fileName())[0], timestamp)
 
 	def get_vector_layers(self, node=None):
 		if node is None:

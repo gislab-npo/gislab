@@ -174,7 +174,7 @@
 					"OverlaysGroup",
 					["{{ mapcache_url }}"],
 					{
-						project: '{{ project }}',
+						project: '{{ ows_project }}',
 						layername: "", // layername will be updated by overlays tree node
 						isBaseLayer: false,
 						type: "png",
@@ -651,7 +651,7 @@
 					method: 'GET',
 					url: '{% url "viewer:vectorlayers" %}',
 					params: {
-						PROJECT: '{{ project }}'
+						PROJECT: '{{ ows_project }}'
 					},
 					success: function(response) {
 						var features = new OpenLayers.Format.GeoJSON().read(response.responseText);
