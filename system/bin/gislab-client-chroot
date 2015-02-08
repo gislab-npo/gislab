@@ -1,29 +1,55 @@
 #!/bin/bash
-#
 
 set -e
 
 source /etc/gislab_version
 source $GISLAB_ROOT/functions.sh
 
+
 # require root privileges
 gislab_require_root
-
-if [ "$GISLAB_SUITE" != "lab" ]; then
-	gislab_print_error "This command can only be run when GISLAB_SUITE is set to 'lab'."
-fi
 
 
 # usage
 function usage() {
         echo "USAGE: $(basename $0) [ -i ] [ COMMAND [ARG] ]"
-        echo "Run command or interactive shell in GIS.lab client image root directory."
+        echo "Run command or interactive shell in current GIS.lab client chroot system."
         echo -e "\nOPTIONS
-        -i run interactive shell in chroot. Other options will be ignored.
+        -i run interactive shell in GIS.lab client chroot system. Other options will be ignored.
         -h display this help
         "
         exit 255
 }
+
+
+# options
+while getopts "ih" OPTION
+do
+        case "$OPTION" in
+                i) INTERCTIVE="yes" ;;
+                h) usage ;;
+                \?) exit 1 ;;
+        esac
+done
+if [ $# -eq 0 ]; then usage; fi
+
+if [ -n "$INTERCTIVE" ]; then
+	shift
+	COMMAND="$@"
+
+	if [ -n "$COMMAND" ]; then
+		usage
+	fi
+else
+	COMMAND="$@"
+fi
+
+
+# sanity checks
+if [ "$GISLAB_SUITE" != "lab" ]; then
+	gislab_print_error "This command can only be run when GISLAB_SUITE is set to 'lab'."
+fi
+
 
 function pre_chroot {
 	chroot $GISLAB_INSTALL_CLIENT_ROOT mount -t devpts -o rw,noexec,nosuid,gid=5,mode=620 devpts /dev/pts
@@ -39,6 +65,7 @@ EOF
 	chmod +x $GISLAB_INSTALL_CLIENT_ROOT/usr/sbin/policy-rc.d
 } 
 
+
 function post_chroot {
 	trap - 0 HUP INT QUIT KILL SEGV PIPE TERM
 	
@@ -49,29 +76,9 @@ function post_chroot {
 }
 	
 
-while getopts "ih" OPTION
-do
-        case "$OPTION" in
-                i) INTERCTIVE="yes" ;;
-                h) usage ;;
-                \?) exit 1 ;;
-        esac
-done
-
-if [ $# -eq 0 ]; then usage; fi
-
-if [ -n "$INTERCTIVE" ]; then
-	shift
-	COMMAND="$@"
-
-	if [ -n "$COMMAND" ]; then
-		usage
-	fi
-else
-	COMMAND="$@"
-fi
-
 pre_chroot
 trap "post_chroot" 0 HUP INT QUIT KILL SEGV PIPE TERM
 eval chroot $GISLAB_INSTALL_CLIENT_ROOT $COMMAND
 
+
+# vim: set ts=4 sts=4 sw=4 noet:

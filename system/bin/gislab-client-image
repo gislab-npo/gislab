@@ -1,27 +1,19 @@
 #!/bin/bash
-#
 
 set -e
 
 source /etc/gislab_version
 source $GISLAB_ROOT/functions.sh
 
+
 # require root privileges
 gislab_require_root
-
-#
-if [ "$GISLAB_SUITE" != "lab" ]; then
-	gislab_print_error "This command can only be run when GISLAB_SUITE is set to 'lab'."
-fi
-
-TFTP_DIR=/var/lib/tftpboot/gislab/i386
-IMAGE_PATH=$GISLAB_INSTALL_CLIENT_IMAGE/i386.img
 
 
 # usage
 function usage() {
         echo "USAGE: $(basename $0)"
-        echo "Build GIS.lab client image."
+        echo "Build GIS.lab client image from current GIS.lab client chroot system."
         echo -e "\nOPTIONS
         -h display this help
         "
@@ -29,6 +21,7 @@ function usage() {
 }
 
 
+# options
 while getopts "h" OPTION
 do
         case "$OPTION" in
@@ -37,22 +30,33 @@ do
         esac
 done
 
-# Create directory for image
+
+# sanity checks
+if [ "$GISLAB_SUITE" != "lab" ]; then
+	gislab_print_error "This command can only be run when GISLAB_SUITE is set to 'lab'."
+fi
+
+
+TFTP_DIR=/var/lib/tftpboot/gislab/i386
+IMAGE_PATH=$GISLAB_INSTALL_CLIENT_IMAGE/i386.img
+
+
+# create directory for image
 mkdir -p $GISLAB_INSTALL_CLIENT_IMAGE
 
 
-# Generate NBI image
+# generate NBI image
 gislab-client-chroot /usr/share/gislab/gislab-update-nbi
 
 
-# Copy /boot directory from client to server TFTP directory
+# copy /boot directory from client to server TFTP directory
 cp -a $GISLAB_INSTALL_CLIENT_ROOT/boot/. $TFTP_DIR/
 
-# Set permissions
+# set permissions
 find $TFTP_DIR -mindepth 1 -type d -exec chmod 0755 "{}" \;
 find $TFTP_DIR -mindepth 1 \! -type d -exec chmod 0644 "{}" \;
 
-# Build image
+# build image
 test -x /usr/bin/nice && nice=nice || unset nice
 test -x /usr/bin/ionice && /usr/bin/ionice -c3 true 2>/dev/null && ionice=ionice || unset ionice
 
@@ -67,3 +71,5 @@ fi
 
 mv $IMAGE_PATH.tmp $IMAGE_PATH
 
+
+# vim: set ts=4 sts=4 sw=4 noet:
