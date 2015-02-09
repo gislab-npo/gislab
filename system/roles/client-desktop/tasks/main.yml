@@ -363,7 +363,7 @@
   template: src=desktop/xfce/xfce4-desktop.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
 - name: Install xfce panel configuration file
-  copy: src=static/desktop/panel/default.xml dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/panel/default.xml
+  template: src=desktop/panel/default.xml dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/panel/default.xml
 
 
 - name: Install xfce menu configuration file
