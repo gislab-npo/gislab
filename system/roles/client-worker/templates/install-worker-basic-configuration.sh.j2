@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# GIS.lab worker basic configuration installation script
+#
+
+
+# sanity check
+if [ -f "/var/lib/gislab/installation.done" ]; then
+	gislab_print_error "Installation is already done"
+fi
+
+# copy worker basic configuration
+cp -a worker-basic-configuration/* /
+
+# locales
+export LANGUAGE=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
+locale-gen en_US.UTF-8
+
+# hostname
+HOSTNUMBER="$(ip -o addr | grep " {{ GISLAB_NETWORK }}.[0-9]\+/[0-9]\+ " | awk '{ print $4 }' | sed -e 's;/.*$;;' -e 's/.*\.//')"
+
+echo "w$HOSTNUMBER" > /etc/hostname
+service hostname start
+service rsyslog restart
+
+# timezone
+dpkg-reconfigure --frontend noninteractive tzdata
+
+# time
+ntpdate-debian
+
+# network shares
+service idmapd restart
+
+echo "server.gis.lab:/storage/repository /mnt/repository nfs defaults 0 0" >> /etc/fstab
+echo "server.gis.lab:/storage/barrel /mnt/barrel nfs defaults 0 0" >> /etc/fstab
+echo "server.gis.lab:/storage/publish /mnt/publish nfs defaults 0 0" >> /etc/fstab
+
+mkdir /mnt/repository && mount /mnt/repository
+mkdir /mnt/barrel && mount /mnt/barrel
+mkdir /mnt/publish && mount /mnt/publish
+
+# purge grub otherwise upgrade will fail
+apt-get --assume-yes purge grub-common grub-gfxpayload-lists grub-pc grub-pc-bin grub2-common
+apt-get --assume-yes autoremove
+
+# install packages
+apt-get update
+apt-get --assume-yes --force-yes upgrade
+apt-get --assume-yes --force-yes --no-install-recommends -o Dpkg::Options::="--force-confold" install {{ GISLAB_WORKER_INSTALL_BASIC_PACKAGES|join(' ') }}
+
+# syslog
+service rsyslog restart
+
+# statistics
+echo "host_name $(hostname)" >> /etc/munin/munin-node.conf
+
+# disable all plugins
+rm -f /etc/munin/plugins/*
+echo > /etc/munin/plugin-conf.d/munin-node
+
+# enable only required plugins
+ln -fs /usr/share/munin/plugins/cpu /etc/munin/plugins/cpu
+ln -fs /usr/share/munin/plugins/load /etc/munin/plugins/load
+ln -fs /usr/share/munin/plugins/memory /etc/munin/plugins/memory
+ln -fs /usr/share/munin/plugins/processes /etc/munin/plugins/processes
+ln -fs /usr/share/munin/plugins/uptime /etc/munin/plugins/uptime
+ln -fs /usr/share/munin/plugins/vmstat /etc/munin/plugins/vmstat
+
+service munin-node restart

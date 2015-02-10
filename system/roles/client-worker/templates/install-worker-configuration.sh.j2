@@ -1,0 +1,55 @@
+#!/bin/bash
+# GIS.lab worker installation script
+#
+# If the first argument is 'desktop' then this script is called
+# from GIS.lab client image build task and some commands are omitted.
+
+
+# sanity check
+if [ -f "/var/lib/gislab/installation.done" ]; then
+	gislab_print_error "Installation is already done"
+fi
+
+# install packages
+apt-get update
+apt-get --assume-yes --force-yes upgrade
+apt-get --assume-yes --force-yes --no-install-recommends install {{ GISLAB_WORKER_INSTALL_PACKAGES|join(' ') }}
+
+# copy worker configuration
+cp -a worker-configuration/* /
+
+# restart services
+if [ -n "$WORKER" ]; then
+	# syslog
+	service rsyslog restart
+
+	# xvfb
+	service xvfb restart
+fi
+
+# log apache to syslog
+sed -i 's/^ErrorLog .*/ErrorLog "|\/usr\/bin\/logger -t apache -p daemon.warn"/' /etc/apache2/apache2.conf
+
+# mapserver
+a2enmod rewrite
+a2enmod expires
+a2ensite default
+a2ensite mapserver
+
+# restart apache
+if [ -n "$WORKER" ]; then
+	service apache2 restart
+fi
+
+# serf
+gislab_serf_install
+
+# restart serf
+if [ -n "$WORKER" ]; then
+	service serf restart
+	service serf-join restart
+fi
+
+# installation done
+mkdir -p /var/lib/gislab
+touch /var/lib/gislab/installation.done

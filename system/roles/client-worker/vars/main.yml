@@ -2,21 +2,23 @@
 
 GISLAB_INSTALL_WORKER_IMAGE: "{{ GISLAB_ROOT }}/system/client-worker/image"
 
-GISLAB_WORKER_INSTALL_PACKAGES:
-  - apache2
-  - apache2-mpm-worker
+GISLAB_WORKER_INSTALL_BASIC_PACKAGES:
   - htop
-  - libapache2-mod-fcgid
   - mc
   - munin-node
   - nfs-common
-  - python-gdal
-  - python-qgis
   - pwgen
-  - qgis
-  - qgis-mapserver
   - unzip
   - xvfb
   - vim
+
+GISLAB_WORKER_INSTALL_PACKAGES:
+  - apache2
+  - apache2-mpm-worker
+  - libapache2-mod-fcgid
+  - python-gdal
+  - python-qgis
+  - qgis
+  - qgis-mapserver
 
 # vim:ft=ansible:

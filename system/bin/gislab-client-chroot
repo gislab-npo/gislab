@@ -63,6 +63,17 @@ exit 101
 EOF
 
 	chmod +x $GISLAB_INSTALL_CLIENT_ROOT/usr/sbin/policy-rc.d
+
+	mv -f $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon.real
+
+	cat <<EOF > $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon
+#!/bin/sh
+#
+
+exit 0
+EOF
+
+	chmod +x $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon
 } 
 
 
@@ -73,6 +84,7 @@ function post_chroot {
 	chroot $GISLAB_INSTALL_CLIENT_ROOT umount /proc
 
 	rm -f $GISLAB_INSTALL_CLIENT_ROOT/usr/sbin/policy-rc.d
+	mv -f $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon.real $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon
 }
 	
 

@@ -64,10 +64,6 @@
 - name: Default kernel modules
   lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/modules line=lp state=present
 
-# rc.local
-- name: Install rc.local file
-  template: src=rc.local/rc.local.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/rc.local mode=0755
-
 # root password
 - name: Lock root password
   command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} passwd -l root
@@ -115,8 +111,14 @@
 
 
 # Daemons handling
+- name: Backup original 'start-stop-daemon' binary
+  command: mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon.real
+
 - name: Avoid running daemons while installing
-  template: src=bin/policy-rc.d.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/sbin/policy-rc.d mode=0755
+  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode=0755
+  with_items:
+    - { src: "bin/policy-rc.d.j2", dest: "/usr/sbin/policy-rc.d" }
+    - { src: "bin/start-stop-daemon.j2", dest: "/sbin/start-stop-daemon" }
 
 
 # System upgrade
@@ -545,6 +547,20 @@
     - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/usr/share/gislab/lightdm/session-cleanup-script.sh" }
 
 
+# Worker
+- name: Install worker
+  shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "mkdir -p /tmp/install-worker
+    && cd /tmp/install-worker
+    && curl --silent http://{{ GISLAB_NETWORK_SERVER_IP }}/worker.tar.gz | tar -xzf -
+    && /bin/bash ./install.sh desktop > /var/log/gislab-install-worker.log 2>&1"
+  args:
+    executable: /bin/bash
+  when: GISLAB_CLIENT_WORKER_ENABLED
+
+- name: Clean up after worker installation
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/install-worker-configuration.sh
+
+
 # Copy apt cache
 - name: Copy apt cache back from client to server
   shell: cp -a {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives/*.deb /var/cache/apt/archives/ 2>/dev/null || true
@@ -611,7 +627,13 @@
 
 # Daemons handling
 - name: Enable daemons handling in chroot
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/sbin/policy-rc.d state=absent
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
+  with_items:
+    - /usr/sbin/policy-rc.d
+    - /sbin/start-stop-daemon
+
+- name: Restore 'start-stop-daemon' binary
+  command: mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon.real {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon
 
 
 # Umount filesystems mounted inside chroot.

@@ -209,6 +209,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
   - vlc
   - vlc-plugin-pulse
   - x11vnc
+  - xvfb
 
 # List of GIS.lab client development packages (installed without recommended packages)
 GISLAB_CLIENT_GIS_DEVELOPMENT_PACKAGES:
