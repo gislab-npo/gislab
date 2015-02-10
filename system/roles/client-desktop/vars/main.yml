@@ -218,6 +218,8 @@ GISLAB_CLIENT_GIS_DEVELOPMENT_PACKAGES:
   - cmake
   - doxygen
   - flex
+  - g++
+  - gdb
   - git
   - graphviz
   - grass-dev
@@ -235,6 +237,7 @@ GISLAB_CLIENT_GIS_DEVELOPMENT_PACKAGES:
   - libspatialindex-dev
   - libspatialite-dev
   - libsqlite3-dev
+  - make
   - pkg-config
   - pyqt4-dev-tools
   - python
@@ -248,6 +251,7 @@ GISLAB_CLIENT_GIS_DEVELOPMENT_PACKAGES:
   - qgit
   - qgit
   - qt4-dev-tools
+  - qt4-qmlviewer
   - txt2tags
   - xauth
   - xfonts-base
