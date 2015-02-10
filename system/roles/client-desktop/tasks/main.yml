@@ -532,6 +532,9 @@
 - name: Install Lightdm configuration file
   template: src=lightdm/conf/lightdm.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/lightdm/lightdm.conf
 
+- name: Install Lightdm greeter configuration
+  template: src=lightdm/conf/lightdm-gtk-greeter.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/lightdm/lightdm-gtk-greeter.conf
+
 - name: Create directory for lightdm scripts
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/lightdm state=directory
 
