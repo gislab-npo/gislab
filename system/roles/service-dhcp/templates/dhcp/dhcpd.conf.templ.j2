@@ -35,6 +35,7 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         # return specified DHCP options in offer
         option dhcp-parameter-request-list 1,3,6,14,15,17,51,54,224;
         option domain-name "gis.lab";
+        option domain-search "gis.lab";
         option domain-name-servers {{ GISLAB_NETWORK_SERVER_IP }};
         option broadcast-address {{ GISLAB_NETWORK }}.255;
         option subnet-mask 255.255.255.0;
@@ -55,6 +56,7 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         allow unknown-clients;		# GISLAB_UNKNOWN_MACHINES_POLICY_ALLOW
         range {{ GISLAB_NETWORK }}.150 {{ GISLAB_NETWORK }}.250;
         option domain-name "gis.lab";
+        option domain-search "gis.lab";
         option domain-name-servers {{ GISLAB_NETWORK_SERVER_IP }};
         option broadcast-address {{ GISLAB_NETWORK }}.255;
         option subnet-mask 255.255.255.0;
