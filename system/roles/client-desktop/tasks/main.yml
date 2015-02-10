@@ -57,8 +57,8 @@
 - name: Configure timezone
   command: cp {{ item }} {{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }}
   with_items:
-  - /etc/timezone
-  - /etc/localtime
+    - /etc/timezone
+    - /etc/localtime
 
 # Modules
 - name: Default kernel modules
@@ -204,8 +204,8 @@
   args:
     executable: /bin/bash
   with_items:
-  - apt-get --assume-yes purge {{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}
-  - apt-get --assume-yes autoremove
+    - apt-get --assume-yes purge {{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}
+    - apt-get --assume-yes autoremove
 
 
 # Install kernel
@@ -287,8 +287,8 @@
 - name: Divert /etc/mtab and point it to /proc/mounts
   command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}
   with_items:
-  - dpkg-divert --add --rename --divert /etc/mtab.real /etc/mtab
-  - ln -sf /proc/mounts /etc/mtab
+    - dpkg-divert --add --rename --divert /etc/mtab.real /etc/mtab
+    - ln -sf /proc/mounts /etc/mtab
 
 
 # NFS
@@ -463,8 +463,8 @@
 - name: Disable all munin plugins
   shell: "{{ item }}"
   with_items:
-   - rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/plugins/*
-   - echo > {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/plugin-conf.d/munin-node
+    - rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/plugins/*
+    - echo > {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/plugin-conf.d/munin-node
 
 - name: Enable only required munin plugins
   file: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} state=link force=yes
@@ -512,8 +512,8 @@
 
 - name: Install modified udhcpc script
   template: src=initramfs-tools/scripts/init-premount/udhcp.j2
-             dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/initramfs-tools/scripts/init-premount/udhcp
-             mode=0755
+            dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/initramfs-tools/scripts/init-premount/udhcp
+            mode=0755
 
 - name: Install system init script
   copy: src=static/init/init-gislab dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/init-gislab mode=0755
@@ -542,21 +542,6 @@
     - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/usr/share/gislab/lightdm/session-cleanup-script.sh" }
 
 
-# HTTP boot (alternative method using iPXE)
-# To boot via HTTP, client machine must boot iPXE boot image first. This boot image will launch HTTP boot.
-# Prepared iPXE boot image exists in 'http-boot/gislab-client-loader.iso.gz' of GIS.lab source code
-# or can be created by running '$ make bin/ipxe.iso EMBED=boot-gislab.ipxe' in iPXE source code.
-
-- name: Install HTTP boot files (files can be launched by http://boot.gis.lab/<file> or http://GISLAB_NETWORK.5/<file>)
-  file: src={{ item.src }} dest={{ item.dest }} owner=root group=root state=link force=yes
-  with_items:
-    - { src: "/var/lib/tftpboot/gislab/i386/vmlinuz", dest: "/var/www/default/vmlinuz"}
-    - { src: "/var/lib/tftpboot/gislab/i386/initrd.img", dest: "/var/www/default/initrd.img"}
-
-- name: Install HTTP boot script
-  template: src=boot-http/i386.j2 dest=/var/www/default/i386
-
-
 # Copy apt cache
 - name: Copy apt cache back from client to server
   shell: cp -a {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives/*.deb /var/cache/apt/archives/ 2>/dev/null || true
@@ -574,7 +559,7 @@
 
 
 # TFTP
-- name: Create TFTP directorier
+- name: Create TFTP directory
   file: dest=/var/lib/tftpboot/gislab/i386 state=directory recurse=yes
 
 
@@ -592,7 +577,7 @@
   template: src=hosts.allow/hosts.allow.j2 dest=/etc/hosts.allow
 
 
-# PXE
+# PXE boot
 - name: Install syslinux files
   command:  cp {{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.src }} {{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
   with_items:
@@ -604,6 +589,21 @@
 
 - name: Install PXE configuration file
   template: src=boot-pxe/default.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/boot/pxelinux.cfg/default
+
+  
+# HTTP boot (alternative method using iPXE)
+# To boot via HTTP, client machine must boot iPXE boot image first. This boot image will launch HTTP boot.
+# Prepared iPXE boot image exists in 'http-boot/gislab-client-loader.iso.gz' of GIS.lab source code
+# or can be created by running '$ make bin/ipxe.iso EMBED=boot-gislab.ipxe' in iPXE source code.
+
+- name: Install HTTP boot files (files can be launched by http://boot.gis.lab/<file> or http://GISLAB_NETWORK.5/<file>)
+  file: src={{ item.src }} dest={{ item.dest }} owner=root group=root state=link force=yes
+  with_items:
+    - { src: "/var/lib/tftpboot/gislab/i386/vmlinuz", dest: "/var/www/default/vmlinuz"}
+    - { src: "/var/lib/tftpboot/gislab/i386/initrd.img", dest: "/var/www/default/initrd.img"}
+
+- name: Install HTTP boot script
+  template: src=boot-http/i386.j2 dest=/var/www/default/i386
 
 
 # Daemons handling
