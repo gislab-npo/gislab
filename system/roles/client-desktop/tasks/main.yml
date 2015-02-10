@@ -33,7 +33,7 @@
   shell: cp -a /var/cache/apt/archives/*.deb {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives/ 2>/dev/null || true
   args:
     executable: /bin/bash
-  when: GISLAB_APT_HTTP_PROXY|default(None) == None
+  when: GISLAB_APT_HTTP_PROXY|default(None) == None and GISLAB_SERVER_ARCHITECTURE == 'i386'
 
 
 # Debootstrap
@@ -569,7 +569,7 @@
   shell: cp -a {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives/*.deb /var/cache/apt/archives/ 2>/dev/null || true
   args:
     executable: /bin/bash
-  when: GISLAB_APT_HTTP_PROXY|default(None) == None
+  when: GISLAB_APT_HTTP_PROXY|default(None) == None and GISLAB_SERVER_ARCHITECTURE == 'i386'
 
 
 # Clean apt cache
