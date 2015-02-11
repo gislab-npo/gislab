@@ -3,7 +3,7 @@
 
 set -e
 
-source /opt/gislab/functions.sh
+source $GISLAB_ROOT/functions.sh
 
 
 # require root privileges
