@@ -16,6 +16,11 @@ whole technology in house and under full control.
 _GIS.lab infrastructure_
 </div>
 
+__GIS.lab can be used in places and conditions where deployment of any other technology wouldn't be affordable or
+technically possible__. GIS.lab is capable to turn bunch of heterogeneous or broken computers in to __crisis
+management command center__, flawlessly working in very hard conditions of natural disaster with power and Internet
+outages. It is also ideal system for __education__ or just for __Open Source technologies popularization__.
+
 
 ## Key benefits
 * fully automatic installation or immediate deployment with [__GIS.lab Unit__](pages/gislab-unit) appliance
