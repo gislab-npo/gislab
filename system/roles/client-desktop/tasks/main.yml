@@ -561,7 +561,7 @@
   shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "mkdir -p /tmp/install-worker
     && cd /tmp/install-worker
     && curl --silent http://{{ GISLAB_NETWORK_SERVER_IP }}/worker.tar.gz | tar -xzf -
-    && /bin/bash ./install.sh desktop > /var/log/gislab-install-worker.log 2>&1"
+    && /bin/bash ./install.sh desktop"
   args:
     executable: /bin/bash
   when: GISLAB_CLIENT_WORKER_ENABLED
@@ -656,7 +656,7 @@
 
 # Build image
 - name: Build GIS.lab client image (can take very long time)
-  shell: /opt/gislab/bin/gislab-client-image > /var/log/gislab-build-client.log 2>&1
+  shell: /opt/gislab/bin/gislab-client-image > /dev/null
   args:
     executable: /bin/bash
 
