@@ -81,7 +81,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - gcalctool
   - gcc
   - gimp
-  - gmusicbrowser
   - gstreamer0.10-plugins-base-apps
   - gstreamer0.10-pulseaudio
   - gthumb
@@ -118,7 +117,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - printer-driver-pxljr
   - printer-driver-sag-gdi
   - printer-driver-splix
-  - simple-scan
   - speech-dispatcher
   - system-config-printer-gnome
   - thunar-archive-plugin
@@ -129,10 +127,8 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - ttf-wqy-microhei
   - xcursor-themes
   - xdg-utils
-  - xfburn
   - xfce4-cpugraph-plugin
   - xfce4-datetime-plugin
-  - xfce4-dict
   - xfce4-indicator-plugin
   - xfce4-mailwatch-plugin
   - xfce4-netload-plugin
@@ -157,7 +153,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
   - aptitude
   - conky-std
   - curl
-  - eog
   - flashplugin-installer
   - freerdp-x11
   - gdal-bin
