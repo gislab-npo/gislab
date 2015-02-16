@@ -136,6 +136,12 @@
 
 
 # Install packages
+- name: Install GIS.lab client minimal OS packages
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install ubuntu-standard"
+  args:
+    executable: /bin/bash
+
 - name: Install GIS.lab client default packages
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT|join(' ') }}"
@@ -148,14 +154,14 @@
   args:
     executable: /bin/bash
 
-- name: Install GIS.lab client packages
+- name: Install GIS.lab client custom packages
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_CLIENT_INSTALL_PACKAGES|default(None) != None
 
-- name: Install GIS development software
+- name: Install GIS development packages
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_GIS_DEVELOPMENT_PACKAGES|join(' ') }}"
   args:
