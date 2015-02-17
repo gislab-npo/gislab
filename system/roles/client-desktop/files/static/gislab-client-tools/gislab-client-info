@@ -18,6 +18,8 @@ INTERFACE_MAC=$(/sbin/ifconfig | grep ${INTERFACE} | cut -f11 -d" ")
 INTERFACE_IP=$(/sbin/ifconfig ${INTERFACE} | grep inet | cut -f2 -d":" | cut -f1 -d" ")
 
 QGIS_VERSION=$(dpkg-query -W --showformat '${version}' qgis)
+GRASS_VERSION=$(dpkg-query -W --showformat '${version}' grass70)
+
 
 INFO="
 GIS.lab ID: $GISLAB_UNIQUE_ID\n
@@ -28,7 +30,6 @@ SESSION\n
 + GROUPS: $GROUPS\n
 + UPTIME: $UPTIME\n
 + VIRTUAL CLIENT: $VIRTUALCLIENT\n
-+ CLIENT BUILD TIME: $GISLAB_CLIENT_BUILD_TIME\n
 \n
 HARDWARE\n
 + CPU: $CPU\n
@@ -43,6 +44,7 @@ NETWORK\n
 \n
 SOFTWARE\n
 + QGIS: $QGIS_VERSION\n
++ GRASS: $GRASS_VERSION\n
 \n
 This report was generated on $(date).
 "
