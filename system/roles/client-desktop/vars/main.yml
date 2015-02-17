@@ -161,8 +161,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
   - git
   - git-core
   - google-earth-stable
-  - grass70-core
-  - grass70-gui
+  - grass70
   - gthumb
   - gtk-recordmydesktop
   - htop
