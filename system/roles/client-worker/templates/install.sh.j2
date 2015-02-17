@@ -1,33 +1,46 @@
 #!/bin/bash
-#
+# Main GIS.lab worker installation script.
 
 set -e
 
-export DEBIAN_FRONTEND=noninteractive
-
 # load configuration
-source worker-basic-configuration/etc/gislab_version
+source basic-configuration/etc/gislab_version
 
 # source functions
 source functions.sh
 
-# Determine if we are called during client image building or on booting worker
-if [ "$1" != "desktop" ]; then
-	WORKER="yes"
-	export WORKER
+
+# set variable if we are running in chroot
+# inode number different from number 2 indicates, that the apparent root is not the actual root
+if [ "$(stat -c %i /)" != "2" ]; then
+	echo "I: Running in chroot ..."
+	CHROOT="yes"
+	export CHROOT
 fi
 
-# halt machine if something fails (only on worker)
-if [ -n "$WORKER" ]; then
+
+# sanity checks
+if [ -f "/var/lib/gislab/installation.done" ]; then
+	gislab_print_error "Installation is already done"
+fi
+
+
+# halt machine if something fails
+if [ -z "$CHROOT" ]; then
 	if [ "$GISLAB_DEBUG_INSTALL" == "False" ]; then
 		trap "halt" SIGHUP SIGINT SIGKILL
 	fi
 fi
 
-# install worker basic configuration
-if [ "$WORKER" == "yes" ]; then
-	source worker-basic-configuration/install-worker-basic-configuration.sh
+
+export DEBIAN_FRONTEND=noninteractive
+
+# install basic configuration
+if [ -f "/etc/gislab_version" ]; then
+	echo "I: Skipping basic configuration ..."
+else
+	source basic-configuration/install.sh
 fi
 
-# install worker configuration
-source worker-configuration/install-worker-configuration.sh
+# install worker
+source client-worker/install.sh

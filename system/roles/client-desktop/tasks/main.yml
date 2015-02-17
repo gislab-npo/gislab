@@ -561,13 +561,13 @@
   shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "mkdir -p /tmp/install-worker
     && cd /tmp/install-worker
     && curl --silent http://{{ GISLAB_NETWORK_SERVER_IP }}/worker.tar.gz | tar -xzf -
-    && /bin/bash ./install.sh desktop"
+    && /bin/bash ./install.sh"
   args:
     executable: /bin/bash
   when: GISLAB_CLIENT_WORKER_ENABLED
 
 - name: Clean up after worker installation
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/install-worker-configuration.sh
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/tmp/install-worker state=absent
 
 
 # Copy apt cache

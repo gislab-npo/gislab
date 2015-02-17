@@ -1,7 +1,5 @@
 ---
 
-GISLAB_INSTALL_WORKER_IMAGE: "{{ GISLAB_ROOT }}/system/client-worker/image"
-
 GISLAB_WORKER_INSTALL_BASIC_PACKAGES:
   - htop
   - mc

@@ -1,16 +1,9 @@
 #!/bin/bash
-#
-# GIS.lab worker basic configuration installation script
-#
+# GIS.lab worker basic configuration installation script.
 
-
-# sanity check
-if [ -f "/var/lib/gislab/installation.done" ]; then
-	gislab_print_error "Installation is already done"
-fi
 
 # copy worker basic configuration
-cp -a worker-basic-configuration/* /
+cp -a basic-configuration/* /
 
 # locales
 export LANGUAGE=en_US.UTF-8

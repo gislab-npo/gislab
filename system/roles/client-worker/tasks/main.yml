@@ -8,9 +8,10 @@
 # from GIS.lab server, unpacking it and running installation script. This process can be automatized by running
 # following commands (in Amazon AWS add this script to 'cloud-data'):
 
-# $ mkdir -p /tmp/install && cd /tmp/install \
-# curl --silent http://%s.5/worker.tar.gz | tar xz \
-# bash ./install.sh &> /var/log/gislab-install-worker.log
+# $ mkdir -p /tmp/install
+# && cd /tmp/install
+# && curl --silent http://%s.5/worker.tar.gz | tar xz
+# && bash ./install.sh &> /var/log/gislab-install.log
 
 
 # System
@@ -21,95 +22,90 @@
   file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}" state=directory
 
 - name: Create worker installation directory for basic configuration
-  file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration" state=directory
+  file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration" state=directory
 
 - name: Create worker installation directory for worker configuration
-  file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration" state=directory
+  file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker" state=directory
 
 - name: Install GIS.lab shell functions library
   copy: src=functions.sh dest={{ GISLAB_INSTALL_WORKER_ROOT }}/functions.sh
 
-- name: Install worker basic configuration installation script
-  template: src=install-worker-basic-configuration.sh.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/install-worker-basic-configuration.sh mode=0755
+- name: Install basic configuration installation script
+  template: src=basic-configuration.sh.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/install.sh mode=0755
 
 - name: Install worker configuration installation script
-  template: src=install-worker-configuration.sh.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration/install-worker-configuration.sh mode=0755
+  template: src=client-worker.sh.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/install.sh mode=0755
 
-- name: Install worker installation script
+- name: Install main installation script
   template: src=install.sh.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/install.sh mode=0755
 
 
-# Worker basic configuration
+# basic configuration
 - name: Create /etc directory
-  file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/etc" state=directory
+  file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc" state=directory
 
 - name: Add GIS.lab ID, version and client build information
-  command: cp /etc/gislab_version {{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/etc
+  command: cp /etc/gislab_version {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc
 
 - name: Create directory for services default configuration files
-  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/etc/default state=directory recurse=yes
+  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/default state=directory recurse=yes
 
 # locales
 - name: Configure locales
-  command: cp --parents /etc/default/locale {{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration
+  command: cp --parents /etc/default/locale {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration
 
 # DNS
 - name: Configure DNS
-  template: src=resolvconf/resolv.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/etc/resolv.conf
+  template: src=resolvconf/resolv.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/resolv.conf
 
 # NTP
 - name: Copy NTPdate configuration
-  template: src=ntpdate/ntpdate.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/etc/default/ntpdate
+  template: src=ntpdate/ntpdate.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/default/ntpdate
 
 # timezone
 - name: Copy timezone configuration
-  command: cp /etc/timezone {{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/etc/
+  command: cp /etc/timezone {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/
 
 # apt
 - name: Copy apt configuration from server
-  command: cp -a /etc/apt {{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/etc/
+  command: cp -a /etc/apt {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/
 
 # NFS configuration
 - name: Install idmapd configuration
-  template: src=nfs/idmapd.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/etc/idmapd.conf
+  template: src=nfs/idmapd.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/idmapd.conf
 
 # statistics
 - name: Create directory for munin configuration
-  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/etc/munin state=directory
+  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/munin state=directory
 
 - name: Install configuration for munin
-  template: src=munin-node/munin-node.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-basic-configuration/etc/munin/munin-node.conf
+  template: src=munin-node/munin-node.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/munin/munin-node.conf
 
 
 # Worker configuration
 # syslog
 - name: Create directory for syslog configuration
-  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration/etc/rsyslog.d state=directory
+  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/etc/rsyslog.d state=directory
 
 - name: Install syslog configuration file
-  template: src=syslog/gislab.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration/etc/rsyslog.d/gislab.conf
+  template: src=syslog/gislab.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/etc/rsyslog.d/gislab.conf
 
-- name: Copy configuration for GIS projections
-  command: cp -a --parents {{ item }} {{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration
-  with_items:
-  - /usr/share/proj
-  - /usr/share/gdal
 
 # Xvfb
 # to enable more advanced print capabilities in QGIS, we need to launch fake X server
 # see: http://hub.qgis.org/issues/9295 and http://www.itopen.it/2014/03/13/qgis-server-setup-notes
 - name: Copy configuration file for X server
-  command: cp --parents {{ item }} {{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration
+  command: cp --parents {{ item }} {{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker
   with_items:
   - /etc/init/xvfb.conf
   - /etc/init.d/xvfb
 
 # mapserver
 - name: Copy index.html for mapserver
-  command: cp --parents /var/www/default/index.html {{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration
+  command: cp --parents /var/www/default/index.html {{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker
 
 - name: Copy configuration files for mapserver
-  command: cp --parents {{ item }} {{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration
+  command: cp --parents {{ item }} {{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker
   with_items:
   - /etc/apache2/ports.conf
   - /etc/apache2/mods-available/fcgid.conf
@@ -118,16 +114,16 @@
 
 # serf
 - name: Install serf upstart scripts
-  template: src={{ item.src }} dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration/{{ item.dest }}
+  template: src={{ item.src }} dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/{{ item.dest }}
   with_items:
   - { src: "serf/serf.conf.j2", dest: "/etc/init/serf.conf" }
   - { src: "serf/serf-join.conf.j2", dest: "/etc/init/serf-join.conf" }
 
 - name: Create directory for serf scripts
-  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration/etc/serf/bin state=directory recurse=yes
+  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/etc/serf/bin state=directory recurse=yes
 
 - name: Install serf scripts
-  copy: src=static/serf/ dest={{ GISLAB_INSTALL_WORKER_ROOT }}/worker-configuration/etc/serf/bin mode=0755
+  copy: src=static/serf/ dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/etc/serf/bin mode=0755
 
 
 # create image
@@ -139,5 +135,6 @@
 
 - name: Create symlink for worker image file to webserver root directory
   file: src={{ GISLAB_INSTALL_WORKER_IMAGE }}/worker.tar.gz dest=/var/www/default/worker.tar.gz state=link force=yes
+
 
 # vim:ft=ansible:
