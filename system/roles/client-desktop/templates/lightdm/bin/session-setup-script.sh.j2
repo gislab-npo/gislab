@@ -1,5 +1,5 @@
 #!/bin/sh
-#
+
 
 # Do not continue if user is root
 if [ "$USER" = "root" ]; then
@@ -20,12 +20,12 @@ PID=$(/sbin/nbd-client -c /dev/nbd9)
 
 # Make sure we don't have a remaining nbd-client
 if [ -d /proc/$PID ]; then
-    while read COLUMN VALUE; do
-        if [ "$COLUMN" = "PPid:" ]; then
-            kill -9 $VALUE
-            break
-        fi
-    done < /proc/$PID/status
+	while read COLUMN VALUE; do
+		if [ "$COLUMN" = "PPid:" ]; then
+			kill -9 $VALUE
+			break
+		fi
+	done < /proc/$PID/status
 fi
 
 # Get the current squashfs information
@@ -34,11 +34,11 @@ CURRENT=$(dd if=/dev/nbd0 of=/dev/stdout bs=64 count=1 2> /dev/null | sha1sum -)
 # Exit if we're already running on the latest squashfs
 if [ "$NEW" != "$CURRENT" ]; then
 	for i in $(seq 10 10 100); do
-	    echo $i;
-	    sleep 1;
+		echo $i;
+		sleep 1;
 	done | zenity --title=Info --progress \
-	              --text="A new version of the system is available, rebooting in 10s." \
-    	          --auto-close --no-cancel
+			--text="A new version of the system is available, rebooting in 10s." \
+			--auto-close --no-cancel
 	/sbin/reboot
 	exit 0
 fi
@@ -50,7 +50,7 @@ fi
 
 if [ -f /home/$USER/.gislab/login ]; then
 	zenity --warning --title="Concurrent login disabled" \
-	       --text="You are already logged in from other place. Please log out and try again." || true
+		--text="You are already logged in from other place. Please log out and try again." || true
 	exit 1
 else
 	echo "$(date)" > /home/$USER/.gislab/login
