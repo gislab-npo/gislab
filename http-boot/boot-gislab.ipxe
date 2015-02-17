@@ -1,7 +1,15 @@
 #!ipxe
 
 # iPXE version: git+d644ad41f5a17315ab72f6ebeeecf895f7d41679
-# compile: make EMBED=../boot-gislab.ipxe
+
+# How to compile
+# --------------
+# $ cd src
+# $ make EMBED=<GIS.lab source code tree>/http-boot/boot-gislab.ipxe
+# $ cp bin/ipxe.iso <GIS.lab source code tree>/http-boot/
+# $ cd <GIS.lab source code tree>/http-boot/gislab-client-loader.iso
+# $ gzip gislab-client-loader.iso
+
 
 ### MENU
 :start
@@ -25,9 +33,10 @@ sleep 3
 chain http://boot.gis.lab/i386?mac=${net0/mac}
 
 :manual
-echo -n GIS.lab network (example: 192.168.50): && read gnetwork
+echo -n GIS.lab network [example: 192.168.50]: && read gnetwork
+isset ${gnetwork} || goto manual
 ifopen net0
-set net0/ip ${gnetwork}.251
+set net0/ip ${gnetwork}.251 || goto manual
 set net0/netmask 255.255.255.0
 set net0/gateway ${gnetwork}.5
 set dns ${gnetwork}.5
