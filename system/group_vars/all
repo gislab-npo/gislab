@@ -7,9 +7,20 @@
 # Inventory file format:
 # <unique-host-name> ansible_ssh_host=<host-url> ansible_ssh_user=<provisioning-user-account-name>
 
-# If using local Vagrant provisioner (with VirtualBox or VMWare provider), create 'gislab_vagrant' variable file in
-# 'host_vars' directory and fill it with your configuration. It will be automatically loaded by Vagrant without needing
+# If using local Vagrant provisioner (with VirtualBox or VMWare provider), create 'gislab_vagrant' configuration file in
+# 'host_vars' directory and place configuration there. It will be automatically loaded by Vagrant without needing
 # to create the inventory file.
+
+
+# Example configuration file with corresponding Ansible inventory file:
+# configuration file 'system/host_vars/gislab-unit-10':
+# GISLAB_NETWORK: 192.168.10
+# GISLAB_CLIENT_LANGUAGES:
+#  - sk
+#  - cs
+
+# Ansible inventory file 'gislab-unit':
+# gislab-unit-10 ansible_ssh_host=192.168.5.155 ansible_ssh_user=ubuntu
 
 
 # In most cases, changing configuration once GIS.lab is installed requires performing server upgrade.
@@ -94,12 +105,6 @@ GISLAB_ADMIN_EMAIL: root@gis.lab
 # Change requires running upgrade.
 GISLAB_SUITE: lab
 
-# Network device on server, to which GIS.lab network IP address is attached in case, when GIS.lab network IP address
-# (GISLAB_NETWORK.5) is not directly received from provider.
-# Example: eth0
-# Change requires running upgrade.
-GISLAB_NETWORK_DEVICE: eth0
-
 # First three octets of private IP range 192.168.0.0 - 192.168.255.255, which will define network number used for
 # GIS.lab network.
 # Example: 192.168.1
@@ -139,6 +144,28 @@ GISLAB_WORKERS_COUNT: 0
 # ******************************************************************************************************************* #
 ################################################### SERVER ############################################################
 # ******************************************************************************************************************* #
+
+# Network device on GIS.lab server which will be used for network communication if no device(s) are explicitly defined
+# by provider (Vagrant: eth0, eth1, AWS: eth0).
+# Example: eth0
+# Change requires running upgrade.
+GISLAB_SERVER_NETWORK_DEVICE: eth0
+
+
+# GIS.lab server is using separate network configuration for integration in to the network, where it is deployed. This
+# configuration is usually used for connection to Internet and in most cases it is received from provider (Vagrant,
+# AWS) or from DHCP server, which exists in network, where GIS.lab is deployed.
+
+# IP address which will be assigned to GIS.lab server, when no IP address is received from network, where GIS.lab is
+# deployed. Make sure, that this IP address does not already exist in network, to avoid IP conflict !
+# Example: 192.168.5.5
+GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS: 192.168.5.5
+
+# IP address of gateway, which will be used for communication with Internet, when no gateway address is received from
+# network, where GIS.lab is deployed.
+# Example: 192.168.5.1
+GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY: 192.168.5.1
+
 
 # Email account which will be used as a relay to send emails from GIS.lab server. SMTP server must support TLS
 # encryption on port 587. If no account configured email messages from GIS.lab server will be delivered locally to Linux
