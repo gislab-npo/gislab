@@ -48,10 +48,10 @@ fi
 # Check if user is already logged in
 #
 
-if [ -f /home/$USER/.gislab/login ]; then
+if [ -f /home/$USER/.gislab/session.lock ]; then
 	zenity --warning --title="Concurrent login disabled" \
 		--text="You are already logged in from other place. Please log out and try again." || true
 	exit 1
 else
-	echo "$(date)" > /home/$USER/.gislab/login
+	echo "$(date)" > /home/$USER/.gislab/session.lock
 fi
