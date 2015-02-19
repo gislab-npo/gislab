@@ -1,8 +1,6 @@
 {% load staticfiles i18n %}
 
 var webgis = angular.module('webgis', []);
-webgis.layers = JSON.parse('{{ layers|default:"[]"|escapejs }}');
-webgis.baseLayers = JSON.parse('{{ base_layers|default:"[]"|escapejs }}');
 
 goog.provide('ol.control.ButtonControl');
 goog.provide('ol.layer.WebgisTmsLayer');
@@ -46,6 +44,7 @@ ol.layer.WebgisTmsLayer = function(opt_options) {
 	var options = goog.isDef(opt_options) ? opt_options : {};
 	goog.base(this,  /** @type {olx.layer.LayerOptions} */ (options));
 	this.setLayers(goog.isDef(options.layers) ? options.layers : []);
+	this.tilesUrl = goog.isDef(options.tilesUrl) ? options.tilesUrl : '';
 	this.legendUrl = goog.isDef(options.legendUrl) ? options.legendUrl : '';
 	this.project = goog.isDef(options.project) ? options.project : '';
 };
@@ -54,8 +53,15 @@ goog.inherits(ol.layer.WebgisTmsLayer, ol.layer.Tile);
 ol.layer.WebgisTmsLayer.prototype.setLayers = function(layers) {
 	var layers_names = [].concat(layers).reverse().join(",");
 	this.getSource().layers = layers;
-	this.getSource().layersString = layers_names;
-	this.getSource().layersHash = CryptoJS.MD5(layers_names).toString();
+	//this.getSource().layersString = layers_names;
+	//this.getSource().layersHash = CryptoJS.MD5(layers_names).toString();
+	console.log(this);
+	var url_template = "{mapcache_url}{hash}/{z}/{x}/{y}.png?PROJECT={project}&LAYERS={layers}"
+			.replace('{mapcache_url}', this.tilesUrl)
+			.replace('{hash}', CryptoJS.MD5(layers_names).toString())
+			.replace('{project}', this.project)
+			.replace('{layers}', layers_names);
+	this.getSource().tileUrlTemplate = url_template;
 	this.getSource().tileCache.clear();
 	this.changed();
 };
@@ -152,59 +158,58 @@ ol.View.prototype.getScale = function () {
 }
 
 
-webgis.initMap = function(controls) {
-	console.log("initMap");
+webgis.createMap = function(config) {
 	// overlay layers
-	{% if layers %}
-	{% if mapcache_url %}
-	var overlays_layer = new ol.layer.WebgisTmsLayer({
-		project: '{{ project }}',
-		legendUrl: '{{ legend_url }}',
-		source: new ol.source.TileImage({
-			tileGrid: new ol.tilegrid.TileGrid ({
-				origin: ol.extent.getBottomLeft({{ project_extent }}),
-				resolutions: {{ tile_resolutions }},
-				tileSize: 256
-			}),
-			tileUrlFunction: function(tileCoord, pixelRatio, projection) {
-				var z = tileCoord[0];
-				var x = tileCoord[1];
-				var y = tileCoord[2];
-				var template = "{{ mapcache_url }}{hash}/{z}/{x}/{y}.png?PROJECT={{ project }}&LAYERS={layers}";
-				var url = template
-					.replace('{hash}', this.layersHash)
-					.replace('{z}', z.toString())
-					.replace('{x}', x.toString())
-					.replace('{y}', y.toString())
-					.replace('{layers}', this.layersString);
-				return url;
-			},
-			//tilePixelRatio: 1.325
-		}),
-		{% else %}
-	var overlays_layer = new ol.layer.WebgisWmsLayer({
-		source: new ol.source.ImageWMS({
-			url: "{{ ows_url }}",
-			params: {
-				'PROJECT': '{{ project }}',
-				'FORMAT': 'image/png',
-			},
-			serverType: ol.source.wms.ServerType.QGIS
-		}),
-		{% endif %}
-		//layers: ['Roads'],
-		extent: {{ project_extent }},
-	});
-	overlays_layer.set("type", "qgislayer");
-	{% endif %}
+	if (config.layers) {
+		var overlays_layer;
+		if (config.mapcache_url) {
+			overlays_layer = new ol.layer.WebgisTmsLayer({
+				project: config.project,
+				tilesUrl: config.mapcache_url,
+				legendUrl: config.legend_url,
+				source: new ol.source.TileImage({
+					tileGrid: new ol.tilegrid.TileGrid ({
+						origin: ol.extent.getBottomLeft(config.project_extent),
+						resolutions: config.tile_resolutions,
+						tileSize: 256
+					}),
+					tileUrlFunction: function(tileCoord, pixelRatio, projection) {
+						var z = tileCoord[0];
+						var x = tileCoord[1];
+						var y = tileCoord[2];
+						var url = this.tileUrlTemplate
+							.replace('{z}', z.toString())
+							.replace('{x}', x.toString())
+							.replace('{y}', y.toString());
+						return url;
+					},
+				//tilePixelRatio: 1.325
+				}),
+				extent: config.project_extent,
+			});
+		} else {
+			overlays_layer = new ol.layer.WebgisWmsLayer({
+				source: new ol.source.ImageWMS({
+					url: config.ows_url,
+					params: {
+						'PROJECT': config.project,
+						'FORMAT': 'image/png',
+					},
+					serverType: ol.source.wms.ServerType.QGIS
+				}),
+				extent: config.project_extent,
+			});
+		}
+		overlays_layer.set("type", "qgislayer");
+	}
 
 	var base_layer = new ol.layer.Tile({
 		source: new ol.source.OSM(),
-		extent: {{ project_extent }},
+		extent: config.project_extent,
 	});
 	
-	console.log(webgis.baseLayers);
-	var layer_data = webgis.baseLayers[0];
+	console.log(config.base_layers);
+	var layer_data = config.base_layers[0];
 	if (layer_data && layer_data.url) {
 		var base_wms_layer = new ol.layer.Image({
 			source: new ol.source.ImageWMS({
@@ -222,9 +227,6 @@ webgis.initMap = function(controls) {
 	}
 
 	base_layer.set("type", "baselayer");
-	if (!controls) {
-		controls = [];
-	}
 	var map = new ol.Map({
 		target: 'map',
 		layers: [
@@ -234,21 +236,21 @@ webgis.initMap = function(controls) {
 		],
 		view: new ol.View({
 			projection: new ol.proj.Projection({
-				code: "{{ projection.code }}",
-				units: "{{ units }}",
-				extent: {{ project_extent }},
+				code: config.projection.code,
+				units: config.units,
+				extent: config.project_extent,
 			}),
-			resolutions: {{ tile_resolutions }},
-			extent: {{ project_extent }},
+			resolutions: config.tile_resolutions,
+			extent: config.project_extent,
 		}),
 		controls: ol.control.defaults({
 			attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
-				collapsible: false
+				collapsible: true
 			})
-		}).extend(controls),
+		}),
 		renderer: ol.RendererType.CANVAS
 	});
-	map.getView().fitExtent({{ zoom_extent}}, map.getSize());
+	map.getView().fitExtent(config.zoom_extent, map.getSize());
 	return map;
-}; // end of main function
+};
 
