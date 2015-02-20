@@ -3,6 +3,6 @@
 umount /mnt/repository
 umount /mnt/barrel
 umount /mnt/publish
-umount /mnt/temporary
+umount /mnt/booster
 umount /home
 /sbin/gislab/poweroff -fp
