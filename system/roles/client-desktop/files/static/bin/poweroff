@@ -5,4 +5,6 @@ umount /mnt/barrel
 umount /mnt/publish
 umount /mnt/booster
 umount /home
+
+sleep 1
 /sbin/gislab/poweroff -fp
