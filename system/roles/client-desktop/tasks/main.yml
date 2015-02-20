@@ -449,7 +449,7 @@
   command: mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/reboot {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab/reboot
 
 - name: Create symlink poweroff to moved reboot binary
-  command: ln -sf reboot {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab/power
+  command: ln -sf reboot {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab/poweroff
 
 - name: Install custom reboot script
   copy: src=static/bin/reboot dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/reboot mode=0755
