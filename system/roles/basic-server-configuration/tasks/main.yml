@@ -86,10 +86,12 @@
     GISLAB_TIMEZONE="{{ GISLAB_TIMEZONE }}"\n
     GISLAB_APT_REPOSITORY_COUNTRY_MIRROR="{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}"\n
     GISLAB_APT_HTTP_PROXY="{{ GISLAB_APT_HTTP_PROXY }}"\n
-    GISLAB_NETWORK_DEVICE="{{ GISLAB_NETWORK_DEVICE }}"\n
     GISLAB_NETWORK="{{ GISLAB_NETWORK }}"\n
     GISLAB_NETWORK_SERVER_IP="{{ GISLAB_NETWORK_SERVER_IP }}"\n
     GISLAB_DNS_SERVERS="{{ GISLAB_DNS_SERVERS }}"\n
+    GISLAB_SERVER_NETWORK_DEVICE="{{ GISLAB_SERVER_NETWORK_DEVICE }}"\n
+    GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS }}"\n
+    GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY }}"\n
     GISLAB_SERVER_EMAIL_RELAY_SERVER="{{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}"\n
     GISLAB_WORKERS_COUNT="{{ GISLAB_WORKERS_COUNT }}"\n
     GISLAB_CLIENT_LANGUAGES="{% if GISLAB_CLIENT_LANGUAGES %}{{ GISLAB_CLIENT_LANGUAGES|join(",") }}{% else %}{% endif %}"\n
@@ -159,15 +161,19 @@
 - meta: flush_handlers
 
 
+# networking
 - name: Add GIS.lab network server IP address if not received from provider
   template: src=network/gislab.j2 dest=/etc/network/if-up.d/gislab mode=0755
   when: GISLAB_NETWORK_SERVER_IP not in ansible_all_ipv4_addresses
 
 - name: Activate GIS.lab network server IP address
-  shell: ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_NETWORK_DEVICE }}
+  shell: ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_SERVER_NETWORK_DEVICE }}
   args:
     executable: /bin/bash
   when: GISLAB_NETWORK_SERVER_IP not in ansible_all_ipv4_addresses
+
+- name: Install DHCP client configuration with fallback support
+  template: src=network/dhclient.conf.j2 dest=/etc/dhcp/dhclient.conf
 
 
 # Apt

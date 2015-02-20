@@ -5,6 +5,6 @@
 
 set -e
 
-if [ "$IFACE" = "{{ GISLAB_NETWORK_DEVICE }}" ]; then
-	ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_NETWORK_DEVICE }}
+if [ "$IFACE" = "{{ GISLAB_SERVER_NETWORK_DEVICE }}" ]; then
+	ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_SERVER_NETWORK_DEVICE }}
 fi

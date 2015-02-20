@@ -13,7 +13,6 @@ import codecs
 import subprocess
 from decimal import Decimal
 from urllib import urlencode
-from urlparse import parse_qs
 
 # Import the PyQt and QGIS libraries
 import PyQt4.uic
@@ -206,7 +205,7 @@ class WebGisPlugin:
 				return Node(node.name, base_children)
 			elif not node.children and node.name in base_layers:
 				return Node(node.name, layer=base_layers[node.name])
-		base_layers_tree = base_tree(layers_root)
+		return base_tree(layers_root)
 
 	def get_project_layers(self):
 		"""Returns root layer node of all overlay layers."""

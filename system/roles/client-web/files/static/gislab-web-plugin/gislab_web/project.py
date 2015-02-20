@@ -12,6 +12,7 @@ import time
 import types
 import datetime
 from decimal import Decimal
+from urlparse import parse_qs
 
 # Import the PyQt and QGIS libraries
 from qgis.core import *
