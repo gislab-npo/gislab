@@ -75,7 +75,7 @@
 - name: Install keyboard layouts configuration
   template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
   with_items:
-          - { src: keyboard-layout/xkb-plugin-14.rc.j2, dest: /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc }
+    - { src: keyboard-layout/xkb-plugin-14.rc.j2, dest: /etc/skel/.config/xfce4/panel/xkb-plugin-14.rc }
 
 
 - name: Install Conky configuration

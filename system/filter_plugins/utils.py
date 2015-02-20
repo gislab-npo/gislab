@@ -17,12 +17,14 @@ def keyboard_layouts(keyboards, f=None):
     """
     layouts = ['us',]
     variants = ['',]
-    for keyboard in keyboards:
-        layouts.append(keyboard['layout'])
-        try:
-            variants.append(keyboard['variant'])
-        except KeyError:
-            variants.append('')
+
+    if keyboards:
+        for keyboard in keyboards:
+            layouts.append(keyboard['layout'])
+            try:
+                variants.append(keyboard['variant'])
+            except KeyError:
+                variants.append('')
 
     if not f:
         ret = (',').join(i for i in layouts)
