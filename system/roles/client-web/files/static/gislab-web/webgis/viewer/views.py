@@ -245,7 +245,7 @@ def vector_layers(request):
 	raise Http404
 
 
-def webgis_data(request):
+def page(request):
 	form = forms.ViewerForm(request.GET)
 	if not form.is_valid():
 		raise Http404
@@ -427,13 +427,11 @@ def webgis_data(request):
 
 	context['gislab_unique_id'] = GISLAB_VERSION.get('GISLAB_UNIQUE_ID', 'unknown')
 	context['gislab_version'] = GISLAB_VERSION.get('GISLAB_VERSION', 'unknown')
-	return context
 
-def page(request):
-	context = webgis_data(request)
 	if settings.DEBUG:
 		context['debug'] = True
 		context['config'] = dict(context)
+
 	return render(request, "viewer/webgis.html", context, content_type="text/html")
 
 
