@@ -655,7 +655,7 @@
 
 
 # Build image
-- name: Build GIS.lab client image (can take very long time)
+- name: Build GIS.lab client image
   shell: /opt/gislab/bin/gislab-client-image > /dev/null
   args:
     executable: /bin/bash

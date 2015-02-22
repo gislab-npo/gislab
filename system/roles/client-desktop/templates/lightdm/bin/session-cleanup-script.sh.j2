@@ -1,4 +1,26 @@
-#!/bin/sh
-# Remove lock file after session is closed. 
+#!/bin/bash
+# LightDM session cleanup script. This script is run after a greeter or user session stops. It is run as root.
 
+source /etc/gislab_version
+
+
+# remove lock file after session is closed
 rm -f /home/$USER/.gislab/session.lock
+
+
+# restart machine if new client image is available
+GISLAB_INSTALL_DATETIME_SERVER=$(curl http://server.gis.lab/gislab_version | grep "GISLAB_INSTALL_DATETIME" | awk -F "=" '{print $2}' | sed "s/\"//g")
+
+if [ "$GISLAB_INSTALL_DATETIME" != "$GISLAB_INSTALL_DATETIME_SERVER" ]; then
+	for i in $(seq 10 10 100); do
+		echo $i;
+		sleep 1;
+	done | zenity --title=Info --progress \
+			--text="A new version of the system is available, rebooting in 10s." \
+			--auto-close --no-cancel
+	/sbin/reboot
+	exit 0
+fi
+
+
+# vim: set ts=4 sts=4 sw=4 noet:

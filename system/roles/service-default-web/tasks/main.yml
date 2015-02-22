@@ -32,12 +32,6 @@
   notify:
     - service apache2 restart
 
-- name: Create default web page root directory
-  file: path=/var/www/default state=directory
-
-- name: Install default web page content
-  copy: src=static/index.html dest=/var/www/default/index.html
-
 - name: Enable default Apache virtualhost
   command: a2ensite default
   notify:
@@ -54,6 +48,17 @@
   template: src=nginx/site-default.j2 dest=/etc/nginx/sites-available/default
   notify:
     - service nginx restart
+
+
+# Default web content
+- name: Create default web page root directory
+  file: path=/var/www/default state=directory
+
+- name: Install default web page content
+  copy: src=static/index.html dest=/var/www/default/index.html
+
+- name: Add 'gislab_version' file to default web content
+  file: src=/etc/gislab_version dest=/var/www/default/gislab_version owner=root group=root state=link
 
 
 # Logging
