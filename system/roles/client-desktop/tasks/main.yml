@@ -230,7 +230,7 @@
 # Install VirtualBox Guest additions.
 # Latest kernel supported by VirtualBox Guest additions on Ubuntu 12.04 is 3.8
 # else install VirtualBox additions from Ubuntu repository - could not match version used on client
-# for manual installation run: $ dkms install -m virtualbox-guest/<vbox-version> -k <kernel-versiob>/i386
+# for manual installation run: $ dkms install -m virtualbox-guest/<vbox-version> -k <kernel-version>/i386
 
 - name: Install build-essential package if VirtualBox Guest additions are going to be build from ISO file
   shell: "export DEBIAN_FRONTEND=noninteractive
@@ -628,8 +628,7 @@
   
 # HTTP boot (alternative method using iPXE)
 # To boot via HTTP, client machine must boot iPXE boot image first. This boot image will launch HTTP boot.
-# Prepared iPXE boot image exists in 'http-boot/gislab-client-loader.iso.gz' of GIS.lab source code
-# or can be created by running '$ make bin/ipxe.iso EMBED=boot-gislab.ipxe' in iPXE source code.
+# Prepared iPXE boot image exists in 'http-boot/gislab-client-loader.iso.gz' of GIS.lab source code.
 
 - name: Install HTTP boot files (files can be launched by http://boot.gis.lab/<file> or http://GISLAB_NETWORK.5/<file>)
   file: src={{ item.src }} dest={{ item.dest }} owner=root group=root state=link force=yes
