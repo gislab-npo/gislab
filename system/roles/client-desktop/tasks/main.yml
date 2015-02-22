@@ -25,11 +25,11 @@
 
 
 # Copy apt cache
-- name: Create apt cache directory
+- name: Prepare apt cache directory if no apt proxy configured
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives state=directory recurce=yes
-  when: GISLAB_APT_HTTP_PROXY|default(None) == None
+  when: GISLAB_APT_HTTP_PROXY|default(None) == None and GISLAB_SERVER_ARCHITECTURE == 'i386'
 
-- name: Copy apt cache from server to client
+- name: Copy apt cache from server to client if no apt proxy configured
   shell: cp -a /var/cache/apt/archives/*.deb {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives/ 2>/dev/null || true
   args:
     executable: /bin/bash
@@ -70,7 +70,7 @@
 
 
 # Network configuration
-- name: Zero out the hostname file
+- name: Install empty hostname file
   shell: echo > {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/hostname
 
 - name: Set alias for loopback network interface in /etc/hostname
@@ -104,10 +104,10 @@
 
 # Mount necessary filesystems in chroot
 - name: Mount /dev/pts and /proc
-  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} mount {{ item.opts }} {{ item.what }} {{ item.where }}
+  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} mount {{ item.opts }} {{ item.src }} {{ item.dest }}
   with_items:
-    - { what: "devpts", where: "/dev/pts", opts: "-t devpts -o rw,noexec,nosuid,gid=5,mode=620" }
-    - { what: "proc", where: "/proc", opts: "-t proc" }
+    - { src: "devpts", dest: "/dev/pts", opts: "-t devpts -o rw,noexec,nosuid,gid=5,mode=620" }
+    - { src: "proc", dest: "/proc", opts: "-t proc" }
 
 
 # Daemons handling
@@ -303,7 +303,7 @@
 - name: Configure NFS
   template: src=nfs/idmapd.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/idmapd.conf
 
-- name: Create NFS mount directories
+- name: Create mount points for shared directories
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory
   with_items:
     - /mnt/repository
@@ -352,7 +352,7 @@
 
 
 # gislab version
-- name: Add GIS.lab ID, version and client build information
+- name: Install '/etc/gislab_version' file
   command: cp /etc/gislab_version {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab_version
 
 
@@ -399,7 +399,7 @@
 
 - name: Install GIS.lab desktop client session
   # session file must be called 'xubuntu.desktop', otherwise LightDM will set variable DESKTOP_SESSION to invalid value
-  template: src=desktop/xsession/gislab-desktop-client.desktop.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/xubuntu.desktop
+  template: src=desktop/xsession/gislab-client.desktop.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/xubuntu.desktop
 
 # Disable session services
 - name: Disable useless session services
@@ -509,16 +509,20 @@
     - /usr/share/initramfs-tools/scripts/init-premount
     - /usr/share/initramfs-tools/scripts/local-top
 
-- name: Install initramfs-tools scripts
+- name: Configure initramfs-tools
+  template: src=initramfs-tools/conf.d/gislab.j2
+            dest={{ GISLAB_INSTALL_CLIENT_ROOT}}/usr/share/initramfs-tools/conf.d/gislab
+            mode=0644
+
+- name: Install initramfs-tools hooks and scripts
   copy: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode={{ item.mode }}
   with_items:
-    - { src: "static/initramfs-tools/conf.d/gislab", dest: "/usr/share/initramfs-tools/conf.d/gislab", mode: "0644" }
     - { src: "static/initramfs-tools/hooks/gislab", dest: "/usr/share/initramfs-tools/hooks/gislab", mode: "0755" }
     - { src: "static/initramfs-tools/hooks/udhcp", dest: "/usr/share/initramfs-tools/hooks/udhcp", mode: "0755" }
     - { src: "static/initramfs-tools/scripts/init-bottom/gislab", dest: "/usr/share/initramfs-tools/scripts/init-bottom/gislab", mode: "0755" }
     - { src: "static/initramfs-tools/scripts/local-top/nbd_gislab", dest: "/usr/share/initramfs-tools/scripts/local-top/nbd_gislab",  mode: "0755" }
 
-- name: Install modified udhcpc script
+- name: Install uDHCP client script
   template: src=initramfs-tools/scripts/init-premount/udhcp.j2
             dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/initramfs-tools/scripts/init-premount/udhcp
             mode=0755
@@ -529,10 +533,12 @@
 - name: Install GIS.lab init script
   copy: src=static/init/gislab-init.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/gislab-init.sh mode=0755
 
-- name: Install upstart scripts
+- name: Configure GIS.lab client service
+  template: src=init/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/gislab.conf mode=0644
+
+- name: Install GIS.lab client service scripts
   copy: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode={{ item.mode }}
   with_items:
-    - { src: "static/init/gislab.conf", dest: "/etc/init/gislab.conf", mode: "0644" }
     - { src: "static/init/nbd-disconnect", dest: "/usr/share/gislab/nbd-disconnect", mode: "0755" }
 
 
@@ -571,7 +577,8 @@
 
 
 # Copy apt cache
-- name: Copy apt cache back from client to server
+- name: Copy apt cache back from client to server if no apt proxy configured
+
   shell: cp -a {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives/*.deb /var/cache/apt/archives/ 2>/dev/null || true
   args:
     executable: /bin/bash

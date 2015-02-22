@@ -49,7 +49,7 @@ prereqs)
     ;;
 esac
 
-# Exit if an LTSP boot was not requested
+# Exit if an GIS.lab boot was not requested
 grep -Eqsw "init=/sbin/init-gislab" /proc/cmdline || exit 0
 
 bring_up_interfaces()

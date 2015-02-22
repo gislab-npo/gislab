@@ -3,6 +3,7 @@
 
 source /etc/gislab_version
 
+
 GROUPS=$(groups)
 
 UPTIME=$(uptime | awk '{print $3}' | sed "s/,//")
