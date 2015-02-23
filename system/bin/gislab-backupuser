@@ -50,7 +50,7 @@ fi
 
 # populate variables and prepare directories structure
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
-GISLAB_USER_HOME=/home/$GISLAB_USER
+GISLAB_USER_HOME=/storage/home/$GISLAB_USER
 
 TEMP_BACKUP_DIR=/tmp/gislab-$GISLAB_USER-$DATE
 HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar

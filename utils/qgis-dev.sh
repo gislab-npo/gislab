@@ -4,7 +4,7 @@
 set -e
 
 
-if [ -f "/home/$USER/apps/bin/qgis" ]; then
+if [ -f "$HOME/apps/bin/qgis" ]; then
 	export LD_LIBRARY_PATH=~/apps/lib/
 	~/apps/bin/qgis
 else

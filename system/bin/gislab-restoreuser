@@ -102,14 +102,14 @@ gislab_print_info "Original password restored from backup"
 
 
 # restore home data
-cp -r home/$GISLAB_USER /home/
+cp -r storage/home/$GISLAB_USER /storage/home/
 
-if [ -f home/$GISLAB_USER/.config/user-dirs.dirs ]; then
-	source home/$GISLAB_USER/.config/user-dirs.dirs
-	mkdir -p /home/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR)
+if [ -f storage/home/$GISLAB_USER/.config/user-dirs.dirs ]; then
+	source storage/home/$GISLAB_USER/.config/user-dirs.dirs
+	mkdir -p /storage/home/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR)
 fi
 
-chown -R $GISLAB_USER:gislabusers /home/$GISLAB_USER
+chown -R $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER
 
 
 # restore published data

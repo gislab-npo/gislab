@@ -39,6 +39,21 @@
   sysctl: name=kernel.shmmax value="{{ ansible_memtotal_mb|postgresql_shm }}" state=present sysctl_set=yes
 
 
+# PostgreSQL cluster storage
+- name: Drop initial PostgreSQL cluster from '/var/lib/postgresql' if exists
+  shell: pg_dropcluster --stop 9.1 main
+  args:
+    removes: /var/lib/postgresql/9.1/main/PG_VERSION
+
+- name: Prepare directory for new PostgreSQL cluster storage
+  file: path=/storage/applications/postgresql state=directory owner=postgres group=postgres
+
+- name: Create new PostgreSQL cluster in '/storage/applications/postgresql' if not exists
+  shell: pg_createcluster --datadir=/storage/applications/postgresql 9.1 main
+  args:
+    creates: /storage/applications/postgresql/PG_VERSION
+
+
 # PostgreSQL configuration
 - name: Configure PostgreSQL
   template: src=postgresql/postgresql.conf.j2 dest=/etc/postgresql/9.1/main/postgresql.conf
@@ -56,6 +71,8 @@
   command: pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
   notify:
     - service postgresql restart
+
+- meta: flush_handlers
 
 
 # User groups

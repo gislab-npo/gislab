@@ -245,6 +245,14 @@
   lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present
 
 
+# /storage bind mount
+- name: Configure universal '/storage to /mnt' mount to keep the same paths on server and clients
+  lineinfile: dest=/etc/fstab line="/storage  /mnt  none  bind  0  0" state=present
+
+- name: Mount '/storage' to '/mnt'
+  mount: name=/mnt src=/storage fstype=none opts=bind state=mounted
+
+
 # Backup
 - name: Activate user accounts and system files backup
   template: src=cron/gislab-backupall.j2 dest=/etc/cron.d/gislab-backupall

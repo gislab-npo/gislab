@@ -16,7 +16,7 @@ if [ ! -f ~/bin/gcc ]; then
 	ln -s /usr/bin/ccache ~/bin/g++
 fi
 
-if [ ! -d "/home/$USER/Projects/qgis-dev" ]; then
+if [ ! -d "/$HOME/Projects/qgis-dev" ]; then
 	git clone https://github.com/qgis/QGIS.git ~/Projects/qgis-dev
 	mkdir -p ~/Projects/qgis-dev/build-master
 	cd ~/Projects/qgis-dev/build-master

@@ -2,8 +2,8 @@
 #
 ### USER ACCOUNTS ###
 #
-# Set strong password for provisioning user account, remove other not required user accounts
-# and configure backup of user accounts data.
+# Set strong password for provisioning user account, remove other not required user accounts,
+# configure shell, create storage and install account configuration.
 
 
 - name: Install packages
@@ -25,6 +25,7 @@
     executable: /bin/bash
 
 
+# provisioning user
 - name: Set strong password for provisioning user account
   shell: 'echo "{{ GISLAB_PROVISIONING_USER }}:$(pwgen -1 -n 24)" | chpasswd'
 
@@ -35,7 +36,7 @@
     - /home/{{ GISLAB_PROVISIONING_USER }}/.ssh
 
 
-# Shell
+# shell
 - name: Configure shell prompt for provisioning user
   lineinfile: dest=/home/{{ GISLAB_PROVISIONING_USER }}/.bashrc \
     regexp="^PS1=.*h\.GIS.lab(.*).*$" \
@@ -49,7 +50,7 @@
     state=present
 
 
-# System
+# configuration files
 - name: Create backup of clean user account skeleton at first run
   shell: cp -a /etc/skel /etc/skel.clean
   args:
@@ -126,6 +127,11 @@
 
 - name: Add symlinks to fast, in-memory file system
   file: src=/mnt/booster dest=/etc/skel/Booster owner=root group=root state=link force=yes
+
+
+# storage
+- name: Create home storage for new user's accounts
+  file: path=/storage/home state=directory owner=root group=root
 
 
 # vim:ft=ansible:

@@ -74,7 +74,7 @@ GISLAB_USER_FULL_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
 
 # create LDAP account
 ldapadduser $GISLAB_USER gislabusers # LDAP account
-chmod go-rwx /home/$GISLAB_USER
+chmod go-rwx /storage/home/$GISLAB_USER
 
 # add LDAP user attributes
 ldapmodifyuser $GISLAB_USER > /dev/null << EOL
@@ -147,22 +147,22 @@ chmod 750 /storage/publish/$GISLAB_USER
 
 
 # replace user name and password placeholders with real user values
-find /home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER +}/$GISLAB_USER/g" "{}" \;
-find /home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_PASSWORD +}/$GISLAB_USER_PASSWORD/g" "{}" \;
+find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER +}/$GISLAB_USER/g" "{}" \;
+find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_PASSWORD +}/$GISLAB_USER_PASSWORD/g" "{}" \;
 
 
 # save user credentials to hidden directory in home folder
-mkdir -p /home/$GISLAB_USER/.gislab
-chmod 700 /home/$GISLAB_USER/.gislab
-echo "$GISLAB_USER:$GISLAB_USER_PASSWORD" > /home/$GISLAB_USER/.gislab/gislab_${GISLAB_USER}_credentials.txt
-chown $GISLAB_USER:gislabusers -R /home/$GISLAB_USER/.gislab
+mkdir -p /storage/home/$GISLAB_USER/.gislab
+chmod 700 /storage/home/$GISLAB_USER/.gislab
+echo "$GISLAB_USER:$GISLAB_USER_PASSWORD" > /storage/home/$GISLAB_USER/.gislab/gislab_${GISLAB_USER}_credentials.txt
+chown $GISLAB_USER:gislabusers -R /storage/home/$GISLAB_USER/.gislab
 
-cp /etc/openvpn/gislab_vpn_ca.crt /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
-chown $GISLAB_USER:gislabusers /home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
+cp /etc/openvpn/gislab_vpn_ca.crt /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
+chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
 
-cp /etc/openvpn/gislab_vpn_ta.key /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-chown $GISLAB_USER:gislabusers /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-chmod 0600 /home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
+cp /etc/openvpn/gislab_vpn_ta.key /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
+chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
+chmod 0600 /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
 
 gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"
 

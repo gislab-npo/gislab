@@ -1,8 +1,4 @@
-# allow network connections - listen_addresses = '*'
-# and set search path to user schema as first - search_path = '"$user",public' .
-# all other settings are default values taken from postgresql.conf.
-
-data_directory = '/var/lib/postgresql/9.1/main'
+data_directory = '/storage/applications/postgresql'
 hba_file = '/etc/postgresql/9.1/main/pg_hba.conf'
 ident_file = '/etc/postgresql/9.1/main/pg_ident.conf'
 external_pid_file = '/var/run/postgresql/9.1-main.pid'
