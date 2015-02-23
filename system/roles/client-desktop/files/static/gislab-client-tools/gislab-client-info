@@ -19,7 +19,7 @@ INTERFACE_MAC=$(/sbin/ifconfig | grep ${INTERFACE} | cut -f11 -d" ")
 INTERFACE_IP=$(/sbin/ifconfig ${INTERFACE} | grep inet | cut -f2 -d":" | cut -f1 -d" ")
 
 QGIS_VERSION=$(dpkg-query -W --showformat '${version}' qgis)
-GRASS_VERSION=$(dpkg-query -W --showformat '${version}' grass70)
+GRASS_VERSION=$(dpkg-query -W --showformat '${version}' grass7)
 
 
 INFO="
