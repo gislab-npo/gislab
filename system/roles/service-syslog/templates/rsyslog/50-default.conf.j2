@@ -1,3 +1,8 @@
+# Ignored Serf messages (see GH #363)
+:msg, contains, "memberlist: Initiating push/pull sync" ~
+:msg, contains, "memberlist: Responding to push/pull sync" ~
+
+
 auth,authpriv.*			/var/log/auth.log
 *.*;auth,authpriv,local7.none	-/var/log/syslog
 kern.*				-/var/log/kern.log
