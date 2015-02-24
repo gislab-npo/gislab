@@ -1,7 +1,7 @@
 # This file contains default values of GIS.lab configuration variables.
 
 # Do not modify this file directly, rather create a new configuration file in 'system/host_vars' directory and place
-# there variables which you want to change. Than create Ansible inventory file, with the same 'unique-host-name' as
+# there variables, which you want to change. Than create Ansible inventory file, with the same 'unique-host-name' as
 # a file name in 'system/host_vars' directory.
 
 # Inventory file format:
