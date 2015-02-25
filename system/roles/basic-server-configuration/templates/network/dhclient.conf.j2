@@ -20,7 +20,7 @@ lease {
 	option subnet-mask 255.255.255.0;
 	option routers 127.0.0.1,{{ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY }};
 	option domain-name-servers 8.8.8.8;
-	renew 2 2099/1/12 00:00:01;
-	rebind 2 2099/1/12 00:00:01;
-	expire 2 2099/1/12 00:00:01;
+	renew never;
+	rebind never;
+	expire never;
 }
