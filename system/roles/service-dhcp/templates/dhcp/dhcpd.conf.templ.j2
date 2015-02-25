@@ -14,11 +14,11 @@ authoritative;
 option gislab-unique-id code 224 = text;
 
 class "gislab-clients" {
-    match if option nis-domain = "{{ GISLAB_UNIQUE_ID }}-client";
+    match if option nis-domain = "{{ GISLAB_UNIQUE_ID }}";
 }
 
 class "third-party-clients" {
-    match if option nis-domain != "{{ GISLAB_UNIQUE_ID }}-client";
+    match if option nis-domain != "{{ GISLAB_UNIQUE_ID }}";
 }
 
 subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {

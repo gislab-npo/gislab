@@ -169,7 +169,7 @@ interfaces=${interface:-$interfaces}
 [ "$quiet" != "y" ] && echo "DHCP request for $i..."
 while [ -z "$configured" ]; do
     for i in $interfaces; do    # Make a DHCP request for each interface...
-        if udhcpc -n -C -s /tmp/dhcp-script.sh -i $i -I {{ GISLAB_NETWORK_SERVER_IP }} -x nisdomain:gislab_vagrant-client $hostname_param $ip_param >/dev/null 2>&1; then
+        if udhcpc -n -C -s /tmp/dhcp-script.sh -i $i -I {{ GISLAB_NETWORK_SERVER_IP }} -x nisdomain:{{ GISLAB_UNIQUE_ID }} $hostname_param $ip_param >/dev/null 2>&1; then
             grep "=" /tmp/dhcp-info.conf # print response provided by the DHCP server
             configured="true"
             break
