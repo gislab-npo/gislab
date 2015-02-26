@@ -4,8 +4,7 @@
 #
 # Install and configure database server and create GIS template database.
 #
-#   production: /var/log/postgresql/postgresql-error.log
-#   debug:      /var/log/postgresql/postgresql-debug.log
+# Logging: /var/log/syslog
 
 
 - name: Install packages
@@ -143,7 +142,7 @@
 
 # Logging
 - name: Activate PostgreSQL error logs checking
-  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/var/log/postgresql/postgresql-error.log" state=present
+  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/var/log/postgresql/postgresql.log" state=present
 
 
 # Email

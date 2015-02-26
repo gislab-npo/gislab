@@ -16,14 +16,12 @@ lc_time = 'en_US.UTF-8'
 default_text_search_config = 'pg_catalog.english'
 
 # logging
-logging_collector = on
-log_directory = '/var/log/postgresql'
+log_destination = 'syslog'
+syslog_facility = 'LOCAL7'
 
 {% if not GISLAB_DEBUG_SERVICES %}
-log_filename = 'postgresql-error.log'
-log_min_messages = FATAL
+log_min_messages = 'ERROR'
 {% else %}
-log_filename = 'postgresql-debug.log'
 log_min_messages = 'DEBUG1'
 log_min_error_statement = 'DEBUG1'
 log_min_duration_statement = 0

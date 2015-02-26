@@ -3,6 +3,8 @@
 ### HAPROXY SERVER ###
 #
 # Install OWS server load balancer.
+#
+# Logging: /var/log/syslog
 
 
 - name: Install packages

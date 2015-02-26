@@ -3,8 +3,6 @@ server {
 	root /var/cache/munin/www;
 	index index.html index.htm;
 
-	error_log /var/log/nginx/stats-error.log;
-
 	location / {
 		try_files $uri $uri/ /index.html;
 	}
