@@ -649,10 +649,7 @@
 				{% if vector_layers %}
 				Ext.Ajax.request({
 					method: 'GET',
-					url: '{% url "viewer:vectorlayers" %}',
-					params: {
-						PROJECT: '{{ ows_project }}'
-					},
+					url: '{{ vectorlayers_url }}',
 					success: function(response) {
 						var features = new OpenLayers.Format.GeoJSON().read(response.responseText);
 						Ext.getCmp('draw-action').importFeatures(features, false);
