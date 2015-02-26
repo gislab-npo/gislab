@@ -13,7 +13,6 @@ def create_case_insensitive_form(base_class):
 				value = self.cleaned_data[key]
 				del self.cleaned_data[key]
 				self.cleaned_data[key.upper()] = value
-			print self.cleaned_data
 	return FormClass
 
 CaseInsensitiveForm = create_case_insensitive_form(forms.Form)
