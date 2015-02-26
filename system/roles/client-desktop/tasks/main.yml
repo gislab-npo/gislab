@@ -26,7 +26,7 @@
 
 # Copy apt cache
 - name: Prepare apt cache directory if no apt proxy configured
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives state=directory recurce=yes
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives state=directory recurse=yes
   when: GISLAB_APT_HTTP_PROXY|default(None) == None and GISLAB_SERVER_ARCHITECTURE == 'i386'
 
 - name: Copy apt cache from server to client if no apt proxy configured
