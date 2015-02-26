@@ -434,21 +434,26 @@
     - ureadahead-other
 
 
-# Workaround to a problem with clients shutdown or reboot. 
-# 'reboot' binary performs 'reboot' and also 'poweroff' task depending on the file name called.
-# This is the reason why '/sbin/poweroff' is a symlink to '/sbin/reboot'. This fix takes
-# to account this behavior.
+# Replacing shutdown commands with simple script, which will umount all network disks and immediately and power off
+# machine without trying to cleanly stop services. This is a workaround to a problems with various shutdown problems
+# caused by network mounted root and NBD itself (see LP #696454).
 
-- name: Create directory for reboot and poweroff commands
+# 'reboot' binary performs 'reboot' and also 'poweroff' task depending on the file name called. This is the reason why
+# '/sbin/poweroff' is a symlink to '/sbin/reboot'. This fix takes to account this behavior.
+
+- name: Create directory for original 'reboot' command
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab state=directory
 
-- name: Remove /sbin/poweroff symlink
+- name: Remove original 'poweroff' command (symlink)
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/poweroff state=absent
 
-- name: Move /sbin/reboot binary
+- name: Remove original 'shutdown' command
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/poweroff state=absent
+
+- name: Move 'reboot' binary
   command: mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/reboot {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab/reboot
 
-- name: Create symlink poweroff to moved reboot binary
+- name: Re-create poweroff command as a symlink to moved reboot binary
   command: ln -sf reboot {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab/poweroff
 
 - name: Install custom reboot script
@@ -456,6 +461,9 @@
 
 - name: Install custom poweroff script
   copy: src=static/bin/poweroff dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/poweroff mode=0755
+
+- name: Install custom shutdown script
+  copy: src=static/bin/poweroff dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/shutdown mode=0755
 
 
 # Statistics
@@ -535,11 +543,6 @@
 
 - name: Configure GIS.lab client service
   template: src=init/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/gislab.conf mode=0644
-
-- name: Install GIS.lab client service scripts
-  copy: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode={{ item.mode }}
-  with_items:
-    - { src: "static/init/nbd-disconnect", dest: "/usr/share/gislab/nbd-disconnect", mode: "0755" }
 
 
 # Lightdm
