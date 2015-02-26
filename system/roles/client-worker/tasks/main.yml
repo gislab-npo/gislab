@@ -109,6 +109,7 @@
   with_items:
   - /etc/apache2/ports.conf
   - /etc/apache2/mods-available/fcgid.conf
+  - /etc/apache2/conf.d/other-vhosts-access-log
   - /etc/apache2/sites-available/default
   - /etc/apache2/sites-available/mapserver
 

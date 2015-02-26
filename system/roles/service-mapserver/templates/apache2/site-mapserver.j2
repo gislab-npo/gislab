@@ -29,8 +29,8 @@
 	</Directory>
 
 	ErrorLog "|/usr/bin/logger -t apache-mapserver -p daemon.warn"
-	CustomLog ${APACHE_LOG_DIR}/mapserver-access.log combined
+	LogLevel warn
 
-#	RewriteLog ${APACHE_LOG_DIR}/error.log
-#	RewriteLogLevel 3
+	# RewriteLog ${APACHE_LOG_DIR}/rewrite.log
+	# RewriteLogLevel 3
 </VirtualHost>

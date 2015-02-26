@@ -4,9 +4,10 @@
 #
 # Install web server and configure default web page content.
 #
-# Logging: /var/log/apache2/access.log /var/log/syslog
-#          /var/log/nginx/access.log /var/log/nginx/error.log
-
+# Logging:
+#   production: /var/log/syslog /var/log/nginx/error.log
+#   debug:      /var/log/apache2/access.log /var/log/syslog
+#               /var/log/nginx/access.log /var/log/nginx/error.log
 
 
 - name: Install packages
@@ -17,12 +18,13 @@
     - nginx
 
 
-# Apache 
+# Apache
 - name: Configure Apache
   template: src={{ item.src }} dest={{ item.dest }}
   with_items:
     - { src: "apache2/apache2.conf.j2", dest: "/etc/apache2/apache2.conf" }
     - { src: "apache2/ports.conf.j2", dest: "/etc/apache2/ports.conf" }
+    - { src: "apache2/other-vhosts-access-log.j2", dest: "/etc/apache2/conf.d/other-vhosts-access-log" }
   notify:
     - service apache2 restart
 

@@ -5,8 +5,8 @@
 # Install statistics monitoring system.
 #
 # Logging: 
-#   production: /var/log/nginx/stats-access.log /var/log/nginx/stats-error.log
-#   debug:      /var/log/nginx/stats-access.log /var/log/nginx/stats-error.log
+#   production: /var/log/nginx/stats-error.log
+#   debug:      /var/log/nginx/access.log /var/log/nginx/stats-error.log
 
 
 - name: Install packages

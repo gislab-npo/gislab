@@ -4,7 +4,9 @@
 #
 # Install and configure GIS.lab Web client.
 #
-# Logging: /var/log/nginx/gislab-web-access.log /var/log/nginx/gislab-web-error.log /var/log/syslog
+# Logging:
+#   production: /var/log/syslog /var/log/nginx/error.log 
+#   debug:      /var/log/nginx/access.log /var/log/nginx/error.log /var/log/syslog
 
 
 - name: Install packages
@@ -242,7 +244,7 @@
 
 # Logging
 - name: Activate GIS.lab Web error logs checking
-  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/var/log/nginx/gislab-web-error.log" state=present
+  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/var/log/nginx/error.log" state=present
 
 
 - meta: flush_handlers
