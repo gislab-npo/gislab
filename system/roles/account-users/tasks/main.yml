@@ -124,6 +124,23 @@
     - { src: qgis/composer_templates/print-template-a3.qpt.j2, dest: /etc/skel/.qgis2/composer_templates/print-template-a3.qpt }
 
 
+- name: Prepare GRASS directories
+  file: path={{ item }} state=directory owner=root group=root
+  with_items:
+    - /etc/skel/.grass7
+    - /etc/skel/.grassdata
+
+- name: Install GRASS configuration
+  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  with_items:
+    - { src: grass/rc.j2, dest: /etc/skel/.grass7/rc }
+
+- name: Install GRASS locations
+  copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0755 owner=root group=root
+  with_items:
+    - { src: static/grassdata/, dest: /etc/skel/.grassdata }
+
+
 - name: Add symlinks to shared directories in skeleton
   file: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root state=link force=yes
   with_items:

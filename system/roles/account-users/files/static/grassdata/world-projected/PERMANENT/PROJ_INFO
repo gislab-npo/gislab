@@ -1,0 +1,12 @@
+name: Mercator
+proj: merc
+datum: wgs84
+ellps: wgs84
+lat_ts: 0.0
+lon_0: 0.0
+x_0: 0.0
+y_0: 0
+k: 1.0
+wktext: defined
+no_defs: defined
+towgs84: 0.000,0.000,0.000

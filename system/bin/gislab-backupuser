@@ -87,12 +87,22 @@ if ls $GISLAB_USER_HOME/.config/user-dirs.* >/dev/null 2>&1; then
 	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.config/user-dirs.*
 fi
 
+# QGIS
 if ls $GISLAB_USER_HOME/.config/QGIS/QGIS2.conf >/dev/null 2>&1; then
 	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.config/QGIS/QGIS2.conf
 fi
 
 if ls $GISLAB_USER_HOME/.qgis2/*.db >/dev/null 2>&1; then
 	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.qgis2/*.db
+fi
+
+# GRASS
+if ls $GISLAB_USER_HOME/.grass7 >/dev/null 2>&1; then
+	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.grass7
+fi
+
+if ls $GISLAB_USER_HOME/.grassdata >/dev/null 2>&1; then
+	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.grassdata
 fi
 
 bzip2 $HOME_BACKUP_FILE
