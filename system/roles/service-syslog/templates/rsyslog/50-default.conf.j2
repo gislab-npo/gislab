@@ -3,7 +3,7 @@
 :msg, contains, "memberlist: Responding to push/pull sync" ~
 
 # Ignore Ansible messages
-:msg, contains, "server ansible" ~
+:syslogtag, contains, "ansible-" ~
 
 
 auth,authpriv.*			/var/log/auth.log
