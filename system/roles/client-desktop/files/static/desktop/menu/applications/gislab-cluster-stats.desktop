@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=GIS.lab Cluster Statistics
+Comment=GIS.lab cluster statistics
+Exec=firefox "http://stats.gis.lab:1936"
+Icon=
+Path=
+Terminal=false
+Categories=Gislab-system;
+StartupNotify=false
+Name[sk]=Štatistiky Klastra GIS.lab
+Comment[sk]=Štatistiky klastra GIS.lab
