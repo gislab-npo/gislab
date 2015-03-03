@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import json
 import os.path
 import urllib
 import urllib2
@@ -335,7 +334,7 @@ class WebgisClient(object):
 				'units': 'm'
 			})
 			context['zoom_extent'] = form.cleaned_data['EXTENT'] or context['project_extent']
-			context['base_layers'] = json.dumps([OSM_LAYER, GOOGLE_LAYERS['GHYBRID']])
+			context['base_layers'] = [OSM_LAYER, GOOGLE_LAYERS['GHYBRID']]
 
 		google = False
 		if context.get('base_layers'):

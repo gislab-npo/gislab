@@ -44,8 +44,8 @@ class WebClient(WebgisClient):
 		project_data['dpi'] = 96
 		project_data['user'] = request.user
 		project_data['base_layers'] = json.dumps(project_data['base_layers'])
-		project_data['layers'] = json.dumps(project_data['layers']) if 'layers' in project_data else '[]'
-		project_data['topics'] = json.dumps(project_data['topics']) if 'topics' in project_data else '[]'
+		project_data['layers'] = json.dumps(project_data['layers']) if 'layers' in project_data else ''
+		project_data['topics'] = json.dumps(project_data['topics']) if 'topics' in project_data else ''
 		if settings.DEBUG:
 			project_data['debug'] = True
 			project_data['config'] = dict(project_data)
