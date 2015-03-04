@@ -182,7 +182,7 @@
   template: src=apt/sources.list.j2 dest=/etc/apt/sources.list
 
 - name: Add imincik PPA signing key
-  apt_key: id=6CD44B55 url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x25B546906CD44B55 state=present
+  apt_key: data="{{ lookup('file', 'static/ppa_imincik.key') }}" state=present
 
 - name: Configure Apt cache proxy server
   template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
