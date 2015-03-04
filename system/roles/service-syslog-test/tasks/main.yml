@@ -1,3 +1,13 @@
 ---
 
+- name: Send a test message to syslog
+  shell: logger -t test This is a test message sent by GIS.lab test {{ GISLAB_TEST_RANDOM_STRING }}
+  changed_when: False
+
+- name: Test if message was written to log file
+  shell: grep "This is a test message sent by GIS.lab test {{ GISLAB_TEST_RANDOM_STRING }}" /storage/log/syslog
+  ignore_errors: yes
+  changed_when: False
+
+
 # vim:ft=ansible:

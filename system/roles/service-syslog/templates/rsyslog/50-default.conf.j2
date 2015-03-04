@@ -6,12 +6,12 @@
 :syslogtag, contains, "ansible-" ~
 
 
-auth,authpriv.*			/var/log/auth.log
-*.*;auth,authpriv,local7.none	-/var/log/syslog
-kern.*				-/var/log/kern.log
-news.crit			/var/log/news/news.crit
-news.err			/var/log/news/news.err
-news.notice			-/var/log/news/news.notice
+auth,authpriv.*			/storage/log/auth.log
+*.*;auth,authpriv,local7.none	-/storage/log/syslog
+kern.*				-/storage/log/kern.log
+news.crit			/storage/log/news.crit
+news.err			/storage/log/news.err
+news.notice			-/storage/log/news.notice
 *.emerg				:omusrmsg:*
 
 daemon.*;mail.*;\
@@ -20,9 +20,9 @@ daemon.*;mail.*;\
 	*.=notice;*.=warn	|/dev/xconsole
 
 {% if not GISLAB_DEBUG_SERVICES %}
-local0.err			/var/log/syslog  # accept only 'error' level messages
-local7.*			/var/log/syslog  # accept all messages
+local0.err			/storage/log/syslog  # accept only 'error' level messages
+local7.*			/storage/log/syslog  # accept all messages
 {% else %}
-local0.*			/var/log/syslog
-local7.*			/var/log/syslog
+local0.*			/storage/log/syslog
+local7.*			/storage/log/syslog
 {% endif %}

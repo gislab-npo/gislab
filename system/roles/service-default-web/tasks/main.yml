@@ -5,9 +5,10 @@
 # Install web server and configure default web page content.
 #
 # Logging:
-#   production: /var/log/syslog /var/log/nginx/error.log
-#   debug:      /var/log/apache2/access.log /var/log/syslog
-#               /var/log/nginx/access.log /var/log/nginx/error.log
+#   production: /storage/log/syslog /storage/log/nginx-error.log
+#   debug:      /storage/log/apache2-access.log
+#               /storage/log/nginx-access.log /storage/log/nginx-error.log
+#               /storage/log/syslog
 
 
 - name: Install packages
@@ -42,7 +43,10 @@
 
 # Nginx
 - name: Configure Nginx
-  template: src=nginx/proxy-parameters.j2 dest=/etc/nginx/proxy-parameters
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: "nginx/nginx.conf.j2 ", dest: "/etc/nginx/nginx.conf" }
+    - { src: "nginx/proxy-parameters.j2 ", dest: "/etc/nginx/proxy-parameters" }
   notify:
     - service nginx restart
 
@@ -65,7 +69,7 @@
 
 # Logging
 - name: Activate Nginx error logs checking
-  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/var/log/nginx/error.log" state=present
+  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/storage/log/nginx-error.log" state=present
 
 
 # Email

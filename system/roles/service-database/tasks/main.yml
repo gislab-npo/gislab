@@ -4,7 +4,7 @@
 #
 # Install and configure database server and create GIS template database.
 #
-# Logging: /var/log/syslog
+# Logging: /storage/log/syslog
 
 
 - name: Install packages
@@ -138,11 +138,6 @@
 - name: Grant connection to 'gislab' database for 'gislabusers'
   command: psql -c "GRANT CONNECT ON DATABASE gislab TO gislabusers;"
   sudo_user: postgres
-
-
-# Logging
-- name: Activate PostgreSQL error logs checking
-  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/var/log/postgresql/postgresql.log" state=present
 
 
 # Email

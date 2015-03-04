@@ -11,6 +11,9 @@
     - rsyslog
 
 
+- name: Create directory for storing log files
+  file: path=/storage/log state=directory owner=root group=root
+
 - name: Rsyslog configuration
   template: src={{ item.src }} dest={{ item.dest }}
   with_items:

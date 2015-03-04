@@ -1,5 +1,15 @@
 ---
 
+- name: Get random string for this test run
+  shell: date | md5sum | head -c 24
+  register: gislab_test_random_string
+  changed_when: False
+
+- name: Set random string for this test run
+  set_fact:
+    GISLAB_TEST_RANDOM_STRING: "{{ gislab_test_random_string.stdout }}"
+
+
 - name: Get value of GISLAB_ROOT variable
   shell: echo $GISLAB_ROOT
   register: test_gislab_root
