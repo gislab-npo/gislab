@@ -595,6 +595,9 @@
   args:
     executable: /bin/bash
 
+- name: Disable Apt cache proxy server
+  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt/apt.conf.d/02proxy state=absent
+
 
 # TFTP
 - name: Create TFTP directory
