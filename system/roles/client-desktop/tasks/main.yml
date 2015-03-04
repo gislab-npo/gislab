@@ -4,7 +4,7 @@
 #
 # Install and configure GIS.lab desktop client.
 #
-# Logging: /storage/log/syslog
+# Logging: /storage/log/syslog /storage/log/kern.log
 
 
 - name: Install packages

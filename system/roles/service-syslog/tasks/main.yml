@@ -14,13 +14,23 @@
 - name: Create directory for storing log files
   file: path=/storage/log state=directory owner=root group=root
 
-- name: Rsyslog configuration
+- name: Install rsyslog configuration
   template: src={{ item.src }} dest={{ item.dest }}
   with_items:
     - { src: 'rsyslog/rsyslog.conf.j2', dest: '/etc/rsyslog.conf' }
     - { src: 'rsyslog/50-default.conf.j2', dest: '/etc/rsyslog.d/50-default.conf' }
   notify:
     - service rsyslog restart
+
+- name: Remove old log files
+  file: path="{{ item }}" state=absent
+  with_items:
+    - /var/log/syslog
+    - /var/log/kern.log
+
+
+- name: Install logrotate configuration
+  template: src=logrotate/rsyslog.j2 dest=/etc/logrotate.d/rsyslog
 
 
 - meta: flush_handlers
