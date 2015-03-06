@@ -40,9 +40,118 @@
   changed_when: False
 
 
+# gislab-adduser|deluser
+# ordinary user account
 - name: Test if GIS.lab administrator tools are on path
   shell: which gislab-help
   ignore_errors: yes
   changed_when: False
+
+- name: Create ordinary test user account
+  shell: gislab-adduser
+    -g Test
+    -l User
+    -d "Test user account"
+    -m test{{ GISLAB_TEST_RANDOM_STRING }}@gis.lab
+    -p {{ GISLAB_TEST_RANDOM_STRING }}
+    test{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if ordinary test user account exists in LDAP database
+  shell: ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    '(&(uid=test{{ GISLAB_TEST_RANDOM_STRING }})(uidNumber>=3000)(gidNumber=3001)(homeDirectory=/mnt/home/test{{ GISLAB_TEST_RANDOM_STRING }})(gecos=Test User)(description=Test user account))'
+    | grep test{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Get info on home directory of ordinary test user
+  stat: path=/mnt/home/test{{ GISLAB_TEST_RANDOM_STRING }}
+  register: test_user_home_dir
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if home directory of ordinary test user exists and is a directory
+  assert:
+    that: "test_user_home_dir.stat.isdir is defined and test_user_home_dir.stat.isdir"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if ordinary test user account exists in PostgreSQL
+  shell: psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='test{{ GISLAB_TEST_RANDOM_STRING }}'" | grep 1
+  sudo_user: postgres
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if PostgreSQL ordinary test user is a member of gislabusers group
+  shell: psql -tAc "SELECT string_agg(rolname, ',')
+    FROM pg_user JOIN pg_auth_members ON (pg_user.usesysid=pg_auth_members.member)
+    JOIN pg_roles ON (pg_roles.oid=pg_auth_members.roleid)
+    WHERE pg_user.usename='test{{ GISLAB_TEST_RANDOM_STRING }}'"
+    | grep gislabusers
+  sudo_user: postgres
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if PostgreSQL schema exists for ordinary test user
+  shell: psql gislab -tAc "SELECT 1
+    FROM information_schema.schemata
+    WHERE schema_name='test{{ GISLAB_TEST_RANDOM_STRING }}'"
+    | grep 1
+  sudo_user: postgres
+  ignore_errors: yes
+  changed_when: False
+
+- name: Get info on publish directory of ordinary test user
+  stat: path=/storage/publish/test{{ GISLAB_TEST_RANDOM_STRING }}
+  register: test_user_publish_dir
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if publish directory of ordinary test user exists and is a directory
+  assert:
+    that: "test_user_publish_dir.stat.isdir is defined and test_user_publish_dir.stat.isdir"
+  ignore_errors: yes
+  changed_when: False
+
+
+# superuser account
+- name: Create superuser test user account
+  shell: gislab-adduser
+    -s
+    -g Test
+    -l SuperUser
+    -d "Test superuser account"
+    -m testsu{{ GISLAB_TEST_RANDOM_STRING }}@gis.lab
+    -p {{ GISLAB_TEST_RANDOM_STRING }}
+    testsu{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if test superuser is member of GIS.lab gislabadmins group
+  shell: ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// '(&(objectClass=posixGroup)(cn=gislabadmins)(gidNumber=3000)(memberUid=testsu{{ GISLAB_TEST_RANDOM_STRING }}))'
+    | grep testsu{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if PostgreSQL test superuser is a member of gislabadmins group
+  shell: psql -tAc "SELECT string_agg(rolname, ',')
+    FROM pg_user JOIN pg_auth_members ON (pg_user.usesysid=pg_auth_members.member)
+    JOIN pg_roles ON (pg_roles.oid=pg_auth_members.roleid)
+    WHERE pg_user.usename='testsu{{ GISLAB_TEST_RANDOM_STRING }}'"
+    | grep "gislabadmins,gislabusers"
+  sudo_user: postgres
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Remove test users accounts
+  shell: gislab-deluser -f "{{ item }}"
+  with_items:
+    - test{{ GISLAB_TEST_RANDOM_STRING }}
+    - testsu{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
 
 # vim:ft=ansible:
