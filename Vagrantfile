@@ -52,7 +52,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     server.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
 
     # provisioning
-    server.vm.provision "ansible" do |ansible|
+    server.vm.provision "install", type: "ansible" do |ansible|
       ansible.playbook = "system/gislab.yml"
       if CONFIG['GISLAB_DEBUG_INSTALL'] == true
         ansible.verbose = "vv"
@@ -64,7 +64,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # tests
     if CONFIG['GISLAB_TESTS_ENABLE'] == true
-      server.vm.provision "ansible" do |ansible|
+      server.vm.provision "test", type: "ansible" do |ansible|
         ansible.playbook = "system/test.yml"
         ansible.verbose = "vv"
       end
