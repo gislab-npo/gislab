@@ -134,6 +134,15 @@ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR: sk
 # Change requires running upgrade.
 GISLAB_APT_HTTP_PROXY:
 
+# List of custom Apt repositories which should be enabled for server and client as installation resources. Repositories
+# must provide Ubuntu Precise packages and it is recommended, that they are using 'ppa:imincik/gis' as a build
+# dependency.
+# Example:
+# - http://ppa.launchpad.net/my-ppa1/ubuntu precise main
+# - http://dl.google.com/linux/earth/deb/ stable main
+# Change requires running upgrade.
+GISLAB_APT_CUSTOM_REPOSITORIES:
+
 # Number of OWS workers to start. Worker machines run OWS services such as WMS and WFS and increase performance and
 # reliability of GIS.lab network. Maximum number of worker instances is 49 - do not start more.
 GISLAB_WORKERS_COUNT: 0
@@ -212,8 +221,7 @@ GISLAB_CLIENT_KEYBOARDS:
 # List of extra packages to install to client images.
 # Change requires running upgrade.
 # Example:
-# - bc
-# - htop
+# - google-earth-stable
 # Change requires running upgrade.
 GISLAB_CLIENT_INSTALL_PACKAGES:
 
@@ -271,14 +279,6 @@ GISLAB_DEBUG_SERVICES: no
 # * yes: provide support for GIS development
 # Change requires running upgrade.
 GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT: no
-
-# List of custom Apt repositories which should be enabled for server and client. Repositories must provide Ubuntu
-# Precise packages it is recommended that they use 'ppa:imincik/gis' as a build dependency.
-# Example:
-# - deb http://ppa.launchpad.net/my-ppa1/ubuntu precise main
-# - deb http://ppa.launchpad.net/my-ppa2/ubuntu precise main
-# Change requires running upgrade.
-GISLAB_APT_CUSTOM_REPOSITORIES:
 
 # Run tests after installation is finished
 # # Possible values are:

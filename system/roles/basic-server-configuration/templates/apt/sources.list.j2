@@ -17,7 +17,7 @@ deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main
 {% if GISLAB_APT_CUSTOM_REPOSITORIES %}
 #### Custom repositories
 {% for repository in GISLAB_APT_CUSTOM_REPOSITORIES %}
-{{ repository }}
+deb {{ repository }}
 {% endfor %}
 {% endif %}
 
