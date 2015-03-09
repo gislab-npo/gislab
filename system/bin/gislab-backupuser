@@ -114,14 +114,14 @@ tar -cjf $PUBLISH_BACKUP_FILE /storage/publish/$GISLAB_USER
 
 # backup database data
 cd $TEMP_BACKUP_DIR # leave root's home dir before sudo to postgres
-sudo -u postgres psql -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball" > /dev/null
-sudo -u postgres psql -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing" > /dev/null
-sudo -u postgres psql -d gislab -c "CREATE TABLE ${GISLAB_USER}.gislab_ball AS SELECT * FROM storage_ball WHERE \"user\" = '$GISLAB_USER';"
-sudo -u postgres psql -d gislab -c "CREATE TABLE ${GISLAB_USER}.gislab_drawing AS SELECT * FROM storage_drawing WHERE \"user\" = '$GISLAB_USER';"
+psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball;" > /dev/null
+psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing;" > /dev/null
+psql -U postgres -d gislab -c "CREATE TABLE ${GISLAB_USER}.gislab_ball AS SELECT * FROM storage_ball WHERE \"user\" = '$GISLAB_USER';"
+psql -U postgres -d gislab -c "CREATE TABLE ${GISLAB_USER}.gislab_drawing AS SELECT * FROM storage_drawing WHERE \"user\" = '$GISLAB_USER';"
 
-sudo -u postgres pg_dump -Fc --schema=$GISLAB_USER gislab > $DB_BACKUP_FILE
-sudo -u postgres psql gislab -c "DROP TABLE ${GISLAB_USER}.gislab_ball" > /dev/null
-sudo -u postgres psql gislab -c "DROP TABLE ${GISLAB_USER}.gislab_drawing" > /dev/null
+pg_dump -U postgres -Fc --schema=$GISLAB_USER gislab > $DB_BACKUP_FILE
+psql -U postgres -d gislab -c "DROP TABLE ${GISLAB_USER}.gislab_ball;" > /dev/null
+psql -U postgres -d gislab -c "DROP TABLE ${GISLAB_USER}.gislab_drawing;" > /dev/null
 
 
 # backup LDAP data

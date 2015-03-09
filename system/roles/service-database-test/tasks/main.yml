@@ -1,3 +1,9 @@
 ---
 
+- name: Test if PostgreSQL database is running and 'gislab' database contains PostGIS
+  shell: psql -U postgres -d gislab -tAc "SELECT postgis_version()"
+  ignore_errors: yes
+  changed_when: False
+
+
 # vim:ft=ansible:

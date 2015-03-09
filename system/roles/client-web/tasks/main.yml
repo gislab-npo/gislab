@@ -113,8 +113,7 @@
     - service gislab-web restart
 
 - name: Grant privileges to database tables
-  shell:  psql gislab -c "GRANT SELECT, INSERT, UPDATE, DELETE ON {{ item }} TO gislab_web"
-  sudo_user: postgres
+  shell: psql -U postgres -d gislab -c "GRANT SELECT, INSERT, UPDATE, DELETE ON {{ item }} TO gislab_web"
   with_items:
     - auth_group
     - auth_group_permissions
@@ -131,8 +130,7 @@
     executable: /bin/bash
 
 - name: Grant privileges to sequences
-  shell:  psql gislab -c "GRANT SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO gislab_web"
-  sudo_user: postgres
+  shell:  psql -U postgres -d gislab -c "GRANT SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO gislab_web"
 
 - name: Collect static files
   django_manage: command=collectstatic app_path=/var/www/gislab-web settings=djproject.settings virtualenv=/usr/local/python-virtualenvs/gislab-web

@@ -114,13 +114,13 @@ gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
 
 
 # create PostgreSQL user account
-sudo su - postgres -c "createuser --no-superuser --no-createdb --no-createrole $GISLAB_USER" # PostgreSQL account
-sudo su - postgres -c "psql -c \"GRANT gislabusers TO $GISLAB_USER;\""
-sudo su - postgres -c "psql -d gislab -c \"CREATE SCHEMA AUTHORIZATION $GISLAB_USER;\""
+createuser -U postgres --no-superuser --no-createdb --no-createrole $GISLAB_USER
+psql -U postgres -c "GRANT gislabusers TO $GISLAB_USER;"
+psql -U postgres -d gislab -c "CREATE SCHEMA AUTHORIZATION $GISLAB_USER;"
 
 # add user to the database superusers group if creating superuser account
 if [ "$SUDO" == "yes" ]; then
-	sudo su - postgres -c "psql -c \"GRANT gislabadmins TO $GISLAB_USER;\""
+	psql -U postgres -c "GRANT gislabadmins TO $GISLAB_USER;"
 fi
 
 

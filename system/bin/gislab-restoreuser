@@ -118,13 +118,13 @@ chown -R $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
 
 
 # restore database
-sudo -u postgres pg_restore -n $GISLAB_USER -d gislab postgresql.dump
+pg_restore -U postgres -d gislab -n $GISLAB_USER postgresql.dump
 
-sudo -u postgres psql -d gislab -c "INSERT INTO storage_ball SELECT * FROM ${GISLAB_USER}.gislab_ball;"
-sudo -u postgres psql -d gislab -c "INSERT INTO storage_drawing SELECT * FROM ${GISLAB_USER}.gislab_drawing;"
+psql -U postgres -d gislab -c "INSERT INTO storage_ball SELECT * FROM ${GISLAB_USER}.gislab_ball;"
+psql -U postgres -d gislab -c "INSERT INTO storage_drawing SELECT * FROM ${GISLAB_USER}.gislab_drawing;"
 
-sudo -u postgres psql gislab -c "DROP TABLE ${GISLAB_USER}.gislab_ball" > /dev/null
-sudo -u postgres psql gislab -c "DROP TABLE ${GISLAB_USER}.gislab_drawing" > /dev/null
+psql -U postgres -d gislab -c "DROP TABLE ${GISLAB_USER}.gislab_ball" > /dev/null
+psql -U postgres -d gislab -c "DROP TABLE ${GISLAB_USER}.gislab_drawing" > /dev/null
 
 
 # clean up

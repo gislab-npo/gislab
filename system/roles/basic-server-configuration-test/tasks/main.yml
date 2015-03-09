@@ -78,27 +78,24 @@
   changed_when: False
 
 - name: Test if ordinary test user account exists in PostgreSQL
-  shell: psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='test{{ GISLAB_TEST_RANDOM_STRING }}'" | grep 1
-  sudo_user: postgres
+  shell: psql -U postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='test{{ GISLAB_TEST_RANDOM_STRING }}'" | grep 1
   ignore_errors: yes
   changed_when: False
 
 - name: Test if PostgreSQL ordinary test user is a member of gislabusers group
-  shell: psql -tAc "SELECT string_agg(rolname, ',')
+  shell: psql -U postgres -tAc "SELECT string_agg(rolname, ',')
     FROM pg_user JOIN pg_auth_members ON (pg_user.usesysid=pg_auth_members.member)
     JOIN pg_roles ON (pg_roles.oid=pg_auth_members.roleid)
     WHERE pg_user.usename='test{{ GISLAB_TEST_RANDOM_STRING }}'"
     | grep gislabusers
-  sudo_user: postgres
   ignore_errors: yes
   changed_when: False
 
 - name: Test if PostgreSQL schema exists for ordinary test user
-  shell: psql gislab -tAc "SELECT 1
+  shell: psql -U postgres -d gislab -tAc "SELECT 1
     FROM information_schema.schemata
     WHERE schema_name='test{{ GISLAB_TEST_RANDOM_STRING }}'"
     | grep 1
-  sudo_user: postgres
   ignore_errors: yes
   changed_when: False
 
@@ -111,6 +108,41 @@
 - name: Test if publish directory of ordinary test user exists and is a directory
   assert:
     that: "test_user_publish_dir.stat.isdir is defined and test_user_publish_dir.stat.isdir"
+  ignore_errors: yes
+  changed_when: False
+
+
+# gislab-backupuser|restoreuser
+- name: Create test files in user's directories
+  shell: touch {{ item }}
+  with_items:
+    - /mnt/home/test{{ GISLAB_TEST_RANDOM_STRING }}/test.txt
+    - /mnt/publish/test{{ GISLAB_TEST_RANDOM_STRING }}/test.txt
+  ignore_errors: yes
+  changed_when: False
+
+- name: Backup test user account
+  shell: gislab-backupuser
+    -d /tmp/test{{ GISLAB_TEST_RANDOM_STRING }}_backupuser
+    test{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Restore test user account
+  shell: gislab-deluser -f test{{ GISLAB_TEST_RANDOM_STRING }}
+    && gislab-restoreuser
+    -f /tmp/test{{ GISLAB_TEST_RANDOM_STRING }}_backupuser/$(ls -1 /tmp/test{{ GISLAB_TEST_RANDOM_STRING }}_backupuser)
+    test{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if test user's file data is restored
+  shell: file {{ item }}
+  with_items:
+    - /mnt/home/test{{ GISLAB_TEST_RANDOM_STRING }}/.config/QGIS/QGIS2.conf
+    - /mnt/home/test{{ GISLAB_TEST_RANDOM_STRING }}/.grass7
+    - /mnt/home/test{{ GISLAB_TEST_RANDOM_STRING }}/test.txt
+    - /mnt/publish/test{{ GISLAB_TEST_RANDOM_STRING }}/test.txt
   ignore_errors: yes
   changed_when: False
 
@@ -135,12 +167,11 @@
   changed_when: False
 
 - name: Test if PostgreSQL test superuser is a member of gislabadmins group
-  shell: psql -tAc "SELECT string_agg(rolname, ',')
+  shell: psql -U postgres -tAc "SELECT string_agg(rolname, ',')
     FROM pg_user JOIN pg_auth_members ON (pg_user.usesysid=pg_auth_members.member)
     JOIN pg_roles ON (pg_roles.oid=pg_auth_members.roleid)
     WHERE pg_user.usename='testsu{{ GISLAB_TEST_RANDOM_STRING }}'"
     | grep "gislabadmins,gislabusers"
-  sudo_user: postgres
   ignore_errors: yes
   changed_when: False
 
