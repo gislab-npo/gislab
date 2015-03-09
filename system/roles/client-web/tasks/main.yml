@@ -84,7 +84,8 @@
 
 
 - name: Generate secret key (run only once)
-  shell: pwgen -sy 50 1 | sed 's/"/_/g' > /etc/gislab/gislab-web_secret_key.txt && chmod 600 /etc/gislab/gislab-web_secret_key.txt
+  shell: python /tmp/gislab-web/utils/secret_key.py > /etc/gislab/gislab-web_secret_key.txt
+    && chmod 600 /etc/gislab/gislab-web_secret_key.txt
   args:
     creates: /etc/gislab/gislab-web_secret_key.txt
 
