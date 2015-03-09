@@ -1,3 +1,38 @@
 ---
 
+- name: Create test user account for mapserver service tests
+  shell: gislab-adduser
+    -g Test
+    -l User
+    -d "Test user account"
+    -m test_mapserver_{{ GISLAB_TEST_RANDOM_STRING }}@gis.lab
+    -p {{ GISLAB_TEST_RANDOM_STRING }}
+    test_mapserver_{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Publish GIS project in test user's publish dir
+  shell: cp -a /mnt/repository/gislab-project/natural-earth /mnt/publish/test_mapserver_{{ GISLAB_TEST_RANDOM_STRING }}/
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Test WMS GetCapabilies request without project
+  shell: curl -I "http://ms.gis.lab:91/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&REQUEST=GetCapabilities" | grep "HTTP/1.1 200 OK"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test WMS GetCapabilies request with example GIS.lab project
+  shell: curl "http://ms.gis.lab:91/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&REQUEST=GetCapabilities&MAP=test_mapserver_{{ GISLAB_TEST_RANDOM_STRING }}//natural-earth/central-europe.qgs"
+    | grep "<Title>Countries of Central Europe</Title>"
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Remove test user account used for mapserver service tests
+  shell: gislab-deluser -f test_mapserver_{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+
 # vim:ft=ansible:
