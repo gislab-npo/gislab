@@ -1,3 +1,18 @@
 ---
 
+- name: Test 'gis.lab' DNS records are resolved
+  shell: ping -c 1 {{ item }}.gis.lab
+  with_items:
+    - server
+    - boot
+    - db
+    - ms
+    - web
+    - chat
+    - stats
+    - qgis
+  ignore_errors: yes
+  changed_when: False
+
+
 # vim:ft=ansible:
