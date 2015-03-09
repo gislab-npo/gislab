@@ -167,11 +167,11 @@
   changed_when: False
 
 - name: Test if PostgreSQL test superuser is a member of gislabadmins group
-  shell: psql -U postgres -tAc "SELECT string_agg(rolname, ',')
+  shell: psql -U postgres -tAc "SELECT 1
     FROM pg_user JOIN pg_auth_members ON (pg_user.usesysid=pg_auth_members.member)
     JOIN pg_roles ON (pg_roles.oid=pg_auth_members.roleid)
-    WHERE pg_user.usename='testsu{{ GISLAB_TEST_RANDOM_STRING }}'"
-    | grep "gislabadmins,gislabusers"
+    WHERE pg_user.usename='testsu{{ GISLAB_TEST_RANDOM_STRING }}' AND rolname='gislabadmins'"
+    | grep 1
   ignore_errors: yes
   changed_when: False
 
