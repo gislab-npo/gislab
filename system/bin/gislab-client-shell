@@ -12,24 +12,24 @@ gislab_require_root
 
 # usage
 function usage() {
-        echo "USAGE: $(basename $0) [ -i ] [ COMMAND [ARG] ]"
-        echo "Run command or interactive shell in current GIS.lab client chroot system."
-        echo -e "\nOPTIONS
-        -i run interactive shell in GIS.lab client chroot system. Other options will be ignored.
-        -h display this help
-        "
-        exit 255
+	echo "USAGE: $(basename $0) [ -i ] [ COMMAND [ARG] ]"
+	echo "Run command or launch interactive shell in GIS.lab client's chroot."
+	echo -e "\nOPTIONS
+	-i launch interactive shell in GIS.lab client's chroot. Other options will be ignored.
+	-h display this help
+	"
+	exit 255
 }
 
 
 # options
 while getopts "ih" OPTION
 do
-        case "$OPTION" in
-                i) INTERCTIVE="yes" ;;
-                h) usage ;;
-                \?) exit 1 ;;
-        esac
+    case "$OPTION" in
+		i) INTERCTIVE="yes" ;;
+		h) usage ;;
+        \?) exit 1 ;;
+    esac
 done
 if [ $# -eq 0 ]; then usage; fi
 
@@ -46,8 +46,8 @@ fi
 
 
 # sanity checks
-if [ "$GISLAB_SUITE" != "lab" ]; then
-	gislab_print_error "This command can only be run when GISLAB_SUITE is set to 'lab'."
+if [ ! -f "$GISLAB_INSTALL_CLIENT_ROOT/etc/gislab_version" ]; then
+	gislab_print_error "GIS.lab client chroot doesn't exist. GISLAB_SUITE must be set to 'lab' to build client image"
 fi
 
 
@@ -74,6 +74,10 @@ exit 0
 EOF
 
 	chmod +x $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon
+
+	if [ "$INTERCTIVE" == "yes" ]; then
+		gislab_print_info "Entering GIS.lab client chroot. Run 'exit' command or press 'CTRL-D' to exit"
+	fi
 } 
 
 
@@ -85,6 +89,10 @@ function post_chroot {
 
 	rm -f $GISLAB_INSTALL_CLIENT_ROOT/usr/sbin/policy-rc.d
 	mv -f $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon.real $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon
+
+	if [ "$INTERCTIVE" == "yes" ]; then
+		gislab_print_info "Leaving GIS.lab client chroot. Run 'gislab-client-image' to build client image from chroot"
+	fi
 }
 	
 
