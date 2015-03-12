@@ -126,6 +126,9 @@
     - /usr/local/python-virtualenvs
     - /storage/applications
 
+- name: Set safe permissions for /etc/gislab directory
+  file: path=/etc/gislab state=directory owner=root group=root mode=0700
+
 
 # Basic server configuration
 - name: Add GISLAB_ROOT variable to server's environment
