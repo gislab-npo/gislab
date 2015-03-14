@@ -62,12 +62,11 @@ GISLAB_WORKER_MEMORY: 512
 # * yes: launch GUI console
 GISLAB_SERVER_GUI_CONSOLE: no
 
-# Absolute path to private SSH key, which is used for connection to GIS.lab server, when performing installation or
-# update. This key must match public key located on GIS.lab server. Public key located on server can be changed at any
-# time by updating content of '/home/vagrant/.ssh/authorized_keys' file with a new key.
+# Absolute path to private SSH key, which is used for GIS.lab server installation or update. This key must match public
+# key located on GIS.lab server in '/home/vagrant/.ssh/authorized_keys' file. Empty value means, that private and public
+# SSH keys will be generated and managed by Vagrant.
 # This configuration is valid only for Vagrant provisioner (when using Ansible provisioner, public SSH key is specified
-# by '--private-key' option). Empty value means, that well known, insecure key is used for connection, which is
-# a potentially dangerous configuration.
+# by '--private-key' option).
 # Example: /home/user/.ssh/id_rsa
 GISLAB_SSH_PRIVATE_KEY:
 
