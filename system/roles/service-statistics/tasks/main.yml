@@ -57,10 +57,9 @@
 - name: Remove unnecessary Munin configuration
   file: path={{ item }} state=absent
   with_items:
-    - /etc/apache2/conf.d/munin
     - /etc/cron.d/munin-node
   notify:
-    - service apache2 restart
+    - service nginx restart
 
 
 # Nginx

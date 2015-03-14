@@ -11,12 +11,11 @@ GISLAB_WORKER_INSTALL_BASIC_PACKAGES:
   - vim
 
 GISLAB_WORKER_INSTALL_PACKAGES:
-  - apache2
-  - apache2-mpm-worker
-  - libapache2-mod-fcgid
+  - lighttpd
   - python-gdal
   - python-qgis
   - qgis
   - qgis-mapserver
+
 
 # vim:ft=ansible:

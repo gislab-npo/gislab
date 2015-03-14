@@ -2,15 +2,15 @@
 #
 ### GIS.lab WORKER CLIENT ###
 #
-# Install and configure worker client.
-# Worker client is useful for OWS services load balancing in environments, where no network boot is available
-# (for example in Amazon AWS). Worker client can be installed to basic server instance by downloading installation package
-# from GIS.lab server, unpacking it and running installation script. This process can be automatized by running
-# following commands (in Amazon AWS add this script to 'cloud-data'):
+# Build installation package for OWS worker.
+# Purpose of worker client is horizontal scaling of OWS requests processing. This task creates installation package,
+# which can be downloaded from GIS.lab server and installed on GIS.lab Desktop client or any other server running
+# supported OS.
 
+# Example worker installation:
 # $ mkdir -p /tmp/install
 # && cd /tmp/install
-# && curl --silent http://%s.5/worker.tar.gz | tar xz
+# && curl --silent http://<GIS.lab server IP>/worker.tar.gz | tar xz
 # && bash ./install.sh &> /var/log/gislab-install.log
 
 
@@ -82,7 +82,6 @@
   template: src=munin-node/munin-node.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/munin/munin-node.conf
 
 
-# Worker configuration
 # syslog
 - name: Create directory for syslog configuration
   file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/etc/rsyslog.d state=directory
@@ -92,33 +91,28 @@
 
 
 # Xvfb
-# to enable more advanced print capabilities in QGIS, we need to launch fake X server
-# see: http://hub.qgis.org/issues/9295 and http://www.itopen.it/2014/03/13/qgis-server-setup-notes
 - name: Copy configuration file for X server
   command: cp --parents {{ item }} {{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker
   with_items:
-  - /etc/init/xvfb.conf
-  - /etc/init.d/xvfb
+    - /etc/init/xvfb.conf
+    - /etc/init.d/xvfb
 
 # mapserver
-- name: Copy index.html for mapserver
+- name: Copy default web page content
   command: cp --parents /var/www/default/index.html {{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker
 
-- name: Copy configuration files for mapserver
+- name: Copy configuration files for web server powering QGIS Server
   command: cp --parents {{ item }} {{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker
   with_items:
-  - /etc/apache2/ports.conf
-  - /etc/apache2/mods-available/fcgid.conf
-  - /etc/apache2/conf.d/other-vhosts-access-log
-  - /etc/apache2/sites-available/default
-  - /etc/apache2/sites-available/mapserver
+    - /etc/lighttpd/lighttpd.conf
+    - /etc/lighttpd/conf-enabled/10-fastcgi.conf
 
 # serf
 - name: Install serf upstart scripts
   template: src={{ item.src }} dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/{{ item.dest }}
   with_items:
-  - { src: "serf/serf.conf.j2", dest: "/etc/init/serf.conf" }
-  - { src: "serf/serf-join.conf.j2", dest: "/etc/init/serf-join.conf" }
+    - { src: "serf/serf.conf.j2", dest: "/etc/init/serf.conf" }
+    - { src: "serf/serf-join.conf.j2", dest: "/etc/init/serf-join.conf" }
 
 - name: Create directory for serf scripts
   file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/etc/serf/bin state=directory recurse=yes

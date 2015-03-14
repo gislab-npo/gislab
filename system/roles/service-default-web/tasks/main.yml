@@ -5,40 +5,14 @@
 # Install web server and configure default web page content.
 #
 # Logging:
-#   production: /storage/log/syslog /storage/log/nginx-error.log
-#   debug:      /storage/log/apache2-access.log
-#               /storage/log/nginx-access.log /storage/log/nginx-error.log
-#               /storage/log/syslog
+#   production: /storage/log/nginx-error.log
+#   debug:      /storage/log/nginx-access.log /storage/log/nginx-error.log
 
 
 - name: Install packages
   apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
-    - apache2
-    - apache2-mpm-worker
     - nginx
-
-
-# Apache
-- name: Configure Apache
-  template: src={{ item.src }} dest={{ item.dest }}
-  with_items:
-    - { src: "apache2/apache2.conf.j2", dest: "/etc/apache2/apache2.conf" }
-    - { src: "apache2/ports.conf.j2", dest: "/etc/apache2/ports.conf" }
-    - { src: "apache2/other-vhosts-access-log.j2", dest: "/etc/apache2/conf.d/other-vhosts-access-log" }
-  notify:
-    - service apache2 restart
-
-
-- name: Configure default Apache virtualhost
-  template: src=apache2/site-default.j2 dest=/etc/apache2/sites-available/default
-  notify:
-    - service apache2 restart
-
-- name: Enable default Apache virtualhost
-  command: a2ensite default
-  notify:
-    - service apache2 restart
 
 
 # Nginx
@@ -61,7 +35,7 @@
   file: path=/var/www/default state=directory
 
 - name: Install default web page content
-  copy: src=static/index.html dest=/var/www/default/index.html
+  template: src=index.html dest=/var/www/default/index.html
 
 - name: Add 'gislab_version' file to default web content
   file: src=/etc/gislab_version dest=/var/www/default/gislab_version owner=root group=root state=link

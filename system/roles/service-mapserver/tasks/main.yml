@@ -6,21 +6,19 @@
 #
 # Logging:
 #   production: /storage/log/syslog
-#   debug:      /storage/log/syslog /storage/log/apache2-access.log
+#   debug:      /storage/log/syslog
 
 
 - name: Install packages
   apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
-    - apache2
-    - apache2-mpm-worker
-    - libapache2-mod-fcgid
+    - lighttpd
     - qgis-mapserver
     - xvfb
 
 
 # Xvfb
-# to enable more advanced print capabilities in QGIS, we need to launch fake X server
+# In order to enable more advanced print capabilities in QGIS, we need to launch fake X server needed by Qt libs
 # see: http://hub.qgis.org/issues/9295 and http://www.itopen.it/2014/03/13/qgis-server-setup-notes
 - name: Configure Xvfb service
   template: src=init/xvfb.conf.j2 dest=/etc/init/xvfb.conf
@@ -33,34 +31,16 @@
     - service xvfb restart
 
 
-# Apache modules
-- name: Enable 'rewrite' and 'exipres' Apache modules
-  command: "{{ item }}"
+- name: Install Lighttpd configuration
+  template: src={{ item.src }} dest={{ item.dest }}
   with_items:
-    - a2enmod rewrite
-    - a2enmod expires
+    - { src: lighttpd/lighttpd.conf.j2, dest: /etc/lighttpd/lighttpd.conf }
+    - { src: lighttpd/10-fastcgi.conf.j2, dest: /etc/lighttpd/conf-enabled/10-fastcgi.conf }
   notify:
-    - service apache2 restart
-
-- name: Configure Apache FCGI
-# Xvfb Xvfb support for QGIS GetPrint requests is enabled here by DISPLAY variable
-  template: src=apache2/fcgid.conf.j2 dest=/etc/apache2/mods-available/fcgid.conf
-  notify:
-    - service apache2 restart
-
-
-# Mapserver
-- name: Configure Mapserver virtualhost
-  template: src=apache2/site-mapserver.j2 dest=/etc/apache2/sites-available/mapserver
-  notify:
-    - service apache2 restart
-
-- name: Enable Mapserver virtualhost
-  command: a2ensite mapserver
-  notify:
-    - service apache2 restart
+    - service lighttpd restart
 
 
 - meta: flush_handlers
+
 
 # vim:ft=ansible:

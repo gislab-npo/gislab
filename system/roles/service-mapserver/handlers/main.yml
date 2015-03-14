@@ -3,7 +3,8 @@
 - name: service xvfb restart
   service: name=xvfb state=restarted
 
-- name: service apache2 restart
-  service: name=apache2 state=restarted
+- name: service lighttpd restart
+  service: name=lighttpd state=restarted
+
 
 # vim:ft=ansible:

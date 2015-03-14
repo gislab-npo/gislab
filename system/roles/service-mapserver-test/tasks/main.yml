@@ -23,8 +23,32 @@
   changed_when: False
 
 - name: Test WMS GetCapabilies request with example GIS.lab project
-  shell: curl "http://ms.gis.lab:91/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&REQUEST=GetCapabilities&MAP=test_mapserver_{{ GISLAB_TEST_RANDOM_STRING }}//natural-earth/central-europe.qgs"
+  shell: curl "http://ms.gis.lab:91/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&REQUEST=GetCapabilities&MAP=test_mapserver_{{ GISLAB_TEST_RANDOM_STRING }}/natural-earth/central-europe.qgs"
     | grep "<Title>Countries of Central Europe</Title>"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test WMS GetMap request with example GIS.lab project
+  shell: curl "http://ms.gis.lab:91/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&MAP=test_mapserver_{{ GISLAB_TEST_RANDOM_STRING }}/natural-earth/central-europe.qgs&LAYERS=Other,Western+Countries,Visegrad+Four,Roads,Places&SRS=EPSG:3857&WIDTH=1024&HEIGHT=768&TRANSPARENT=True&FORMAT=png&BBOX=651496.191979,5688462.82139,3156184.73448,7566979.22827"
+    > /tmp/test_mapserver_getmap_{{ GISLAB_TEST_RANDOM_STRING }}.png
+    && file /tmp/test_mapserver_getmap_{{ GISLAB_TEST_RANDOM_STRING }}.png
+    | grep "PNG image data, 1024 x 768, 8-bit/color RGBA, non-interlaced"
+    && rm /tmp/test_mapserver_getmap_{{ GISLAB_TEST_RANDOM_STRING }}.png
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test WMS GetLegendGraphic request with example GIS.lab project
+  shell: curl "http://ms.gis.lab:91/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&MAP=test_mapserver_{{ GISLAB_TEST_RANDOM_STRING }}/natural-earth/central-europe.qgs&LAYERS=Visegrad+Four&SRS=EPSG:3857&FORMAT=png&SCALE=1155581&LAYERFONTSIZE=8&LAYERFONTBOLD=true&SYMBOLHEIGHT=3&SYMBOLWIDTH=5&ITEMFONTSIZE=8&ICONLABELSPACE=5"
+    > /tmp/test_mapserver_getlegend_{{ GISLAB_TEST_RANDOM_STRING }}.png
+    && file /tmp/test_mapserver_getlegend_{{ GISLAB_TEST_RANDOM_STRING }}.png
+    | grep "PNG image data, 128 x 99, 8-bit/color RGB, non-interlaced"
+    && rm /tmp/test_mapserver_getlegend_{{ GISLAB_TEST_RANDOM_STRING }}.png
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test WMS GetFeatureinfo request with example GIS.lab project
+  shell: curl "http://ms.gis.lab:91/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetFeatureinfo&MAP=test_mapserver_{{ GISLAB_TEST_RANDOM_STRING }}/natural-earth/central-europe.qgs&LAYERS=Other,Western+Countries,Visegrad+Four,Roads,Places&QUERY_LAYERS=Other,Western+Countries,Visegrad+Four,Roads,Places&SRS=EPSG:3857&HEIGHT=250&WIDTH=1107&INFO_FORMAT=application%2Fvnd.ogc.gml&X=549&Y=133&BBOX=2196900.029634,6239313.778502,2535363.190833,6315750.806776"
+    | grep "<qgs:NAME>Presov</qgs:NAME>"
   ignore_errors: yes
   changed_when: False
 
