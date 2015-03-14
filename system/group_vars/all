@@ -88,7 +88,7 @@ GISLAB_ADMIN_SURNAME: GIS.lab
 
 # GIS.lab administrator email. All administrator emails including system logs will be sent to this address.
 # Example: ivan.mincik@gmail.com
-GISLAB_ADMIN_EMAIL: root@gis.lab
+GISLAB_ADMIN_EMAIL: gislab@gis.lab
 
 
 
