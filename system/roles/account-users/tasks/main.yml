@@ -92,6 +92,12 @@
     - { src: conky/conky.desktop.j2, dest: /etc/skel/.config/autostart/conky.desktop }
 
 
+- name: Install Mutt configuration
+  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  with_items:
+    - { src: mutt/muttrc.j2, dest: /etc/skel/.muttrc }
+
+
 - name: Prepare Pidgin directory in skeleton
   file: path=/etc/skel/.purple state=directory owner=root group=root
 

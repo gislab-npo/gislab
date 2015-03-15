@@ -177,6 +177,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
   - lightdm-gtk-greeter
   - mc
   - mkelfimage
+  - mutt
   - nbd-client
   - nfs-common
   - openssh-server

@@ -1,3 +1,34 @@
 ---
 
+- name: Create test superuser account for mail service tests
+  shell: gislab-adduser
+    -s
+    -g Test
+    -l User
+    -d "Test user account"
+    -m test_mail_{{ GISLAB_TEST_RANDOM_STRING }}@gis.lab
+    -p {{ GISLAB_TEST_RANDOM_STRING }}
+    test_mail_{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Send a test email to root user
+  shell: echo "This is a test message sent by GIS.lab test {{ GISLAB_TEST_RANDOM_STRING }}"
+    | mail -s "Test message" root
+  changed_when: False
+
+- name: Test if email to root user was forwarded to test superuser
+  shell: grep -r "This is a test message sent by GIS.lab test {{ GISLAB_TEST_RANDOM_STRING }}"
+    /mnt/home/test_mail_{{ GISLAB_TEST_RANDOM_STRING }}/Mail/new
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Remove test user account used for mail service tests
+  shell: gislab-deluser -f test_mail_{{ GISLAB_TEST_RANDOM_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+
 # vim:ft=ansible:

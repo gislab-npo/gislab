@@ -1,7 +1,7 @@
 $TTL    604800
 $ORIGIN gis.lab.
 @  3600  IN    SOA       ns.gis.lab. root.gis.lab. (
-               2013112203     ; Serial
+               2015031501     ; Serial
                604800         ; Refresh
                86400          ; Retry
                2419200        ; Expire
@@ -9,6 +9,7 @@ $ORIGIN gis.lab.
                )
 
          IN    NS       ns.gis.lab.
+         IN    MX  10   server.gis.lab.
 
 ns       IN    A        {{ GISLAB_NETWORK_SERVER_IP }}
 ns1      IN    A        {{ GISLAB_NETWORK_SERVER_IP }}
