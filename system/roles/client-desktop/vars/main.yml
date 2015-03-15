@@ -247,7 +247,6 @@ GISLAB_CLIENT_GIS_DEVELOPMENT_PACKAGES:
   - txt2tags
   - xauth
   - xfonts-base
-  - xvfb
 
 # List of packages to remove client images.
 # To find out the reason why package was installed use '$ aptitude why <package>'.
