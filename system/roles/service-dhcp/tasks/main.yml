@@ -10,6 +10,7 @@
 - name: Install packages
   apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
+    - arp-scan
     - isc-dhcp-server
 
 
