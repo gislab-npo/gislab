@@ -48,7 +48,7 @@
   file: path=/storage/applications/postgresql state=directory owner=postgres group=postgres
 
 - name: Create new PostgreSQL cluster in '/storage/applications/postgresql' if not exists
-  shell: pg_createcluster --locale en_US.UTF-8 --datadir=/storage/applications/postgresql 9.1 main
+  shell: LC_ALL=en_US.UTF-8 pg_createcluster --locale en_US.UTF-8 --datadir=/storage/applications/postgresql 9.1 main
   args:
     creates: /storage/applications/postgresql/PG_VERSION
 

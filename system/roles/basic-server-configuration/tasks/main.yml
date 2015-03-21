@@ -147,6 +147,9 @@
 - name: Generate en_US.UTF-8 locale
   locale_gen: name=en_US.UTF-8 state=present
 
+- name: Set en_US.UTF-8 locale
+  shell: /usr/sbin/update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 LANGUAGE=en
+
 - name: Set timezone
   template: src=timezone.j2 dest=/etc/timezone
   notify:
