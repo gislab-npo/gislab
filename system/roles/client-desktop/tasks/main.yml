@@ -154,16 +154,9 @@
   args:
     executable: /bin/bash
 
-- name: Install GIS.lab client custom packages
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES|join(' ') }}"
-  args:
-    executable: /bin/bash
-  when: GISLAB_CLIENT_INSTALL_PACKAGES|default(None) != None
-
 - name: Install GIS development packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_GIS_DEVELOPMENT_PACKAGES|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT
@@ -434,7 +427,7 @@
     - ureadahead-other
 
 
-# Replacing shutdown commands with simple script, which will umount all network disks and immediately and power off
+# Replacing shutdown commands with simple script, which will umount all network disks and immediately power off
 # machine without trying to cleanly stop services. This is a workaround to a problems with various shutdown problems
 # caused by network mounted root and NBD itself (see LP #696454).
 

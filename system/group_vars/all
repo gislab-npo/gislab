@@ -110,6 +110,10 @@ GISLAB_SUITE: lab
 # Change requires GIS.lab re-installation.
 GISLAB_NETWORK: 192.168.50
 
+# Time zone. Check list of time zones here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
+# Change requires running upgrade.
+GISLAB_TIMEZONE: Europe/Bratislava
+
 # List of DNS servers which will be used in addition to GIS.lab's internal DNS server (for example for resolving local
 # DNS records of your LAN).
 # Example:
@@ -117,10 +121,6 @@ GISLAB_NETWORK: 192.168.50
 # - 192.168.0.9
 # Change requires running upgrade.
 GISLAB_DNS_SERVERS:
-
-# Time zone. Check list of time zones here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
-# Change requires running upgrade.
-GISLAB_TIMEZONE: Europe/Bratislava
 
 # Ubuntu packages repository country code. For Amazon AWS provider use value <region-name>.ec2
 # Example: sk             - Slovak Ubuntu mirror
@@ -217,13 +217,6 @@ GISLAB_CLIENT_LANGUAGES:
 # - layout: bb
 GISLAB_CLIENT_KEYBOARDS:
 
-# List of extra packages to install to client images.
-# Change requires running upgrade.
-# Example:
-# - google-earth-stable
-# Change requires running upgrade.
-GISLAB_CLIENT_INSTALL_PACKAGES:
-
 # Determines if client image should provide full support for VirtualBox client
 # * no: do not support VirtualBox client
 # * yes: provide support for VirtualBox client (VirtualBox guest additions installed)
@@ -237,11 +230,6 @@ GISLAB_CLIENT_VIRTUALBOX_SUPPORT: yes
 # Example: user/VBoxGuestAdditions.iso
 # Change requires running upgrade.
 GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO:
-
-# Mount external network storage on client machines. Place here a line in same format as in '/etc/fstab' file.
-# Example: 192.168.1.200:/ /media/storage nfs4 user,bg,exec 0 0
-# Change requires running upgrade.
-GISLAB_CLIENT_NETWORK_STORAGE:
 
 # Allow usage of GIS.lab clients as OWS services worker nodes, which in reality means that GIS.lab client will be
 # requested by some OWS requests from time to time.

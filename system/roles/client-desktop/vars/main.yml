@@ -204,7 +204,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
   - xvfb
 
 # List of GIS.lab client development packages (installed without recommended packages)
-GISLAB_CLIENT_GIS_DEVELOPMENT_PACKAGES:
+GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT:
   - bison
   - build-essential
   - ccache
@@ -241,7 +241,6 @@ GISLAB_CLIENT_GIS_DEVELOPMENT_PACKAGES:
   - python-qt4-dev
   - python-sip
   - python-sip-dev
-  - qgit
   - qgit
   - qt4-dev-tools
   - qt4-qmlviewer
