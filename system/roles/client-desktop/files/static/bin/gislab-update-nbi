@@ -1,5 +1,4 @@
 #!/bin/sh
-#
 
 set -e
 
@@ -38,7 +37,7 @@ for kernel in $ALL_KERNELS ; do
 		vmlinux*) 
 			version=${basename##vmlinux-}
 			initrd=$initrd-$version
-			 nbi=$nbi-$version
+			nbi=$nbi-$version
 		;;
 	esac
 
@@ -75,3 +74,5 @@ for kernel in $ALL_KERNELS ; do
 	fi
 done
 
+
+# vim: set ts=4 sts=4 sw=4 noet:
