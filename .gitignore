@@ -1,9 +1,8 @@
 TODO.txt
 tmp
 .vagrant/*
-barrel
 install.log
 http-boot/gislab-client-loader.iso
-user/*
 system/host_vars/*
+inventories/*
 *.pyc
