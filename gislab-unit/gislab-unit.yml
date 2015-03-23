@@ -49,10 +49,13 @@
         - { name: "vm.swappiness", value: "1" }
         - { name: "vm.vfs_cache_pressure", value: "50" }
 
-    - name: Add 'fstrim' daily cron job
-      copy: src=static/cron.daily/fstrim dest=/etc/cron.daily/fstrim mode=0755
+    - name: Add daily cron job to discard unused blocks on SSD disk (fstrim)
+      template: src=templates/cron.daily/fstrim dest=/etc/cron.daily/fstrim mode=0755
 
-    - name: Configure I/O scheduler
+    - name: Perform first discarding of unused blocks on SSD disk now (fstrim)
+      shell: bash /etc/cron.daily/fstrim
+
+    - name: Set I/O scheduler for SSD disk
       lineinfile: dest=/etc/default/grub
                   regexp='GRUB_CMDLINE_LINUX_DEFAULT=.*'
                   line='GRUB_CMDLINE_LINUX_DEFAULT="elevator=deadline"'
@@ -69,7 +72,7 @@
 
     - meta: flush_handlers
 
-    
+
     # Restart
     - name: Restart GIS.lab Unit machine
       command: shutdown -r now "GIS.lab Unit pre-installation task done"
