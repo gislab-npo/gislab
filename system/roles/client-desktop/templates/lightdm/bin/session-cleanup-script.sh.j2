@@ -9,9 +9,10 @@ rm -f /mnt/home/$USER/.gislab/session.lock
 
 
 # restart machine if new client image is available
-GISLAB_INSTALL_DATETIME_SERVER=$(curl http://server.gis.lab/gislab_version | grep "GISLAB_INSTALL_DATETIME" | awk -F "=" '{print $2}' | sed "s/\"//g")
+GISLAB_CLIENT_IMAGE_VERSION_SERVER=$(curl http://server.gis.lab/gislab_client_desktop.version)
+GISLAB_CLIENT_IMAGE_VERSION_CLIENT=$(cat /etc/gislab_client_desktop.version)
 
-if [ "$GISLAB_INSTALL_DATETIME" != "$GISLAB_INSTALL_DATETIME_SERVER" ]; then
+if [ "$GISLAB_CLIENT_IMAGE_VERSION_SERVER" != "$GISLAB_CLIENT_IMAGE_VERSION_CLIENT" ]; then
 	for i in $(seq 10 10 100); do
 		echo $i;
 		sleep 1;

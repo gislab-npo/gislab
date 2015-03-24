@@ -665,6 +665,9 @@
   args:
     executable: /bin/bash
 
+- name: Publish GIS.lab client image version file
+  file: src={{ GISLAB_INSTALL_CLIENT_IMAGE }}/gislab_client_desktop.version dest=/var/www/default/gislab_client_desktop.version state=link force=yes
+
 # Restart NBD server
 - name: Ensure that NBD server is up
   # NBD server is sometimes down after running update (see: https://github.com/imincik/gis-lab/issues/327)

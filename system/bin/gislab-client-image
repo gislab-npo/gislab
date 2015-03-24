@@ -38,7 +38,13 @@ fi
 
 
 TFTP_DIR=/var/lib/tftpboot/gislab/i386
-IMAGE_PATH=$GISLAB_INSTALL_CLIENT_IMAGE/i386.img
+IMAGE_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/i386.img
+IMAGE_VERSION=$(date +%s)
+IMAGE_VERSION_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/gislab_client_desktop.version
+
+
+# install image version file in to client chroot
+echo "$IMAGE_VERSION" > $GISLAB_INSTALL_CLIENT_ROOT/etc/gislab_client_desktop.version
 
 
 # create directory for image
@@ -60,16 +66,19 @@ find $TFTP_DIR -mindepth 1 \! -type d -exec chmod 0644 "{}" \;
 test -x /usr/bin/nice && nice=nice || unset nice
 test -x /usr/bin/ionice && /usr/bin/ionice -c3 true 2>/dev/null && ionice=ionice || unset ionice
 
-rm -f $IMAGE_PATH.tmp
+rm -f $IMAGE_FILE.tmp
 
-$nice $ionice mksquashfs $GISLAB_INSTALL_CLIENT_ROOT $IMAGE_PATH.tmp -e cdrom
+$nice $ionice mksquashfs $GISLAB_INSTALL_CLIENT_ROOT $IMAGE_FILE.tmp -e cdrom
 
 if [ $? -ne 0 ]; then
-	rm -f $IMAGE_PATH.tmp
+	rm -f $IMAGE_FILE.tmp
 	gislab_print_error "'mksquashfs' failed to build the GIS.lab client image"
 fi
 
-mv $IMAGE_PATH.tmp $IMAGE_PATH
+
+# place image to final destionation
+mv $IMAGE_FILE.tmp $IMAGE_FILE
+echo "$IMAGE_VERSION" > $IMAGE_VERSION_FILE
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
