@@ -105,10 +105,6 @@
     GISLAB_DEBUG_SERVICES="{{ GISLAB_DEBUG_SERVICES }}"\n
     GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT="{{ GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT }}"\n
     GISLAB_APT_CUSTOM_REPOSITORIES="{% if GISLAB_APT_CUSTOM_REPOSITORIES %}{{ GISLAB_APT_CUSTOM_REPOSITORIES|join(",") }}{% else %}{% endif %}"\n
-    GISLAB_INSTALL_WORKER_ROOT="{{ GISLAB_INSTALL_WORKER_ROOT }}"\n
-    GISLAB_INSTALL_WORKER_IMAGE="{{ GISLAB_INSTALL_WORKER_IMAGE }}"\n
-    GISLAB_INSTALL_CLIENT_ROOT="{{ GISLAB_INSTALL_CLIENT_ROOT }}"\n
-    GISLAB_INSTALL_CLIENT_IMAGE="{{ GISLAB_INSTALL_CLIENT_IMAGE }}"\n
     GISLAB_INSTALL_DATETIME="{{ GISLAB_INSTALL_DATETIME }}"\n
     GISLAB_PROVISIONING_USER="{{ GISLAB_PROVISIONING_USER }}"\n
     GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"'
@@ -129,8 +125,8 @@
 
 
 # Basic server configuration
-- name: Add GISLAB_ROOT variable to server's environment
-  lineinfile: dest=/etc/environment line="GISLAB_ROOT={{ GISLAB_ROOT }}" state=present
+- name: Set system wide environment variables
+  template: src=environment.j2 dest=/etc/environment
 
 
 - name: Set hostname
