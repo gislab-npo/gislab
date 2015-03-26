@@ -83,6 +83,9 @@
 - name: Add service user mail alias
   lineinfile: "dest=/etc/aliases line='munin: root' state=present"
 
+- name: Activate new mail alias
+  command: newaliases
+
 
 - meta: flush_handlers
 
