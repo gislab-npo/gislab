@@ -20,12 +20,19 @@
     - python-psycopg2
 
 
-# Installation of additional tools
+# Version and paths detection
+- name: Detect PostgreSQL version
+  shell: "pg_config --version | awk -F ' ' '{print $2}' | awk -F '.' '{print $1 \".\" $2}'"
+  register: pg_version
+  changed_when: False
+
 - name: Detect PostgreSQL shared dir
-  command: pg_config --sharedir
+  shell: pg_config --sharedir
   register: pg_sharedir
   changed_when: False
 
+
+# Installation of additional tools
 - name: Install Audit trigger
   copy: src=static/audit-trigger/audit.sql dest="{{ pg_sharedir.stdout }}/contrib/audit.sql"
 
@@ -40,37 +47,37 @@
 
 # PostgreSQL cluster storage
 - name: Drop initial PostgreSQL cluster from '/var/lib/postgresql' if exists
-  shell: pg_dropcluster --stop 9.1 main
+  shell: pg_dropcluster --stop {{ pg_version.stdout }} main
   args:
-    removes: /var/lib/postgresql/9.1/main/PG_VERSION
+    removes: /var/lib/postgresql/{{ pg_version.stdout }}/main/PG_VERSION
 
 - name: Prepare directory for new PostgreSQL cluster storage
   file: path=/storage/applications/postgresql state=directory owner=postgres group=postgres
 
 - name: Create new PostgreSQL cluster in '/storage/applications/postgresql' if not exists
-  shell: LC_ALL=en_US.UTF-8 pg_createcluster --locale en_US.UTF-8 --datadir=/storage/applications/postgresql 9.1 main
+  shell: LC_ALL=en_US.UTF-8 pg_createcluster --locale en_US.UTF-8 --datadir=/storage/applications/postgresql {{ pg_version.stdout }} main
   args:
     creates: /storage/applications/postgresql/PG_VERSION
 
 
 # PostgreSQL configuration
 - name: Configure PostgreSQL
-  template: src=postgresql/postgresql.conf.j2 dest=/etc/postgresql/9.1/main/postgresql.conf
+  template: src=postgresql/postgresql.conf.j2 dest=/etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
   notify:
     - service postgresql restart
 
 - name: Configure PostgreSQL access policy
   template: src="{{ item.src }}" dest="{{ item.dest }}"
   with_items:
-    - { src: postgresql/pg_hba.conf.j2, dest: /etc/postgresql/9.1/main/pg_hba.conf }
-    - { src: postgresql/pg_ident.conf.j2, dest: /etc/postgresql/9.1/main/pg_ident.conf }
+    - { src: postgresql/pg_hba.conf.j2, dest: "/etc/postgresql/{{ pg_version.stdout }}/main/pg_hba.conf" }
+    - { src: postgresql/pg_ident.conf.j2, dest: "/etc/postgresql/{{ pg_version.stdout }}/main/pg_ident.conf" }
   notify:
     - service postgresql restart
 
 
 # PostgreSQL tuning
 - name: Fine tune database configuration
-  command: pgtune -T Mixed -i /etc/postgresql/9.1/main/postgresql.conf -o /etc/postgresql/9.1/main/postgresql.conf
+  command: pgtune -T Mixed -i /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf -o /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
   notify:
     - service postgresql restart
 
