@@ -15,6 +15,8 @@ from django.utils.translation import ugettext as _
 
 from webgis.viewer import forms
 from webgis.viewer import models
+import webgis.viewer.client as gislab_client
+from webgis.storage.views import drawing as drawings_view
 from webgis.viewer.client import WebgisClient, LoginRequired
 from webgis.viewer.metadata_parser import MetadataParser
 from webgis.libs.auth.decorators import basic_authentication
@@ -106,3 +108,34 @@ def user_projects(request, username):
 		'debug': settings.DEBUG
 	}
 	return render(request, "viewer/user_projects.html", context, content_type="text/html")
+
+
+def gislab_version_json(request):
+	data = gislab_client.GISLAB_VERSION
+	return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+def user_json(request):
+	user = request.user
+	data = {
+		'username': user.username,
+		'first_name': user.first_name,
+		'last_name': user.last_name,
+		'email': user.email,
+		'is_superuser': user.is_superuser
+	}
+	return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+def projects_json(request):
+	projects = client.get_user_projects(request, request.user.username)
+	return HttpResponse(json.dumps(projects), content_type="application/json")
+
+@login_required
+def drawings_json(request):
+	if request.method == "GET":
+		params = request.GET.copy()
+		params['user'] = request.user.username
+		request.GET = params
+		return drawings_view(request)
+	raise Http404

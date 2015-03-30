@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser
 
 
 class GislabUser(AbstractUser):
-	organization = ""
 
 	@classmethod
 	def get_guest_user(cls):
