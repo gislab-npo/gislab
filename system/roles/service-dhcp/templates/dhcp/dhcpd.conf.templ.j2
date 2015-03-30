@@ -7,11 +7,14 @@
 # 251       : GIS.lab client HTTP boot
 
 
-log-facility local7;
-authoritative;
+# authoritative mode must be disabled, otherwise DHCP server in GIS.lab will interfere in communication of legitimate
+# DHCP server on the network with DHCPNAK messages
+not authoritative;
 
 # custom DHCP option to distinguish between multiple GIS.lab servers in LAN
 option gislab-unique-id code 224 = text;
+
+log-facility local7;
 
 class "gislab-clients" {
     match if option nis-domain = "{{ GISLAB_UNIQUE_ID }}";
