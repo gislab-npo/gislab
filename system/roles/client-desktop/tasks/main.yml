@@ -441,6 +441,26 @@
     - ureadahead
     - ureadahead-other
 
+    
+# Disable cron jobs
+- name: Disable useless cron jobs
+  command: "rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }}"
+  with_items:
+    - /etc/cron.daily/apt
+    - /etc/cron.daily/apport
+    - /etc/cron.daily/aptitude
+    - /etc/cron.daily/bsdmainutils
+    - /etc/cron.daily/dpkg
+    - /etc/cron.daily/logrotate
+    - /etc/cron.daily/man-db
+    - /etc/cron.daily/mlocate
+    - /etc/cron.daily/passwd
+    - /etc/cron.daily/popularity-contest
+    - /etc/cron.daily/standard
+    - /etc/cron.daily/update-notifier-common
+    - /etc/cron.weekly/apt-xapian-index
+    - /etc/cron.weekly/man-db
+
 
 # Replacing shutdown commands with simple script, which will umount all network disks and immediately power off
 # machine without trying to cleanly stop services. This is a workaround to a problems with various shutdown problems
