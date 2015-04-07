@@ -20,15 +20,8 @@ hostname -b -F /etc/hostname
 
 # configure /etc/hosts
 cat <<EOF >>/etc/hosts
-$ROOTSERVER	server.gis.lab	server
-$IPV4ADDR	$HOSTNAME.gis.lab	$HOSTNAME
-
-# The following lines are desirable for IPv6 capable hosts
-::1     ip6-localhost ip6-loopback
-fe00::0 ip6-localnet
-ff00::0 ip6-mcastprefix
-ff02::1 ip6-allnodes
-ff02::2 ip6-allrouters
+$ROOTSERVER    server.gis.lab	   server
+$IPV4ADDR      $HOSTNAME.gis.lab   $HOSTNAME
 EOF
 
 
@@ -40,23 +33,6 @@ if [ -w "/etc/network/interfaces" ]; then
 		echo "iface $DEVICE inet manual"
 	fi >> "/etc/network/interfaces" 2>/dev/null || true
 fi
-
-
-# remove useless cron jobs
-while read job; do
-	rm -f "$job"
-done <<EOF
-/etc/cron.daily/apt
-/etc/cron.daily/dpkg
-/etc/cron.daily/logrotate
-/etc/cron.daily/mlocate
-/etc/cron.daily/passwd
-/etc/cron.daily/popularity-contest
-/etc/cron.daily/standard
-/etc/cron.daily/man-db
-/etc/cron.weekly/apt-xapian-index
-/etc/cron.weekly/man-db
-EOF
 
 
 # set munin node name
