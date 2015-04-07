@@ -19,8 +19,9 @@
   changed_when: False
 
 - name: Test if email to root user was forwarded to test superuser
-  shell: grep -r "This is a test message sent by GIS.lab test {{ GISLAB_TEST_RANDOM_STRING }}"
-    /mnt/home/test_mail_{{ GISLAB_TEST_RANDOM_STRING }}/Mail/new
+  shell: sleep 2
+    && grep -r "This is a test message sent by GIS.lab test {{ GISLAB_TEST_RANDOM_STRING }}"
+       /mnt/home/test_mail_{{ GISLAB_TEST_RANDOM_STRING }}/Mail/new
   ignore_errors: yes
   changed_when: False
 
