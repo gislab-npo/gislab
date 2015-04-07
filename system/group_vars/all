@@ -202,7 +202,7 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 # List of country codes of languages which should be installed on client beside English language.
 # Example:
 # - sk
-# - cz
+# - cs
 # Change requires running upgrade.
 GISLAB_CLIENT_LANGUAGES:
 
@@ -211,7 +211,7 @@ GISLAB_CLIENT_LANGUAGES:
 # Example: 
 # - layout: sk
 #   variant: qwerty
-# - layout: cs
+# - layout: cz
 #   variant: qwerty
 # - layout: aa
 # - layout: bb
