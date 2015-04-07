@@ -25,6 +25,10 @@ dpkg-reconfigure --frontend noninteractive tzdata
 # time
 ntpdate-debian
 
+# booster
+echo "tmpfs /mnt/booster tmpfs defaults,noatime,noexec,size=50% 0 0" >> /etc/fstab
+mkdir /mnt/booster && mount /mnt/booster
+
 # network shares
 service idmapd restart
 
