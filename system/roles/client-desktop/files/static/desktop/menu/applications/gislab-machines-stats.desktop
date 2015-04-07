@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=GIS.lab Machines Load
+Name=GIS.lab Machines Statistics
 Comment=GIS.lab machines load statistics
 Exec=firefox "http://stats.gis.lab"
 Icon=
@@ -9,5 +9,5 @@ Path=
 Terminal=false
 Categories=Gislab-system;
 StartupNotify=false
-Name[sk]=Vyťaženie Počítačov GIS.lab
+Name[sk]=Štatistiky Počítačov GIS.lab
 Comment[sk]=Štatistiky vyťaženia počítačov GIS.lab

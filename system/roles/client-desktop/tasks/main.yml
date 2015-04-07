@@ -24,6 +24,16 @@
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }} state=directory
 
 
+- name: Create custom GIS.lab directories structure
+  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory
+  with_items:
+    - /etc/gislab
+    - /usr/share/gislab
+
+- name: Set safe permissions for /etc/gislab directory
+  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab state=directory owner=root group=root mode=0700
+
+
 # Copy apt cache
 - name: Prepare apt cache directory if no apt proxy configured
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives state=directory recurse=yes
@@ -336,17 +346,22 @@
   template: src=ntp/ntpdate.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/default/ntpdate
 
 
-# GIS.lab client tools
-- name: Create directory for GIS.lab shell functions library
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/local/gislab state=directory
+# syslog
+- name: Install syslog configuration
+  template: src=syslog/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/rsyslog.d/gislab.conf
 
-- name: Install GIS.lab client tools
-  copy: src=static/gislab-client-tools/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/local/bin/ mode=0755
-
-
+  
 # gislab version
 - name: Install '/etc/gislab_version' file
   command: cp /etc/gislab_version {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab_version
+
+
+# GIS.lab client tools
+- name: Install GIS.lab shell functions library
+  copy: src=functions.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/ mode=0644
+
+- name: Install GIS.lab client tools
+  copy: src=static/gislab-client-tools/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/local/bin/ mode=0755
 
 
 # GIS.lab client desktop customizations
@@ -487,9 +502,6 @@
 
 
 # Install GIS.lab client image building scripts
-- name: Create directory for GIS.lab client init scripts and tools
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab state=directory
-
 - name: Install NBI update script
   copy: src=static/bin/gislab-update-nbi dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/gislab-update-nbi mode=0755
 
@@ -557,6 +569,29 @@
     - { src: "lightdm/bin/session-setup-script.sh.j2", dest: "/usr/share/gislab/lightdm/session-setup-script.sh" }
     - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/usr/share/gislab/lightdm/session-cleanup-script.sh" }
 
+      
+# Cluster
+- name: Install Serf
+  shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "source /usr/share/gislab/functions.sh
+    && gislab_serf_install 0.6.4"
+  args:
+    executable: /bin/bash
+
+- name: Install Serf encryption key
+  shell: cp /etc/gislab/gislab_serf.key {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab/gislab_serf.key
+
+- name: Create directory for Serf handlers
+  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/serf/handlers state=directory
+
+- name: Install Serf handlers scripts 
+  copy: src=static/serf/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/serf/handlers mode=0774
+
+- name: Install Serf agent init script
+  template: src=init/serf-agent.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/serf-agent.conf
+
+- name: Install Serf join init script
+  template: src=init/serf-join.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/serf-join.conf
+
 
 # Worker
 - name: Install worker
@@ -569,9 +604,13 @@
   when: GISLAB_CLIENT_WORKER_ENABLED
 
 - name: Clean up after worker installation
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/tmp/install-worker state=absent
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
+  with_items:
+    - /tmp/install-worker
+    - install.sh
+  when: GISLAB_CLIENT_WORKER_ENABLED
 
-
+  
 # Copy apt cache
 - name: Copy apt cache back from client to server if no apt proxy configured
 

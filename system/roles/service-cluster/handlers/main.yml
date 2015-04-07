@@ -1,0 +1,6 @@
+---
+
+- name: service serf-agent restart
+  service: name=serf-agent state=restarted
+
+# vim:ft=ansible:

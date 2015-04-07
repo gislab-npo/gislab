@@ -1,0 +1,19 @@
+---
+
+- name: Test if Serf agent is running
+  shell: serf info
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test Serf cluster reachability
+  shell: serf reachability
+  ignore_errors: yes
+  changed_when: False
+
+- name: Perform a test query
+  shell: serf query test
+  ignore_errors: yes
+  changed_when: False
+
+  
+# vim:ft=ansible:

@@ -10,18 +10,18 @@ source basic-configuration/etc/gislab_version
 source functions.sh
 
 
+# sanity checks
+if [ -f "/var/lib/gislab/installation.done" ]; then
+	gislab_print_error "Installation is already done"
+fi
+
+
 # set variable if we are running in chroot
 # inode number different from number 2 indicates, that the apparent root is not the actual root
 if [ "$(stat -c %i /)" != "2" ]; then
 	echo "I: Running in chroot ..."
 	CHROOT="yes"
 	export CHROOT
-fi
-
-
-# sanity checks
-if [ -f "/var/lib/gislab/installation.done" ]; then
-	gislab_print_error "Installation is already done"
 fi
 
 

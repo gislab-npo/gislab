@@ -13,7 +13,7 @@ export LC_CTYPE=en_US.UTF-8
 locale-gen en_US.UTF-8
 
 # hostname
-HOSTNUMBER="$(ip -o addr | grep " {{ GISLAB_NETWORK }}.[0-9]\+/[0-9]\+ " | awk '{ print $4 }' | sed -e 's;/.*$;;' -e 's/.*\.//')"
+HOSTNUMBER="$(ip -o addr | grep -Eo "inet {{ GISLAB_NETWORK }}.[0-9]{1,3}" | awk '{ print $2 }' | sed -e 's;/.*$;;' -e 's/.*\.//')"
 
 echo "w$HOSTNUMBER" > /etc/hostname
 service hostname start
@@ -45,9 +45,6 @@ apt-get update
 apt-get --assume-yes --force-yes upgrade
 apt-get --assume-yes --force-yes --no-install-recommends -o Dpkg::Options::="--force-confold" install {{ GISLAB_WORKER_INSTALL_BASIC_PACKAGES|join(' ') }}
 
-# syslog
-service rsyslog restart
-
 # statistics
 echo "host_name $(hostname)" >> /etc/munin/munin-node.conf
 
@@ -64,3 +61,10 @@ ln -fs /usr/share/munin/plugins/uptime /etc/munin/plugins/uptime
 ln -fs /usr/share/munin/plugins/vmstat /etc/munin/plugins/vmstat
 
 service munin-node restart
+
+
+# serf
+gislab_serf_install 0.6.4
+
+service serf-agent restart
+service serf-join restart

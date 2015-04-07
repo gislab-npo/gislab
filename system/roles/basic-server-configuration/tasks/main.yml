@@ -110,13 +110,13 @@
     GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"'
     dest="/etc/gislab_version"
 
-- name: Create main GIS.lab installation directories structure
+- name: Create custom GIS.lab directories structure
   file: path="{{ item }}" state=directory
   with_items:
     - "{{ GISLAB_ROOT }}"
     - /etc/gislab
+    - /usr/share/gislab
     - /var/lib/gislab
-    - /etc/cron.d.bin
     - /usr/local/python-virtualenvs
     - /storage/applications
 
@@ -236,7 +236,7 @@
 
 # GIS.lab administrator tools
 - name: Install GIS.lab shell functions library
-  copy: src=functions.sh dest={{ GISLAB_ROOT }}/functions.sh
+  copy: src=functions.sh dest={{ GISLAB_ROOT }}/functions.sh mode=0644
 
 - name: Install GIS.lab administrator tools
   copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0775 owner=root group=root

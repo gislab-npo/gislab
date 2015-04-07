@@ -31,19 +31,40 @@ gislab_require_root () {
 
 
 gislab_serf_install () {
-	# download and install Serf
-	if [ ! -f "/usr/local/bin/serf" ]; then
-		# get arch from function parameter or autodetect
-		if [ "$1" != "" ]; then
-			serf_arch=$1
-		else
-			if [ "$(getconf LONG_BIT)" == "32" ]; then
-				serf_arch="386"
-			else
-				serf_arch="amd64"
-			fi
+	# download and install Serf for GIS.lab cluster management
+
+	SERF_INSTALL="yes"
+	SERF_VERSION="$1"
+		
+	# detect architecture
+	if [ "$(getconf LONG_BIT)" == "32" ]; then
+		SERF_ARCH="386"
+	else
+		SERF_ARCH="amd64"
+	fi
+
+	# test if installation is required
+	if ! type "serf" > /dev/null 2>&1; then
+		echo "Serf is not installed. Performing installation ..."
+
+	else
+		echo "Serf is installed. Checking version ..."
+
+		if [ "$SERF_VERSION" == "" ]; then
+			echo "Version not given !"
+			exit 1
 		fi
 
+		if [ "$(serf version | grep '^Serf')" == "Serf v${SERF_VERSION}" ]; then
+			echo "Serf installation is up to date !"
+			SERF_INSTALL="no"
+		else
+			echo "Serf installation is outdated. Updating ..."
+		fi
+	fi
+
+	# perform installation if required
+	if [ "$SERF_INSTALL" == "yes" ]; then
 		# download Serf
 		wget --no-verbose \
 			--retry-connrefused \
@@ -51,12 +72,17 @@ gislab_serf_install () {
 			--read-timeout=20 \
 			--timeout=15 \
 			--tries=0 \
-			--output-document=/tmp/serf.zip https://dl.bintray.com/mitchellh/serf/0.6.4_linux_$serf_arch.zip
+			--output-document=/tmp/serf.zip https://dl.bintray.com/mitchellh/serf/${SERF_VERSION}_linux_${SERF_ARCH}.zip
 
 		# install Serf
-		unzip -d /tmp /tmp/serf.zip
-		mv /tmp/serf /usr/local/bin/serf
+		rm -f /usr/local/bin/serf
+		unzip -d /usr/local/bin /tmp/serf.zip
 		rm -f /tmp/serf.zip
+
+		chown root:root /usr/local/bin/serf
+		chmod 744 /usr/local/bin/serf
+
+		echo "Serf was successfully installed (ARCH: $SERF_ARCH, VERSION: $SERF_VERSION)!"
 	fi
 }
 

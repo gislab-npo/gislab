@@ -1,0 +1,27 @@
+description "Start GIS.lab cluster Serf agent"
+
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on runlevel [06]
+
+kill signal INT    # Use SIGINT instead of SIGTERM so serf can depart the cluster.
+respawn
+respawn limit 15 5
+kill timeout 90
+normal exit 0 TERM INT
+
+exec serf agent \
+	-bind {{ GISLAB_NETWORK_SERVER_IP }} \
+	-keyring-file /etc/gislab/gislab_serf.key \
+	-event-handler "member-join=/usr/share/gislab/serf/handlers/member-join.sh" \
+	-event-handler "member-leave,member-failed=/usr/share/gislab/serf/handlers/member-leave.sh" \
+	-event-handler "user:member-join-lb=/usr/share/gislab/serf/handlers/member-join-lb.sh" \
+	-event-handler "query:test=echo 'yes'" \
+	-node="server.gis.lab" \
+	-tag role=server \
+	-log-level=err \
+	-syslog
+
+post-stop script
+	sed -i'' "/# Managed by Serf/d" /etc/haproxy/haproxy.cfg
+	sleep 3
+end script

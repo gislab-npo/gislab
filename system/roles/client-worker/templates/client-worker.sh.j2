@@ -12,24 +12,11 @@ cp -a client-worker/* /
 
 # restart services if not in chroot
 if [ -z "$CHROOT" ]; then
-	# syslog
-	service rsyslog restart
-
 	# xvfb
 	service xvfb restart
 
 	# lighttpd
 	service lighttpd restart
-fi
-
-
-# serf
-gislab_serf_install
-
-# restart serf if not in chroot
-if [ -z "$CHROOT" ]; then
-	service serf restart
-	service serf-join restart
 fi
 
 

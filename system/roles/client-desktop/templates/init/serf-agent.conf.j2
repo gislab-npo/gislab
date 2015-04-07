@@ -1,0 +1,30 @@
+description "Start GIS.lab cluster Serf agent"
+
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on runlevel [06]
+
+kill signal INT    # Use SIGINT instead of SIGTERM so serf can depart the cluster.
+respawn
+respawn limit 15 5
+kill timeout 90
+normal exit 0 TERM INT
+
+exec serf agent \
+	-iface $(/sbin/route -n | grep "^{{ GISLAB_NETWORK }}.0" | awk -F " " '{print $NF}') \
+	-keyring-file /etc/gislab/gislab_serf.key \
+	-event-handler "user:reboot=/usr/share/gislab/serf/handlers/reboot.sh" \
+	-event-handler "user:shutdown=/usr/share/gislab/serf/handlers/shutdown.sh" \
+	-event-handler "query:command=/usr/share/gislab/serf/handlers/command.sh" \
+	-event-handler "query:script=/usr/share/gislab/serf/handlers/script.sh" \
+	-event-handler "query:client-session-active=/usr/share/gislab/serf/handlers/client-session-active.sh" \
+	-event-handler "query:uptime=uptime" \
+	-event-handler "query:test=echo 'yes'" \
+	-tag role=client \
+	-tag events=reboot,shutdown \
+	-tag queries=command,script,client-session-active,uptime,test \
+	-log-level=err \
+	-syslog
+
+post-stop script
+	sleep 3
+end script

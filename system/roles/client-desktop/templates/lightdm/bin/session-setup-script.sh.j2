@@ -32,9 +32,15 @@ if [ -f /mnt/home/$USER/.gislab/session.lock ]; then
 	zenity --warning --title="Concurrent login disabled" \
 		--text="You are already logged in from other place. Please log out and try again." || true
 	exit 1
-else
-	echo "$(date)" > /mnt/home/$USER/.gislab/session.lock
 fi
+
+
+# set user session lock file
+echo "$(date)" > /mnt/home/$USER/.gislab/session.lock
+
+# set global session lock file
+mkdir -p /var/lib/gislab
+echo "$USER" > /var/lib/gislab/session.lock
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

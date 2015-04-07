@@ -4,7 +4,10 @@
 source /etc/gislab_version
 
 
-# remove lock file after session is closed
+# remove global session lock file after session is closed
+rm -f /var/lib/gislab/session.lock
+
+# remove user lock file after session is closed
 rm -f /mnt/home/$USER/.gislab/session.lock
 
 

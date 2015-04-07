@@ -6,7 +6,5 @@ umount /mnt/publish
 umount /mnt/booster
 umount /mnt/home
 
-# send leave message to Serf cluster
-if [ -f "/usr/local/bin/serf" ]; then serf leave; fi
-
+serf leave
 /sbin/gislab/poweroff -fp

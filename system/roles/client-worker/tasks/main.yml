@@ -2,7 +2,7 @@
 #
 ### GIS.lab WORKER CLIENT ###
 #
-# Build installation package for OWS worker.
+# Build installation package for GIS.lab OWS cluster worker.
 # Purpose of worker client is horizontal scaling of OWS requests processing. This task creates installation package,
 # which can be downloaded from GIS.lab server and installed on GIS.lab Desktop client or any other server running
 # supported OS.
@@ -14,7 +14,7 @@
 # && bash ./install.sh &> /var/log/gislab-install.log
 
 
-# System
+# directories structure
 - name: Flush worker installation directory
   file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}" state=absent
 
@@ -27,8 +27,20 @@
 - name: Create worker installation directory for worker configuration
   file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker" state=directory
 
+
+- name: Create custom GIS.lab directories structure
+  file: path={{ GISLAB_INSTALL_WORKER_ROOT }}{{ item }} state=directory
+  with_items:
+    - /etc/gislab
+    - /usr/share/gislab
+
+- name: Set safe permissions for /etc/gislab directory
+  file: path={{ GISLAB_INSTALL_WORKER_ROOT }}/etc/gislab state=directory owner=root group=root mode=0700
+
+
+# basic installation scripts
 - name: Install GIS.lab shell functions library
-  copy: src=functions.sh dest={{ GISLAB_INSTALL_WORKER_ROOT }}/functions.sh
+  copy: src=functions.sh dest={{ GISLAB_INSTALL_WORKER_ROOT }}/functions.sh mode=0644
 
 - name: Install basic configuration installation script
   template: src=basic-configuration.sh.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/install.sh mode=0755
@@ -40,12 +52,11 @@
   template: src=install.sh.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/install.sh mode=0755
 
 
-# basic configuration
-- name: Create /etc directory
-  file: path="{{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc" state=directory
-
+#
+# BASIC CONFIGURATION
+#
 - name: Add GIS.lab ID, version and client build information
-  command: cp /etc/gislab_version {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc
+  command: cp --parents /etc/gislab_version {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration
 
 - name: Create directory for services default configuration files
   file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/default state=directory recurse=yes
@@ -64,7 +75,7 @@
 
 # timezone
 - name: Copy timezone configuration
-  command: cp /etc/timezone {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/
+  command: cp --parents /etc/timezone {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration
 
 # apt
 - name: Copy apt configuration from server
@@ -81,15 +92,36 @@
 - name: Install configuration for munin
   template: src=munin-node/munin-node.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/munin/munin-node.conf
 
-
 # syslog
 - name: Create directory for syslog configuration
-  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/etc/rsyslog.d state=directory
+  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/rsyslog.d state=directory
 
 - name: Install syslog configuration file
-  template: src=syslog/gislab.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/etc/rsyslog.d/gislab.conf
+  template: src=syslog/gislab.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/rsyslog.d/gislab.conf
+
+# cluster
+- name: Install Serf encryption key
+  shell: cp --parents /etc/gislab/gislab_serf.key {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration
+
+- name: Create directory for Serf handlers
+  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/usr/share/gislab/serf/handlers state=directory recurse=yes
+
+- name: Install Serf handlers scripts
+  copy: src=static/serf/ dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/usr/share/gislab/serf/handlers mode=0755
+
+- name: Create directory for init scripts
+  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/init state=directory recurse=yes
+
+- name: Install Serf agent init script
+  template: src=init/serf-agent.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/init/serf-agent.conf
+
+- name: Install Serf join init script
+  template: src=init/serf-join.conf.j2 dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/init/serf-join.conf
 
 
+#
+# CLIENT WORKER
+#
 # Xvfb
 - name: Copy configuration file for X server
   command: cp --parents {{ item }} {{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker
@@ -106,19 +138,6 @@
   with_items:
     - /etc/lighttpd/lighttpd.conf
     - /etc/lighttpd/conf-enabled/10-fastcgi.conf
-
-# serf
-- name: Install serf upstart scripts
-  template: src={{ item.src }} dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/{{ item.dest }}
-  with_items:
-    - { src: "serf/serf.conf.j2", dest: "/etc/init/serf.conf" }
-    - { src: "serf/serf-join.conf.j2", dest: "/etc/init/serf-join.conf" }
-
-- name: Create directory for serf scripts
-  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/etc/serf/bin state=directory recurse=yes
-
-- name: Install serf scripts
-  copy: src=static/serf/ dest={{ GISLAB_INSTALL_WORKER_ROOT }}/client-worker/etc/serf/bin mode=0755
 
 
 # create image

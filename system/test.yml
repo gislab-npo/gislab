@@ -20,6 +20,7 @@
     - { role: service-mapserver-test, tags: ['service-mapserver-test'] }
     - { role: service-load-balancer-test, tags: ['service-load-balancer-test'] }
     - { role: service-statistics-test, tags: ['service-statistics-test'] }
+    - { role: service-cluster-test, tags: ['service-cluster-test'] }
     - { role: service-connection-forwarding-test, tags: ['service-connection-forwarding-test'] }
     - { role: service-vpn-test, tags: ['service-vpn-test'] }
     - { role: client-web-test, tags: ['client-web-test'] }

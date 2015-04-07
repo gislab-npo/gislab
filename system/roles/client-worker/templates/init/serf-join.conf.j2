@@ -1,0 +1,15 @@
+description "Join a GIS.lab cluster"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+task
+respawn
+
+script
+sleep 3
+serf join {{ GISLAB_NETWORK_SERVER_IP }}
+
+sleep 3
+serf event member-join-lb "$(ip -o addr | grep -Eo 'inet {{ GISLAB_NETWORK }}.[0-9]{1,3}' | awk '{print $2}')"
+end script
