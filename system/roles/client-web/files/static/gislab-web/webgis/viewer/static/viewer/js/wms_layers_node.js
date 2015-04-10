@@ -54,7 +54,11 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			this.layer.layers_hash = CryptoJS.MD5(this.layer.layername).toString();
 			this.layer.mergeNewParams();// to update legend
 		}
-		this.fireEvent('layerchange', this, this.layer, visible_layers);
+		if (!this.skipLayerchangeEvent) {
+			this.fireEvent('layerchange', this, this.layer, visible_layers);
+		} else {
+			this.skipLayerchangeEvent = false;
+		}
 		//console.log(visible_layers);
 		//console.log(this.root.checkchangeParamsStack);
 	},
@@ -155,6 +159,7 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 			expanded: true,
 			listeners: {
 				beforechildrenrendered: function(node) {
+					node.getUI().elNode.setAttribute('depth', node.getDepth());
 					if (node.isLeaf()) {
 						var info_button = document.createElement('button');
 						info_button.setAttribute('class', 'layer-info');
@@ -186,9 +191,6 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 				},
 				click: function(node, evt) {
 					if (evt.getTarget().className === "layer-info") {
-						if (node.root.layerInfoWindow) {
-							node.root.layerInfoWindow.destroy();
-						}
 						var layer_info = node.attributes.config;
 						// collect info about layer
 						var layer_data_parts = [];
@@ -219,8 +221,17 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 								formatted_data_parts.push(String.format('<p><label>{0}:</label> {1}</p>', data[0], data[1]));
 							}
 						});
+						if (node.root.layerInfoWindow) {
+							if (node.root.layerInfoWindow.target.getAttribute('id') === node.getUI().getEl().getAttribute('id')) {
+								node.root.layerInfoWindow.destroy();
+								node.root.layerInfoWindow = null;
+								return;
+							} else {
+								node.root.layerInfoWindow.destroy();
+							}
+						}
 						var t = new Ext.ToolTip({
-							anchor: 'west',
+							anchor: 'right',
 							target: node.getUI().getEl(),
 							title: layer_info.name,
 							html: '<div class="layer-info-panel">'+formatted_data_parts.join('')+'</div>',
@@ -237,6 +248,12 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 						});
 						t.show();
 						node.root.layerInfoWindow = t;
+					}
+				},
+				beforedblclick: function(node, evt) {
+					if (!node.isLeaf()) {
+						node.toggle();
+						return false;
 					}
 				}
 			}
@@ -327,7 +344,8 @@ WebGIS.WmsLayersNode = Ext.extend(Ext.tree.TreeNode, {
 		visit_node(this);
 		return param_parts.join(';');
 	},
-	setVisibleLayers: function(layernames) {
+	setVisibleLayers: function(layernames, skip_layerchange_event) {
+		this.skipLayerchangeEvent = skip_layerchange_event;
 		this.cascade(function(node) {
 			if (node.isLeaf()) {
 				node.getUI().toggleCheck(layernames.indexOf(node.attributes.text) != -1);

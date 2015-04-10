@@ -23,72 +23,40 @@ WebgisWmsLayer = OpenLayers.Class(OpenLayers.Layer.WMS, {
 	}
 });
 
-WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
+WebGIS.BaseLayersPanel = Ext.extend(Ext.tree.TreePanel, {
 	baselayerRoot: null,
-	selectedLayerRecordData: null,
+	selectedLayer: null,
 
 	constructor: function(config) {
 		this.map = config.map;
-		// create base layers tree for easier generating of encoded base layers parameter
-		// and items for combobox store
 		this.createLayersData(config.baselayers);
-		config.store = new Ext.data.JsonStore({
-			data: { baselayers: this.baselayersItems },
-			storeId: 'baselayers-store',
-			root: 'baselayers',
-			fields: [{
-					name: 'name',
-					type: 'string'
-				}, {
-					name: 'title',
-					type: 'string'
-				}, {
-					name: 'itemCls',
-					type: 'string'
-				}, {
-					name: 'indent',
-					type: 'intege'
-				}
-			]
-		});
-		config.displayField = 'title';
-		config.valueField = 'name';
-		config.mode = 'local';
-		config.triggerAction = 'all';
-		config.forceSelection = true;
-		config.tpl = '<tpl for="."><div class="x-combo-list-item {itemCls} list-item-indent-{indent}">{title}</div></tpl>';
-		WebGIS.BaseLayersComboBox.superclass.constructor.apply(this, arguments);
+		config.root = this.baselayerRoot;
+		//config.useArrows = true;
+		config.rootVisible = false;
+		WebGIS.BaseLayersPanel.superclass.constructor.apply(this, arguments);
+
 		// select visible base layer
-		if (!this.selectedLayerRecordData) {
+		if (!this.selectedLayer) {
 			// no visible base layer by default, so find the first suitable in the tree
 			this.baselayerRoot.cascade(function(node) {
-				if (!this.selectedLayerRecordData && node.isLeaf() && node.attributes.layerRecordData.layer) {
-					this.selectedLayerRecordData = node.attributes.layerRecordData;
+				if (!this.selectedLayer && node.isLeaf() && node.attributes.layerRecordData.layer) {
+					this.selectedLayer = node.attributes.layerRecordData.layer;
+					node.attributes.checked = true;
 					return false;
 				}
 			}, this);
 		}
-		if (this.selectedLayerRecordData) {
-			this.setValue(this.selectedLayerRecordData.title);
-			this.selectedLayerRecordData.layer.setVisibility(true);
-			this.map.setBaseLayer(this.selectedLayerRecordData.layer);
-		}
+		this.setBaseLayer(this.selectedLayer);
 	},
-	listeners: {
-		beforeselect: function(combo, record, index) {
-			return !(record.get('itemCls') == 'layer-category-item' || record.get('itemCls') == 'layer-unavailable-item');
-		},
-		select: function (combo, record, index) {
-			var layer = record.json.layer;
-			if (layer.CLASS_NAME == 'OpenLayers.Layer.Google') {
-				Ext.Element.select('.olControlScaleLine').addClass("google");
-				Ext.Element.select('.olControlAttribution').addClass("google");
-			} else if (this.map.baseLayer.CLASS_NAME == 'OpenLayers.Layer.Google') {
-				Ext.Element.select('.olControlScaleLine').removeClass("google");
-				Ext.Element.select('.olControlAttribution').removeClass("google");
-			}
-			this.map.setBaseLayer(layer);
+	setBaseLayer: function(layer) {
+		if (layer.CLASS_NAME == 'OpenLayers.Layer.Google') {
+			Ext.Element.select('.olControlScaleLine').addClass("google");
+			Ext.Element.select('.olControlAttribution').addClass("google");
+		} else if (this.map.baseLayer.CLASS_NAME == 'OpenLayers.Layer.Google') {
+			Ext.Element.select('.olControlScaleLine').removeClass("google");
+			Ext.Element.select('.olControlAttribution').removeClass("google");
 		}
+		this.map.setBaseLayer(layer);
 	},
 	createLayer: function(layer_config) {
 		// create Openlayer Layer
@@ -186,22 +154,53 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 		var layerRecordData = {
 			title: title,
 			name: layer_config.name,
-			indent: parentNode.attributes.layerRecordData? parentNode.attributes.layerRecordData.indent+1 : 0,
 		};
+		var visible = layer_config.visible && !this.selectedLayer;
 		if (isGroup) {
 			layerRecordData.itemCls = 'layer-category-item';
-			node = new Ext.tree.TreeNode({leaf: false});
+			node = new Ext.tree.TreeNode({
+				text: title,
+				leaf: false,
+				expanded: true
+			});
 		} else {
-			node = new Ext.tree.TreeNode({leaf: true});
+			node = new Ext.tree.TreeNode({
+				text: title,
+				checked: visible,
+				leaf: true,
+				expanded: true, // must be set on leaf nodes to make 'beforechildrenrendered' event work
+				listeners: {
+					beforechildrenrendered: function(node) {
+						node.getUI().elNode.setAttribute('depth', node.getDepth());
+						if (node.isLeaf()) {
+							node.getUI().checkbox.setAttribute('type', 'radio');
+							node.getUI().checkbox.setAttribute('name', 'baselayer-radio');
+						}
+					},
+					checkchange: function(node) {
+						var layer = node.attributes.layerRecordData.layer;
+						this.setBaseLayer(layer);
+					}.bind(this),
+					click: function(node, evt) {
+						if (evt.getTarget().tagName === 'INPUT') {
+							node.getUI().checkbox.click();
+							node.getUI().toggleCheck(true);
+						}
+					},
+					beforedblclick: function(node, evt) {
+						node.getUI().toggleCheck(true);
+						return false;
+					}
+				}
+			});
 			var layer = this.createLayer(layer_config);
 			if (layer) {
-				var visible = layer_config.visible && !this.selectedLayerRecordData;
-				if (visible) {
-					this.selectedLayerRecordData = layerRecordData;
-				}
 				this.map.addLayer(layer);
 				layer.setVisibility(visible);
 				layerRecordData.layer = layer;
+				if (visible) {
+					this.selectedLayer = layer;
+				}
 			} else {
 				layerRecordData.itemCls = 'layer-unavailable-item';
 			}
@@ -218,11 +217,7 @@ WebGIS.BaseLayersComboBox = Ext.extend(Ext.form.ComboBox, {
 	},
 	createLayersData: function(baselayers) {
 		this.baselayersItems = [];
-		this.baselayerRoot = new Ext.tree.TreeNode({});
-		Ext.each(baselayers, function(layer_config) {
-			var node = this.createLayerNode(this.baselayerRoot, layer_config);
-			this.baselayerRoot.appendChild(node);
-		}, this);
+		this.baselayerRoot = this.createLayerNode(null, {name: 'Base root', layers: baselayers})
 		return baselayers;
 	},
 	getEncodedLayersParam: function() {

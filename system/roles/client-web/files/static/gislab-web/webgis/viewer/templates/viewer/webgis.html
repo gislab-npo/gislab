@@ -70,14 +70,14 @@
 		<script type="text/javascript" src="{% static 'viewer/lib/GeoExt-1.1/GeoExt.js' %}"></script>
 
 		<script type="text/javascript" src="{% static 'viewer/js/styles.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/baselayers_combo.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer/js/baselayers_panel.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/wms_layers_node.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/wms_layers_legend.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/featureinfo_panel.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/search_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/measure_action.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/draw_action.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/topics_action.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer/js/topics_panel.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/control_display.js' %}"></script>
 		<script type="text/javascript" src="{% static 'viewer/js/link_list.js' %}"></script>
 		{% if google %}<script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>{% endif %}
@@ -354,21 +354,22 @@
 					layersTree: JSON.parse('{{ layers|default:"[]"|escapejs }}'),
 				});
 
-				var baselayer_panel = new Ext.Panel({
+				var topics = JSON.parse('{{ topics|default:"[]"|escapejs }}');
+				var topics_panel = new WebGIS.TopicsPanel({
 					layout: 'fit',
-					cls: 'layers-toolbar',
-					{% if base_layers %}
-					height: 23,
-					items: new WebGIS.BaseLayersComboBox({
-						id: 'base-layer-combo',
-						editable: false,
-						map: mappanel.map,
-						baselayers: JSON.parse('{{ base_layers|escapejs }}'),
-					}),
-					{% else %}
-					height: 1,
-					{% endif %}
+					title: '{% trans "Topics" %}',
+					cls: 'radiobutton-toolbar',
+					topics: topics,
 				})
+
+				var baselayer_panel = new WebGIS.BaseLayersPanel({
+					layout: 'fit',
+					title: '{% trans "Base Layers" %}',
+					cls: 'radiobutton-toolbar',
+					id: 'base-layer-panel',
+					map: mappanel.map,
+					baselayers: JSON.parse('{{ base_layers|escapejs }}'),
+				});
 
 				// layers tree
 				var layer_treepanel = new Ext.tree.TreePanel({
@@ -381,9 +382,18 @@
 					collapsible: false,
 					cmargins: '0 0 0 0',
 					autoScroll: true,
+					//useArrows: true,
 					{% if layers %}
 					title: '{% trans "Layers" %}',
 					{% endif %}
+					listeners: {
+						deactivate: function(panel) {
+							var info_window = panel.root.layerInfoWindow;
+							if (info_window && info_window.isVisible()) {
+								info_window.destroy();
+							}
+						}
+					}
 				});
 
 				// legend
@@ -455,9 +465,24 @@
 					]
 				});
 
+				var layers_tabpanel = new Ext.TabPanel({
+					id: 'layers-control-panel',
+					activeTab: 2,
+					items: [
+						topics_panel,
+						baselayer_panel,
+						layer_treepanel
+					],
+					listeners: {
+						afterrender: function(panel) {
+							// switch to topics tab (layers tree must be rendered first!)
+							this.setActiveTab(0);
+						}
+					}
+				});
 				// left panel
 				var left_panel = new Ext.Panel({
-					title: '{% trans "Base Layers" %}',
+					id: 'left-panel',
 					region: 'west',
 					width: 250,
 					cls: 'layers-panel',
@@ -466,24 +491,35 @@
 						flex: 1
 					},
 					layout: 'vbox',
-					collapsible: true,
 					animCollapse: false,
 					layoutConfig: {
 						align: 'stretch',
 						pack: 'start'
 					},
 					items: [
-						baselayer_panel,
-						layer_treepanel,
+						layers_tabpanel,
 						{% if project != "empty" %} info_panel {% endif %}
 					]
 				});
 
 				// Toolbar Actions
+				mappanel.getTopToolbar().add({
+					id: 'left-panel-collapse-button',
+					cls: 'x-btn-icon',
+					iconCls: 'collapse-button',
+					tooltip: 'Collapse/expand left panel',
+					handler: function(action) {
+						if (left_panel.collapsed) {
+							action.getEl().removeClass('collapsed');
+						} else {
+							action.getEl().addClass('collapsed');
+						}
+						left_panel.toggleCollapse(false);
+					}
+				});
 
 				mappanel.getTopToolbar().add(' ');
 				{% if project != "empty" and topics %}
-				{% include "viewer/actions/topics.js" %}
 				mappanel.getTopToolbar().add(' ', '-', ' ');
 				{% endif %}
 				{% include "viewer/actions/basic.js" %}
