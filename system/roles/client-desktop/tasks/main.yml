@@ -218,6 +218,47 @@
     executable: /bin/bash
 
     
+# Initramfs-tools and init
+- name: Create directories for initramfs-tools
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory recurse=yes
+  with_items:
+    - /usr/share/initramfs-tools/conf.d
+    - /usr/share/initramfs-tools/hooks
+    - /usr/share/initramfs-tools/scripts/init-bottom
+    - /usr/share/initramfs-tools/scripts/init-premount
+    - /usr/share/initramfs-tools/scripts/local-top
+
+- name: Configure initramfs-tools
+  template: src=initramfs-tools/conf.d/gislab.j2
+            dest={{ GISLAB_INSTALL_CLIENT_ROOT}}/usr/share/initramfs-tools/conf.d/gislab
+            mode=0644
+
+- name: Install initramfs-tools hooks and scripts
+  copy: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode={{ item.mode }}
+  with_items:
+    - { src: "static/initramfs-tools/hooks/gislab", dest: "/usr/share/initramfs-tools/hooks/gislab", mode: "0755" }
+    - { src: "static/initramfs-tools/hooks/udhcp", dest: "/usr/share/initramfs-tools/hooks/udhcp", mode: "0755" }
+    - { src: "static/initramfs-tools/scripts/init-bottom/gislab", dest: "/usr/share/initramfs-tools/scripts/init-bottom/gislab", mode: "0755" }
+    - { src: "static/initramfs-tools/scripts/local-top/nbd_gislab", dest: "/usr/share/initramfs-tools/scripts/local-top/nbd_gislab",  mode: "0755" }
+
+- name: Install uDHCP client script
+  template: src=initramfs-tools/scripts/init-premount/udhcp.j2
+            dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/initramfs-tools/scripts/init-premount/udhcp
+            mode=0755
+
+- name: Install system init script
+  copy: src=static/init/init-gislab dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/init-gislab mode=0755
+
+- name: Install GIS.lab init script
+  copy: src=static/init/gislab-init.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/gislab-init.sh mode=0755
+
+- name: Configure GIS.lab client service
+  template: src=init/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/gislab.conf mode=0644
+
+- name: Update initramfs
+  shell: "chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} update-initramfs -u"
+
+
 # Install VirtualBox Guest additions.
 # Latest kernel supported by VirtualBox Guest additions on Ubuntu 12.04 is 3.8
 # else install VirtualBox additions from Ubuntu repository - could not match version used on client
@@ -507,55 +548,6 @@
     - { src: "/usr/share/munin/plugins/processes", dest: "/etc/munin/plugins/processes" }
     - { src: "/usr/share/munin/plugins/uptime", dest: "/etc/munin/plugins/uptime" }
     - { src: "/usr/share/munin/plugins/vmstat", dest: "/etc/munin/plugins/vmstat" }
-
-
-# Install GIS.lab client image building scripts
-- name: Install NBI update script
-  copy: src=static/bin/gislab-update-nbi dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/gislab-update-nbi mode=0755
-
-- name: Create symlinks to NBI update script for kernel installation hook
-  file: src=/usr/share/gislab/gislab-update-nbi dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=link force=yes
-  with_items:
-    - /etc/kernel/postinst.d/gislab-update-nbi
-    - /etc/kernel/postrm.d/gislab-update-nbi
-
-
-# Initramfs-tools and init
-- name: Create directories for initramfs-tools
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory recurse=yes
-  with_items:
-    - /usr/share/initramfs-tools/conf.d
-    - /usr/share/initramfs-tools/hooks
-    - /usr/share/initramfs-tools/scripts/init-bottom
-    - /usr/share/initramfs-tools/scripts/init-premount
-    - /usr/share/initramfs-tools/scripts/local-top
-
-- name: Configure initramfs-tools
-  template: src=initramfs-tools/conf.d/gislab.j2
-            dest={{ GISLAB_INSTALL_CLIENT_ROOT}}/usr/share/initramfs-tools/conf.d/gislab
-            mode=0644
-
-- name: Install initramfs-tools hooks and scripts
-  copy: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode={{ item.mode }}
-  with_items:
-    - { src: "static/initramfs-tools/hooks/gislab", dest: "/usr/share/initramfs-tools/hooks/gislab", mode: "0755" }
-    - { src: "static/initramfs-tools/hooks/udhcp", dest: "/usr/share/initramfs-tools/hooks/udhcp", mode: "0755" }
-    - { src: "static/initramfs-tools/scripts/init-bottom/gislab", dest: "/usr/share/initramfs-tools/scripts/init-bottom/gislab", mode: "0755" }
-    - { src: "static/initramfs-tools/scripts/local-top/nbd_gislab", dest: "/usr/share/initramfs-tools/scripts/local-top/nbd_gislab",  mode: "0755" }
-
-- name: Install uDHCP client script
-  template: src=initramfs-tools/scripts/init-premount/udhcp.j2
-            dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/initramfs-tools/scripts/init-premount/udhcp
-            mode=0755
-
-- name: Install system init script
-  copy: src=static/init/init-gislab dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/init-gislab mode=0755
-
-- name: Install GIS.lab init script
-  copy: src=static/init/gislab-init.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/gislab-init.sh mode=0755
-
-- name: Configure GIS.lab client service
-  template: src=init/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/gislab.conf mode=0644
 
 
 # Lightdm
