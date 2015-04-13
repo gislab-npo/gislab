@@ -45,8 +45,6 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         option gislab-unique-id "{{ GISLAB_UNIQUE_ID }}";
         if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
             filename "/gislab/i386/pxelinux.0";
-        } else {
-            filename "/gislab/i386/nbi.img";
         }
     }
 
@@ -65,8 +63,6 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         option gislab-unique-id "{{ GISLAB_UNIQUE_ID }}";
         if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
             filename "/gislab/i386/pxelinux.0";
-        } else {
-            filename "/gislab/i386/nbi.img";
         }
     }
 }
