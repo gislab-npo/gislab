@@ -8,6 +8,9 @@
 - name: Disable Apt cache proxy server
   file: path=/etc/apt/apt.conf.d/02proxy state=absent
 
+- name: Clean apt cache
+  shell: "apt-get clean"
+
 
 - name: "Installation of GIS.lab is done"
   shell: "echo '{{ GISLAB_INSTALL_DATETIME }} {{ GISLAB_INSTALL_ACTION }}' >> /var/lib/gislab/installation.done"

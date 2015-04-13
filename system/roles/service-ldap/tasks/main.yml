@@ -25,11 +25,45 @@
 
 
 - name: Detect if LDAP is installed
-  shell: "ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// '(o=gis.lab)' 2>/dev/null || echo 'LDAP NOT INSTALLED'"
+  shell: "ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// '(o=gis.lab)' 2>/dev/null || echo 'LDAP DB EMPTY'"
   args:
     executable: /bin/bash
-  register: ldap_install_status
+  register: ldap_db_status
   changed_when: False
+
+
+# Move LDAP database to /storage
+- name: Allow access for slapd to /storage directory
+  template: src=apparmor/usr.sbin.slapd.j2 dest=/etc/apparmor.d/local/usr.sbin.slapd
+
+- name: Reload apparmor service
+  service: name=apparmor state=reloaded
+
+
+- name: Stop LDAP database
+  service: name=slapd state=stopped
+
+- name: Move LDAP database to /storage directory (run only once)
+  shell: mv -f /var/lib/ldap /storage/applications/
+    && ln -s /storage/applications/ldap /var/lib/ldap
+  args:
+    creates: /storage/applications/ldap/DB_CONFIG
+
+- name: Start LDAP service
+  service: name=slapd state=started
+
+
+- name: Load LDAP database storage directory configuration (run only once)
+  template: src=ldap/change_ldap_directory.ldif.j2 dest=/tmp/ldap.ldif
+  when: ldap_db_status.stdout == "LDAP DB EMPTY"
+
+- name: Install LDAP database storage directory configuration (run only once)
+  shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
+  when: ldap_db_status.stdout == "LDAP DB EMPTY"
+
+
+- name: Remove old LDAP database storage directory
+  file: dest=/var/lib/ldap state=absent
 
 
 # PAM
@@ -131,7 +165,7 @@
 
 - name: Install TLS certificates configuration (run only once)
   shell: ldapmodify -Q -Y EXTERNAL -H ldapi:// -f /tmp/ldap.ldif
-  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
+  when: ldap_db_status.stdout == "LDAP DB EMPTY"
   notify:
     - service slapd restart
 
@@ -147,7 +181,7 @@
 
 - name: Install sudo LDAP schema (run only once)
   shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
-  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
+  when: ldap_db_status.stdout == "LDAP DB EMPTY"
 
 
 # LDAP Postfix schema
@@ -156,7 +190,7 @@
 
 - name: Install Postfix LDAP schema (run only once)
   shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
-  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
+  when: ldap_db_status.stdout == "LDAP DB EMPTY"
 
 
 # LDAP indexes
@@ -165,7 +199,7 @@
 
 - name: Install LDAP indexes (run only once)
   shell: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
-  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
+  when: ldap_db_status.stdout == "LDAP DB EMPTY"
 
 
 # GIS.lab LDAP tree
@@ -174,7 +208,7 @@
 
 - name: Install GIS.lab LDAP tree (run only once)
   shell: 'ldapadd -Z -w {{ gislab_ldap_admin_password.stdout }} -D "cn=admin,dc=gis,dc=lab" -f /tmp/ldap.ldif'
-  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
+  when: ldap_db_status.stdout == "LDAP DB EMPTY"
 
 - meta: flush_handlers
 
@@ -194,7 +228,7 @@
 
 - name: Install LDAP scripts runtime patch (run only once)
   shell: patch /usr/share/ldapscripts/runtime /tmp/runtime-fix.patch; rm -f /tmp/runtime-fix.patch
-  when: ldap_install_status.stdout == "LDAP NOT INSTALLED"
+  when: ldap_db_status.stdout == "LDAP DB EMPTY"
 
 - name: Save LDAP admin password to LDAP scripts (run only once)
   shell: printf "{{ gislab_ldap_admin_password.stdout }}" > /etc/ldapscripts/ldapscripts.passwd && chmod 0600 /etc/ldapscripts/ldapscripts.passwd

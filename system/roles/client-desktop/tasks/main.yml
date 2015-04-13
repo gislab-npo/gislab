@@ -34,18 +34,6 @@
   file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab state=directory owner=root group=root mode=0700
 
 
-# Copy apt cache
-- name: Prepare apt cache directory if no apt proxy configured
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives state=directory recurse=yes
-  when: GISLAB_APT_HTTP_PROXY|default(None) == None and GISLAB_SERVER_ARCHITECTURE == 'i386'
-
-- name: Copy apt cache from server to client if no apt proxy configured
-  shell: cp -a /var/cache/apt/archives/*.deb {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives/ 2>/dev/null || true
-  args:
-    executable: /bin/bash
-  when: GISLAB_APT_HTTP_PROXY|default(None) == None and GISLAB_SERVER_ARCHITECTURE == 'i386'
-
-
 # Debootstrap
 - name: Install base system (without apt proxy)
   command: debootstrap --arch i386 {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENT_ROOT }} http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
@@ -631,15 +619,6 @@
   when: GISLAB_CLIENT_WORKER_ENABLED
 
   
-# Copy apt cache
-- name: Copy apt cache back from client to server if no apt proxy configured
-
-  shell: cp -a {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives/*.deb /var/cache/apt/archives/ 2>/dev/null || true
-  args:
-    executable: /bin/bash
-  when: GISLAB_APT_HTTP_PROXY|default(None) == None and GISLAB_SERVER_ARCHITECTURE == 'i386'
-
-
 # Clean apt cache
 - name: Clean apt cache
   shell: "export DEBIAN_FRONTEND=noninteractive

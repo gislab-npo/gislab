@@ -184,8 +184,19 @@
 - name: Add imincik PPA signing key
   apt_key: data="{{ lookup('file', 'static/ppa_imincik.key') }}" state=present
 
+
 - name: Configure Apt cache proxy server
   template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
+
+# TODO: does /storage/applications/apt/pkgcache.bin exists
+- name: Move apt cache to '/storage' directory
+  shell: mv -f /var/cache/apt /storage/applications/apt
+  args:
+    creates: /storage/applications/apt/pkgcache.bin
+
+- name: Create symlink to apt in '/storage' directory
+  file: src=/storage/applications/apt dest=/var/cache/apt state=link
+
 
 - name: Update apt cache
   apt: update_cache=yes
