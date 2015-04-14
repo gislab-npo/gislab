@@ -181,6 +181,7 @@ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY: 192.168.5.1
 # Change requires running upgrade.
 
 # SMTP address
+# If using GMail account, allowing less secure access is required (https://www.google.com/settings/security/lesssecureapps)
 # Example: smtp.gmail.com
 GISLAB_SERVER_EMAIL_RELAY_SERVER:
 
