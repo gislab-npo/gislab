@@ -1,4 +1,4 @@
-#### GIS.lab Unit pre-configuration file
+#### Basic OS installation seed file for GIS.lab Unit
 
 ### Network configuration
 d-i netcfg/choose_interface select eth0

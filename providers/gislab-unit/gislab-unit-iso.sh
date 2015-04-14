@@ -80,9 +80,9 @@ sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" preseed/gislab-unit.seed
 sed -i "s;###APT_PROXY###;$APT_PROXY;" preseed/gislab-unit.seed
 sed -i "s;###TIMEZONE###;$TIMEZONE;" preseed/gislab-unit.seed
 
-cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_public_key
+cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_key.pub
 sed -i 's|.*###DUMMY_COMMAND###*.|mkdir /target/home/ubuntu/.ssh; \\\
-cp /cdrom/ssh_public_key /target/home/ubuntu/.ssh/authorized_keys; \\\
+cp /cdrom/ssh_key.pub /target/home/ubuntu/.ssh/authorized_keys; \\\
 chroot /target chown -R ubuntu:ubuntu /home/ubuntu/.ssh; \\\
 chroot /target chmod 0700 /home/ubuntu/.ssh; \\\
 chroot /target chmod 0600 /home/ubuntu/.ssh/authorized_keys|' preseed/gislab-unit.seed
