@@ -586,6 +586,9 @@
 - name: Install Serf handlers scripts 
   copy: src=static/serf/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/serf/handlers mode=0774
 
+- name: Install reboot Serf handler
+  shell: ln -sf shutdown.sh {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/serf/handlers/reboot.sh
+
 - name: Install Serf agent init script
   template: src=init/serf-agent.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/serf-agent.conf
 

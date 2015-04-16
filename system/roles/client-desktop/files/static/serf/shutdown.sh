@@ -1,22 +1,41 @@
 #!/bin/bash
 
-# Perform machine shutdown if no user session is active.
+# Perform machine shutdown or reboot if no user session is active.
 
-ADDRESS=$(cat)
+HOSTNAMES=$(cat)
 
-# test if IP address is matching, if event is limited only for specified IP address
-if [ "$ADDRESS" != "" ]; then
-	 ip addr show | grep "inet ${ADDRESS}/" || exit 0
-fi
+perform_event() {
+	# detect event type from script file name
+	if [ "$(basename $0)" == "shutdown.sh" ]; then
+		event="poweroff"
+	else
+		event="reboot"
+	fi
+
+	# test if no active user session is running
+	if [ ! -f  "/var/lib/gislab/session.lock" ]; then
+		logger --tag serf "Performing system $event."
+
+		serf leave
+		/sbin/$event
+	else
+		logger --tag serf "Can't $event machine. User session is still active."
+	fi
+}
 
 
-if [ ! -f  "/var/lib/gislab/session.lock" ]; then
-	logger --tag serf "Performing system shutdown."
+if [ "$HOSTNAMES" != "" ]; then
+	IFS=', ' read -a HOSTNAMESLIST <<< "$HOSTNAMES"
 
-	serf leave
-	/sbin/poweroff
+	# test if hostname is matching, if event is limited only for specified one
+	for host in "${HOSTNAMESLIST[@]}"; do
+		if [ "$host" == "$(hostname --short)" ]; then
+			perform_event
+		fi
+	done
+
 else
-	logger --tag serf "Can't shutdown machine. User session is still active."
+	perform_event
 fi
 
 
