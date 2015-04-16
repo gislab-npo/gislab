@@ -85,7 +85,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # GIS.lab worker
   (1..CONFIG['GISLAB_WORKERS_COUNT']).each do |i|
-    config.vm.define vm_name = "gislab_vagrant_w%02d" % i do |worker|
+    config.vm.define vm_name = "gislab_vagrant_w%02d" % (i+9) do |worker|
       worker.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".#{9+i}"
 
     # provisioning
