@@ -79,8 +79,8 @@ gislab_serf_install () {
 		unzip -d /usr/local/bin /tmp/serf.zip
 		rm -f /tmp/serf.zip
 
-		# it is difficult to test if gislabadmins group exist on initial installation without reloading user
-		# environment. Therefore we rather use fallback.
+		# It is difficult to properly test if gislabadmins group exist in system when running initial installation
+		# (gislabadmins doesn't exist on worker). Therefore we rather use bash exception if chown throws an error.
 		chown root:gislabadmins /usr/local/bin/serf 2> /dev/null || chown root:root /usr/local/bin/serf
 		chmod 774 /usr/local/bin/serf
 
