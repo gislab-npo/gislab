@@ -79,8 +79,10 @@ gislab_serf_install () {
 		unzip -d /usr/local/bin /tmp/serf.zip
 		rm -f /tmp/serf.zip
 
-		chown root:root /usr/local/bin/serf
-		chmod 744 /usr/local/bin/serf
+		# it is difficult to test if gislabadmins group exist on initial installation without reloading user
+		# environment. Therefore we rather use fallback.
+		chown root:gislabadmins /usr/local/bin/serf 2> /dev/null || chown root:root /usr/local/bin/serf
+		chmod 774 /usr/local/bin/serf
 
 		echo "Serf was successfully installed (ARCH: $SERF_ARCH, VERSION: $SERF_VERSION)!"
 	fi
