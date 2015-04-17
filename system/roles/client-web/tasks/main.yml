@@ -45,14 +45,6 @@
   shell: rm -rf /usr/local/python-virtualenvs/gislab-web;
     virtualenv --clear --quiet --system-site-packages /usr/local/python-virtualenvs/gislab-web
 
-- name: Install Gunicorn
-  pip: name=gunicorn version=19.1.1
-       virtualenv=/usr/local/python-virtualenvs/gislab-web
-       virtualenv_site_packages=yes
-       state=present
-  notify:
-    - service gislab-web restart
-
 
 # GIS.lab Web installation
 - name: Copy GIS.lab Web installation files to temporary dir on server
@@ -69,9 +61,10 @@
 
 - name: Install GIS.lab Web
   shell: source /usr/local/python-virtualenvs/gislab-web/bin/activate
-         && python /tmp/gislab-web/setup.py install
+         && python ./setup.py install
   args:
     executable: /bin/bash
+    chdir: /tmp/gislab-web
   notify:
     - service gislab-web restart
 
