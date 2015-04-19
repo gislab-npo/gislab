@@ -96,14 +96,6 @@
     </Menu>
 
     <Menu>
-        <Name>Games</Name>
-        <Directory>xfce-games.directory</Directory>
-        <Include>
-            <Category>Game</Category>
-        </Include>
-    </Menu>
-
-    <Menu>
         <Name>Graphics</Name>
         <Directory>xfce-graphics.directory</Directory>
         <Include>
