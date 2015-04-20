@@ -148,28 +148,24 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - xul-ext-ubufox
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
-  # list of GIS.lab client extra packages (installed without recommended packages)
+GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
+  # list of default desktop packages (installed without recommended packages)
   - aptitude
   - conky-std
   - curl
   - flashplugin-installer
   - freerdp-x11
-  - gdal-bin
   - gdisk
   - gimp
   - git
   - git-core
-  - grass7
   - gthumb
   - gtk-recordmydesktop
   - htop
   - imagemagick
   - inkscape
   - ipython
-  - josm
   - keepassx
-  - libgdal1h
   - libreoffice
   - libreoffice-calc
   - libreoffice-gtk
@@ -184,15 +180,8 @@ GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
   - pgadmin3
   - postgresql-client
   - postgresql-comparator
-  - proj-bin
-  - python-pysqlite2
-  - python-gdal
-  - python-qgis
-  - qgis
   - qgit
   - rst2pdf
-  - spatialite-bin
-  - spatialite-gui
   - sqlite3
   - sshfs
   - syslinux-common
@@ -201,10 +190,26 @@ GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
   - vlc
   - vlc-plugin-pulse
   - x11vnc
+
+
+GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
+  # list of GIS.lab client GIS packages (installed without recommended packages)
+  - gdal-bin
+  - grass7
+  - josm
+  - libgdal1h
+  - proj-bin
+  - python-pysqlite2
+  - python-gdal
+  - python-qgis
+  - qgis
+  - spatialite-bin
+  - spatialite-gui
   - xvfb
 
-# List of GIS.lab client development packages (installed without recommended packages)
+
 GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT:
+  # list of GIS.lab client development packages (installed without recommended packages)
   - bison
   - build-essential
   - ccache
@@ -247,6 +252,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT:
   - txt2tags
   - xauth
   - xfonts-base
+
 
 # List of packages to remove client images.
 # To find out the reason why package was installed use '$ aptitude why <package>'.

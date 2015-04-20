@@ -15,7 +15,7 @@
         <value type="int" value="18"/>
         <value type="int" value="12"/>
         <value type="int" value="8"/>
-        <value type="int" value="9"/>
+{% if GISLAB_SUITE == 'lab' %}<value type="int" value="9"/>{% endif %}
         <value type="int" value="15"/>
         <value type="int" value="26"/>
         <value type="int" value="2"/>
@@ -83,11 +83,13 @@
     <property name="plugin-16" type="string" value="separator"/>
     <property name="plugin-14" type="string" value="xkb-plugin"/>
     <property name="plugin-8" type="string" value="separator"/>
+{% if GISLAB_SUITE == 'lab' %}
     <property name="plugin-9" type="string" value="launcher">
       <property name="items" type="array">
         <value type="string" value="gislab-desktop.desktop"/>
       </property>
     </property>
+{% endif %}
     <property name="plugin-18" type="string" value="launcher">
       <property name="items" type="array">
         <value type="string" value="leafpad.desktop"/>

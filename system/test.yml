@@ -17,15 +17,39 @@
     - { role: service-files-test, tags: ['service-files-test'] }
     - { role: service-chat-test, tags: ['service-chat-test'] }
     - { role: service-database-test, tags: ['service-database-test'] }
-    - { role: service-mapserver-test, tags: ['service-mapserver-test'] }
-    - { role: service-load-balancer-test, tags: ['service-load-balancer-test'] }
+    - {
+      role: service-mapserver-test,
+      tags: ['service-mapserver-test'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+    }
+    - {
+      role: service-load-balancer-test,
+      tags: ['service-load-balancer-test'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+    }
     - { role: service-statistics-test, tags: ['service-statistics-test'] }
     - { role: service-cluster-test, tags: ['service-cluster-test'] }
     - { role: service-connection-forwarding-test, tags: ['service-connection-forwarding-test'] }
     - { role: service-vpn-test, tags: ['service-vpn-test'] }
-    - { role: client-web-test, tags: ['client-web-test'] }
-    - { role: client-worker-test, tags: ['client-worker-test'] }
-    - { role: client-desktop-test, tags: ['client-desktop-test'], when: "'{{ GISLAB_SUITE }}' == 'lab'" }
+    - {
+      role: client-web-test,
+      tags: ['client-web-test'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+    }
+    - {
+      role: client-worker-test,
+      tags: ['client-worker-test'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+    }
+    - {
+      role: client-desktop-test,
+      tags: ['client-desktop-test'],
+      when: "'{{ GISLAB_SUITE }}' in ('desktop', 'lab')"
+    }
     - { role: account-admin-test, tags: ['account-admin-test'] }
-    - { role: example-data-test, tags: ['example-data-test'] }
+    - {
+      role: example-data-test,
+      tags: ['example-data-test'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+    }
     - { role: installation-done-test, tags: ['installation-done-test'] }

@@ -146,11 +146,18 @@
   args:
     executable: /bin/bash
 
+- name: Install GIS.lab client desktop packages
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP|join(' ') }}"
+  args:
+    executable: /bin/bash
+
 - name: Install GIS.lab client GIS packages
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_GIS|join(' ') }}"
   args:
     executable: /bin/bash
+  when: GISLAB_SUITE == 'lab'
 
 - name: Install GIS development packages
   shell: "export DEBIAN_FRONTEND=noninteractive
@@ -400,18 +407,22 @@
 - name: Install XFCE desktop configuration file
   template: src=desktop/xfce/xfce4-desktop.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
-- name: Install xfce panel configuration file
+- name: Install XFCE panel configuration file
   template: src=desktop/panel/default.xml dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/panel/default.xml
 
 
-- name: Install xfce menu configuration file
+- name: Install XFCE menu configuration file
   copy: src=static/desktop/menu/xfce-applications.menu dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/menus/xfce-applications.menu
-
-- name: Install desktop applications files
-  copy: src=static/desktop/menu/applications/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
 
 - name: Install desktop directories files
   copy: src=static/desktop/menu/directories/  dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/desktop-directories/
+
+- name: Install desktop applications files
+  copy: src=static/desktop/menu/applications/desktop/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
+
+- name: Install GIS applications files
+  copy: src=static/desktop/menu/applications/gis/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
+  when: GISLAB_SUITE == 'lab'
 
 
 # Xubuntu Greybird theme originally provides very thin window borders, which are very
@@ -604,14 +615,14 @@
     && /bin/bash ./install.sh"
   args:
     executable: /bin/bash
-  when: GISLAB_CLIENT_WORKER_ENABLED
+  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
 - name: Clean up after worker installation
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
   with_items:
     - /tmp/install-worker
     - install.sh
-  when: GISLAB_CLIENT_WORKER_ENABLED
+  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
   
 # Clean apt cache

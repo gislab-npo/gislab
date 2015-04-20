@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# TODO: backup also Firefox and maybe other application's configs
+# TODO: backup configuration and data from other apps like Firefox
 
 set -e
 
@@ -65,11 +65,11 @@ chmod 700 $BACKUP_DIR
 mkdir $TEMP_BACKUP_DIR
 
 
-# write GIS.lab version
+# GIS.lab VERSION
 echo $GISLAB_VERSION > $TEMP_BACKUP_DIR/GISLAB_VERSION
 
 
-# backup home directory
+# HOME DIRECTORY
 # load home directory names from XDG
 if [ -f $GISLAB_USER_HOME/.config/user-dirs.dirs ]; then
 	source $GISLAB_USER_HOME/.config/user-dirs.dirs
@@ -108,23 +108,29 @@ fi
 bzip2 $HOME_BACKUP_FILE
 
 
-# backup published projects
+# PUBLISHED PROJECTS
 tar -cjf $PUBLISH_BACKUP_FILE /storage/publish/$GISLAB_USER
 
 
-# backup database data
+# DATABASE DATA
 cd $TEMP_BACKUP_DIR # leave root's home dir before sudo to postgres
+
 psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball;" > /dev/null
 psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing;" > /dev/null
-psql -U postgres -d gislab -c "CREATE TABLE ${GISLAB_USER}.gislab_ball AS SELECT * FROM storage_ball WHERE \"user\" = '$GISLAB_USER';"
-psql -U postgres -d gislab -c "CREATE TABLE ${GISLAB_USER}.gislab_drawing AS SELECT * FROM storage_drawing WHERE \"user\" = '$GISLAB_USER';"
 
-pg_dump -U postgres -Fc --schema=$GISLAB_USER gislab > $DB_BACKUP_FILE
-psql -U postgres -d gislab -c "DROP TABLE ${GISLAB_USER}.gislab_ball;" > /dev/null
-psql -U postgres -d gislab -c "DROP TABLE ${GISLAB_USER}.gislab_drawing;" > /dev/null
+# include data from GIS.lab Web client only if client is installed
+ball_exist_sql="SELECT 1 FROM information_schema.tables WHERE table_name = 'storage_ball'"
+if [[ $(psql -U postgres -d gislab -tAc "$ball_exist_sql") == "1" ]]; then
+	psql -U postgres -d gislab -c "CREATE TABLE ${GISLAB_USER}.gislab_ball AS SELECT * FROM storage_ball WHERE \"user\" = '$GISLAB_USER';"
+	psql -U postgres -d gislab -c "CREATE TABLE ${GISLAB_USER}.gislab_drawing AS SELECT * FROM storage_drawing WHERE \"user\" = '$GISLAB_USER';"
+fi
+
+pg_dump -U postgres -Fc --schema=$GISLAB_USER gislab > $DB_BACKUP_FILE # perform backup
+psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball;" > /dev/null
+psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing;" > /dev/null
 
 
-# backup LDAP data
+# LDAP DATA
 ldapfinger -u $GISLAB_USER > $LDAP_BACKUP_FILE
 id $GISLAB_USER | grep -q '(gislabadmins)' && echo "#superuser" >> $LDAP_BACKUP_FILE  # superuser permissions
 

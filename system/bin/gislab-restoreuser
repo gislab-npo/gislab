@@ -92,7 +92,7 @@ gislab-adduser -g "$GISLAB_USER_GIVEN_NAME" -l "$GISLAB_USER_SURNAME" \
                -m "$GISLAB_USER_MAIL" -d "$GISLAB_USER_DESC" $SUDO_OPT $GISLAB_USER
 
 
-# restore password
+# PASSWORD
 ldapmodifyuser $GISLAB_USER > /dev/null << EOL
 changetype: modify
 replace: userPassword
@@ -101,7 +101,7 @@ EOL
 gislab_print_info "Original password restored from backup"
 
 
-# restore home data
+# HOME DATA
 cp -r storage/home/$GISLAB_USER /storage/home/
 
 if [ -f storage/home/$GISLAB_USER/.config/user-dirs.dirs ]; then
@@ -112,19 +112,30 @@ fi
 chown -R $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER
 
 
-# restore published data
+# PUBLISHED DATA
 cp -r storage/publish/$GISLAB_USER /storage/publish/
 chown -R $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
 
 
-# restore database
+# DATABASE DATA
 pg_restore -U postgres -d gislab -n $GISLAB_USER postgresql.dump
 
-psql -U postgres -d gislab -c "INSERT INTO storage_ball SELECT * FROM ${GISLAB_USER}.gislab_ball;"
-psql -U postgres -d gislab -c "INSERT INTO storage_drawing SELECT * FROM ${GISLAB_USER}.gislab_drawing;"
+# restore data from GIS.lab Web client only if installed and data is present in backup
+ball_exist_src_sql="SELECT 1 FROM information_schema.tables WHERE
+						table_schema = '${GISLAB_USER}'
+						AND table_name = 'gislab_ball'"
+ball_exist_dest_sql="SELECT 1 FROM information_schema.tables WHERE table_name = 'storage_ball'"
+if [ $(psql -U postgres -d gislab -tAc "$ball_exist_src_sql") == "1" ]; then
+	if [ $(psql -U postgres -d gislab -tAc "$ball_exist_dest_sql") == "1" ]; then
+		psql -U postgres -d gislab -c "INSERT INTO storage_ball SELECT * FROM ${GISLAB_USER}.gislab_ball;"
+		psql -U postgres -d gislab -c "INSERT INTO storage_drawing SELECT * FROM ${GISLAB_USER}.gislab_drawing;"
+	else
+		gislab_print_warning "GIS.lab Web client is not installed. Skipping data restore"
+	fi
+fi
 
-psql -U postgres -d gislab -c "DROP TABLE ${GISLAB_USER}.gislab_ball" > /dev/null
-psql -U postgres -d gislab -c "DROP TABLE ${GISLAB_USER}.gislab_drawing" > /dev/null
+psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball" > /dev/null
+psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing" > /dev/null
 
 
 # clean up

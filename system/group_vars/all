@@ -99,8 +99,9 @@ GISLAB_ADMIN_EMAIL: gislab@gis.lab
 
 # Type of GIS.lab infrastructure suite to install.
 # Possible options are:
-# * server: only server installed
-# * lab: complete lab infrastructure for LAN. Includes server and client
+# * server: only GIS server installed
+# * desktop: general purpose server and desktop clients installed with no GIS support
+# * lab: complete GIS server and GIS clients infrastructure installed
 # Change requires running upgrade.
 GISLAB_SUITE: lab
 
