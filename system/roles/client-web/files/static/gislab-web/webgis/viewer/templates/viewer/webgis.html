@@ -354,13 +354,15 @@
 					layersTree: JSON.parse('{{ layers|default:"[]"|escapejs }}'),
 				});
 
+				{% if topics %}
 				var topics = JSON.parse('{{ topics|default:"[]"|escapejs }}');
 				var topics_panel = new WebGIS.TopicsPanel({
 					layout: 'fit',
 					title: '{% trans "Topics" %}',
 					cls: 'radiobutton-toolbar',
 					topics: topics,
-				})
+				});
+				{% endif %}
 
 				var baselayer_panel = new WebGIS.BaseLayersPanel({
 					layout: 'fit',
@@ -459,20 +461,23 @@
 				var info_panel = new Ext.TabPanel({
 					activeTab: 0,
 					items: [
+						{% if project != "empty" %}
 						layer_legend,
 						properties,
+						{% endif %}
 						about_panel
 					]
 				});
 
+				var layers_control_tabs = [
+					{% if topics %}topics_panel,{% endif %}
+					baselayer_panel,
+					{% if layers %}layer_treepanel{% endif %}
+				];
 				var layers_tabpanel = new Ext.TabPanel({
 					id: 'layers-control-panel',
-					activeTab: 2,
-					items: [
-						topics_panel,
-						baselayer_panel,
-						layer_treepanel
-					],
+					activeTab: layers_control_tabs.length-1,
+					items: layers_control_tabs,
 					listeners: {
 						afterrender: function(panel) {
 							// switch to topics tab (layers tree must be rendered first!)
@@ -498,7 +503,7 @@
 					},
 					items: [
 						layers_tabpanel,
-						{% if project != "empty" %} info_panel {% endif %}
+						info_panel
 					]
 				});
 
@@ -518,10 +523,7 @@
 					}
 				});
 
-				mappanel.getTopToolbar().add(' ');
-				{% if project != "empty" and topics %}
-				mappanel.getTopToolbar().add(' ', '-', ' ');
-				{% endif %}
+				mappanel.getTopToolbar().add(' ', ' ', '-', ' ');
 				{% include "viewer/actions/basic.js" %}
 
 				{% if project != "empty" %}
