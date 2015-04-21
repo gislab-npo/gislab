@@ -57,6 +57,7 @@ WebGIS.BaseLayersPanel = Ext.extend(Ext.tree.TreePanel, {
 			Ext.Element.select('.olControlAttribution').removeClass("google");
 		}
 		this.map.setBaseLayer(layer);
+		layer.setVisibility(true);
 	},
 	createLayer: function(layer_config) {
 		// create Openlayer Layer
@@ -155,7 +156,7 @@ WebGIS.BaseLayersPanel = Ext.extend(Ext.tree.TreePanel, {
 			title: title,
 			name: layer_config.name,
 		};
-		var visible = layer_config.visible && !this.selectedLayer;
+		var visible = (layer_config.visible && !this.selectedLayer) === true;
 		if (isGroup) {
 			layerRecordData.itemCls = 'layer-category-item';
 			node = new Ext.tree.TreeNode({
