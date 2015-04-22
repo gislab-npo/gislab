@@ -36,12 +36,13 @@ derase:
 # The zip target creates a zip file with the deployed content.
 # You can then upload the zip file on http://plugins.qgis.org
 zip:
+	rm -f $(PLUGINNAME).zip
+	rm -Rf $(GISLAB_BUILDDIR)
 	mkdir -p $(GISLAB_BUILDDIR)/$(PLUGINNAME)
 	cp -vf $(PY_FILES) $(GISLAB_BUILDDIR)/$(PLUGINNAME)
 	cp -vf $(UI_FILES) $(GISLAB_BUILDDIR)/$(PLUGINNAME)
 	cp -vf $(RESOURCE_FILES) $(GISLAB_BUILDDIR)/$(PLUGINNAME)
 	cp -vf $(EXTRAS) $(GISLAB_BUILDDIR)/$(PLUGINNAME)
-	rm -f $(PLUGINNAME).zip
 	cd $(GISLAB_BUILDDIR); zip -9r $(CURDIR)/$(PLUGINNAME).zip $(PLUGINNAME)
 	rm -Rf $(GISLAB_BUILDDIR)
 
