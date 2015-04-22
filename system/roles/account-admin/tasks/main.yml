@@ -7,18 +7,27 @@
 
 
 - name: Detect if GIS.lab administrator user account is already created
-  shell: "id gislab || echo 'USER DOES NOT EXIST'"
+  shell: "id gislab || echo 'ADMIN DOES NOT EXIST'"
   args:
     executable: /bin/bash
   register: admin_account_status
   changed_when: False
 
 - name: Create GIS.lab administrator user account 'gislab'
-  shell: "gislab-adduser -s -g {{ GISLAB_ADMIN_FIRST_NAME }} -l {{ GISLAB_ADMIN_SURNAME }} -m {{ GISLAB_ADMIN_EMAIL }} -p {{ GISLAB_ADMIN_PASSWORD }} gislab"
-  when: GISLAB_ADMIN_PASSWORD != "" and admin_account_status.stdout == 'USER DOES NOT EXIST'
+  shell: gislab-adduser
+    -s
+    -g "Administrator"
+    -l "GIS.lab"
+    -m "gislab@gis.lab"
+    -p "{{ GISLAB_ADMIN_PASSWORD }}"
+    gislab
+  when: GISLAB_ADMIN_PASSWORD != "" and admin_account_status.stdout == 'ADMIN DOES NOT EXIST'
 
-- name: Update GIS.lab administrator user account password
-  shell: "gislab-password -p {{ GISLAB_ADMIN_PASSWORD }} gislab"
+- name: Update password of GIS.lab administrator user account
+  shell: gislab-password
+    -p "{{ GISLAB_ADMIN_PASSWORD }}"
+    gislab
   when: GISLAB_ADMIN_PASSWORD != ""
+
 
 # vim:ft=ansible:

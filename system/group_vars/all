@@ -76,8 +76,6 @@ GISLAB_SSH_PRIVATE_KEY:
 # ******************************************************************************************************************* #
 ############################################# ADMINISTRATOR DETAILS ###################################################
 # ******************************************************************************************************************* #
-# Following information will be used for creation of GIS.lab administrator user account 'gislab'.
-
 # GIS.lab administrator first name.
 # Example: Ivan
 GISLAB_ADMIN_FIRST_NAME: Administrator
@@ -86,7 +84,7 @@ GISLAB_ADMIN_FIRST_NAME: Administrator
 # Example: Mincik
 GISLAB_ADMIN_SURNAME: GIS.lab
 
-# GIS.lab administrator email. All administrator emails including system logs will be sent to this address.
+# GIS.lab administrator email.
 # Example: ivan.mincik@gmail.com
 GISLAB_ADMIN_EMAIL: gislab@gis.lab
 
