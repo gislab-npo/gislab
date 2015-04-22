@@ -35,6 +35,7 @@ gislab_serf_install () {
 
 	SERF_INSTALL="yes"
 	SERF_VERSION="$1"
+	SERF_INSTALL_TMP_ROOT="/tmp/serf-install-$(date +%s)"
 		
 	# detect architecture
 	if [ "$(getconf LONG_BIT)" == "32" ]; then
@@ -65,6 +66,8 @@ gislab_serf_install () {
 
 	# perform installation if required
 	if [ "$SERF_INSTALL" == "yes" ]; then
+		mkdir -p $SERF_INSTALL_TMP_ROOT
+
 		# download Serf
 		wget --no-verbose \
 			--retry-connrefused \
@@ -72,17 +75,19 @@ gislab_serf_install () {
 			--read-timeout=20 \
 			--timeout=15 \
 			--tries=0 \
-			--output-document=/tmp/serf.zip https://dl.bintray.com/mitchellh/serf/${SERF_VERSION}_linux_${SERF_ARCH}.zip
+			--output-document=$SERF_INSTALL_TMP_ROOT/serf.zip https://dl.bintray.com/mitchellh/serf/${SERF_VERSION}_linux_${SERF_ARCH}.zip
 
 		# install Serf
 		rm -f /usr/local/bin/serf
-		unzip -d /usr/local/bin /tmp/serf.zip
-		rm -f /tmp/serf.zip
+		unzip -d /usr/local/bin /$SERF_INSTALL_TMP_ROOT/serf.zip
 
 		# It is difficult to properly test if gislabadmins group exist in system when running initial installation
 		# (gislabadmins doesn't exist on worker). Therefore we rather use bash exception if chown throws an error.
 		chown root:gislabadmins /usr/local/bin/serf 2> /dev/null || chown root:root /usr/local/bin/serf
 		chmod 774 /usr/local/bin/serf
+
+		# cleanup
+		rm -rf $SERF_INSTALL_TMP_ROOT
 
 		echo "Serf was successfully installed (ARCH: $SERF_ARCH, VERSION: $SERF_VERSION)!"
 	fi

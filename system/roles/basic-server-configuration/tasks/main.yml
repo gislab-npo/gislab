@@ -5,6 +5,19 @@
 # Run basic server configuration.
 
 # Facts
+- name: Generate unique string for this installation
+  shell: date +%s | md5sum | head -c 24
+  register: gislab_install_unique_string
+  changed_when: False
+
+- name: Set unique string for this installation
+  set_fact:
+    GISLAB_INSTALL_UNIQUE_STRING: "{{ gislab_install_unique_string.stdout }}"
+
+- name: Set temporary directory for this installation
+  set_fact:
+    GISLAB_INSTALL_TMP_ROOT: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
+
 - name: Detect GIS.lab unique ID
   set_fact:
     GISLAB_UNIQUE_ID: "{{ inventory_hostname }}"
@@ -119,6 +132,7 @@
     - /var/lib/gislab
     - /usr/local/python-virtualenvs
     - /storage/applications
+    - "{{ GISLAB_INSTALL_TMP_ROOT }}"
 
 - name: Set safe permissions for /etc/gislab directory
   file: path=/etc/gislab state=directory owner=root group=root mode=0700
