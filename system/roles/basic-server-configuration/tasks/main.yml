@@ -218,7 +218,7 @@
 - name: Upgrade system
   apt: upgrade=full force=yes
 
-- name: Remove not needed packages installed with OS image
+- name: Remove not needed packages possibly comming with OS image
   apt: pkg={{item}} state=absent
   with_items:
     - landscape-client
@@ -227,6 +227,9 @@
 - name: Install packages
   apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
+    - arp-scan
+    - etherwake
+    - ethtool
     - htop
     - iotop
     - mc
