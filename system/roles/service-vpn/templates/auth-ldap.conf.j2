@@ -7,12 +7,5 @@
 <Authorization>
 	BaseDN		"ou=People,dc=gis,dc=lab"
 	SearchFilter	"uid=%u"
-	RequireGroup	true
-
-	<Group>
-		BaseDN		"dc=gis,dc=lab"
-		SearchFilter	"(cn=gislabusers)"
-		MemberAttribute	"member"
-	</Group>
-
+	RequireGroup	false
 </Authorization>
