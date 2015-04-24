@@ -1,18 +1,29 @@
 port 1194
 proto udp
 dev tun
+
 ca gislab_vpn_ca.crt
 cert gislab_vpn_server.crt
 key gislab_vpn_server.key
+tls-auth gislab_vpn_ta.key 0
 dh gislab_vpn_dh1024.pem
-server 172.16.{{ GISLAB_NETWORK_AS_LIST[2] }}.0 255.255.255.0
-ifconfig-pool-persist ipp.txt
-push "route {{ GISLAB_NETWORK }}.0 255.255.255.0"
+client-cert-not-required
+
+mode server
+tls-server
+topology subnet
+
+ifconfig 172.16.{{ GISLAB_NETWORK_AS_LIST[2] }}.1 255.255.255.0
+ifconfig-pool 172.16.{{ GISLAB_NETWORK_AS_LIST[2] }}.50 172.16.{{ GISLAB_NETWORK_AS_LIST[2] }}.250 255.255.255.0
+
+push "topology subnet"
+push "route {{ GISLAB_NETWORK }}.0 255.255.255.0 172.16.{{ GISLAB_NETWORK_AS_LIST[2] }}.1"
 push "dhcp-option DOMAIN gis.lab"
 push "dhcp-option DNS {{ GISLAB_NETWORK_SERVER_IP }}"
-client-to-client
+
+plugin /usr/lib/openvpn/openvpn-auth-ldap.so /etc/openvpn/auth/auth-ldap.conf
+
 keepalive 10 120
-tls-auth gislab_vpn_ta.key 0
 comp-lzo
 user nobody
 group nogroup
@@ -23,5 +34,3 @@ verb 0
 {% else %}
 verb 3
 {% endif %}
-plugin /usr/lib/openvpn/openvpn-auth-ldap.so /etc/openvpn/auth/auth-ldap.conf
-client-cert-not-required
