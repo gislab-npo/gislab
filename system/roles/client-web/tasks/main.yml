@@ -42,8 +42,8 @@
 
 # Python virtual environment
 - name: Re-create Python virtual environment
-  shell: rm -rf /usr/local/python-virtualenvs/gislab-web;
-    virtualenv --clear --quiet --system-site-packages /usr/local/python-virtualenvs/gislab-web
+  shell: rm -rf /usr/local/python-virtualenvs/gislab-web
+    && virtualenv --clear --quiet --system-site-packages /usr/local/python-virtualenvs/gislab-web
 
 
 # GIS.lab Web installation
