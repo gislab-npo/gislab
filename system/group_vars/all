@@ -245,9 +245,6 @@ GISLAB_CLIENT_WORKER_ENABLED: yes
 ############################################# DEVELOPER SECTION #######################################################
 # ******************************************************************************************************************* #
 
-# GIS.lab version value. In master Git branch it should be always set to 'dev'.  
-GISLAB_VERSION: dev
-
 # Determines if enable installation in debug mode.
 # Possible values are:
 # * no: do not activate debug mode

@@ -5,6 +5,22 @@
 # Run basic server configuration.
 
 # Facts
+- name: Detect if it is possible to get GIS.lab version from Git
+  local_action: shell git rev-parse HEAD 2> /dev/null || echo "GIT NOT AVAILABLE"
+  register: gislab_version_git_status
+  changed_when: False
+
+- name: Detect GIS.lab version from Git
+  local_action: shell echo "dev~$(basename $(git symbolic-ref -q HEAD))+$(git rev-parse --short HEAD)"
+  register: gislab_version
+  when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
+
+- name: Set GIS.lab version from Git
+  set_fact:
+    GISLAB_VERSION: "{{ gislab_version.stdout }}"
+  when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
+
+
 - name: Generate unique string for this installation
   shell: date +%s | md5sum | head -c 24
   register: gislab_install_unique_string
