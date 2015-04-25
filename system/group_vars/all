@@ -218,6 +218,7 @@ GISLAB_CLIENT_LANGUAGES:
 # - layout: aa
 # - layout: bb
 GISLAB_CLIENT_KEYBOARDS:
+  - layout: us
 
 # Determines if client image should provide full support for VirtualBox client
 # * no: do not support VirtualBox client
