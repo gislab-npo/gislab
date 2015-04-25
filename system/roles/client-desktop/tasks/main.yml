@@ -410,6 +410,9 @@
 - name: Install XFCE panel configuration file
   template: src=desktop/panel/default.xml dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/panel/default.xml
 
+- name: Install keyboard layouts configuration file
+  template: src=desktop/keyboard-layouts/keyboard-layout.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml
+
 
 - name: Install XFCE menu configuration file
   copy: src=static/desktop/menu/xfce-applications.menu dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/menus/xfce-applications.menu
