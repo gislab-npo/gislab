@@ -208,7 +208,8 @@ GISLAB_CLIENT_LANGUAGES:
 
 # List of keyboard layout codes and their variants which should be installed on client beside English keyboard
 # layout. 'variant' value is optional and can be omitted. For complete list of keyboard layouts and their corresponding
-# variants see 'man xkeyboard-config'.
+# variants see 'man xkeyboard-config'. Due to X11 protocol limitation, it possible to specify only up to three keyboard
+# layouts here.
 # Example: 
 # - layout: sk
 #   variant: qwerty
