@@ -413,6 +413,9 @@
 - name: Install keyboard layouts configuration file
   template: src=desktop/keyboard-layouts/keyboard-layout.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml
 
+- name: Install Conky configuration
+  template: src=desktop/conky/conky.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/conky/conky.conf
+
 
 - name: Install XFCE menu configuration file
   copy: src=static/desktop/menu/xfce-applications.menu dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/menus/xfce-applications.menu

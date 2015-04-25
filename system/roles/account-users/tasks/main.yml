@@ -73,13 +73,12 @@
 - name: Install filesystem bookmarks
   template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
   with_items:
-  - { src: bookmarks/gtk-bookmarks.j2, dest: /etc/skel/.gtk-bookmarks }
+    - { src: bookmarks/gtk-bookmarks.j2, dest: /etc/skel/.gtk-bookmarks }
 
 
-- name: Install Conky configuration
+- name: Install Conky autostart file
   template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
   with_items:
-    - { src: conky/conkyrc.j2, dest: /etc/skel/.conkyrc }
     - { src: conky/conky.desktop.j2, dest: /etc/skel/.config/autostart/conky.desktop }
 
 
