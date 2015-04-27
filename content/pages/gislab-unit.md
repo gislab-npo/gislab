@@ -46,6 +46,7 @@ _GIS.lab Unit appliance_
 * Secure data storage: KeepassX
 * Database management: PgAdmin, SpatiaLite GUI
 * GIS software: QGIS, GRASS
+* Virtual client support: VirtualBox Guest Additions
 
 ### GIS.lab Web
 * Framework: ExtJS
