@@ -45,13 +45,50 @@
 <p><img alt="GIS.lab Unit" src="http://imincik.github.io/gis-lab/images/gislab-unit.png" /><br />
 <em>GIS.lab Unit appliance</em></p>
 </div>
-<h2>Technical specification</h2>
-<h3>Hardware</h3>
+<h1>Technical specification</h1>
+<h2>Hardware</h2>
 <ul>
 <li>CPU: Intel Core i5 3427U 1,8 GHz</li>
 <li>RAM: 8 - 16 GB DDR3 Kingston</li>
 <li>Disk: 60 -120 GB SSD Kingston</li>
 <li>Size: 116,6 mm x 39 mm x 112 mm</li>
+</ul>
+<h2>Software</h2>
+<h3>GIS.lab Server</h3>
+<ul>
+<li>Deployment: Ansible</li>
+<li>Operating system: Ubuntu Linux</li>
+<li>Authentication: LDAP (OpenLDAP), Kerberos</li>
+<li>DNS: BIND</li>
+<li>Email: Postfix</li>
+<li>Time service: NTP</li>
+<li>Files storage: EXT4, LVM, NFS 4</li>
+<li>Database storage: PostgreSQL/PostGIS</li>
+<li>Monitoring services: Syslog-NG, Logcheck, Munin</li>
+<li>Remote access: VPN (OpenVPN)</li>
+<li>Clustering: HAProxy, Serf</li>
+<li>Communication: IRC (IRCD Hybrid)</li>
+<li>Web services: NGINX, Lighttpd, Django, Gunicorn</li>
+<li>Map services: WMS, WFS (QGIS Server)</li>
+<li>Desktop client boot service: DHCP (ISC DHCP), NBD</li>
+</ul>
+<h3>GIS.lab Desktop</h3>
+<ul>
+<li>Operating system: Ubuntu Linux</li>
+<li>Desktop environment: XFCE</li>
+<li>Office suite: LibreOffice</li>
+<li>Web browser: Firefox</li>
+<li>Graphics editor: GIMP, Inkscape</li>
+<li>Video player: VLC</li>
+<li>Secure data storage: KeepassX</li>
+<li>Database management: PgAdmin, SpatiaLite GUI</li>
+<li>GIS software: QGIS, GRASS</li>
+<li>Virtual client support: VirtualBox Guest Additions</li>
+</ul>
+<h3>GIS.lab Web</h3>
+<ul>
+<li>Framework: ExtJS</li>
+<li>Map library: OpenLayers</li>
 </ul>
 </section>
         <section id="extras" class="body">
