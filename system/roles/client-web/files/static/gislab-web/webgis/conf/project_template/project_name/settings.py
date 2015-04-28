@@ -132,6 +132,7 @@ INSTALLED_APPS = (
 	'webgis.viewer',
 	'webgis.storage',
 	'webgis.mapcache',
+	'webgis.mobile',
 )
 
 ROOT_URLCONF = '{{ project_name }}.urls'
