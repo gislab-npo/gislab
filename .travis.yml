@@ -12,5 +12,5 @@ install:
 
 script:
   - ansible-playbook -i inventories/localhost system/gislab.yml --syntax-check
-  - "ansible-playbook -i inventories/localhost --extra-vars "GISLAB_ADMIN_PASSWORD=gislab" -vv system/gislab.yml --connection=local --sudo"
+  - "ansible-playbook -i inventories/localhost --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab' -vv system/gislab.yml --connection=local --sudo"
   - "ansible-playbook -i inventories/localhost -vv system/test.yml --connection=local --sudo"
