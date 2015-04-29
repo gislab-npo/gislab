@@ -220,7 +220,6 @@
 - name: Configure Apt cache proxy server
   template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
 
-# TODO: does /storage/applications/apt/pkgcache.bin exists
 - name: Move apt cache to '/storage' directory
   shell: mv -f /var/cache/apt /storage/applications/apt
   args:
@@ -233,14 +232,17 @@
 - name: Update apt cache
   apt: update_cache=yes
 
-- name: Upgrade system
-  apt: upgrade=full force=yes
-
 - name: Remove not needed packages possibly comming with OS image
   apt: pkg={{item}} state=absent
   with_items:
     - landscape-client
     - landscape-common
+
+- name: Install aptitude which is required for running system upgrade
+  apt: pkg=aptitude force=yes install_recommends=no state=latest
+
+- name: Upgrade system
+  apt: upgrade=full force=yes
 
 - name: Install packages
   apt: pkg={{item}} force=yes install_recommends=no state=latest
