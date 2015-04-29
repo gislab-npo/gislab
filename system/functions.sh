@@ -85,6 +85,7 @@ gislab_serf_install () {
 		# (gislabadmins doesn't exist on worker). Therefore we rather use bash exception if chown throws an error.
 		chown root:gislabadmins /usr/local/bin/serf 2> /dev/null || chown root:root /usr/local/bin/serf
 		chmod 774 /usr/local/bin/serf
+		ln -sf /usr/local/bin/serf /usr/local/bin/gislab-cluster
 
 		# cleanup
 		rm -rf $SERF_INSTALL_TMP_ROOT
