@@ -13,10 +13,10 @@ def split_regex(string, seperator_pattern):
 def keyboard_layouts(keyboards, f=None):
     """ Return keyboards layout configuration as a string of comma separated layouts
     and variants separated by colon or only as comma separated layouts or variants if
-    'f' (filter) is set. US keyboard is always available.
+    'f' (filter) is set.
     """
-    layouts = ['us',]
-    variants = ['',]
+    layouts = []
+    variants = []
 
     if keyboards:
         for keyboard in keyboards:

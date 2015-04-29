@@ -207,7 +207,9 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 GISLAB_CLIENT_LANGUAGES:
 
 # List of keyboard layout codes and their variants which should be installed on client beside English keyboard
-# layout. 'variant' value is optional and can be omitted.
+# layout. 'variant' value is optional and can be omitted. For complete list of keyboard layouts and their corresponding
+# variants see 'man xkeyboard-config'. Due to X11 protocol limitation, it possible to specify only up to four keyboard
+# layouts here.
 # Example: 
 # - layout: sk
 #   variant: qwerty
@@ -216,6 +218,7 @@ GISLAB_CLIENT_LANGUAGES:
 # - layout: aa
 # - layout: bb
 GISLAB_CLIENT_KEYBOARDS:
+  - layout: us
 
 # Determines if client image should provide full support for VirtualBox client
 # * no: do not support VirtualBox client
