@@ -169,7 +169,9 @@
 
 
 - name: Generate en_US.UTF-8 locale
-  locale_gen: name=en_US.UTF-8 state=present
+  # we don't use 'locale_gen' here, because it fails with travis-ci (https://github.com/ansible/ansible/issues/7289)
+  # locale_gen: name=en_US.UTF-8 state=present
+  shell: /usr/sbin/locale-gen en_US.UTF-8
 
 - name: Set en_US.UTF-8 locale
   shell: /usr/sbin/update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 LANGUAGE=en
