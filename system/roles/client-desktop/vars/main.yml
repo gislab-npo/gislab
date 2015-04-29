@@ -148,8 +148,8 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - xul-ext-ubufox
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
-  # list of default desktop packages (installed without recommended packages)
+GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
+  # list of default office packages (installed without recommended packages)
   - aptitude
   - conky-std
   - curl
@@ -192,7 +192,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - x11vnc
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_GIS:
+GISLAB_CLIENT_INSTALL_PACKAGES_LAB:
   # list of GIS.lab client GIS packages (installed without recommended packages)
   - gdal-bin
   - grass7

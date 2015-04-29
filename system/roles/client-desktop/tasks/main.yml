@@ -148,13 +148,13 @@
 
 - name: Install GIS.lab client desktop packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE|join(' ') }}"
   args:
     executable: /bin/bash
 
 - name: Install GIS.lab client GIS packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_GIS|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_LAB|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_SUITE == 'lab'
@@ -417,11 +417,11 @@
 - name: Install desktop directories files
   copy: src=static/desktop/menu/directories/  dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/desktop-directories/
 
-- name: Install desktop applications files
-  copy: src=static/desktop/menu/applications/desktop/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
+- name: Install office applications files
+  copy: src=static/desktop/menu/applications/office/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
 
-- name: Install GIS applications files
-  copy: src=static/desktop/menu/applications/gis/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
+- name: Install lab applications files
+  copy: src=static/desktop/menu/applications/lab/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
   when: GISLAB_SUITE == 'lab'
 
 
