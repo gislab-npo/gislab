@@ -4,7 +4,7 @@
 #
 # Run basic server configuration.
 
-# Facts
+# FACTS
 - name: Detect if it is possible to get GIS.lab version from Git
   local_action: shell git rev-parse HEAD 2> /dev/null || echo "GIT NOT AVAILABLE"
   register: gislab_version_git_status
@@ -96,11 +96,24 @@
     GISLAB_NETWORK_SERVER_IP: "{{ GISLAB_NETWORK }}.5"
 
 
-# Sanity checks
-# UBUNTU VERSION
+### SANITY CHECKS
+# OS version
 - name: Fail if server is not running compatible OS version
   fail: msg="Server is not running compatible OS version Ubuntu 12.04, {{ ansible_distribution }} {{ ansible_distribution_version }} detected"
   when: ansible_distribution != "Ubuntu" or ansible_distribution_version != "12.04"
+
+
+### CAPABILITIES
+- name: Detect capability to provide VPN service
+  # tun device can be missing on systems running in container
+  stat: path=/dev/net/tuns
+  register: cap_tun_device_status
+  changed_when: False
+
+- name: Enable capability to provide VPN service
+  set_fact:
+    GISLAB_SERVER_CAPABILITY_VPN: yes
+  when: cap_tun_device_status.stat.ischr is defined and cap_tun_device_status.stat.ischr
 
 
 # Configuration and basic directory structure
@@ -136,7 +149,8 @@
     GISLAB_APT_CUSTOM_REPOSITORIES="{% if GISLAB_APT_CUSTOM_REPOSITORIES %}{{ GISLAB_APT_CUSTOM_REPOSITORIES|join(",") }}{% else %}{% endif %}"\n
     GISLAB_INSTALL_DATETIME="{{ GISLAB_INSTALL_DATETIME }}"\n
     GISLAB_PROVISIONING_USER="{{ GISLAB_PROVISIONING_USER }}"\n
-    GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"'
+    GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"\n
+    GISLAB_SERVER_CAPABILITY_VPN="{{ GISLAB_SERVER_CAPABILITY_VPN }}"'
     dest="/etc/gislab_version"
 
 - name: Create custom GIS.lab directories structure
