@@ -227,6 +227,9 @@
 - name: Configure apt repositories
   template: src=apt/sources.list.j2 dest=/etc/apt/sources.list
 
+- name: Remove possible third party apt repositories
+  file: dest=/etc/apt/sources.list.d state=absent
+
 - name: Add imincik PPA signing key
   apt_key: data="{{ lookup('file', 'static/ppa_imincik.key') }}" state=present
 
