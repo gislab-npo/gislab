@@ -61,8 +61,7 @@
 
 - name: Install GIS.lab Web
   shell: source /usr/local/python-virtualenvs/gislab-web/bin/activate
-    && cd {{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web
-    && python ./setup.py install
+    && pip install {{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web
   args:
     executable: /bin/bash
   notify:
