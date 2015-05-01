@@ -1,5 +1,11 @@
 ---
 
+GISLAB_CLIENT_INSTALL_PACKAGES_KERNEL:
+  # list of Linux kernel packages (installed without recommended packages)
+  - linux-image-generic-lts-raring
+  - linux-headers-generic-lts-raring
+
+
 GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   # list of XUbuntu required packages (installed with recommended packages)
   - alsa-base
@@ -20,6 +26,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - libgd2-xpm
   - libnss-ldap
   - libpam-ck-connector
+  - libpam-cracklib
   - libsasl2-modules
   - libxp6
   - lightdm
@@ -57,7 +64,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - zip
   # list of XUbuntu recommended packages
   - acpi-support
-  - apport-gtk
   - avahi-autoipd
   - avahi-daemon
   - catfish
@@ -97,18 +103,15 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - indicator-application-gtk2
   - indicator-sound-gtk2
   - jockey-gtk
-  - kerneloops-daemon
   - laptop-detect
   - leafpad
   - libnotify-bin
   - libnss-mdns
   - libpam-gnome-keyring
-  - make
   - pastebinit
   - pavucontrol
   - pcmciautils
   - pidgin
-  - pidgin-microblog
   - policykit-desktop-privileges
   - printer-driver-c2esp
   - printer-driver-foo2zjs
@@ -173,6 +176,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   - lightdm-gtk-greeter
   - mc
   - mkelfimage
+  - munin-node
   - mutt
   - nbd-client
   - nfs-common
@@ -254,9 +258,9 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT:
   - xfonts-base
 
 
-# List of packages to remove client images.
-# To find out the reason why package was installed use '$ aptitude why <package>'.
 GISLAB_CLIENT_REMOVE_PACKAGES:
+  # list of packages to remove from client image. Run  '$ aptitude why <package>' find out the reason why package was
+  # installed.
   - network-manager
   - network-manager-gnome
   - network-manager-pptp

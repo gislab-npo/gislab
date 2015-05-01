@@ -220,7 +220,7 @@
 
 - name: Install kernel
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install linux-image-generic-lts-raring linux-headers-generic-lts-raring"
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_KERNEL|join(' ') }}"
   args:
     executable: /bin/bash
 
@@ -541,12 +541,6 @@
 
 
 # Statistics
-- name: Install munin-node package
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install munin-node"
-  args:
-    executable: /bin/bash
-
 - name: Install munin configuration file
   template: src=munin-node/munin-node.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/munin-node.conf
 
