@@ -6,7 +6,7 @@ source /etc/gislab_version
 
 
 # do not continue if user is root
-if [ "$USER" = "root" ]; then
+if [ "$USER" == "root" ]; then
 	exit 0
 fi
 
@@ -27,6 +27,18 @@ if [ "$GISLAB_CLIENT_IMAGE_VERSION_SERVER" != "$GISLAB_CLIENT_IMAGE_VERSION_CLIE
 fi
 
 
+# request initialization of user account, if user was successfully authenticated, but home directory was not found
+if [ ! -d /mnt/home/$USER ]; then
+	serf event adduser $USER
+
+	# Loop until user's account initialization is successfully finished.
+	# For unknown reason it takes some 30 seconds to detect created user account on NFS storage. 
+	while [ ! -f /mnt/home/$USER/.gislab/account.done ]; do
+		sleep 2
+	done
+fi
+
+
 # don't allow login if user is already running session
 if [ -f /mnt/home/$USER/.gislab/session.lock ]; then
 	zenity --warning --title="Concurrent login disabled" \
@@ -36,7 +48,7 @@ fi
 
 
 # set user session lock file
-echo "$(date)" > /mnt/home/$USER/.gislab/session.lock
+echo "$(date +%Y-%m-%d-%H:%M:%S)" > /mnt/home/$USER/.gislab/session.lock
 
 # set global session lock file
 mkdir -p /var/lib/gislab
