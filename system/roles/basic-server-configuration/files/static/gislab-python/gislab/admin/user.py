@@ -1,6 +1,6 @@
-"""GIS.lab Administration Management Library
+"""GIS.lab Management Library
 
-GIS.lab user definition
+User accounts administration
 
 (C) 2015 by the GIS.lab Development Team
 
@@ -27,16 +27,13 @@ from subprocess import call
 import ldap
 import ldap.modlist as modlist
 
-from psycopg2 import connect, ProgrammingError
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-
 from utils import nextuid, password_generate, \
      password_encrypt, password_validate, read_env
 from exception import GISLabAdminError
 from logger import GISLabAdminLogger
 
 class GISLabUser(object):
-    """GISLab user account.
+    """GIS.lab user account.
 
     User account is initialized by create() or get() class methods.
 
@@ -44,7 +41,7 @@ class GISLabUser(object):
     """
     class MetaGISLabUser(type):
         def __init__(cls, name, bases, d):
-            """Meta class constructor opens LDAL connection.
+            """Meta class constructor, opens LDAP connection.
 
             :todo: unbind
             """
@@ -54,7 +51,7 @@ class GISLabUser(object):
             if os.getuid() != 0:
                 GISLabAdminLogger.error("This command can only be be run with superuser privileges")
                 sys.exit(1)
-            
+
             try:
                 cls.ldap_base = "dc=gis,dc=lab"
                 cls.ldap = ldap.initialize('ldapi:///')
@@ -65,39 +62,39 @@ class GISLabUser(object):
                     raise GISLabAdminError()
             except ldap.LDAPError as e:
                 raise GISLabAdminError("Unable to open LDAL connection: {}".format(e))
-            
+
             GISLabAdminLogger.debug("LDAP connection established")
-            
+
         def _users_ldap(cls, query=None):
-            """Get LDAP GIS.lab users entries.
-            
-            :param query: LDAP query to filter users or None for all GIS.lab users
-            
+            """Get list of GIS.lab users from LDAP.
+
+            :param query: LDAP query to filter users or None to return all GIS.lab users
+
             :return: list of LDAP entries
             """
             if not query:
                 # all gislab users
                 gid = grp.getgrnam('gislabusers').gr_gid
                 query = "(&(objectClass=inetOrgPerson)(gidNumber={}))".format(gid)
-                
+
             ldap_items = cls.ldap.search_s(cls.ldap_base, ldap.SCOPE_SUBTREE, query)
-            
+
             return ldap_items
 
         def _admins_ldap(cls):
-            """Get list of 'gislabadmins' members
-            
+            """Get list of GIS.lab superusers from LDAP.
+
             :return: list of usernames
             """
             query = "(&(objectClass=posixGroup)(cn=gislabadmins))"
             result = cls.ldap.search_s(cls.ldap_base, ldap.SCOPE_SUBTREE, query)
             if result is None and len(result) != 1:
                 raise GISLabAdminError("User group 'gislabadmins not found")
-            
+
             return result[0][1]['memberUid']
 
     __metaclass__ = MetaGISLabUser
-    
+
     def __init__(self, username, **kwargs):
         """
         Throw GISLabAdminError when user name is not valid. User name can
@@ -109,14 +106,14 @@ class GISLabUser(object):
         """
         # do user name validation
         self.username = self._validate_username(username)
-        
+
         # set user attributes
         for name, value in kwargs.iteritems():
             setattr(self, name, value)
         self.fullname = "{0} {1}".format(self.firstname, self.lastname)
         self.home = os.path.join('/', 'mnt', 'home', self.username)
         self.published_data = os.path.join('/', 'storage', 'publish', self.username)
-        
+
         # set prefix for logger
         self._log = "GISLabUser(%s): " % self.username
 
@@ -125,25 +122,17 @@ class GISLabUser(object):
                password, description, superuser):
         """Create a new GIS.lab user account.
 
-        Throw GISLabAdminError when user email is not valid or another user
-        account with the same email already exists.
+        Throw GISLabAdminError when some account properties are invalid.
 
-        Throw GISLabAdminError if user already exists.
-
-        This method creates:
-         - LDAP account
-         - PostgreSQL account
-         - publishing and credentials hidden directories
-        
         :param username: user name (required)
         :param firstname: first name (required)
         :param lastname: last name (required)
-        :param email: email (required) - validated
-        :param password: user password if not given than automatically generated
+        :param email: email (required) - must be unique
+        :param password: password, if not given, it is automatically generated
         :param description: user description (optional)
         :param superuser: True to add user to superuser's group
 
-        :return: GISLabUser
+        :return: GISLabUser object
         """
         # check if user account already exists
         try:
@@ -151,47 +140,47 @@ class GISLabUser(object):
             raise GISLabAdminError("GIS.lab user '{0}' already exists".format(username))
         except KeyError:
             pass
-        
+
         # create new account
         user = cls(username, firstname=firstname, lastname=lastname,
                    email=email,
                    password=password, description=description,
-                   superuser=superuser,       
+                   superuser=superuser,
                    uid=nextuid(),
                    gid = int(grp.getgrnam('gislabusers').gr_gid))
         # do e-mail validation
         user._validate_email(email)
-        
+
         GISLabAdminLogger.debug("{0}".format(user))
-                       
+
         # set user password or generated random password if not given
         if not password:
             user.set_password(password_generate())
         else:
             user.set_password(password)
-        
+
         # create LDAP account
         user._create_ldap()
-        
+
         # create PostgreSQL user account
         user._create_postgres()
-        
+
         # create publishing and credentials hidden directories
         user._create_dirs()
-        
+
         return user
 
     @classmethod
     def users(cls, query=None):
         """Get list of GIS.lab users.
 
-        :param query: LDAP query to filter users or None for all GIS.lab users
+        :param query: LDAP query to filter users or None to return all GIS.lab users
 
         :return: list of GISLabUser objects
         """
         # get admins
         admins = cls._admins_ldap()
-        
+
         # list users
         users = []
         for ldap_item in cls._users_ldap(query):
@@ -199,23 +188,23 @@ class GISLabUser(object):
             data = ldap_item[1]
             user = cls(username, firstname=data['givenName'][0], lastname=data['sn'][0],
                        email=data['mail'][0], password=data['userPassword'][0],
-                       description=data.get('description', [''])[0], 
+                       description=data.get('description', [''])[0],
                        superuser=username in admins,
                        uid=int(data['uidNumber'][0]), gid=int(data['gidNumber'][0]),
                        home=data['homeDirectory'][0])
             users.append(user)
-        
+
         return users
 
     @classmethod
     def get(cls, username):
-        """Get GIS.lab user account by name.
+        """Get GIS.lab user by name.
 
         Throw GISLabAdminError if user doesn't exists.
 
-        :param username: GIS.lab user name account to be queried
-        
-        :return: GISLabUser
+        :param username: GIS.lab user name
+
+        :return: GISLabUser object
         """
         query = "(uid={})".format(username)
         users = GISLabUser.users(query)
@@ -233,29 +222,23 @@ class GISLabUser(object):
 
     def delete(self):
         """Delete GIS.lab user account.
-
-        This method deletes:
-         - user home
-         - LDAP account
-         - PostgreSQL account
-         - published data
         """
         if self.is_active():
             raise GISLabAdminError("GIS.lab user '{0}' is still running "
                               "session".format(self.username))
-        
+
         # remove user home
         self._delete_dir(self.home)
-                          
+
         # remove LDAP user
         self._delete_ldap()
-        
+
         # remove PostgreSQL user
         self._delete_postgres()
-        
+
         # delete published data
         self._delete_dir(self.published_data)
-        
+
     def modify(self, **kwargs):
         """Modify GIS.lab user account.
 
@@ -264,29 +247,29 @@ class GISLabUser(object):
         """
         # open LDAP connection
         dn="uid={0},ou=people,{1}".format(self.username, self.ldap_base)
-        
+
         # modify LDAP entries
         ldap_item = { 'firstname'  : 'givenName',
                       'lastname'   : 'sn',
                       'password'   : 'userPassword',
                       'email'      : 'mail',
                       'description': 'description' }
-        
-        # fullname  changed ?
+
+        # fullname changed ?
         old_fullname = None
-        
+
         # superuser <-> normaluser changed ?
         superuser_changed = False
         if kwargs.get('superuser', None):
             superuser_changed = True
             self.superuser = not self.superuser
             kwargs.pop('superuser')
-        
+
         # change other LDAP user attributes
         for key, value in kwargs.iteritems():
             if not value:
                 continue # skip empty values
-            
+
             if key == 'password': # password changed
                 value = password_encrypt(value)
             elif key == 'email': # email changed
@@ -295,7 +278,7 @@ class GISLabUser(object):
                     self._remove_ldap_maildrop()
                 # validate e-mail
                 value = self._validate_email(kwargs['email'])
-            
+
             # set new user attribute, remember old value
             old_value = getattr(self, key)
             setattr(self, key, value)
@@ -303,13 +286,13 @@ class GISLabUser(object):
             if key == 'email' and self.is_superuser():
                 # add new mail to maildrop
                 self._add_ldap_maildrop()
-            
+
             # update full name if first or last name changed
             if key in ('firstname', 'lastname'):
                 if not old_fullname:
                     old_fullname = self.fullname
                 self.fullname = '{} {}'.format(self.firstname, self.lastname)
-            
+
             # update LDAP attribute
             item = ldap_item[key]
             try:
@@ -318,7 +301,7 @@ class GISLabUser(object):
                 self.ldap.modify_s(dn, modlist)
             except ldap.LDAPError as e:
                 raise GISLabAdminError(str(e))
-        
+
         # first or/and last name changed
         if old_fullname:
             for item in ('cn', 'gecos'):
@@ -327,7 +310,7 @@ class GISLabUser(object):
                                                          {item: [self.fullname]})
                     self.ldap.modify_s(dn, modlist)
                 except ldap.LDAPError as e:
-                    raise GISLabAdminError(str(e))    
+                    raise GISLabAdminError(str(e))
 
         # superuser <-> normaluser changed
         if superuser_changed:
@@ -341,13 +324,13 @@ class GISLabUser(object):
                 self._remove_ldap_maildrop()
 
     def backup(self):
-        """Backup user account.
+        """Backup GIS.lab user account.
 
-        :param username: user name
+        :param username: GIS.lab user name
         """
         # read GIS.lab environment variables
         read_env(os.path.join('/', 'etc', 'gislab_version'))
-                 
+
         # backup settings
         backup_dir = os.path.join('/', 'storage', 'backup')
         date = "{:%Y-%m-%d:%H-%M-%S}".format(datetime.now())
@@ -358,38 +341,38 @@ class GISLabUser(object):
         db_backup_file = os.path.join(temp_backup_dir, 'postgresql.dump')
         ldap_backup_file = os.path.join(temp_backup_dir, 'ldap.dump')
         backup_file = os.path.join(backup_dir, 'gislab-{0}-{1}.tar'.format(self.username, date))
-        
+
         # create backup directory if not exists
         if not os.path.exists(backup_dir):
             os.mkdir(backup_dir)
             os.chmod(backup_dir, 0o700)
-        
+
         # create tmp backup directory
         os.mkdir(temp_backup_dir)
-        
+
         # write GIS.lab version
         with open(os.path.join(temp_backup_dir, 'GISLAB_VERSION'), 'w') as f:
             f.write(os.environ['GISLAB_VERSION'] + '\n')
-        
+
         # backup home directory and published data
         self._backup_dirs(home_backup_file, publish_backup_file)
-        
+
         # backup PostgreSQL data
         self._backup_postgres(db_backup_file)
-        
+
         # backup LDAP data
         ldap_item = self._get_users("uid={}".format(self.username))
         if ldap_item is None or len(ldap_item) == 0:
             raise GISLabAdminError("No LDAP entry for GIS.lab user '{}'".format(self.username))
         self._backup_ldap(ldap_item[0], ldap_backup_file)
-        
+
         # create backup file
         with tarfile.open(backup_file, "w") as tar:
             tar.add(temp_backup_dir, arcname='.')
         os.chmod(backup_file, 0o400)
 
         GISLabAdminLogger.info("{0}: Backup stored in {1}".format(self._log, backup_file))
-        
+
         # clean up
         shutil.rmtree(temp_backup_dir)
 
@@ -398,14 +381,14 @@ class GISLabUser(object):
         """Backup user account.
 
         :todo: To be implemented
-        
+
         :param username: user name
         """
         pass
 
     def _backup_ldap(self, ldap_user, ldap_backup_file):
         """Backup LDAP user data
-        
+
         :todo: userPassword differs from ldapfinger (why?)
 
         :param ldap_user: LDAL entry
@@ -416,13 +399,13 @@ class GISLabUser(object):
             for key, values in ldap_user[1].iteritems():
                 for v in map(lambda x: x.rstrip('\n'), values):
                     f.write('{0}: {1}\n'.format(key, v))
-                
+
                 if self.is_superuser():
                     f.write("\n#superuser\n")
 
     def _backup_dirs(self, home_backup_file, publish_backup_file):
         """Backup GIS.lab user home directory.
-        
+
         Load home directory names from XDG.
 
         :param home_backup_file: full path to home tarball
@@ -434,7 +417,7 @@ class GISLabUser(object):
         if os.path.isfile(dirs_file):
             read_env(dirs_file)
             exclude = os.path.join(self.home, os.path.basename(os.environ['XDG_DOWNLOAD_DIR']))
-        
+
         # create tarball
         with tarfile.open(home_backup_file, "w:bz2") as tar:
             def excludes_fn(info):
@@ -449,28 +432,28 @@ class GISLabUser(object):
                 tar.add(self.home, filter=excludes_fn)
             except OSError as e:
                 raise GISLabAdminError(e)
-            
+
             for f in glob.glob(os.path.join(self.home, '.config', 'user-dirs.*')):
                 tar.add(f)
-                
+
             # QGIS
             qgis_file = os.path.join(self.home, '.config', 'QGIS', 'QGIS2.conf')
             if os.path.exists(qgis_file):
                 tar.add(qgis_file)
-                
+
             for f in glob.glob(os.path.join(self.home, '.qgis2', '*.db')):
                 tar.add(f)
-            
+
             # GRASS
             for d in (os.path.join(self.home, '.grass7'),
                       os.path.join(self.home, '.grassdata')):
                 if os.path.exists(d):
                     tar.add(d)
-                
+
         # backup published projects
         with tarfile.open(publish_backup_file, "w:bz2") as tar:
             tar.add(self.published_data)
-        
+
     def _backup_postgres(self, db_backup_file):
         """Backup GIS.lab user database data.
 
@@ -480,7 +463,7 @@ class GISLabUser(object):
         con = connect(user='postgres', dbname='gislab', password='gislab')
         con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = con.cursor()
-        
+
         # prepare data for backup
         try:
             cur.execute("DROP TABLE IF EXISTS {}.gislab_ball".format(self.username))
@@ -492,11 +475,11 @@ class GISLabUser(object):
         except ProgrammingError as e:
             raise GISLabAdminError("PostgreSQL: {0}".format(e).rstrip("\n"))
         cur.close()
-        
+
         # create PG dump
         call(['pg_dump', '-U', 'postgres', '-Fc', '--schema={}'.format(self.username),
               '-f', db_backup_file, 'gislab'])
-        
+
         # clean up - remove support tables
         cur = con.cursor()
         try:
@@ -504,25 +487,25 @@ class GISLabUser(object):
             cur.execute("DROP TABLE {}.gislab_drawing".format(self.username))
         except ProgrammingError as e:
             raise GISLabAdminError("PostgreSQL: {0}".format(e).rstrip("\n"))
-        
+
         # close cursor and connection
         cur.close()
         con.close()
-        
+
     def __str__(self):
-        """Get GIS.lab user account string info.
+        """Get GIS.lab user string info.
         """
         return "GISLabUser({0}): firstname='{1}' lastname='{2}' email='{3}' description='{4}' " \
                "superuser={5} is_active={6} is_connected={7}".format(self.username, self.firstname,
                                                                      self.lastname, self.email,
                                                                      self.description, self.superuser,
                                                                      self.is_active(), self.is_connected())
-        
-    def _validate_username(self, username):
-        """Do user name validation.
 
-        :param username: user name to be validated
-        
+    def _validate_username(self, username):
+        """Perform user name validation.
+
+        :param username: GIS.lab user name
+
         Throws GISLabAdminError when user name is not valid
 
         :return: validated username
@@ -532,15 +515,17 @@ class GISLabUser(object):
             raise GISLabAdminError("Invalid characters in user name."
                               "User name can contain only lower "
                               "case digits and numbers.")
-        
-        return username
-    
-    def _validate_email(self, email):
-        """Do email validation.
 
-        :param email: email to be validated
-        
-        :return: validated email
+        return username
+
+    def _validate_email(self, email):
+        """Perform email validation.
+
+        :param email: email address
+
+        Throws GISLabAdminError when email is not valid
+
+	:return: validated email
         """
         # validate
         p = re.compile('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')
@@ -556,19 +541,19 @@ class GISLabUser(object):
             if len(usermail) > 0 and username != self.username and usermail[0] == email:
                 raise GISLabAdminError("User account with this e-mail address already "
                                   "exists ({})".format(username))
-        
+
         return email
 
     def set_password(self, password):
-        """Set a new password.
+        """Set a new password for GIS.lab user.
         """
         self.password = password
         GISLabAdminLogger.debug("{0}new password='{1}'".format(self._log, self.password))
-    
-    def is_superuser(self):
-        """Check if user has superuser privileges.
 
-        :return: True if user account has superuser privileges, otherwise return False
+    def is_superuser(self):
+        """Check if GIS.lab user is superuser.
+
+        :return: True if user is superuser, otherwise return False
         """
         return self.superuser
 
@@ -576,7 +561,7 @@ class GISLabUser(object):
         """Check if the user is connected or running some process on the server.
 
         :todo: do it better (psutil?) - not working yet!!!
-        
+
         :return: True if connected otherwise False
         """
         # pids = [pid for pid in os.listdir('/proc') if pid.isdigit()]
@@ -592,39 +577,31 @@ class GISLabUser(object):
         #     except IOError: # proc has already terminated
         #         continue
         return False
-    
+
     def is_active(self):
         """Check if user is active.
 
         :return: True if account is active otherwise False
         """
-        lfile = os.path.join('/', 'storage', 'home', self.username,
+        lfile = os.path.join('/', 'mnt', 'home', self.username,
                              '.gislab', 'session.lock')
         return os.path.isfile(lfile)
 
     def _create_ldap(self):
-        """Create LDAP account, add LDAL user attributes.
-        
-        Allow sudo for user if creating superuser account.
-        
-        Forward system mails to user if creating superuser account
-        perform only if this email does not already exist in
-        'maildrop' (other user account can be possibly created with
-        same email address).
+        """Create record in LDAP database and activate forwarding of email
+	sent to root if creating superuser account.
 
-        Partly based on http://www.grotan.com/ldap/python-ldap-samples.html
-
-        Throw GISLabAdminError if password is not set or on ecrypt failure.
+        Throw GISLabAdminError if password is not set or on encrypt failure.
         """
         # check password
         if not self.password:
             raise GISLabAdminError("Empty password")
-        
-        # ecrypt password
+
+        # encrypt password
         encrypted_password = password_encrypt(self.password)
         if password_validate(encrypted_password, self.password) is False:
             raise GISLabAdminError("Validation of encrypted password failed")
-        
+
         # define LDAP attributes
         dn="uid={0},ou=people,{1}".format(self.username, self.ldap_base)
         modlist = {
@@ -643,13 +620,13 @@ class GISLabUser(object):
             }
         if self.description:
             modlist['description'] = self.description
-        
+
         # add user to LDAP
         try:
             self.ldap.add_s(dn, ldap.modlist.addModlist(modlist))
         except ldap.LDAPError as e:
             raise GISLabAdminError(str(e))
-        
+
         GISLabAdminLogger.debug("{0}Successfully set encoded password "
                            "for user {1}".format(self._log, dn))
         GISLabAdminLogger.debug("{0}Successfully added user '{1}' to "
@@ -659,7 +636,7 @@ class GISLabUser(object):
         if self.superuser:
             self._add_ldap_superuser()
             self._add_ldap_maildrop()
-    
+
     def _add_ldap_superuser(self):
         """Add user to 'gislabadmins' group,
         """
@@ -678,14 +655,7 @@ class GISLabUser(object):
                                "gislabadmins".format(self.username))
 
     def _add_ldap_maildrop(self):
-        """Enable forwarding system mails.
-
-        Forward system mails to user if creating superuser account
-        perform only if this email does not already exist in
-        'maildrop' (other user account can be possibly created with
-        same email address)
-
-        :todo: not tested yet!
+        """Enable forwarding of emails sent to root if user is superuser.
         """
         query = "(|(cn=root)(ou=MailAliases)({}))".format(self.ldap_base)
         result = self.ldap.search_s(self.ldap_base, ldap.SCOPE_SUBTREE, query)
@@ -699,10 +669,10 @@ class GISLabUser(object):
                                                  {'maildrop': new_value})
             dn = "cn=root,ou=MailAliases,{}".format(self.ldap_base)
             self.ldap.modify_s(dn, modlist)
-            
+
             GISLabAdminLogger.debug("{0}Successfully added user {1} to root's "
                                "maildrop".format(self._log, self.username))
-                
+
     def _create_postgres(self):
         """Create PostgreSQL user account.
         
@@ -801,9 +771,9 @@ class GISLabUser(object):
                 raise GISLabAdminError(str(e))
         else:
             GISLabAdminLogger.info("{0}'{1}' already exists".format(self._log, path))
-        
+
     def _delete_ldap(self):
-        """Delete LDAP user entry.
+        """Delete record from LDAP database.
         """
         dn="uid={0},ou=people,{1}".format(self.username, self.ldap_base)
         if self.superuser:
@@ -812,7 +782,7 @@ class GISLabUser(object):
             self._remove_ldap_maildrop()
             # remove user from all groups
             self._remove_ldap_group()
-        
+
         # delete LDAP account
         try:
             self.ldap.delete_s(dn)
@@ -820,9 +790,7 @@ class GISLabUser(object):
             raise GISLabAdminError(str(e))
 
     def _remove_ldap_maildrop(self):
-        """Disable forwarding system mails.
-
-        :todo: not tested yet!
+        """Disable forwarding of emails sent to root if user is superuser.
         """
         query = "(|(cn=root)(ou=MailAliases)({}))".format(self.ldap_base)
         result = self.ldap.search_s(self.ldap_base, ldap.SCOPE_SUBTREE, query)
@@ -835,7 +803,7 @@ class GISLabUser(object):
                                                  {'maildrop': new_value})
             dn = "cn=root,ou=MailAliases,{}".format(self.ldap_base)
             self.ldap.modify_s(dn, modlist)
-            
+
             GISLabAdminLogger.debug("{0}Successfully removed user {1} from root's "
                                "maildrop".format(self._log, self.username))
 
@@ -845,8 +813,7 @@ class GISLabUser(object):
         return self._remove_ldap_group(['cn=gislabadmins,ou=Groups,dc=gis,dc=lab'])
     
     def _remove_ldap_group(self, selected_groups = []):
-        """Manunaly delete user from additional groups (bug
-        https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
+        """Remove user from LDAP groups.
         """
         query = "(&(objectClass=posixGroup))"
         result = self.ldap.search_s(self.ldap_base, ldap.SCOPE_SUBTREE, query)
@@ -868,7 +835,7 @@ class GISLabUser(object):
             else:
                 GISLabAdminLogger.debug("{0}User '{1}' is not member of group "
                                    "{2}".format(self._log, self.username, group_dn))
-        
+
     def _delete_postgres(self):
         """Delete PostgreSQL user data.
         """

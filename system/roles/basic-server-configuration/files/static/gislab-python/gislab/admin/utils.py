@@ -1,6 +1,6 @@
-"""GIS.lab Administration Management Library
+"""GIS.lab Management Library
 
-Various utilities
+Utilities
 
 (C) 2015 by the GIS.lab Development Team
 
@@ -42,7 +42,7 @@ def parse(desc, positional=(), required=(), optional=()):
         parser.add_argument(key, metavar=meta, type=str,
                             help=desc, **args)
     requiredNamed = parser.add_argument_group('required named arguments')
-   
+
     for key, meta, desc in required:
         requiredNamed.add_argument(key,
                                    metavar=meta,
@@ -63,21 +63,28 @@ def parse(desc, positional=(), required=(), optional=()):
         else:
             args['action'] = 'store_true'
             args['default'] = meta
-            
+
         parser.add_argument(key,
                             help=desc, **args)
-    
+
     return parser.parse_args()
 
+def password_generate(size=8):
+    """Generate random user password.
+
+    return: password
+    """
+    return pwgen(size, numerals=True, no_symbols=True)
+
 def password_encrypt(password):
-    """Return encrypted password.
+    """Return SHA1 encrypted password.
 
     :return: encrypted password
     """
     salt = os.urandom(4)
     h = hashlib.sha1(password)
     h.update(salt)
-    
+
     ret = "{SSHA}" + encode(h.digest() + salt)
     GISLabAdminLogger.debug("Encrypted password '{}': {}".format(password, ret.rstrip('\n')))
     return ret
@@ -92,20 +99,13 @@ def password_validate(challenge_password, password):
     salt = challenge_bytes[20:]
     hr = hashlib.sha1(password)
     hr.update(salt)
-    
+
     ret = digest == hr.digest()
     GISLabAdminLogger.debug("password '{}' validated: {}".format(password, ret))
     return ret
 
-def password_generate():
-    """Generate a new password for the user.
-
-    return: new password
-    """
-    return pwgen(8, numerals=True, no_symbols=True)
-
 def nextuid(min_uid=3000):
-    """Get next free uidNumber.
+    """Get next free user ID.
 
     :param min_uid: starting uid
 
@@ -119,9 +119,9 @@ def nextuid(min_uid=3000):
             return min_uid
 
 def read_env(filename):
-    """Read environmental variables from file.
+    """Read variables from file.
 
-    :param filename: full patch to the file
+    :param filename: absolute path to file
     """
     reg = re.compile('\s+(?P<name>\w+)(\=(?P<value>.+))*')
     with open(filename) as f:

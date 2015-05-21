@@ -1,4 +1,6 @@
-"""GIS.lab Administration Management Library - logger
+"""GIS.lab Management Library
+
+Logging
 
 Inspired by: http://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
 
@@ -57,7 +59,7 @@ class LoggerManager(object):
         elif name not in LoggerManager._loggers.keys():
             logging.basicConfig()
             LoggerManager._loggers[name] = logging.getLogger(str(name))
-        return LoggerManager._loggers[name]    
+        return LoggerManager._loggers[name]
 
 class ColoredFormatter(logging.Formatter):
     def __init__(self, msg, use_color = True):
@@ -75,15 +77,15 @@ class ColoredLogger(logging.Logger):
     FORMAT = "$BOLD%(name)s][%(levelname)s] %(message)s$RESET"
     COLOR_FORMAT = formatter_message(FORMAT, True)
     def __init__(self, name):
-        logging.Logger.__init__(self, name, logging.DEBUG)                
+        logging.Logger.__init__(self, name, logging.DEBUG)
         self.propagate = False
-        
+
         color_formatter = ColoredFormatter(self.COLOR_FORMAT)
 
         console = logging.StreamHandler()
         console.setFormatter(color_formatter)
         self.addHandler(console)
-        
+
         return
 
 logging.setLoggerClass(ColoredLogger)

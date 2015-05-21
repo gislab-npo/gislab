@@ -1,4 +1,4 @@
-"""GIS.lab Administration Management Library
+"""GIS.lab Management Library
 
 (C) 2015 by the GIS.lab Development Team
 
