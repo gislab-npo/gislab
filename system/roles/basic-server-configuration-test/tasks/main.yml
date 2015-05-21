@@ -112,6 +112,24 @@
   changed_when: False
 
 
+# gislab-password|passwd
+- name: Change password of ordinary test user
+  shell: gislab-password
+    -p test
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Change password of ordinary test user to previous value using 'passwd' command
+  # must use /bin/bash, otherwise 'echo -e' was not working
+  shell: echo -e "test\n{{ GISLAB_TEST_UNIQUE_STRING }}\n{{ GISLAB_TEST_UNIQUE_STRING }}"
+    | passwd test{{ GISLAB_TEST_UNIQUE_STRING }}
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+
 # gislab-backupuser|restoreuser
 - name: Create test files in user's directories
   shell: touch {{ item }}

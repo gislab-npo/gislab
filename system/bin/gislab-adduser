@@ -51,6 +51,7 @@ if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_US
 fi
 
 GISLAB_USER=$1
+GISLAB_USER_FULL_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
 
 
 # sanity checks
@@ -69,12 +70,10 @@ if ! [[ "$GISLAB_USER_MAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$
 	exit 1
 fi
 
-GISLAB_USER_FULL_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
 
-
-# create LDAP account
-ldapadduser $GISLAB_USER gislabusers # LDAP account
-chmod go-rwx /storage/home/$GISLAB_USER
+### LDAP
+# create LDAP account (without creating home directory - CREATEHOMES="no")
+ldapadduser $GISLAB_USER gislabusers
 
 # add LDAP user attributes
 ldapmodifyuser $GISLAB_USER > /dev/null << EOL
@@ -108,22 +107,6 @@ if [ "$SUDO" == "yes" ]; then
 	ldapaddusertogroup $GISLAB_USER gislabadmins
 fi
 
-
-# set user password
-gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
-
-
-# create PostgreSQL user account
-createuser -U postgres --no-superuser --no-createdb --no-createrole $GISLAB_USER
-psql -U postgres -c "GRANT gislabusers TO $GISLAB_USER;"
-psql -U postgres -d gislab -c "CREATE SCHEMA AUTHORIZATION $GISLAB_USER;"
-
-# add user to the database superusers group if creating superuser account
-if [ "$SUDO" == "yes" ]; then
-	psql -U postgres -c "GRANT gislabadmins TO $GISLAB_USER;"
-fi
-
-
 # forward system mails to user if creating superuser account
 # perform only if this email does not already exist in 'maildrop' (other user account
 # can be possibly created with same email address)
@@ -139,31 +122,15 @@ maildrop: $GISLAB_USER_MAIL
 EOL
 fi
 
-
-# create publishing directory
-mkdir -p /storage/publish/$GISLAB_USER # NFS directory
-chown $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
-chmod 750 /storage/publish/$GISLAB_USER
+# set user password
+gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
 
 
-# replace user name and password placeholders with real user values
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER +}/$GISLAB_USER/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_PASSWORD +}/$GISLAB_USER_PASSWORD/g" "{}" \;
+# run adduser hook
+/usr/share/gislab/account/hooks/adduser.sh $GISLAB_USER
 
 
-# save user credentials to hidden directory in home folder
-mkdir -p /storage/home/$GISLAB_USER/.gislab
-chmod 700 /storage/home/$GISLAB_USER/.gislab
-echo "$GISLAB_USER:$GISLAB_USER_PASSWORD" > /storage/home/$GISLAB_USER/.gislab/gislab_${GISLAB_USER}_credentials.txt
-chown $GISLAB_USER:gislabusers -R /storage/home/$GISLAB_USER/.gislab
-
-cp /etc/openvpn/gislab_vpn_ca.crt /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
-chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
-
-cp /etc/openvpn/gislab_vpn_ta.key /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-chmod 0600 /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-
+# final message
 gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"
 
 

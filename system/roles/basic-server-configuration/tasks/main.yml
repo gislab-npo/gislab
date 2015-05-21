@@ -4,7 +4,23 @@
 #
 # Run basic server configuration.
 
-# Facts
+# FACTS
+- name: Detect if it is possible to get GIS.lab version from Git
+  local_action: shell git describe 2> /dev/null || echo "GIT NOT AVAILABLE"
+  register: gislab_version_git_status
+  changed_when: False
+
+- name: Detect GIS.lab version from Git
+  local_action: shell git describe
+  register: gislab_version
+  when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
+
+- name: Set GIS.lab version from Git
+  set_fact:
+    GISLAB_VERSION: "{{ gislab_version.stdout }}"
+  when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
+
+
 - name: Generate unique string for this installation
   shell: date +%s | md5sum | head -c 24
   register: gislab_install_unique_string
@@ -80,11 +96,24 @@
     GISLAB_NETWORK_SERVER_IP: "{{ GISLAB_NETWORK }}.5"
 
 
-# Sanity checks
-# UBUNTU VERSION
+### SANITY CHECKS
+# OS version
 - name: Fail if server is not running compatible OS version
   fail: msg="Server is not running compatible OS version Ubuntu 12.04, {{ ansible_distribution }} {{ ansible_distribution_version }} detected"
   when: ansible_distribution != "Ubuntu" or ansible_distribution_version != "12.04"
+
+
+### CAPABILITIES
+- name: Detect capability to provide VPN service
+  # tun device can be missing on systems running in container
+  stat: path=/dev/net/tuns
+  register: cap_tun_device_status
+  changed_when: False
+
+- name: Enable capability to provide VPN service
+  set_fact:
+    GISLAB_SERVER_CAPABILITY_VPN: yes
+  when: cap_tun_device_status.stat.ischr is defined and cap_tun_device_status.stat.ischr
 
 
 # Configuration and basic directory structure
@@ -120,7 +149,8 @@
     GISLAB_APT_CUSTOM_REPOSITORIES="{% if GISLAB_APT_CUSTOM_REPOSITORIES %}{{ GISLAB_APT_CUSTOM_REPOSITORIES|join(",") }}{% else %}{% endif %}"\n
     GISLAB_INSTALL_DATETIME="{{ GISLAB_INSTALL_DATETIME }}"\n
     GISLAB_PROVISIONING_USER="{{ GISLAB_PROVISIONING_USER }}"\n
-    GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"'
+    GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"\n
+    GISLAB_SERVER_CAPABILITY_VPN="{{ GISLAB_SERVER_CAPABILITY_VPN }}"'
     dest="/etc/gislab_version"
 
 - name: Create custom GIS.lab directories structure
@@ -153,7 +183,9 @@
 
 
 - name: Generate en_US.UTF-8 locale
-  locale_gen: name=en_US.UTF-8 state=present
+  # we don't use 'locale_gen' here, because it fails with travis-ci (https://github.com/ansible/ansible/issues/7289)
+  # locale_gen: name=en_US.UTF-8 state=present
+  shell: /usr/sbin/locale-gen en_US.UTF-8
 
 - name: Set en_US.UTF-8 locale
   shell: /usr/sbin/update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 LANGUAGE=en
@@ -195,6 +227,9 @@
 - name: Configure apt repositories
   template: src=apt/sources.list.j2 dest=/etc/apt/sources.list
 
+- name: Remove possible third party apt repositories
+  file: dest=/etc/apt/sources.list.d state=absent
+
 - name: Add imincik PPA signing key
   apt_key: data="{{ lookup('file', 'static/ppa_imincik.key') }}" state=present
 
@@ -202,7 +237,6 @@
 - name: Configure Apt cache proxy server
   template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
 
-# TODO: does /storage/applications/apt/pkgcache.bin exists
 - name: Move apt cache to '/storage' directory
   shell: mv -f /var/cache/apt /storage/applications/apt
   args:
@@ -215,14 +249,17 @@
 - name: Update apt cache
   apt: update_cache=yes
 
-- name: Upgrade system
-  apt: upgrade=full force=yes
-
 - name: Remove not needed packages possibly comming with OS image
   apt: pkg={{item}} state=absent
   with_items:
     - landscape-client
     - landscape-common
+
+- name: Install aptitude which is required for running system upgrade
+  apt: pkg=aptitude force=yes install_recommends=no state=latest
+
+- name: Upgrade system
+  apt: upgrade=full force=yes
 
 - name: Install packages
   apt: pkg={{item}} force=yes install_recommends=no state=latest

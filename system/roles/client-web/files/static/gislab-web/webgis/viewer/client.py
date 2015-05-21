@@ -300,6 +300,7 @@ class WebgisClient(object):
 				'publish_user': metadata.gislab_user,
 				'publish_date': metadata.publish_date,
 				'publish_date_unix': int(metadata.publish_date_unix),
+				'expiration_date': metadata.expiration,
 				'selection_color': metadata.selection_color[:-2], #strip alpha channel,
 				'topics': metadata.topics,
 				'vector_layers': metadata.vector_layers is not None

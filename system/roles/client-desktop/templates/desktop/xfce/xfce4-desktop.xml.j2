@@ -14,11 +14,19 @@
   <property name="backdrop" type="empty">
     <property name="screen0" type="empty">
       <property name="monitor0" type="empty">
-        <property name="image-path" type="string" value="/usr/share/xfce4/backdrops/gislab-wallpaper.png"/>
+        {% if GISLAB_SUITE == 'office' %}
+	<property name="image-path" type="string" value="/usr/share/xfce4/backdrops/gislab-wallpaper-office.png"/>
+        {% elif GISLAB_SUITE == 'lab' %}
+	<property name="image-path" type="string" value="/usr/share/xfce4/backdrops/gislab-wallpaper-lab.png"/>
+        {% endif %}
         <property name="image-show" type="bool" value="true"/>
       </property>
       <property name="monitor1" type="empty">
-        <property name="image-path" type="string" value="/usr/share/xfce4/backdrops/gislab-wallpaper.png"/>
+        {% if GISLAB_SUITE == 'office' %}
+	<property name="image-path" type="string" value="/usr/share/xfce4/backdrops/gislab-wallpaper-office.png"/>
+        {% elif GISLAB_SUITE == 'lab' %}
+	<property name="image-path" type="string" value="/usr/share/xfce4/backdrops/gislab-wallpaper-lab.png"/>
+        {% endif %}
         <property name="image-show" type="bool" value="true"/>
       </property>
     </property>

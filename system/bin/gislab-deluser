@@ -15,7 +15,7 @@ function usage() {
 	echo "Delete GIS.lab user account."
 	echo -e "\nOPTIONS
 	-b  backup user data
-	-f  force running this command - do not ask before deleting account
+	-f  force running this command (do not ask before deleting account)
 	-h  display this help
 	"
 	exit 255
@@ -62,17 +62,8 @@ if [ "$BACKUP" == "yes" ]; then
 fi
 
 
-# remove account
-# delete home
-GISLAB_USER_HOME=$(getent passwd $GISLAB_USER | awk -F: '{ print $6 }')
-
-if [ -d "$GISLAB_USER_HOME" ]; then
-	rm -rf $GISLAB_USER_HOME
-fi
-
-
-# LDAP
-# disable forwarding system mails to user if user was superuser
+### LDAP
+# disable forwarding system mails to user, if user was superuser
 ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 GISLAB_USER_MAIL=$($ldapsearch_cmd "uid=$GISLAB_USER" mail 2>/dev/null | awk '/^mail: / { print $2 }')
 
@@ -92,27 +83,15 @@ for GROUP in $(id -nG $GISLAB_USER | grep '[[:space:]]' | sed -r 's/^[^ ]* //');
 	ldapdeleteuserfromgroup $GISLAB_USER $GROUP
 done
 
-ldapdeleteuser $GISLAB_USER # LDAP account
+# remove LDAP account
+ldapdeleteuser $GISLAB_USER
 
 
-# database
-psql -U postgres -d gislab -c "DROP SCHEMA $GISLAB_USER CASCADE"
-psql -U postgres -d gislab -c "DROP OWNED BY $GISLAB_USER CASCADE"
-
-# delete data from GIS.lab Web client if installed
-ball_exist_sql="SELECT 1 FROM information_schema.tables WHERE table_name = 'storage_ball'"
-if [[ $(psql -U postgres -d gislab -tAc "$ball_exist_sql") == "1" ]]; then
-	psql -U postgres -d gislab -c "DELETE FROM storage_drawing WHERE \"user\" = '$GISLAB_USER'"
-	psql -U postgres -d gislab -c "DELETE FROM storage_ball WHERE \"user\" = '$GISLAB_USER'"
-fi
-
-dropuser -U postgres $GISLAB_USER
+# run deluser hook
+/usr/share/gislab/account/hooks/deluser.sh $GISLAB_USER
 
 
-# published data
-rm -rf /storage/publish/$GISLAB_USER
-
-
+# final message
 gislab_print_info "Account '$GISLAB_USER' removed"
 
 

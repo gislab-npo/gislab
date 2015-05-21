@@ -9,9 +9,13 @@
 
 - name: Install packages
   apt: pkg={{ item }} force=yes install_recommends=no state=latest
+  # libpam-cracklib is improving strength of user passwords. It is also responsible for setting of PAM 'authtok'.
+  # If libpam-cracklib is not installed, change 'use_authtok' option in /etc/pam.d/common-password to 'try_authtok'
+  # or remove it, otherwise it will be impossible to change user password using 'passwd' command.
   with_items:
     - gnutls-bin
     - ldapscripts
+    - libpam-cracklib
     - ldap-utils
     - libnss-ldap
     - pwgen
