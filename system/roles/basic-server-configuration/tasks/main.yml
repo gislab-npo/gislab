@@ -323,8 +323,7 @@
 
 - name: Install GIS.lab Python Library
   shell: source /usr/local/python-virtualenvs/gislab-python/bin/activate
-    && cd {{ GISLAB_INSTALL_TMP_ROOT }}/gislab-python
-    && python ./setup.py install
+    && pip install {{ GISLAB_INSTALL_TMP_ROOT }}/gislab-python
   args:
     executable: /bin/bash
 
