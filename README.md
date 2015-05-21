@@ -1,5 +1,5 @@
 # GIS.lab - free geospatial infrastructure
-[![Build Status (only server suite): ](https://travis-ci.org/imincik/gis-lab.svg?branch=master)](https://travis-ci.org/imincik/gis-lab)
+[![Build Status](https://travis-ci.org/imincik/gis-lab.svg?branch=master)](https://travis-ci.org/imincik/gis-lab)
 
  * project page : http://imincik.github.io/gis-lab
  * documentation: https://github.com/imincik/gis-lab/wiki
