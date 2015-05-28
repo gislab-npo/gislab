@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# Run script located in 'Publish' directory with user privileges. Return last 512 bytes of response and exit code.
+# Run script located in 'Publish' directory with root privileges. Return last 512 bytes of response and exit code.
+
+
+SCRIPT_PATH=$(cat) # must begin with username
 
 PUBLISH_PATH=/mnt/publish
-SCRIPT_PATH=$(cat)
 SCRIPT=$PUBLISH_PATH/$SCRIPT_PATH
-
-USERNAME=$(echo $SCRIPT_PATH | awk -F '/' '{print $1}')
 
 
 if [ -f "$SCRIPT" ]; then
-	RESPONSE=$(sudo -iu $USERNAME $SCRIPT 2>&1)
+	RESPONSE=$($SCRIPT 2>&1)
 	EXIT=$?
 
 	RESPONSE521=$(echo $RESPONSE | tail -c 512)
-	echo "$RESPONSE521, USERNAME: $USERNAME, EXIT CODE: $EXIT"
+	echo "$RESPONSE521, EXIT CODE: $EXIT"
 else
 	echo "Script '$SCRIPT' not found !, EXIT CODE: 1"
 fi

@@ -14,14 +14,13 @@ exec serf agent \
 	-keyring-file /etc/gislab/gislab_serf.key \
 	-event-handler "user:reboot=/usr/share/gislab/serf/handlers/reboot.sh" \
 	-event-handler "user:shutdown=/usr/share/gislab/serf/handlers/shutdown.sh" \
-	-event-handler "query:command=/usr/share/gislab/serf/handlers/command.sh" \
 	-event-handler "query:script=/usr/share/gislab/serf/handlers/script.sh" \
 	-event-handler "query:client-session-active=/usr/share/gislab/serf/handlers/client-session-active.sh" \
 	-event-handler "query:uptime=uptime" \
 	-event-handler "query:test=echo 'yes'" \
 	-tag role=client \
 	-tag events=reboot,shutdown \
-	-tag queries=command,script,client-session-active,uptime,test \
+	-tag queries=script,client-session-active,uptime,test \
 	-log-level=err \
 	-syslog
 
