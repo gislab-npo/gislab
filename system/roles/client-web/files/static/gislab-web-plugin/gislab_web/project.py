@@ -507,13 +507,15 @@ class ProjectPage(PublishPage):
 				project_extent[2]+extent_buffer,
 				project_extent[3]+extent_buffer
 			]
+		project_crs = map_canvas.mapRenderer().destinationCrs();
 		metadata.update({
 			'extent': project_extent,
 			'extent_buffer': extent_buffer,
 			'zoom_extent': [round(coord, 3) for coord in map_canvas.extent().toRectF().getCoords()],
 			'projection': {
-				'code': map_canvas.mapRenderer().destinationCrs().authid(),
-				'is_geographic': map_canvas.mapRenderer().destinationCrs().geographicFlag()
+				'code': project_crs.authid(),
+				'is_geographic': project_crs.geographicFlag(),
+				'proj4': project_crs.toProj4()
 			},
 			'units': self.plugin.map_units(),
 			'selection_color': '{0}{1:02x}'.format(selection_color.name(), selection_color.alpha()),
