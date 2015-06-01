@@ -199,6 +199,12 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 ################################################### CLIENT ############################################################
 # ******************************************************************************************************************* #
 
+# GIS.lab client architecture
+# Possible values are:
+# * i386: use this if you are working in mixed environment containing older and new machines
+# * amd64: use this only if all client machines are capable to run 64 bit OS (including virtual clients)
+GISLAB_CLIENT_ARCHITECTURE: i386
+
 # List of country codes of languages which should be installed on client beside English language.
 # Example:
 # - sk

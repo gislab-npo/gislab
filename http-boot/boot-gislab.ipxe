@@ -6,8 +6,8 @@
 # --------------
 # $ cd src
 # $ make EMBED=<GIS.lab source code tree>/http-boot/boot-gislab.ipxe
-# $ cp bin/ipxe.iso <GIS.lab source code tree>/http-boot/
-# $ cd <GIS.lab source code tree>/http-boot/gislab-client-loader.iso
+# $ cp bin/ipxe.iso <GIS.lab source code tree>/http-boot/gislab-client-loader.iso
+# $ cd <GIS.lab source code tree>/http-boot/
 # $ gzip gislab-client-loader.iso
 
 
@@ -30,7 +30,7 @@ choose --default auto --timeout 5000 target && goto ${target}
 dhcp
 route
 sleep 3
-chain http://boot.gis.lab/i386?mac=${net0/mac}
+chain http://boot.gis.lab/gislab_desktop.init?mac=${net0/mac}
 
 :manual
 echo -n GIS.lab network [example: 192.168.50]: && read gnetwork
@@ -42,7 +42,7 @@ set net0/gateway ${gnetwork}.5
 set dns ${gnetwork}.5
 route
 sleep 3
-chain http://${gnetwork}.5/i386?mac=${net0/mac}
+chain http://${gnetwork}.5/gislab_desktop.init?mac=${net0/mac}
 
 
 ### UTILITIES

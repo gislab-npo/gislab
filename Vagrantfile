@@ -92,7 +92,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       worker.vm.provision "shell",
         inline: "echo 'Performing worker installation (will take some time) ...' \
           && mkdir -p /tmp/install && cd /tmp/install \
-	  && curl --silent http://%s.5/worker.tar.gz | tar xz \
+	  && curl --silent http://%s.5/gislab_worker.init.tar.gz | tar xz \
 	  && bash ./install.sh &> /var/log/gislab-install-worker.log \
           && echo 'Worker installation is done.'" % [CONFIG['GISLAB_NETWORK']]
 

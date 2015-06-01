@@ -1,3 +1,53 @@
 ---
 
+- name: Install packages for tests
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
+  with_items:
+    - nbd-client
+
+
+- name: Prepare mount point for test NBD mount
+  file: path="/tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount" state=directory
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test NBD mount
+  shell: modprobe nbd
+    && nbd-client -name gislab {{ GISLAB_NETWORK }}.5 /dev/nbd0
+    && mount /dev/nbd0 /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test to run command in NBD chroot
+  shell: chroot /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount id
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if VirtualBox guest additions are installed
+  shell: chroot /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount find /lib/modules | grep "vboxguest.ko"
+  args:
+    executable: /bin/bash
+  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
+  ignore_errors: yes
+  changed_when: False
+
+- name: Umount NBD
+  shell: umount /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount
+    && nbd-client -disconnect /dev/nbd0
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Uninstall packages for tests
+  apt: pkg={{item}} force=yes purge=yes state=absent
+  with_items:
+    - nbd-client
+
+
 # vim:ft=ansible:

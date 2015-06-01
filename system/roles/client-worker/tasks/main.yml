@@ -10,7 +10,7 @@
 # Example worker installation:
 # $ mkdir -p /tmp/install
 # && cd /tmp/install
-# && curl --silent http://<GIS.lab server IP>/worker.tar.gz | tar xz
+# && curl --silent http://<GIS.lab server IP>/gislab_worker.init.tar.gz | tar xz
 # && bash ./install.sh &> /var/log/gislab-install.log
 
 
@@ -148,10 +148,10 @@
   file: dest={{ GISLAB_INSTALL_WORKER_IMAGE }} state=directory recurse=yes
 
 - name: Create worker image file
-  command: tar -czf {{ GISLAB_INSTALL_WORKER_IMAGE }}/worker.tar.gz -C {{ GISLAB_INSTALL_WORKER_ROOT }} .
+  command: tar -czf {{ GISLAB_INSTALL_WORKER_IMAGE }}/gislab_worker.init.tar.gz -C {{ GISLAB_INSTALL_WORKER_ROOT }} .
 
 - name: Create symlink for worker image file to webserver root directory
-  file: src={{ GISLAB_INSTALL_WORKER_IMAGE }}/worker.tar.gz dest=/var/www/default/worker.tar.gz state=link force=yes
+  file: src={{ GISLAB_INSTALL_WORKER_IMAGE }}/gislab_worker.init.tar.gz dest=/var/www/default/gislab_worker.init.tar.gz state=link force=yes
 
 
 # vim:ft=ansible:
