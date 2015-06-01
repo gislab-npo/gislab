@@ -4,11 +4,9 @@
 
 # How to compile
 # --------------
-# $ cd src
-# $ make EMBED=<GIS.lab source code tree>/http-boot/boot-gislab.ipxe
-# $ cp bin/ipxe.iso <GIS.lab source code tree>/http-boot/gislab-client-loader.iso
-# $ cd <GIS.lab source code tree>/http-boot/
-# $ gzip gislab-client-loader.iso
+# $ cd <iPXE src>/src
+# $ make EMBED=<GIS.lab src>/http-boot/gislab-desktop-bootloader.ipxe
+# $ cp bin/ipxe.iso <GIS.lab src>/http-boot/gislab-desktop-bootloader.ipxe
 
 
 ### MENU
