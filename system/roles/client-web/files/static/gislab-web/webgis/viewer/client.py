@@ -85,7 +85,11 @@ def get_project_layers_info(project_key, publish, project=None):
 	if data:
 		return { param.replace(prefix, ''): value for param, value in data.iteritems() }
 	elif project:
-		metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, clean_project_name(project) + '.meta')
+		filename = "{0}_{1}.meta".format(clean_project_name(project), publish)
+		metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, filename)
+		if not os.path.exists(metadata_filename):
+			# fallback to old metadata filename without publish timestamp
+			metadata_filename = os.path.join(settings.GISLAB_WEB_PROJECT_ROOT, "{0}.meta".format(clean_project_name(project)))
 		try:
 			metadata = MetadataParser(metadata_filename)
 			if int(metadata.publish_date_unix) == int(publish):
