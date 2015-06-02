@@ -34,7 +34,7 @@ psql -U postgres -c "GRANT gislabusers TO $GISLAB_USER;"
 psql -U postgres -d gislab -c "CREATE SCHEMA AUTHORIZATION $GISLAB_USER;"
 
 # add user to the database superusers group if creating superuser account
-id gislab | grep gislabadmins &> /dev/null && SUDO=yes || SUDO=no
+id $GISLAB_USER | grep gislabadmins &> /dev/null && SUDO=yes || SUDO=no
 if [ "$SUDO" == "yes" ]; then
 	psql -U postgres -c "GRANT gislabadmins TO $GISLAB_USER;"
 fi
