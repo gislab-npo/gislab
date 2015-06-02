@@ -1,0 +1,12 @@
+---
+
+- name: service krb5-kdc restart
+  service: name=krb5-kdc state=restarted
+
+- name: service krb5-admin-server restart
+  service: name=krb5-admin-server state=restarted
+
+- name: service slapd restart
+  service: name=slapd state=restarted
+
+# vim:ft=ansible:

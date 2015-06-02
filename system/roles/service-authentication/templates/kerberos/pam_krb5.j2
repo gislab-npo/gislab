@@ -1,0 +1,20 @@
+Name: Kerberos authentication
+Default: yes
+Priority: 704
+Conflicts: krb5-openafs
+Auth-Type: Primary
+Auth:
+	[success=end default=ignore]	pam_krb5.so minimum_uid=3000 try_first_pass
+Auth-Initial:
+	[success=end default=ignore]	pam_krb5.so minimum_uid=3000
+Account-Type: Additional
+Account:
+	required						pam_krb5.so minimum_uid=3000
+Password-Type: Primary
+Password:
+	[success=end default=ignore]	pam_krb5.so minimum_uid=3000 try_first_pass use_authtok
+Password-Initial:
+	[success=end default=ignore]	pam_krb5.so minimum_uid=3000
+Session-Type: Additional
+Session:
+	optional						pam_krb5.so minimum_uid=3000

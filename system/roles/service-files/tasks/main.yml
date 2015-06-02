@@ -24,8 +24,13 @@
 
 # NFS configuration
 - name: Configure NFS exports
-  template: src=nfs/exports.j2 dest=/etc/exports
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: "nfs/nfs-common.j2", dest: "/etc/default/nfs-common" }
+    - { src: "nfs/nfs-kernel-server.j2", dest: "/etc/default/nfs-kernel-server" }
+    - { src: "nfs/exports.j2", dest: "/etc/exports" }
   notify:
+    - service gssd restart
     - service nfs-kernel-server restart
 
 - name: Configure user IDs mapping

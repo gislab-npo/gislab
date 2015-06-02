@@ -18,7 +18,7 @@
     - { role: service-logcheck, tags: ['service-logcheck'] }
     - { role: service-time, tags: ['service-time'] }
     - { role: service-dns, tags: ['service-dns'] }
-    - { role: service-ldap, tags: ['service-ldap'] }
+    - { role: service-authentication, tags: ['service-authentication'] }
     - { role: service-mail, tags: ['service-mail'] }
     - { role: service-dhcp, tags: ['service-dhcp'] }
     - { role: service-default-web, tags: ['service-default-web'] }

@@ -14,7 +14,6 @@
     - mutt
     - postfix
     - postfix-ldap
-    - sasl2-bin
 
 
 # Postfix configuration

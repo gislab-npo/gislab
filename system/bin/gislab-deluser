@@ -83,8 +83,17 @@ for GROUP in $(id -nG $GISLAB_USER | grep '[[:space:]]' | sed -r 's/^[^ ]* //');
 	ldapdeleteuserfromgroup $GISLAB_USER $GROUP
 done
 
+# remove user from Kerberos admin users
+if grep -q "^$GISLAB_USER \*$" /etc/krb5kdc/kadm5.acl; then
+	sed -i "/^$GISLAB_USER \*$/d" /etc/krb5kdc/kadm5.acl
+	service krb5-admin-server restart
+fi
+
 # remove LDAP account
 ldapdeleteuser $GISLAB_USER
+
+# remove Kerberos principal
+kadmin.local "delprinc -force $GISLAB_USER"
 
 
 # run deluser hook

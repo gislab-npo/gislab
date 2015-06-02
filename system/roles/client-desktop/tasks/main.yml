@@ -340,7 +340,10 @@
 
 # NFS
 - name: Configure NFS
-  template: src=nfs/idmapd.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/idmapd.conf
+  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
+  with_items:
+    - { src: "nfs/nfs-common.j2", dest: "/etc/default/nfs-common" }
+    - { src: "nfs/idmapd.conf.j2", dest: "/etc/idmapd.conf" }
 
 - name: Create mount points for shared directories
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory
@@ -349,16 +352,26 @@
     - /mnt/barrel
     - /mnt/publish
 
+# Kerberos
+- name: Generate Kerberos principals for clients and export them to keytab file
+  shell: kadmin.local -q "addprinc -randkey -policy hosts host/c{{ item }}.gis.lab"
+    && kadmin.local -q "ktadd -k /etc/gislab/gislab-krb5-keytab-all-clients host/c{{ item }}.gis.lab"
+  with_sequence: start=50 end=149
+  when: kerberos_db_status.stdout == "KERBEROS DB EMPTY"
 
-# LDAP
-- name: Enable LDAP authentication
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}"
-  with_items:
-    - pam-auth-update --force
-    - auth-client-config -t nss -p lac_ldap
-  args:
-    executable: /bin/bash
+- name: Install Kerberos keytab file
+  shell: cp /etc/gislab/gislab-krb5-keytab-all-clients {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/krb5.keytab
+    && chmod 0600 {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/krb5.keytab
+
+- name: Install Kerberos configuration file
+  template: src=kerberos/krb5.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/krb5.conf
+
+# LDAP - toto nie je potrebne, pretoze to riesi /etc/nsswitch.conf
+#- name: Enable LDAP authentication
+#  shell: "export DEBIAN_FRONTEND=noninteractive
+#    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} auth-client-config -t nss -p lac_ldap"
+#  args:
+#    executable: /bin/bash
 
 - name: Install LDAP configuration files
   template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
@@ -376,6 +389,12 @@
 - name: Install NSS configuration file (configure sudo to use LDAP)
   template: src=nsswitch/nsswitch.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/nsswitch.conf
 
+# PAM
+- name: Install Kerberos PAM configuration file
+  command: cp /usr/share/pam-configs/krb5 {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/pam-configs/krb5
+
+- name: Enable Kerberos authentication in PAM
+  shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} pam-auth-update --force --package krb5 unix --remove ldap
 
 # NTP
 - name: Configure client to use server.gis.lab for setting time at start

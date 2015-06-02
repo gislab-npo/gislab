@@ -1,13 +1,91 @@
 ---
 #
-###  LDAP DATABASE ###
+###  KERBEROS AND LDAP DATABASE ###
 #
-# Install and configure authentication server.
+# Install and configure authentication and authorization servers.
 #
 # Logging: /storage/log/syslog
 
 
-- name: Install packages
+# Kerberos
+
+- name: Install Kerberos packages
+  apt: pkg={{ item }} force=yes install_recommends=no state=latest
+  with_items:
+    - krb5-admin-server
+    - libpam-krb5
+
+- name: Install configuration files for Kerberos
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0600
+  with_items:
+    - { src: "kerberos/krb5.conf.j2", dest: "/etc/krb5.conf" }
+    - { src: "kerberos/kdc.conf.j2", dest: "/etc/krb5kdc/kdc.conf" }
+    - { src: "kerberos/kadm5.acl.j2", dest: "/etc/krb5kdc/kadm5.acl" }
+
+- name: Detect if Kerberos is installed
+  shell: "kdb5_util -r GIS.LAB dump 2>/dev/null || echo 'KERBEROS DB EMPTY'"
+  args:
+    executable: /bin/bash
+  register: kerberos_db_status
+  changed_when: False
+
+- name: Generate Kerberos master password
+  shell: pwgen -s -N 1 10 > /etc/gislab/gislab_kerberos_master_password.txt
+    && chmod 0600 /etc/gislab/gislab_kerberos_master_password.txt
+  args:
+    creates: /etc/gislab/gislab_kerberos_master_password.txt
+
+- name: Get Kerberos master password
+  shell: cat /etc/gislab/gislab_kerberos_master_password.txt
+  register: gislab_kerberos_master_password
+  changed_when: False
+
+- name: Create Kerberos realm GIS.LAB (run only once)
+  shell: kdb5_util -P {{ gislab_kerberos_master_password.stdout }} create -s
+  args:
+    executable: /bin/bash
+  when: kerberos_db_status.stdout == "KERBEROS DB EMPTY"
+
+- name: Restart Kerberos services
+  service: name={{ item }} state=restarted
+  with_items:
+    - krb5-kdc
+    - krb5-admin-server
+  when: kerberos_db_status.stdout == "KERBEROS DB EMPTY"
+
+- name: Create policies for users, admins and hosts
+  command: kadmin.local -q "addpol {{ item }}"
+  with_items:
+    - users
+    - admins
+    - hosts
+
+- name: Create Kerberos principals for server.gis.lab and export them to the keytab file
+  shell: kadmin.local -q "addprinc -randkey -policy hosts {{ item }}"
+    && kadmin.local -q "ktadd {{ item }}"
+  with_items:
+    - host/server.gis.lab
+    - nfs/server.gis.lab
+  when: kerberos_db_status.stdout == "KERBEROS DB EMPTY"
+
+
+# SASL
+- name: Install SASL package
+  apt: pkg={{ item }} force=yes install_recommends=no state=latest
+  with_items:
+      - sasl2-bin
+      - libsasl2-modules-gssapi-mit
+
+- name: Install SASL configuration file
+  template: src=sasl/saslauthd.j2 dest=/etc/default/saslauthd
+
+
+- name: Restart SASL service
+  service: name=saslauthd state=restarted
+
+
+# LDAP
+- name: Install LDAP packages
   apt: pkg={{ item }} force=yes install_recommends=no state=latest
   # libpam-cracklib is improving strength of user passwords. It is also responsible for setting of PAM 'authtok'.
   # If libpam-cracklib is not installed, change 'use_authtok' option in /etc/pam.d/common-password to 'try_authtok'
@@ -23,6 +101,8 @@
     - slapd
     - ssl-cert
 
+- name: Add 'openldap' user to 'sasl' group
+  shell: adduser openldap sasl 2> /dev/null || true
 
 - name: Add 'openldap' user to 'ssl-cert' group
   shell: adduser openldap ssl-cert 2> /dev/null || true
@@ -35,6 +115,12 @@
   register: ldap_db_status
   changed_when: False
 
+
+# Enable SASL in LDAP
+- name: Configure LDAP to use SASL
+  template: src=ldap/sasl-slapd.conf.j2 dest=/usr/lib/sasl2/slapd.conf
+  notify:
+    - service slapd restart
 
 # Move LDAP database to /storage
 - name: Allow access for slapd to /storage directory
@@ -71,11 +157,11 @@
 
 
 # PAM
-- name: Configure PAM to use Unix and LDAP authentication 
-  shell: DEBIAN_FRONTEND=noninteractive {{ item }}
-  with_items:
-    - "pam-auth-update --force"
-    - "auth-client-config -t nss -p lac_ldap"
+- name: Install Kerberos PAM configuration file
+  template: src=kerberos/pam_krb5.j2 dest=/usr/share/pam-configs/krb5
+
+- name: Configure PAM to use Kerberos and Unix authentication
+  shell: DEBIAN_FRONTEND=noninteractive pam-auth-update --force --package krb5 unix --remove ldap
 
 - name: Configure PAM to use LDAP
   template: src=ldap/ldap-pam.conf.j2 dest=/etc/ldap.conf

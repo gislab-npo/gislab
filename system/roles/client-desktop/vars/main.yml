@@ -22,11 +22,13 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - gtk2-engines
   - gtk2-engines-pixbuf
   - inputattach
+  - krb5-user
   - libasound2-plugins
   - libgd2-xpm
   - libnss-ldap
   - libpam-ck-connector
   - libpam-cracklib
+  - libpam-krb5
   - libsasl2-modules
   - libxp6
   - lightdm
