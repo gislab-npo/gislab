@@ -19,7 +19,7 @@ end script
 post-stop script
     grep -Eqsw "init=/sbin/init-gislab" /proc/cmdline || exit 0
 
-    if [ -x /usr/share/gislab/nbd-disconnect ]; then
-        /usr/share/gislab/nbd-disconnect&
+    if [ -x /opt/gislab/system/nbd-disconnect ]; then
+        /opt/gislab/system/nbd-disconnect&
     fi
 end script

@@ -28,7 +28,8 @@
   file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory
   with_items:
     - /etc/gislab
-    - /usr/share/gislab
+    - /opt/gislab
+    - /opt/gislab/system
 
 - name: Set safe permissions for /etc/gislab directory
   file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab state=directory owner=root group=root mode=0700
@@ -257,7 +258,7 @@
   copy: src=static/init/init-gislab dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/init-gislab mode=0755
 
 - name: Install GIS.lab init script
-  copy: src=static/init/gislab-init.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/gislab-init.sh mode=0755
+  copy: src=static/init/gislab-init.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/gislab-init.sh mode=0755
 
 - name: Configure GIS.lab client service
   template: src=init/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/gislab.conf mode=0644
@@ -394,7 +395,7 @@
 
 # GIS.lab client tools
 - name: Install GIS.lab shell functions library
-  copy: src=functions.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/ mode=0644
+  copy: src=functions.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/functions.sh mode=0644
 
 - name: Install GIS.lab client tools
   copy: src=static/gislab-client-tools/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/local/bin/ mode=0755
@@ -572,18 +573,18 @@
   - { src: lightdm/conf/greeter.ui.j2, dest: /usr/share/lightdm-gtk-greeter/greeter.ui }
 
 - name: Create directory for lightdm scripts
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/lightdm state=directory
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/lightdm state=directory
 
 - name: Install Lightdm scripts
   template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode=0755
   with_items:
-    - { src: "lightdm/bin/session-setup-script.sh.j2", dest: "/usr/share/gislab/lightdm/session-setup-script.sh" }
-    - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/usr/share/gislab/lightdm/session-cleanup-script.sh" }
+    - { src: "lightdm/bin/session-setup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-setup-script.sh" }
+    - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-cleanup-script.sh" }
 
       
 # Cluster
 - name: Install Serf
-  shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "source /usr/share/gislab/functions.sh
+  shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "source /opt/gislab/system/functions.sh
     && gislab_serf_install 0.6.4"
   args:
     executable: /bin/bash
@@ -592,13 +593,13 @@
   shell: cp /etc/gislab/gislab_serf.key {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab/gislab_serf.key
 
 - name: Create directory for Serf handlers
-  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/serf/handlers state=directory
+  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/serf/handlers state=directory
 
 - name: Install Serf handlers scripts 
-  copy: src=static/serf/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/serf/handlers mode=0774
+  copy: src=static/serf/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/serf/handlers mode=0774
 
 - name: Install reboot Serf handler
-  shell: ln -sf shutdown.sh {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/serf/handlers/reboot.sh
+  shell: ln -sf shutdown.sh {{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/serf/handlers/reboot.sh
 
 - name: Install Serf agent init script
   template: src=init/serf-agent.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/serf-agent.conf

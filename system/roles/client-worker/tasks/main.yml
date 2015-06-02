@@ -32,7 +32,8 @@
   file: path={{ GISLAB_INSTALL_WORKER_ROOT }}{{ item }} state=directory
   with_items:
     - /etc/gislab
-    - /usr/share/gislab
+    - /opt/gislab
+    - /opt/gislab/system
 
 - name: Set safe permissions for /etc/gislab directory
   file: path={{ GISLAB_INSTALL_WORKER_ROOT }}/etc/gislab state=directory owner=root group=root mode=0700
@@ -104,13 +105,13 @@
   shell: cp --parents /etc/gislab/gislab_serf.key {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration
 
 - name: Create directory for Serf handlers
-  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/usr/share/gislab/serf/handlers state=directory recurse=yes
+  file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/opt/gislab/system/serf/handlers state=directory recurse=yes
 
 - name: Install Serf handlers scripts
-  copy: src=static/serf/ dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/usr/share/gislab/serf/handlers mode=0774
+  copy: src=static/serf/ dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/opt/gislab/system/serf/handlers mode=0774
 
 - name: Install reboot Serf handler
-  shell: ln -sf shutdown.sh {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/usr/share/gislab/serf/handlers/reboot.sh
+  shell: ln -sf shutdown.sh {{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/opt/gislab/system/serf/handlers/reboot.sh
 
 - name: Create directory for init scripts
   file: dest={{ GISLAB_INSTALL_WORKER_ROOT }}/basic-configuration/etc/init state=directory recurse=yes

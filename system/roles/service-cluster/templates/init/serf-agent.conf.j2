@@ -12,10 +12,10 @@ normal exit 0 TERM INT
 exec serf agent \
 	-bind {{ GISLAB_NETWORK_SERVER_IP }} \
 	-keyring-file /etc/gislab/gislab_serf.key \
-	-event-handler "member-join=/usr/share/gislab/serf/handlers/member-join.sh" \
-	-event-handler "member-leave,member-failed=/usr/share/gislab/serf/handlers/member-leave.sh" \
-	-event-handler "user:member-join-lb=/usr/share/gislab/serf/handlers/member-join-lb.sh" \
-	-event-handler "user:adduser=/usr/share/gislab/serf/handlers/adduser.sh" \
+	-event-handler "member-join=/opt/gislab/system/serf/handlers/member-join.sh" \
+	-event-handler "member-leave,member-failed=/opt/gislab/system/serf/handlers/member-leave.sh" \
+	-event-handler "user:member-join-lb=/opt/gislab/system/serf/handlers/member-join-lb.sh" \
+	-event-handler "user:adduser=/opt/gislab/system/serf/handlers/adduser.sh" \
 	-event-handler "query:test=echo 'yes'" \
 	-node="server.gis.lab" \
 	-tag role=server \

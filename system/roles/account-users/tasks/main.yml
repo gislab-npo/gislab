@@ -155,10 +155,10 @@
 
 # account hooks
 - name: Prepare directory for account hooks
-  file: path=/usr/share/gislab/account/hooks state=directory owner=root group=root
+  file: path=/opt/gislab/system/account/hooks state=directory owner=root group=root
 
 - name: Install account hooks
-  copy: src=static/hooks/ dest=/usr/share/gislab/account/hooks mode=0755 owner=root group=root
+  copy: src=static/hooks/ dest=/opt/gislab/system/account/hooks mode=0755 owner=root group=root
 
 
 # vim:ft=ansible:

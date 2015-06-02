@@ -161,9 +161,10 @@
   with_items:
     - "{{ GISLAB_ROOT }}"
     - /etc/gislab
-    - /usr/share/gislab
-    - /var/lib/gislab
     - /usr/local/python-virtualenvs
+    - /var/lib/gislab
+    - /opt/gislab
+    - /opt/gislab/system
     - /storage/applications
     - "{{ GISLAB_INSTALL_TMP_ROOT }}"
 
@@ -304,7 +305,7 @@
 
 # GIS.lab administrator tools
 - name: Install GIS.lab shell functions library
-  copy: src=functions.sh dest={{ GISLAB_ROOT }}/functions.sh mode=0644
+  copy: src=functions.sh dest={{ GISLAB_ROOT }}/system/functions.sh mode=0644
 
 - name: Install GIS.lab administrator tools
   copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0775 owner=root group=root
