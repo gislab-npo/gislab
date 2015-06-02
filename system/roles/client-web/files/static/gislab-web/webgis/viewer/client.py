@@ -31,6 +31,15 @@ GOOGLE_LAYERS = {
 	'GTERRAIN': {'name': 'GTERRAIN', 'type': 'google', 'title': 'Google Terrain'},
 }
 
+OSM_RESOLUTIONS = [156543.03390625,78271.516953125,39135.7584765625,19567.87923828125,9783.939619140625,
+	4891.9698095703125,2445.9849047851562,1222.9924523925781,611.4962261962891,305.74811309814453,
+	152.87405654907226,76.43702827453613,38.218514137268066,19.109257068634033,9.554628534317017,4.777314267158508
+]
+
+OSM_SCALES = [591657528, 295828764, 147914382, 73957191, 36978595, 18489298, 9244649, 4622324,
+	2311162, 1155581, 577791, 288895, 144448, 72224, 36112, 18056, 9028, 4514, 2257
+]
+
 
 GISLAB_VERSION = {}
 try:
@@ -227,6 +236,7 @@ class WebgisClient(object):
 
 			context['projection'] = metadata.projection
 			context['tile_resolutions'] = project_tile_resolutions
+			context['scales'] = metadata.scales
 
 			# converts tree with layers data into simple dictionary
 			def collect_layers_capabilities(layers_data, capabilities=None):
@@ -332,6 +342,8 @@ class WebgisClient(object):
 				'project': 'empty',
 				'root_title': _('Empty Project'),
 				'project_extent': [-20037508.34, -20037508.34, 20037508.34, 20037508.34],
+				'tile_resolutions': OSM_RESOLUTIONS,
+				'scales': OSM_SCALES,
 				'projection': {
 					'code': 'EPSG:3857',
 					'is_geographic': False
