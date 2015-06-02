@@ -554,6 +554,7 @@ class ProjectPage(PublishPage):
 		project_tile_resolutions = set(publish_resolutions(project_tile_resolutions))
 		project_tile_resolutions = sorted(project_tile_resolutions, reverse=True)
 		metadata['tile_resolutions'] = project_tile_resolutions
+		metadata['scales'] = self.plugin.resolutions_to_scales(project_tile_resolutions)
 
 		# create base layers metadata
 		default_baselayer = self.dialog.default_baselayer.itemData(self.dialog.default_baselayer.currentIndex())
@@ -693,8 +694,8 @@ class ProjectPage(PublishPage):
 						'url': layer.attributionUrl()
 					}
 				if layer.hasScaleBasedVisibility():
-					layer_data['visibility_scale_min'] = layer.minimumScale()
-					layer_data['visibility_scale_max'] = layer.maximumScale()
+					layer_data['visibility_scale_min'] = max(layer.minimumScale(), metadata['scales'][-1])
+					layer_data['visibility_scale_max'] = min(layer.maximumScale(), metadata['scales'][0])
 
 				if layer.type() == QgsMapLayer.VectorLayer:
 					layer_data['type'] = 'vector'
