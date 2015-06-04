@@ -75,12 +75,6 @@ fi
 # create Kerberos principal
 kadmin.local -q "addprinc -pw $GISLAB_USER_PASSWORD -policy users $GISLAB_USER"
 
-# add user to Kerberos admin users if creating superuser account
-if [ "$SUDO" == "yes" ]; then
-	echo "$GISLAB_USER *" >>/etc/krb5kdc/kadm5.acl
-	service krb5-admin-server restart
-fi
-
 
 ### LDAP
 # create LDAP account (without creating home directory - CREATEHOMES="no")
