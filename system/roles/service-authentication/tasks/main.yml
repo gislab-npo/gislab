@@ -16,11 +16,11 @@
     - libpam-krb5
 
 - name: Install configuration files for Kerberos
-  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0600
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode={{ item.mode }}
   with_items:
-    - { src: "kerberos/krb5.conf.j2", dest: "/etc/krb5.conf" }
-    - { src: "kerberos/kdc.conf.j2", dest: "/etc/krb5kdc/kdc.conf" }
-    - { src: "kerberos/kadm5.acl.j2", dest: "/etc/krb5kdc/kadm5.acl" }
+    - { src: "kerberos/krb5.conf.j2", dest: "/etc/krb5.conf", mode: "0644" }
+    - { src: "kerberos/kdc.conf.j2", dest: "/etc/krb5kdc/kdc.conf", mode: "0644" }
+    - { src: "kerberos/kadm5.acl.j2", dest: "/etc/krb5kdc/kadm5.acl", mode: "0600" }
 
 - name: Detect if Kerberos is installed
   shell: "kdb5_util -r GIS.LAB dump 2>/dev/null || echo 'KERBEROS DB EMPTY'"
