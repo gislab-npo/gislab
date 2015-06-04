@@ -372,13 +372,6 @@
 - name: Install Kerberos configuration file
   template: src=kerberos/krb5.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/krb5.conf
 
-# LDAP - toto nie je potrebne, pretoze to riesi /etc/nsswitch.conf
-#- name: Enable LDAP authentication
-#  shell: "export DEBIAN_FRONTEND=noninteractive
-#    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} auth-client-config -t nss -p lac_ldap"
-#  args:
-#    executable: /bin/bash
-
 - name: Install LDAP configuration files
   template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
   with_items:
