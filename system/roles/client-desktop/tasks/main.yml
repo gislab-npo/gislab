@@ -337,6 +337,12 @@
     - dpkg-divert --add --rename --divert /etc/mtab.real /etc/mtab
     - ln -sf /proc/mounts /etc/mtab
 
+# SSH
+- name: Configure SSH server and client
+  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
+  with_items:
+    - { src: "ssh/sshd_config.j2", dest: "/etc/ssh/sshd_config" }
+    - { src: "ssh/ssh_config.j2", dest: "/etc/ssh/ssh_config" }
 
 # NFS
 - name: Configure NFS
