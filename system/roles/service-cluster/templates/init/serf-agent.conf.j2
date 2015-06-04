@@ -21,8 +21,3 @@ exec serf agent \
 	-tag role=server \
 	-log-level=err \
 	-syslog
-
-post-stop script
-	sed -i'' "/# Managed by Serf/d" /etc/haproxy/haproxy.cfg
-	sleep 3
-end script

@@ -2,6 +2,7 @@
 
 # Perform machine shutdown or reboot if no user session is active.
 
+
 HOSTNAMES=$(cat)
 
 perform_event() {
