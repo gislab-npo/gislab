@@ -16,8 +16,10 @@ exec serf agent \
 	-event-handler "member-leave,member-failed=/opt/gislab/system/serf/handlers/member-leave.sh" \
 	-event-handler "user:member-join-lb=/opt/gislab/system/serf/handlers/member-join-lb.sh" \
 	-event-handler "user:adduser=/opt/gislab/system/serf/handlers/adduser.sh" \
+	-event-handler "query:uptime=uptime" \
 	-event-handler "query:test=echo 'yes'" \
 	-node="server.gis.lab" \
 	-tag role=server \
+	-tag queries=uptime,test \
 	-log-level=err \
 	-syslog
