@@ -81,7 +81,6 @@ while read line; do
 			sn) GISLAB_USER_SURNAME="$VAL" ;;
 			mail) GISLAB_USER_MAIL="$VAL" ;;
 			description) GISLAB_USER_DESC="$VAL" ;;
-			userPassword) GISLAB_USER_PASS_CRYPT="$VAL" ;;
 			\#superuser) SUDO_OPT="-s" ;;
 		esac
 done < ldap.dump
@@ -90,15 +89,6 @@ done < ldap.dump
 # create user account
 gislab-adduser -g "$GISLAB_USER_GIVEN_NAME" -l "$GISLAB_USER_SURNAME" \
                -m "$GISLAB_USER_MAIL" -d "$GISLAB_USER_DESC" $SUDO_OPT $GISLAB_USER
-
-
-# PASSWORD
-ldapmodifyuser $GISLAB_USER > /dev/null << EOL
-changetype: modify
-replace: userPassword
-userPassword:: $GISLAB_USER_PASS_CRYPT
-EOL
-gislab_print_info "Original password restored from backup"
 
 
 # HOME DATA
