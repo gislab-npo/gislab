@@ -19,7 +19,7 @@ exec serf agent \
 	-event-handler "query:test=echo 'yes'" \
 	-tag role=worker \
 	-tag events=reboot,shutdown \
-	-tag queries=script,client-session-active,uptime,test \
+	-tag queries=script,uptime,test \
 	-log-level=err \
 	-syslog
 
