@@ -19,9 +19,11 @@ if [ "$GISLAB_CLIENT_IMAGE_VERSION_SERVER" != "$GISLAB_CLIENT_IMAGE_VERSION_CLIE
 	for i in $(seq 10 10 100); do
 		echo $i;
 		sleep 1;
-	done | zenity --title=Info --progress \
+	done | zenity --title="Info" \
+			--progress \
+			--auto-close \
+			--no-cancel \
 			--text="A new version of the system is available, rebooting in 10s." \
-			--auto-close --no-cancel
 	/sbin/reboot
 	exit 0
 fi
@@ -39,20 +41,37 @@ if [ ! -d /mnt/home/$USER ]; then
 fi
 
 
-# don't allow login if user is already running session
-if [ -f /mnt/home/$USER/.gislab/session.lock ]; then
-	zenity --warning --title="Concurrent login disabled" \
-		--text="You are already logged in from other place. Please log out and try again." || true
-	exit 1
+# warn if user is already running session
+GISLAB_SESSION_LOCKFILE_USER="/mnt/home/$USER/.gislab/session.lock"
+GISLAB_SESSION_LOCKFILE_GLOBAL="/var/lib/gislab/session.lock"
+
+WARNING_LOCKFILE_USER="It is strongly recommended to log off from previous session before starting a new one. You can
+choose to continue only if your previous session has crashed or you exactly know what are you doing. Otherwise you can
+loose your data or run in to software malfunction.
+"
+
+if [ -f "$GISLAB_SESSION_LOCKFILE_USER" ]; then
+	# zenity return codes:
+	# 0 : 'Continue anyway' button
+	# 1 : 'Cancel' button
+	zenity --question \
+		--cancel-label="Cancel" \
+		--ok-label="Continue anyway" \
+		--title="Concurrent session detected" \
+		--text="You are already running active session ($(cat $GISLAB_SESSION_LOCKFILE_USER)) !\n$WARNING_LOCKFILE_USER"
+
+	if [ $? != 0 ]; then
+			exit 1
+	fi
 fi
 
 
 # set user session lock file
-echo "$(date +%Y-%m-%d-%H:%M:%S)" > /mnt/home/$USER/.gislab/session.lock
+echo "$USER@$(hostname --fqdn) started at $(date +%Y-%m-%d-%H:%M:%S)" > $GISLAB_SESSION_LOCKFILE_USER
 
 # set global session lock file
 mkdir -p /var/lib/gislab
-echo "$USER" > /var/lib/gislab/session.lock
+echo "$USER" > $GISLAB_SESSION_LOCKFILE_GLOBAL
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
