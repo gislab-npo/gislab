@@ -4,6 +4,7 @@
   apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
     - nbd-client
+  changed_when: False
 
 
 - name: Prepare mount point for test NBD mount
@@ -48,6 +49,7 @@
   apt: pkg={{item}} force=yes purge=yes state=absent
   with_items:
     - nbd-client
+  changed_when: False
 
 
 # vim:ft=ansible:
