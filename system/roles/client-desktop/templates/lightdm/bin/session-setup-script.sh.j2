@@ -57,6 +57,7 @@ if [ -f "$GISLAB_SESSION_LOCKFILE_USER" ]; then
 	zenity --question \
 		--cancel-label="Cancel" \
 		--ok-label="Continue anyway" \
+		--no-wrap \
 		--title="Concurrent session detected" \
 		--text="You are already running active session ($(cat $GISLAB_SESSION_LOCKFILE_USER)) !\n$WARNING_LOCKFILE_USER"
 
