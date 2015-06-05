@@ -35,6 +35,10 @@
   file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab state=directory owner=root group=root mode=0700
 
 
+#
+## INITIAL SYSTEM INSTALLATION ########################################################################################
+#
+
 # Debootstrap
 - name: Install base system (without apt proxy)
   command: debootstrap --arch {{ GISLAB_CLIENT_ARCHITECTURE }} {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENT_ROOT }} http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
@@ -93,7 +97,27 @@
     - touch {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/resolvconf/resolv.conf.d/tail
 
 
-# Apt
+# fstab
+- name: Configure mount points
+  template: src=fstab/fstab.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/fstab
+
+- name: Divert /etc/mtab and point it to /proc/mounts
+  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}
+  with_items:
+    - dpkg-divert --add --rename --divert /etc/mtab.real /etc/mtab
+    - ln -sf /proc/mounts /etc/mtab
+
+
+# version
+- name: Install '/etc/gislab_version' file
+  command: cp /etc/gislab_version {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab_version
+
+
+#
+## INSTALLATION #######################################################################################################
+#
+
+# apt
 - name: Purge apt configuration directory
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt state=absent
 
@@ -204,17 +228,6 @@
   when: GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 
-# Remove not needed packages
-- name: Remove packages
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}"
-  args:
-    executable: /bin/bash
-  with_items:
-    - apt-get --assume-yes purge {{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}
-    - apt-get --assume-yes autoremove
-
-
 # Install kernel
 - name: Create configuration file for kernel setup
   template: src=kernel/kernel-img.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/kernel-img.conf
@@ -224,47 +237,6 @@
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_KERNEL|join(' ') }}"
   args:
     executable: /bin/bash
-
-    
-# Initramfs-tools and init
-- name: Create directories for initramfs-tools
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory recurse=yes
-  with_items:
-    - /usr/share/initramfs-tools/conf.d
-    - /usr/share/initramfs-tools/hooks
-    - /usr/share/initramfs-tools/scripts/init-bottom
-    - /usr/share/initramfs-tools/scripts/init-premount
-    - /usr/share/initramfs-tools/scripts/local-top
-
-- name: Configure initramfs-tools
-  template: src=initramfs-tools/conf.d/gislab.j2
-            dest={{ GISLAB_INSTALL_CLIENT_ROOT}}/usr/share/initramfs-tools/conf.d/gislab
-            mode=0644
-
-- name: Install initramfs-tools hooks and scripts
-  copy: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode={{ item.mode }}
-  with_items:
-    - { src: "static/initramfs-tools/hooks/gislab", dest: "/usr/share/initramfs-tools/hooks/gislab", mode: "0755" }
-    - { src: "static/initramfs-tools/hooks/udhcp", dest: "/usr/share/initramfs-tools/hooks/udhcp", mode: "0755" }
-    - { src: "static/initramfs-tools/scripts/init-bottom/gislab", dest: "/usr/share/initramfs-tools/scripts/init-bottom/gislab", mode: "0755" }
-    - { src: "static/initramfs-tools/scripts/local-top/nbd_gislab", dest: "/usr/share/initramfs-tools/scripts/local-top/nbd_gislab",  mode: "0755" }
-
-- name: Install uDHCP client script
-  template: src=initramfs-tools/scripts/init-premount/udhcp.j2
-            dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/initramfs-tools/scripts/init-premount/udhcp
-            mode=0755
-
-- name: Install system init script
-  copy: src=static/init/init-gislab dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/init-gislab mode=0755
-
-- name: Install GIS.lab init script
-  copy: src=static/init/gislab-init.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/gislab-init.sh mode=0755
-
-- name: Configure GIS.lab client service
-  template: src=init/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/gislab.conf mode=0644
-
-- name: Update initramfs
-  shell: "chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} update-initramfs -u"
 
 
 # Install VirtualBox Guest additions.
@@ -327,17 +299,21 @@
   when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
         and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) == None
 
-
-# fstab
-- name: Configure mount points
-  template: src=fstab/fstab.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/fstab
-
-- name: Divert /etc/mtab and point it to /proc/mounts
-  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}
+        
+# Remove not needed packages
+- name: Remove packages
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}"
+  args:
+    executable: /bin/bash
   with_items:
-    - dpkg-divert --add --rename --divert /etc/mtab.real /etc/mtab
-    - ln -sf /proc/mounts /etc/mtab
+    - apt-get --assume-yes purge {{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}
+    - apt-get --assume-yes autoremove
 
+
+#
+## CONFIGURATION ######################################################################################################
+#
 
 # NFS
 - name: Configure NFS
@@ -387,11 +363,119 @@
 - name: Install syslog configuration
   template: src=syslog/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/rsyslog.d/gislab.conf
 
-  
-# gislab version
-- name: Install '/etc/gislab_version' file
-  command: cp /etc/gislab_version {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab_version
 
+# Lightdm
+- name: Install Lightdm configuration file
+  template: src=lightdm/conf/lightdm.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/lightdm/lightdm.conf
+
+- name: Install Lightdm greeter configuration
+  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
+  with_items:
+  - { src: lightdm/conf/lightdm-gtk-greeter.conf.j2, dest: /etc/xdg/xdg-xubuntu/lightdm/lightdm-gtk-greeter.conf }
+  - { src: lightdm/conf/greeter.ui.j2, dest: /usr/share/lightdm-gtk-greeter/greeter.ui }
+
+- name: Create directory for lightdm scripts
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/lightdm state=directory
+
+- name: Install Lightdm scripts
+  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode=0755
+  with_items:
+    - { src: "lightdm/bin/session-setup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-setup-script.sh" }
+    - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-cleanup-script.sh" }
+
+ 
+# Disable session services
+- name: Disable useless session services
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
+  with_items:
+    - /etc/xdg/autostart/jockey-gtk.desktop
+    - /etc/xdg/autostart/jockey-kde.desktop
+    - /etc/xdg/autostart/update-notifier.desktop
+
+
+# Disable system services
+- name: Disable useless system services
+  command: "rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/rc?.d/???{{ item }}
+                  {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init.d/{{ item }}
+                  {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/{{ item }}.conf"
+  with_items:
+    - alsa-restore
+    - alsa-store
+    - grub-common
+    - modemmanager
+    - nbd-client
+    - plymouth-stop
+    - rfkill-store
+    - tty2
+    - tty3
+    - tty4
+    - tty5
+    - tty6
+    - unattended-upgrades
+    - urandom
+    - ureadahead
+    - ureadahead-other
+
+    
+# Disable cron jobs
+- name: Disable useless cron jobs
+  command: "rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }}"
+  with_items:
+    - /etc/cron.daily/apt
+    - /etc/cron.daily/apport
+    - /etc/cron.daily/aptitude
+    - /etc/cron.daily/bsdmainutils
+    - /etc/cron.daily/dpkg
+    - /etc/cron.daily/logrotate
+    - /etc/cron.daily/man-db
+    - /etc/cron.daily/mlocate
+    - /etc/cron.daily/passwd
+    - /etc/cron.daily/popularity-contest
+    - /etc/cron.daily/standard
+    - /etc/cron.daily/update-notifier-common
+    - /etc/cron.weekly/apt-xapian-index
+    - /etc/cron.weekly/man-db
+
+ 
+#
+## SHUTDOWN ###########################################################################################################
+#
+
+# Replacing shutdown commands with simple script, which will umount all network disks and immediately power off
+# machine without trying to cleanly stop services. This is a workaround to a problems with various shutdown problems
+# caused by network mounted root and NBD itself (see LP #696454).
+
+# 'reboot' binary performs 'reboot' and also 'poweroff' task depending on the file name called. This is the reason why
+# '/sbin/poweroff' is a symlink to '/sbin/reboot'. This fix takes to account this behavior.
+
+- name: Create directory for original 'reboot' command
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab state=directory
+
+- name: Remove original 'poweroff' command (symlink)
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/poweroff state=absent
+
+- name: Remove original 'shutdown' command
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/poweroff state=absent
+
+- name: Move 'reboot' binary
+  command: mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/reboot {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab/reboot
+
+- name: Re-create poweroff command as a symlink to moved reboot binary
+  command: ln -sf reboot {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab/poweroff
+
+- name: Install custom reboot script
+  copy: src=static/bin/reboot dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/reboot mode=0755
+
+- name: Install custom poweroff script
+  copy: src=static/bin/poweroff dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/poweroff mode=0755
+
+- name: Install custom shutdown script
+  copy: src=static/bin/poweroff dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/shutdown mode=0755
+
+
+#
+## DESKTOP ############################################################################################################
+#
 
 # GIS.lab client tools
 - name: Install GIS.lab shell functions library
@@ -456,90 +540,10 @@
   # session file must be called 'xubuntu.desktop', otherwise LightDM will set variable DESKTOP_SESSION to invalid value
   template: src=desktop/xsession/gislab-client.desktop.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/xubuntu.desktop
 
-# Disable session services
-- name: Disable useless session services
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
-  with_items:
-    - /etc/xdg/autostart/jockey-gtk.desktop
-    - /etc/xdg/autostart/jockey-kde.desktop
-    - /etc/xdg/autostart/update-notifier.desktop
 
-
-# Disable system services
-- name: Disable useless system services
-  command: "rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/rc?.d/???{{ item }}
-                  {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init.d/{{ item }}
-                  {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/{{ item }}.conf"
-  with_items:
-    - alsa-restore
-    - alsa-store
-    - grub-common
-    - modemmanager
-    - nbd-client
-    - plymouth-stop
-    - rfkill-store
-    - tty2
-    - tty3
-    - tty4
-    - tty5
-    - tty6
-    - unattended-upgrades
-    - urandom
-    - ureadahead
-    - ureadahead-other
-
-    
-# Disable cron jobs
-- name: Disable useless cron jobs
-  command: "rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }}"
-  with_items:
-    - /etc/cron.daily/apt
-    - /etc/cron.daily/apport
-    - /etc/cron.daily/aptitude
-    - /etc/cron.daily/bsdmainutils
-    - /etc/cron.daily/dpkg
-    - /etc/cron.daily/logrotate
-    - /etc/cron.daily/man-db
-    - /etc/cron.daily/mlocate
-    - /etc/cron.daily/passwd
-    - /etc/cron.daily/popularity-contest
-    - /etc/cron.daily/standard
-    - /etc/cron.daily/update-notifier-common
-    - /etc/cron.weekly/apt-xapian-index
-    - /etc/cron.weekly/man-db
-
-
-# Replacing shutdown commands with simple script, which will umount all network disks and immediately power off
-# machine without trying to cleanly stop services. This is a workaround to a problems with various shutdown problems
-# caused by network mounted root and NBD itself (see LP #696454).
-
-# 'reboot' binary performs 'reboot' and also 'poweroff' task depending on the file name called. This is the reason why
-# '/sbin/poweroff' is a symlink to '/sbin/reboot'. This fix takes to account this behavior.
-
-- name: Create directory for original 'reboot' command
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab state=directory
-
-- name: Remove original 'poweroff' command (symlink)
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/poweroff state=absent
-
-- name: Remove original 'shutdown' command
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/poweroff state=absent
-
-- name: Move 'reboot' binary
-  command: mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/reboot {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab/reboot
-
-- name: Re-create poweroff command as a symlink to moved reboot binary
-  command: ln -sf reboot {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/gislab/poweroff
-
-- name: Install custom reboot script
-  copy: src=static/bin/reboot dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/reboot mode=0755
-
-- name: Install custom poweroff script
-  copy: src=static/bin/poweroff dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/poweroff mode=0755
-
-- name: Install custom shutdown script
-  copy: src=static/bin/poweroff dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/shutdown mode=0755
-
+#
+## CLUSTER ############################################################################################################
+#
 
 # Statistics
 - name: Install munin configuration file
@@ -560,28 +564,8 @@
     - { src: "/usr/share/munin/plugins/processes", dest: "/etc/munin/plugins/processes" }
     - { src: "/usr/share/munin/plugins/uptime", dest: "/etc/munin/plugins/uptime" }
     - { src: "/usr/share/munin/plugins/vmstat", dest: "/etc/munin/plugins/vmstat" }
+ 
 
-
-# Lightdm
-- name: Install Lightdm configuration file
-  template: src=lightdm/conf/lightdm.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/lightdm/lightdm.conf
-
-- name: Install Lightdm greeter configuration
-  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
-  with_items:
-  - { src: lightdm/conf/lightdm-gtk-greeter.conf.j2, dest: /etc/xdg/xdg-xubuntu/lightdm/lightdm-gtk-greeter.conf }
-  - { src: lightdm/conf/greeter.ui.j2, dest: /usr/share/lightdm-gtk-greeter/greeter.ui }
-
-- name: Create directory for lightdm scripts
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/lightdm state=directory
-
-- name: Install Lightdm scripts
-  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode=0755
-  with_items:
-    - { src: "lightdm/bin/session-setup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-setup-script.sh" }
-    - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-cleanup-script.sh" }
-
-      
 # Cluster
 - name: Install Serf
   shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "source /opt/gislab/system/functions.sh
@@ -625,7 +609,11 @@
     - install.sh
   when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
-  
+
+#
+## INSTALLATION CLEANUP ###############################################################################################
+#
+
 # Clean apt cache
 - name: Clean apt cache
   shell: "export DEBIAN_FRONTEND=noninteractive
@@ -636,6 +624,74 @@
 - name: Disable Apt cache proxy server
   file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt/apt.conf.d/02proxy state=absent
 
+
+# Daemons handling
+- name: Enable daemons handling in chroot
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
+  with_items:
+    - /usr/sbin/policy-rc.d
+    - /sbin/start-stop-daemon
+
+- name: Restore 'start-stop-daemon' binary
+  command: mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon.real {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon
+
+
+# Umount filesystems mounted inside chroot.
+# Umount /dev/pts before /proc.
+- name: Umount /dev/pts and /proc inside chroot
+  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} umount {{ item }}
+  with_items:
+    - /dev/pts
+    - /proc
+
+
+#
+## INITRAMFS AND INIT #################################################################################################
+#
+
+- name: Create directories for initramfs-tools
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory recurse=yes
+  with_items:
+    - /usr/share/initramfs-tools/conf.d
+    - /usr/share/initramfs-tools/hooks
+    - /usr/share/initramfs-tools/scripts/init-bottom
+    - /usr/share/initramfs-tools/scripts/init-premount
+    - /usr/share/initramfs-tools/scripts/local-top
+
+- name: Configure initramfs-tools
+  template: src=initramfs-tools/conf.d/gislab.j2
+            dest={{ GISLAB_INSTALL_CLIENT_ROOT}}/usr/share/initramfs-tools/conf.d/gislab
+            mode=0644
+
+- name: Install initramfs-tools hooks and scripts
+  copy: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode={{ item.mode }}
+  with_items:
+    - { src: "static/initramfs-tools/hooks/gislab", dest: "/usr/share/initramfs-tools/hooks/gislab", mode: "0755" }
+    - { src: "static/initramfs-tools/hooks/udhcp", dest: "/usr/share/initramfs-tools/hooks/udhcp", mode: "0755" }
+    - { src: "static/initramfs-tools/scripts/init-bottom/gislab", dest: "/usr/share/initramfs-tools/scripts/init-bottom/gislab", mode: "0755" }
+    - { src: "static/initramfs-tools/scripts/local-top/nbd_gislab", dest: "/usr/share/initramfs-tools/scripts/local-top/nbd_gislab",  mode: "0755" }
+
+- name: Install uDHCP client script
+  template: src=initramfs-tools/scripts/init-premount/udhcp.j2
+            dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/initramfs-tools/scripts/init-premount/udhcp
+            mode=0755
+
+- name: Install system init script
+  copy: src=static/init/init-gislab dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/init-gislab mode=0755
+
+- name: Install GIS.lab init script
+  copy: src=static/init/gislab-init.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/gislab-init.sh mode=0755
+
+- name: Configure GIS.lab client service
+  template: src=init/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/gislab.conf mode=0644
+
+- name: Update initramfs
+  shell: "chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} update-initramfs -u"
+
+
+#
+## BOOT ###############################################################################################################
+#
 
 # TFTP
 - name: Create TFTP directory
@@ -684,27 +740,10 @@
   template: src=boot-http/gislab.j2 dest=/var/www/default/gislab_desktop.init
 
 
-# Daemons handling
-- name: Enable daemons handling in chroot
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
-  with_items:
-    - /usr/sbin/policy-rc.d
-    - /sbin/start-stop-daemon
+#
+## IMAGE BUILD ########################################################################################################
+#
 
-- name: Restore 'start-stop-daemon' binary
-  command: mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon.real {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon
-
-
-# Umount filesystems mounted inside chroot.
-# Umount /dev/pts before /proc.
-- name: Umount /dev/pts and /proc inside chroot
-  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} umount {{ item }}
-  with_items:
-    - /dev/pts
-    - /proc
-
-
-# Build image
 - name: Build GIS.lab client image
   shell: /opt/gislab/bin/gislab-client-image > /dev/null
   args:
