@@ -61,20 +61,20 @@ script:
       --sudo"
  
 
-  # Upgrade
-  - "ansible-playbook
-      -i inventories/localhost
-      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
-      -vv system/gislab.yml
-      --connection=local
-      --sudo"
-
-  - "ansible-playbook
-      -i inventories/localhost
-      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
-      -vv system/test.yml
-      --connection=local
-      --sudo"
+#  # Upgrade
+#  - "ansible-playbook
+#      -i inventories/localhost
+#      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
+#      -vv system/gislab.yml
+#      --connection=local
+#      --sudo"
+#
+#  - "ansible-playbook
+#      -i inventories/localhost
+#      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
+#      -vv system/test.yml
+#      --connection=local
+#      --sudo"
 
 
 after_failure:
