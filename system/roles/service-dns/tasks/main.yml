@@ -14,7 +14,7 @@
     - resolvconf
 
 
-- name: Bind server configuration
+- name: Install Bind server configuration
   template: src={{ item.src }} dest={{ item.dest }}
   with_items:
     - { src: "bind/bind9.j2", dest: "/etc/default/bind9" }
@@ -26,8 +26,11 @@
   notify:
     - service bind9 restart
 
-- name: Resolvconf configuration
-  template: src=resolvconf/head.j2 dest=/etc/resolvconf/resolv.conf.d/head
+- name: Install resolvconf configuration
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: "resolvconf/head.j2 ", dest: "/etc/resolvconf/resolv.conf.d/head" }
+    - { src: "resolvconf/tail.j2 ", dest: "/etc/resolvconf/resolv.conf.d/tail" }
   notify:
     - resolvconf update
 
