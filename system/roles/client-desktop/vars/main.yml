@@ -7,92 +7,45 @@ GISLAB_CLIENT_INSTALL_PACKAGES_KERNEL:
 
 
 GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
-  # list of XUbuntu required packages (installed with recommended packages)
+  # list of basic desktop packages (installed with recommended packages)
+  - acpi-support
   - alsa-base
   - alsa-utils
+  - aptitude
+  - avahi-autoipd
+  - avahi-daemon
   - anacron
   - bc
   - ca-certificates
-  - dmz-cursor-theme
-  - doc-base
-  - foomatic-db-compressed-ppds
-  - foomatic-filters
-  - genisoimage
-  - ghostscript-x
-  - gtk2-engines
-  - gtk2-engines-pixbuf
-  - inputattach
-  - libasound2-plugins
-  - libgd2-xpm
-  - libnss-ldap
-  - libpam-ck-connector
-  - libpam-cracklib
-  - libsasl2-modules
-  - libxp6
-  - lightdm
-  - lightdm-gtk-greeter
-  - nvidia-common
-  - openprinting-ppds
-  - printer-driver-pnm2ppa
-  - rarian-compat
-  - rfkill
-  - thunar
-  - thunar-volman
-  - ttf-dejavu-core
-  - ttf-freefont
-  - tumbler
-  - ubuntu-extras-keyring
-  - unzip
-  - wireless-tools
-  - wpasupplicant
-  - xdg-user-dirs
-  - xdg-user-dirs-gtk
-  - xfce4-appfinder
-  - xfce4-notifyd
-  - xfce4-panel
-  - xfce4-session
-  - xfce4-settings
-  - xfce4-utils
-  - xfdesktop4
-  - xfwm4
-  - xkb-data
-  - xorg
-  - xterm
-  - xubuntu-artwork
-  - xubuntu-default-settings
-  - zenity
-  - zip
-  # list of XUbuntu recommended packages
-  - acpi-support
-  - avahi-autoipd
-  - avahi-daemon
   - catfish
   - cups
   - cups-bsd
   - cups-client
+  - curl
   - desktop-file-utils
+  - dbus-x11
+  - dmz-cursor-theme
+  - doc-base
   - espeak
-  - evince
   - file-roller
-  - firefox
-  - firefox-gnome-support
-  - fonts-kacst-one
-  - fonts-khmeros-core
-  - fonts-lao
   - fonts-liberation
-  - fonts-nanum
   - fonts-opensymbol
-  - fonts-takao-pgothic
-  - fonts-thai-tlwg
-  - gcalctool
-  - gcc
-  - gimp
+  - foomatic-db-compressed-ppds
+  - foomatic-filters
+  - genisoimage
+  - ghostscript-x
+  - gstreamer0.10-gnomevfs
+  - gstreamer0.10-plugins-base
   - gstreamer0.10-plugins-base-apps
+  - gstreamer0.10-plugins-good
   - gstreamer0.10-pulseaudio
-  - gthumb
-  - gucharmap
+  - gstreamer0.10-tools
+  - gtk2-engines
+  - gtk2-engines-pixbuf
+  - gvfs
   - gvfs-backends
   - gvfs-fuse
+  - gvfs-bin
   - hplip
   - ibus
   - ibus-gtk
@@ -102,94 +55,114 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - im-switch
   - indicator-application-gtk2
   - indicator-sound-gtk2
+  - inputattach
   - jockey-gtk
   - laptop-detect
-  - leafpad
+  - libasound2-plugins
+  - libgd2-xpm
   - libnotify-bin
+  - libnss-ldap
   - libnss-mdns
+  - libpam-ck-connector
+  - libpam-cracklib
   - libpam-gnome-keyring
-  - pastebinit
+  - libsasl2-modules
+  - libxp6
+  - lightdm
+  - lightdm-gtk-greeter
+  - mkelfimage
+  - munin-node
+  - nbd-client
+  - nfs-common
+  - nvidia-common
+  - openprinting-ppds
+  - openssh-server
   - pavucontrol
   - pcmciautils
-  - pidgin
   - policykit-desktop-privileges
   - printer-driver-c2esp
   - printer-driver-foo2zjs
   - printer-driver-min12xxw
+  - printer-driver-pnm2ppa
   - printer-driver-ptouch
   - printer-driver-pxljr
   - printer-driver-sag-gdi
   - printer-driver-splix
+  - rarian-compat
+  - syslinux-common
   - speech-dispatcher
   - system-config-printer-gnome
+  - thunar
+  - thunar-volman
   - thunar-archive-plugin
   - thunar-media-tags-plugin
-  - ttf-indic-fonts-core
-  - ttf-punjabi-fonts
+  - ttf-dejavu-core
+  - ttf-freefont
   - ttf-ubuntu-font-family
-  - ttf-wqy-microhei
+  - tumbler
+  - ubuntu-extras-keyring
+  - udhcpc
+  - unzip
+  - wireless-tools
+  - wpasupplicant
   - xcursor-themes
+  - xdg-user-dirs
+  - xdg-user-dirs-gtk
   - xdg-utils
-  - xfce4-cpugraph-plugin
+  - xfce4-appfinder
   - xfce4-datetime-plugin
   - xfce4-indicator-plugin
-  - xfce4-mailwatch-plugin
-  - xfce4-netload-plugin
-  - xfce4-notes-plugin
-  - xfce4-places-plugin
+  - xfce4-notifyd
+  - xfce4-panel
   - xfce4-power-manager
-  - xfce4-quicklauncher-plugin
   - xfce4-screenshooter
-  - xfce4-systemload-plugin
+  - xfce4-session
+  - xfce4-settings
   - xfce4-taskmanager
   - xfce4-terminal
-  - xfce4-verve-plugin
+  - xfce4-utils
   - xfce4-volumed
-  - xfce4-weather-plugin
   - xfce4-xkb-plugin
-  - xubuntu-docs
+  - xfdesktop4
+  - xfwm4
+  - xkb-data
+  - xorg
+  - xterm
+  - xubuntu-artwork
+  - xubuntu-default-settings
   - xul-ext-ubufox
+  - zenity
+  - zip
 
 
 GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   # list of default office packages (installed without recommended packages)
-  - aptitude
   - conky-std
-  - curl
+  - evince
+  - firefox
+  - firefox-gnome-support
   - flashplugin-installer
   - freerdp-x11
+  - gcalctool
   - gdisk
   - gimp
-  - git
-  - git-core
   - gthumb
   - gtk-recordmydesktop
   - htop
   - imagemagick
   - inkscape
-  - ipython
+  - leafpad
   - keepassx
   - libreoffice
   - libreoffice-calc
   - libreoffice-gtk
   - libreoffice-writer
-  - lightdm-gtk-greeter
   - mc
-  - mkelfimage
-  - munin-node
   - mutt
-  - nbd-client
-  - nfs-common
-  - openssh-server
-  - pgadmin3
-  - postgresql-client
-  - postgresql-comparator
-  - qgit
+  - pidgin
+  - pidgin-libnotify
   - rst2pdf
-  - sqlite3
   - sshfs
-  - syslinux-common
-  - udhcpc
   - vim-gnome
   - vlc
   - vlc-plugin-pulse
@@ -199,17 +172,22 @@ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
 GISLAB_CLIENT_INSTALL_PACKAGES_LAB:
   # list of GIS.lab client GIS packages (installed without recommended packages)
   - gdal-bin
+  - git
   - grass7
+  - ipython
   - josm
-  - libgdal1h
+  - pgadmin3
+  - postgresql-client
+  - postgresql-comparator
   - proj-bin
   - python-pysqlite2
   - python-gdal
   - python-qgis
   - qgis
+  - qgit
   - spatialite-bin
   - spatialite-gui
-  - xvfb
+  - sqlite3
 
 
 GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT:
@@ -221,6 +199,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT:
   - doxygen
   - flex
   - g++
+  - gcc
   - gdb
   - git
   - graphviz
@@ -259,16 +238,16 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT:
 
 
 GISLAB_CLIENT_REMOVE_PACKAGES:
-  # list of packages to remove from client image. Run  '$ aptitude why <package>' find out the reason why package was
-  # installed.
+  # List of packages which have been installed automatically as dependency but we don't want them to be installed.
+  # Run  '$ aptitude why <package>' find out the reason why package was installed.
   - network-manager
-  - network-manager-gnome
   - network-manager-pptp
-  - network-manager-pptp-gnome
+  - xscreensaver
 
 
 apt_get_opts: "
  --assume-yes
  --force-yes"
+
 
 # vim:ft=ansible:

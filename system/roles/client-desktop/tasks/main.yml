@@ -67,10 +67,6 @@
 - name: Default kernel modules
   lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/modules line=lp state=present
 
-# root password
-- name: Lock root password
-  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} passwd -l root
-
 
 # Network configuration
 - name: Install empty hostname file
@@ -106,6 +102,11 @@
   with_items:
     - dpkg-divert --add --rename --divert /etc/mtab.real /etc/mtab
     - ln -sf /proc/mounts /etc/mtab
+
+
+# root password
+- name: Lock root password
+  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} passwd -l root
 
 
 # version
@@ -374,7 +375,7 @@
   - { src: lightdm/conf/lightdm-gtk-greeter.conf.j2, dest: /etc/xdg/xdg-xubuntu/lightdm/lightdm-gtk-greeter.conf }
   - { src: lightdm/conf/greeter.ui.j2, dest: /usr/share/lightdm-gtk-greeter/greeter.ui }
 
-- name: Create directory for lightdm scripts
+- name: Create directory for Lightdm scripts
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/lightdm state=directory
 
 - name: Install Lightdm scripts
@@ -384,16 +385,7 @@
     - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-cleanup-script.sh" }
 
  
-# Disable session services
-- name: Disable useless session services
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
-  with_items:
-    - /etc/xdg/autostart/jockey-gtk.desktop
-    - /etc/xdg/autostart/jockey-kde.desktop
-    - /etc/xdg/autostart/update-notifier.desktop
-
-
-# Disable system services
+# Disabling useless services
 - name: Disable useless system services
   command: "rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/rc?.d/???{{ item }}
                   {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init.d/{{ item }}
@@ -415,28 +407,18 @@
     - urandom
     - ureadahead
     - ureadahead-other
-
     
-# Disable cron jobs
-- name: Disable useless cron jobs
-  command: "rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }}"
-  with_items:
-    - /etc/cron.daily/apt
-    - /etc/cron.daily/apport
-    - /etc/cron.daily/aptitude
-    - /etc/cron.daily/bsdmainutils
-    - /etc/cron.daily/dpkg
-    - /etc/cron.daily/logrotate
-    - /etc/cron.daily/man-db
-    - /etc/cron.daily/mlocate
-    - /etc/cron.daily/passwd
-    - /etc/cron.daily/popularity-contest
-    - /etc/cron.daily/standard
-    - /etc/cron.daily/update-notifier-common
-    - /etc/cron.weekly/apt-xapian-index
-    - /etc/cron.weekly/man-db
+- name: Disable all cron jobs by default
+  shell: find {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/cron.* -type f | grep -v "anacron\|placeholder" | xargs rm -f
 
- 
+- name: Disable useless session services
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
+  with_items:
+    - /etc/xdg/autostart/jockey-gtk.desktop
+    - /etc/xdg/autostart/jockey-kde.desktop
+    - /etc/xdg/autostart/update-notifier.desktop
+
+
 #
 ## SHUTDOWN ###########################################################################################################
 #
@@ -545,27 +527,6 @@
 ## CLUSTER ############################################################################################################
 #
 
-# Statistics
-- name: Install munin configuration file
-  template: src=munin-node/munin-node.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/munin-node.conf
-
-- name: Disable all munin plugins
-  shell: "{{ item }}"
-  with_items:
-    - rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/plugins/*
-    - echo > {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/plugin-conf.d/munin-node
-
-- name: Enable only required munin plugins
-  file: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} state=link force=yes
-  with_items:
-    - { src: "/usr/share/munin/plugins/cpu", dest: "/etc/munin/plugins/cpu" }
-    - { src: "/usr/share/munin/plugins/load", dest: "/etc/munin/plugins/load" }
-    - { src: "/usr/share/munin/plugins/memory", dest: "/etc/munin/plugins/memory" }
-    - { src: "/usr/share/munin/plugins/processes", dest: "/etc/munin/plugins/processes" }
-    - { src: "/usr/share/munin/plugins/uptime", dest: "/etc/munin/plugins/uptime" }
-    - { src: "/usr/share/munin/plugins/vmstat", dest: "/etc/munin/plugins/vmstat" }
- 
-
 # Cluster
 - name: Install Serf
   shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "source /opt/gislab/system/functions.sh
@@ -592,6 +553,27 @@
   template: src=init/serf-join.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/serf-join.conf
 
 
+# Statistics
+- name: Install munin configuration file
+  template: src=munin-node/munin-node.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/munin-node.conf
+
+- name: Disable all munin plugins
+  shell: "{{ item }}"
+  with_items:
+    - rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/plugins/*
+    - echo > {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/plugin-conf.d/munin-node
+
+- name: Enable only required munin plugins
+  file: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} state=link force=yes
+  with_items:
+    - { src: "/usr/share/munin/plugins/cpu", dest: "/etc/munin/plugins/cpu" }
+    - { src: "/usr/share/munin/plugins/load", dest: "/etc/munin/plugins/load" }
+    - { src: "/usr/share/munin/plugins/memory", dest: "/etc/munin/plugins/memory" }
+    - { src: "/usr/share/munin/plugins/processes", dest: "/etc/munin/plugins/processes" }
+    - { src: "/usr/share/munin/plugins/uptime", dest: "/etc/munin/plugins/uptime" }
+    - { src: "/usr/share/munin/plugins/vmstat", dest: "/etc/munin/plugins/vmstat" }
+ 
+
 # Worker
 - name: Install worker
   shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "mkdir -p /tmp/install-worker
@@ -611,7 +593,7 @@
 
 
 #
-## INSTALLATION CLEANUP ###############################################################################################
+## POST-INSTALLATION CLEANUP ##########################################################################################
 #
 
 # Clean apt cache

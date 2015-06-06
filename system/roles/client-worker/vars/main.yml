@@ -7,7 +7,6 @@ GISLAB_WORKER_INSTALL_BASIC_PACKAGES:
   - nfs-common
   - pwgen
   - unzip
-  - xvfb
   - vim
 
 GISLAB_WORKER_INSTALL_PACKAGES:
@@ -16,6 +15,7 @@ GISLAB_WORKER_INSTALL_PACKAGES:
   - python-qgis
   - qgis
   - qgis-mapserver
+  - xvfb
 
 
 # vim:ft=ansible:
