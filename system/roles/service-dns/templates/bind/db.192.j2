@@ -13,11 +13,6 @@ $ORIGIN {{ GISLAB_NETWORK_SERVER_IP|reverse_ip }}.IN-ADDR.ARPA.
 ; server
 5        IN    PTR       server.gis.lab.
 
-; workers
-{% for ip in range(10,50) %}
-{{ ip }}  IN  PTR  w{{ ip }}.gis.lab.
-{% endfor %}
-
 ; clients
 {% for ip in range(50,150) %}
 {{ ip }}  IN  PTR  c{{ ip }}.gis.lab.

@@ -49,11 +49,6 @@
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
     }
     - {
-      role: client-worker,
-      tags: ['client-worker'],
-      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
-    }
-    - {
       role: client-desktop,
       tags: ['client-desktop'],
       when: "'{{ GISLAB_SUITE }}' in ('office', 'lab')"

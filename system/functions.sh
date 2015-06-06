@@ -81,9 +81,7 @@ gislab_serf_install () {
 		rm -f /usr/local/bin/serf
 		unzip -d /usr/local/bin /$SERF_INSTALL_TMP_ROOT/serf.zip
 
-		# It is difficult to properly test if gislabadmins group exist in system when running initial installation
-		# (gislabadmins doesn't exist on worker). Therefore we rather use bash exception if chown throws an error.
-		chown root:gislabadmins /usr/local/bin/serf 2> /dev/null || chown root:root /usr/local/bin/serf
+		chown root:gislabadmins /usr/local/bin/serf 2> /dev/null
 		chmod 774 /usr/local/bin/serf
 		ln -sf /usr/local/bin/serf /usr/local/bin/gislab-cluster
 

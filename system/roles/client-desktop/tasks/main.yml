@@ -190,11 +190,18 @@
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT|join(' ') }}"
   args:
     executable: /bin/bash
-  when: GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT
+  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT
 
 - name: Set more permissive mode for PTRACE (do not limit PTRACE only to direct child processes)
   lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/sysctl.d/10-ptrace.conf line="kernel.yama.ptrace_scope = 0" state=present
-  when: GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT
+  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT
+
+- name: Install OWS worker packages
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_WORKER|join(' ') }}"
+  args:
+    executable: /bin/bash
+  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
 
 # Language support
@@ -572,23 +579,30 @@
     - { src: "/usr/share/munin/plugins/processes", dest: "/etc/munin/plugins/processes" }
     - { src: "/usr/share/munin/plugins/uptime", dest: "/etc/munin/plugins/uptime" }
     - { src: "/usr/share/munin/plugins/vmstat", dest: "/etc/munin/plugins/vmstat" }
- 
 
-# Worker
-- name: Install worker
-  shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "mkdir -p /tmp/install-worker
-    && cd /tmp/install-worker
-    && curl --silent http://{{ GISLAB_NETWORK_SERVER_IP }}/gislab_worker.init.tar.gz | tar -xzf -
-    && /bin/bash ./install.sh"
-  args:
-    executable: /bin/bash
+
+#
+## OWS WORKER #########################################################################################################
+#
+
+# Xvfb
+- name: Copy Xvfb configuration files from server
+  command: cp --parents {{ item }} {{ GISLAB_INSTALL_CLIENT_ROOT }}/
+  with_items:
+    - /etc/init/xvfb.conf
+    - /etc/init.d/xvfb
   when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
-- name: Clean up after worker installation
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
+# mapserver
+- name: Copy default web page content from server
+  command: cp --parents /var/www/default/index.html {{ GISLAB_INSTALL_CLIENT_ROOT }}/
+  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+
+- name: Copy Lighttpd configuration for QGIS Server from server
+  command: cp --parents {{ item }} {{ GISLAB_INSTALL_CLIENT_ROOT }}/
   with_items:
-    - /tmp/install-worker
-    - install.sh
+    - /etc/lighttpd/lighttpd.conf
+    - /etc/lighttpd/conf-enabled/10-fastcgi.conf
   when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
 

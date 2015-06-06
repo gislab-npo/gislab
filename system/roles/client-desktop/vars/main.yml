@@ -237,6 +237,16 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT:
   - xfonts-base
 
 
+GISLAB_CLIENT_INSTALL_PACKAGES_WORKER:
+  # OWS worker packages
+  - lighttpd
+  - python-gdal
+  - python-qgis
+  - qgis
+  - qgis-mapserver
+  - xvfb
+
+
 GISLAB_CLIENT_REMOVE_PACKAGES:
   # List of packages which have been installed automatically as dependency but we don't want them to be installed.
   # Run  '$ aptitude why <package>' find out the reason why package was installed.

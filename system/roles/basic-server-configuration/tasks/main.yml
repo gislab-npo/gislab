@@ -60,14 +60,6 @@
   set_fact:
     GISLAB_ROOT: /opt/gislab
 
-- name: Set GIS.lab worker installation root directory
-  set_fact:
-    GISLAB_INSTALL_WORKER_ROOT: "{{ GISLAB_ROOT }}/client-worker/root"
-
-- name: Set GIS.lab worker image directory
-  set_fact:
-    GISLAB_INSTALL_WORKER_IMAGE: "{{ GISLAB_ROOT }}/client-worker/image"
-
 - name: Set GIS.lab client installation root directory
   set_fact:
     GISLAB_INSTALL_CLIENT_ROOT: "{{ GISLAB_ROOT }}/client-desktop/root"
@@ -137,7 +129,6 @@
     GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS }}"\n
     GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY }}"\n
     GISLAB_SERVER_EMAIL_RELAY_SERVER="{{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}"\n
-    GISLAB_WORKERS_COUNT="{{ GISLAB_WORKERS_COUNT }}"\n
     GISLAB_CLIENT_ARCHITECTURE="{{ GISLAB_CLIENT_ARCHITECTURE }}"\n
     GISLAB_CLIENT_LANGUAGES="{% if GISLAB_CLIENT_LANGUAGES %}{{ GISLAB_CLIENT_LANGUAGES|join(",") }}{% else %}{% endif %}"\n
     GISLAB_CLIENT_KEYBOARDS="{% if GISLAB_CLIENT_KEYBOARDS %}{{ GISLAB_CLIENT_KEYBOARDS|keyboard_layouts }}{% else %}{% endif %}"\n

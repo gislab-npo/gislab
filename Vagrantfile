@@ -81,27 +81,4 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
     end
   end
-
-
-  # GIS.lab worker
-  (1..CONFIG['GISLAB_WORKERS_COUNT']).each do |i|
-    config.vm.define vm_name = "gislab_vagrant_w%02d" % (i+9) do |worker|
-      worker.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".#{9+i}"
-
-    # provisioning
-      worker.vm.provision "shell",
-        inline: "echo 'Performing worker installation (will take some time) ...' \
-          && mkdir -p /tmp/install && cd /tmp/install \
-	  && curl --silent http://%s.5/gislab_worker.init.tar.gz | tar xz \
-	  && bash ./install.sh &> /var/log/gislab-install-worker.log \
-          && echo 'Worker installation is done.'" % [CONFIG['GISLAB_NETWORK']]
-
-      # VirtualBox configuration
-      worker.vm.provider "virtualbox" do |vb, override|
-        vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_WORKER_MEMORY']]
-        vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
-        vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
-      end
-    end
-  end
 end
