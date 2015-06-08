@@ -327,9 +327,10 @@
 - name: Configure NFS
   template: src=nfs/idmapd.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/idmapd.conf
 
-- name: Create mount points for shared directories
+- name: Create mount points for home and shared directories
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory
   with_items:
+    - /mnt/home
     - /mnt/repository
     - /mnt/barrel
     - /mnt/publish
