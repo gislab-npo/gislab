@@ -88,7 +88,12 @@ gislab_serf_install () {
 		# cleanup
 		rm -rf $SERF_INSTALL_TMP_ROOT
 
-		echo "Serf was successfully installed (ARCH: $SERF_ARCH, VERSION: $SERF_VERSION)!"
+		if [ -f "/usr/local/bin/serf" ]; then
+			echo "Serf was successfully installed (ARCH: $SERF_ARCH, VERSION: $SERF_VERSION) !"
+		else
+			echo "Serf installation failed !"
+			exit 1
+		fi
 	fi
 }
 
