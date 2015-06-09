@@ -394,16 +394,16 @@
   when:
     GISLAB_SUITE in ('office', 'lab')
 
-- name: Create directory for Lightdm scripts
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/lightdm state=directory
+- name: Create directory for Lightdm hooks
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/session/hooks state=directory
   when:
     GISLAB_SUITE in ('office', 'lab')
 
-- name: Install Lightdm scripts
+- name: Install Lightdm hooks
   template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode=0755
   with_items:
-    - { src: "lightdm/bin/session-setup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-setup-script.sh" }
-    - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-cleanup-script.sh" }
+    - { src: "lightdm/bin/session-setup.sh.j2", dest: "/opt/gislab/system/session/hooks/session-setup.sh" }
+    - { src: "lightdm/bin/session-cleanup.sh.j2", dest: "/opt/gislab/system/session/hooks/session-cleanup.sh" }
   when:
     GISLAB_SUITE in ('office', 'lab')
 

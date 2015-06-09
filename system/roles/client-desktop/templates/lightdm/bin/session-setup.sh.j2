@@ -74,5 +74,8 @@ echo "$USER@$(hostname --fqdn) started at $(date +%Y-%m-%d-%H:%M:%S)" > $GISLAB_
 mkdir -p /var/lib/gislab
 echo "$USER" > $GISLAB_SESSION_LOCKFILE_GLOBAL
 
+# add Serf tag
+serf tags -set session-active=$USER
+
 
 # vim: set ts=4 sts=4 sw=4 noet:
