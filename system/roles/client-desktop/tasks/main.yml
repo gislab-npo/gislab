@@ -189,17 +189,6 @@
     executable: /bin/bash
   when: GISLAB_SUITE == 'lab'
 
-- name: Install GIS development packages
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT|join(' ') }}"
-  args:
-    executable: /bin/bash
-  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT
-
-- name: Set more permissive mode for PTRACE (do not limit PTRACE only to direct child processes)
-  lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/sysctl.d/10-ptrace.conf line="kernel.yama.ptrace_scope = 0" state=present
-  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT
-
 - name: Install OWS worker packages
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_WORKER|join(' ') }}"

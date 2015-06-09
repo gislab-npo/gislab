@@ -257,13 +257,6 @@ GISLAB_DEBUG_INSTALL: no
 # * yes: activate debug mode
 GISLAB_DEBUG_SERVICES: no
 
-# Determines if client image should provide support for GIS software development which means installation of QGIS build
-# dependencies and other software, libraries and helper scripts.
-# * no: do not support GIS development
-# * yes: provide support for GIS development
-# Change requires running upgrade.
-GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT: no
-
 # Run tests after installation is finished
 # # Possible values are:
 # * no: do not run tests
