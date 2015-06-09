@@ -275,6 +275,7 @@
     - ethtool
     - htop
     - iotop
+    - linux-image-extra-virtual
     - mc
     - pwgen
     - tmux
