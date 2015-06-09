@@ -359,7 +359,7 @@
     - /mnt/publish
 
 # Kerberos
-- name: Generate Kerberos principals for clients and export them to keytab file
+- name: Create Kerberos principals for clients and export them to keytab file
   shell: kadmin.local -q "addprinc -randkey -policy hosts host/c{{ item }}.gis.lab"
     && kadmin.local -q "ktadd -k /etc/gislab/gislab-krb5-keytab-all-clients host/c{{ item }}.gis.lab"
   with_sequence: start=50 end=149
@@ -640,6 +640,22 @@
   with_items:
     - /tmp/install-worker
     - install.sh
+  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+
+# Lighttpd
+- name: Install init file for lighttpd
+  template: src=lighttpd/lighttpd.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init.d/lighttpd mode=0755
+  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+
+- name: Create Kerberos principal for mapserver service and export it to keytab file
+  shell: kadmin.local -q "addprinc -randkey -policy users www-data"
+    && kadmin.local -q "ktadd -k /etc/gislab/gislab-krb5-keytab-www-data www-data"
+  when: kerberos_db_status.stdout == "KERBEROS DB EMPTY" and GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+
+- name: Install Kerberos keytab file for mapserver service
+  shell: cp /etc/gislab/gislab-krb5-keytab-www-data {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/lighttpd/krb5.keytab-www-data
+    && chmod 0600 {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/lighttpd/krb5.keytab-www-data
+    && chown www-data:www-data {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/lighttpd/krb5.keytab-www-data
   when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
   
