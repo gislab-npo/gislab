@@ -717,6 +717,14 @@
   template: src=boot-http/gislab.j2 dest=/var/www/default/gislab_desktop.init
 
 
+# Password handling
+- name: Handle users password with proper command
+  shell: {{ item }}
+  with_items:
+    - mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/bin/passwd {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/bin/passwd.local
+    - chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} ln -s /usr/bin/kpasswd /usr/bin/passwd
+
+
 # Daemons handling
 - name: Enable daemons handling in chroot
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent

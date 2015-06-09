@@ -324,6 +324,14 @@
   shell: printf "{{ gislab_ldap_admin_password.stdout }}" > /etc/ldapscripts/ldapscripts.passwd && chmod 0600 /etc/ldapscripts/ldapscripts.passwd
 
 
+# Password handling
+- name: Handle users password with proper command
+  shell: {{ item }}
+  with_items:
+    - mv /usr/bin/passwd /usr/bin/passwd.local
+    - ln -s /usr/bin/kpasswd /usr/bin/passwd
+  when: kerberos_db_status.stdout == "KERBEROS DB EMPTY"
+
 # Logging
 - name: Load LDAP logging configuration
   template: src=ldap/logging.ldif.j2 dest=/tmp/ldap.ldif
