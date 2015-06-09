@@ -51,7 +51,6 @@
     - {
       role: client-desktop,
       tags: ['client-desktop'],
-      when: "'{{ GISLAB_SUITE }}' in ('office', 'lab')"
     }
     - { role: account-admin, tags: ['account-admin'] }
     - {

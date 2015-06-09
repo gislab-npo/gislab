@@ -63,10 +63,6 @@
     - /etc/timezone
     - /etc/localtime
 
-# Modules
-- name: Default kernel modules
-  lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/modules line=lp state=present
-
 
 # Network configuration
 - name: Install empty hostname file
@@ -166,17 +162,25 @@
   args:
     executable: /bin/bash
 
-- name: Install GIS.lab client default packages
+- name: Install GIS.lab client base packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_BASE|join(' ') }}"
   args:
     executable: /bin/bash
 
 - name: Install GIS.lab client desktop packages
   shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP|join(' ') }}"
+  args:
+    executable: /bin/bash
+  when: GISLAB_SUITE in ('office', 'lab')
+
+- name: Install GIS.lab client office packages
+  shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE|join(' ') }}"
   args:
     executable: /bin/bash
+  when: GISLAB_SUITE in ('office', 'lab')
 
 - name: Install GIS.lab client GIS packages
   shell: "export DEBIAN_FRONTEND=noninteractive
@@ -201,7 +205,7 @@
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_WORKER|join(' ') }}"
   args:
     executable: /bin/bash
-  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+  when: GISLAB_SUITE == 'server' or GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
 
 # Language support
@@ -209,34 +213,37 @@
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install language-pack-{{ item }} 2>/dev/null || echo 'LANGUAGE DOES NOT EXIST'"
   with_items: GISLAB_CLIENT_LANGUAGES
-  when: GISLAB_CLIENT_LANGUAGES|default(None) != None
+  when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 - name: Install language support for Firefox
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install firefox-locale-{{ item }} 2>/dev/null || echo 'LANGUAGE DOES NOT EXIST'"
   with_items: GISLAB_CLIENT_LANGUAGES
-  when: GISLAB_CLIENT_LANGUAGES|default(None) != None
+  when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 - name: Install language support for Libreoffice
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install libreoffice-l10n-{{ item }} 2>/dev/null || echo 'LANGUAGE DOES NOT EXIST'"
   with_items: GISLAB_CLIENT_LANGUAGES
-  when: GISLAB_CLIENT_LANGUAGES|default(None) != None
+  when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 - name: Install language support for dictionary
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install myspell-{{ item }} 2>/dev/null || echo 'LANGUAGE DOES NOT EXIST'"
   with_items: GISLAB_CLIENT_LANGUAGES
-  when: GISLAB_CLIENT_LANGUAGES|default(None) != None
+  when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 - name: Install language support for thesaurus
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install mythes-{{ item }} 2>/dev/null || echo 'LANGUAGE DOES NOT EXIST'"
   with_items: GISLAB_CLIENT_LANGUAGES
-  when: GISLAB_CLIENT_LANGUAGES|default(None) != None
+  when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 
 # Install kernel
+- name: Default kernel modules
+  lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/modules line=lp state=present
+
 - name: Create configuration file for kernel setup
   template: src=kernel/kernel-img.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/kernel-img.conf
 
@@ -376,21 +383,29 @@
 # Lightdm
 - name: Install Lightdm configuration file
   template: src=lightdm/conf/lightdm.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/lightdm/lightdm.conf
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install Lightdm greeter configuration
   template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
   with_items:
   - { src: lightdm/conf/lightdm-gtk-greeter.conf.j2, dest: /etc/xdg/xdg-xubuntu/lightdm/lightdm-gtk-greeter.conf }
   - { src: lightdm/conf/greeter.ui.j2, dest: /usr/share/lightdm-gtk-greeter/greeter.ui }
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Create directory for Lightdm scripts
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/lightdm state=directory
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install Lightdm scripts
   template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode=0755
   with_items:
     - { src: "lightdm/bin/session-setup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-setup-script.sh" }
     - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/opt/gislab/system/lightdm/session-cleanup-script.sh" }
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
  
 # Disabling useless services
@@ -417,14 +432,7 @@
     - ureadahead-other
     
 - name: Disable all cron jobs by default
-  shell: find {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/cron.* -type f | grep -v "anacron\|placeholder" | xargs rm -f
-
-- name: Disable useless session services
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
-  with_items:
-    - /etc/xdg/autostart/jockey-gtk.desktop
-    - /etc/xdg/autostart/jockey-kde.desktop
-    - /etc/xdg/autostart/update-notifier.desktop
+  shell: find {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/cron.* -type f | grep -v "placeholder" | xargs rm -f
 
 
 #
@@ -473,33 +481,51 @@
 
 - name: Install GIS.lab client tools
   copy: src=static/gislab-client-tools/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/local/bin/ mode=0755
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 
 # GIS.lab client desktop customizations
 - name: Configure default home directories structure
   template: src=desktop/home-directories/user-dirs.defaults.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/user-dirs.defaults
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install XFCE desktop configuration file
   template: src=desktop/xfce/xfce4-desktop.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install XFCE panel configuration file
   template: src=desktop/panel/default.xml dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/panel/default.xml
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install keyboard layouts configuration file
   template: src=desktop/keyboard-layouts/keyboard-layout.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install Conky configuration
   template: src=desktop/conky/conky.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/conky/conky.conf
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 
 - name: Install XFCE menu configuration file
   copy: src=static/desktop/menu/xfce-applications.menu dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/menus/xfce-applications.menu
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install desktop directories files
   copy: src=static/desktop/menu/directories/  dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/desktop-directories/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install office applications files
   copy: src=static/desktop/menu/applications/office/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install lab applications files
   copy: src=static/desktop/menu/applications/lab/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
@@ -510,25 +536,37 @@
 # difficult to grab and resize. This is fixed version of Greybird (taken from OSGeo Live CD)
 - name: Install theme
   copy: src=static/desktop/themes/greybird/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/themes/Greybird/xfwm4/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install wallpapers
   copy: src=static/desktop/wallpapers/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xfce4/backdrops/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install icons
   copy: src=static/desktop/icons/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/pixmaps/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 
 # Start Gnome Keyring also in XFCE session
 - name: Fix gnome keyring
   command: sed -i "s/OnlyShowIn=GNOME;Unity;/OnlyShowIn=GNOME;Unity;XFCE/" {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/autostart/gnome-keyring-pkcs11.desktop
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 
 - name: Remove plain XFCE and XUbuntu sessions
   shell: rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/*.desktop
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 - name: Install GIS.lab desktop client session
   # session file must be called 'xubuntu.desktop', otherwise LightDM will set variable DESKTOP_SESSION to invalid value
   template: src=desktop/xsession/gislab-client.desktop.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/xubuntu.desktop
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
 
 #
@@ -592,19 +630,19 @@
   with_items:
     - /etc/init/xvfb.conf
     - /etc/init.d/xvfb
-  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+  when: GISLAB_SUITE == 'server' or GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
 # mapserver
 - name: Copy default web page content from server
   command: cp --parents /var/www/default/index.html {{ GISLAB_INSTALL_CLIENT_ROOT }}/
-  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+  when: GISLAB_SUITE == 'server' or GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
 - name: Copy Lighttpd configuration for QGIS Server from server
   command: cp --parents {{ item }} {{ GISLAB_INSTALL_CLIENT_ROOT }}/
   with_items:
     - /etc/lighttpd/lighttpd.conf
     - /etc/lighttpd/conf-enabled/10-fastcgi.conf
-  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+  when: GISLAB_SUITE == 'server' or GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
 
 
 #

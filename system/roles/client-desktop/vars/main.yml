@@ -1,38 +1,60 @@
 ---
 
+# get list of Ubuntu installer tasks: $ tasksel --list-tasks
+# get list of packages included in task: $ tasksel --task-packages <task> 
+
+
 GISLAB_CLIENT_INSTALL_PACKAGES_KERNEL:
   # list of Linux kernel packages (installed without recommended packages)
   - linux-image-generic-lts-raring
   - linux-headers-generic-lts-raring
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
-  # list of basic desktop packages (installed with recommended packages)
+GISLAB_CLIENT_INSTALL_PACKAGES_BASE:
+  # list of basic server packages (installed with recommended packages)
+  - acpid
   - acpi-support
+  - bc
+  - curl
+  - genisoimage
+  - libnss-ldap
+  - libnss-mdns
+  - libpam-ck-connector
+  - libpam-cracklib
+  - libsasl2-modules
+  - mkelfimage
+  - munin-node
+  - nbd-client
+  - nfs-common
+  - openssh-server
+  - rsyslog
+  - syslinux-common
+  - udhcpc
+  - unzip
+  - zip
+  
+
+GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
+  # list of basic desktop packages (installed with recommended packages)
   - alsa-base
   - alsa-utils
   - aptitude
   - avahi-autoipd
   - avahi-daemon
-  - anacron
-  - bc
   - ca-certificates
   - catfish
   - cups
   - cups-bsd
   - cups-client
-  - curl
   - desktop-file-utils
   - dbus-x11
   - dmz-cursor-theme
   - doc-base
-  - espeak
   - file-roller
   - fonts-liberation
   - fonts-opensymbol
   - foomatic-db-compressed-ppds
   - foomatic-filters
-  - genisoimage
   - ghostscript-x
   - gstreamer0.10-gnomevfs
   - gstreamer0.10-plugins-base
@@ -56,27 +78,16 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - indicator-application-gtk2
   - indicator-sound-gtk2
   - inputattach
-  - jockey-gtk
   - laptop-detect
   - libasound2-plugins
   - libgd2-xpm
   - libnotify-bin
-  - libnss-ldap
-  - libnss-mdns
-  - libpam-ck-connector
-  - libpam-cracklib
   - libpam-gnome-keyring
-  - libsasl2-modules
   - libxp6
   - lightdm
   - lightdm-gtk-greeter
-  - mkelfimage
-  - munin-node
-  - nbd-client
-  - nfs-common
   - nvidia-common
   - openprinting-ppds
-  - openssh-server
   - pavucontrol
   - pcmciautils
   - policykit-desktop-privileges
@@ -89,8 +100,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - printer-driver-sag-gdi
   - printer-driver-splix
   - rarian-compat
-  - syslinux-common
-  - speech-dispatcher
   - system-config-printer-gnome
   - thunar
   - thunar-volman
@@ -101,8 +110,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - ttf-ubuntu-font-family
   - tumbler
   - ubuntu-extras-keyring
-  - udhcpc
-  - unzip
   - wireless-tools
   - wpasupplicant
   - xcursor-themes
@@ -132,7 +139,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT:
   - xubuntu-default-settings
   - xul-ext-ubufox
   - zenity
-  - zip
 
 
 GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
