@@ -326,7 +326,7 @@
 
 # Password handling
 - name: Handle users password with proper command
-  shell: {{ item }}
+  shell: "{{ item }}"
   with_items:
     - mv /usr/bin/passwd /usr/bin/passwd.local
     - ln -s /usr/bin/kpasswd /usr/bin/passwd

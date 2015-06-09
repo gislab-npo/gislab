@@ -719,7 +719,7 @@
 
 # Password handling
 - name: Handle users password with proper command
-  shell: {{ item }}
+  shell: "{{ item }}"
   with_items:
     - mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/bin/passwd {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/bin/passwd.local
     - chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} ln -s /usr/bin/kpasswd /usr/bin/passwd
