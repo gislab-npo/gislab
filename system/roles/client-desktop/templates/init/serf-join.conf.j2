@@ -10,8 +10,11 @@ script
 sleep 3
 serf join {{ GISLAB_NETWORK_SERVER_IP }}
 
-{% if GISLAB_SUITE == 'server' or GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED %}
 sleep 3
-serf event member-join-lb "$(ip -o addr | grep -Eo 'inet {{ GISLAB_NETWORK }}.[0-9]{1,3}' | awk '{print $2}')"
-{% endif %}
+if [ $(free -m | awk 'NR==2 {print $2}') -ge {{ GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY }} ]; then
+	serf event member-join-lb "$(ip -o addr | grep -Eo 'inet {{ GISLAB_NETWORK }}.[0-9]{1,3}' | awk '{print $2}')"
+	serf tags -set worker=yes
+else
+	logger -t serf "Not enough memory to activate OWS worker"
+fi
 end script

@@ -205,7 +205,7 @@
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_WORKER|join(' ') }}"
   args:
     executable: /bin/bash
-  when: GISLAB_SUITE == 'server' or GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+  when: GISLAB_SUITE in ('server', 'lab')
 
 
 # Language support
@@ -630,19 +630,19 @@
   with_items:
     - /etc/init/xvfb.conf
     - /etc/init.d/xvfb
-  when: GISLAB_SUITE == 'server' or GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+  when: GISLAB_SUITE in ('server', 'lab')
 
 # mapserver
 - name: Copy default web page content from server
   command: cp --parents /var/www/default/index.html {{ GISLAB_INSTALL_CLIENT_ROOT }}/
-  when: GISLAB_SUITE == 'server' or GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+  when: GISLAB_SUITE in ('server', 'lab')
 
 - name: Copy Lighttpd configuration for QGIS Server from server
   command: cp --parents {{ item }} {{ GISLAB_INSTALL_CLIENT_ROOT }}/
   with_items:
     - /etc/lighttpd/lighttpd.conf
     - /etc/lighttpd/conf-enabled/10-fastcgi.conf
-  when: GISLAB_SUITE == 'server' or GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
+  when: GISLAB_SUITE in ('server', 'lab')
 
 
 #
