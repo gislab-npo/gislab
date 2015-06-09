@@ -4,6 +4,7 @@
 #
 # Run basic server configuration.
 
+
 # FACTS
 - name: Detect if it is possible to get GIS.lab version from Git
   local_action: shell git describe 2> /dev/null || echo "GIT NOT AVAILABLE"
@@ -100,7 +101,7 @@
 ### CAPABILITIES
 - name: Detect capability to provide VPN service
   # tun device can be missing on systems running in container
-  stat: path=/dev/net/tuns
+  stat: path=/dev/net/tun
   register: cap_tun_device_status
   changed_when: False
 
