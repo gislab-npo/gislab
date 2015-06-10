@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
+
 from __future__ import unicode_literals
+import os
 
 AUTHOR = u'Ivan Minčík'
 SITENAME = u'GIS.lab'
@@ -32,7 +34,7 @@ DEFAULT_PAGINATION = 10
 
 MD_EXTENSIONS = ['codehilite(css_class=highlight)', 'extra']
 
-THEME = "themes/blueidea"
+THEME = os.path.join(os.path.abspath(os.curdir), "themes/blueidea")
 DISPLAY_CATEGORIES_ON_MENU = True
 PAGES_SORT_ATTRIBUTE = 'order'
 GITHUB_URL = 'https://github.com/imincik/gis-lab'
