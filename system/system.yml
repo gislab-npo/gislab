@@ -7,7 +7,7 @@
   # fix: export PYTHONIOENCODING='utf-8'
   vars_prompt:
     - name: GISLAB_ADMIN_PASSWORD
-      prompt: "Enter new password for GIS.lab administrator account 'gislab' or leave empty to keep current password"
+      prompt: "\nEnter new password for GIS.lab administrator account 'gislab' or leave empty to keep current password"
       private: yes
       confirm: yes
 
