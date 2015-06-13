@@ -17,8 +17,6 @@ exec serf agent \
 	-event-handler "query:uptime=uptime" \
 	-event-handler "query:test=echo 'yes'" \
 	-tag role=client \
-	-tag events=reboot,shutdown \
-	-tag queries=uptime,test \
 	-log-level=err \
 	-syslog
 
