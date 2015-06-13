@@ -1,6 +1,14 @@
-# Ignored Serf messages (see GH #363)
+# Ignore Serf messages (see GH #363)
 :msg, contains, "memberlist: Initiating push/pull sync" ~
 :msg, contains, "memberlist: Responding to push/pull sync" ~
+
+# Ignore opening and closing messages from sudo
+:msg, contains, "pam_unix(sudo:session): session opened for user" ~
+:msg, contains, "pam_unix(sudo:session): session closed for user" ~
+
+# Ignore opening and closing messages from cron
+:msg, contains, "pam_unix(cron:session): session opened for user" ~
+:msg, contains, "pam_unix(cron:session): session closed for user" ~
 
 # Ignore Ansible messages
 :syslogtag, contains, "ansible-" ~
