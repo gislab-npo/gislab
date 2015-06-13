@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Perform actions when a machine joins the GIS.lab cluster.
-# Script adds machine to the statistics monitoring. Machine will stay activated even it leaves cluster.
+# Perform actions when a machine requests to join the GIS.lab cluster:
+#  * activate statistics monitoring. Monitoring will stay activated even if machine leaves cluster.
 
 
 while read line; do
@@ -14,7 +14,7 @@ while read line; do
 		continue
 	fi
 	
-	# add machine to statistics monitoring
+	# activate statistics monitoring
 	echo -e "[gis.lab;$NAME] # Managed by Serf\n  address $ADDRESS\n  use_node_name yes\n" > /etc/munin/munin-conf.d/$NAME-gislab.conf
 
 done

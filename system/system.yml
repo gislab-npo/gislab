@@ -7,7 +7,7 @@
   # fix: export PYTHONIOENCODING='utf-8'
   vars_prompt:
     - name: GISLAB_ADMIN_PASSWORD
-      prompt: "Enter new password for GIS.lab administrator user account 'gislab'. If 'gislab' account does not exists, it will be created. If 'gislab' account already exists, it will be updated with given password. If none password given, none of these actions will be performed"
+      prompt: "Enter new password for GIS.lab administrator account 'gislab' or leave empty to keep current password"
       private: yes
       confirm: yes
 
@@ -38,21 +38,19 @@
     - { role: service-statistics, tags: ['service-statistics'] }
     - { role: service-cluster, tags: ['service-cluster'] }
     - { role: service-connection-forwarding, tags: ['service-connection-forwarding'] }
-    - { role: service-vpn, tags: ['service-vpn'] }
+    - {
+      role: service-vpn,
+      tags: ['service-vpn'],
+      when: GISLAB_SERVER_CAPABILITY_VPN
+    }
     - {
       role: client-web,
       tags: ['client-web'],
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
     }
     - {
-      role: client-worker,
-      tags: ['client-worker'],
-      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
-    }
-    - {
       role: client-desktop,
       tags: ['client-desktop'],
-      when: "'{{ GISLAB_SUITE }}' in ('office', 'lab')"
     }
     - { role: account-admin, tags: ['account-admin'] }
     - {

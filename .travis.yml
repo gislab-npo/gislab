@@ -1,0 +1,90 @@
+---
+
+language: python
+python: "2.7"
+
+before_install:
+  ### Clean Travis instance from not needed packages ###
+  - sudo apt-get purge --assume-yes --force-yes ^mysql.*$
+
+  ### Clean Travis instance from packages in conflict with GIS.lab ###
+  # PostgreSQL/PostGIS
+  - sudo apt-get purge --assume-yes --force-yes ^postgres.*$ ^libpq.*$ ^postgis.*$
+  - sudo rm -rf /var/lib/postgresql
+
+  # xvfb
+  - sudo rm -f /etc/init.d/xvfb
+
+  # remove no longer required packages
+  - sudo apt-get --assume-yes --force-yes autoremove
+
+
+  # print memory utilization and running processes
+  - sudo free
+  - sudo ps aux
+ 
+
+install:
+  # Install Apparmor, which is required by GIS.lab
+  - sudo apt-get install --assume-yes --force-yes apparmor
+
+  # Install Ansible
+  - sudo apt-get install --assume-yes --force-yes python-pip
+  - sudo pip install ansible
+
+
+script:
+  # Run outside of Python virtual environment automatically provided by Travis
+  - deactivate
+
+  - "ansible-playbook
+      -i inventories/localhost
+      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab'
+      --syntax-check
+      system/gislab.yml"
+
+  # We are building only server suite. lab suite is failing because of some Travis memory problems
+  
+  # Installation 
+  - "ansible-playbook
+      -i inventories/localhost
+      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
+      -vv system/gislab.yml
+      --connection=local
+      --sudo"
+
+  - "ansible-playbook
+      -i inventories/localhost
+      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
+      -vv system/test.yml
+      --connection=local
+      --sudo"
+ 
+
+#  # Upgrade
+#  - "ansible-playbook
+#      -i inventories/localhost
+#      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
+#      -vv system/gislab.yml
+#      --connection=local
+#      --sudo"
+#
+#  - "ansible-playbook
+#      -i inventories/localhost
+#      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
+#      -vv system/test.yml
+#      --connection=local
+#      --sudo"
+
+
+after_failure:
+  - cat /etc/gislab_version
+  - sudo cat /storage/log/syslog
+
+
+notifications:
+  email:
+    recipients:
+      - ivan.mincik@gmail.com
+    on_success: change
+    on_failure: always

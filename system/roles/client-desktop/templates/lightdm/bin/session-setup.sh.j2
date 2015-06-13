@@ -1,0 +1,81 @@
+#!/bin/bash
+# LightDM session setup script. This script is run before a user session starts. If this command returns an error the
+# session will not start (user is returned to a greeter). 
+
+source /etc/gislab_version
+
+
+# do not continue if user is root
+if [ "$USER" == "root" ]; then
+	exit 0
+fi
+
+
+# restart machine if new client image is available
+GISLAB_CLIENT_IMAGE_VERSION_SERVER=$(curl http://server.gis.lab/gislab_desktop.version)
+GISLAB_CLIENT_IMAGE_VERSION_CLIENT=$(cat /etc/gislab_desktop.version)
+
+if [ "$GISLAB_CLIENT_IMAGE_VERSION_SERVER" != "$GISLAB_CLIENT_IMAGE_VERSION_CLIENT" ]; then
+	for i in $(seq 10 10 100); do
+		echo $i;
+		sleep 1;
+	done | zenity --title="Info" \
+			--progress \
+			--auto-close \
+			--no-cancel \
+			--text="A new version of the system is available, rebooting in 10s." \
+	/sbin/reboot
+	exit 0
+fi
+
+
+# request initialization of user account, if user was successfully authenticated, but home directory was not found
+if [ ! -d /mnt/home/$USER ]; then
+	serf event adduser $USER
+
+	# Loop until user's account initialization is successfully finished.
+	# For unknown reason it takes some 30 seconds to detect created user account on NFS storage. 
+	while [ ! -f /mnt/home/$USER/.gislab/account.done ]; do
+		sleep 2
+	done
+fi
+
+
+# warn if user is already running session
+GISLAB_SESSION_LOCKFILE_USER="/mnt/home/$USER/.gislab/session.lock"
+GISLAB_SESSION_LOCKFILE_GLOBAL="/var/lib/gislab/session.lock"
+
+WARNING_LOCKFILE_USER="It is strongly recommended to log off from previous session before starting a new one. You can
+choose to continue only if your previous session has crashed or you exactly know what are you doing. Otherwise you can
+loose your data or run in to software malfunction.
+"
+
+if [ -f "$GISLAB_SESSION_LOCKFILE_USER" ]; then
+	# zenity return codes:
+	# 0 : 'Continue anyway' button
+	# 1 : 'Cancel' button
+	zenity --question \
+		--cancel-label="Cancel" \
+		--ok-label="Continue anyway" \
+		--no-wrap \
+		--title="Concurrent session detected" \
+		--text="You are already running active session ($(cat $GISLAB_SESSION_LOCKFILE_USER)) !\n$WARNING_LOCKFILE_USER"
+
+	if [ $? != 0 ]; then
+			exit 1
+	fi
+fi
+
+
+# set user session lock file
+echo "$USER@$(hostname --fqdn) started at $(date +%Y-%m-%d-%H:%M:%S)" > $GISLAB_SESSION_LOCKFILE_USER
+
+# set global session lock file
+mkdir -p /var/lib/gislab
+echo "$USER" > $GISLAB_SESSION_LOCKFILE_GLOBAL
+
+# add Serf tag
+serf tags -set session-active=$USER
+
+
+# vim: set ts=4 sts=4 sw=4 noet:

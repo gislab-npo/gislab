@@ -1,0 +1,5 @@
+default gislab
+
+label gislab
+kernel vmlinuz
+append ro initrd=initrd.img root=/dev/nbd0 init=/sbin/init-gislab nbdroot={{ GISLAB_NETWORK }}.5:gislab

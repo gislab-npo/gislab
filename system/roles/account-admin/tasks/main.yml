@@ -2,8 +2,7 @@
 #
 ### ADMINISTRATOR USER ACCOUNT ###
 #
-# Create administrator user 'gislab' account if any password given on installation start. Update password
-# if 'gislab' account already exists.
+# Create or update GIS.lab administrator user account 'gislab' with given or random password.
 
 
 - name: Detect if GIS.lab administrator user account is already created
@@ -13,17 +12,17 @@
   register: admin_account_status
   changed_when: False
 
-- name: Create GIS.lab administrator user account 'gislab'
+- name: Create GIS.lab administrator user account 'gislab' if doesn't exist
   shell: gislab-adduser
     -s
     -g "Administrator"
     -l "GIS.lab"
     -m "gislab@gis.lab"
-    -p "{{ GISLAB_ADMIN_PASSWORD }}"
     gislab
-  when: GISLAB_ADMIN_PASSWORD != "" and admin_account_status.stdout == 'ADMIN DOES NOT EXIST'
+  when: admin_account_status.stdout == 'ADMIN DOES NOT EXIST'
 
-- name: Update password of GIS.lab administrator user account
+
+- name: Update password of GIS.lab administrator user account with given password
   shell: gislab-password
     -p "{{ GISLAB_ADMIN_PASSWORD }}"
     gislab

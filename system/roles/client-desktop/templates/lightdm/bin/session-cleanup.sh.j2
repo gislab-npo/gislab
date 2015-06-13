@@ -10,10 +10,13 @@ rm -f /var/lib/gislab/session.lock
 # remove user lock file after session is closed
 rm -f /mnt/home/$USER/.gislab/session.lock
 
+# remove session tag
+serf tags -delete session-active
+
 
 # restart machine if new client image is available
-GISLAB_CLIENT_IMAGE_VERSION_SERVER=$(curl http://server.gis.lab/gislab_client_desktop.version)
-GISLAB_CLIENT_IMAGE_VERSION_CLIENT=$(cat /etc/gislab_client_desktop.version)
+GISLAB_CLIENT_IMAGE_VERSION_SERVER=$(curl http://server.gis.lab/gislab_desktop.version)
+GISLAB_CLIENT_IMAGE_VERSION_CLIENT=$(cat /etc/gislab_desktop.version)
 
 if [ "$GISLAB_CLIENT_IMAGE_VERSION_SERVER" != "$GISLAB_CLIENT_IMAGE_VERSION_CLIENT" ]; then
 	for i in $(seq 10 10 100); do

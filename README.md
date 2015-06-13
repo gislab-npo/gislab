@@ -1,8 +1,9 @@
-# GIS.lab - rapid deployment of free geospatial infrastructure
+[![Build Status](https://travis-ci.org/imincik/gis-lab.svg?branch=master)](https://travis-ci.org/imincik/gis-lab)
 
-## See also
+# GIS.lab - free geospatial infrastructure
  * project page : http://imincik.github.io/gis-lab
  * documentation: https://github.com/imincik/gis-lab/wiki
+
 
 ## Authors (alphabetical order)
  * Marcel Dancak, dancakm@gmail.com

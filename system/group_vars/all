@@ -44,36 +44,6 @@
 
 
 # ******************************************************************************************************************* #
-############################################## LOCAL VAGRANT PROVISIONER ##############################################
-# ******************************************************************************************************************* #
-# Configuration specific to local Vagrant provisioner.
-
-# Server memory size in MB.
-# Change requires GIS.lab server restart.
-GISLAB_SERVER_MEMORY: 1024
-
-# Worker memory size in MB.
-# Change requires GIS.lab worker restart.
-GISLAB_WORKER_MEMORY: 512
-
-# Determines if GIS.lab server should start with graphical console. This is useful to gain more control with server boot
-# process.
-# * no: do not launch GUI console
-# * yes: launch GUI console
-GISLAB_SERVER_GUI_CONSOLE: no
-
-# Absolute path to private SSH key, which is used for GIS.lab server installation or update. This key must match public
-# key located on GIS.lab server in '/home/vagrant/.ssh/authorized_keys' file. Empty value means, that private and public
-# SSH keys will be generated and managed by Vagrant.
-# This configuration is valid only for Vagrant provisioner (when using Ansible provisioner, public SSH key is specified
-# by '--private-key' option).
-# Example: /home/user/.ssh/id_rsa
-GISLAB_SSH_PRIVATE_KEY:
-
-
-
-
-# ******************************************************************************************************************* #
 ############################################# ADMINISTRATOR DETAILS ###################################################
 # ******************************************************************************************************************* #
 # GIS.lab administrator first name.
@@ -92,14 +62,32 @@ GISLAB_ADMIN_EMAIL: gislab@gis.lab
 
 
 # ******************************************************************************************************************* #
+############################################## LOCAL VAGRANT PROVISIONER ##############################################
+# ******************************************************************************************************************* #
+# Configuration specific to local Vagrant provisioner.
+
+# Server memory size in MB.
+# Change requires GIS.lab server restart.
+GISLAB_SERVER_MEMORY: 1024
+
+# Determines if GIS.lab server should start with graphical console. This is useful to gain more control with server boot
+# process.
+# * no: do not launch GUI console
+# * yes: launch GUI console
+GISLAB_SERVER_GUI_CONSOLE: no
+
+
+
+
+# ******************************************************************************************************************* #
 ############################################# GENERAL CONFIGURATION ###################################################
 # ******************************************************************************************************************* #
 
 # Type of GIS.lab infrastructure suite to install.
 # Possible options are:
-# * server: only GIS server installed
-# * office: general purpose server and desktop clients installed with no GIS support
-# * lab: complete GIS server and GIS clients infrastructure installed
+# * server: GIS server with horizontal scaling support
+# * office: general purpose server and desktop clients with no GIS support
+# * lab: complete GIS server with desktop GIS clients with horizontal scaling support
 # Change requires running upgrade.
 GISLAB_SUITE: lab
 
@@ -140,10 +128,6 @@ GISLAB_APT_HTTP_PROXY:
 # - http://dl.google.com/linux/earth/deb/ stable main
 # Change requires running upgrade.
 GISLAB_APT_CUSTOM_REPOSITORIES:
-
-# Number of OWS workers to start. Worker machines run OWS services such as WMS and WFS and increase performance and
-# reliability of GIS.lab network. Maximum number of worker instances is 49 - do not start more.
-GISLAB_WORKERS_COUNT: 0
 
 
 
@@ -199,6 +183,12 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 ################################################### CLIENT ############################################################
 # ******************************************************************************************************************* #
 
+# GIS.lab client architecture
+# Possible values are:
+# * i386: use this if you are working in mixed environment containing older and new machines
+# * amd64: use this only if all client machines are capable to run 64 bit OS (including virtual clients)
+GISLAB_CLIENT_ARCHITECTURE: i386
+
 # List of country codes of languages which should be installed on client beside English language.
 # Example:
 # - sk
@@ -234,12 +224,11 @@ GISLAB_CLIENT_VIRTUALBOX_SUPPORT: yes
 # Change requires running upgrade.
 GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO:
 
-# Allow usage of GIS.lab clients as OWS services worker nodes, which in reality means that GIS.lab client will be
-# requested by some OWS requests from time to time.
-# * yes: enable to use GIS.lab clients as worker node
-# * no : disable to use GIS.lab clients as worker node
+# Minimal amount of memory specified in MB, which must be present on client machine to utilize it horizontal scaling of
+# OWS services. In reality, it means, that GIS.lab client machine will be requested to process some OWS requests
+# generated by other members of GIS.lab cluster.
 # Change requires running upgrade.
-GISLAB_CLIENT_WORKER_ENABLED: yes
+GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY: 2000
 
 
 
@@ -259,13 +248,6 @@ GISLAB_DEBUG_INSTALL: no
 # * no: do not activate debug mode
 # * yes: activate debug mode
 GISLAB_DEBUG_SERVICES: no
-
-# Determines if client image should provide support for GIS software development which means installation of QGIS build
-# dependencies and other software, libraries and helper scripts.
-# * no: do not support GIS development
-# * yes: provide support for GIS development
-# Change requires running upgrade.
-GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT: no
 
 # Run tests after installation is finished
 # # Possible values are:

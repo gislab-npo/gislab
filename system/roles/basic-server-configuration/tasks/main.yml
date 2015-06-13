@@ -4,14 +4,17 @@
 #
 # Run basic server configuration.
 
-# Facts
+
+# FACTS
 - name: Detect if it is possible to get GIS.lab version from Git
-  local_action: shell git rev-parse HEAD 2> /dev/null || echo "GIT NOT AVAILABLE"
+  local_action: shell git describe 2> /dev/null || echo "GIT NOT AVAILABLE"
+  sudo: no
   register: gislab_version_git_status
   changed_when: False
 
 - name: Detect GIS.lab version from Git
-  local_action: shell echo "dev~$(basename $(git symbolic-ref -q HEAD))+$(git rev-parse --short HEAD)"
+  local_action: shell git describe
+  sudo: no
   register: gislab_version
   when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
 
@@ -58,14 +61,6 @@
   set_fact:
     GISLAB_ROOT: /opt/gislab
 
-- name: Set GIS.lab worker installation root directory
-  set_fact:
-    GISLAB_INSTALL_WORKER_ROOT: "{{ GISLAB_ROOT }}/client-worker/root"
-
-- name: Set GIS.lab worker image directory
-  set_fact:
-    GISLAB_INSTALL_WORKER_IMAGE: "{{ GISLAB_ROOT }}/client-worker/image"
-
 - name: Set GIS.lab client installation root directory
   set_fact:
     GISLAB_INSTALL_CLIENT_ROOT: "{{ GISLAB_ROOT }}/client-desktop/root"
@@ -96,11 +91,24 @@
     GISLAB_NETWORK_SERVER_IP: "{{ GISLAB_NETWORK }}.5"
 
 
-# Sanity checks
-# UBUNTU VERSION
+### SANITY CHECKS
+# OS version
 - name: Fail if server is not running compatible OS version
   fail: msg="Server is not running compatible OS version Ubuntu 12.04, {{ ansible_distribution }} {{ ansible_distribution_version }} detected"
   when: ansible_distribution != "Ubuntu" or ansible_distribution_version != "12.04"
+
+
+### CAPABILITIES
+- name: Detect capability to provide VPN service
+  # tun device can be missing on systems running in container
+  stat: path=/dev/net/tun
+  register: cap_tun_device_status
+  changed_when: False
+
+- name: Enable capability to provide VPN service
+  set_fact:
+    GISLAB_SERVER_CAPABILITY_VPN: yes
+  when: cap_tun_device_status.stat.ischr is defined and cap_tun_device_status.stat.ischr
 
 
 # Configuration and basic directory structure
@@ -122,21 +130,21 @@
     GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS }}"\n
     GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY }}"\n
     GISLAB_SERVER_EMAIL_RELAY_SERVER="{{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}"\n
-    GISLAB_WORKERS_COUNT="{{ GISLAB_WORKERS_COUNT }}"\n
+    GISLAB_CLIENT_ARCHITECTURE="{{ GISLAB_CLIENT_ARCHITECTURE }}"\n
     GISLAB_CLIENT_LANGUAGES="{% if GISLAB_CLIENT_LANGUAGES %}{{ GISLAB_CLIENT_LANGUAGES|join(",") }}{% else %}{% endif %}"\n
     GISLAB_CLIENT_KEYBOARDS="{% if GISLAB_CLIENT_KEYBOARDS %}{{ GISLAB_CLIENT_KEYBOARDS|keyboard_layouts }}{% else %}{% endif %}"\n
     GISLAB_CLIENT_VIRTUALBOX_SUPPORT="{{ GISLAB_CLIENT_VIRTUALBOX_SUPPORT }}"\n
     GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO="{{ GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO }}"\n
-    GISLAB_CLIENT_WORKER_ENABLED="{{ GISLAB_CLIENT_WORKER_ENABLED }}"\n
+    GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY="{{ GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY }}"\n
     GISLAB_VERSION="{{ GISLAB_VERSION }}"\n
     GISLAB_SERVER_GUI_CONSOLE="{{ GISLAB_SERVER_GUI_CONSOLE }}"\n
     GISLAB_DEBUG_INSTALL="{{ GISLAB_DEBUG_INSTALL }}"\n
     GISLAB_DEBUG_SERVICES="{{ GISLAB_DEBUG_SERVICES }}"\n
-    GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT="{{ GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT }}"\n
     GISLAB_APT_CUSTOM_REPOSITORIES="{% if GISLAB_APT_CUSTOM_REPOSITORIES %}{{ GISLAB_APT_CUSTOM_REPOSITORIES|join(",") }}{% else %}{% endif %}"\n
     GISLAB_INSTALL_DATETIME="{{ GISLAB_INSTALL_DATETIME }}"\n
     GISLAB_PROVISIONING_USER="{{ GISLAB_PROVISIONING_USER }}"\n
-    GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"'
+    GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"\n
+    GISLAB_SERVER_CAPABILITY_VPN="{{ GISLAB_SERVER_CAPABILITY_VPN }}"'
     dest="/etc/gislab_version"
 
 - name: Create custom GIS.lab directories structure
@@ -144,9 +152,10 @@
   with_items:
     - "{{ GISLAB_ROOT }}"
     - /etc/gislab
-    - /usr/share/gislab
-    - /var/lib/gislab
     - /usr/local/python-virtualenvs
+    - /var/lib/gislab
+    - /opt/gislab
+    - /opt/gislab/system
     - /storage/applications
     - "{{ GISLAB_INSTALL_TMP_ROOT }}"
 
@@ -169,7 +178,9 @@
 
 
 - name: Generate en_US.UTF-8 locale
-  locale_gen: name=en_US.UTF-8 state=present
+  # we don't use 'locale_gen' here, because it fails with travis-ci (https://github.com/ansible/ansible/issues/7289)
+  # locale_gen: name=en_US.UTF-8 state=present
+  shell: /usr/sbin/locale-gen en_US.UTF-8
 
 - name: Set en_US.UTF-8 locale
   shell: /usr/sbin/update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 LANGUAGE=en
@@ -211,6 +222,9 @@
 - name: Configure apt repositories
   template: src=apt/sources.list.j2 dest=/etc/apt/sources.list
 
+- name: Remove possible third party apt repositories
+  file: dest=/etc/apt/sources.list.d state=absent
+
 - name: Add imincik PPA signing key
   apt_key: data="{{ lookup('file', 'static/ppa_imincik.key') }}" state=present
 
@@ -218,7 +232,6 @@
 - name: Configure Apt cache proxy server
   template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
 
-# TODO: does /storage/applications/apt/pkgcache.bin exists
 - name: Move apt cache to '/storage' directory
   shell: mv -f /var/cache/apt /storage/applications/apt
   args:
@@ -231,14 +244,17 @@
 - name: Update apt cache
   apt: update_cache=yes
 
-- name: Upgrade system
-  apt: upgrade=full force=yes
-
 - name: Remove not needed packages possibly comming with OS image
   apt: pkg={{item}} state=absent
   with_items:
     - landscape-client
     - landscape-common
+
+- name: Install aptitude which is required for running system upgrade
+  apt: pkg=aptitude force=yes install_recommends=no state=latest
+
+- name: Upgrade system
+  apt: upgrade=full force=yes
 
 - name: Install packages
   apt: pkg={{item}} force=yes install_recommends=no state=latest
@@ -280,7 +296,7 @@
 
 # GIS.lab administrator tools
 - name: Install GIS.lab shell functions library
-  copy: src=functions.sh dest={{ GISLAB_ROOT }}/functions.sh mode=0644
+  copy: src=functions.sh dest={{ GISLAB_ROOT }}/system/functions.sh mode=0644
 
 - name: Install GIS.lab administrator tools
   copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0775 owner=root group=root

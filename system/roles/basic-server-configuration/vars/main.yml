@@ -4,4 +4,8 @@
 GISLAB_VERSION: dev
 
 
+# CAPABILITIES (default values)
+GISLAB_SERVER_CAPABILITY_VPN: no
+
+
 # vim:ft=ansible:
