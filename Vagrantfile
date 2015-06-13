@@ -42,9 +42,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder '.', '/vagrant', disabled: true
 
   config.ssh.forward_agent = true
-  if not CONFIG['GISLAB_SSH_PRIVATE_KEY'].nil?
-    config.ssh.private_key_path = [CONFIG['GISLAB_SSH_PRIVATE_KEY']]
-  end
 
 
   # GIS.lab server

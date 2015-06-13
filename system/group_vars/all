@@ -44,32 +44,6 @@
 
 
 # ******************************************************************************************************************* #
-############################################## LOCAL VAGRANT PROVISIONER ##############################################
-# ******************************************************************************************************************* #
-# Configuration specific to local Vagrant provisioner.
-
-# Server memory size in MB.
-# Change requires GIS.lab server restart.
-GISLAB_SERVER_MEMORY: 1024
-
-# Determines if GIS.lab server should start with graphical console. This is useful to gain more control with server boot
-# process.
-# * no: do not launch GUI console
-# * yes: launch GUI console
-GISLAB_SERVER_GUI_CONSOLE: no
-
-# Absolute path to private SSH key, which is used for GIS.lab server installation or update. This key must match public
-# key located on GIS.lab server in '/home/vagrant/.ssh/authorized_keys' file. Empty value means, that private and public
-# SSH keys will be generated and managed by Vagrant.
-# This configuration is valid only for Vagrant provisioner (when using Ansible provisioner, public SSH key is specified
-# by '--private-key' option).
-# Example: /home/user/.ssh/id_rsa
-GISLAB_SSH_PRIVATE_KEY:
-
-
-
-
-# ******************************************************************************************************************* #
 ############################################# ADMINISTRATOR DETAILS ###################################################
 # ******************************************************************************************************************* #
 # GIS.lab administrator first name.
@@ -83,6 +57,24 @@ GISLAB_ADMIN_SURNAME: GIS.lab
 # GIS.lab administrator email.
 # Example: ivan.mincik@gmail.com
 GISLAB_ADMIN_EMAIL: gislab@gis.lab
+
+
+
+
+# ******************************************************************************************************************* #
+############################################## LOCAL VAGRANT PROVISIONER ##############################################
+# ******************************************************************************************************************* #
+# Configuration specific to local Vagrant provisioner.
+
+# Server memory size in MB.
+# Change requires GIS.lab server restart.
+GISLAB_SERVER_MEMORY: 1024
+
+# Determines if GIS.lab server should start with graphical console. This is useful to gain more control with server boot
+# process.
+# * no: do not launch GUI console
+# * yes: launch GUI console
+GISLAB_SERVER_GUI_CONSOLE: no
 
 
 
