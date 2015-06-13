@@ -173,6 +173,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   - vlc
   - vlc-plugin-pulse
   - x11vnc
+  - xtightvncviewer
 
 
 GISLAB_CLIENT_INSTALL_PACKAGES_LAB:
