@@ -79,7 +79,7 @@ script:
 
 after_failure:
   - cat /etc/gislab_version
-  - sudo cat /storage/log/syslog
+  - sudo tail -n 100 /storage/log/syslog
 
 
 notifications:
