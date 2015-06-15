@@ -71,6 +71,11 @@ if ! [[ "$GISLAB_USER_MAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$
 fi
 
 
+### Kerberos
+# create Kerberos principal
+kadmin.local -q "addprinc -pw $GISLAB_USER_PASSWORD -policy users $GISLAB_USER"
+
+
 ### LDAP
 # create LDAP account (without creating home directory - CREATEHOMES="no")
 ldapadduser $GISLAB_USER gislabusers
@@ -83,6 +88,9 @@ cn: $GISLAB_USER_FULL_NAME
 -
 replace: sn
 sn: $GISLAB_USER_SURNAME
+-
+replace: userPassword
+userPassword: {SASL}$GISLAB_USER@GIS.LAB
 -
 add: givenName
 givenName: $GISLAB_USER_GIVEN_NAME
@@ -121,9 +129,6 @@ add: maildrop
 maildrop: $GISLAB_USER_MAIL
 EOL
 fi
-
-# set user password
-gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
 
 
 # run adduser hook

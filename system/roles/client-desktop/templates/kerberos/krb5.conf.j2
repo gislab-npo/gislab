@@ -1,0 +1,17 @@
+[libdefaults]
+	default_realm = GIS.LAB
+	kdc_timesync = 1
+	ccache_type = 4
+	forwardable = true
+	proxiable = true
+	ticket_lifetime = 3650d 0h 0m 0s
+
+[realms]
+	GIS.LAB = {
+		kdc = server.gis.lab
+		admin_server = server.gis.lab
+		default_domain = gis.lab
+	}
+
+[domain_realm]
+	.gis.lab = GIS.LAB

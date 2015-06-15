@@ -86,6 +86,8 @@ done
 # remove LDAP account
 ldapdeleteuser $GISLAB_USER
 
+# remove Kerberos principal
+kadmin.local -q "delprinc -force $GISLAB_USER"
 
 # run deluser hook
 /opt/gislab/system/account/hooks/deluser.sh $GISLAB_USER

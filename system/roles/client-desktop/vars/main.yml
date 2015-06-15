@@ -17,10 +17,12 @@ GISLAB_CLIENT_INSTALL_PACKAGES_BASE:
   - bc
   - curl
   - genisoimage
+  - krb5-user
   - libnss-ldap
   - libnss-mdns
   - libpam-ck-connector
   - libpam-cracklib
+  - libpam-krb5
   - libsasl2-modules
   - mkelfimage
   - munin-node

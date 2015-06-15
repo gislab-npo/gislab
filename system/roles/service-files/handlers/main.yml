@@ -1,5 +1,8 @@
 ---
 
+- name: service gssd restart
+  service: name=gssd state=restarted
+
 - name: service nfs-kernel-server restart
   service: name=nfs-kernel-server state=restarted
 
