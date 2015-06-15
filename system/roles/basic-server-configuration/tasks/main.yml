@@ -33,10 +33,6 @@
   set_fact:
     GISLAB_INSTALL_UNIQUE_STRING: "{{ gislab_install_unique_string.stdout }}"
 
-- name: Set temporary directory for this installation
-  set_fact:
-    GISLAB_INSTALL_TMP_ROOT: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
-
 - name: Detect GIS.lab unique ID
   set_fact:
     GISLAB_UNIQUE_ID: "{{ inventory_hostname }}"
@@ -60,6 +56,10 @@
 - name: Set GIS.lab installation root directory
   set_fact:
     GISLAB_ROOT: /opt/gislab
+
+- name: Set temporary directory for this installation
+  set_fact:
+    GISLAB_INSTALL_TMP_ROOT: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
 
 - name: Set GIS.lab client installation root directory
   set_fact:
@@ -152,11 +152,15 @@
   with_items:
     - "{{ GISLAB_ROOT }}"
     - /etc/gislab
-    - /usr/local/python-virtualenvs
     - /var/lib/gislab
     - /opt/gislab
     - /opt/gislab/system
     - /storage/applications
+    - /storage/cache
+    - /storage/cache/packages/apt
+    - /storage/cache/packages/tar
+    - /storage/cache/packages/pip
+    - /usr/local/python-virtualenvs
     - "{{ GISLAB_INSTALL_TMP_ROOT }}"
 
 - name: Set safe permissions for /etc/gislab directory
@@ -233,12 +237,15 @@
   template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
 
 - name: Move apt cache to '/storage' directory
-  shell: mv -f /var/cache/apt /storage/applications/apt
+  shell: mv -f /var/cache/apt/* /storage/cache/packages/apt/
   args:
-    creates: /storage/applications/apt/pkgcache.bin
+    creates: /storage/cache/packages/apt/pkgcache.bin
 
-- name: Create symlink to apt in '/storage' directory
-  file: src=/storage/applications/apt dest=/var/cache/apt state=link
+- name: Deactivate original apt cache
+  file: dest=/var/cache/apt state=absent
+
+- name: Activate shared apt cache
+  file: src=/storage/cache/packages/apt dest=/var/cache/apt state=link
 
 
 - name: Update apt cache

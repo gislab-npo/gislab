@@ -114,6 +114,14 @@
 ## INSTALLATION #######################################################################################################
 #
 
+# Mount necessary filesystems in chroot
+- name: Mount /dev/pts and /proc
+  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} mount {{ item.opts }} {{ item.src }} {{ item.dest }}
+  with_items:
+    - { src: "devpts", dest: "/dev/pts", opts: "-t devpts -o rw,noexec,nosuid,gid=5,mode=620" }
+    - { src: "proc", dest: "/proc", opts: "-t proc" }
+
+
 # apt
 - name: Purge apt configuration directory
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt state=absent
@@ -122,12 +130,19 @@
   command: cp -a /etc/apt {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/
 
 
-# Mount necessary filesystems in chroot
-- name: Mount /dev/pts and /proc
-  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} mount {{ item.opts }} {{ item.src }} {{ item.dest }}
-  with_items:
-    - { src: "devpts", dest: "/dev/pts", opts: "-t devpts -o rw,noexec,nosuid,gid=5,mode=620" }
-    - { src: "proc", dest: "/proc", opts: "-t proc" }
+- name: Remove debian packages cached during debootstrap
+  command: rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives/*.deb
+
+- name: Activate shared apt cache
+  command: mount -o bind /storage/cache/packages/apt {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt
+
+
+# Shared packages cache
+- name: Create mount point for shared packages cache
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/storage/cache/packages state=directory recurse=yes
+
+- name: Activate shared packages cache
+  command: mount -o bind /storage/cache/packages {{ GISLAB_INSTALL_CLIENT_ROOT }}/storage/cache/packages
 
 
 # Daemons handling
@@ -637,16 +652,20 @@
 #
 ## POST-INSTALLATION CLEANUP ##########################################################################################
 #
-
-# Clean apt cache
-- name: Clean apt cache
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get clean"
-  args:
-    executable: /bin/bash
+# apt
+- name: Deactivate shared apt cache
+  command: umount {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt
 
 - name: Disable Apt cache proxy server
-  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt/apt.conf.d/02proxy state=absent
+  shell: sed -i "s/^/# /g" {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt/apt.conf.d/02proxy
+
+
+# Shared packages cache
+- name: Deactivate shared packages cache
+  command: umount {{ GISLAB_INSTALL_CLIENT_ROOT }}/storage/cache/packages
+
+- name: Remove mount point for shared packages cache
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/storage state=absent
 
 
 # Daemons handling
@@ -661,8 +680,8 @@
 
 
 # Umount filesystems mounted inside chroot.
-# Umount /dev/pts before /proc.
-- name: Umount /dev/pts and /proc inside chroot
+# always mount /dev/pts before /proc.
+- name: Umount /dev/pts, /proc and /storage/cache/packages inside chroot
   command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} umount {{ item }}
   with_items:
     - /dev/pts
