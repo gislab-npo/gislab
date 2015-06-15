@@ -35,8 +35,7 @@ gislab_serf_install () {
 
 	SERF_INSTALL="yes"
 	SERF_VERSION="$1"
-	SERF_INSTALL_TMP_ROOT="/tmp/serf-install-$(date +%s)"
-		
+
 	# detect architecture
 	if [ "$(getconf LONG_BIT)" == "32" ]; then
 		SERF_ARCH="386"
@@ -66,29 +65,28 @@ gislab_serf_install () {
 
 	# perform installation if required
 	if [ "$SERF_INSTALL" == "yes" ]; then
-		mkdir -p $SERF_INSTALL_TMP_ROOT
 
 		# download Serf
-		wget --no-verbose \
+		wget --continue \
+			--no-verbose \
 			--retry-connrefused \
 			--waitretry=1 \
 			--read-timeout=20 \
 			--timeout=15 \
 			--tries=0 \
-			--output-document=$SERF_INSTALL_TMP_ROOT/serf.zip https://dl.bintray.com/mitchellh/serf/${SERF_VERSION}_linux_${SERF_ARCH}.zip
+			--output-document=/storage/cache/packages/tar/${SERF_VERSION}_linux_${SERF_ARCH}.zip \
+		https://dl.bintray.com/mitchellh/serf/${SERF_VERSION}_linux_${SERF_ARCH}.zip
 
 		# install Serf
 		rm -f /usr/local/bin/serf
-		unzip -d /usr/local/bin /$SERF_INSTALL_TMP_ROOT/serf.zip
+		unzip -d /usr/local/bin /storage/cache/packages/tar/${SERF_VERSION}_linux_${SERF_ARCH}.zip
 
 		chown root:gislabadmins /usr/local/bin/serf 2> /dev/null
 		chmod 774 /usr/local/bin/serf
 		ln -sf /usr/local/bin/serf /usr/local/bin/gislab-cluster
 
-		# cleanup
-		rm -rf $SERF_INSTALL_TMP_ROOT
-
-		if [ -f "/usr/local/bin/serf" ]; then
+		# test Serf installation
+		if [ "$(serf version | grep '^Serf')" == "Serf v${SERF_VERSION}" ]; then
 			echo "Serf was successfully installed (ARCH: $SERF_ARCH, VERSION: $SERF_VERSION) !"
 		else
 			echo "Serf installation failed !"
