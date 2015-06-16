@@ -273,6 +273,7 @@
     - iotop
     - mc
     - pwgen
+    - pssh
     - tmux
     - vim
 
