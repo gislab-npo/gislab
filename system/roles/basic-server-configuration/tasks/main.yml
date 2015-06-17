@@ -69,6 +69,14 @@
   set_fact:
     GISLAB_INSTALL_CLIENT_IMAGE: "{{ GISLAB_ROOT }}/client-desktop/image"
 
+- name: Set GIS.lab Mobile installation root directory
+  set_fact:
+    GISLAB_INSTALL_CLIENT_MOBILE_ROOT: "{{ GISLAB_ROOT }}/client-mobile/root"
+
+- name: Set GIS.lab Mobile image directory
+  set_fact:
+    GISLAB_INSTALL_CLIENT_MOBILE_IMAGE: "{{ GISLAB_ROOT }}/client-mobile/image"
+
 
 - name: Detect current date and time
   set_fact:
@@ -158,8 +166,9 @@
     - /storage/applications
     - /storage/cache
     - /storage/cache/packages/apt
-    - /storage/cache/packages/tar
+    - /storage/cache/packages/npm
     - /storage/cache/packages/pip
+    - /storage/cache/packages/tar
     - /usr/local/python-virtualenvs
     - "{{ GISLAB_INSTALL_TMP_ROOT }}"
 

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" ng-app="gl.mobile">
+<head>
+	<meta charset="utf-8">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=medium-dpi" />
+
+	<title>GIS.lab mobile client</title>
+
+	<link rel="stylesheet" href="lib/onsen/css/onsenui.css">
+	<link rel="stylesheet" href="lib/onsen/css/onsen-css-components.css">
+	<link rel="stylesheet" href="lib/ui-grid/ui-grid.css">
+	<link rel="stylesheet" href="styles/gislab/mobile.css"/>
+	<link rel="stylesheet" href="styles/gislab/settings.css"/>
+	<link rel="stylesheet" href="styles/gislab/tree.css"/>
+	<link rel="stylesheet" href="styles/gislab/list.css"/>
+	<link rel="stylesheet" href="styles/gislab/toolbar.css"/>
+	<link rel="stylesheet" href="styles/gislab/wizard.css"/>
+
+	<script src="lib/onsen/js/angular/angular.js"></script>
+	<script src="lib/onsen/js/angular/angular-touch.js"></script>
+	<script src="lib/onsen/js/angular/angular-animate.js"></script>
+	<script src="lib/onsen/js/onsenui.js"></script>
+	<script src="lib/ui-grid/ui-grid.js"></script>
+	<script src="lib/ngStorage.js"></script>
+	<script src="lib/proj4.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="lib/OpenLayers-3.2.1/css/ol.css"/>
+
+	<script type="text/javascript" src="lib/OpenLayers-3.2.1/build/ol-debug.js"></script>
+	<script type="text/javascript" src="lib/md5.js"></script>
+
+	<script type="text/javascript">
+	// First, checks if it isn't implemented yet.
+	if (!String.prototype.format) {
+		String.prototype.format = function() {
+			var args = arguments;
+			return this.replace(/{(\d+)}/g, function(match, number) {
+				return typeof args[number] != 'undefined'
+					? args[number]
+					: match
+				;
+			});
+		};
+	}
+	</script>
+
+	<script type="text/javascript" src="cordova.js"></script>
+
+	<script type="text/javascript" src="js/mobile/mobile.module.js"></script>
+	<script type="text/javascript" src="js/mobile/controllers/MobileAppController.js"></script>
+	<script type="text/javascript" src="js/mobile/controllers/SettingsController.js"></script>
+	<script type="text/javascript" src="js/mobile/controllers/ServerSettingsController.js"></script>
+	<script type="text/javascript" src="js/mobile/controllers/ProjectSettingsController.js"></script>
+	<script type="text/javascript" src="js/mobile/controllers/StartupConfigController.js"></script>
+	<script type="text/javascript" src="js/mobile/services/gislab-mobile-client.js"></script>
+	<script type="text/javascript" src="js/mobile/services/tabbar-slide-animator.js"></script>
+
+	<script type="text/javascript" src="js/map/map.module.js"></script>
+	<script type="text/javascript" src="js/map/services/map-builder.js"></script>
+	<script type="text/javascript" src="js/map/services/project-provider.js"></script>
+
+	<script type="text/javascript" src="js/ui/ui.module.js"></script>
+	<script type="text/javascript" src="js/ui/controllers/AccordionController.js"></script>
+	<script type="text/javascript" src="js/ui/directives/tree.js"></script>
+	<script type="text/javascript" src="js/ui/directives/carousel-tab-slider.js"></script>
+	<script type="text/javascript" src="js/ui/directives/scroll-indicator.js"></script>
+	<script type="text/javascript" src="js/ui/directives/height-animation.js"></script>
+
+	<script type="text/javascript" src="js/utils/utils.module.js"></script>
+	<script type="text/javascript" src="js/utils/directives/gl-con-attr.js"></script>
+	<script type="text/javascript" src="js/utils/directives/gl-click.js"></script>
+
+	<script type="text/javascript" src="js/map-tools/layers-control/layers-control.module.js"></script>
+	<script type="text/javascript" src="js/map-tools/layers-control/layers-control.js"></script>
+	<script type="text/javascript" src="js/map-tools/layers-control/LayersController.js"></script>
+	<script type="text/javascript" src="js/map-tools/legend/legend.module.js"></script>
+	<script type="text/javascript" src="js/map-tools/legend/LegendController.js"></script>
+	<script type="text/javascript" src="js/map-tools/location/location.module.js"></script>
+	<script type="text/javascript" src="js/map-tools/location/location-service.js"></script>
+	<script type="text/javascript" src="js/map-tools/drawings/drawings.module.js"></script>
+	<script type="text/javascript" src="js/map-tools/drawings/DrawingsController.js"></script>
+</head>
+
+<body ng-controller="MobileAppController">
+	<ons-navigator var="app.navigator" page="map_container.html">
+	</ons-navigator>
+
+<!--	<ons-split-view-->
+<!--		var="app.split"-->
+<!--		secondary-page="pages/panel.html"-->
+<!--		main-page="map.html"-->
+<!--		main-page-width="80%"-->
+<!--		collapse="portrait">-->
+<!--	</ons-split-view>-->
+
+
+	<ons-template id="map_container.html">
+		<ons-page>
+			<div style="width: {{ screenWidth }}px;height: {{ screenHeight }}px;">
+				<ons-sliding-menu var="app.menu" main-page="map.html" menu-page="panel_tab_container.html" max-slide-distance="261px" swipe-target-width="20px" side="left" swipeable="false" type="reveal">
+				</ons-sliding-menu>
+			</div>
+		</ons-page>
+	</ons-template>
+	<ons-template id="panel_tab_container.html">
+		<ons-page class="main-panel">
+			<ons-tabbar var="app.panel.tabbar" style="height: {{ screenHeight }}px;" class="main-panel-tabbar" hide-tabs="true">
+				<ons-tab page="empty.html" active="true"></ons-tab>
+				<ons-tab ng-repeat="tool in ::ui.toolbar | filter:{page:'',disabled:false}" page="{{ ::tool.page }}" gl-con-attr="{persistent: {{ ::tool.persistent == true }}}" ng-init="tool._tab_index = $index+1" no-reload>
+				</ons-tab>
+			</ons-tabbar>
+		</ons-page>
+	</ons-template>
+
+	<ons-template id="empty.html">
+		<ons-page style="background-color: white;"></ons-page>
+	</ons-template>
+
+	<ons-template id="map.html">
+		<ons-page id="map-page">
+
+			<div id="map" style="width: {{ screenWidth }}px; height: {{ screenHeight }}px;"></div>
+<!--			<div ons-if-orientation="portrait" class="map-toolbar map-toolbar-horizontal">-->
+<!--				<ons-scroller style="max-width: {{ screenWidth }}px; ">-->
+<!--					<ons-button ng-repeat="tool in toolbar" ng-click="toolTaped(tool);" ng-class="{activated: tool.activated}">-->
+<!--						<ons-icon ng-if="tool.icon" icon="{{ tool.icon }}" size="28px" fixed-width="true"></ons-icon>-->
+<!--						<i ng-if="tool.faIcon" class="fa {{ tool.faIcon }}"></i>-->
+<!--					</ons-button>-->
+<!--				</ons-scroller>-->
+<!--			</div>-->
+			<div class="map-toolbar map-toolbar-vertical">
+				<ons-scroller style="max-height: {{ screenHeight }}px;">
+
+					<ons-button ng-repeat="tool in ::ui.toolbar | filter:{disabled:false}"
+							ng-click="toolTaped(tool);" ng-class="{activated: tool.activated}">
+<!--							gl-con-attr="{disabled: {{ ::tool.disabled == true }}}">-->
+						<ons-icon ng-if="tool.icon" icon="{{ tool.icon }}" size="28px" fixed-width="true"></ons-icon>
+						<i ng-if="tool.faIcon" class="fa {{ tool.faIcon }}"></i>
+					</ons-button>
+
+					<gl-scroll-indicator gl-orientation="top" gl-update-on="screenHeight">
+						<div class="scroll-top-indicator-bg">
+							<ons-icon class="scroll-top-indicator" icon="ion-android-arrow-dropup" size="28px" fixed-width="true"></ons-icon>
+						</div>
+					</gl-scroll-indicator>
+					<gl-scroll-indicator gl-orientation="bottom" gl-update-on="screenHeight">
+						<div class="scroll-bottom-indicator-bg" gl-scroll-indicator="bottom">
+							<ons-icon class="scroll-bottom-indicator" icon="ion-android-arrow-dropdown" size="28px" fixed-width="true"></ons-icon>
+						</div>
+					</gl-scroll-indicator>
+				</ons-scroller>
+			</div>
+		</ons-page>
+	</ons-template>
+
+	<ons-modal var="app.wizard.dialog" class="startup-wizard">
+		<ons-carousel var="app.wizard.carousel" class="wizard-carousel" ng-controller="StartupConfigController">
+			<ons-carousel-item class="flex-container-vertical">
+				<div class="wizard-header">
+					Welcome in GIS.lab mobile application. In order to use this application, you have to configure it!
+				</div>
+				<ons-scroller class="wizard-content">
+					<ons-list class="wizard settings">
+						<ons-list-header>
+							<i class="icon fa fa-globe"></i>Server URL. This is field is mandatory.
+						</ons-list-header>
+						<ons-list-item class="textarea-input">
+							<div style="width: 100%;">
+								<textarea type="text" class="http-prefix text-input text-input--transparent">http://</textarea>
+								<textarea style="text-indent: 50px;" type="text" class="text-input text-input--transparent" ng-model="$storage.serverUrl"></textarea>
+								<span style="text-indent: 50px;" class="multiline-wrapper" ng-bind="$storage.serverUrl"></span>
+							</div>
+						</ons-list-item>
+						<ons-list-header>
+							Some projects may require permission to open it.
+						</ons-list-header>
+						<ons-list-header>
+							<i class="icon fa fa-user"></i>Username
+						</ons-list-header>
+						<ons-list-item>
+							<input type="text" class="text-input text-input--transparent" placeholder="Username" ng-model="$storage.username">
+						</ons-list-item>
+						<ons-list-header>
+							<i class="icon fa fa-lock"></i>Password
+						</ons-list-header>
+						<ons-list-item>
+							<input type="password" class="text-input text-input--transparent" placeholder="Password" ng-model="$storage.password">
+						</ons-list-item>
+					</ons-list>
+				</ons-scroller>
+				<div class="wizard-footer bottom-toolbar">
+					<ons-toolbar-button class="left" ng-click="close()">Cancel</ons-toolbar-button>
+					<ons-toolbar-button class="right" ng-click="wizardLogin()">Next&nbsp;<ons-icon icon="ion-chevron-right" size="22px"></ons-icon></ons-toolbar-button>
+				</div>
+			</ons-carousel-item>
+			<ons-carousel-item class="flex-container-vertical">
+				<div class="wizard-header">
+					Setup your first project!
+				</div>
+				<ons-scroller class="wizard-content">
+					<ons-list class="wizard settings gl-tree" ng-controller="AccordionController">
+						<ons-list-header>
+							<i class="icon fa fa-pencil"></i>Project Name
+						</ons-list-header>
+						<ons-list-item class="textarea-input">
+							<div style="width: 100%;">
+								<textarea type="text" class="text-input text-input--transparent" placeholder="Project" ng-model="$storage.project"></textarea>
+								<span class="multiline-wrapper" ng-bind="$storage.project"></span>
+							</div>
+						</ons-list-item>
+						<div ng-if="$storage.username && $storage.password">
+							<ons-list-header>
+								<i class="icon fa fa-bars"></i>My projects
+							</ons-list-header>
+
+							<div ng-repeat="project in userProjects">
+								<ons-list-item  modifier="tappable" class="list__item--fa-button-right list__item--accordion" ng-class="{expanded: isAccordionShown(project)}">
+									<ons-row>
+										<ons-col class="left-center" ng-click="$storage.project=project.project">
+											<div class="title list__item--two-lines-max"><span>{{ project.title }}</span></div>
+										</ons-col>
+										<ons-col width="30px">
+											<div class="list-button expand" ng-click="toggleAccordion(project)">&nbsp;</div>
+											<div style="display: inline-block;"></div>
+										</ons-col>
+									</ons-row>
+								</ons-list-item>
+								<ons-list-item class="list__item--accordion-content list__item--info-content" ng-show="isAccordionShown(project)" gl-fixed-height>
+									<div>
+										<label>Path:</label>
+										<span>{{ ::project.project }}</span><br />
+										<label>Publication time:</label>
+										<span>{{ ::project.publish_date_text }}</span><br />
+										<label>Expiration time:</label>
+										<span>{{ ::project.expiration_date_text }}</span><br />
+										<div style="height: 8px;"></div>
+									</div>
+								</ons-list-item>
+							</div>
+
+						</div>
+					</ons-list>
+				</ons-scroller>
+				<div class="wizard-footer bottom-toolbar">
+					<ons-toolbar-button class="left" ng-click="app.wizard.carousel.prev()">
+						<ons-icon icon="ion-chevron-left" size="22px"></ons-icon>&nbsp;Back
+					</ons-toolbar-button>
+					<ons-toolbar-button class="right" ng-click="finish()">Finish</ons-toolbar-button>
+				</div>
+			</ons-carousel-item>
+		</ons-carousel>
+	</ons-modal>
+
+	<ons-modal var="app.progressBar">
+		<ons-icon icon="ion-load-c" spin="true"></ons-icon>
+		<br><br>
+		Please wait.<br>{{ progressBarMessage }}
+	</ons-modal>
+</body>
+</html>

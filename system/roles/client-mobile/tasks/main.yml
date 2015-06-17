@@ -1,0 +1,239 @@
+---
+#
+### GIS.lab MOBILE CLIENT ###
+#
+# Build GIS.lab Mobile client package.
+
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
+  with_items:
+    - debootstrap
+
+
+# Prepare installation directory
+- name: Purge GIS.lab Mobile build directory
+  file: dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} state=absent
+
+- name: Create GIS.lab Mobile build directory
+  file: dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} state=directory
+
+
+#
+## INITIAL SYSTEM INSTALLATION ########################################################################################
+#
+
+# Debootstrap
+# Android SDK in 32-bit only
+- name: Install base system (without apt proxy)
+  command: debootstrap --arch i386 {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
+  when: GISLAB_APT_HTTP_PROXY|default(None) == None
+
+- name: Install base system (with apt proxy)
+  command: debootstrap --arch i386 {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    {{ GISLAB_APT_HTTP_PROXY }}/{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
+  when: GISLAB_APT_HTTP_PROXY|default(None) != None
+
+
+# Locale
+- name: Generate locale
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} locale-gen en_US.UTF-8
+
+- name: Copy locale default configuration file
+  command: cp /etc/default/locale {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/etc/default/locale
+
+# Timezone
+- name: Configure timezone
+  command: cp {{ item }} {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}{{ item }}
+  with_items:
+    - /etc/timezone
+    - /etc/localtime
+
+
+#
+## INSTALLATION #######################################################################################################
+#
+
+# Mount necessary filesystems in chroot
+- name: Mount /dev/pts and /proc
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} mount {{ item.opts }} {{ item.src }} {{ item.dest }}
+  with_items:
+    - { src: "devpts", dest: "/dev/pts", opts: "-t devpts -o rw,noexec,nosuid,gid=5,mode=620" }
+    - { src: "proc", dest: "/proc", opts: "-t proc" }
+
+
+# apt
+- name: Purge apt configuration directory
+  file: dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/etc/apt state=absent
+
+- name: Copy apt configuration from server
+  command: cp -a /etc/apt {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/etc/
+
+
+- name: Remove debian packages cached during debootstrap
+  command: rm -f {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/var/cache/apt/archives/*.deb
+
+- name: Activate shared apt cache
+  command: mount -o bind /storage/cache/packages/apt {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/var/cache/apt
+
+
+# Shared packages cache
+- name: Create mount point for shared packages cache
+  file: dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/storage/cache/packages state=directory recurse=yes
+
+- name: Activate shared packages cache
+  command: mount -o bind /storage/cache/packages {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/storage/cache/packages
+
+
+# Daemons handling
+- name: Avoid running daemons while installing
+  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}{{ item.dest }} mode=0755
+  with_items:
+    - { src: "roles/client-desktop/templates/bin/policy-rc.d.j2", dest: "/usr/sbin/policy-rc.d" }
+    - { src: "roles/client-desktop/templates/bin/start-stop-daemon.j2", dest: "/sbin/start-stop-daemon" }
+
+
+# System upgrade
+- name: Update apt cache
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} apt-get {{ apt_get_opts }} update"
+  args:
+    executable: /bin/bash
+
+- name: Upgrade system
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} apt-get {{ apt_get_opts }} dist-upgrade"
+  args:
+    executable: /bin/bash
+
+
+# Install packages
+- name: Install minimal packages for GIS.lab Mobile build
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} apt-get {{ apt_get_opts }} install ubuntu-standard"
+  args:
+    executable: /bin/bash
+
+- name: Install packages for GIS.lab Mobile build
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} apt-get {{ apt_get_opts }} --no-install-recommends install
+    {{ GISLAB_CLIENT_MOBILE_INSTALL_PACKAGES|join(' ') }}"
+  args:
+    executable: /bin/bash
+
+
+# Android SDK
+- name: Download Android SDK
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    wget {{ wget_opts }} {{ android_sdk_url_base }}/android-sdk_r{{ android_sdk_version }}-linux.tgz
+    -O /storage/cache/packages/tar/android-sdk_r{{ android_sdk_version }}-linux.tgz
+  args:
+    creates: /storage/cache/packages/tar/android-sdk_{{ android_sdk_version }}-{{ android_build_tools_version }}-{{ android_api_version }}.tar.gz
+
+- name: Install Android SDK
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    tar -xzf /storage/cache/packages/tar/android-sdk_r{{ android_sdk_version }}-linux.tgz -C /root/
+  args:
+    creates: /storage/cache/packages/tar/android-sdk_{{ android_sdk_version }}-{{ android_build_tools_version }}-{{ android_api_version }}.tar.gz
+
+- name: Install script for non-interactive Android platform, tools and API installation
+  template: src=android-sdk-install.expect.j2 dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/android-sdk-install.expect mode=0755
+
+- name: Install Android platform, tools and API 
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} /root/android-sdk-install.expect
+  args:
+    creates: /storage/cache/packages/tar/android-sdk_{{ android_sdk_version }}-{{ android_build_tools_version }}-{{ android_api_version }}.tar.gz
+
+- name: Save installed Android SDK package to cache
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    tar -czf /storage/cache/packages/tar/android-sdk_{{ android_sdk_version }}-{{ android_build_tools_version }}-{{ android_api_version }}.tar.gz
+    -C /root android-sdk-linux
+  args:
+    creates: /storage/cache/packages/tar/android-sdk_{{ android_sdk_version }}-{{ android_build_tools_version }}-{{ android_api_version }}.tar.gz
+
+- name: Install Android SDK from cache if not installed
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    tar -xzf /storage/cache/packages/tar/android-sdk_{{ android_sdk_version }}-{{ android_build_tools_version }}-{{ android_api_version }}.tar.gz
+    -C /root/
+  args:
+    creates: "{{ android_root }}/tools/android"
+
+
+# NodeJS
+- name: Download NodeJS
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    wget {{ wget_opts }} {{ nodejs_url_base }}/v{{ nodejs_version }}/node-v{{ nodejs_version }}-linux-x86.tar.gz
+    -O /storage/cache/packages/tar/node-v{{ nodejs_version }}-linux-x86.tar.gz
+
+- name: Install NodeJS
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    tar -xzf /storage/cache/packages/tar/node-v{{ nodejs_version }}-linux-x86.tar.gz -C /root/
+
+- name: Rename NodeJS directory
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    mv /root/node-v{{ nodejs_version }}-linux-x86 /root/nodejs
+
+
+# Cordova
+- name: Install Cordova
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    {{ nodejs_root }}/bin/npm install --quiet --cache=/storage/cache/packages/npm --global cordova@{{ cordova_version }}
+
+
+#
+## PACKAGE BUILD ######################################################################################################
+#
+- name: Copy GIS.lab Mobile files
+  copy: src=static/gislab-mobile dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/
+
+- name: Install Cordova plugins required by GIS.lab Mobile
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
+    {{ nodejs_root }}/bin/node {{ gislab_mobile_root }}/tasks/plugins.js
+
+- name: Install GIS.lab Mobile build script
+  template: src=cordova-build.sh.j2 dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/cordova-build.sh mode=0755
+
+- name: Build GIS.lab Mobile package
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} /root/cordova-build.sh
+
+
+- name: Publish GIS.lab Mobile package
+  shell: mv {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/gislab-mobile/platforms/android/ant-build/*-debug.apk
+    /var/www/default/gislab_mobile.apk
+  args:
+    executable: /bin/bash
+
+
+#
+## POST-INSTALLATION CLEANUP ##########################################################################################
+#
+
+# apt
+- name: Deactivate shared apt cache
+  command: umount {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/var/cache/apt
+
+- name: Disable Apt cache proxy server
+  shell: sed -i "s/^/# /g" {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/etc/apt/apt.conf.d/02proxy
+
+
+# Shared packages cache
+- name: Deactivate shared packages cache
+  command: umount {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/storage/cache/packages
+
+- name: Remove mount point for shared packages cache
+  file: dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/storage state=absent
+
+
+# Umount filesystems mounted inside chroot.
+# always mount /dev/pts before /proc.
+- name: Umount /dev/pts, /proc and /storage/cache/packages inside chroot
+  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} umount {{ item }}
+  with_items:
+    - /dev/pts
+    - /proc
+
+
+- meta: flush_handlers
+
+# vim:ft=ansible:

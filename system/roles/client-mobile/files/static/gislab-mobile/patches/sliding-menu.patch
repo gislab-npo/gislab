@@ -1,0 +1,19 @@
+--- www/lib/onsen/js/onsenui.js.orig	2015-04-28 10:39:26.323141352 +0200
++++ www/lib/onsen/js/onsenui.js	2015-04-28 13:51:58.861135299 +0200
+@@ -12829,12 +12829,14 @@
+             instant = options.animation == 'none';
+ 
+         this._animator.openMenu(function() {
+           unlock();
+ 
+-          this._mainPage.children().css('pointer-events', 'none');
+-          this._mainPageHammer.on('tap', this._bindedOnTap);
++          if (!options.autoCloseDisabled) {
++            this._mainPage.children().css('pointer-events', 'none');
++            this._mainPageHammer.on('tap', this._bindedOnTap);
++          }
+ 
+           this.emit('postopen', {
+             slidingMenu: this
+           });
+ 

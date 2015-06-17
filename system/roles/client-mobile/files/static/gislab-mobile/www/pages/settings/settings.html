@@ -1,0 +1,78 @@
+<ons-page ng-controller="SettingsController" class="flex-container-vertical">
+<!--	<ons-toolbar ng-if="::$storage.showHeader" fixed-style>-->
+<!--		<div class="center"><span>{{ ['Settings', 'About'][app.settings.carousel._lastActiveIndex] }}</span></div>-->
+<!--	</ons-toolbar>-->
+	<div class="panel-header" ng-if="$storage.showHeader">
+		<div class="center"><span>{{ ['Settings', 'About'][app.settings.carousel._lastActiveIndex] }}</span></div>
+	</div>
+	<ons-carousel var="app.settings.carousel" class="main-panel-content" swipeable auto-scroll>
+		<ons-carousel-item class="panel-settings">
+			<ons-scroller style="height: 100%;">
+<!--				<ons-list>-->
+<!--					<ons-list-header>Server/Account</ons-list-header>-->
+<!--					<ons-list-item modifier="chevron"  ng-click="app.navigator.pushPage('pages/settings/server.html');">-->
+<!--						<div class="item-content" ng-bind="$storage.serverUrl"></div>-->
+<!--					</ons-list-item>-->
+<!--					<ons-list-header>Project</ons-list-header>-->
+<!--					<ons-list-item modifier="chevron" ng-bind="$storage.project" ng-click="app.navigator.pushPage('pages/settings/project.html');">-->
+<!--					</ons-list-item>-->
+<!--				</ons-list>-->
+				<ons-list>
+					<ons-list-item modifier="chevron"  ng-click="app.navigator.pushPage('pages/settings/server.html');">
+					Server/Account
+					</ons-list-item>
+					<ons-list-item modifier="chevron" ng-click="app.navigator.pushPage('pages/settings/project.html');">
+					Project
+					</ons-list-item>
+					<ons-list-header>
+						<i class="fa fa-tablet"></i>Appearance
+					</ons-list-header>
+					<ons-list-item>
+						Panel Header<ons-switch modifier="list-item" ng-model="$storage.showHeader" ng-change="showHeaderChanged()"></ons-switch>
+					</ons-list-item>
+					<ons-list-item>
+						Zoom Controls<ons-switch var="app.settings.showZoomControls" modifier="list-item" ng-model="$storage.showZoomControls" ng-change="showZoomControlsChanged(app.settings.showZoomControls.isChecked())"></ons-switch>
+					</ons-list-item>
+					<ons-list-item>
+						Graphical Scale<ons-switch var="app.settings.showScaleLine" modifier="list-item" ng-model="$storage.showScaleLine" ng-change="showScaleLineChanged(app.settings.showScaleLine.isChecked())"></ons-switch>
+					</ons-list-item>
+				</ons-list>
+			</ons-scroller>
+		</ons-carousel-item>
+
+		<ons-carousel-item>
+			<ons-navigator var="app.navigator.about">
+				<ons-scroller style="height: 100%;">
+					<ons-list>
+						<ons-list-item modifier="chevron" ng-click="app.navigator.about.pushPage('pages/settings/about_project.html', { animation: 'slide' });">
+						Project
+						</ons-list-item>
+						<ons-list-item modifier="chevron" ng-click="app.navigator.about.pushPage('pages/settings/about_gislab.html', { animation: 'slide' });">
+						GIS.lab
+						</ons-list-item>
+					</ons-list>
+				</ons-scroller>
+			</ons-navigator>
+
+		</ons-carousel-item>
+	</ons-carousel>
+
+	<div class="carousel-tab-bar--bottom">
+		<gl-carousel-tab-slider gl-tab-model="ui.tools_settings_tab" gl-carousel="app.settings.carousel"></gl-carousel-tab-slider>
+		<div class="tab-bar tab-bar--bottom">
+			<label class="tab-bar__item border-right">
+				<input type="radio" name="settings-tab-radio" value="0" ng-model="ui.tools_settings_tab">
+				<button class="tab-bar__button">
+					<i class="tab-bar__icon ion-android-options"></i>
+				</button>
+			</label>
+
+			<label class="tab-bar__item">
+				<input type="radio" name="settings-tab-radio" value="1" ng-model="ui.tools_settings_tab">
+				<button class="tab-bar__button">
+					<i class="tab-bar__icon ion-information-circled"></i>
+				</button>
+			</label>
+		</div>
+	</div>
+</ons-page>

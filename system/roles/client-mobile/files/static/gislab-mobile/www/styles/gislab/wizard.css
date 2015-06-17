@@ -1,0 +1,88 @@
+ons-carousel.wizard-carousel {
+	height: 100%;
+}
+
+ons-carousel.wizard-carousel {
+	width: 90%;
+	height: 90%;
+	left: 5%;
+	top: 5%;
+	position: absolute;
+	background: -webkit-linear-gradient(#d40000, #d40000, gray, #eee, #eee);
+	background: linear-gradient(#d40000, #d40000, gray, #eee, #eee);
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+.wizard-header {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	line-height: 24px;
+	font-weight: bold;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+.wizard-footer {
+	font-weight: bold;
+	height: 32px;
+	width: 100%;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+div.wizzard-control {
+	bottom: 0;
+	position: absolute;
+	width: 100%;
+}
+
+.bottom-toolbar ons-toolbar-button.left {
+	float: left;
+}
+
+.bottom-toolbar ons-toolbar-button.right {
+	float: right;
+}
+
+.bottom-toolbar ons-toolbar-button span {
+	font-size: 20px!important;
+	color: #333;
+}
+.bottom-toolbar .ons-icon--ion {
+	padding-left: 10px;
+	padding-right: 10px;
+	line-height: 22px!important;
+	vertical-align: middle;
+}
+
+.modal.startup-wizard {
+	z-index: 10000;
+}
+
+.flex-container-vertical {
+	display: flex;
+	flex-direction: column;
+}
+
+.wizard-content {
+	min-height: 0;
+	background-color: #fff;
+	flex-grow: 1;
+	flex-shrink: 1;
+	xoverflow: hidden;
+}
+
+.wizard-footer.bottom-toolbar {
+	background-color: transparent;
+	border-top: 1px solid #ccc;
+}
+
+.wizard-footer .bottom-toolbar, ons-toolbar-button {
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+.wizard-footer .toolbar-button .ons-icon {
+	padding: 0!important;
+}

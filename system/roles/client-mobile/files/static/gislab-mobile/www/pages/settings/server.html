@@ -1,0 +1,68 @@
+<ons-page class="settings server-settings" ng-controller="ServerSettingsController">
+	<ons-toolbar fixed-style>
+		<div class="left"><ons-back-button></ons-back-button></div>
+		<div class="center">Server</div>
+	</ons-toolbar>
+	<ons-scroller style="width: 100%; height: {{ screenHeight-64 }}px;">
+		<ons-list>
+			<ons-list-header>
+				<i class="icon fa fa-globe"></i>Server URL
+			</ons-list-header>
+			<ons-list-item class="textarea-input">
+				<div style="width: 100%;">
+					<textarea type="text" class="http-prefix text-input text-input--transparent">http://</textarea>
+					<textarea style="text-indent: 50px;" type="text" class="text-input text-input--transparent" ng-model="$storage.serverUrl"></textarea>
+					<span style="text-indent: 50px;" class="multiline-wrapper" ng-bind="$storage.serverUrl"></span>
+				</div>
+			</ons-list-item>
+			<ons-list-header>
+				<i class="icon fa fa-user"></i>Username
+			</ons-list-header>
+			<ons-list-item>
+				<input type="text" class="text-input text-input--transparent" placeholder="Username" ng-model="$storage.username">
+			</ons-list-item>
+			<ons-list-header>
+				<i class="icon fa fa-lock"></i>Password
+			</ons-list-header>
+			<ons-list-item>
+				<input type="password" class="text-input text-input--transparent" placeholder="Password" ng-model="$storage.password">
+			</ons-list-item>
+		</ons-list>
+	</ons-scroller>
+	<div class="toolbar bottom-toolbar">
+		<ons-row>
+			<ons-col>
+				<ons-toolbar-button ng-click="saveServerProfile($storage.serverUrl, $storage.username, $storage.password)">
+					<i class="icon fa fa-plus-circle"></i>Save profile
+				</ons-toolbar-button>
+			</ons-col>
+			<ons-col width="1px" class="vertical-separator"></ons-col>
+			<ons-col>
+				<ons-toolbar-button ng-click="app.navigator.pushPage('server_profiles.html')">
+					<i class="icon fa fa-users"></i>Select profile
+				</ons-toolbar-button>
+			</ons-col>
+		</ons-row>
+	</div>
+
+	<ons-template id="server_profiles.html">
+		<ons-page class="settings server-settings" ng-controller="ServerSettingsController">
+			<ons-toolbar fixed-style>
+				<div class="left"><ons-back-button></ons-back-button></div>
+				<div class="center">Server profiles</div>
+			</ons-toolbar>
+			<ons-list class="gl-tree">
+				<ons-list-item class="list__item--fa-button-right" ng-repeat="profile in $storage.serverProfiles" class="list__item--right-btn" modifier="tappable">
+					<ons-row>
+						<ons-col class="left-center" ng-click="loadProfile(profile);app.navigator.popPage()">
+							<div class="title"><span>{{ profile.name }}</span></div>
+						</ons-col>
+						<ons-col width="30px">
+							<div class="list-button delete" ng-click="removeProfile(profile)"></div>
+						</ons-col>
+					</ons-row>
+				</ons-list-item>
+			</ons-list>
+		</ons-page>
+	</ons-template>
+</ons-page>

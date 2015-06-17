@@ -1,0 +1,10 @@
+<ons-page ng-controller="LegendController" class="legend-panel flex-container-vertical">
+	<div class="panel-header" ng-if="$storage.showHeader">
+		<span>Legend</span>
+	</div>
+	<ons-scroller class="main-panel-content">
+		<div class="legend-container">
+			<img class="legend-item" ng-repeat="layer in ::layers.list" ng-if="layer.visible" ng-src="{{ layer.legendUrl }}" />
+		</div>
+	</ons-scroller>
+</ons-page>

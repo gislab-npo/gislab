@@ -1,0 +1,270 @@
+/*
+ General List
+*/
+
+
+.list__item header {
+	line-height: 32px;
+}
+
+.list__item {
+	line-height: 38px;
+	min-height: 39px;
+	color: #444;
+}
+.list__item. input,
+.list__item textarea {
+	color: #444;
+}
+
+.list__item .title {
+	font-size: 15px;
+	display: inline-block!important;
+}
+
+.left-center {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-align: left;
+	-ms-flex-align: left;
+	-webkit-align-items: center;
+	align-items: center;
+}
+.center-vertical {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-align-items: center;
+	align-items: center;
+}
+
+/*
+ List Checkbox & RadioButton
+*/
+
+.list__item--checkbox {
+	padding-left: 0px;
+}
+
+.radio-button__icon-checkmark,
+.checkbox__icon-checkmark {
+	padding-left: 2px;
+	padding-right: 4px;
+	padding-top: 5px;
+	xpadding-bottom: 5px;
+}
+
+.radio-button__icon-checkmark::before, .checkbox__icon-checkmark::before {
+	width: 28px;
+	text-align: center;
+	display: inline-block;
+	font-family: "FontAwesome";
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	font-size: 28px;
+	text-rendering: auto;
+	text-transform: none;
+	z-index: 1;
+}
+
+.radio-button__icon-checkmark-fill::before {
+	width: 14px;
+	height: 14px;
+	text-align: center;
+	font-family: "FontAwesome";
+	font-size: 14px;
+}
+
+.radio-button__icon-checkmark-fill {
+	position: absolute;
+	left: -1px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 3;
+	text-align: center;
+	line-height: 32px;
+}
+.radio-button > input[type="radio"]:checked + .radio-button__icon-checkmark .radio-button__icon-checkmark-fill::before {
+	content: "\f0c8";
+	vertical-align: middle;
+	text-align: center;
+}
+.radio-button__icon-checkmark::before {
+	content: "\f096";
+}
+
+.checkbox__icon-checkmark::before {
+	content: "\f096";
+}
+.checkbox > input[type="checkbox"]:checked + .checkbox__icon-checkmark {
+	content: "\f046";
+	padding-left: 4px;
+	padding-right: 2px;
+}
+.checkbox > input[type="checkbox"]:checked + .checkbox__icon-checkmark::before {
+	content: "\f046";
+}
+.checkbox > input[type="checkbox"]:indeterminate + .checkbox__icon-checkmark::before {
+	content: "\f147";
+}
+
+.checkbox, .radio-button {
+	vertical-align: middle;
+	line-height: 28px;
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+
+/*
+ List Switch Item
+*/
+
+.switch--list-item__input {
+	height: 100%;
+	margin: 0;
+}
+
+.switch--list-item__toggle {
+	height: 28px;
+	line-height: 32px;
+}
+.switch__toggle::before {
+	height: 24px;
+}
+
+/*
+ List Item with button on right side
+*/
+
+.list__item--fa-button-right {
+	padding-right: 0;
+}
+
+.list__item--fa-button-right .title{
+	padding-right: 30px;
+}
+
+.list__item--fa-button-right .list-button::before {
+	font-family: FontAwesome;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: normal;
+	height: 20px;
+	line-height: 20px;
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	padding-left: 20px;
+}
+
+.list__item--fa-button-right .list-button {
+	width: 50px;
+	height: 100%;
+	display: inline-block;
+	float: right;
+	right: 0;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	position: absolute;
+}
+
+/*
+ List Accordion
+*/
+
+.list__item--tappable.expanded {
+	background-color: #f7f7f7;
+}
+
+.list__item--tappable.expanded:active {
+	background-color: #d9d9d9;
+}
+
+.list__item--accordion-content {
+	display: block!important;
+	overflow: hidden;
+	min-height: 0;
+	transition: 0s linear all;
+	opacity: 1;
+}
+
+.list__item--accordion:first-child:last-child,
+.list__item--accordion-content:last-child {
+	border-bottom: 1px solid #ddd;
+}
+
+.list__item--accordion-content.ng-hide {
+	opacity: 0;
+	height: 0!important;
+	display: none!important;
+}
+
+.list__item--accordion-content.ng-hide-add-active, .list__item--accordion-content.ng-hide-remove {
+	/* this needs to be here to make it visible during the animation
+	since the .ng-hide class is already on the element rendering
+	it as hidden. */
+	display: block!important;
+	transition: 0.4s all ease-in-out;
+}
+
+
+/*
+ List with info text content
+*/
+
+.list__item--info-content {
+	font-size: 13px;
+	line-height: 15px;
+	color: #606060;
+	padding: 0 3px 0 5px;
+}
+
+.list__item--info-content label {
+	font-weight: bold;
+	display: inline-block;
+	line-height: 15px;
+}
+
+.list__item--info-content label::before {
+	max-height: 8px;
+	display: block;
+	content: "\00a0"
+}
+
+/*
+ List item with button on right side
+*/
+
+.list__item--fa-button-right .expand::before {
+	color: #ddd;
+	content: "\f107";
+}
+
+.list__item--fa-button-right.expanded .expand::before {
+	content: "\f106";
+}
+
+.list__item--fa-button-right .delete::before {
+	color: #444;
+	content: '\f00d';
+}
+
+.list__item--two-lines-max.title {
+	display: -webkit-box!important;
+	-webkit-line-clamp: 2!important;
+	-webkit-box-orient: vertical!important;
+	overflow: hidden!important;
+	max-height: 40px;
+	line-height: 19px;
+	text-overflow: ellipsis!important;
+}
