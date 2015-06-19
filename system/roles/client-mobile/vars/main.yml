@@ -8,9 +8,9 @@ GISLAB_CLIENT_MOBILE_INSTALL_PACKAGES:
 
 # Android
 android_sdk_url_base: http://dl.google.com/android
-android_sdk_version: r24.1.2
+android_sdk_version: 24.1.2
 android_build_tools_version: 22.0.1
-android_api_version: 21
+android_api_version: 22
 android_root: /root/android-sdk-linux
 
 # NodeJS
@@ -19,7 +19,7 @@ nodejs_version: 0.10.32
 nodejs_root: /root/nodejs
 
 # Cordova
-cordova_version: 4.3.0
+cordova_version: 5.1.1
 
 # GIS.lab Mobile
 gislab_mobile_root: /root/gislab-mobile
