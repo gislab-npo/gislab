@@ -167,6 +167,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   - mutt
   - pidgin
   - pidgin-libnotify
+  - pssh
   - rst2pdf
   - sshfs
   - vim-gnome
