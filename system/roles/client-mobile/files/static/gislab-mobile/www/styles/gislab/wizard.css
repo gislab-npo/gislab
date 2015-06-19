@@ -8,8 +8,8 @@ ons-carousel.wizard-carousel {
 	left: 5%;
 	top: 5%;
 	position: absolute;
-	background: -webkit-linear-gradient(#d40000, #d40000, gray, #eee, #eee);
-	background: linear-gradient(#d40000, #d40000, gray, #eee, #eee);
+	background: -webkit-linear-gradient(#00aad4, #00aad4, gray, #eee, #eee);
+	background: linear-gradient(#00aad4, #00aad4, gray, #eee, #eee);
 	border-radius: 10px;
 	overflow: hidden;
 }
@@ -46,14 +46,8 @@ div.wizzard-control {
 }
 
 .bottom-toolbar ons-toolbar-button span {
-	font-size: 20px!important;
+	font-size: 18px!important;
 	color: #333;
-}
-.bottom-toolbar .ons-icon--ion {
-	padding-left: 10px;
-	padding-right: 10px;
-	line-height: 22px!important;
-	vertical-align: middle;
 }
 
 .modal.startup-wizard {
@@ -70,7 +64,6 @@ div.wizzard-control {
 	background-color: #fff;
 	flex-grow: 1;
 	flex-shrink: 1;
-	xoverflow: hidden;
 }
 
 .wizard-footer.bottom-toolbar {
@@ -78,11 +71,8 @@ div.wizzard-control {
 	border-top: 1px solid #ccc;
 }
 
-.wizard-footer .bottom-toolbar, ons-toolbar-button {
+.wizard-footer .bottom-toolbar, .wizard-footer ons-toolbar-button {
 	padding-left: 8px;
 	padding-right: 8px;
 }
 
-.wizard-footer .toolbar-button .ons-icon {
-	padding: 0!important;
-}

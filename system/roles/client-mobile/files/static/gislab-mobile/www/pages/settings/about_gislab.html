@@ -1,6 +1,12 @@
 <ons-page class="about">
 	<ons-toolbar class="sub-toolbar" fixed-style>
-		<div class="left"><ons-back-button></ons-back-button></div>
+		<div class="left">
+			<ons-toolbar-button ng-click="app.navigator.about.popPage();">
+				<svg class="toolbar-button-icon">
+					<use xlink:href="#icon-arrow-left"></use>
+				</svg>
+			</ons-toolbar-button>
+		</div>
 		<div class="center">GIS.lab</div>
 	</ons-toolbar>
 	<ons-scroller>
@@ -15,11 +21,19 @@
 			</ons-list-item>
 			<ons-list-item class="list__item--info-content">
 				<label>Home page:</label>
-				<a ng-href="{{ ::project.gislab_homepage }}" gl-open-in-browser><i class="fa fa-globe"></i></a>
+				<a ng-href="{{ ::project.gislab_homepage }}" gl-open-in-browser>
+					<svg class="hyperlink-icon">
+						<use xlink:href="#icon-hyperlink"></use>
+					</svg>
+				</a>
 			</ons-list-item>
 			<ons-list-item class="list__item--info-content">
 				<label>Documentation:</label>
-				<a ng-href="{{ ::project.gislab_documentation }}" gl-open-in-browser><i class="fa fa-globe"></i></a>
+				<a ng-href="{{ ::project.gislab_documentation }}" gl-open-in-browser>
+					<svg class="hyperlink-icon">
+						<use xlink:href="#icon-hyperlink"></use>
+					</svg>
+				</a>
 			</ons-list-item>
 		</ons-list>
 	</ons-scroller>

@@ -27,6 +27,7 @@
     "org.apache.cordova.device",
     "org.apache.cordova.splashscreen",
     "org.apache.cordova.geolocation",
-    "org.apache.cordova.inappbrowser"
+    "org.apache.cordova.inappbrowser",
+    "cordova-plugin-whitelist"
   ]
 }

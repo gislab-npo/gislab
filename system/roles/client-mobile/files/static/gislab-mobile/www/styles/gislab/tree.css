@@ -5,11 +5,39 @@
 	color: #555;
 }
 
+.layer-metadata-icon {
+	width: 18px;
+	height: 18px;
+	fill: #444;
+}
+
+.gl-tree .toggle-button-icon {
+	width: 14px;
+	height: 14px;
+	float: left;
+	padding-top: 12px;
+	padding-left: 3px;
+	padding-right: 2px;
+	fill: #444;
+}
+
+.toggle-button-icon .expanded {
+	display: none;
+}
+
+.expanded.toggle-button-icon .collapsed {
+	display: none;
+}
+.expanded.toggle-button-icon .expanded {
+	display: inline-block;
+}
+
 .gl-tree .toggle-button {
 	float: left;
 	margin-left: 5px;
 	vertical-align: middle;
-	line-height: 38px;
+	line-height: 40px;
+	height: 40px;
 	font-size: 15px;
 }
 
@@ -25,25 +53,12 @@
 	display: inline-block;
 }
 
-.gl-tree .list__item.leaf .radio-button__icon-checkmark,
-.gl-tree .list__item.leaf .checkbox__icon-checkmark {
+.gl-tree .list__item.leaf .checkbox, .gl-tree .list__item.leaf .radio-button {
 	padding-left: 6px;
 }
 
-.gl-tree .list__item.leaf .radio-button__icon-checkmark-fill {
-	left: 1px;
-}
-
-.gl-tree .list__item.leaf .checkbox > input[type="checkbox"]:checked + .checkbox__icon-checkmark {
-	padding-left: 8px;
-}
-
-.gl-tree .list__item.leaf[depth="1"] .radio-button__icon-checkmark-fill {
-	left: -1px;
-}
-
-.gl-tree .list__item.leaf[depth="1"] .checkbox > input[type="checkbox"]:checked + .checkbox__icon-checkmark {
-	padding-left: 4px;
+.gl-tree .list__item.leaf[depth="1"] .checkbox, .gl-tree .list__item.leaf[depth="1"] .radio-button {
+	padding-left: 3px;
 }
 
 .gl-tree .list__item.leaf[depth="1"] .radio-button__icon-checkmark,

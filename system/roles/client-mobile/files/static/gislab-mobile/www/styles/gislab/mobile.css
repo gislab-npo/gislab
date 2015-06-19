@@ -1,9 +1,7 @@
 @media screen and (-webkit-min-device-pixel-ratio: 1.5), screen and (-o-min-device-pixel-ratio: 15/10)
-
 {
 
 }
-
 
 @-moz-document url-prefix() { 
 	ons-scroller {
@@ -66,11 +64,6 @@
 	z-index: 1000;
 }
 
-.checkbox > input[type="checkbox"]:checked + .checkbox__checkmark:before {
-	background: rgba(24,103,194,0.6);
-	border: 1px solid rgba(24,103,194,0.81);
-}
-
 .main-panel .navigation-bar {
 	height: 26px;
 }
@@ -82,8 +75,12 @@
 	top: 26px;
 }
 
+.navigation-bar__title {
+	font-size: 18px;
+}
+
 .main-panel .navigation-bar__title, .navigation-bar__line-height {
-	line-height: 26px;
+	line-height: 32px;
 }
 
 ons-page.flex-container-vertical {
@@ -96,7 +93,7 @@ ons-page.flex-container-vertical {
 }
 
 .panel-header {
-	background-color: #d40000;
+	background-color: #00aad4;
 	color: white;
 	text-align: center;
 	font-size: 14px;
@@ -145,14 +142,12 @@ ons-page.flex-container-vertical {
 	background-color: white;
 }
 :checked + .tab-bar__button, :checked + .tab-bar__button .tab-bar__icon {
-	color: #d40000;
-	
+	color: #00aad4;
 }
 .tab-bar {
 	height: 25px;
 }
 .tab-bar__button {
-	xborder-right: 1px solid gray;
 	color: #555;
 }
 .tab-bar__label {
@@ -160,16 +155,16 @@ ons-page.flex-container-vertical {
 	font-size: 14px!important;
 	line-height: 32px!important;
 }
-.tab-bar__icon {
-	width: 100%;
+.tab-bar__button .icon {
 	height: 22px;
-	line-height: 22px;
+	width: 22px;
 	vertical-align:top;
-	font-size: 22px;
+	fill: #555;
 }
-.tab-bar__icon::before {
-	line-height: 0px!important;
+:checked + .tab-bar__button .icon {
+	fill: #00aad4;
 }
+
 .tab-bar__item {
 	margin-top: 2px;
 }
@@ -197,11 +192,6 @@ ons-page.flex-container-vertical {
 	width: 2px;
 	height: 100%;
 	background-color: black;
-	xdisplay: inline-block!important;
-	xposition: absolute;
-	xfloat: left;
-	sleft: 33%;
-	xz-index: 1000;
 }
 
 .carousel-slider-bg {
@@ -212,7 +202,7 @@ ons-page.flex-container-vertical {
 	height: 3px;
 	xbackground-color: white;
 	xbackground-color: #7abfff;
-	background-color: #d40000;
+	background-color: #00aad4;
 	transition: all 0.3s cubic-bezier(0.1, 0.7, 0.1, 1) 0s;
 }
 
@@ -246,50 +236,6 @@ img.legend-item {
 	margin-left: 10px;
 }
 
-.point-layer-icon, .point-layer-icon-queryable, .line-layer-icon, .line-layer-icon-queryable, .polygon-layer-icon, .polygon-layer-icon-queryable, .raster-layer-icon {
-	background-image: url('../../images/layer-geometry.png')!important;
-	background: no-repeat;
-	width: 18px;
-	height: 18px;
-	display: inline-block;
-}
-.point-layer-icon {
-	background-position: 0px 0px !important;
-	background-position-x: 0px !important;
-	background-position-y: 0px !important;
-}
-.point-layer-icon-queryable {
-	background-position: 0px -18px !important;
-	background-position-x: 0px !important;
-	background-position-y: -18px !important;
-}
-.line-layer-icon {
-	background-position: 0px -36px !important;
-	background-position-x: 0px !important;
-	background-position-y: -36px !important;
-}
-.line-layer-icon-queryable {
-	background-position: 0px -54px !important;
-	background-position-x: 0px !important;
-	background-position-y: -54px !important;
-}
-.polygon-layer-icon {
-	background-position: 0px -72px !important;
-	background-position-x: 0px !important;
-	background-position-y: -72px !important;
-}
-.polygon-layer-icon-queryable {
-	background-position: 0px -90px !important;
-	background-position-x: 0px !important;
-	background-position-y: -90px !important;
-}
-.raster-layer-icon {
-	background-position: 0px -108px !important;
-	background-position-x: 0px !important;
-	background-position-y: -108px !important;
-}
-
-
 .ui-grid-render-container, .ui-grid-viewport {
 	height: 100%!important;
 }
@@ -301,29 +247,6 @@ img.legend-item {
 }
 .ui-grid-column-menu-button-last-col {
 	margin-right: 0px;
-}
-
-.toolbar-button--quiet i {
-	height: 36px!important;
-	font-size: 30px!important;
-	color: #555;
-}
-.toolbar-button--quiet i::before {
-	line-height: 20px!important;
-	height: 20px!important;
-	vertical-align: middle!important;
-}
-
-.main-panel .toolbar-button--quiet i {
-	height: 18px!important;
-	font-size: 20px!important;
-	color: #555;
-	line-height: 24px!important;
-}
-.main-panel .toolbar-button--quiet i::before {
-	line-height: 20px!important;
-	height: 22px!important;
-	vertical-align: middle!important;
 }
 
 
@@ -344,4 +267,11 @@ img.legend-item {
 }
 .topic-visible-layers label {
 	line-height: 6px;
+}
+
+.loading-icon {
+	width: 24px;
+	height: 24px;
+	fill: white;
+	animation: 2s linear 0s normal none infinite running ons-icon-spin;
 }

@@ -84,6 +84,8 @@
 </head>
 
 <body ng-controller="MobileAppController">
+	<ng-include src="'styles/gislab/icons.svg'">
+	</ng-include>
 	<ons-navigator var="app.navigator" page="map_container.html">
 	</ons-navigator>
 
@@ -136,18 +138,25 @@
 					<ons-button ng-repeat="tool in ::ui.toolbar | filter:{disabled:false}"
 							ng-click="toolTaped(tool);" ng-class="{activated: tool.activated}">
 <!--							gl-con-attr="{disabled: {{ ::tool.disabled == true }}}">-->
-						<ons-icon ng-if="tool.icon" icon="{{ tool.icon }}" size="28px" fixed-width="true"></ons-icon>
-						<i ng-if="tool.faIcon" class="fa {{ tool.faIcon }}"></i>
+							<svg class="toolbar-icon">
+								<use xlink:href="{{'#'+tool.icon}}"></use>
+							</svg>
 					</ons-button>
 
 					<gl-scroll-indicator gl-orientation="top" gl-update-on="screenHeight">
-						<div class="scroll-top-indicator-bg">
-							<ons-icon class="scroll-top-indicator" icon="ion-android-arrow-dropup" size="28px" fixed-width="true"></ons-icon>
+						<div class="scroll-indicator-top-bg">
+<!--							<ons-icon class="scroll-indicator-top" icon="ion-android-arrow-dropup" size="28px" fixed-width="true"></ons-icon>-->
+							<svg class="scroll-indicator-top">
+								<use xlink:href="#icon-arrow-up"></use>
+							</svg>
 						</div>
 					</gl-scroll-indicator>
 					<gl-scroll-indicator gl-orientation="bottom" gl-update-on="screenHeight">
-						<div class="scroll-bottom-indicator-bg" gl-scroll-indicator="bottom">
-							<ons-icon class="scroll-bottom-indicator" icon="ion-android-arrow-dropdown" size="28px" fixed-width="true"></ons-icon>
+						<div class="scroll-indicator-bottom-bg" gl-scroll-indicator="bottom">
+<!--							<ons-icon class="scroll-indicator-bottom" icon="ion-android-arrow-dropdown" size="28px" fixed-width="true"></ons-icon>-->
+							<svg class="scroll-indicator-bottom">
+								<use xlink:href="#icon-arrow-down"></use>
+							</svg>
 						</div>
 					</gl-scroll-indicator>
 				</ons-scroller>
@@ -164,7 +173,10 @@
 				<ons-scroller class="wizard-content">
 					<ons-list class="wizard settings">
 						<ons-list-header>
-							<i class="icon fa fa-globe"></i>Server URL. This is field is mandatory.
+							<svg class="list-header-icon">
+								<use xlink:href="#icon-earth"></use>
+							</svg>
+							Server URL. This is field is mandatory.
 						</ons-list-header>
 						<ons-list-item class="textarea-input">
 							<div style="width: 100%;">
@@ -177,13 +189,19 @@
 							Some projects may require permission to open it.
 						</ons-list-header>
 						<ons-list-header>
-							<i class="icon fa fa-user"></i>Username
+							<svg class="list-header-icon">
+								<use xlink:href="#icon-user"></use>
+							</svg>
+							Username
 						</ons-list-header>
 						<ons-list-item>
 							<input type="text" class="text-input text-input--transparent" placeholder="Username" ng-model="$storage.username">
 						</ons-list-item>
 						<ons-list-header>
-							<i class="icon fa fa-lock"></i>Password
+							<svg class="list-header-icon">
+								<use xlink:href="#icon-lock"></use>
+							</svg>
+							Password
 						</ons-list-header>
 						<ons-list-item>
 							<input type="password" class="text-input text-input--transparent" placeholder="Password" ng-model="$storage.password">
@@ -192,7 +210,11 @@
 				</ons-scroller>
 				<div class="wizard-footer bottom-toolbar">
 					<ons-toolbar-button class="left" ng-click="close()">Cancel</ons-toolbar-button>
-					<ons-toolbar-button class="right" ng-click="wizardLogin()">Next&nbsp;<ons-icon icon="ion-chevron-right" size="22px"></ons-icon></ons-toolbar-button>
+					<ons-toolbar-button class="right" ng-click="wizardLogin()">Next
+						<svg class="toolbar-button-icon">
+							<use xlink:href="#icon-arrow-right"></use>
+						</svg>
+					</ons-toolbar-button>
 				</div>
 			</ons-carousel-item>
 			<ons-carousel-item class="flex-container-vertical">
@@ -202,7 +224,10 @@
 				<ons-scroller class="wizard-content">
 					<ons-list class="wizard settings gl-tree" ng-controller="AccordionController">
 						<ons-list-header>
-							<i class="icon fa fa-pencil"></i>Project Name
+							<svg class="list-header-icon">
+								<use xlink:href="#icon-pen"></use>
+							</svg>
+							Project Name
 						</ons-list-header>
 						<ons-list-item class="textarea-input">
 							<div style="width: 100%;">
@@ -212,20 +237,23 @@
 						</ons-list-item>
 						<div ng-if="$storage.username && $storage.password">
 							<ons-list-header>
-								<i class="icon fa fa-bars"></i>My projects
+								<svg class="list-header-icon">
+									<use xlink:href="#icon-menu"></use>
+								</svg>
+								My projects
 							</ons-list-header>
 
 							<div ng-repeat="project in userProjects">
-								<ons-list-item  modifier="tappable" class="list__item--fa-button-right list__item--accordion" ng-class="{expanded: isAccordionShown(project)}">
-									<ons-row>
-										<ons-col class="left-center" ng-click="$storage.project=project.project">
-											<div class="title list__item--two-lines-max"><span>{{ project.title }}</span></div>
-										</ons-col>
-										<ons-col width="30px">
-											<div class="list-button expand" ng-click="toggleAccordion(project)">&nbsp;</div>
-											<div style="display: inline-block;"></div>
-										</ons-col>
-									</ons-row>
+								<ons-list-item  modifier="tappable" class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}">
+									<div class="left-center title list__item--two-lines-max" ng-click="$storage.project=project.project">
+										<span>{{ project.title }}</span>
+									</div>
+									<div class="list-button-right expand" ng-click="toggleAccordion(project)">
+										<svg class="expand-icon">
+											<use class="expanded" xlink:href="#icon-arrow-up"></use>
+											<use class="collapsed" xlink:href="#icon-arrow-down"></use>
+										</svg>
+									</div>
 								</ons-list-item>
 								<ons-list-item class="list__item--accordion-content list__item--info-content" ng-show="isAccordionShown(project)" gl-fixed-height>
 									<div>
@@ -245,7 +273,10 @@
 				</ons-scroller>
 				<div class="wizard-footer bottom-toolbar">
 					<ons-toolbar-button class="left" ng-click="app.wizard.carousel.prev()">
-						<ons-icon icon="ion-chevron-left" size="22px"></ons-icon>&nbsp;Back
+						<svg class="toolbar-button-icon">
+							<use xlink:href="#icon-arrow-left"></use>
+						</svg>
+						Back
 					</ons-toolbar-button>
 					<ons-toolbar-button class="right" ng-click="finish()">Finish</ons-toolbar-button>
 				</div>
@@ -254,7 +285,9 @@
 	</ons-modal>
 
 	<ons-modal var="app.progressBar">
-		<ons-icon icon="ion-load-c" spin="true"></ons-icon>
+		<svg class="loading-icon" spin="true">
+			<use xlink:href="#icon-load"></use>
+		</svg>
 		<br><br>
 		Please wait.<br>{{ progressBarMessage }}
 	</ons-modal>

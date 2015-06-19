@@ -19,7 +19,7 @@
 
 .list__item .title {
 	font-size: 15px;
-	display: inline-block!important;
+	display: inline-block;
 }
 
 .left-center {
@@ -51,75 +51,36 @@
 	padding-left: 0px;
 }
 
-.radio-button__icon-checkmark,
-.checkbox__icon-checkmark {
-	padding-left: 2px;
-	padding-right: 4px;
-	padding-top: 5px;
-	xpadding-bottom: 5px;
-}
-
-.radio-button__icon-checkmark::before, .checkbox__icon-checkmark::before {
-	width: 28px;
-	text-align: center;
-	display: inline-block;
-	font-family: "FontAwesome";
-	font-style: normal;
-	font-variant: normal;
-	font-weight: normal;
-	font-size: 28px;
-	text-rendering: auto;
-	text-transform: none;
-	z-index: 1;
-}
-
-.radio-button__icon-checkmark-fill::before {
-	width: 14px;
-	height: 14px;
-	text-align: center;
-	font-family: "FontAwesome";
-	font-size: 14px;
-}
-
-.radio-button__icon-checkmark-fill {
-	position: absolute;
-	left: -1px;
-	top: 0px;
-	width: 100%;
+.list__item .checkbox, .list__item .radio-button {
 	height: 100%;
-	z-index: 3;
-	text-align: center;
-	line-height: 32px;
-}
-.radio-button > input[type="radio"]:checked + .radio-button__icon-checkmark .radio-button__icon-checkmark-fill::before {
-	content: "\f0c8";
-	vertical-align: middle;
-	text-align: center;
-}
-.radio-button__icon-checkmark::before {
-	content: "\f096";
+	line-height: 26px;
+	margin-top: 0px;
+	margin-bottom: 0px;
 }
 
-.checkbox__icon-checkmark::before {
-	content: "\f096";
-}
-.checkbox > input[type="checkbox"]:checked + .checkbox__icon-checkmark {
-	content: "\f046";
-	padding-left: 4px;
-	padding-right: 2px;
-}
-.checkbox > input[type="checkbox"]:checked + .checkbox__icon-checkmark::before {
-	content: "\f046";
-}
-.checkbox > input[type="checkbox"]:indeterminate + .checkbox__icon-checkmark::before {
-	content: "\f147";
+
+.checkbox-icon {
+	width: 28px;
+	height: 28px;
+	display: inline-block;
+	padding-top: 5px;
+	fill: #444;
 }
 
-.checkbox, .radio-button {
-	vertical-align: middle;
-	line-height: 28px;
-	margin-top: 1px;
-	margin-bottom: 1px;
+.checkbox-icon .checked, .checkbox-icon .indeterminate {
+	display: none;
+}
+
+input:checked + .checkbox-icon .checked {
+	display: inline-block;
+}
+
+input:checked + .checkbox-icon .unchecked {
+	display: none;
+}
+
+input[type="checkbox"]:indeterminate + .checkbox-icon .indeterminate {
+	display:  inline-block;
 }
 
 /*
@@ -130,7 +91,6 @@
 	height: 100%;
 	margin: 0;
 }
-
 .switch--list-item__toggle {
 	height: 28px;
 	line-height: 32px;
@@ -143,39 +103,42 @@
  List Item with button on right side
 */
 
-.list__item--fa-button-right {
-	padding-right: 0;
-}
-
-.list__item--fa-button-right .title{
+.list__item--button-right .title {
 	padding-right: 30px;
 }
 
-.list__item--fa-button-right .list-button::before {
-	font-family: FontAwesome;
-	font-size: 20px;
-	font-style: normal;
-	font-weight: normal;
-	height: 20px;
-	line-height: 20px;
-	position: absolute;
-	right: 12px;
-	top: 50%;
-	-webkit-transform: translateY(-50%);
-	transform: translateY(-50%);
-	padding-left: 20px;
+.list__item .list-item-icon {
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+	fill: #aaa;
 }
 
-.list__item--fa-button-right .list-button {
-	width: 50px;
-	height: 100%;
-	display: inline-block;
-	float: right;
+.list-button-right {
+	position: absolute;
 	right: 0;
 	top: 50%;
 	-webkit-transform: translateY(-50%);
 	transform: translateY(-50%);
-	position: absolute;
+	padding-left: 20px;
+	padding-right: 10px;
+}
+
+.expand-icon {
+	width: 12px;
+	height: 12px;
+	fill: #aaa;
+}
+
+.expand-icon .expanded {
+	display: none;
+}
+
+.expanded .expand-icon .expanded {
+	display: inline-block;
+}
+.expanded .expand-icon .collapsed {
+	display: none;
 }
 
 /*
@@ -242,29 +205,68 @@
 }
 
 /*
- List item with button on right side
+ List with multiline text
 */
 
-.list__item--fa-button-right .expand::before {
-	color: #ddd;
-	content: "\f107";
+.list__item--two-lines-max2.title {
+	overflow: hidden;
+	max-height: 40px;
+	line-height: 19px;
+	white-space: normal;
 }
-
-.list__item--fa-button-right.expanded .expand::before {
-	content: "\f106";
-}
-
-.list__item--fa-button-right .delete::before {
-	color: #444;
-	content: '\f00d';
-}
-
 .list__item--two-lines-max.title {
-	display: -webkit-box!important;
-	-webkit-line-clamp: 2!important;
-	-webkit-box-orient: vertical!important;
 	overflow: hidden!important;
 	max-height: 40px;
 	line-height: 19px;
-	text-overflow: ellipsis!important;
+	word-break:break-word;
+	xword-wrap: break-all;
+	xswhite-space: pre-line;
+}
+
+.list__item--two-lines-max.text-ellipsis.title::after {
+	content: "...";
+	position: absolute;
+	bottom: 0;
+	right: 30px;
+	padding: 0 1px 2px 15px;
+}
+
+.list__item--two-lines-max.text-ellipsis.title::after {
+	background-image: linear-gradient(to right, transparent, white, white);
+}
+
+.expanded .list__item--two-lines-max.text-ellipsis.title::after {
+	background-image: linear-gradient(to right, transparent, #f7f7f7, #f7f7f7);
+}
+.list__item--tappable:active .list__item--two-lines-max.text-ellipsis.title::after {
+	background-image: linear-gradient(to right, transparent, #d9d9d9, #d9d9d9);
+}
+
+.list__item.group .list__item--two-lines-max.text-ellipsis.title::after {
+	background-image: linear-gradient(to right, transparent, red, #d9d9d9);
+}
+
+.list__item--two-lines-max .text-ellipsis {
+	padding: 0 1px 2px 15px;
+	background-image: linear-gradient(to right, transparent, white, white);
+}
+
+.expanded .list__item--two-lines-max .text-ellipsis {
+	background-image: linear-gradient(to right, transparent, #f7f7f7, #f7f7f7);
+}
+.list__item--tappable:active .list__item--two-lines-max .text-ellipsis {
+	background-image: linear-gradient(to right, transparent, #d9d9d9, #d9d9d9);
+}
+
+.list__item.group .list__item--two-lines-max .text-ellipsis {
+	background-image: linear-gradient(to right, transparent, red, #d9d9d9);
+}
+
+.list-header-icon {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin-bottom: 3px;
+	vertical-align: middle;
+	fill: #444;
 }

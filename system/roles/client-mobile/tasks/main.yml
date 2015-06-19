@@ -199,8 +199,10 @@
 
 
 - name: Publish GIS.lab Mobile package
-  shell: mv {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/gislab-mobile/platforms/android/ant-build/*-debug.apk
-    /var/www/default/gislab_mobile.apk
+  # Cordova is currently not capable to build APK with correct file name in correct directory. It is changing from
+  # release to release (see: https://issues.apache.org/jira/browse/CB-7827)
+  shell: find {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/gislab-mobile -name '*-debug.apk' -type f
+    -exec mv '{}' /var/www/default/gislab_mobile.apk \;
   args:
     executable: /bin/bash
 

@@ -17,7 +17,7 @@
 		};
 		$scope.ui.toolbar = [
 			{
-				icon: 'ion-social-buffer',
+				icon: 'icon-layers',
 				page: 'pages/tools/layers.html',
 				persistent: true,
 				disabled: true,
@@ -27,12 +27,12 @@
 					}
 				},
 			}, {
-				icon: 'ion-android-color-palette',
+				icon: 'icon-legend',
 				page: 'pages/tools/legend.html',
 				persistent: true,
 				disabled: true
 			}, {
-				icon: 'ion-qr-scanner',
+				icon: 'icon-zoom-max',
 				toggle: false,
 				disabled: true,
 				callback: function() {
@@ -49,14 +49,14 @@
 					projectProvider.map.getView().fitExtent(projectProvider.config.project_extent, projectProvider.map.getSize());
 				}
 			}, {
-				icon: 'ion-location',
+				icon: 'icon-location',
 				disabled: true,
 				//toggle: true,
 				toggle: false,
 				callback: function() {
-					if (this.icon === 'ion-android-locate') {
+					if (this.icon === 'icon-location-target') {
 						this.activated = false;
-						this.icon = 'ion-location';
+						this.icon = 'icon-location';
 						locationService.deactivate(projectProvider.map);
 					} else {
 						if (!this.activated) {
@@ -64,23 +64,28 @@
 							locationService.setAutoPan(false);
 							locationService.activate(projectProvider.map);
 						} else {
-							this.icon = 'ion-android-locate';
+							this.icon = 'icon-location-target';
 							locationService.setAutoPan(true);
 						}
 					}
 				}
 			}, /*{
-				icon: 'ion-search'
+				icon: 'icon-base-layer',
+				disabled: false
 			}, {
-				icon: 'ion-information-circled'
+				icon: 'icon-lock',
+				disabled: false
 			}, {
-				faIcon:'fa-expand'
+				icon: 'icon-users',
+				disabled: false
 			}, {
-				icon: 'ion-edit',
-				page: 'pages/tools/drawings.html',
-				persistent: true,
-			}, */{
-				icon: 'ion-gear-b',
+				icon: 'icon-history',
+				disabled: false
+			}, {
+				icon: 'icon-menu',
+				disabled: false
+			},*/ {
+				icon: 'icon-settings',
 				page: 'pages/settings/settings.html',
 				disabled: false
 			}

@@ -8,24 +8,28 @@
 	<ons-carousel var="app.settings.carousel" class="main-panel-content" swipeable auto-scroll>
 		<ons-carousel-item class="panel-settings">
 			<ons-scroller style="height: 100%;">
-<!--				<ons-list>-->
-<!--					<ons-list-header>Server/Account</ons-list-header>-->
-<!--					<ons-list-item modifier="chevron"  ng-click="app.navigator.pushPage('pages/settings/server.html');">-->
-<!--						<div class="item-content" ng-bind="$storage.serverUrl"></div>-->
-<!--					</ons-list-item>-->
-<!--					<ons-list-header>Project</ons-list-header>-->
-<!--					<ons-list-item modifier="chevron" ng-bind="$storage.project" ng-click="app.navigator.pushPage('pages/settings/project.html');">-->
-<!--					</ons-list-item>-->
-<!--				</ons-list>-->
 				<ons-list>
-					<ons-list-item modifier="chevron"  ng-click="app.navigator.pushPage('pages/settings/server.html');">
-					Server/Account
+					<ons-list-item modifier="tappable" ng-click="app.navigator.pushPage('pages/settings/server.html');">
+						Server/Account
+						<div class="list-button-right">
+							<svg class="list-item-icon center-vertical">
+								<use xlink:href="#icon-arrow-right"></use>
+							</svg>
+						</div>
 					</ons-list-item>
-					<ons-list-item modifier="chevron" ng-click="app.navigator.pushPage('pages/settings/project.html');">
-					Project
+					<ons-list-item modifier="tappable" ng-click="app.navigator.pushPage('pages/settings/project.html');">
+						Project
+						<div class="list-button-right">
+							<svg class="list-item-icon center-vertical">
+								<use xlink:href="#icon-arrow-right"></use>
+							</svg>
+						</div>
 					</ons-list-item>
 					<ons-list-header>
-						<i class="fa fa-tablet"></i>Appearance
+						<svg class="list-header-icon">
+							<use xlink:href="#icon-phone"></use>
+						</svg>
+						Appearance
 					</ons-list-header>
 					<ons-list-item>
 						Panel Header<ons-switch modifier="list-item" ng-model="$storage.showHeader" ng-change="showHeaderChanged()"></ons-switch>
@@ -44,11 +48,21 @@
 			<ons-navigator var="app.navigator.about">
 				<ons-scroller style="height: 100%;">
 					<ons-list>
-						<ons-list-item modifier="chevron" ng-click="app.navigator.about.pushPage('pages/settings/about_project.html', { animation: 'slide' });">
-						Project
+						<ons-list-item modifier="tappable" ng-click="app.navigator.about.pushPage('pages/settings/about_project.html', { animation: 'slide' });">
+							Project
+							<div class="list-button-right">
+								<svg class="list-item-icon center-vertical">
+									<use xlink:href="#icon-arrow-right"></use>
+								</svg>
+							</div>
 						</ons-list-item>
-						<ons-list-item modifier="chevron" ng-click="app.navigator.about.pushPage('pages/settings/about_gislab.html', { animation: 'slide' });">
-						GIS.lab
+						<ons-list-item modifier="tappable" ng-click="app.navigator.about.pushPage('pages/settings/about_gislab.html', { animation: 'slide' });">
+							GIS.lab
+							<div class="list-button-right">
+								<svg class="list-item-icon center-vertical">
+									<use xlink:href="#icon-arrow-right"></use>
+								</svg>
+							</div>
 						</ons-list-item>
 					</ons-list>
 				</ons-scroller>
@@ -63,14 +77,18 @@
 			<label class="tab-bar__item border-right">
 				<input type="radio" name="settings-tab-radio" value="0" ng-model="ui.tools_settings_tab">
 				<button class="tab-bar__button">
-					<i class="tab-bar__icon ion-android-options"></i>
+					<svg class="icon">
+						<use xlink:href="#icon-options"></use>
+					</svg>
 				</button>
 			</label>
 
 			<label class="tab-bar__item">
 				<input type="radio" name="settings-tab-radio" value="1" ng-model="ui.tools_settings_tab">
 				<button class="tab-bar__button">
-					<i class="tab-bar__icon ion-information-circled"></i>
+					<svg class="icon">
+						<use xlink:href="#icon-help"></use>
+					</svg>
 				</button>
 			</label>
 		</div>

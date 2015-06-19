@@ -254,4 +254,66 @@
 			}
 		}
 	}
+
+	function glCheckTreeView2() {
+		return {
+			restrict: 'A',
+			scope: {
+				rootNodes: '=glCheckTreeView',
+				selectAttribute: '@glTreeSelectedAttribute',
+				childrenAttribute: '@glTreeChildrenAttribute',
+				changeHandler: '&glTreeViewChangeHandler'
+			},
+			transclude: true,
+			link: function(scope, iElem, iAttrs, ctrl, transclude) {
+				transclude(scope, function(clone) {
+					iElem.append(clone);
+				});
+				scope.updateGroupsCheckState();
+			},
+			controller: ['$scope', '$timeout', function($scope, $timeout) {
+				$scope.treeDepth = 0;
+				$scope.isGroup = function(node) {
+					return node.hasOwnProperty($scope.childrenAttribute);
+				};
+				$scope.children = function(node) {
+					return node[$scope.childrenAttribute];
+				};
+
+				$scope.nodeSelected = function(node, isSelected) {
+					$scope.updateParentCheckState(node);
+					$scope.changeHandler({node: node});
+				};
+				$scope.groupCheckState = function(node) {
+					return $scope.children(node).some(function(child) {
+						if (child[$scope.selectAttribute] === true) {
+							return true;
+						}
+					});
+				};
+				$scope.updateParentCheckState = function(node) {
+					var parent = this.getParentNode(node);
+					while(parent) {
+						parent[$scope.selectAttribute] = $scope.groupCheckState(parent);
+						parent = this.getParentNode(parent);
+					}
+				};
+				$scope.updateGroupsCheckState = function() {
+					$timeout(function() {
+						var fn = function(layers) {
+							layers.forEach(function(node) {
+								var children = $scope.children(node);
+								if (children) {
+									fn(children);
+									node[$scope.selectAttribute] = $scope.groupCheckState(node);
+								}
+							});
+						}
+						fn($scope.rootNodes);
+					});
+				};
+				$scope.rootNodes.updateGroupsCheckState = $scope.updateGroupsCheckState;
+			}]
+		}
+	}
 })();

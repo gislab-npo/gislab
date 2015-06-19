@@ -1,14 +1,22 @@
 <ons-page ng-controller="ProjectSettingsController" class="settings project-settings">
 	<ons-toolbar fixed-style>
-		<div class="left"><ons-back-button></ons-back-button></div>
+		<div class="left">
+			<ons-toolbar-button class="backbutton" ng-click="app.navigator.popPage();">
+				<svg class="toolbar-button-icon">
+					<use xlink:href="#icon-arrow-left"></use>
+				</svg>
+			</ons-toolbar-button>
+		</div>
 		<div class="center">Project</div>
-<!--		<div class="right"><ons-toolbar-button ng-click=""><i class="fa fa-history"></i></ons-toolbar-button></div>-->
 	</ons-toolbar>
 	<ons-scroller style="width: 100%; height: {{ screenHeight-64 }}px;">
 
 		<ons-list class="gl-tree" ng-controller="AccordionController">
 			<ons-list-header>
-			<i class="fa fa-pencil"></i>Actual
+				<svg class="list-header-icon">
+					<use xlink:href="#icon-pen"></use>
+				</svg>
+				Actual
 			</ons-list-header>
 			<ons-list-item class="textarea-input">
 				<div style="width: 100%;">
@@ -17,19 +25,22 @@
 				</div>
 			</ons-list-item>
 			<ons-list-header>
-				<i class="fa fa-bars"></i>My projects
+				<svg class="list-header-icon">
+					<use xlink:href="#icon-menu"></use>
+				</svg>
+				My projects
 			</ons-list-header>
 			<div ng-repeat="project in userProjects">
-				<ons-list-item  modifier="tappable" class="list__item--fa-button-right list__item--accordion" ng-class="{expanded: isAccordionShown(project)}">
-					<ons-row>
-						<ons-col class="left-center" ng-click="$storage.project=project.project">
-							<div class="title list__item--two-lines-max"><span>{{ project.title }}</span></div>
-						</ons-col>
-						<ons-col width="30px">
-							<div class="list-button expand" ng-click="toggleAccordion(project)">&nbsp;</div>
-							<div style="display: inline-block;"></div>
-						</ons-col>
-					</ons-row>
+				<ons-list-item  modifier="tappable" class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}">
+					<div class="left-center title list__item--two-lines-max" ng-click="$storage.project=project.project">
+						<span>{{ project.title }}</span>
+					</div>
+					<div class="list-button-right expand" ng-click="toggleAccordion(project)">
+						<svg class="expand-icon">
+							<use class="expanded" xlink:href="#icon-arrow-up"></use>
+							<use class="collapsed" xlink:href="#icon-arrow-down"></use>
+						</svg>
+					</div>
 				</ons-list-item>
 				<ons-list-item class="list__item--accordion-content list__item--info-content" ng-show="isAccordionShown(project)" gl-fixed-height>
 					<div>
@@ -48,8 +59,11 @@
 	<div class="toolbar bottom-toolbar">
 		<ons-row>
 			<ons-col>
-				<ons-toolbar-button ng-click="app.navigator.pushPage('recent_projects.html')">
-					<i class="icon fa fa-history"></i>Recent projects
+				<ons-toolbar-button class="toolbar-button--icon-text" ng-click="app.navigator.pushPage('recent_projects.html')">
+					<svg class="toolbar-text-button-icon">
+						<use xlink:href="#icon-history"></use>
+					</svg>
+					Recent projects
 				</ons-toolbar-button>
 			</ons-col>
 		</ons-row>
@@ -58,21 +72,28 @@
 	<ons-template id="recent_projects.html">
 		<ons-page class="settings project-settings">
 			<ons-toolbar fixed-style>
-				<div class="left"><ons-back-button></ons-back-button></div>
+				<div class="left">
+					<ons-toolbar-button class="backbutton" ng-click="app.navigator.popPage();">
+						<svg class="toolbar-button-icon">
+							<use xlink:href="#icon-arrow-left"></use>
+						</svg>
+					</ons-toolbar-button>
+				</div>
 				<div class="center">Recently used projects</div>
 			</ons-toolbar>
 			<ons-list class="gl-tree" ng-controller="AccordionController">
 				<div ng-repeat="project in $storage.recentProjects">
-					<ons-list-item  modifier="tappable" class="list__item--fa-button-right list__item--accordion" ng-class="{expanded: isAccordionShown(project)}">
-						<ons-row>
-							<ons-col class="left-center" ng-click="$storage.project=project.project;app.navigator.popPage()">
-								<div class="title list__item--two-lines-max"><span>{{ project.project }}</span></div>
-							</ons-col>
-							<ons-col width="30px">
-								<div class="list-button expand" ng-click="toggleAccordion(project)">&nbsp;</div>
-								<div style="display: inline-block;"></div>
-							</ons-col>
-						</ons-row>
+					<ons-list-item  modifier="tappable" class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}">
+							<div class="left-center title list__item--two-lines-max"
+									ng-click="$storage.project=project.project;app.navigator.popPage()">
+								<span>{{ project.project }}</span>
+							</div>
+							<div class="list-button-right expand" ng-click="toggleAccordion(project)">
+								<svg class="expand-icon">
+									<use class="expanded" xlink:href="#icon-arrow-up"></use>
+									<use class="collapsed" xlink:href="#icon-arrow-down"></use>
+								</svg>
+							</div>
 					</ons-list-item>
 					<ons-list-item class="list__item--accordion-content list__item--info-content" ng-show="isAccordionShown(project)" gl-fixed-height>
 						<div>
