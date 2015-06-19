@@ -13,6 +13,9 @@
 # Ignore Ansible messages
 :syslogtag, contains, "ansible-" ~
 
+# Ignore certain DHCP server messages
+:msg, contains, "DHCPINFORM from" ~
+
 
 *.*;kern.none			-/storage/log/syslog
 kern.*				-/storage/log/kern.log
