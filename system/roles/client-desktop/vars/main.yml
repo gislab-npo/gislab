@@ -39,8 +39,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - alsa-base
   - alsa-utils
   - aptitude
-  - avahi-autoipd
-  - avahi-daemon
   - ca-certificates
   - catfish
   - cups
