@@ -10,6 +10,8 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
+    <allow-navigation href="http://*/*" />
+    <allow-navigation href="https://*/*" />
     <preference name="Fullscreen" value="true" />
     <preference name="KeepRunning" value="true"/>
     <preference name="SplashScreen" value="screen" />
