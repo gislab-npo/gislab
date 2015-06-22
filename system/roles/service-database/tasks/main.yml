@@ -77,7 +77,9 @@
 
 # PostgreSQL tuning
 - name: Fine tune database configuration
-  command: pgtune -T Mixed -i /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf -o /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
+  command: pgtune -T Mixed -c 200
+    -i /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
+    -o /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
   notify:
     - service postgresql restart
 

@@ -3,7 +3,7 @@
 set -e
 
 source /etc/gislab_version
-source $GISLAB_ROOT/functions.sh
+source $GISLAB_ROOT/system/functions.sh
 
 
 # require root privileges
@@ -54,6 +54,7 @@ fi
 function pre_chroot {
 	chroot $GISLAB_INSTALL_CLIENT_ROOT mount -t devpts -o rw,noexec,nosuid,gid=5,mode=620 devpts /dev/pts
 	chroot $GISLAB_INSTALL_CLIENT_ROOT mount -t proc proc /proc
+	mount -o bind /storage/cache/packages/apt $GISLAB_INSTALL_CLIENT_ROOT/var/cache/apt
 
 	# policy-rc.d
 	cat <<EOF > $GISLAB_INSTALL_CLIENT_ROOT/usr/sbin/policy-rc.d
@@ -86,6 +87,7 @@ function post_chroot {
 	
 	chroot $GISLAB_INSTALL_CLIENT_ROOT umount /dev/pts
 	chroot $GISLAB_INSTALL_CLIENT_ROOT umount /proc
+	umount $GISLAB_INSTALL_CLIENT_ROOT/var/cache/apt
 
 	rm -f $GISLAB_INSTALL_CLIENT_ROOT/usr/sbin/policy-rc.d
 	mv -f $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon.real $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon

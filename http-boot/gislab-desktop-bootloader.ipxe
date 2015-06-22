@@ -4,11 +4,9 @@
 
 # How to compile
 # --------------
-# $ cd src
-# $ make EMBED=<GIS.lab source code tree>/http-boot/boot-gislab.ipxe
-# $ cp bin/ipxe.iso <GIS.lab source code tree>/http-boot/
-# $ cd <GIS.lab source code tree>/http-boot/gislab-client-loader.iso
-# $ gzip gislab-client-loader.iso
+# $ cd <iPXE src>/src
+# $ make EMBED=<GIS.lab src>/http-boot/gislab-desktop-bootloader.ipxe
+# $ cp bin/ipxe.iso <GIS.lab src>/http-boot/gislab-desktop-bootloader.ipxe
 
 
 ### MENU
@@ -30,7 +28,7 @@ choose --default auto --timeout 5000 target && goto ${target}
 dhcp
 route
 sleep 3
-chain http://boot.gis.lab/i386?mac=${net0/mac}
+chain http://boot.gis.lab/gislab_desktop.init?mac=${net0/mac}
 
 :manual
 echo -n GIS.lab network [example: 192.168.50]: && read gnetwork
@@ -42,7 +40,7 @@ set net0/gateway ${gnetwork}.5
 set dns ${gnetwork}.5
 route
 sleep 3
-chain http://${gnetwork}.5/i386?mac=${net0/mac}
+chain http://${gnetwork}.5/gislab_desktop.init?mac=${net0/mac}
 
 
 ### UTILITIES

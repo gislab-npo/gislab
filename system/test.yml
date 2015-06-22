@@ -41,14 +41,8 @@
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
     }
     - {
-      role: client-worker-test,
-      tags: ['client-worker-test'],
-      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
-    }
-    - {
       role: client-desktop-test,
       tags: ['client-desktop-test'],
-      when: "'{{ GISLAB_SUITE }}' in ('office', 'lab')"
     }
     - { role: account-admin-test, tags: ['account-admin-test'] }
     - {

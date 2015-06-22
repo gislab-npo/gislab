@@ -68,6 +68,14 @@ trap clean_up SIGHUP SIGINT SIGKILL
 
 # load original ISO image content
 sudo mount -o loop $SRC_IMAGE $MOUNT_DIR
+
+# check if using valid Ubuntu ISO image file
+if [ ! -f "$MOUNT_DIR/install/vmlinuz" ]; then
+	echo "Invalid Ubuntu ISO image file. Ubuntu 12.04 Server ISO is required."
+	umount $MOUNT_DIR
+	exit 1
+fi
+
 rsync -a $MOUNT_DIR/ $ROOT_DIR/
 umount $MOUNT_DIR
 

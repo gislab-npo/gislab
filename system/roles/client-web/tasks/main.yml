@@ -53,7 +53,7 @@
 - name: Install GIS.lab Web requirements
   pip: requirements={{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web/requirements.txt
        virtualenv=/usr/local/python-virtualenvs/gislab-web
-       extra_args="--download-cache=/var/cache/pip"
+       extra_args="--download-cache=/storage/cache/packages/pip"
        virtualenv_site_packages=yes
        state=present
   notify:

@@ -4,14 +4,17 @@
 #
 # Run basic server configuration.
 
+
 # FACTS
 - name: Detect if it is possible to get GIS.lab version from Git
   local_action: shell git describe 2> /dev/null || echo "GIT NOT AVAILABLE"
+  sudo: no
   register: gislab_version_git_status
   changed_when: False
 
 - name: Detect GIS.lab version from Git
   local_action: shell git describe
+  sudo: no
   register: gislab_version
   when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
 
@@ -29,10 +32,6 @@
 - name: Set unique string for this installation
   set_fact:
     GISLAB_INSTALL_UNIQUE_STRING: "{{ gislab_install_unique_string.stdout }}"
-
-- name: Set temporary directory for this installation
-  set_fact:
-    GISLAB_INSTALL_TMP_ROOT: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
 
 - name: Detect GIS.lab unique ID
   set_fact:
@@ -58,13 +57,9 @@
   set_fact:
     GISLAB_ROOT: /opt/gislab
 
-- name: Set GIS.lab worker installation root directory
+- name: Set temporary directory for this installation
   set_fact:
-    GISLAB_INSTALL_WORKER_ROOT: "{{ GISLAB_ROOT }}/client-worker/root"
-
-- name: Set GIS.lab worker image directory
-  set_fact:
-    GISLAB_INSTALL_WORKER_IMAGE: "{{ GISLAB_ROOT }}/client-worker/image"
+    GISLAB_INSTALL_TMP_ROOT: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
 
 - name: Set GIS.lab client installation root directory
   set_fact:
@@ -106,7 +101,7 @@
 ### CAPABILITIES
 - name: Detect capability to provide VPN service
   # tun device can be missing on systems running in container
-  stat: path=/dev/net/tuns
+  stat: path=/dev/net/tun
   register: cap_tun_device_status
   changed_when: False
 
@@ -135,17 +130,16 @@
     GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS }}"\n
     GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY }}"\n
     GISLAB_SERVER_EMAIL_RELAY_SERVER="{{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}"\n
-    GISLAB_WORKERS_COUNT="{{ GISLAB_WORKERS_COUNT }}"\n
+    GISLAB_CLIENT_ARCHITECTURE="{{ GISLAB_CLIENT_ARCHITECTURE }}"\n
     GISLAB_CLIENT_LANGUAGES="{% if GISLAB_CLIENT_LANGUAGES %}{{ GISLAB_CLIENT_LANGUAGES|join(",") }}{% else %}{% endif %}"\n
     GISLAB_CLIENT_KEYBOARDS="{% if GISLAB_CLIENT_KEYBOARDS %}{{ GISLAB_CLIENT_KEYBOARDS|keyboard_layouts }}{% else %}{% endif %}"\n
     GISLAB_CLIENT_VIRTUALBOX_SUPPORT="{{ GISLAB_CLIENT_VIRTUALBOX_SUPPORT }}"\n
     GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO="{{ GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO }}"\n
-    GISLAB_CLIENT_WORKER_ENABLED="{{ GISLAB_CLIENT_WORKER_ENABLED }}"\n
+    GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY="{{ GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY }}"\n
     GISLAB_VERSION="{{ GISLAB_VERSION }}"\n
     GISLAB_SERVER_GUI_CONSOLE="{{ GISLAB_SERVER_GUI_CONSOLE }}"\n
     GISLAB_DEBUG_INSTALL="{{ GISLAB_DEBUG_INSTALL }}"\n
     GISLAB_DEBUG_SERVICES="{{ GISLAB_DEBUG_SERVICES }}"\n
-    GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT="{{ GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT }}"\n
     GISLAB_APT_CUSTOM_REPOSITORIES="{% if GISLAB_APT_CUSTOM_REPOSITORIES %}{{ GISLAB_APT_CUSTOM_REPOSITORIES|join(",") }}{% else %}{% endif %}"\n
     GISLAB_INSTALL_DATETIME="{{ GISLAB_INSTALL_DATETIME }}"\n
     GISLAB_PROVISIONING_USER="{{ GISLAB_PROVISIONING_USER }}"\n
@@ -158,10 +152,15 @@
   with_items:
     - "{{ GISLAB_ROOT }}"
     - /etc/gislab
-    - /usr/share/gislab
     - /var/lib/gislab
-    - /usr/local/python-virtualenvs
+    - /opt/gislab
+    - /opt/gislab/system
     - /storage/applications
+    - /storage/cache
+    - /storage/cache/packages/apt
+    - /storage/cache/packages/tar
+    - /storage/cache/packages/pip
+    - /usr/local/python-virtualenvs
     - "{{ GISLAB_INSTALL_TMP_ROOT }}"
 
 - name: Set safe permissions for /etc/gislab directory
@@ -238,12 +237,15 @@
   template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
 
 - name: Move apt cache to '/storage' directory
-  shell: mv -f /var/cache/apt /storage/applications/apt
+  shell: mv -f /var/cache/apt/* /storage/cache/packages/apt/
   args:
-    creates: /storage/applications/apt/pkgcache.bin
+    creates: /storage/cache/packages/apt/pkgcache.bin
 
-- name: Create symlink to apt in '/storage' directory
-  file: src=/storage/applications/apt dest=/var/cache/apt state=link
+- name: Deactivate original apt cache
+  file: dest=/var/cache/apt state=absent
+
+- name: Activate shared apt cache
+  file: src=/storage/cache/packages/apt dest=/var/cache/apt state=link
 
 
 - name: Update apt cache
@@ -274,6 +276,7 @@
     - python-pip
     - python-psycopg2
     - python-virtualenv
+    - pssh
     - tmux
     - vim
 
@@ -303,8 +306,8 @@
 
 
 # GIS.lab administrator tools
-- name: Install GIS.lab Shell library
-  copy: src=functions.sh dest={{ GISLAB_ROOT }}/functions.sh mode=0644
+- name: Install GIS.lab shell functions library
+  copy: src=functions.sh dest={{ GISLAB_ROOT }}/system/functions.sh mode=0644
 
 
 - name: Re-create Python virtual environment for GIS.lab Python library

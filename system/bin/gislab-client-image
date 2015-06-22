@@ -3,7 +3,7 @@
 set -e
 
 source /etc/gislab_version
-source $GISLAB_ROOT/functions.sh
+source $GISLAB_ROOT/system/functions.sh
 
 
 # require root privileges
@@ -37,14 +37,14 @@ if [ ! -f "$GISLAB_INSTALL_CLIENT_ROOT/etc/gislab_version" ]; then
 fi
 
 
-TFTP_DIR=/var/lib/tftpboot/gislab/i386
-IMAGE_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/i386.img
+TFTP_DIR=/var/lib/tftpboot/gislab
+IMAGE_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/gislab.img
 IMAGE_VERSION=$(date +%s)
-IMAGE_VERSION_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/gislab_client_desktop.version
+IMAGE_VERSION_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/gislab_desktop.version
 
 
 # install image version file in to client chroot
-echo "$IMAGE_VERSION" > $GISLAB_INSTALL_CLIENT_ROOT/etc/gislab_client_desktop.version
+echo "$IMAGE_VERSION" > $GISLAB_INSTALL_CLIENT_ROOT/etc/gislab_desktop.version
 
 
 # create directory for image

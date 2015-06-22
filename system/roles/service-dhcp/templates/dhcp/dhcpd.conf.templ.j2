@@ -1,7 +1,6 @@
 # IP ranges of GIS.lab network
 # ----------------------------
 # 5         : server
-# 10 - 49   : workers
 # 50 - 149  : GIS.lab clients
 # 150 - 250 : third party clients
 # 251       : GIS.lab client HTTP boot
@@ -41,10 +40,9 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         option domain-name-servers {{ GISLAB_NETWORK_SERVER_IP }};
         option broadcast-address {{ GISLAB_NETWORK }}.255;
         option subnet-mask 255.255.255.0;
-        option root-path "/opt/gislab/i386";
         option gislab-unique-id "{{ GISLAB_UNIQUE_ID }}";
         if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
-            filename "/gislab/i386/pxelinux.0";
+            filename "/gislab/pxelinux.0";
         }
     }
 
@@ -59,10 +57,9 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         option domain-name-servers {{ GISLAB_NETWORK_SERVER_IP }};
         option broadcast-address {{ GISLAB_NETWORK }}.255;
         option subnet-mask 255.255.255.0;
-        option root-path "/opt/gislab/i386";
         option gislab-unique-id "{{ GISLAB_UNIQUE_ID }}";
         if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
-            filename "/gislab/i386/pxelinux.0";
+            filename "/gislab/pxelinux.0";
         }
     }
 }

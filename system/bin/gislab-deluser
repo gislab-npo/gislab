@@ -2,7 +2,7 @@
 
 set -e
 
-source $GISLAB_ROOT/functions.sh
+source $GISLAB_ROOT/system/functions.sh
 
 
 # require root privileges
@@ -88,7 +88,7 @@ ldapdeleteuser $GISLAB_USER
 
 
 # run deluser hook
-/usr/share/gislab/account/hooks/deluser.sh $GISLAB_USER
+/opt/gislab/system/account/hooks/deluser.sh $GISLAB_USER
 
 
 # final message

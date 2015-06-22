@@ -28,19 +28,24 @@
   file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory
   with_items:
     - /etc/gislab
-    - /usr/share/gislab
+    - /opt/gislab
+    - /opt/gislab/system
 
 - name: Set safe permissions for /etc/gislab directory
   file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab state=directory owner=root group=root mode=0700
 
 
+#
+## INITIAL SYSTEM INSTALLATION ########################################################################################
+#
+
 # Debootstrap
 - name: Install base system (without apt proxy)
-  command: debootstrap --arch i386 {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENT_ROOT }} http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
+  command: debootstrap --arch {{ GISLAB_CLIENT_ARCHITECTURE }} {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENT_ROOT }} http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
   when: GISLAB_APT_HTTP_PROXY|default(None) == None
 
 - name: Install base system (with apt proxy)
-  command: debootstrap --arch i386 {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ GISLAB_APT_HTTP_PROXY }}/{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
+  command: debootstrap --arch {{ GISLAB_CLIENT_ARCHITECTURE }} {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ GISLAB_APT_HTTP_PROXY }}/{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
   when: GISLAB_APT_HTTP_PROXY|default(None) != None
 
 
@@ -57,14 +62,6 @@
   with_items:
     - /etc/timezone
     - /etc/localtime
-
-# Modules
-- name: Default kernel modules
-  lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/modules line=lp state=present
-
-# root password
-- name: Lock root password
-  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} passwd -l root
 
 
 # Network configuration
@@ -92,13 +89,30 @@
     - touch {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/resolvconf/resolv.conf.d/tail
 
 
-# Apt
-- name: Purge apt configuration directory
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt state=absent
+# fstab
+- name: Configure mount points
+  template: src=fstab/fstab.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/fstab
 
-- name: Copy apt configuration from server
-  command: cp -a /etc/apt {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/
+- name: Divert /etc/mtab and point it to /proc/mounts
+  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}
+  with_items:
+    - dpkg-divert --add --rename --divert /etc/mtab.real /etc/mtab
+    - ln -sf /proc/mounts /etc/mtab
 
+
+# root password
+- name: Lock root password
+  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} passwd -l root
+
+
+# version
+- name: Install '/etc/gislab_version' file
+  command: cp /etc/gislab_version {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab_version
+
+
+#
+## INSTALLATION #######################################################################################################
+#
 
 # Mount necessary filesystems in chroot
 - name: Mount /dev/pts and /proc
@@ -106,6 +120,29 @@
   with_items:
     - { src: "devpts", dest: "/dev/pts", opts: "-t devpts -o rw,noexec,nosuid,gid=5,mode=620" }
     - { src: "proc", dest: "/proc", opts: "-t proc" }
+
+
+# apt
+- name: Purge apt configuration directory
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt state=absent
+
+- name: Copy apt configuration from server
+  command: cp -a /etc/apt {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/
+
+
+- name: Remove debian packages cached during debootstrap
+  command: rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt/archives/*.deb
+
+- name: Activate shared apt cache
+  command: mount -o bind /storage/cache/packages/apt {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt
+
+
+# Shared packages cache
+- name: Create mount point for shared packages cache
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/storage/cache/packages state=directory recurse=yes
+
+- name: Activate shared packages cache
+  command: mount -o bind /storage/cache/packages {{ GISLAB_INSTALL_CLIENT_ROOT }}/storage/cache/packages
 
 
 # Daemons handling
@@ -140,17 +177,25 @@
   args:
     executable: /bin/bash
 
-- name: Install GIS.lab client default packages
+- name: Install GIS.lab client base packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DEFAULT|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_BASE|join(' ') }}"
   args:
     executable: /bin/bash
 
 - name: Install GIS.lab client desktop packages
   shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP|join(' ') }}"
+  args:
+    executable: /bin/bash
+  when: GISLAB_SUITE in ('office', 'lab')
+
+- name: Install GIS.lab client office packages
+  shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE|join(' ') }}"
   args:
     executable: /bin/bash
+  when: GISLAB_SUITE in ('office', 'lab')
 
 - name: Install GIS.lab client GIS packages
   shell: "export DEBIAN_FRONTEND=noninteractive
@@ -159,16 +204,12 @@
     executable: /bin/bash
   when: GISLAB_SUITE == 'lab'
 
-- name: Install GIS development packages
+- name: Install OWS worker packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DEVELOPMENT|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_WORKER|join(' ') }}"
   args:
     executable: /bin/bash
-  when: GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT
-
-- name: Set more permissive mode for PTRACE (do not limit PTRACE only to direct child processes)
-  lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/sysctl.d/10-ptrace.conf line="kernel.yama.ptrace_scope = 0" state=present
-  when: GISLAB_CLIENT_GIS_DEVELOPMENT_SUPPORT
+  when: GISLAB_SUITE in ('server', 'lab')
 
 
 # Language support
@@ -176,45 +217,37 @@
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install language-pack-{{ item }} 2>/dev/null || echo 'LANGUAGE DOES NOT EXIST'"
   with_items: GISLAB_CLIENT_LANGUAGES
-  when: GISLAB_CLIENT_LANGUAGES|default(None) != None
+  when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 - name: Install language support for Firefox
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install firefox-locale-{{ item }} 2>/dev/null || echo 'LANGUAGE DOES NOT EXIST'"
   with_items: GISLAB_CLIENT_LANGUAGES
-  when: GISLAB_CLIENT_LANGUAGES|default(None) != None
+  when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 - name: Install language support for Libreoffice
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install libreoffice-l10n-{{ item }} 2>/dev/null || echo 'LANGUAGE DOES NOT EXIST'"
   with_items: GISLAB_CLIENT_LANGUAGES
-  when: GISLAB_CLIENT_LANGUAGES|default(None) != None
+  when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 - name: Install language support for dictionary
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install myspell-{{ item }} 2>/dev/null || echo 'LANGUAGE DOES NOT EXIST'"
   with_items: GISLAB_CLIENT_LANGUAGES
-  when: GISLAB_CLIENT_LANGUAGES|default(None) != None
+  when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 - name: Install language support for thesaurus
   shell: "export DEBIAN_FRONTEND=noninteractive
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get {{ apt_get_opts }} install mythes-{{ item }} 2>/dev/null || echo 'LANGUAGE DOES NOT EXIST'"
   with_items: GISLAB_CLIENT_LANGUAGES
-  when: GISLAB_CLIENT_LANGUAGES|default(None) != None
-
-
-# Remove not needed packages
-- name: Remove packages
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}"
-  args:
-    executable: /bin/bash
-  with_items:
-    - apt-get --assume-yes purge {{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}
-    - apt-get --assume-yes autoremove
+  when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 
 # Install kernel
+- name: Default kernel modules
+  lineinfile: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/modules line=lp state=present
+
 - name: Create configuration file for kernel setup
   template: src=kernel/kernel-img.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/kernel-img.conf
 
@@ -224,52 +257,11 @@
   args:
     executable: /bin/bash
 
-    
-# Initramfs-tools and init
-- name: Create directories for initramfs-tools
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory recurse=yes
-  with_items:
-    - /usr/share/initramfs-tools/conf.d
-    - /usr/share/initramfs-tools/hooks
-    - /usr/share/initramfs-tools/scripts/init-bottom
-    - /usr/share/initramfs-tools/scripts/init-premount
-    - /usr/share/initramfs-tools/scripts/local-top
-
-- name: Configure initramfs-tools
-  template: src=initramfs-tools/conf.d/gislab.j2
-            dest={{ GISLAB_INSTALL_CLIENT_ROOT}}/usr/share/initramfs-tools/conf.d/gislab
-            mode=0644
-
-- name: Install initramfs-tools hooks and scripts
-  copy: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode={{ item.mode }}
-  with_items:
-    - { src: "static/initramfs-tools/hooks/gislab", dest: "/usr/share/initramfs-tools/hooks/gislab", mode: "0755" }
-    - { src: "static/initramfs-tools/hooks/udhcp", dest: "/usr/share/initramfs-tools/hooks/udhcp", mode: "0755" }
-    - { src: "static/initramfs-tools/scripts/init-bottom/gislab", dest: "/usr/share/initramfs-tools/scripts/init-bottom/gislab", mode: "0755" }
-    - { src: "static/initramfs-tools/scripts/local-top/nbd_gislab", dest: "/usr/share/initramfs-tools/scripts/local-top/nbd_gislab",  mode: "0755" }
-
-- name: Install uDHCP client script
-  template: src=initramfs-tools/scripts/init-premount/udhcp.j2
-            dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/initramfs-tools/scripts/init-premount/udhcp
-            mode=0755
-
-- name: Install system init script
-  copy: src=static/init/init-gislab dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/init-gislab mode=0755
-
-- name: Install GIS.lab init script
-  copy: src=static/init/gislab-init.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/gislab-init.sh mode=0755
-
-- name: Configure GIS.lab client service
-  template: src=init/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/gislab.conf mode=0644
-
-- name: Update initramfs
-  shell: "chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} update-initramfs -u"
-
 
 # Install VirtualBox Guest additions.
 # Latest kernel supported by VirtualBox Guest additions on Ubuntu 12.04 is 3.8
 # else install VirtualBox additions from Ubuntu repository - could not match version used on client
-# for manual installation run: $ dkms install -m virtualbox-guest/<vbox-version> -k <kernel-version>/i386
+# for manual installation run: $ dkms install -m virtualbox-guest/<vbox-version> -k <kernel-version>/<ARCH>
 
 - name: Install build-essential package if VirtualBox Guest additions are going to be build from ISO file
   shell: "export DEBIAN_FRONTEND=noninteractive
@@ -298,7 +290,7 @@
         and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
 
 - name: Install VirtualBox Guest additions from ISO file
-  shell: "export BUILD_TARGET_ARCH=x86
+  shell: "if [ '{{ GISLAB_CLIENT_ARCHITECTURE }}' == 'amd64' ]; then export BUILD_TARGET_ARCH=amd64; else export BUILD_TARGET_ARCH=x86; fi
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash /tmp/virtualbox/mnt/VBoxLinuxAdditions.run | tee /dev/null"
   args:
     executable: /bin/bash
@@ -317,7 +309,7 @@
 
 
 - name: Install VirtualBox Guest additions from repository
-  shell: "export BUILD_TARGET_ARCH=x86
+  shell: "if [ '{{ GISLAB_CLIENT_ARCHITECTURE }}' == 'amd64' ]; then export BUILD_TARGET_ARCH=amd64; else export BUILD_TARGET_ARCH=x86; fi
     && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get --no-install-recommends {{ apt_get_opts }} install {{ item }}"
   with_items:
     - virtualbox-guest-dkms virtualbox-guest-x11 virtualbox-guest-utils
@@ -326,25 +318,30 @@
   when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
         and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) == None
 
-
-# fstab
-- name: Configure mount points
-  template: src=fstab/fstab.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/fstab
-
-- name: Divert /etc/mtab and point it to /proc/mounts
-  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}
+        
+# Remove not needed packages
+- name: Remove packages
+  shell: "export DEBIAN_FRONTEND=noninteractive
+    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} {{ item }}"
+  args:
+    executable: /bin/bash
   with_items:
-    - dpkg-divert --add --rename --divert /etc/mtab.real /etc/mtab
-    - ln -sf /proc/mounts /etc/mtab
+    - apt-get --assume-yes purge {{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}
+    - apt-get --assume-yes autoremove
 
+
+#
+## CONFIGURATION ######################################################################################################
+#
 
 # NFS
 - name: Configure NFS
   template: src=nfs/idmapd.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/idmapd.conf
 
-- name: Create mount points for shared directories
+- name: Create mount points for home and shared directories
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory
   with_items:
+    - /mnt/home
     - /mnt/repository
     - /mnt/barrel
     - /mnt/publish
@@ -386,85 +383,36 @@
 - name: Install syslog configuration
   template: src=syslog/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/rsyslog.d/gislab.conf
 
-  
-# gislab version
-- name: Install '/etc/gislab_version' file
-  command: cp /etc/gislab_version {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab_version
 
+# Lightdm
+- name: Install Lightdm configuration file
+  template: src=lightdm/conf/lightdm.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/lightdm/lightdm.conf
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
-# GIS.lab client tools
-- name: Install GIS.lab shell functions library
-  copy: src=functions.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/ mode=0644
-
-- name: Install GIS.lab client tools
-  copy: src=static/gislab-client-tools/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/local/bin/ mode=0755
-
-
-# GIS.lab client desktop customizations
-- name: Configure default home directories structure
-  template: src=desktop/home-directories/user-dirs.defaults.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/user-dirs.defaults
-
-- name: Install XFCE desktop configuration file
-  template: src=desktop/xfce/xfce4-desktop.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-
-- name: Install XFCE panel configuration file
-  template: src=desktop/panel/default.xml dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/panel/default.xml
-
-- name: Install keyboard layouts configuration file
-  template: src=desktop/keyboard-layouts/keyboard-layout.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml
-
-- name: Install Conky configuration
-  template: src=desktop/conky/conky.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/conky/conky.conf
-
-
-- name: Install XFCE menu configuration file
-  copy: src=static/desktop/menu/xfce-applications.menu dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/menus/xfce-applications.menu
-
-- name: Install desktop directories files
-  copy: src=static/desktop/menu/directories/  dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/desktop-directories/
-
-- name: Install office applications files
-  copy: src=static/desktop/menu/applications/office/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
-
-- name: Install lab applications files
-  copy: src=static/desktop/menu/applications/lab/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
-  when: GISLAB_SUITE == 'lab'
-
-
-# Xubuntu Greybird theme originally provides very thin window borders, which are very
-# difficult to grab and resize. This is fixed version of Greybird (taken from OSGeo Live CD)
-- name: Install theme
-  copy: src=static/desktop/themes/greybird/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/themes/Greybird/xfwm4/
-
-- name: Install wallpapers
-  copy: src=static/desktop/wallpapers/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xfce4/backdrops/
-
-- name: Install icons
-  copy: src=static/desktop/icons/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/pixmaps/
-
-
-# Start Gnome Keyring also in XFCE session
-- name: Fix gnome keyring
-  command: sed -i "s/OnlyShowIn=GNOME;Unity;/OnlyShowIn=GNOME;Unity;XFCE/" {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/autostart/gnome-keyring-pkcs11.desktop
-
-
-- name: Remove plain XFCE and XUbuntu sessions
-  shell: rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/*.desktop
-
-- name: Install GIS.lab desktop client session
-  # session file must be called 'xubuntu.desktop', otherwise LightDM will set variable DESKTOP_SESSION to invalid value
-  template: src=desktop/xsession/gislab-client.desktop.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/xubuntu.desktop
-
-# Disable session services
-- name: Disable useless session services
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
+- name: Install Lightdm greeter configuration
+  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
   with_items:
-    - /etc/xdg/autostart/jockey-gtk.desktop
-    - /etc/xdg/autostart/jockey-kde.desktop
-    - /etc/xdg/autostart/update-notifier.desktop
+  - { src: lightdm/conf/lightdm-gtk-greeter.conf.j2, dest: /etc/xdg/xdg-xubuntu/lightdm/lightdm-gtk-greeter.conf }
+  - { src: lightdm/conf/greeter.ui.j2, dest: /usr/share/lightdm-gtk-greeter/greeter.ui }
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
+- name: Create directory for Lightdm hooks
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/session/hooks state=directory
+  when:
+    GISLAB_SUITE in ('office', 'lab')
 
-# Disable system services
+- name: Install Lightdm hooks
+  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode=0755
+  with_items:
+    - { src: "lightdm/bin/session-setup.sh.j2", dest: "/opt/gislab/system/session/hooks/session-setup.sh" }
+    - { src: "lightdm/bin/session-cleanup.sh.j2", dest: "/opt/gislab/system/session/hooks/session-cleanup.sh" }
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+ 
+# Disabling useless services
 - name: Disable useless system services
   command: "rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/rc?.d/???{{ item }}
                   {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init.d/{{ item }}
@@ -486,27 +434,14 @@
     - urandom
     - ureadahead
     - ureadahead-other
-
     
-# Disable cron jobs
-- name: Disable useless cron jobs
-  command: "rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }}"
-  with_items:
-    - /etc/cron.daily/apt
-    - /etc/cron.daily/apport
-    - /etc/cron.daily/aptitude
-    - /etc/cron.daily/bsdmainutils
-    - /etc/cron.daily/dpkg
-    - /etc/cron.daily/logrotate
-    - /etc/cron.daily/man-db
-    - /etc/cron.daily/mlocate
-    - /etc/cron.daily/passwd
-    - /etc/cron.daily/popularity-contest
-    - /etc/cron.daily/standard
-    - /etc/cron.daily/update-notifier-common
-    - /etc/cron.weekly/apt-xapian-index
-    - /etc/cron.weekly/man-db
+- name: Disable all cron jobs by default
+  shell: find {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/cron.* -type f | grep -v "placeholder" | xargs rm -f
 
+
+#
+## SHUTDOWN ###########################################################################################################
+#
 
 # Replacing shutdown commands with simple script, which will umount all network disks and immediately power off
 # machine without trying to cleanly stop services. This is a workaround to a problems with various shutdown problems
@@ -540,6 +475,134 @@
   copy: src=static/bin/poweroff dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/shutdown mode=0755
 
 
+#
+## DESKTOP ############################################################################################################
+#
+
+# GIS.lab client tools
+- name: Install GIS.lab shell functions library
+  copy: src=functions.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/functions.sh mode=0644
+
+- name: Install GIS.lab client tools
+  copy: src=static/gislab-client-tools/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/local/bin/ mode=0755
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+
+# GIS.lab client desktop customizations
+- name: Configure default home directories structure
+  template: src=desktop/home-directories/user-dirs.defaults.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/user-dirs.defaults
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+- name: Install XFCE desktop configuration file
+  template: src=desktop/xfce/xfce4-desktop.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+- name: Install XFCE panel configuration file
+  template: src=desktop/panel/default.xml dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/panel/default.xml
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+- name: Install keyboard layouts configuration file
+  template: src=desktop/keyboard-layouts/keyboard-layout.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+- name: Install Conky configuration
+  template: src=desktop/conky/conky.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/conky/conky.conf
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+
+- name: Install XFCE menu configuration file
+  copy: src=static/desktop/menu/xfce-applications.menu dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/xdg-xubuntu/menus/xfce-applications.menu
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+- name: Install desktop directories files
+  copy: src=static/desktop/menu/directories/  dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/desktop-directories/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+- name: Install office applications files
+  copy: src=static/desktop/menu/applications/office/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+- name: Install lab applications files
+  copy: src=static/desktop/menu/applications/lab/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/applications/
+  when: GISLAB_SUITE == 'lab'
+
+
+# Xubuntu Greybird theme originally provides very thin window borders, which are very
+# difficult to grab and resize. This is fixed version of Greybird (taken from OSGeo Live CD)
+- name: Install theme
+  copy: src=static/desktop/themes/greybird/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/themes/Greybird/xfwm4/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+- name: Install wallpapers
+  copy: src=static/desktop/wallpapers/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xfce4/backdrops/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+- name: Install icons
+  copy: src=static/desktop/icons/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/pixmaps/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+
+# Start Gnome Keyring also in XFCE session
+- name: Fix gnome keyring
+  command: sed -i "s/OnlyShowIn=GNOME;Unity;/OnlyShowIn=GNOME;Unity;XFCE/" {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/xdg/autostart/gnome-keyring-pkcs11.desktop
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+
+- name: Remove plain XFCE and XUbuntu sessions
+  shell: rm -f {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/*.desktop
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+- name: Install GIS.lab desktop client session
+  # session file must be called 'xubuntu.desktop', otherwise LightDM will set variable DESKTOP_SESSION to invalid value
+  template: src=desktop/xsession/gislab-client.desktop.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/xsessions/xubuntu.desktop
+  when:
+    GISLAB_SUITE in ('office', 'lab')
+
+
+#
+## CLUSTER ############################################################################################################
+#
+
+# Cluster
+- name: Install Serf
+  shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "source /opt/gislab/system/functions.sh
+    && gislab_serf_install 0.6.4"
+  args:
+    executable: /bin/bash
+
+- name: Install Serf encryption key
+  shell: cp /etc/gislab/gislab_serf.key {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab/gislab_serf.key
+
+- name: Create directory for Serf handlers
+  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/serf/handlers state=directory
+
+- name: Install Serf handlers scripts 
+  copy: src=static/serf/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/serf/handlers mode=0774
+
+- name: Install reboot Serf handler
+  shell: ln -sf shutdown.sh {{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/serf/handlers/reboot.sh
+
+- name: Install Serf agent init script
+  template: src=init/serf-agent.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/serf-agent.conf
+
+- name: Install Serf join init script
+  template: src=init/serf-join.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/serf-join.conf
+
+
 # Statistics
 - name: Install munin configuration file
   template: src=munin-node/munin-node.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/munin/munin-node.conf
@@ -561,84 +624,121 @@
     - { src: "/usr/share/munin/plugins/vmstat", dest: "/etc/munin/plugins/vmstat" }
 
 
-# Lightdm
-- name: Install Lightdm configuration file
-  template: src=lightdm/conf/lightdm.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/lightdm/lightdm.conf
+#
+## OWS WORKER #########################################################################################################
+#
 
-- name: Install Lightdm greeter configuration
-  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }}
+# Xvfb
+- name: Copy Xvfb configuration files from server
+  command: cp --parents {{ item }} {{ GISLAB_INSTALL_CLIENT_ROOT }}/
   with_items:
-  - { src: lightdm/conf/lightdm-gtk-greeter.conf.j2, dest: /etc/xdg/xdg-xubuntu/lightdm/lightdm-gtk-greeter.conf }
-  - { src: lightdm/conf/greeter.ui.j2, dest: /usr/share/lightdm-gtk-greeter/greeter.ui }
+    - /etc/init/xvfb.conf
+    - /etc/init.d/xvfb
+  when: GISLAB_SUITE in ('server', 'lab')
 
-- name: Create directory for lightdm scripts
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/lightdm state=directory
+# mapserver
+- name: Copy default web page content from server
+  command: cp --parents /var/www/default/index.html {{ GISLAB_INSTALL_CLIENT_ROOT }}/
+  when: GISLAB_SUITE in ('server', 'lab')
 
-- name: Install Lightdm scripts
-  template: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode=0755
+- name: Copy Lighttpd configuration for QGIS Server from server
+  command: cp --parents {{ item }} {{ GISLAB_INSTALL_CLIENT_ROOT }}/
   with_items:
-    - { src: "lightdm/bin/session-setup-script.sh.j2", dest: "/usr/share/gislab/lightdm/session-setup-script.sh" }
-    - { src: "lightdm/bin/session-cleanup-script.sh.j2", dest: "/usr/share/gislab/lightdm/session-cleanup-script.sh" }
-
-      
-# Cluster
-- name: Install Serf
-  shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "source /usr/share/gislab/functions.sh
-    && gislab_serf_install 0.6.4"
-  args:
-    executable: /bin/bash
-
-- name: Install Serf encryption key
-  shell: cp /etc/gislab/gislab_serf.key {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab/gislab_serf.key
-
-- name: Create directory for Serf handlers
-  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/serf/handlers state=directory
-
-- name: Install Serf handlers scripts 
-  copy: src=static/serf/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/serf/handlers mode=0774
-
-- name: Install reboot Serf handler
-  shell: ln -sf shutdown.sh {{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/gislab/serf/handlers/reboot.sh
-
-- name: Install Serf agent init script
-  template: src=init/serf-agent.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/serf-agent.conf
-
-- name: Install Serf join init script
-  template: src=init/serf-join.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/serf-join.conf
+    - /etc/lighttpd/lighttpd.conf
+    - /etc/lighttpd/conf-enabled/10-fastcgi.conf
+  when: GISLAB_SUITE in ('server', 'lab')
 
 
-# Worker
-- name: Install worker
-  shell: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} /bin/bash -c "mkdir -p /tmp/install-worker
-    && cd /tmp/install-worker
-    && curl --silent http://{{ GISLAB_NETWORK_SERVER_IP }}/worker.tar.gz | tar -xzf -
-    && /bin/bash ./install.sh"
-  args:
-    executable: /bin/bash
-  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
-
-- name: Clean up after worker installation
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
-  with_items:
-    - /tmp/install-worker
-    - install.sh
-  when: GISLAB_SUITE == 'lab' and GISLAB_CLIENT_WORKER_ENABLED
-
-  
-# Clean apt cache
-- name: Clean apt cache
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} apt-get clean"
-  args:
-    executable: /bin/bash
+#
+## POST-INSTALLATION CLEANUP ##########################################################################################
+#
+# apt
+- name: Deactivate shared apt cache
+  command: umount {{ GISLAB_INSTALL_CLIENT_ROOT }}/var/cache/apt
 
 - name: Disable Apt cache proxy server
-  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt/apt.conf.d/02proxy state=absent
+  shell: sed -i "s/^/# /g" {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/apt/apt.conf.d/02proxy
 
+
+# Shared packages cache
+- name: Deactivate shared packages cache
+  command: umount {{ GISLAB_INSTALL_CLIENT_ROOT }}/storage/cache/packages
+
+- name: Remove mount point for shared packages cache
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/storage state=absent
+
+
+# Daemons handling
+- name: Enable daemons handling in chroot
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
+  with_items:
+    - /usr/sbin/policy-rc.d
+    - /sbin/start-stop-daemon
+
+- name: Restore 'start-stop-daemon' binary
+  command: mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon.real {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon
+
+
+# Umount filesystems mounted inside chroot.
+# always mount /dev/pts before /proc.
+- name: Umount /dev/pts, /proc and /storage/cache/packages inside chroot
+  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} umount {{ item }}
+  with_items:
+    - /dev/pts
+    - /proc
+
+
+#
+## INITRAMFS AND INIT #################################################################################################
+#
+
+- name: Create directories for initramfs-tools
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=directory recurse=yes
+  with_items:
+    - /usr/share/initramfs-tools/conf.d
+    - /usr/share/initramfs-tools/hooks
+    - /usr/share/initramfs-tools/scripts/init-bottom
+    - /usr/share/initramfs-tools/scripts/init-premount
+    - /usr/share/initramfs-tools/scripts/local-top
+
+- name: Configure initramfs-tools
+  template: src=initramfs-tools/conf.d/gislab.j2
+            dest={{ GISLAB_INSTALL_CLIENT_ROOT}}/usr/share/initramfs-tools/conf.d/gislab
+            mode=0644
+
+- name: Install initramfs-tools hooks and scripts
+  copy: src={{ item.src }} dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item.dest }} mode={{ item.mode }}
+  with_items:
+    - { src: "static/initramfs-tools/hooks/gislab", dest: "/usr/share/initramfs-tools/hooks/gislab", mode: "0755" }
+    - { src: "static/initramfs-tools/hooks/udhcp", dest: "/usr/share/initramfs-tools/hooks/udhcp", mode: "0755" }
+    - { src: "static/initramfs-tools/scripts/init-bottom/gislab", dest: "/usr/share/initramfs-tools/scripts/init-bottom/gislab", mode: "0755" }
+    - { src: "static/initramfs-tools/scripts/local-top/nbd_gislab", dest: "/usr/share/initramfs-tools/scripts/local-top/nbd_gislab",  mode: "0755" }
+
+- name: Install uDHCP client script
+  template: src=initramfs-tools/scripts/init-premount/udhcp.j2
+            dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/usr/share/initramfs-tools/scripts/init-premount/udhcp
+            mode=0755
+
+- name: Install system init script
+  copy: src=static/init/init-gislab dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/init-gislab mode=0755
+
+- name: Install GIS.lab init script
+  copy: src=static/init/gislab-init.sh dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/gislab-init.sh mode=0755
+
+- name: Configure GIS.lab client service
+  template: src=init/gislab.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/gislab.conf mode=0644
+
+- name: Update initramfs
+  shell: "chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} update-initramfs -u"
+
+
+#
+## BOOT ###############################################################################################################
+#
 
 # TFTP
 - name: Create TFTP directory
-  file: dest=/var/lib/tftpboot/gislab/i386 state=directory recurse=yes
+  file: dest=/var/lib/tftpboot/gislab state=directory recurse=yes
 
 
 # NBD
@@ -649,7 +749,7 @@
   template: src={{ item.src }} dest={{ item.dest }}
   with_items:
     - { src: "nbd-server/config.j2", dest: "/etc/nbd-server/config" }
-    - { src: "nbd-server/gislab_i386.conf.j2", dest: "/etc/nbd-server/conf.d/gislab_i386.conf" }
+    - { src: "nbd-server/gislab.conf.j2", dest: "/etc/nbd-server/conf.d/gislab.conf" }
 
 - name: Install hosts.allow file - enable keepalive option for nbdrootd
   template: src=hosts.allow/hosts.allow.j2 dest=/etc/hosts.allow
@@ -666,7 +766,7 @@
   file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/boot/pxelinux.cfg state=directory
 
 - name: Install PXE configuration file
-  template: src=boot-pxe/default.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/boot/pxelinux.cfg/default
+  template: src=boot-pxe/gislab.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/boot/pxelinux.cfg/default
 
   
 # HTTP boot (alternative method using iPXE)
@@ -676,41 +776,24 @@
 - name: Install HTTP boot files (files can be launched by http://boot.gis.lab/<file> or http://GISLAB_NETWORK.5/<file>)
   file: src={{ item.src }} dest={{ item.dest }} owner=root group=root state=link force=yes
   with_items:
-    - { src: "/var/lib/tftpboot/gislab/i386/vmlinuz", dest: "/var/www/default/vmlinuz"}
-    - { src: "/var/lib/tftpboot/gislab/i386/initrd.img", dest: "/var/www/default/initrd.img"}
+    - { src: "/var/lib/tftpboot/gislab/vmlinuz", dest: "/var/www/default/vmlinuz"}
+    - { src: "/var/lib/tftpboot/gislab/initrd.img", dest: "/var/www/default/initrd.img"}
 
 - name: Install HTTP boot script
-  template: src=boot-http/i386.j2 dest=/var/www/default/i386
+  template: src=boot-http/gislab.j2 dest=/var/www/default/gislab_desktop.init
 
 
-# Daemons handling
-- name: Enable daemons handling in chroot
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ item }} state=absent
-  with_items:
-    - /usr/sbin/policy-rc.d
-    - /sbin/start-stop-daemon
+#
+## IMAGE BUILD ########################################################################################################
+#
 
-- name: Restore 'start-stop-daemon' binary
-  command: mv {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon.real {{ GISLAB_INSTALL_CLIENT_ROOT }}/sbin/start-stop-daemon
-
-
-# Umount filesystems mounted inside chroot.
-# Umount /dev/pts before /proc.
-- name: Umount /dev/pts and /proc inside chroot
-  command: chroot {{ GISLAB_INSTALL_CLIENT_ROOT }} umount {{ item }}
-  with_items:
-    - /dev/pts
-    - /proc
-
-
-# Build image
 - name: Build GIS.lab client image
   shell: /opt/gislab/bin/gislab-client-image > /dev/null
   args:
     executable: /bin/bash
 
 - name: Publish GIS.lab client image version file
-  file: src={{ GISLAB_INSTALL_CLIENT_IMAGE }}/gislab_client_desktop.version dest=/var/www/default/gislab_client_desktop.version state=link force=yes
+  file: src={{ GISLAB_INSTALL_CLIENT_IMAGE }}/gislab_desktop.version dest=/var/www/default/gislab_desktop.version state=link force=yes
 
 # Restart NBD server
 - name: Ensure that NBD server is up
