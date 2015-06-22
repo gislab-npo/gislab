@@ -11,7 +11,6 @@ from django.views.decorators.csrf import csrf_exempt
 from webgis.mobile import forms
 from webgis.viewer.views import WebClient
 from webgis.viewer.client import LoginRequired
-from webgis.libs.decorators import json_response
 
 
 class MobileClient(WebClient):
@@ -34,10 +33,10 @@ class MobileClient(WebClient):
 
 client = MobileClient()
 
-@json_response
+
 def project_config(request):
 	try:
-		return client.project_request(request)
+		return HttpResponse(json.dumps(client.project_request(request)), content_type="application/json")
 	except LoginRequired, e:
 		return HttpResponse('Authentication required', status=401)
 
