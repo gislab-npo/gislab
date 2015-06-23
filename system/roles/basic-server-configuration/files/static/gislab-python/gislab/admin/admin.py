@@ -81,7 +81,7 @@ class GISLabAdmin(object):
 
         :return: list of GISLabUser objects
         """
-        return GISLabUser.users()
+        return GISLabUser.list()
 
     @staticmethod
     def user_get(username):
