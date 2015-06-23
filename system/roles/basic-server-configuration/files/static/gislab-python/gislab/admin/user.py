@@ -520,10 +520,10 @@ class GISLabUser(object):
         """Get GIS.lab user string info.
         """
         return "GISLabUser({0}): firstname='{1}' lastname='{2}' email='{3}' description='{4}' " \
-               "superuser={5} is_active={6} is_connected={7}".format(self.username, self.firstname,
-                                                                     self.lastname, self.email,
-                                                                     self.description, self.superuser,
-                                                                     self.is_active(), self.is_connected())
+               "superuser={5} is_active={6}".format(self.username, self.firstname,
+                                                    self.lastname, self.email,
+                                                    self.description, self.superuser,
+                                                    self.is_active())
 
     def _validate_username(self, username):
         """Perform user name validation.
@@ -582,27 +582,6 @@ class GISLabUser(object):
         :return: True if user is superuser, otherwise return False
         """
         return self.superuser
-
-    def is_connected(self):
-        """Check if the user is connected or running some process on the server.
-
-        :todo: do it better (psutil?) - not working yet!!!
-
-        :return: True if connected otherwise False
-        """
-        # pids = [pid for pid in os.listdir('/proc') if pid.isdigit()]
-
-        # for pid in pids:
-        #     try:
-        #         with open(os.path.join('/proc', pid, 'status'), 'rb') as f:
-        #             for line in f.readlines():
-        #                 if line.startswith('Uid:'):
-        #                     if self.uid == int(line.split('\t')[1]):
-        #                         return True
-        #                     break
-        #     except IOError: # proc has already terminated
-        #         continue
-        return False
 
     def is_active(self):
         """Check if user is active.
