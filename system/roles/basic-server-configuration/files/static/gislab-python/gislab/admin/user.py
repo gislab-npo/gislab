@@ -197,8 +197,8 @@ class GISLabUser(object):
         return user
 
     @classmethod
-    def users(cls, query=None):
-        """Get list of GIS.lab users.
+    def list(cls, query=None):
+        """List GIS.lab users.
 
         :param query: LDAP query to filter users or None to return all GIS.lab users
 
@@ -233,7 +233,7 @@ class GISLabUser(object):
         :return: GISLabUser object
         """
         query = "(uid={})".format(username)
-        users = GISLabUser.users(query)
+        users = GISLabUser.list(query)
         if users is None or len(users) == 0:
             raise GISLabAdminError("GIS.lab user '{}' doesn't exists".format(username))
         return users[0]
