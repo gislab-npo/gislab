@@ -17,15 +17,15 @@ from gislab.admin import GISLabAdmin, GISLabUser, GISLabAdminError, GISLabAdminL
 
 def main():
     # parse command arguments
-    opts = parse(desc='Modify GIS.lab user account. Optionally list user accounts.',
-                positional=(('username', None,
-                             'user name (if not given than list all existing users)'),),
-                optional=(('-g', 'firstname', 'first name'),
-                          ('-l', 'lastname', 'last name'),
-                          ('-m', 'email', 'email'),
-                          ('-p', 'password?', 'password'),
-                          ('-d', 'description', 'user description'),
-                          ('-s', None, 'add user to superuser\'s group')))
+    opts = parse_arguments(desc='Modify GIS.lab user account. Optionally list user accounts.',
+                           positional=(('username', None,
+                                        'user name (if not given than list all existing users)'),),
+                           optional=(('-g', 'firstname', 'first name'),
+                                     ('-l', 'lastname', 'last name'),
+                                     ('-m', 'email', 'email'),
+                                     ('-p', 'password?', 'password'),
+                                     ('-d', 'description', 'user description'),
+                                     ('-s', None, 'add user to superuser\'s group')))
 
     try:
         if opts.g or opts.l or opts.m or opts.p or opts.d or opts.s:

@@ -16,12 +16,12 @@ from gislab.admin import GISLabAdmin, GISLabUser, GISLabAdminError, GISLabAdminL
 
 def main():
     # parse command arguments
-    opts = parse(desc='Delete GIS.lab user account.',
-                 positional=(('username', 'username', 'user name'),),
-                 optional=(('-b', None,'backup user data'),
-                           ('-f', None,
-                            'force running this command - do not ask before '
-                            'deleting account')))
+    opts = parse_arguments(desc='Delete GIS.lab user account.',
+                           positional=(('username', 'username', 'user name'),),
+                           optional=(('-b', None,'backup user data'),
+                                     ('-f', None,
+                                      'force running this command - do not ask before '
+                                      'deleting account')))
     
     # delete existing user account
     try:

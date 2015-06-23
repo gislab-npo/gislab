@@ -15,16 +15,16 @@ from gislab.admin import GISLabAdmin, GISLabUser, GISLabAdminError, GISLabAdminL
 
 def main():
     # parse command arguments
-    opts = parse(desc='Create GIS.lab user account.',
-                 positional=(('username', 'username',
-                              'user name can contain only lower case digits and numbers'),),
-                 required=(('-g', 'firstname', 'first name'),
-                           ('-l', 'lastname', 'last name'),
-                           ('-m', 'email', 'email')),
-                 optional=(('-p', 'password',
-                            'password (default: automatically generated)'),
-                           ('-d', 'description', 'user description'),
-                           ('-s', False, 'add user to superuser\'s group')))
+    opts = parse_arguments(desc='Create GIS.lab user account.',
+                           positional=(('username', 'username',
+                                        'user name can contain only lower case digits and numbers'),),
+                           required=(('-g', 'firstname', 'first name'),
+                                     ('-l', 'lastname', 'last name'),
+                                     ('-m', 'email', 'email')),
+                           optional=(('-p', 'password',
+                                      'password (default: automatically generated)'),
+                                     ('-d', 'description', 'user description'),
+                                     ('-s', False, 'add user to superuser\'s group')))
 
     # add new user account
     try:

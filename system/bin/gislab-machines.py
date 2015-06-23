@@ -15,16 +15,16 @@ from gislab.admin.utils import parse_arguments
 from gislab.admin import GISLabAdmin, GISLabUser, GISLabAdminError, GISLabAdminLogger
 
 def main():
-    opts = parse(desc="Add or remove GIS.lab client machines to/from list of known machines. "
-                 "If 'unknown machines' policy is set to 'deny', only known machines will be authorized for connection to "
-                 "GIS.lab network. If 'unknown machines' policy is set to 'allow', all machines will be authorized to connect.",
-                 positional=(('mac', None,
-                              "MAC addresses must be specified in format MM:MM:MM:SS:SS:SS"),),
-                 optional=(('-l', False, "print a list of known machines"),
-                           ('-a', False, "add machines to known list. If value 'all' is given instead of MAC address, "
-                            "'unknown machines' policy will be set to 'allow'"),
-                           ('-r', False, "remove machines from known list. If value 'all' is given instead of MAC address, "
-                            "'unknown machines' policy will be set to 'deny'")))
+    opts = parse_arguments(desc="Add or remove GIS.lab client machines to/from list of known machines. "
+                           "If 'unknown machines' policy is set to 'deny', only known machines will be authorized for connection to "
+                           "GIS.lab network. If 'unknown machines' policy is set to 'allow', all machines will be authorized to connect.",
+                           positional=(('mac', None,
+                                        "MAC addresses must be specified in format MM:MM:MM:SS:SS:SS"),),
+                           optional=(('-l', False, "print a list of known machines"),
+                                     ('-a', False, "add machines to known list. If value 'all' is given instead of MAC address, "
+                                      "'unknown machines' policy will be set to 'allow'"),
+                                     ('-r', False, "remove machines from known list. If value 'all' is given instead of MAC address, "
+                                      "'unknown machines' policy will be set to 'deny'")))
     
     try:
         # check mutually exclusive
