@@ -24,7 +24,7 @@ from .pwgen import pwgen
 from .logger import GISLabAdminLogger
 from .exception import GISLabAdminError
 
-def parse(desc, positional=(), required=(), optional=()):
+def parse_arguments(desc, positional=(), required=(), optional=()):
     """Parse command line arguments.
 
     :param desc: command description

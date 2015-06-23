@@ -11,7 +11,7 @@ v3. Read the file LICENCE.md that comes with GIS.lab for details.
 
 import sys
 
-from gislab.admin.utils import parse
+from gislab.admin.utils import parse_arguments
 from gislab.admin import GISLabAdmin, GISLabUser, GISLabAdminError, GISLabAdminLogger
 
 def main():
