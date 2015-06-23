@@ -1,0 +1,8 @@
+#!/bin/bash
+# Fix hanging of Intel 82579LM network adapter (see GH #407).
+# In case of more problems consider also disabling of gso, gro, tso, lro.
+
+set -e
+
+ethtool -K eth0 tso off
+logger -t network "tcp-segmentation-offload has been disabled to prevent hanging of network adapter"

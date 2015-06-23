@@ -39,12 +39,12 @@ fi
 
 TFTP_DIR=/var/lib/tftpboot/gislab
 IMAGE_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/gislab.img
-IMAGE_VERSION=$(date +%s)
-IMAGE_VERSION_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/gislab_desktop.version
+IMAGE_BUILDSTAMP=$(date +%s)
+IMAGE_BUILDSTAMP_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/gislab_desktop.buildstamp
 
 
 # install image version file in to client chroot
-echo "$IMAGE_VERSION" > $GISLAB_INSTALL_CLIENT_ROOT/etc/gislab_desktop.version
+echo "$IMAGE_BUILDSTAMP" > $GISLAB_INSTALL_CLIENT_ROOT/etc/gislab_desktop.buildstamp
 
 
 # create directory for image
@@ -74,7 +74,7 @@ fi
 
 # place image to final destionation
 mv $IMAGE_FILE.tmp $IMAGE_FILE
-echo "$IMAGE_VERSION" > $IMAGE_VERSION_FILE
+echo "$IMAGE_BUILDSTAMP" > $IMAGE_BUILDSTAMP_FILE
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

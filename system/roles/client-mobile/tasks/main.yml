@@ -187,9 +187,8 @@
 - name: Copy GIS.lab Mobile files
   copy: src=static/gislab-mobile dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/
 
-- name: Install Cordova plugins required by GIS.lab Mobile
-  command: chroot {{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}
-    {{ nodejs_root }}/bin/node {{ gislab_mobile_root }}/tasks/plugins.js
+- name: Install GIS.lab Mobile configuration file
+  template: src=config.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}{{ gislab_mobile_root }}/config.xml
 
 - name: Install GIS.lab Mobile build script
   template: src=cordova-build.sh.j2 dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/cordova-build.sh mode=0755
@@ -205,6 +204,9 @@
     -exec mv '{}' /var/www/default/gislab_mobile.apk \;
   args:
     executable: /bin/bash
+
+- name: Publish GIS.lab Mobile build stamp file
+  file: src={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/gislab_mobile.buildstamp dest=/var/www/default/gislab_mobile.buildstamp state=link force=yes
 
 
 #
