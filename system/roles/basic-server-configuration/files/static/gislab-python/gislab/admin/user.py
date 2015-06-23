@@ -46,7 +46,9 @@ class GISLabUser(object):
             :todo: unbind
             """
             type.__init__(cls, name, bases, d)
-
+            
+            cls._hooks = os.path.join('/', 'opt', 'gislab', 'system', 'account', 'hooks')
+            
             # requires root
             if os.getuid() != 0:
                 GISLabAdminLogger.error("This command can only be be run with superuser privileges")
@@ -162,12 +164,16 @@ class GISLabUser(object):
         # create LDAP account
         user._create_ldap()
 
-        # create PostgreSQL user account
-        user._create_postgres()
-
-        # create publishing and credentials hidden directories
-        user._create_dirs()
-
+        # create PostgreSQL user account, publishing and credentials
+        # hidden directories
+        rc = call([os.path.join(user._hooks, 'adduser.sh'), username])
+        GISLabAdminLogger.debug("Return code of adduser.sh: {}".format(rc))
+        if rc != 0:
+            # rollback
+            user._delete_ldap()
+            raise GISLabAdminError("Unable to create a new GIS.lab user: "
+                                   "adduser hook failed".format(username))
+        
         return user
 
     @classmethod
@@ -226,19 +232,17 @@ class GISLabUser(object):
         if self.is_active():
             raise GISLabAdminError("GIS.lab user '{0}' is still running "
                               "session".format(self.username))
-
-        # remove user home
-        self._delete_dir(self.home)
-
+        
         # remove LDAP user
         self._delete_ldap()
-
-        # remove PostgreSQL user
-        self._delete_postgres()
-
-        # delete published data
-        self._delete_dir(self.published_data)
-
+        
+        # drop PostgreSQL user, delete published data
+        rc = call([os.path.join(self._hooks, 'deluser.sh'), self.username])
+        GISLabAdminLogger.debug("Return code of deluser.sh: {}".format(rc))
+        if rc != 0:
+            raise GISLabAdminError("Unable to delete GIS.lab user: "
+                                   "deluser hook failed".format(username))
+        
     def modify(self, **kwargs):
         """Modify GIS.lab user account.
 
@@ -672,106 +676,7 @@ class GISLabUser(object):
 
             GISLabAdminLogger.debug("{0}Successfully added user {1} to root's "
                                "maildrop".format(self._log, self.username))
-
-    def _create_postgres(self):
-        """Create PostgreSQL user account.
         
-        Add user to the database superusers group if creating
-        superuser account.
-        """
-        # open connection and cursor
-        con = connect(user='postgres', dbname='gislab', password='gislab')
-        con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-        cur = con.cursor()
-        
-        # add user and grant privileges
-        try:
-            cur.execute("CREATE USER {0} NOSUPERUSER NOCREATEDB "
-                        "NOCREATEROLE".format(self.username))
-            cur.execute("GRANT gislabusers TO {0}".format(self.username))
-            if self.superuser:
-                cur.execute("GRANT gislabadmins TO {0}".format(self.username))
-                
-            # create schema authorization
-            cur.execute("CREATE SCHEMA AUTHORIZATION {0}".format(self.username))
-        except ProgrammingError as e:
-            raise GISLabAdminError("PostgreSQL: {0}".format(e).rstrip("\n"))
-        
-        # close cursor and connection
-        cur.close()
-        con.close()
-        
-    def _create_dirs(self):
-        """Create publishing and credentials hidden directory.
-        """
-        # copy home skeleton
-        shutil.copytree(src=os.path.join('/', 'etc', 'skel'),\
-                        dst=self.home, symlinks=True)
-        os.chown(self.home, self.uid, self.gid)
-        os.chmod(self.home, 0o700)
-        GISLabAdminLogger.debug("{0}Successfully created home directory "
-                           "for user '{1}'".format(self._log, self.username))
-        
-        # create publishing directory
-        if not os.path.exists(self.published_data):
-            try:
-                os.makedirs(self.published_data) # NFS directory
-                gid = grp.getgrnam('www-data').gr_gid
-                os.chown(self.published_data, self.uid, gid)
-                os.chmod(self.published_data, 0o750)
-            except OSError as e:
-                raise GISLabAdminError(str(e))
-        else:
-            GISLabAdminLogger.debug("{0}'{1}' already "
-                               "exists".format(self._log, self.published_data))
-                    
-        # replace user name and password placeholders with real user values
-        for dirName, subdirList, fileList in os.walk(self.home):
-            os.chown(dirName, self.uid, self.gid)
-            for fname in fileList:
-                fpath = os.path.join(dirName, fname)
-                if os.path.isfile(fpath):
-                    for line in fileinput.FileInput(fpath, inplace=True):
-                        line = line.rstrip('\n')
-                        line = line.replace(r'{+ GISLAB_USER +}', self.username)
-                        line = line.replace(r'{+ GISLAB_USER_PASSWORD +}', self.password)
-                        print(line)
-                    os.chown(fpath, self.uid, self.gid)
-        
-        # save user credentials to hidden directory in home folder
-        gislab_path = os.path.join(self.home, '.gislab')
-        if not os.path.exists(gislab_path):
-            try:
-                os.mkdir(gislab_path)
-                os.chown(gislab_path, self.uid, self.gid)
-                os.chmod(gislab_path, 0o700)
-                # create credential file
-                fpath = os.path.join(gislab_path,
-                                     "gislab_{0}_credentials.txt".format(self.username))
-                try:
-                    with open(fpath, 'w') as f:
-                        f.write("{0}:{1}".format(self.username, self.password))
-                    os.chown(fpath, self.uid, self.gid)
-                except IOError as e:
-                    raise GISLabAdminError(str(e))
-                
-                # copy gislab_vpn_ca.crt file
-                fpath = os.path.join(gislab_path, 'gislab_vpn_ca.crt')
-                shutil.copyfile(os.path.join('/', 'etc', 'openvpn', 'gislab_vpn_ca.crt'),
-                                fpath)
-                os.chown(fpath, self.uid, self.gid)
-
-                # copy gislab_vpn_ca.crt file
-                fpath = os.path.join(gislab_path, 'gislab_vpn_ta.key')
-                shutil.copyfile(os.path.join('/', 'etc', 'openvpn', 'gislab_vpn_ta.key'),
-                                fpath)
-                os.chown(fpath, self.uid, self.gid)
-                os.chmod(fpath, 0o600)
-            except OSError as e:
-                raise GISLabAdminError(str(e))
-        else:
-            GISLabAdminLogger.info("{0}'{1}' already exists".format(self._log, path))
-
     def _delete_ldap(self):
         """Delete record from LDAP database.
         """
@@ -835,36 +740,3 @@ class GISLabUser(object):
             else:
                 GISLabAdminLogger.debug("{0}User '{1}' is not member of group "
                                    "{2}".format(self._log, self.username, group_dn))
-
-    def _delete_postgres(self):
-        """Delete PostgreSQL user data.
-        """
-        # open connection and cursor
-        con = connect(user='postgres', dbname='gislab', password='gislab')
-        con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-        cur = con.cursor()
-        
-        # remove user schema and user info
-        try:
-            cur.execute("DROP SCHEMA {0} CASCADE".format(self.username))
-            cur.execute("DROP OWNED BY {0} CASCADE".format(self.username))
-            cur.execute("DELETE FROM storage_drawing WHERE \"user\" = '{0}'".format(self.username))
-            cur.execute("DELETE FROM storage_ball WHERE \"user\" = '{0}'".format(self.username))
-            cur.execute("DROP USER {0}".format(self.username))
-        except ProgrammingError as e:
-            GISLabAdminLogger.debug("{0}PostgreSQL: {1}".format(self._log, str(e)).rstrip('\n'))
-        
-        # close cursor and connection
-        cur.close()
-        con.close()
-        
-    def _delete_dir(self, path):
-        """Delete user directory
-
-        :param path: directory path to be deleted
-        """
-        try:
-            shutil.rmtree(path)
-            GISLabAdminLogger.debug("{0}'{1}' removed".format(self._log, path))
-        except OSError as e:
-            GISLabAdminLogger.debug("{0}'{1}' doesn't exists".format(self._log, path))
