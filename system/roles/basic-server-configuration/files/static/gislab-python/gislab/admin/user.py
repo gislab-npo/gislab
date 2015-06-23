@@ -27,10 +27,10 @@ from subprocess import call
 import ldap
 import ldap.modlist as modlist
 
-from utils import nextuid, password_generate, \
+from .utils import nextuid, password_generate, \
      password_encrypt, password_validate, read_env
-from exception import GISLabAdminError
-from logger import GISLabAdminLogger
+from .exception import GISLabAdminError
+from .logger import GISLabAdminLogger
 
 class GISLabUser(object):
     """GIS.lab user account.

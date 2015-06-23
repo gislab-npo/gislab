@@ -20,9 +20,9 @@ import hashlib
 from base64 import encodestring as encode
 from base64 import decodestring as decode
 
-from pwgen import pwgen
-from logger import GISLabAdminLogger
-from exception import GISLabAdminError
+from .pwgen import pwgen
+from .logger import GISLabAdminLogger
+from .exception import GISLabAdminError
 
 def parse(desc, positional=(), required=(), optional=()):
     """Parse command line arguments.

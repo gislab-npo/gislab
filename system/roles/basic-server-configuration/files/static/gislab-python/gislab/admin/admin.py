@@ -15,9 +15,9 @@ import ldap
 import grp
 import re
 
-from user import GISLabUser
-from exception import GISLabAdminError
-from logger import GISLabAdminLogger
+from .user import GISLabUser
+from .exception import GISLabAdminError
+from .logger import GISLabAdminLogger
 
 
 class GISLabAdmin(object):
