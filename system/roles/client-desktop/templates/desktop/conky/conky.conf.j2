@@ -121,7 +121,7 @@ use_spacer none
 # stuff after 'TEXT' will be formatted on screen
 TEXT
 $alignc \
-${color1}${exec whoami}@${nodename}.GIS.lab | \
+${color1}${exec echo $USER}@${nodename}.GIS.lab | \
 ${color0}UP ${color1}$uptime_short | \
 ${color0}LOAD ${color1}$loadavg | \
 ${color0}CPU ${color1}$cpu% ${cpubar 5,50} ${freq 1}MHz | \
