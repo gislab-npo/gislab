@@ -4,9 +4,13 @@ export PATH=$PATH:{{ android_root }}/tools:{{ android_root }}/platform-tools:{{ 
 export ANDROID_HOME={{ android_root }}
 export ANDROID_BUILD=ant
 
+
 cd {{ gislab_mobile_root }}
 
 cordova platform add android
+node tasks/plugins.js # install Cordova plugins required by GIS.lab Mobile
+
+# build
 cordova build android
 
 
