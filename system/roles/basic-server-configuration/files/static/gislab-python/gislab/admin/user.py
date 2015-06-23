@@ -570,6 +570,8 @@ class GISLabUser(object):
 
     def set_password(self, password):
         """Set a new password for GIS.lab user.
+
+        :param password: a new password to be set
         """
         self.password = password
         GISLabAdminLogger.debug("{0}new password='{1}'".format(self._log, self.password))
