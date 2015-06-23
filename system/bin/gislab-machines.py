@@ -55,12 +55,16 @@ def main():
         maclist = map(lambda x: x.strip(), opts.mac.split(','))
         for mac in maclist:
             try:
-                if opts.a:
-                    # add new machine to list
-                    GISLabAdmin.machineadd(mac)
-                elif opts.r:
-                    # remove machine from list
-                    GISLabAdmin.machinedel(mac)
+                if mac == 'all':
+                    # change machines policy
+                    GISLabAdmin.machine_policy('allow' if opts.a else 'deny')
+                else:
+                    if opts.a:
+                        # add new machine to list
+                        GISLabAdmin.machine_add(mac)
+                    elif opts.r:
+                        # remove machine from list
+                        GISLabAdmin.machine_delete(mac)
             except GISLabAdminError as e:
                 GISLabAdminLogger.warning(str(e))
     

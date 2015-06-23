@@ -14,6 +14,9 @@ import os
 import ldap
 import grp
 import re
+import fileinput
+import sys
+from subprocess import call
 
 from .user import GISLabUser
 from .exception import GISLabAdminError
@@ -28,6 +31,7 @@ class GISLabAdmin(object):
     class MetaGISLabAdmin(type):
       def __init__(cls, name, bases, d):
         type.__init__(cls, name, bases, d)
+        
         cls.policy_file = os.path.join('/', 'etc' , 'gislab',
                                      'gislab_unknown_machines_policy.conf')
         cls.known_machines_list_file = os.path.join('/', 'etc', 'gislab',
@@ -113,33 +117,60 @@ class GISLabAdmin(object):
         """
         return GISLabUser.restore(username)
 
-    @staticmethod
-    def machine_add(mac):
+    @classmethod
+    def machine_add(cls, mac):
         """Add machine to list of known GIS.lab machines.
-
-        :todo: to be implemented
-
-        :param mac: MAC address
+        
+        :param mac: MAC address to be added
         """
-        if mac == 'all':
-            pass # TODO
-        else:
-            p = re.compile('^[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}$')
-            if not p.match(mac):
-                raise GISLabAdminError("Skipping MAC address {} - invalid format".format(mac))
-
-            GISLabAdminLogger.info("Adding MAC address {}".format(mac))
+        p = re.compile('^[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}$')
+        if not p.match(mac):
+            raise GISLabAdminError("Skipping MAC address {} - invalid format".format(mac))
+        
+        try:
+            # check if mac address is already registered
+            with open(cls.known_machines_list_file) as f:
+                for line in f.read().splitlines():
+                    if mac == line:
+                        GISLabAdminLogger.info("MAC address {} already registered".format(mac))
+                        return
+            
             # add records to known machines list file in /etc/gislab
+            with open(cls.known_machines_list_file, 'a') as f:
+                f.write("{}\n".format(mac))
+            GISLabAdminLogger.debug("MAC address {} added to the list of known machines".format(mac))
+            
+        except IOError as e:
+            raise GISLabAdminError("Unable to add machine: {}".format(e))
+        
+        # generate known machines DHCP configuration file
+        cls._known_machines_dhcp_file()
+        cls._restart_dhcp_server()
+	GISLabAdminLogger.info("Machines added successfully")
 
-    @staticmethod
-    def machine_delete(mac):
+    @classmethod
+    def machine_delete(cls, mac):
         """Remove machine from list of known GIS.lab machines.
 
-        :todo: to be implemented
-
         :param mac: MAC address
         """
-        pass
+        found = False
+        for line in fileinput.input(cls.known_machines_list_file, inplace=True):
+            line = line.rstrip('\n')
+            if mac == line:
+                found = True
+                continue
+            sys.stdout.write("{}\n".format(line))
+                    
+        if not found:
+            GISLabAdminLogger.info("MAC address {} not found, skipped.".format(mac))
+        else:
+            GISLabAdminLogger.debug("MAC address {} removed from the list of known machines".format(mac))
+        
+        # generate known machines DHCP configuration file
+        cls._known_machines_dhcp_file()
+        cls._restart_dhcp_server()
+	GISLabAdminLogger.info("Machines removed successfully")
 
     @classmethod
     def machines(cls):
@@ -154,13 +185,46 @@ class GISLabAdmin(object):
             raise GISLabAdminError(str(e))
 
     @classmethod
-    def machine_policy(cls):
-        """Get current GIS.lab unknown machines policy.
+    def machine_policy(cls, policy=None):
+        """Set/get current GIS.lab unknown machines policy.
 
-        :return: policy as string (allow or deny)
+        :param policy: set machines policy (None to get current settings)
+        
+        :return: current policy
         """
+        if policy and policy not in ('allow', 'deny'):
+            raise GISLabAdminError("Unsupported machines policy: {0}".format(policy))
+        
         try:
-            with open(cls.policy_file) as f:
-                return f.read().rstrip('\n')
+            if policy is None:
+                with open(cls.policy_file) as f:
+                    policy = f.read().rstrip('\n')
+            else:
+                with open(cls.policy_file, 'w') as f:
+                    f.write('{0}\n'.format(policy))
+                GISLabAdminLogger.debug("Machines policy changed to '{}'".format(policy))
         except IOError as e:
             raise GISLabAdminError(str(e))
+        
+        return policy
+
+    @classmethod
+    def _known_machines_dhcp_file(cls):
+	"""Generate DHCP configuration file from MAC list file located
+	in /etc/gislab
+        """
+        try: 
+            with open(cls.known_machines_dhcp_file, 'w') as f:
+                f.write("group {\n") # opening bracket
+
+                for mac in cls.machines():
+                    hostname = mac.replace(':', '')
+                    f.write("\thost {0} {{ hardware ethernet {1}; }}\n".format(hostname, mac))
+
+                f.write("}\n") # closing bracket
+        except IOError as e:
+            raise GISLabAdminError(e)
+
+    @classmethod
+    def _restart_dhcp_server(cls):
+        call(["service", "isc-dhcp-server", "restart"])
