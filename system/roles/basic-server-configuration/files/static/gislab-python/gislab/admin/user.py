@@ -28,7 +28,7 @@ import ldap
 import ldap.modlist as modlist
 
 from .utils import nextuid, password_generate, \
-     password_encrypt, password_validate, read_env
+     password_encrypt, read_env
 from .exception import GISLabAdminError
 from .logger import GISLabAdminLogger
 
@@ -605,9 +605,7 @@ class GISLabUser(object):
 
         # encrypt password
         encrypted_password = password_encrypt(self.password)
-        if password_validate(encrypted_password, self.password) is False:
-            raise GISLabAdminError("Validation of encrypted password failed")
-
+        
         # define LDAP attributes
         dn="uid={0},ou=people,{1}".format(self.username, self.ldap_base)
         modlist = {

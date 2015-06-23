@@ -89,21 +89,6 @@ def password_encrypt(password):
     GISLabAdminLogger.debug("Encrypted password '{}': {}".format(password, ret.rstrip('\n')))
     return ret
 
-def password_validate(challenge_password, password):
-    """Validate password against encrypted password.
-
-    :return: True on success otherwise False
-    """
-    challenge_bytes = decode(challenge_password[6:])
-    digest = challenge_bytes[:20]
-    salt = challenge_bytes[20:]
-    hr = hashlib.sha1(password)
-    hr.update(salt)
-
-    ret = digest == hr.digest()
-    GISLabAdminLogger.debug("password '{}' validated: {}".format(password, ret))
-    return ret
-
 def nextuid(min_uid=3000):
     """Get next free user ID.
 
