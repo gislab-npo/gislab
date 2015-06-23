@@ -19,17 +19,17 @@
 	padding-left: 3px;
 	padding-right: 2px;
 	fill: #444;
+	display: inline-block;
 }
 
 .toggle-button-icon .expanded {
-	display: none;
+	visibility: hidden;
 }
-
 .expanded.toggle-button-icon .collapsed {
-	display: none;
+	visibility: hidden;
 }
 .expanded.toggle-button-icon .expanded {
-	display: inline-block;
+	visibility: visible;
 }
 
 .gl-tree .toggle-button {

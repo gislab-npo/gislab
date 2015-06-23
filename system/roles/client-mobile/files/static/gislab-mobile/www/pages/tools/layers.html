@@ -224,7 +224,7 @@
 			<label class="tab-bar__item border-right" ng-if="::topics">
 				<input type="radio" name="layers-tab-radio" value="0" ng-model="ui.tools_layers_tab">
 				<button class="tab-bar__button">
-					<svg class="icon icon-topics2">
+					<svg class="icon icon-topics">
 						<use xlink:href="#icon-topics"></use>
 					</svg>
 				</button>
@@ -242,8 +242,8 @@
 			<label class="tab-bar__item border-left" ng-if="::layers.tree">
 				<input type="radio" name="layers-tab-radio" value="{{::topics? '2' : '1'}}" ng-model="ui.tools_layers_tab">
 				<button class="tab-bar__button">
-					<svg class="icon icon-layers">
-						<use xlink:href="#icon-layers"></use>
+					<svg class="icon icon-overlays">
+						<use xlink:href="#icon-overlays"></use>
 					</svg>
 				</button>
 			</label>
