@@ -187,6 +187,9 @@
 - name: Copy GIS.lab Mobile files
   copy: src=static/gislab-mobile dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/
 
+- name: Install GIS.lab Mobile configuration file
+  template: src=config.xml.j2 dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}{{ gislab_mobile_root }}/config.xml
+
 - name: Install GIS.lab Mobile build script
   template: src=cordova-build.sh.j2 dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/cordova-build.sh mode=0755
 
