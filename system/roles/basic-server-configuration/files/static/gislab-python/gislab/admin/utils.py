@@ -103,7 +103,7 @@ def nextuid(min_uid=3000):
         except KeyError:
             return min_uid
 
-def read_env(filename):
+def read_vars_from_file(filename):
     """Read variables from file.
 
     :param filename: absolute path to file

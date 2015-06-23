@@ -28,7 +28,7 @@ import ldap
 import ldap.modlist as modlist
 
 from .utils import nextuid, password_generate, \
-     password_encrypt, read_env
+     password_encrypt, read_vars_from_file
 from .exception import GISLabAdminError
 from .logger import GISLabAdminLogger
 
@@ -353,7 +353,7 @@ class GISLabUser(object):
         :param username: GIS.lab user name
         """
         # read GIS.lab environment variables
-        read_env(os.path.join('/', 'etc', 'gislab_version'))
+        read_vars_from_file(os.path.join('/', 'etc', 'gislab_version'))
 
         # backup settings
         backup_dir = os.path.join('/', 'storage', 'backup')
@@ -439,7 +439,7 @@ class GISLabUser(object):
         dirs_file = os.path.join(self.home, '.config', 'user-dirs.dirs')
         exclude = None
         if os.path.isfile(dirs_file):
-            read_env(dirs_file)
+            read_vars_from_file(dirs_file)
             exclude = os.path.join(self.home, os.path.basename(os.environ['XDG_DOWNLOAD_DIR']))
 
         # create tarball
