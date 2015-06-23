@@ -91,22 +91,6 @@ class GISLabUser(object):
             
             return ldap_items
 
-        def _admins(cls):
-            """Get GIS.lab superuser names.
-
-            Example: 
-
-            ['gislab', ...]
-            
-            :return: list of usernames
-            """
-            query = "(&(objectClass=posixGroup)(cn=gislabadmins))"
-            result = cls.ldap.search_s(cls.ldap_base, ldap.SCOPE_SUBTREE, query)
-            if result is None and len(result) != 1:
-                raise GISLabAdminError("User group 'gislabadmins not found")
-            
-            return result[0][1]['memberUid']
-
     __metaclass__ = MetaGISLabUser
 
     def __init__(self, username, **kwargs):
@@ -205,8 +189,12 @@ class GISLabUser(object):
         :return: list of GISLabUser objects
         """
         # get admins
-        admins = cls._admins()
-
+        try:
+            items = cls._get_users_ldap('(&(objectClass=posixGroup)(cn=gislabadmins))')
+            admins = items[0][1]['memberUid']
+        except StandardError as e:
+            raise GISLabAdminError("LDAP group 'gislabadmins' not found: {}".format(e))
+        
         # list users
         users = []
         for ldap_item in cls._users_ldap(query):
@@ -241,10 +229,6 @@ class GISLabUser(object):
     @classmethod
     def _get_users_ldap(cls, query):
         return cls._users_ldap(query)
-
-    @classmethod
-    def _get_admins(cls):
-        return cls._admins()
 
     def delete(self):
         """Delete GIS.lab user account.
@@ -324,7 +308,7 @@ class GISLabUser(object):
                                                      {item: [value]})
                 self.ldap.modify_s(dn, modlist)
             except ldap.LDAPError as e:
-                raise GISLabAdminError(str(e))
+                raise GISLabAdminError('{}'.format(e))
 
         # first or/and last name changed
         if old_fullname:
@@ -334,7 +318,7 @@ class GISLabUser(object):
                                                          {item: [self.fullname]})
                     self.ldap.modify_s(dn, modlist)
                 except ldap.LDAPError as e:
-                    raise GISLabAdminError(str(e))
+                    raise GISLabAdminError('{}'.format(e))
 
         # superuser <-> normaluser changed
         if superuser_changed:
@@ -629,7 +613,7 @@ class GISLabUser(object):
         try:
             self.ldap.add_s(dn, ldap.modlist.addModlist(modlist))
         except ldap.LDAPError as e:
-            raise GISLabAdminError(str(e))
+            raise GISLabAdminError('{}'.format(e))
 
         GISLabAdminLogger.debug("{0}Successfully set encoded password "
                            "for user {1}".format(self._log, dn))
@@ -642,22 +626,37 @@ class GISLabUser(object):
             self._add_ldap_maildrop()
 
     def _add_ldap_superuser(self):
-        """Add user to 'gislabadmins' group,
+        """Add user to 'gislabadmins' group.
         """
-        group_dn="cn=gislabadmins,ou=Groups,{1}".format(self.username, self.ldap_base)
-        admins = self._get_admins()
-        new_admins = copy.deepcopy(admins)
-        if self.username not in new_admins:
-            new_admins.append(self.username)
-            group_modlist = ldap.modlist.modifyModlist({'memberUid': admins},
-                                                       {'memberUid': new_admins})
-            self.ldap.modify_s(group_dn, group_modlist)
-            GISLabAdminLogger.debug("{0}Successfully added user '{1}' to group "
-                               "gislabadmins".format(self._log, self.username))
-        else:
-            GISLabAdminLogger.debug("User '{}' is already member of group "
-                               "gislabadmins".format(self.username))
+        return self._add_ldap_group(['gislabadmins'])
+    
+    def _add_ldap_group(self, selected_groups = []):
+        """Add user to LDAP groups
 
+        :param selected_groups: list of groups from which user should be removed
+        """
+        for group in selected_groups:
+            group_dn = 'cn={0},ou=Groups,{1}'.format(group, self.ldap_base)
+            
+            try:
+                items = self._get_users_ldap('(&(objectClass=posixGroup)'
+                                             '(cn={}))'.format(group))
+                members_old = items[0][1]['memberUid']
+            except StandardError as e:
+                raise GISLabAdminError("LDAP group '{}' not found: {}".format(group, e))
+            
+            members_new = copy.deepcopy(members_old)
+            if self.username not in members_old:
+                members_new.append(self.username)
+                group_modlist = ldap.modlist.modifyModlist({'memberUid': members_old},
+                                                           {'memberUid': members_new})
+                self.ldap.modify_s(group_dn, group_modlist)
+                GISLabAdminLogger.debug("{0}Successfully added user '{1}' to group "
+                                        "gislabadmins".format(self._log, self.username))
+            else:
+                GISLabAdminLogger.debug("User '{}' is already member of group "
+                                        "gislabadmins".format(self.username))
+        
     def _add_ldap_maildrop(self):
         """Enable forwarding of emails sent to root if user is superuser.
         """
@@ -692,7 +691,7 @@ class GISLabUser(object):
         try:
             self.ldap.delete_s(dn)
         except ldap.LDAPError as e:
-            raise GISLabAdminError(str(e))
+            raise GISLabAdminError('{}'.format(e))
 
     def _remove_ldap_maildrop(self):
         """Disable forwarding of emails sent to root if user is superuser.
@@ -713,18 +712,20 @@ class GISLabUser(object):
                                "maildrop".format(self._log, self.username))
 
     def _remove_ldap_superuser(self):
-        """Remove user from gislabadmins group
+        """Remove user from 'gislabadmins' group.
         """
-        return self._remove_ldap_group(['cn=gislabadmins,ou=Groups,dc=gis,dc=lab'])
+        return self._remove_ldap_group(['gislabadmins'])
     
     def _remove_ldap_group(self, selected_groups = []):
         """Remove user from LDAP groups.
+
+        :param selected_groups: list of groups from which user should be removed
         """
-        query = "(&(objectClass=posixGroup))"
-        result = self.ldap.search_s(self.ldap_base, ldap.SCOPE_SUBTREE, query)
+        result = self._get_users_ldap("(&(objectClass=posixGroup))")
         for group in result:
             group_dn = group[0]
-            if selected_groups and group_dn not in selected_groups:
+            group_name = group_dn[group_dn.find('cn'):].split(',', 1)[0].replace('cn=', '')
+            if selected_groups and group_name not in selected_groups:
                 continue
             if 'memberUid' not in group[1]:
                 continue
@@ -736,7 +737,7 @@ class GISLabUser(object):
                                                            {'memberUid': members_new})
                 self.ldap.modify_s(group_dn, group_modlist)
                 GISLabAdminLogger.debug("{0}Successfully removed user '{1}' from group "
-                                   "{2}".format(self._log, self.username, group_dn))
+                                        "{2}".format(self._log, self.username, group_name))
             else:
                 GISLabAdminLogger.debug("{0}User '{1}' is not member of group "
-                                   "{2}".format(self._log, self.username, group_dn))
+                                        "{2}".format(self._log, self.username, group_name))
