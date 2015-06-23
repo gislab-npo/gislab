@@ -187,7 +187,7 @@ class GISLabUser(object):
         # create PostgreSQL user account, publishing and credentials
         # hidden directories
         rc = call([os.path.join(user._hooks, 'adduser.sh'), username])
-        GISLabAdminLogger.debug("Return code of adduser.sh: {}".format(rc))
+        GISLabAdminLogger.debug("{0}return code of adduser.sh: {1}".format(user._log, rc))
         if rc != 0:
             # rollback
             user._delete_ldap()
@@ -249,7 +249,7 @@ class GISLabUser(object):
     def delete(self):
         """Delete GIS.lab user account.
         """
-        if self.is_active():
+        if self.has_active_session():
             raise GISLabAdminError("GIS.lab user '{0}' is still running "
                               "session".format(self.username))
         
@@ -258,7 +258,7 @@ class GISLabUser(object):
         
         # drop PostgreSQL user, delete published data
         rc = call([os.path.join(self._hooks, 'deluser.sh'), self.username])
-        GISLabAdminLogger.debug("Return code of deluser.sh: {}".format(rc))
+        GISLabAdminLogger.debug("{}return code of deluser.sh: {}".format(self._log, rc))
         if rc != 0:
             raise GISLabAdminError("Unable to delete GIS.lab user: "
                                    "deluser hook failed".format(username))
@@ -520,10 +520,10 @@ class GISLabUser(object):
         """Get GIS.lab user string info.
         """
         return "GISLabUser({0}): firstname='{1}' lastname='{2}' email='{3}' description='{4}' " \
-               "superuser={5} is_active={6}".format(self.username, self.firstname,
+               "superuser={5} has_active_session={6}".format(self.username, self.firstname,
                                                     self.lastname, self.email,
                                                     self.description, self.superuser,
-                                                    self.is_active())
+                                                    self.has_active_session())
 
     def _validate_username(self, username):
         """Perform user name validation.
@@ -583,14 +583,15 @@ class GISLabUser(object):
         """
         return self.superuser
 
-    def is_active(self):
-        """Check if user is active.
+    def has_active_session(self):
+        """Check if user is running a session.
 
-        :return: True if account is active otherwise False
+        :return: True if user is running a session otherwise False
         """
-        lfile = os.path.join('/', 'mnt', 'home', self.username,
-                             '.gislab', 'session.lock')
-        return os.path.isfile(lfile)
+        ret = os.path.isfile(os.path.join(self.home, '.gislab', 'session.lock'))
+        GISLabAdminLogger.debug("{0}has_active_session='{1}'".format(self._log, ret))
+        
+        return ret
 
     def _create_ldap(self):
         """Create record in LDAP database and activate forwarding of email
