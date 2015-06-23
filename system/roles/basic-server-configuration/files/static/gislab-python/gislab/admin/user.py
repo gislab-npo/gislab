@@ -72,7 +72,11 @@ class GISLabUser(object):
             GISLabAdminLogger.debug("LDAP connection closed")
 
         def _users_ldap(cls, query=None):
-            """Get list of GIS.lab users from LDAP.
+            """Get LDAP entries of GIS.lab users.
+
+            Example:
+
+            [('uid=lab1,ou=People,dc=gis,dc=lab', {'uid': ['lab1'], 'objectClass': ['inetOrgPerson', 'posixAccount', 'shadowAccount'], ...})]
 
             :param query: LDAP query to filter users or None to return all GIS.lab users
 
@@ -84,19 +88,23 @@ class GISLabUser(object):
                 query = "(&(objectClass=inetOrgPerson)(gidNumber={}))".format(gid)
 
             ldap_items = cls.ldap.search_s(cls.ldap_base, ldap.SCOPE_SUBTREE, query)
-
+            
             return ldap_items
 
-        def _admins_ldap(cls):
-            """Get list of GIS.lab superusers from LDAP.
+        def _admins(cls):
+            """Get GIS.lab superuser names.
 
+            Example: 
+
+            ['gislab', ...]
+            
             :return: list of usernames
             """
             query = "(&(objectClass=posixGroup)(cn=gislabadmins))"
             result = cls.ldap.search_s(cls.ldap_base, ldap.SCOPE_SUBTREE, query)
             if result is None and len(result) != 1:
                 raise GISLabAdminError("User group 'gislabadmins not found")
-
+            
             return result[0][1]['memberUid']
 
     __metaclass__ = MetaGISLabUser
@@ -197,7 +205,7 @@ class GISLabUser(object):
         :return: list of GISLabUser objects
         """
         # get admins
-        admins = cls._admins_ldap()
+        admins = cls._admins()
 
         # list users
         users = []
@@ -231,12 +239,12 @@ class GISLabUser(object):
         return users[0]
 
     @classmethod
-    def _get_users(cls, query):
+    def _get_users_ldap(cls, query):
         return cls._users_ldap(query)
 
     @classmethod
     def _get_admins(cls):
-        return cls._admins_ldap()
+        return cls._admins()
 
     def delete(self):
         """Delete GIS.lab user account.
@@ -377,7 +385,7 @@ class GISLabUser(object):
         self._backup_postgres(db_backup_file)
 
         # backup LDAP data
-        ldap_item = self._get_users("uid={}".format(self.username))
+        ldap_item = self._get_users_ldap("uid={}".format(self.username))
         if ldap_item is None or len(ldap_item) == 0:
             raise GISLabAdminError("No LDAP entry for GIS.lab user '{}'".format(self.username))
         self._backup_ldap(ldap_item[0], ldap_backup_file)
