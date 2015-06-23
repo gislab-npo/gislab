@@ -205,6 +205,9 @@
   args:
     executable: /bin/bash
 
+- name: Publish GIS.lab Mobile build stamp file
+  file: src={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }}/root/gislab_mobile.buildstamp dest=/var/www/default/gislab_mobile.buildstamp state=link force=yes
+
 
 #
 ## POST-INSTALLATION CLEANUP ##########################################################################################

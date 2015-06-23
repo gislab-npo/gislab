@@ -4,6 +4,9 @@ export PATH=$PATH:{{ android_root }}/tools:{{ android_root }}/platform-tools:{{ 
 export ANDROID_HOME={{ android_root }}
 export ANDROID_BUILD=ant
 
+BUILDSTAMP=$(date +%s)
+BUILDSTAMP_FILE=/root/gislab_mobile.buildstamp
+
 
 cd {{ gislab_mobile_root }}
 
@@ -12,6 +15,7 @@ node tasks/plugins.js # install Cordova plugins required by GIS.lab Mobile
 
 # build
 cordova build android
+echo "$BUILDSTAMP" > $BUILDSTAMP_FILE
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
