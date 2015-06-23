@@ -42,8 +42,6 @@ class GISLabUser(object):
     class MetaGISLabUser(type):
         def __init__(cls, name, bases, d):
             """Meta class constructor, opens LDAP connection.
-
-            :todo: unbind
             """
             type.__init__(cls, name, bases, d)
             
@@ -66,6 +64,12 @@ class GISLabUser(object):
                 raise GISLabAdminError("Unable to open LDAL connection: {}".format(e))
 
             GISLabAdminLogger.debug("LDAP connection established")
+
+        def _unbind(cls):
+            """Close LDAL connection.
+            """
+            cls.ldap.unbind()
+            GISLabAdminLogger.debug("LDAP connection closed")
 
         def _users_ldap(cls, query=None):
             """Get list of GIS.lab users from LDAP.
@@ -119,6 +123,14 @@ class GISLabUser(object):
         # set prefix for logger
         self._log = "GISLabUser(%s): " % self.username
 
+    @classmethod
+    def __del__(cls):
+        """Class destructor.
+
+        Close LDAP connection.
+        """
+        cls._unbind()
+        
     @classmethod
     def create(cls, username, firstname, lastname, email,
                password, description, superuser):
