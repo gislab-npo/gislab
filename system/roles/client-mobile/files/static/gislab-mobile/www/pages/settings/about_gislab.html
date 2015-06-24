@@ -1,7 +1,10 @@
 <ons-page class="about">
-	<ons-toolbar class="sub-toolbar" fixed-style>
+<!--	<div class="panel-header" ng-if="$storage.showHeader">-->
+<!--		<div class="center"><span>Settings</span></div>-->
+<!--	</div>-->
+	<ons-toolbar class="sub-toolbar" >
 		<div class="left">
-			<ons-toolbar-button ng-click="app.navigator.about.popPage();">
+			<ons-toolbar-button ng-click="app.navigator.settings.popPage();">
 				<svg class="toolbar-button-icon">
 					<use xlink:href="#icon-arrow-left"></use>
 				</svg>
@@ -19,21 +22,39 @@
 				<label>Version:</label>
 				<span ng-bind="::project.gislab_version"></span>
 			</ons-list-item>
-			<ons-list-item class="list__item--info-content">
-				<label>Home page:</label>
-				<a ng-href="{{ ::project.gislab_homepage }}" gl-open-in-browser>
-					<svg class="hyperlink-icon">
-						<use xlink:href="#icon-hyperlink"></use>
+<!--			<ons-list-item class="list__item--info-content">-->
+<!--				<a ng-href="{{ ::project.gislab_homepage }}" gl-open-in-browser>-->
+<!--					<label>Home page</label>-->
+<!--					<svg class="hyperlink-icon">-->
+<!--						<use xlink:href="#icon-hyperlink"></use>-->
+<!--					</svg>-->
+<!--				</a>-->
+<!--			</ons-list-item>-->
+<!--			<ons-list-item class="list__item--info-content">-->
+<!--				<label>Documentation:</label>-->
+<!--				<a ng-href="{{ ::project.gislab_documentation }}" gl-open-in-browser>-->
+<!--					<svg class="hyperlink-icon">-->
+<!--						<use xlink:href="#icon-hyperlink"></use>-->
+<!--					</svg>-->
+<!--				</a>-->
+<!--			</ons-list-item>-->
+
+			<ons-list-item modifier="tappable" class="list__item--info-content" gl-open-in-browser="{{ ::project.gislab_homepage }}">
+				<label>Home page</label>
+				<div class="list-button-right">
+					<svg class="list-item-icon center-vertical">
+						<use xlink:href="#icon-link-external"></use>
 					</svg>
-				</a>
+				</div>
 			</ons-list-item>
-			<ons-list-item class="list__item--info-content">
-				<label>Documentation:</label>
-				<a ng-href="{{ ::project.gislab_documentation }}" gl-open-in-browser>
-					<svg class="hyperlink-icon">
-						<use xlink:href="#icon-hyperlink"></use>
+			<ons-list-item modifier="tappable" class="list__item--info-content" gl-open-in-browser="{{ ::project.gislab_documentation }}"
+				xng-click="window.open('{{ ::project.gislab_documentation }}', '_system', 'location=yes')">
+				<label>Documentation</label>
+				<div class="list-button-right">
+					<svg class="list-item-icon center-vertical">
+						<use xlink:href="#icon-link-external"></use>
 					</svg>
-				</a>
+				</div>
 			</ons-list-item>
 		</ons-list>
 	</ons-scroller>

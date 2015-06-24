@@ -224,20 +224,8 @@
 				<div class="wizard-header">
 					Configuration wizard: Project
 				</div>
-				<ons-scroller class="wizard-content">
+				<ons-scroller class="wizard-content vertical-flexible">
 					<ons-list class="wizard settings gl-tree" ng-controller="AccordionController">
-						<ons-list-header>
-							<svg class="list-header-icon">
-								<use xlink:href="#icon-pen"></use>
-							</svg>
-							Path
-						</ons-list-header>
-						<ons-list-item class="textarea-input">
-							<div style="width: 100%;">
-								<textarea type="text" class="text-input text-input--transparent" placeholder="Project" ng-model="$storage.project"></textarea>
-								<span class="multiline-wrapper" ng-bind="$storage.project"></span>
-							</div>
-						</ons-list-item>
 						<ons-list-header>
 							<svg class="list-header-icon">
 								<use xlink:href="#icon-menu"></use>
@@ -272,9 +260,24 @@
 								</div>
 							</ons-list-item>
 						</div>
-
 					</ons-list>
 				</ons-scroller>
+
+				<ons-list class="wizard settings gl-tree vertical-fit" ng-controller="AccordionController">
+					<ons-list-header>
+						<svg class="list-header-icon">
+							<use xlink:href="#icon-pen"></use>
+						</svg>
+						Path
+					</ons-list-header>
+					<ons-list-item class="textarea-input">
+						<div style="width: 100%;">
+							<textarea type="text" class="text-input text-input--transparent" placeholder="Project" ng-model="$storage.project"></textarea>
+							<span class="multiline-wrapper" ng-bind="$storage.project"></span>
+						</div>
+					</ons-list-item>
+				</ons-list>
+
 				<div class="wizard-footer bottom-toolbar">
 					<ons-toolbar-button class="left" ng-click="app.wizard.carousel.prev()">
 						<svg class="toolbar-button-icon">

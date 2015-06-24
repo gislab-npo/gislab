@@ -28,8 +28,7 @@
 			restrict: 'A',
 			link: function (scope, iElem, iAttrs) {
 				iElem.on('click', function(event) {
-					window.open(iAttrs.href, '_system', 'location=yes');
-					event.preventDefault();
+					window.open(iAttrs.glOpenInBrowser, '_system', 'location=yes');
 				});
 			}
 		};

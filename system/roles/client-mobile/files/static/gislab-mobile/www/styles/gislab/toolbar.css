@@ -118,10 +118,8 @@
 */
 
 .bottom-toolbar {
-	xposition: absolute;
-	bottom: 0;
 	background-color: #ddd;
-	height: 32px;
+	width: 100%;
 	line-height: 28px;
 }
 

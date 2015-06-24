@@ -92,6 +92,15 @@ ons-page.flex-container-vertical {
 	flex-direction: column;
 }
 
+.vertical-flexible {
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+.vertical-fit {
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
 .panel-header {
 	background-color: #00aad4;
 	color: white;
@@ -105,18 +114,8 @@ ons-page.flex-container-vertical {
 	flex-shrink: 0;
 }
 
-.carousel-tab-bar--bottom {
-	flex-grow: 0;
-	flex-shrink: 0;
-}
 
-.main-panel-content {
-	flex-grow: 1;
-	flex-shrink: 1;
-	xoverflow: hidden;
-}
-
-.legend-panel .main-panel-content {
+.legend-panel .layers-panel {
 	background-color: white;
 }
 
