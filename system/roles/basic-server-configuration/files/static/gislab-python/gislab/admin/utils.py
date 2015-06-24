@@ -89,20 +89,6 @@ def password_encrypt(password):
     GISLabAdminLogger.debug("Encrypted password '{}': {}".format(password, ret.rstrip('\n')))
     return ret
 
-def nextuid(min_uid=3000):
-    """Get next free user ID.
-
-    :param min_uid: starting uid
-
-    :return: uid as integer
-    """
-    while min_uid:
-        try:
-            pwd.getpwuid(min_uid)
-            min_uid+=1
-        except KeyError:
-            return min_uid
-
 def read_vars_from_file(filename):
     """Read variables from file.
 

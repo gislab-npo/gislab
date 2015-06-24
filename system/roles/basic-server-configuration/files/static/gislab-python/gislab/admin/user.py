@@ -27,7 +27,7 @@ from subprocess import call
 import ldap
 import ldap.modlist as modlist
 
-from .utils import nextuid, password_generate, \
+from .utils import password_generate, \
      password_encrypt, read_vars_from_file
 from .exception import GISLabAdminError
 from .logger import GISLabAdminLogger
@@ -103,16 +103,21 @@ class GISLabUser(object):
         """
         self.username = username
 
+        # set prefix for logger
+        self._log = "GISLabUser(%s): " % self.username
+        
         # set user attributes
         for name, value in kwargs.iteritems():
             setattr(self, name, value)
         self.fullname = "{0} {1}".format(self.firstname, self.lastname)
         self.home = os.path.join('/', 'mnt', 'home', self.username)
         self.published_data = os.path.join('/', 'storage', 'publish', self.username)
-
-        # set prefix for logger
-        self._log = "GISLabUser(%s): " % self.username
-
+        
+        # user/groupd id
+        # gid must be defined before calling _next_uid()
+        self.gid = int(grp.getgrnam('gislabusers').gr_gid)
+        self.uid = self._next_uid()
+        
     @classmethod
     def __del__(cls):
         """Class destructor.
@@ -120,6 +125,24 @@ class GISLabUser(object):
         Close LDAP connection.
         """
         cls._unbind()
+
+    def _next_uid(self, min_uid=3000):
+        """Get next free user ID.
+
+        :param min_uid: starting uid
+        
+        :return: uid as integer
+        """
+        for item in self._get_users_ldap("(&(objectClass=inetOrgPerson)"
+                                         "(gidNumber={}))".format(self.gid)):
+            uid = int(item[1]['uidNumber'][0])
+            if uid > min_uid:
+                min_uid = uid
+        
+        min_uid += 1
+        GISLabAdminLogger.debug("{0}uid={1}".format(self._log, min_uid))
+        
+        return min_uid
         
     @classmethod
     def create(cls, username, firstname, lastname, email,
@@ -149,9 +172,7 @@ class GISLabUser(object):
         user = cls(username, firstname=firstname, lastname=lastname,
                    email=email,
                    password=password, description=description,
-                   superuser=superuser,
-                   uid=nextuid(),
-                   gid = int(grp.getgrnam('gislabusers').gr_gid))
+                   superuser=superuser)
         
         # username/email validation
         if not user.is_username_valid():
