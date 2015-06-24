@@ -16,11 +16,14 @@
 				<svg class="list-header-icon">
 					<use xlink:href="#icon-pen"></use>
 				</svg>
-				Actual
+				Path
 			</ons-list-header>
 			<ons-list-item class="textarea-input">
 				<div style="width: 100%;">
-					<textarea type="text" class="text-input text-input--transparent" placeholder="Project" ng-model="$storage.project"></textarea>
+					<textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+						class="text-input text-input--transparent" placeholder="Project" ng-model="$storage.project"
+						id="settings-project-field" onkeydown="if (event.keyCode == 13) document.getElementById('settings-project-field').blur()">
+					</textarea>
 					<span class="multiline-wrapper" ng-bind="$storage.project"></span>
 				</div>
 			</ons-list-item>
@@ -30,12 +33,16 @@
 				</svg>
 				My projects
 			</ons-list-header>
+			<ons-list-item class="list__item--accordion" modifier="tappable" ng-click="$storage.project='empty'">
+				<div class="left-center title" ><span>Empty</span></div>
+			</ons-list-item>
 			<div ng-repeat="project in userProjects">
-				<ons-list-item  modifier="tappable" class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}">
-					<div class="left-center title list__item--two-lines-max" ng-click="$storage.project=project.project">
+				<ons-list-item  modifier="tappable" class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}"
+					ng-click="$storage.project=project.project">
+					<div class="left-center title list__item--two-lines-max">
 						<span>{{ project.title }}</span>
 					</div>
-					<div class="list-button-right expand" ng-click="toggleAccordion(project)">
+					<div class="list-button-right expand" ng-click="toggleAccordion(project);$event.stopPropagation()">
 						<svg class="expand-icon">
 							<use class="expanded" xlink:href="#icon-arrow-up"></use>
 							<use class="collapsed" xlink:href="#icon-arrow-down"></use>
@@ -63,7 +70,7 @@
 					<svg class="toolbar-text-button-icon">
 						<use xlink:href="#icon-history"></use>
 					</svg>
-					Recent projects
+					Recent Projects
 				</ons-toolbar-button>
 			</ons-col>
 		</ons-row>
@@ -79,16 +86,17 @@
 						</svg>
 					</ons-toolbar-button>
 				</div>
-				<div class="center">Recently used projects</div>
+				<div class="center">Recent Projects</div>
 			</ons-toolbar>
 			<ons-list class="gl-tree" ng-controller="AccordionController">
 				<div ng-repeat="project in $storage.recentProjects">
-					<ons-list-item  modifier="tappable" class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}">
+					<ons-list-item  modifier="tappable" class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}"
+						ng-click="$storage.project=project.project;app.navigator.popPage()">
 							<div class="left-center title list__item--two-lines-max"
-									ng-click="$storage.project=project.project;app.navigator.popPage()">
-								<span>{{ project.project }}</span>
+									>
+								<span>{{ project.title }}</span>
 							</div>
-							<div class="list-button-right expand" ng-click="toggleAccordion(project)">
+							<div class="list-button-right expand" ng-click="toggleAccordion(project);$event.stopPropagation()">
 								<svg class="expand-icon">
 									<use class="expanded" xlink:href="#icon-arrow-up"></use>
 									<use class="collapsed" xlink:href="#icon-arrow-down"></use>

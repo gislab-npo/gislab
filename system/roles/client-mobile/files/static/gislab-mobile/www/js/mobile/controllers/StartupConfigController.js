@@ -7,6 +7,9 @@
 
 	function StartupConfigController($scope, $timeout, gislabMobileClient) {
 		$scope.wizardLogin = function() {
+			if (!$scope.$storage.serverUrl) {
+				return;
+			}
 			if ($scope.$storage.username && $scope.$storage.password) {
 				$scope.showProgressDialog($scope.app.progressBar, 'Login to GIS.lab server');
 				$scope.login()

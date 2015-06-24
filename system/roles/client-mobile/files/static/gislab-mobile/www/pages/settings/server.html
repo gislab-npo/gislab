@@ -19,9 +19,10 @@
 			</ons-list-header>
 			<ons-list-item class="textarea-input">
 				<div style="width: 100%;">
-					<textarea type="text" class="http-prefix text-input text-input--transparent">http://</textarea>
-					<textarea style="text-indent: 50px;" type="text" class="text-input text-input--transparent" ng-model="$storage.serverUrl"></textarea>
-					<span style="text-indent: 50px;" class="multiline-wrapper" ng-bind="$storage.serverUrl"></span>
+					<textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+						class="text-input text-input--transparent" ng-model="$storage.serverUrl" placeholder="web.gis.lab"
+						onkeydown="if (event.keyCode == 13) document.getElementById('settings-username-field').focus()"></textarea>
+					<span class="multiline-wrapper" ng-bind="$storage.serverUrl"></span>
 				</div>
 			</ons-list-item>
 			<ons-list-header>
@@ -31,7 +32,10 @@
 				Username
 			</ons-list-header>
 			<ons-list-item>
-				<input type="text" class="text-input text-input--transparent" placeholder="Username" ng-model="$storage.username">
+				<input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+					class="text-input text-input--transparent" placeholder="guest" ng-model="$storage.username"
+					id="settings-username-field" onkeydown="if (event.keyCode == 13) document.getElementById('settings-password-field').focus()">
+				</input>
 			</ons-list-item>
 			<ons-list-header>
 				<svg class="list-header-icon">
@@ -40,7 +44,9 @@
 				Password
 			</ons-list-header>
 			<ons-list-item>
-				<input type="password" class="text-input text-input--transparent" placeholder="Password" ng-model="$storage.password">
+				<input type="password" class="text-input text-input--transparent" placeholder="password" ng-model="$storage.password"
+					id="settings-password-field" onkeydown="if (event.keyCode == 13) document.getElementById('settings-password-field').blur()">
+				</input>
 			</ons-list-item>
 		</ons-list>
 	</ons-scroller>

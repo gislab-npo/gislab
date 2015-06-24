@@ -304,6 +304,7 @@
 							//$scope.$storage.recentProjects = [];
 							var currentProjectData = {
 								project: data.project,
+								title: data.root_title,
 								author: data.author,
 								publish_date_text: data.publish_date,
 								expiration_date: data.expiration_date

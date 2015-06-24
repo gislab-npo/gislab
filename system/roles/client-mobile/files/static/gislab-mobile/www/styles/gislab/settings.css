@@ -155,11 +155,6 @@
 .settings .list__item textarea {
 	padding-top: 6px;
 }
-.settings textarea.http-prefix {
-	color: gray!important;
-	resize: none;
-	max-width: 65px;
-}
 
 .settings .list__item--accordion-content {
 	padding: 0 5px 0 5px;
