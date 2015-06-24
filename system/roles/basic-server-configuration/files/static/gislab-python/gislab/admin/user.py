@@ -68,8 +68,10 @@ class GISLabUser(object):
         def _unbind(cls):
             """Close LDAL connection.
             """
-            cls.ldap.unbind()
-            GISLabAdminLogger.debug("LDAP connection closed")
+            if cls.ldap:
+                cls.ldap.unbind()
+                cls.ldap = None
+                GISLabAdminLogger.debug("LDAP connection closed")
 
         def _users_ldap(cls, query=None):
             """Get LDAP entries of GIS.lab users.
@@ -116,7 +118,6 @@ class GISLabUser(object):
         # user/groupd id
         # gid must be defined before calling _next_uid()
         self.gid = int(grp.getgrnam('gislabusers').gr_gid)
-        self.uid = self._next_uid()
         
     @classmethod
     def __del__(cls):
@@ -187,6 +188,9 @@ class GISLabUser(object):
                                    "exists.")
         
         GISLabAdminLogger.debug("{0}".format(user))
+
+        # set uid
+        user.uid = user._next_uid()
 
         # set user password or generated random password if not given
         if not password:
@@ -614,11 +618,8 @@ class GISLabUser(object):
 
         :return: True if user is running a session otherwise False
         """
-        ret = os.path.isfile(os.path.join(self.home, '.gislab', 'session.lock'))
-        GISLabAdminLogger.debug("{0}has_active_session='{1}'".format(self._log, ret))
+        return os.path.isfile(os.path.join(self.home, '.gislab', 'session.lock'))
         
-        return ret
-
     def _create_ldap(self):
         """Create record in LDAP database and activate forwarding of email
 	sent to root if creating superuser account.
