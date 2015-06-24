@@ -542,12 +542,17 @@ class GISLabUser(object):
     def __str__(self):
         """Get GIS.lab user string info.
         """
-        return "GISLabUser({0}): firstname='{1}' lastname='{2}' email='{3}' description='{4}' " \
-               "superuser={5} has_active_session={6}".format(self.username, self.firstname,
-                                                    self.lastname, self.email,
-                                                    self.description, self.superuser,
-                                                    self.has_active_session())
-
+        user_str = "{0}:\n\tfirstname='{1}' lastname='{2}' email='{3}'" \
+            "\n".format(self.username, self.firstname,
+                        self.lastname, self.email)
+        if self.description:
+            user_str += "\tdescription='{0}'".format(self.description)
+        user_str += "\tsuperuser={0}".format('yes' if self.superuser else 'no')
+        if self.has_active_session():
+            user_str += "\tis running a session"
+            
+        return user_str
+    
     def is_username_valid(self):
         """Check if user name is valid
 
