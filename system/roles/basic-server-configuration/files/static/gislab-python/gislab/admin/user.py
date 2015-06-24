@@ -95,15 +95,13 @@ class GISLabUser(object):
 
     def __init__(self, username, **kwargs):
         """
-        Throw GISLabAdminError when user name is not valid. User name can
-        contain only lower case digits and numbers.
+        GIS.lab user constuctor.
 
         :param username: user name (must be unique)
         :param kwargs: user attributes (firstname, lastname,
         ...), see create() for details
         """
-        # do user name validation
-        self.username = self._validate_username(username)
+        self.username = username
 
         # set user attributes
         for name, value in kwargs.iteritems():
@@ -154,9 +152,19 @@ class GISLabUser(object):
                    superuser=superuser,
                    uid=nextuid(),
                    gid = int(grp.getgrnam('gislabusers').gr_gid))
-        # do e-mail validation
-        user._validate_email(email)
-
+        
+        # username/email validation
+        if not user.is_username_valid():
+            raise GISLabAdminError("Invalid characters in user name. "
+                                   "User name can contain only lower "
+                                   "case digits and numbers.")
+        if not user.is_email_valid():
+            raise GISLabAdminError("Invalid e-mail address format")
+        if not user.is_email_unique():
+            raise GISLabAdminError("User account e-mail must be unique. "
+                                   "Account with this e-mail already "
+                                   "exists.")
+        
         GISLabAdminLogger.debug("{0}".format(user))
 
         # set user password or generated random password if not given
@@ -285,8 +293,14 @@ class GISLabUser(object):
                     # remove old mail from maildrop
                     self._remove_ldap_maildrop()
                 # validate e-mail
-                value = self._validate_email(kwargs['email'])
-
+                value = kwargs['email']
+                if not self.is_email_valid(value):
+                    raise GISLabAdminError("Invalid e-mail address format")
+                if not self.is_email_unique(value):
+                    raise GISLabAdminError("User account e-mail must be unique. "
+                                           "Account with this e-mail already "
+                                           "exists.")
+            
             # set new user attribute, remember old value
             old_value = getattr(self, key)
             setattr(self, key, value)
@@ -509,48 +523,55 @@ class GISLabUser(object):
                                                     self.description, self.superuser,
                                                     self.has_active_session())
 
-    def _validate_username(self, username):
-        """Perform user name validation.
+    def is_username_valid(self):
+        """Check if user name is valid
 
-        :param username: GIS.lab user name
-
-        Throws GISLabAdminError when user name is not valid
-
-        :return: validated username
+        :return: True if valid otherwise False
         """
         p = re.compile('^[a-z][a-z0-9_]*$')
-        if not p.match(username):
-            raise GISLabAdminError("Invalid characters in user name."
-                              "User name can contain only lower "
-                              "case digits and numbers.")
+        if not p.match(self.username):
+            return False
+        
+        return True
 
-        return username
+    def is_email_valid(self, email=None):
+        """Check if email is valid.
 
-    def _validate_email(self, email):
-        """Perform email validation.
+        :param email: e-mail to be validated or None to check already
+        defined e-mail
 
-        :param email: email address
-
-        Throws GISLabAdminError when email is not valid
-
-	:return: validated email
+	:return: True if valid otherwise False
         """
-        # validate
+        if not email:
+            email = self.email
+        
         p = re.compile('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$')
         if not p.match(email):
-            raise GISLabAdminError("Invalid e-mail address format")
+            return False
+        
+        return True
 
-        # check if email is unique
+    def is_email_unique(self, email=None):
+        """Check if email is unique
+
+        :param email: e-mail to be validated or None to check already
+        defined e-mail
+
+	:return: True if unique otherwise False
+        """
+        if not email:
+            email = self.email
+        
         gid = grp.getgrnam('gislabusers').gr_gid
-        query = "(&(objectClass=inetOrgPerson)(gidNumber={}))".format(gid)
-        for ldap_item in self.ldap.search_s(self.ldap_base, ldap.SCOPE_SUBTREE, query):
+        for ldap_item in self._get_users_ldap("(&(objectClass=inetOrgPerson)"
+                                              "(gidNumber={}))".format(gid)):
             username = ldap_item[1]['uid'][0]
             usermail = ldap_item[1]['mail']
-            if len(usermail) > 0 and username != self.username and usermail[0] == email:
-                raise GISLabAdminError("User account with this e-mail address already "
-                                  "exists ({})".format(username))
-
-        return email
+            if len(usermail) > 0 and username != self.username and \
+                    usermail[0] == email:
+                return False
+        
+        return True
 
     def set_password(self, password):
         """Set a new password for GIS.lab user.
