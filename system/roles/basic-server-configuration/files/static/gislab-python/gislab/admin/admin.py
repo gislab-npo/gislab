@@ -41,6 +41,13 @@ class GISLabAdmin(object):
 
     __metaclass__ = MetaGISLabAdmin
 
+    def __del__(self):
+        """Class destructor.
+
+        Close LDAP connection.
+        """
+        GISLabUser.unbind()
+
     @staticmethod
     def user_add(username, **kwargs):
         """Create new GIS.lab user account.

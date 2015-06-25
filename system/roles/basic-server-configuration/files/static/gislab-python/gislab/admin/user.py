@@ -88,7 +88,7 @@ class GISLabUser(object):
                 # all gislab users
                 gid = grp.getgrnam('gislabusers').gr_gid
                 query = "(&(objectClass=inetOrgPerson)(gidNumber={}))".format(gid)
-
+            
             ldap_items = cls.ldap.search_s(cls.ldap_base, ldap.SCOPE_SUBTREE, query)
             
             return ldap_items
@@ -119,14 +119,6 @@ class GISLabUser(object):
         # gid must be defined before calling _next_uid()
         self.gid = int(grp.getgrnam('gislabusers').gr_gid)
         
-    @classmethod
-    def __del__(cls):
-        """Class destructor.
-
-        Close LDAP connection.
-        """
-        cls.unbind()
-
     def _next_uid(self, min_uid=3000):
         """Get next free user ID.
 
