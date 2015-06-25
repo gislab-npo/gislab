@@ -792,7 +792,7 @@
   args:
     executable: /bin/bash
 
-- name: Publish GIS.lab client image version file
+- name: Publish GIS.lab client build stamp file
   file: src={{ GISLAB_INSTALL_CLIENT_IMAGE }}/gislab_desktop.buildstamp dest=/var/www/default/gislab_desktop.buildstamp state=link force=yes
 
 # Restart NBD server
