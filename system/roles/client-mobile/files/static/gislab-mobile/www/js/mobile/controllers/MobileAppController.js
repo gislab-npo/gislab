@@ -232,22 +232,33 @@
 		});
 
 		$scope.updateScreenSize = function() {
+			/*
 			var width, height;
 			if (window.orientation === 0 || window.orientation === 180) {
 				width = Math.min(window.innerWidth, window.innerHeight);
 				height = Math.max(window.innerWidth, window.innerHeight);
+				width = Math.min(document.body.clientWidth, document.body.clientHeight);
+				height = Math.max(document.body.clientWidth, document.body.clientHeight);
 			} else {
 				width = Math.max(window.innerWidth, window.innerHeight);
 				height = Math.min(window.innerWidth, window.innerHeight);
+				width = Math.max(document.body.clientWidth, document.body.clientHeight);
+				height = Math.min(document.body.clientWidth, document.body.clientHeight);
 			}
-			$scope.screenWidth = width;
-			$scope.screenHeight = height;
-			if (projectProvider.map) {
-				projectProvider.map.updateSize();
-			}
-			//console.log('orientation: {0}'.format(window.orientation));
-			//console.log('screenWidth: {0}'.format($scope.screenWidth));
-			//console.log('screenHeight: {0}'.format($scope.screenHeight));
+			console.log("orientation: {0} width: {1} height: {2}".format(window.orientation, width, height));
+			console.log("width: {0} height: {1}".format(window.innerWidth, window.innerHeight));
+			*/
+			$timeout(function() {
+				//$scope.screenWidth = width;
+				//$scope.screenHeight = height;
+				$scope.screenWidth = document.body.clientWidth;
+				$scope.screenHeight = document.body.clientHeight;
+				if (projectProvider.map) {
+					$timeout(function() {
+						projectProvider.map.updateSize();
+					}, 10);
+				}
+			}, 150);
 		};
 
 		$scope.showProgressDialog = function(dialog, msg) {
