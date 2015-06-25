@@ -1,4 +1,4 @@
-<ons-page class="settings server-settings" ng-controller="ServerSettingsController">
+<ons-page class="settings server-settings flex-container-vertical" ng-controller="ServerSettingsController">
 	<ons-toolbar fixed-style>
 		<div class="left">
 			<ons-toolbar-button class="backbutton" ng-click="app.navigator.popPage();">
@@ -9,7 +9,7 @@
 		</div>
 		<div class="center">Server</div>
 	</ons-toolbar>
-	<ons-scroller style="width: 100%; height: {{ screenHeight-64 }}px;">
+	<ons-scroller style="width: 100%;" class="vertical-flexible">
 		<ons-list>
 			<ons-list-header>
 				<svg class="list-header-icon">
@@ -50,7 +50,7 @@
 			</ons-list-item>
 		</ons-list>
 	</ons-scroller>
-	<div class="toolbar bottom-toolbar">
+	<div class="toolbar bottom-toolbar vertical-fit">
 		<ons-row>
 			<ons-col>
 				<ons-toolbar-button class="toolbar-button--icon-text" ng-click="saveServerProfile($storage.serverUrl, $storage.username, $storage.password)">
