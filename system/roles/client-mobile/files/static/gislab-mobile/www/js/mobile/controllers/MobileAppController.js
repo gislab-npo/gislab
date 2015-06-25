@@ -184,6 +184,11 @@
 
 		ons.ready(function() {
 			console.log('ons ready');
+			if (!angular.isDefined($scope.$storage.showScaleLine)) {
+				$scope.$storage.showScaleLine = true;
+				$scope.$storage.showHeader = true;
+				$scope.$storage.showZoomControls = true;
+			}
 			setImmediate(function() {
 				$scope.app.menu.on('postclose', function() {
 					$scope.ui.toolbar.forEach(function(tool) {
