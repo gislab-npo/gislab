@@ -120,7 +120,8 @@ class GISLabAdmin(object):
 
         :param username: user name
         """
-        GISLabUser.get(username).backup()
+        # GISLabUser.get(username).backup()
+        raise NotImplementedError("User backup not implemented yet")
 
     @staticmethod
     def user_restore(username):
@@ -132,7 +133,8 @@ class GISLabAdmin(object):
 
         :return: GISLabUser object
         """
-        return GISLabUser.restore(username)
+        # return GISLabUser.restore(username)
+        raise NotImplementedError("User restore not implemented yet")
 
     @classmethod
     def machine_add(cls, mac):
