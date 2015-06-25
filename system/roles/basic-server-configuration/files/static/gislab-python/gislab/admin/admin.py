@@ -96,6 +96,16 @@ class GISLabAdmin(object):
         return GISLabUser.get(username)
 
     @staticmethod
+    def user_exists(username):
+        """Check if GIS.lab user exists.
+
+        :param username: user name
+
+        :return: True if user exists otherwise False
+        """
+        return GISLabUser.exists(username)
+
+    @staticmethod
     def user_backup(username):
         """Backup GIS.lab user account.
 

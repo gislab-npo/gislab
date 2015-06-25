@@ -25,6 +25,11 @@ def main():
     
     # delete existing user account
     try:
+        # check if user account already exists
+        if not GISLabAdmin.user_exists(opts.username):
+            raise GISLabAdminError("GIS.lab user '{0}' doesn't "
+                                   "exists".format(opts.username))
+        
         GISLabAdminLogger.warning("This command will completely remove GIS.lab user "
                              "account '{}' including all data!".format(opts.username))
         if not opts.f:

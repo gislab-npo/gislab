@@ -25,9 +25,14 @@ def main():
                                       'password (default: automatically generated)'),
                                      ('-d', 'description', 'user description'),
                                      ('-s', False, 'add user to superuser\'s group')))
-
-    # add new user account
+    
     try:
+        # check if user account already exists
+        if GISLabAdmin.user_exists(opts.username):
+            raise GISLabAdminError("GIS.lab user '{0}' already "
+                                   "exists".format(opts.username))
+    
+        # add new user account
         user = GISLabAdmin.user_add(opts.username, firstname=opts.g, lastname=opts.l,
                                     email=opts.m, password=opts.p, description=opts.d,
                                     superuser=opts.s)

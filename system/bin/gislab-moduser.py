@@ -34,6 +34,11 @@ def main():
                 opts.p = getpass()
             
             if opts.username:
+                # check if user account already exists
+                if not GISLabAdmin.user_exists(opts.username):
+                    raise GISLabAdminError("GIS.lab user '{0}' doesn't "
+                                           "exists".format(opts.username))
+                
                 # modify selected user account
                 GISLabAdmin.user_modify(opts.username, firstname=opts.g, lastname=opts.l,
                                         email=opts.m, password=opts.p,

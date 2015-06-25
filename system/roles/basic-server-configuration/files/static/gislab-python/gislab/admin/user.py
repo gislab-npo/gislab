@@ -162,13 +162,6 @@ class GISLabUser(object):
 
         :return: GISLabUser object
         """
-        # check if user account already exists
-        try:
-            pwd.getpwnam(username)
-            raise GISLabAdminError("GIS.lab user '{0}' already exists".format(username))
-        except KeyError:
-            pass
-
         # create new account
         user = cls(username, firstname=firstname, lastname=lastname,
                    email=email,
@@ -253,15 +246,29 @@ class GISLabUser(object):
 
         :return: GISLabUser object
         """
-        query = "(uid={})".format(username)
-        users = GISLabUser.list(query)
+        users = GISLabUser.list("(uid={})".format(username))
         if users is None or len(users) == 0:
-            raise GISLabAdminError("GIS.lab user '{}' doesn't exists".format(username))
+            raise GISLabAdminError("GIS.lab user '{0}' doesn't "
+                                   "exists".format(username))
         return users[0]
 
     @classmethod
     def _get_users_ldap(cls, query):
         return cls._users_ldap(query)
+
+    @classmethod
+    def exists(cls, username):
+        """Check if GIS.lab user account exists.
+
+        :param username: GIS.lab user name to be checked
+        
+        :return: True if user exists otherwise False
+        """
+        users = GISLabUser.list("(uid={})".format(username))
+        if not users or len(users) != 1:
+            return False
+        
+        return True
 
     def delete(self):
         """Delete GIS.lab user account.
