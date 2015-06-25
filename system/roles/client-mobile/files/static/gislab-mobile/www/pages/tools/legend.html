@@ -1,10 +1,10 @@
-<ons-page ng-controller="LegendController" class="legend-panel flex-container-vertical">
+<ons-page ng-controller="LegendController" class="flex-container-vertical">
 	<div class="panel-header" ng-if="$storage.showHeader">
 		<div class="center"><span>{{ ['Legend', 'Properties'][app.legend.carousel._lastActiveIndex] }}</span></div>
 	</div>
 	<ons-carousel var="app.legend.carousel" class="vertical-flexible" swipeable auto-scroll>
-		<ons-carousel-item>
-			<ons-scroller class="main-panel-content">
+		<ons-carousel-item class="legend-panel">
+			<ons-scroller>
 				<div class="legend-container">
 					<img class="legend-item" ng-repeat="layer in ::layers.list" ng-if="layer.visible" ng-src="{{ layer.legendUrl }}" />
 				</div>

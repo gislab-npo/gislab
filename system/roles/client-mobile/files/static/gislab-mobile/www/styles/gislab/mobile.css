@@ -115,8 +115,8 @@ ons-page.flex-container-vertical {
 }
 
 
-.legend-panel .layers-panel {
-	background-color: white;
+.legend-panel, .layers-panel {
+	background-color: white!important;
 }
 
 .main-panel .navigation-bar.sub-toolbar .navigation-bar__title {
