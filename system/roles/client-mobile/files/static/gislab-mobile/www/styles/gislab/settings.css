@@ -122,6 +122,10 @@
 	padding-right: 0;
 }
 
+.settings .list__item.list__item--accordion {
+	padding-right: 26px;
+}
+
 .settings .list__item span.multiline-wrapper {
 	box-sizing: border-box;
 	opacity: 0.01;

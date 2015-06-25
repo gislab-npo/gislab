@@ -153,6 +153,10 @@ input[type="checkbox"]:indeterminate + .checkbox-icon .indeterminate {
 	background-color: #d9d9d9;
 }
 
+.list__item--accordion {
+	padding-right: 26px;
+}
+
 .list__item--accordion-content {
 	display: block!important;
 	overflow: hidden;
