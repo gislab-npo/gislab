@@ -9,6 +9,7 @@ v3. Read the file LICENCE.md that comes with GIS.lab for details.
 """
 
 import sys
+import atexit
 
 from gislab.admin.utils import parse_arguments
 from gislab.admin import GISLabAdmin, GISLabUser, GISLabAdminError, GISLabAdminLogger
@@ -46,4 +47,5 @@ def main():
     return 0
 
 if __name__ == "__main__":
+    atexit.register(GISLabUser.unbind)
     sys.exit(main())

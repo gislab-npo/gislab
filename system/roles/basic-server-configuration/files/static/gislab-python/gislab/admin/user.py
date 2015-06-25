@@ -65,7 +65,7 @@ class GISLabUser(object):
 
             GISLabAdminLogger.debug("LDAP connection established")
 
-        def _unbind(cls):
+        def unbind(cls):
             """Close LDAL connection.
             """
             if cls.ldap:
@@ -125,7 +125,7 @@ class GISLabUser(object):
 
         Close LDAP connection.
         """
-        cls._unbind()
+        cls.unbind()
 
     def _next_uid(self, min_uid=3000):
         """Get next free user ID.
