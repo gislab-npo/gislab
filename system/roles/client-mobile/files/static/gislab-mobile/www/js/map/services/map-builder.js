@@ -50,7 +50,6 @@
 			} else if (config.type === 'OSM') {
 				base_layer = new ol.layer.Tile({
 					source: new ol.source.OSM(),
-					extent: config.extent,
 					visible: config.visible || false
 				});
 			} else if (config.type === 'WMS') {

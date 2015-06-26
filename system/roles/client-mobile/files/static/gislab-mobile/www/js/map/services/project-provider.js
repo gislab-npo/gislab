@@ -22,6 +22,10 @@
 			if (this.map) {
 				this.map.dispose();
 			}
+			// filter google base layers
+			config.base_layers = config.base_layers.filter(function(obj) {
+				return obj.type !== 'google';
+			});
 			this.baseLayers.tree = config.base_layers;
 			this.baseLayers.list = mapBuilder.layersTreeToList({layers: this.baseLayers.tree}, true);
 			this.layers.tree = config.layers;
