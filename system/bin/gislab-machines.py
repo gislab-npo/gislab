@@ -11,7 +11,7 @@ v3. Read the file LICENCE.md that comes with GIS.lab for details.
 
 import sys
 
-from gislab.admin.utils import parse_arguments
+from gislab.admin.utils import parse_arguments, requires_root
 from gislab.admin import GISLabAdmin, GISLabUser, GISLabAdminError, GISLabAdminLogger
 
 def main():
@@ -27,6 +27,9 @@ def main():
 					  "'unknown machines' policy will be set to 'deny'")))
 	
 	try:
+		# requires root
+		requires_root()
+		
 		# check mutually exclusive
 		# TODO: do it better (argparse ???)
 		nopts = 0

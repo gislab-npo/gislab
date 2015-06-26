@@ -14,7 +14,6 @@ import os
 import re
 import grp
 import copy
-import sys
 
 from subprocess import call
 
@@ -40,12 +39,10 @@ class GISLabUser(object):
 			type.__init__(cls, name, bases, d)
 			
 			cls._hooks = os.path.join('/', 'opt', 'gislab', 'system', 'account', 'hooks')
-			
-			# requires root
-			if os.getuid() != 0:
-				GISLabAdminLogger.error("This command can only be be run with superuser privileges")
-				sys.exit(1)
 
+			cls.ldap = None
+			
+		def ldap_bind(cls):
 			try:
 				cls.ldap_base = "dc=gis,dc=lab"
 				cls.ldap = ldap.initialize('ldapi:///')
@@ -59,7 +56,7 @@ class GISLabUser(object):
 
 			GISLabAdminLogger.debug("LDAP connection established")
 
-		def unbind(cls):
+		def ldap_unbind(cls):
 			"""Close LDAL connection.
 			"""
 			if cls.ldap:
@@ -78,6 +75,9 @@ class GISLabUser(object):
 
 			:return: list of LDAP entries
 			"""
+			if cls.ldap is None:
+				cls.ldap_bind()
+			
 			if not query:
 				# all gislab users
 				gid = grp.getgrnam('gislabusers').gr_gid

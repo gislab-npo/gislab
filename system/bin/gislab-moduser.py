@@ -13,7 +13,7 @@ import sys
 import atexit
 from getpass import getpass
 
-from gislab.admin.utils import parse_arguments
+from gislab.admin.utils import parse_arguments, requires_root
 from gislab.admin import GISLabAdmin, GISLabUser, GISLabAdminError, GISLabAdminLogger
 
 def main():
@@ -29,6 +29,9 @@ def main():
 					 ('-s', None, 'add user to superuser\'s group')))
 
 	try:
+		# requires root
+		requires_root()
+		
 		if opts.g or opts.l or opts.m or opts.p or opts.d or opts.s:
 			if opts.p is True:
 				# interactively ask for password
@@ -62,5 +65,5 @@ def main():
 	return 0
 
 if __name__ == "__main__":
-	atexit.register(GISLabUser.unbind)
+	atexit.register(GISLabUser.ldap_unbind)
 	sys.exit(main())

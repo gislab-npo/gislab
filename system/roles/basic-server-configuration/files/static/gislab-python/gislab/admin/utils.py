@@ -21,6 +21,12 @@ from .pwgen import pwgen
 from .logger import GISLabAdminLogger
 from .exception import GISLabAdminError
 
+def requires_root():
+	"""Check if script is running with administrator privileges.
+	"""
+	if os.getuid() != 0:
+		raise GISLabAdminError("This command can only be be run with superuser privileges")
+
 def parse_arguments(desc, positional=(), required=(), optional=()):
 	"""Parse command line arguments.
 

@@ -11,7 +11,7 @@ v3. Read the file LICENCE.md that comes with GIS.lab for details.
 import sys
 import atexit
 
-from gislab.admin.utils import parse_arguments
+from gislab.admin.utils import parse_arguments, requires_root
 from gislab.admin import GISLabAdmin, GISLabUser, GISLabAdminError, GISLabAdminLogger
 
 def main():
@@ -28,6 +28,9 @@ def main():
 					 ('-s', False, 'add user to superuser\'s group')))
 	
 	try:
+		# requires root
+		requires_root()
+		
 		# check if user account already exists
 		if GISLabAdmin.user_exists(opts.username):
 			raise GISLabAdminError("GIS.lab user '{0}' already "
@@ -38,7 +41,7 @@ def main():
 					    email=opts.m, password=opts.p, description=opts.d,
 					    superuser=opts.s)
 	except GISLabAdminError as e:
-		GISLabAdminLogger.error(str(e))
+		GISLabAdminLogger.error("{}".format(e))
 		return 1
 	
 	GISLabAdminLogger.info("GIS.lab account '{user}' created with password "
@@ -47,5 +50,5 @@ def main():
 	return 0
 
 if __name__ == "__main__":
-	atexit.register(GISLabUser.unbind)
+	atexit.register(GISLabUser.ldap_unbind)
 	sys.exit(main())
