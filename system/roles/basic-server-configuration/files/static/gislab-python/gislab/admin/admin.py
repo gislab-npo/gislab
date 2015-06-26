@@ -27,15 +27,15 @@ class GISLabAdmin(object):
     Throw GISLabAdminError on failure.
     """
     class MetaGISLabAdmin(type):
-      def __init__(cls, name, bases, d):
-        type.__init__(cls, name, bases, d)
+        def __init__(cls, name, bases, d):
+            type.__init__(cls, name, bases, d)
         
-        cls.policy_file = os.path.join('/', 'etc' , 'gislab',
-                                     'gislab_unknown_machines_policy.conf')
-        cls.known_machines_list_file = os.path.join('/', 'etc', 'gislab',
-                                                    'gislab_known_machines.txt')
-        cls.known_machines_dhcp_file = os.path.join('/', 'etc', 'dhcp',
-                                                    'gislab_known_machines.conf')
+            cls.policy_file = os.path.join('/', 'etc' , 'gislab',
+                                           'gislab_unknown_machines_policy.conf')
+            cls.known_machines_list_file = os.path.join('/', 'etc', 'gislab',
+                                                        'gislab_known_machines.txt')
+            cls.known_machines_dhcp_file = os.path.join('/', 'etc', 'dhcp',
+                                                        'gislab_known_machines.conf')
 
     __metaclass__ = MetaGISLabAdmin
 
