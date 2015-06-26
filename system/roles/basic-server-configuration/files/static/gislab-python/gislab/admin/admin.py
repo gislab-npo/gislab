@@ -20,7 +20,6 @@ from .user import GISLabUser
 from .exception import GISLabAdminError
 from .logger import GISLabAdminLogger
 
-
 class GISLabAdmin(object):
     """Main class.
 
