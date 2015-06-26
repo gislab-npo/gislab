@@ -12,13 +12,10 @@ v3. Read the file LICENCE.md that comes with GIS.lab for details.
 
 import os
 import argparse
-import ldap
-import pwd
 import re
 
 import hashlib
 from base64 import encodestring as encode
-from base64 import decodestring as decode
 
 from .pwgen import pwgen
 from .logger import GISLabAdminLogger

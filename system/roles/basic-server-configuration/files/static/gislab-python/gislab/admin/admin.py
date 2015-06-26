@@ -11,8 +11,6 @@ v3. Read the file LICENCE.md that comes with GIS.lab for details.
 """
 
 import os
-import ldap
-import grp
 import re
 import fileinput
 import sys

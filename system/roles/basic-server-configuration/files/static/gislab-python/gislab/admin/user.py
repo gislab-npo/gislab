@@ -12,16 +12,10 @@ v3. Read the file LICENCE.md that comes with GIS.lab for details.
 
 import os
 import re
-import pwd
 import grp
-import shutil
 import copy
-import fileinput
-import tarfile
-import glob
 import sys
 
-from datetime import datetime
 from subprocess import call
 
 import ldap
