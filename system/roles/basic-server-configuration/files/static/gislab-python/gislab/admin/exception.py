@@ -9,8 +9,8 @@ v3. Read the file LICENCE.md that comes with GIS.lab for details.
 """
 
 class GISLabAdminError(Exception):
-    """GIS.lab Admin error
+	"""GIS.lab Admin error
 
-    :todo: implement different
-    """
-    pass
+	:todo: implement different
+	"""
+	pass
