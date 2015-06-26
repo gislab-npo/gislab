@@ -1,10 +1,7 @@
 <ons-page ng-controller="SettingsController" class="flex-container-vertical">
-<!--	<div class="panel-header" ng-if="$storage.showHeader">-->
-<!--		<div class="center"><span>{{ ['Settings', 'About'][app.settings.carousel._lastActiveIndex] }}</span></div>-->
-<!--	</div>-->
-		<div class="panel-header" ng-if="$storage.showHeader">
-			<div class="center"><span>Settings</span></div>
-		</div>
+	<div class="panel-header" ng-if="$storage.showHeader">
+		<div class="center"><span>Settings</span></div>
+	</div>
 	<ons-navigator class="settings-navigator" var="app.navigator.settings">
 		<ons-scroller style="height: 100%;">
 			<ons-list>

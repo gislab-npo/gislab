@@ -137,8 +137,10 @@
 								<ons-row>
 									<ons-col class="indent" width="52px">
 										<svg class="toggle-button-icon" ng-class="{expanded: $node.isExpanded}">
-											<use class="collapsed" xlink:href="#icon-toggle-plus"></use>
-											<use class="expanded" xlink:href="#icon-toggle-minus"></use>
+<!--											<use class="collapsed" xlink:href="#icon-circle-plus"></use>-->
+<!--											<use class="expanded" xlink:href="#icon-circle-minus"></use>-->
+											<use class="collapsed" xlink:href="#icon-square-plus"></use>
+											<use class="expanded" xlink:href="#icon-square-minus"></use>
 										</svg>
 										<label class="checkbox" gl-click="$event.stopPropagation();">
 											<input type="checkbox" ng-model="node.visible" ng-change="nodeSelected(node, node.visible)"/>

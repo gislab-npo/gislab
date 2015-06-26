@@ -109,7 +109,7 @@
 	</ons-template>
 	<ons-template id="panel_tab_container.html">
 		<ons-page class="main-panel">
-			<ons-tabbar var="app.panel.tabbar" style="height: {{ screenHeight }}px;" class="main-panel-tabbar" hide-tabs="true">
+			<ons-tabbar var="app.panel.tabbar" style="height: 100%;" class="main-panel-tabbar" hide-tabs="true">
 				<ons-tab page="empty.html" active="true"></ons-tab>
 				<ons-tab ng-repeat="tool in ::ui.toolbar | filter:{page:'',disabled:false}" page="{{ ::tool.page }}" gl-con-attr="{persistent: {{ ::tool.persistent == true }}}" ng-init="tool._tab_index = $index+1" no-reload>
 				</ons-tab>

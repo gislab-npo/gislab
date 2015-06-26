@@ -13,28 +13,6 @@
 	padding-right: 5px;
 }
 
-.about .list__item {
-	font-size: 14px!important;
-	line-height: 20px;
-	min-height: 30px;
-	padding-left: 3px;
-	padding-right: 3px;
-	color: #555;
-}
-.about .navigation-bar {
-	background-color: #f7f7f7;
-	border: none;
-}
-
-.settings .navigation-bar {
-	background-color: #f7f7f7;
-	height: 32px;
-	line-height: 32px;
-	color: #555;
-	text-align: center;
-	font-size: 14px;
-	font-weight: bold;
-}
 .settings .navigation-bar__title, .settings .navigation-bar__left, .settings .navigation-bar__right {
 	line-height: 32px;
 	height: 32px;
@@ -175,4 +153,14 @@
 .settings-navigator {
 	position: relative;
 	height: 100%;
+}
+
+.settings-navigator-toolbar {
+	background-color: #f7f7f7;
+	height: 32px;
+	line-height: 32px;
+	color: #555;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
 }

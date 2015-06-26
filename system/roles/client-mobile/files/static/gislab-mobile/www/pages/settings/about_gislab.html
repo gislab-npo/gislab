@@ -1,10 +1,7 @@
-<ons-page class="about">
-<!--	<div class="panel-header" ng-if="$storage.showHeader">-->
-<!--		<div class="center"><span>Settings</span></div>-->
-<!--	</div>-->
-	<ons-toolbar class="sub-toolbar" >
+<ons-page>
+	<ons-toolbar class="settings-navigator-toolbar sub-toolbar" fixed-style>
 		<div class="left">
-			<ons-toolbar-button ng-click="app.navigator.settings.popPage();">
+			<ons-toolbar-button class="backbutton" ng-click="app.navigator.settings.popPage();">
 				<svg class="toolbar-button-icon">
 					<use xlink:href="#icon-arrow-left"></use>
 				</svg>
@@ -13,7 +10,7 @@
 		<div class="center">GIS.lab</div>
 	</ons-toolbar>
 	<ons-scroller>
-		<ons-list>
+		<ons-list class="property-list">
 			<ons-list-item class="list__item--info-content">
 				<label>GIS.lab ID:</label>
 				<span ng-bind="::project.gislab_unique_id"></span>

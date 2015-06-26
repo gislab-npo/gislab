@@ -27,7 +27,7 @@
 					}
 				},
 			}, {
-				icon: 'icon-legend',
+				icon: 'icon-project',
 				page: 'pages/tools/legend.html',
 				persistent: true,
 				disabled: true

@@ -65,14 +65,14 @@
 }
 
 .main-panel .navigation-bar {
-	height: 26px;
+	height: 32px;
 }
 
 .navigation-bar__item, .navigation-bar__left, .navigation-bar__right, .navigation-bar__center {
 	height: auto!important;
 }
 .main-panel ons-toolbar ~ .page__content {
-	top: 26px;
+	top: 32px;
 }
 
 .navigation-bar__title {
@@ -121,7 +121,7 @@ ons-page.flex-container-vertical {
 
 .main-panel .navigation-bar.sub-toolbar .navigation-bar__title {
 	color: #555;
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: bold;
 }
 
@@ -272,5 +272,6 @@ img.legend-item {
 	width: 24px;
 	height: 24px;
 	fill: white;
+	-webkit-animation: 2s linear 0s normal none infinite running ons-icon-spin;
 	animation: 2s linear 0s normal none infinite running ons-icon-spin;
 }

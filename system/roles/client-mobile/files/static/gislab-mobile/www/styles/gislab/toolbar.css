@@ -177,20 +177,23 @@
 
 .sub-toolbar .toolbar-button-icon {
 	display: inline-block;
-	width: 14px;
-	height: 14px;
+	width: 16px;
+	height: 16px;
 	fill: #444;
 }
 
 .sub-toolbar .toolbar-button {
-	padding: 0;
+	padding-left: 0;
+	padding-right: 8px;
+	padding-top: 0;
+	padding-bottom: 2px;
 }
 
-.sub-toolbar .navigation-bar__left, .sub-toolbar .navigation-bar__center {
-	line-height: 26px!important;
-	height: 26px!important;
-}
-
+.sub-toolbar .navigation-bar__left,
+.sub-toolbar .navigation-bar__center,
+.sub-toolbar .navigation-bar__title,
 .sub-toolbar .navigation-bar__line-height {
-	line-height: 26px!important;
+	line-height: 32px!important;
+	height: 32px!important;
 }
+
