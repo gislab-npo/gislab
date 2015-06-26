@@ -40,9 +40,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - aptitude
   - ca-certificates
   - catfish
-  - cups
-  - cups-bsd
-  - cups-client
   - desktop-file-utils
   - dbus-x11
   - dmz-cursor-theme
@@ -50,8 +47,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - file-roller
   - fonts-liberation
   - fonts-opensymbol
-  - foomatic-db-compressed-ppds
-  - foomatic-filters
   - ghostscript-x
   - gstreamer0.10-gnomevfs
   - gstreamer0.10-plugins-base
@@ -65,7 +60,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - gvfs-backends
   - gvfs-fuse
   - gvfs-bin
-  - hplip
   - ibus
   - ibus-gtk
   - ibus-pinyin
@@ -84,20 +78,10 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - lightdm
   - lightdm-gtk-greeter
   - nvidia-common
-  - openprinting-ppds
   - pavucontrol
   - pcmciautils
   - policykit-desktop-privileges
-  - printer-driver-c2esp
-  - printer-driver-foo2zjs
-  - printer-driver-min12xxw
-  - printer-driver-pnm2ppa
-  - printer-driver-ptouch
-  - printer-driver-pxljr
-  - printer-driver-sag-gdi
-  - printer-driver-splix
   - rarian-compat
-  - system-config-printer-gnome
   - thunar
   - thunar-volman
   - thunar-archive-plugin
@@ -141,10 +125,16 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
 GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   # list of default office packages (installed without recommended packages)
   - conky-std
+  - cups
+  - cups-bsd
+  - cups-client
   - evince
   - firefox
   - firefox-gnome-support
   - flashplugin-installer
+  - foomatic-db-compressed-ppds
+  - foomatic-db-engine
+  - foomatic-filters
   - freerdp-x11
   - gcalctool
   - gdisk
@@ -152,6 +142,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   - gthumb
   - gtk-recordmydesktop
   - htop
+  - hplip
   - imagemagick
   - inkscape
   - leafpad
@@ -162,10 +153,23 @@ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   - libreoffice-writer
   - mc
   - mutt
+  - openprinting-ppds
   - pidgin
   - pidgin-libnotify
+  - printer-driver-c2esp
+  - printer-driver-foo2zjs
+  - printer-driver-gutenprint
+  - printer-driver-hpijs
+  - printer-driver-min12xxw
+  - printer-driver-pnm2ppa
+  - printer-driver-postscript-hp
+  - printer-driver-ptouch
+  - printer-driver-pxljr
+  - printer-driver-sag-gdi
+  - printer-driver-splix
   - pssh
   - rst2pdf
+  - system-config-printer-gnome
   - sshfs
   - vim-gnome
   - vlc
