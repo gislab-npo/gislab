@@ -14,9 +14,10 @@
 				$scope.showProgressDialog($scope.app.progressBar, 'Login to GIS.lab server');
 				$scope.login()
 					.then(function() {
+						$scope.app.wizard.carousel.next();
 						$scope.setProgressBarMessage('Loading list of user projects ...');
 						gislabMobileClient.userProjects()
-							.success(function(data, status, headers, config) {
+							.then(function(data) {
 								if (angular.isArray(data)) {
 									data.forEach(function(projectData) {
 										projectData.publish_date_text = new Date(projectData.publication_time_unix*1000).toLocaleString();
@@ -25,27 +26,28 @@
 									$scope.userProjects = data;
 								}
 								$scope.hideProgressDialog($scope.app.progressBar, 500, $scope.app.wizard.carousel.next, $scope.app.wizard.carousel);
-							})
-							.error(function(data, status, headers, config) {
-								/*
-								$scope.hideProgressDialog($scope.app.progressBar, 500, ons.notification.alert, null, {
-									title: 'Warning',
-									message: 'Failed to load list of your projects.'
-								});*/
-								$scope.hideProgressDialog($scope.app.progressBar, 500, function() {
-									$scope.app.wizard.carousel.next();
-									ons.notification.alert({
-										title: 'Warning',
-										message: 'Failed to load list of yours projects.'
+							}, function(error) {
+								if (error.canceled) {
+									$scope.hideProgressDialog($scope.app.progressBar, 0);
+								} else {
+									$scope.hideProgressDialog($scope.app.progressBar, 500, function() {
+										ons.notification.alert({
+											title: 'Warning',
+											message: 'Failed to load list of yours projects.'
+										});
 									});
-								});
+								}
 							});
 						
-					}, function() {
-						$scope.hideProgressDialog($scope.app.progressBar, 500, ons.notification.alert, null, {
-							title: 'Warning',
-							message: 'Login to GIS.lab server has failed.'
-						});
+					}, function(error) {
+						if (error.canceled) {
+							$scope.hideProgressDialog($scope.app.progressBar, 0);
+						} else {
+							$scope.hideProgressDialog($scope.app.progressBar, 500, ons.notification.alert, null, {
+								title: 'Warning',
+								message: 'Login to GIS.lab server has failed.'
+							});
+						}
 					})
 			} else {
 				$scope.app.wizard.carousel.next();

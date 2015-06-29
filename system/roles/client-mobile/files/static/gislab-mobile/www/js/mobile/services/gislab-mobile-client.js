@@ -19,20 +19,55 @@
 		.factory('gislabMobileClient', ['$http', '$q', gislabMobileClient]);
 
 	function gislabMobileClient($http, $q) {
-		function GislabMobileClient() {};
+		function GislabMobileClient() {
+			this.currentRequest = null;
+		};
+
+		GislabMobileClient.prototype._deferredRequest = function(httpParams) {
+			var deferredAbort = $q.defer();
+			var requestParams = angular.extend({
+					timeout: deferredAbort.promise
+				}, httpParams);
+			var request = $http(requestParams);
+			var promise = request.then(
+				function (response) {
+					return response.data;
+				}, function (response) {
+					return $q.reject({canceled: promise.canceled === true});
+				}
+			);
+			promise.abort = function() {
+				promise.canceled = true;
+				deferredAbort.resolve();
+			}
+			promise.finally(function() {
+				promise.abort = angular.noop;
+				deferredAbort = request = promise = null;
+			});
+			this.currentRequest = promise;
+			return promise;
+		};
+
+		GislabMobileClient.prototype.abortRequest = function() {
+			if (this.currentRequest && this.currentRequest.abort) {
+				this.currentRequest.abort();
+			}
+		};
 
 		GislabMobileClient.prototype.login = function(server, username, password) {
 			if (username && password) {
 				this._secure = true;
 				//this.serverUrl = 'https://{0}'.format(server);
 				this.serverUrl = 'http://{0}'.format(server);
-				return $http.post('{0}/mobile/login/'.format(this.serverUrl), {
+				return this._deferredRequest({
+					url: '{0}/mobile/login/'.format(this.serverUrl),
+					method: 'post',
+					withCredentials: true,
+					data: {
 						username: username,
 						password: password
-					}, {
-						withCredentials: true
 					}
-				);
+				});
 			} else {
 				this._secure = false;
 				this.serverUrl = 'http://{0}'.format(server);
@@ -55,10 +90,10 @@
 
 		GislabMobileClient.prototype.logout = function() {
 			if (this.serverUrl) {
-				return $http.get('{0}/mobile/logout/'.format(this.serverUrl), {
-						withCredentials: true
-					}
-				);
+				return this._deferredRequest({
+					url: '{0}/mobile/logout/'.format(this.serverUrl),
+					withCredentials: true
+				});
 			} else {
 				return $q.when();
 			}
@@ -71,14 +106,18 @@
 			} else {
 				url = '{0}/mobile/config.json?'.format(this.serverUrl);
 			}
-			return $http.get(url, {
-					withCredentials: true
+			return this._deferredRequest({
+				url: url,
+				method: 'get',
+				withCredentials: true
 			});
 		};
 
 		GislabMobileClient.prototype.userProjects = function() {
-			return $http.get('{0}/projects.json'.format(this.serverUrl), {
-					withCredentials: true
+			return this._deferredRequest({
+				url: '{0}/projects.json'.format(this.serverUrl),
+				method: 'get',
+				withCredentials: true
 			});
 		};
 

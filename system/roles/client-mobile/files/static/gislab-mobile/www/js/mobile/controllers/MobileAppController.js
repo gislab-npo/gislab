@@ -132,9 +132,9 @@
 				.then(function() {
 					$scope.currentServer = '{0}:{1}:{2}'.format($scope.$storage.serverUrl, $scope.$storage.username, $scope.$storage.password);
 					login.resolve();
-				}, function() {
+				}, function(error) {
 					$scope.currentServer = null;
-					login.reject();
+					login.reject(error);
 				});
 			return login.promise;
 		}
@@ -142,45 +142,46 @@
 			if ($scope.$storage.serverUrl) {
 				$scope.showProgressDialog($scope.app.progressBar, 'Login to GIS.lab server');
 				$scope.login()
-					.catch(function() {
-						$scope.loginFailed = true;
-					})
-					.finally(function () {
+					.then(function () {
 						$scope.setProgressBarMessage('Loading project ...');
 						$scope.loadProject($scope.$storage.project, viewConfig)
-							.catch(function() {
-								$scope.invalidProject = true;
+							.then(function() {
+								$scope.hideProgressDialog($scope.app.progressBar, 500);
 							})
-							.finally(function() {
-								$scope.hideProgressDialog($scope.app.progressBar, 800, function() {
-									if ($scope.loginFailed && $scope.invalidProject) {
-										ons.notification.alert({
-											title: 'Warning',
-											message: 'Login to GIS.lab server has failed and failed to load project as Guest user.'
-										});
-									} else if ($scope.loginFailed) {
-										ons.notification.alert({
-											title: 'Warning',
-											message: 'Login to GIS.lab server has failed. Continue as Guest user.'
-										});
-										$scope.loginFailed = null;
-									} else if ($scope.invalidProject) {
+							.catch(function(error) {
+								if (error.canceled) {
+									$scope.hideProgressDialog($scope.app.progressBar, 0);
+								} else {
+									$scope.hideProgressDialog($scope.app.progressBar, 500, function() {
 										ons.notification.alert({
 											title: 'Warning',
 											message: 'Failed to load project.'
 										});
-									}
-									$scope.loginFailed = null;
-									$scope.invalidProject = null;
+									});
+								}
+							})
+					})
+					.catch(function (error) {
+						if (error.canceled) {
+							$scope.hideProgressDialog($scope.app.progressBar, 0);
+						} else {
+							$scope.hideProgressDialog($scope.app.progressBar, 500, function() {
+								ons.notification.alert({
+									title: 'Warning',
+									message: 'Login to GIS.lab server has failed.'
 								});
 							});
-					});
+						}
+					})
 			} else {
 				$scope.loadProject(null);
 				$scope.app.wizard.carousel.setActiveCarouselItemIndex(0);
 				$scope.app.wizard.dialog.show();
 			}
 		}
+		$scope.abortRequest = function() {
+			gislabMobileClient.abortRequest();
+		};
 
 		ons.ready(function() {
 			console.log('ons ready');
@@ -293,13 +294,12 @@
 
 		$scope.loadProject = function(projectName, viewConfig) {
 			var task = $q.defer();
-			//$scope.showProgressDialog($scope.app.modal.loadingProject)
 			console.log('loadProject '+projectName);
 			$scope.$storage.project = projectName;
 
 			if ($scope.$storage.serverUrl) {
 				gislabMobileClient.project(projectName)
-					.success(function(data, status, headers, config) {
+					.then(function(data) {
 						projectProvider.load(data);
 						$scope.currentProject = projectName;
 						if (projectProvider.map) {
@@ -374,9 +374,8 @@
 						} else {
 							task.reject();
 						}
-					})
-					.error(function(data, status, headers, config) {
-						task.reject();
+					}, function(error) {
+						task.reject(error);
 					})
 			} else {
 				console.log('No MAP');
@@ -398,20 +397,21 @@
 		$scope.loadProjectWithProgressBar = function(projectName) {
 			$scope.showProgressDialog($scope.app.progressBar, 'Loading project ...');
 			$scope.loadProject(projectName)
-				.catch(function() {
-					$scope.invalidProject = true;
+				.then(function() {
+					$scope.hideProgressDialog($scope.app.progressBar, 500);
 				})
-				.finally(function() {
-					$scope.hideProgressDialog($scope.app.progressBar, 500, function() {
-						if ($scope.invalidProject) {
+				.catch(function(error) {
+					if (error.canceled) {
+						$scope.hideProgressDialog($scope.app.progressBar, 0);
+					} else {
+						$scope.hideProgressDialog($scope.app.progressBar, 500, function() {
 							ons.notification.alert({
 								title: 'Warning',
 								message: 'Failed to load project.'
 							});
-							$scope.invalidProject = null;
-						}
-					});
-				});
+						});
+					}
+				})
 		};
 		$scope.saveMapState = function() {
 			var map = projectProvider.map;

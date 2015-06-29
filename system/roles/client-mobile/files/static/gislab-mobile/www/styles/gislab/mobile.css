@@ -2,6 +2,7 @@
 {
 
 }
+/* hide scrollbars in Firefox */
 
 @-moz-document url-prefix() { 
 	ons-scroller {
@@ -274,4 +275,10 @@ img.legend-item {
 	fill: white;
 	-webkit-animation: 2s linear 0s normal none infinite running ons-icon-spin;
 	animation: 2s linear 0s normal none infinite running ons-icon-spin;
+}
+
+.progress-bar-button, .progress-bar-button:active {
+	background-color: #666;
+	height: 30px;
+	line-height: 22px;
 }
