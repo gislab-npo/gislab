@@ -94,6 +94,7 @@ MIDDLEWARE_CLASSES = (
 	'django.middleware.locale.LocaleMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
+	'webgis.libs.middleware.GislabHeaderMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
