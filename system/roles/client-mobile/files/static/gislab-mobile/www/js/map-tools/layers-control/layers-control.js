@@ -32,15 +32,17 @@
 		};
 
 		LayersControl.prototype.setVisibleLayers = function(map, visibleLayers) {
-			var layer = map.getLayer('qgislayer');
-			if (visibleLayers.length) {
-				if (!layer.getVisible()) {
-					layer.setVisible(true);
+			var overlaysLayer = map.getLayer('qgislayer');
+			if (overlaysLayer) {
+				if (visibleLayers.length) {
+					if (!overlaysLayer.getVisible()) {
+						overlaysLayer.setVisible(true);
+					}
+				} else {
+					overlaysLayer.setVisible(false);
 				}
-			} else {
-				layer.setVisible(false);
+				overlaysLayer.getSource().setVisibleLayers(visibleLayers);
 			}
-			layer.getSource().setVisibleLayers(visibleLayers);
 		};
 
 		LayersControl.prototype.getVisibleLayers = function(map) {
