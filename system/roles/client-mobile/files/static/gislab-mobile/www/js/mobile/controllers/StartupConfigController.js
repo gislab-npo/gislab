@@ -11,8 +11,8 @@
 				return;
 			}
 			if ($scope.$storage.username && $scope.$storage.password) {
-				$scope.showProgressDialog($scope.app.progressBar, 'Login to GIS.lab server');
-				$scope.login()
+				$scope.showProgressDialog($scope.app.progressBar);
+				$scope.loginProgressBarTask()
 					.then(function() {
 						$scope.app.wizard.carousel.next();
 						$scope.setProgressBarMessage('Loading list of user projects ...');
@@ -25,30 +25,20 @@
 									});
 									$scope.userProjects = data;
 								}
-								$scope.hideProgressDialog($scope.app.progressBar, 500, $scope.app.wizard.carousel.next, $scope.app.wizard.carousel);
+								$scope.hideProgressDialog($scope.app.progressBar, 800, $scope.app.wizard.carousel.next, $scope.app.wizard.carousel);
 							}, function(error) {
 								if (error.canceled) {
 									$scope.hideProgressDialog($scope.app.progressBar, 0);
 								} else {
-									$scope.hideProgressDialog($scope.app.progressBar, 500, function() {
+									$scope.hideProgressDialog($scope.app.progressBar, 800, function() {
 										ons.notification.alert({
 											title: 'Warning',
-											message: 'Failed to load list of yours projects.'
+											message: 'Failed to load list of your projects.'
 										});
 									});
 								}
 							});
-						
-					}, function(error) {
-						if (error.canceled) {
-							$scope.hideProgressDialog($scope.app.progressBar, 0);
-						} else {
-							$scope.hideProgressDialog($scope.app.progressBar, 500, ons.notification.alert, null, {
-								title: 'Warning',
-								message: 'Login to GIS.lab server has failed.'
-							});
-						}
-					})
+					});
 			} else {
 				$scope.app.wizard.carousel.next();
 			}
@@ -78,7 +68,7 @@
 		};
 		$scope.finish = function() {
 			$scope.close();
-			$scope.loadProjectWithProgressBar($scope.$storage.project);
+			$scope.loadProjectInProgressBar();
 		};
 		//$scope.userProjects = [{project: 'project1'}, {project: 'project2'}, {project: 'project3'}];
 	};

@@ -31,9 +31,19 @@
 			var request = $http(requestParams);
 			var promise = request.then(
 				function (response) {
+					if (!response.headers('X-GIS.lab-Version')) {
+						return $q.reject({
+							invalid_server: true,
+							canceled: false
+						});
+					}
 					return response.data;
 				}, function (response) {
-					return $q.reject({canceled: promise.canceled === true});
+					return $q.reject({
+						invalid_server: response.headers('X-GIS.lab-Version')? false : true,
+						canceled: promise.canceled === true,
+						status_code: response.status,
+					});
 				}
 			);
 			promise.abort = function() {

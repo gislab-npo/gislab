@@ -126,172 +126,6 @@
 			}
 		};
 
-		$scope.login = function() {
-			var login = $q.defer();
-			gislabMobileClient.login($scope.$storage.serverUrl, $scope.$storage.username, $scope.$storage.password)
-				.then(function() {
-					$scope.currentServer = '{0}:{1}:{2}'.format($scope.$storage.serverUrl, $scope.$storage.username, $scope.$storage.password);
-					login.resolve();
-				}, function(error) {
-					$scope.currentServer = null;
-					login.reject(error);
-				});
-			return login.promise;
-		}
-		$scope.loginAndLoadProject = function(viewConfig) {
-			if ($scope.$storage.serverUrl) {
-				$scope.showProgressDialog($scope.app.progressBar, 'Login to GIS.lab server');
-				$scope.login()
-					.then(function () {
-						$scope.setProgressBarMessage('Loading project ...');
-						$scope.loadProject($scope.$storage.project, viewConfig)
-							.then(function() {
-								$scope.hideProgressDialog($scope.app.progressBar, 500);
-							})
-							.catch(function(error) {
-								if (error.canceled) {
-									$scope.hideProgressDialog($scope.app.progressBar, 0);
-								} else {
-									$scope.hideProgressDialog($scope.app.progressBar, 500, function() {
-										ons.notification.alert({
-											title: 'Warning',
-											message: 'Failed to load project.'
-										});
-									});
-								}
-							})
-					})
-					.catch(function (error) {
-						if (error.canceled) {
-							$scope.hideProgressDialog($scope.app.progressBar, 0);
-						} else {
-							$scope.hideProgressDialog($scope.app.progressBar, 500, function() {
-								ons.notification.alert({
-									title: 'Warning',
-									message: 'Login to GIS.lab server has failed.'
-								});
-							});
-						}
-					})
-			} else {
-				$scope.loadProject(null);
-				$scope.app.wizard.carousel.setActiveCarouselItemIndex(0);
-				$scope.app.wizard.dialog.show();
-			}
-		}
-		$scope.abortRequest = function() {
-			gislabMobileClient.abortRequest();
-		};
-
-		ons.ready(function() {
-			console.log('ons ready');
-			if (!angular.isDefined($scope.$storage.showScaleLine)) {
-				$scope.$storage.showScaleLine = true;
-				$scope.$storage.showHeader = true;
-				$scope.$storage.showZoomControls = true;
-			}
-			setImmediate(function() {
-				$scope.app.menu.on('postclose', function() {
-					$scope.ui.toolbar.forEach(function(tool) {
-						if (tool.page && tool.activated) {
-							$timeout(function() {
-								tool.activated = false;
-							});
-						}
-					});
-				});
-			});
-			$scope.app.navigator.on('postpop', function(evt) {
-				if (evt.leavePage.page === 'pages/settings/project.html' && $scope.currentProject !== $scope.$storage.project) {
-					$scope.loadProjectWithProgressBar($scope.$storage.project);
-				}
-				if (evt.leavePage.page === 'pages/settings/server.html') {
-					var server = '{0}:{1}:{2}'.format($scope.$storage.serverUrl, $scope.$storage.username, $scope.$storage.password);
-					if ($scope.currentServer !== server) {
-						if ($scope.currentServer) {
-							gislabMobileClient.logout()
-								.finally(function() {
-									$scope.loginAndLoadProject();
-								});
-						} else {
-							$scope.loginAndLoadProject();
-						}
-					}
-				}
-				if (evt.enterPage.page === 'map_container.html' && projectProvider.map && projectProvider.map.getSize()[0] === 0) {
-					projectProvider.map.updateSize();
-				}
-			});
-
-			$scope.updateScreenSize();
-			if ($scope.$storage.mapState && $scope.$storage.mapState.project === $scope.$storage.project) {
-				$scope.loginAndLoadProject($scope.$storage.mapState);
-			} else {
-				$scope.loginAndLoadProject();
-			}
-			//$scope.app.wizard.dialog.show();
-		});
-
-		$scope.updateScreenSize = function() {
-			/*
-			var width, height;
-			if (window.orientation === 0 || window.orientation === 180) {
-				width = Math.min(window.innerWidth, window.innerHeight);
-				height = Math.max(window.innerWidth, window.innerHeight);
-				width = Math.min(document.body.clientWidth, document.body.clientHeight);
-				height = Math.max(document.body.clientWidth, document.body.clientHeight);
-			} else {
-				width = Math.max(window.innerWidth, window.innerHeight);
-				height = Math.min(window.innerWidth, window.innerHeight);
-				width = Math.max(document.body.clientWidth, document.body.clientHeight);
-				height = Math.min(document.body.clientWidth, document.body.clientHeight);
-			}
-			console.log("orientation: {0} width: {1} height: {2}".format(window.orientation, width, height));
-			console.log("width: {0} height: {1}".format(window.innerWidth, window.innerHeight));
-			*/
-			$timeout(function() {
-				//$scope.screenWidth = width;
-				//$scope.screenHeight = height;
-				$scope.screenWidth = document.body.clientWidth;
-				$scope.screenHeight = document.body.clientHeight;
-				if (projectProvider.map) {
-					$timeout(function() {
-						projectProvider.map.updateSize();
-					}, 10);
-				}
-			}, 150);
-		};
-
-		$scope.showProgressDialog = function(dialog, msg) {
-			if (angular.isDefined(msg)) {
-				$scope.setProgressBarMessage(msg);
-			}
-			dialog._showTime = Date.now();
-			dialog.show();
-		};
-		$scope.hideProgressDialog = function(dialog, minShowTime, done) {
-			var args = Array.prototype.slice.call(arguments, 4);
-			var thiz = arguments[3] || null;
-			var elapsed = Date.now() - dialog._showTime;
-			dialog._showTime = 0;
-			if (elapsed >= minShowTime) {
-				dialog.hide();
-				if (angular.isFunction(done)) {
-					done.apply(thiz, args);
-				}
-			} else {
-				$timeout(function() {
-					dialog.hide();
-					if (angular.isFunction(done)) {
-						done.apply(thiz, args);
-					}
-				}, minShowTime-elapsed);
-			}
-		};
-		$scope.setProgressBarMessage = function(msg) {
-			$scope.progressBarMessage = msg;
-		};
-
 		$scope.loadProject = function(projectName, viewConfig) {
 			var task = $q.defer();
 			console.log('loadProject '+projectName);
@@ -394,25 +228,121 @@
 			}
 			return task.promise;
 		};
-		$scope.loadProjectWithProgressBar = function(projectName) {
-			$scope.showProgressDialog($scope.app.progressBar, 'Loading project ...');
-			$scope.loadProject(projectName)
+
+		$scope.showProgressDialog = function(dialog, msg) {
+			if (angular.isDefined(msg)) {
+				$scope.setProgressBarMessage(msg);
+			}
+			dialog._showTime = Date.now();
+			dialog.show();
+		};
+		$scope.hideProgressDialog = function(dialog, minShowTime, done) {
+			var args = Array.prototype.slice.call(arguments, 4);
+			var thiz = arguments[3] || null;
+			var elapsed = Date.now() - dialog._showTime;
+			dialog._showTime = 0;
+			if (elapsed >= minShowTime) {
+				dialog.hide();
+				if (angular.isFunction(done)) {
+					done.apply(thiz, args);
+				}
+			} else {
+				$timeout(function() {
+					dialog.hide();
+					if (angular.isFunction(done)) {
+						done.apply(thiz, args);
+					}
+				}, minShowTime-elapsed);
+			}
+		};
+		$scope.setProgressBarMessage = function(msg) {
+			$scope.progressBarMessage = msg;
+		};
+
+		$scope.abortRequest = function() {
+			gislabMobileClient.abortRequest();
+		};
+
+		$scope.loginProgressBarTask = function() {
+			$scope.setProgressBarMessage('Login to GIS.lab server');
+			return gislabMobileClient.login($scope.$storage.serverUrl, $scope.$storage.username, $scope.$storage.password)
 				.then(function() {
-					$scope.hideProgressDialog($scope.app.progressBar, 500);
-				})
+					$scope.currentServer = '{0}:{1}:{2}'.format($scope.$storage.serverUrl, $scope.$storage.username, $scope.$storage.password);
+				}, function(error) {
+					$scope.currentServer = null;
+					if (error.canceled) {
+						$scope.hideProgressDialog($scope.app.progressBar, 0);
+					} else {
+						var msg;
+						if (error.invalid_server)
+							msg = "Can't connect to server";
+						else if (error.status_code === 401)
+							msg = "Authentication failed";
+						else
+							msg = "Network error";
+						$scope.hideProgressDialog($scope.app.progressBar, 800, function() {
+							ons.notification.alert({
+								title: 'Error',
+								message: msg
+							});
+						});
+					}
+					return $q.reject(error);
+				});
+		};
+		$scope.loadProjectProgressBarTask = function(viewConfig) {
+			$scope.setProgressBarMessage('Loading project');
+			return $scope.loadProject($scope.$storage.project, viewConfig)
 				.catch(function(error) {
 					if (error.canceled) {
 						$scope.hideProgressDialog($scope.app.progressBar, 0);
 					} else {
-						$scope.hideProgressDialog($scope.app.progressBar, 500, function() {
+						var msg;
+						if (error.invalid_server)
+							msg = "Can't connect to server";
+						else if (error.status_code === 401)
+							msg = "Authentication required";
+						else if (error.status_code === 403)
+							msg = "Permission denied";
+						else if (error.status_code === 404)
+							msg = "Project doesn't exist";
+						else
+							msg = "Failed to load project";
+						$scope.hideProgressDialog($scope.app.progressBar, 800, function() {
 							ons.notification.alert({
-								title: 'Warning',
-								message: 'Failed to load project.'
+								title: 'Error',
+								message: msg
 							});
 						});
 					}
 				})
 		};
+
+		$scope.loginAndLoadProjectInProgressBar = function(viewConfig) {
+			if ($scope.$storage.serverUrl) {
+				$scope.showProgressDialog($scope.app.progressBar);
+				$scope.loginProgressBarTask()
+					.then(function() {
+						$scope.loadProjectProgressBarTask(viewConfig)
+							.then(function() {
+								$scope.hideProgressDialog($scope.app.progressBar, 800);
+							})
+					});
+			} else {
+				$scope.loadProject(null);
+				$scope.app.wizard.carousel.setActiveCarouselItemIndex(0);
+				$scope.app.wizard.dialog.show();
+			}
+		};
+
+		$scope.loadProjectInProgressBar = function() {
+			$scope.showProgressDialog($scope.app.progressBar);
+			$scope.loadProjectProgressBarTask()
+				.then(function() {
+					$scope.hideProgressDialog($scope.app.progressBar, 800);
+				});
+		};
+
 		$scope.saveMapState = function() {
 			var map = projectProvider.map;
 			if (map) {
@@ -429,6 +359,69 @@
 				});
 			}
 		};
+
+		$scope.updateScreenSize = function() {
+			$timeout(function() {
+				//$scope.screenWidth = innerWidth;
+				//$scope.screenHeight = innerHeight;
+				$scope.screenWidth = document.body.clientWidth;
+				$scope.screenHeight = document.body.clientHeight;
+				if (projectProvider.map) {
+					$timeout(function() {
+						projectProvider.map.updateSize();
+					}, 10);
+				}
+			}, 150);
+		};
+
+		ons.ready(function() {
+			console.log('ons ready');
+			if (!angular.isDefined($scope.$storage.showScaleLine)) {
+				$scope.$storage.showScaleLine = true;
+				$scope.$storage.showHeader = true;
+				$scope.$storage.showZoomControls = true;
+			}
+			setImmediate(function() {
+				$scope.app.menu.on('postclose', function() {
+					$scope.ui.toolbar.forEach(function(tool) {
+						if (tool.page && tool.activated) {
+							$timeout(function() {
+								tool.activated = false;
+							});
+						}
+					});
+				});
+			});
+			$scope.app.navigator.on('postpop', function(evt) {
+				if (evt.leavePage.page === 'pages/settings/project.html' && $scope.currentProject !== $scope.$storage.project) {
+					$scope.loadProjectInProgressBar();
+				}
+				if (evt.leavePage.page === 'pages/settings/server.html') {
+					var server = '{0}:{1}:{2}'.format($scope.$storage.serverUrl, $scope.$storage.username, $scope.$storage.password);
+					if ($scope.currentServer !== server) {
+						if ($scope.currentServer) {
+							gislabMobileClient.logout()
+								.finally(function() {
+									$scope.loginAndLoadProjectInProgressBar();
+								});
+						} else {
+							$scope.loginAndLoadProjectInProgressBar();
+						}
+					}
+				}
+				if (evt.enterPage.page === 'map_container.html' && projectProvider.map && projectProvider.map.getSize()[0] === 0) {
+					projectProvider.map.updateSize();
+				}
+			});
+
+			$scope.updateScreenSize();
+			if ($scope.$storage.mapState && $scope.$storage.mapState.project === $scope.$storage.project) {
+				$scope.loginAndLoadProjectInProgressBar($scope.$storage.mapState);
+			} else {
+				$scope.loginAndLoadProjectInProgressBar();
+			}
+			//$scope.app.wizard.dialog.show();
+		});
 
 		// device APIs are available
 		function onDeviceReady() {
