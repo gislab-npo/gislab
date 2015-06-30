@@ -134,7 +134,7 @@
 <!--				</ons-scroller>-->
 <!--			</div>-->
 			<div class="map-toolbar map-toolbar-vertical">
-				<ons-scroller style="max-height: {{ screenHeight }}px;">
+				<ons-scroller style="width: auto; height: auto; max-height: {{ screenHeight }}px;">
 
 					<ons-button ng-repeat="tool in ::ui.toolbar | filter:{disabled:false}"
 							ng-click="toolTaped(tool);" ng-class="{activated: tool.activated}">
@@ -224,44 +224,47 @@
 				<div class="wizard-header">
 					Configuration wizard: Project
 				</div>
-				<ons-scroller class="wizard-content vertical-flexible">
-					<ons-list class="wizard settings gl-tree" ng-controller="AccordionController">
-						<ons-list-header>
-							<svg class="list-header-icon">
-								<use xlink:href="#icon-menu"></use>
-							</svg>
-							My projects
-						</ons-list-header>
-						<ons-list-item class="list__item--accordion" modifier="tappable" ng-click="$storage.project='empty'">
-							<div class="left-center title" ><span>Empty Project</span></div>
-						</ons-list-item>
-						<div ng-repeat="project in userProjects">
-							<ons-list-item class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}"
-								modifier="tappable" ng-click="$storage.project=project.project">
-								<div class="left-center title list__item--two-lines-max" >
-									<span>{{ project.title }}</span>
-								</div>
-								<div class="list-button-right expand" ng-click="toggleAccordion(project);$event.stopPropagation()">
-									<svg class="expand-icon">
-										<use class="expanded" xlink:href="#icon-arrow-up"></use>
-										<use class="collapsed" xlink:href="#icon-arrow-down"></use>
-									</svg>
-								</div>
+				<div class="vertical-flexible" style="overflow: auto; position: relative;">
+					<div class="scroll-indicator--bottom"></div>
+					<ons-scroller class="wizard-content scroller-indicator">
+						<ons-list class="wizard settings gl-tree" ng-controller="AccordionController">
+							<ons-list-header>
+								<svg class="list-header-icon">
+									<use xlink:href="#icon-menu"></use>
+								</svg>
+								My projects
+							</ons-list-header>
+							<ons-list-item class="list__item--accordion" modifier="tappable" ng-click="$storage.project='empty'">
+								<div class="left-center title" ><span>Empty Project</span></div>
 							</ons-list-item>
-							<ons-list-item class="list__item--accordion-content list__item--info-content" ng-show="isAccordionShown(project)" gl-fixed-height>
-								<div>
-									<label>Path:</label>
-									<span>{{ ::project.project }}</span><br />
-									<label>Publication time:</label>
-									<span>{{ ::project.publish_date_text }}</span><br />
-									<label>Expiration time:</label>
-									<span>{{ ::project.expiration_date_text }}</span><br />
-									<div style="height: 8px;"></div>
-								</div>
-							</ons-list-item>
-						</div>
-					</ons-list>
-				</ons-scroller>
+							<div ng-repeat="project in userProjects">
+								<ons-list-item class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}"
+									modifier="tappable" ng-click="$storage.project=project.project">
+									<div class="left-center title list__item--two-lines-max" >
+										<span>{{ project.title }}</span>
+									</div>
+									<div class="list-button-right expand" ng-click="toggleAccordion(project);$event.stopPropagation()">
+										<svg class="expand-icon">
+											<use class="expanded" xlink:href="#icon-arrow-up"></use>
+											<use class="collapsed" xlink:href="#icon-arrow-down"></use>
+										</svg>
+									</div>
+								</ons-list-item>
+								<ons-list-item class="list__item--accordion-content list__item--info-content" ng-show="isAccordionShown(project)" gl-fixed-height>
+									<div>
+										<label>Path:</label>
+										<span>{{ ::project.project }}</span><br />
+										<label>Publication time:</label>
+										<span>{{ ::project.publish_date_text }}</span><br />
+										<label>Expiration time:</label>
+										<span>{{ ::project.expiration_date_text }}</span><br />
+										<div style="height: 8px;"></div>
+									</div>
+								</ons-list-item>
+							</div>
+						</ons-list>
+					</ons-scroller>
+				</div>
 
 				<ons-list class="wizard settings gl-tree vertical-fit" ng-controller="AccordionController">
 					<ons-list-header>

@@ -1,9 +1,9 @@
-<ons-page ng-controller="SettingsController" class="flex-container-vertical">
+<ons-page ng-controller="SettingsController" class="panel-settings flex-container-vertical">
 	<div class="panel-header" ng-if="$storage.showHeader">
 		<div class="center"><span>Settings</span></div>
 	</div>
 <!--	<ons-navigator class="settings-navigator" var="app.navigator.settings">-->
-	<ons-scroller style="height: 100%;">
+	<ons-scroller>
 		<ons-list>
 			<ons-list-item modifier="tappable" ng-click="app.navigator.pushPage('pages/settings/server.html');">
 				Server/Account
