@@ -13,7 +13,7 @@
 
 		$scope.ui = {
 			tools_layers_tab: 0,
-			tools_settings_tab: 0,
+			tools_project_info_tab: 0,
 		};
 		$scope.ui.toolbar = [
 			{
@@ -28,7 +28,7 @@
 				},
 			}, {
 				icon: 'icon-project',
-				page: 'pages/tools/legend.html',
+				page: 'pages/tools/project_info.html',
 				persistent: true,
 				disabled: true
 			}, {
