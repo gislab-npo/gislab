@@ -150,6 +150,8 @@
 							if (!$scope.$storage.showZoomControls) {
 								var zoomControl = projectProvider.map.getControlByClass(ol.control.Zoom);
 								zoomControl.setMap(null);
+								var rotateControl = projectProvider.map.getControlByClass(ol.control.Rotate);
+								rotateControl.element.classList.add('top');
 							}
 							//$scope.$storage.recentProjects = [];
 							var currentProjectData = {
@@ -427,7 +429,7 @@
 		function onDeviceReady() {
 			setTimeout(function() {
 				navigator.splashscreen.hide();
-			}, 200);
+			}, 100);
 			ons.setDefaultDeviceBackButtonListener(function() {
 				if (!$scope.exitDialogShown) {
 					$scope.exitDialogShown = true;

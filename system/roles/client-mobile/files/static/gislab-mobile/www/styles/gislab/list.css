@@ -87,18 +87,39 @@ input[type="checkbox"]:indeterminate + .checkbox-icon .indeterminate {
  List Switch Item
 */
 
+.switch--list-item {
+	margin-right: 5px;
+	margin-bottom: 0;
+	margin-top: 0;
+}
+
 .switch--list-item__input {
 	height: 100%;
 	margin: 0;
 }
 .switch--list-item__toggle {
-	height: 28px;
-	line-height: 32px;
+	height: 8px;
+	margin-top: 16px;
 }
-.switch__toggle::before {
-	height: 24px;
+.switch__input:checked + .switch--list-item__toggle {
+	background-color: rgba(0, 170, 212, 0.4);
 }
 
+.switch__toggle::before {
+	width: 20px;
+	height: 20px;
+	xbackground-color: gray;
+	background-color: #ccc;
+}
+
+.switch__input:not(:checked) + .switch__toggle::before {
+	transform: translate(1px, -8px);
+}
+
+.switch__input:checked + .switch__toggle::before {
+	transform: translate(25px, -8px);
+	background-color: #00aad4;
+}
 /*
  List Item with button on right side
 */
@@ -145,12 +166,16 @@ input[type="checkbox"]:indeterminate + .checkbox-icon .indeterminate {
  List Accordion
 */
 
-.list__item--tappable.expanded {
-	background-color: #f7f7f7;
+.list__item--tappable:active {
+	background-color: rgba(0, 170, 212, 0.2);
 }
 
-.list__item--tappable.expanded:active {
-	background-color: #d9d9d9;
+.expanded .list__item--tappable {
+	background-color: rgba(0, 170, 212, 0.09);
+}
+
+.expanded .list__item--tappable:active {
+	background-color: rgba(0, 170, 212, 0.2);
 }
 
 .list__item--accordion {
@@ -184,6 +209,9 @@ input[type="checkbox"]:indeterminate + .checkbox-icon .indeterminate {
 	transition: 0.4s all ease-in-out;
 }
 
+.expanded.accordion-container {
+	background-color: rgba(0, 170, 212, 0.06);
+}
 
 /*
  List with info text content
@@ -219,6 +247,13 @@ input[type="checkbox"]:indeterminate + .checkbox-icon .indeterminate {
 	padding-left: 3px;
 	padding-right: 3px;
 	color: #555;
+}
+
+/*
+ List with text input field
+*/
+.list__item--text-input, .list__item--text-input:last-child {
+	border-bottom: 2px solid #69cde6!important;
 }
 
 /*

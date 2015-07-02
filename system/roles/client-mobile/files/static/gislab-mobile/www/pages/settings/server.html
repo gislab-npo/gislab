@@ -17,7 +17,7 @@
 				</svg>
 				Server URL
 			</ons-list-header>
-			<ons-list-item class="textarea-input">
+			<ons-list-item class="list__item--text-input textarea-input">
 				<div style="width: 100%;">
 					<textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
 						class="text-input text-input--transparent" ng-model="$storage.serverUrl" placeholder="web.gis.lab"
@@ -31,7 +31,7 @@
 				</svg>
 				Username
 			</ons-list-header>
-			<ons-list-item>
+			<ons-list-item class="list__item--text-input">
 				<input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
 					class="text-input text-input--transparent" placeholder="guest" ng-model="$storage.username"
 					id="settings-username-field" onkeydown="if (event.keyCode == 13) document.getElementById('settings-password-field').focus()">
@@ -43,7 +43,7 @@
 				</svg>
 				Password
 			</ons-list-header>
-			<ons-list-item>
+			<ons-list-item class="list__item--text-input">
 				<input type="password" class="text-input text-input--transparent" placeholder="password" ng-model="$storage.password"
 					id="settings-password-field" onkeydown="if (event.keyCode == 13) document.getElementById('settings-password-field').blur()">
 				</input>
@@ -54,18 +54,18 @@
 		<ons-row>
 			<ons-col>
 				<ons-toolbar-button class="toolbar-button--icon-text" ng-click="saveServerProfile($storage.serverUrl, $storage.username, $storage.password)">
-					<svg class="toolbar-text-button-icon">
-						<use xlink:href="#icon-circle-plus-outline"></use>
-					</svg>
+<!--					<svg class="toolbar-text-button-icon">-->
+<!--						<use xlink:href="#icon-circle-plus-outline"></use>-->
+<!--					</svg>-->
 					Save profile
 				</ons-toolbar-button>
 			</ons-col>
 			<ons-col width="1px" class="vertical-separator"></ons-col>
 			<ons-col>
 				<ons-toolbar-button class="toolbar-button--icon-text" ng-click="app.navigator.pushPage('server_profiles.html')">
-					<svg class="toolbar-text-button-icon">
-						<use xlink:href="#icon-users"></use>
-					</svg>
+<!--					<svg class="toolbar-text-button-icon">-->
+<!--						<use xlink:href="#icon-users"></use>-->
+<!--					</svg>-->
 					Select profile
 				</ons-toolbar-button>
 			</ons-col>

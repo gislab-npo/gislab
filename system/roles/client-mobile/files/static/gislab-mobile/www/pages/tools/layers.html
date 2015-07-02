@@ -7,8 +7,8 @@
 		<ons-carousel-item ng-if="::topics" ng-init="headers.splice(0,0,'Topics')">
 			<ons-scroller style="height: 100%;">
 				<ons-list class="gl-tree" ng-controller="AccordionController">
-					<div ng-repeat="topic in ::topics">
-						<ons-list-item class="list__item--checkbox list__item--accordion leaf" modifier="tappable" ng-class="{expanded: isAccordionShown(topic)}">
+					<div ng-repeat="topic in ::topics" class="accordion-container" ng-class="{expanded: isAccordionShown(topic)}">
+						<ons-list-item class="list__item--checkbox list__item--accordion leaf" modifier="tappable">
 							<ons-row>
 								<ons-col width="36px">
 									<label class="radio-button">
@@ -76,7 +76,7 @@
 							</ons-row>
 						</ons-list-item>
 						<div class="group-content" ng-show="$node.isExpanded" gl-height-animation>
-							<div ng-repeat="node in node.layers" gl-tree-node="node"></div>
+							<div ng-repeat="node in node.layers" gl-tree-node="node" gl-tree-node="node" class="accordion-container" ng-class="{expanded: isAccordionShown(node)}"></div>
 						</div>
 					</div>
 
@@ -114,7 +114,7 @@
 						</ons-list-item>
 					</div>
 					<div ng-controller="AccordionController">
-						<div ng-repeat="node in rootNodes" gl-tree-node="node"></div>
+						<div ng-repeat="node in rootNodes" gl-tree-node="node" class="accordion-container" ng-class="{expanded: isAccordionShown(node)}"></div>
 					</div>
 				</ons-list>
 			</ons-scroller>
@@ -159,12 +159,12 @@
 								</ons-row>
 							</ons-list-item>
 							<div class="group-content" ng-show="$node.isExpanded" gl-height-animation>
-								<div ng-repeat="node in node.layers" gl-check-tree-node="node"></div>
+								<div ng-repeat="node in node.layers" gl-check-tree-node="node" class="accordion-container" ng-class="{expanded: isAccordionShown(node)}"></div>
 							</div>
 						</div>
 
 						<div gl-tree-leaf-template>
-							<ons-list-item modifier="tappable" class="list__item--checkbox list__item--accordion leaf" depth="{{ ::$node.treeDepth }}" ng-class="{expanded: isAccordionShown(node)}">
+							<ons-list-item modifier="tappable" class="list__item--checkbox list__item--accordion leaf" depth="{{ ::$node.treeDepth }}">
 								<ons-row>
 									<ons-col class="indent" width="{{ ::$node.treeDepth==1? '35px' : '39px' }}">
 										<label class="checkbox">
@@ -211,7 +211,7 @@
 						</div>
 
 						<div ng-controller="AccordionController">
-							<div ng-repeat="node in rootNodes" gl-check-tree-node="node"></div>
+							<div ng-repeat="node in rootNodes" gl-check-tree-node="node" class="accordion-container" ng-class="{expanded: isAccordionShown(node)}"></div>
 						</div>
 				</ons-list>
 			</ons-scroller>

@@ -171,9 +171,13 @@
 					attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
 						collapsible: true,
 						label: '©',
-						//label: goog.dom.createDom(goog.dom.TagName.I, 'fa fa-copyright', ''),
+					}),
+					rotate: false
+				}).extend([
+					new ol.control.Rotate({
+						label: goog.dom.createDom(goog.dom.TagName.SPAN, 'icon-compass')
 					})
-				}),
+				]),
 				renderer: ol.RendererType.CANVAS
 			});
 			return map;

@@ -135,7 +135,6 @@
 <!--			</div>-->
 			<div class="map-toolbar map-toolbar-vertical">
 				<ons-scroller style="width: auto; height: auto; max-height: {{ screenHeight }}px;">
-
 					<ons-button ng-repeat="tool in ::ui.toolbar | filter:{disabled:false}"
 							ng-click="toolTaped(tool);" ng-class="{activated: tool.activated}">
 <!--							gl-con-attr="{disabled: {{ ::tool.disabled == true }}}">-->
@@ -169,7 +168,7 @@
 		<ons-carousel var="app.wizard.carousel" class="wizard-carousel" ng-controller="StartupConfigController">
 			<ons-carousel-item class="flex-container-vertical">
 				<div class="wizard-header">
-					Configuration wizard: Server/Account
+					Configuration Wizard: Server
 				</div>
 				<ons-scroller class="wizard-content">
 					<ons-list class="wizard settings">
@@ -222,7 +221,7 @@
 			</ons-carousel-item>
 			<ons-carousel-item class="flex-container-vertical">
 				<div class="wizard-header">
-					Configuration wizard: Project
+					Configuration Wizard: Project
 				</div>
 				<div class="vertical-flexible" style="overflow: auto; position: relative;">
 					<div class="scroll-indicator--bottom"></div>
@@ -237,9 +236,9 @@
 							<ons-list-item class="list__item--accordion" modifier="tappable" ng-click="$storage.project='empty'">
 								<div class="left-center title" ><span>Empty Project</span></div>
 							</ons-list-item>
-							<div ng-repeat="project in userProjects">
-								<ons-list-item class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}"
-									modifier="tappable" ng-click="$storage.project=project.project">
+							<div ng-repeat="project in userProjects" class="accordion-container" ng-class="{expanded: isAccordionShown(project)}">
+								<ons-list-item class="list__item--accordion" modifier="tappable"
+									ng-click="$storage.project=project.project">
 									<div class="left-center title list__item--two-lines-max" >
 										<span>{{ project.title }}</span>
 									</div>

@@ -22,9 +22,8 @@
 				<ons-list-item class="list__item--accordion" modifier="tappable" ng-click="$storage.project='empty'">
 					<div class="left-center title" ><span>Empty Project</span></div>
 				</ons-list-item>
-				<div ng-repeat="project in userProjects">
-					<ons-list-item  modifier="tappable" class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}"
-						ng-click="$storage.project=project.project">
+				<div ng-repeat="project in userProjects" class="accordion-container" ng-class="{expanded: isAccordionShown(project)}">
+					<ons-list-item  modifier="tappable" class="list__item--accordion" ng-click="$storage.project=project.project">
 						<div class="left-center title list__item--two-lines-max">
 							<span>{{ project.title }}</span>
 						</div>
@@ -53,9 +52,8 @@
 					</svg>
 					Recent Projects
 				</ons-list-header>
-				<div ng-repeat="project in $storage.recentProjects">
-					<ons-list-item modifier="tappable" class="list__item--accordion" ng-class="{expanded: isAccordionShown(project)}"
-						ng-click="$storage.project=project.project">
+				<div ng-repeat="project in $storage.recentProjects" class="accordion-container" ng-class="{expanded: isAccordionShown(project)}">
+					<ons-list-item modifier="tappable" class="list__item--accordion" ng-click="$storage.project=project.project">
 							<div class="left-center title list__item--two-lines-max">
 								<span>{{ project.title }}</span>
 							</div>
@@ -91,7 +89,7 @@
 				</svg>
 				Path
 			</ons-list-header>
-			<ons-list-item class="textarea-input">
+			<ons-list-item class="list__item--text-input textarea-input">
 				<div style="width: 100%;">
 					<textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
 						class="text-input text-input--transparent" placeholder="Project" ng-model="$storage.project"
