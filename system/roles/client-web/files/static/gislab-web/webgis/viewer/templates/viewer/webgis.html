@@ -526,21 +526,18 @@
 				mappanel.getTopToolbar().add(' ', ' ', '-', ' ');
 				{% include "viewer/actions/basic.js" %}
 
-				{% if project != "empty" %}
-				mappanel.getTopToolbar().add(' ', '-', ' ');
-					{% if print_composers %}
-					{% include "viewer/actions/print.js" %}
-					mappanel.getTopToolbar().add(' ', '-', ' ');
-					{% endif %}
-				{% include "viewer/actions/search.js" %}
-				mappanel.getTopToolbar().add(' ');
-				{% include "viewer/actions/featureinfo.js" %}
+				{% if project != "empty" and print_composers %}
+				{% include "viewer/actions/print.js" %}
 				{% endif %}
 
-				mappanel.getTopToolbar().add(' ', '-', ' ');
 				{% include "viewer/actions/measurement.js" %}
-				mappanel.getTopToolbar().add(' ');
+				//mappanel.getTopToolbar().add(' ');
 				{% include "viewer/actions/draw.js" %}
+
+				{% if project != "empty" %}
+					{% include "viewer/actions/search.js" %}
+					{% include "viewer/actions/featureinfo.js" %}
+				{% endif %}
 
 				// viewport
 				var webgis = new Ext.Viewport({

@@ -12,21 +12,3 @@ mappanel.getTopToolbar().add(' ', action);
 // Navigation history - two 'button' controls
 ctrl = new OpenLayers.Control.NavigationHistory();
 mappanel.map.addControl(ctrl);
-
-action = new GeoExt.Action({
-	control: ctrl.previous,
-	disabled: true,
-	cls: 'x-btn-icon',
-	iconCls: 'previous-icon',
-	tooltip: '{% trans "Previous view" %}',
-});
-mappanel.getTopToolbar().add(' ', action);
-
-action = new GeoExt.Action({
-	control: ctrl.next,
-	disabled: true,
-	cls: 'x-btn-icon',
-	iconCls: 'next-icon',
-	tooltip: '{% trans "Next view" %}',
-});
-mappanel.getTopToolbar().add(' ', action);
