@@ -29,14 +29,14 @@ class MobileClient(WebClient):
 
 
 	def render(self, request, project_data):
-		return project_data
+		return HttpResponse(json.dumps(project_data), content_type="application/json")
 
 client = MobileClient()
 
 
 def project_config(request):
 	try:
-		return HttpResponse(json.dumps(client.project_request(request)), content_type="application/json")
+		return client.project_request(request)
 	except LoginRequired, e:
 		return HttpResponse('Authentication required', status=401)
 
