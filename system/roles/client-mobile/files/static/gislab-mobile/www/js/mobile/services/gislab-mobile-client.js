@@ -67,8 +67,7 @@
 		GislabMobileClient.prototype.login = function(server, username, password) {
 			if (username && password) {
 				this._secure = true;
-				//this.serverUrl = 'https://{0}'.format(server);
-				this.serverUrl = 'http://{0}'.format(server);
+				this.serverUrl = 'https://{0}'.format(server);
 				return this._deferredRequest({
 					url: '{0}/mobile/login/'.format(this.serverUrl),
 					method: 'post',
