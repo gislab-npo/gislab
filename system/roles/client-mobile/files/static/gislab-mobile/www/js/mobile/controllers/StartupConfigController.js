@@ -6,6 +6,7 @@
 		.controller('StartupConfigController', StartupConfigController);
 
 	function StartupConfigController($scope, $timeout, gislabMobileClient) {
+		$scope.$storage.serverUrl = 'web.gis.lab';
 		$scope.wizardLogin = function() {
 			if (!$scope.$storage.serverUrl) {
 				return;
