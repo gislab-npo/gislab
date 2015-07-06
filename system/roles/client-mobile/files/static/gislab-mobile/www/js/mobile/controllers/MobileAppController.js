@@ -322,6 +322,7 @@
 
 		$scope.loginAndLoadProjectInProgressBar = function(viewConfig) {
 			if ($scope.$storage.serverUrl) {
+				$scope.loadWizard = false;
 				$scope.showProgressDialog($scope.app.progressBar);
 				$scope.loginProgressBarTask()
 					.then(function() {
@@ -332,8 +333,14 @@
 					});
 			} else {
 				$scope.loadProject(null);
-				$scope.app.wizard.carousel.setActiveCarouselItemIndex(0);
-				$scope.app.wizard.dialog.show();
+				if (!angular.isDefined($scope.loadWizard)) {
+					$scope.loadWizard = true;
+					setImmediate(function() {
+						$scope.$storage.serverUrl = 'web.gis.lab';
+						$scope.app.wizard.carousel.setActiveCarouselItemIndex(0);
+						$scope.app.wizard.dialog.show();
+					});
+				}
 			}
 		};
 

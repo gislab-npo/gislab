@@ -164,7 +164,7 @@
 		</ons-page>
 	</ons-template>
 
-	<ons-modal var="app.wizard.dialog" class="startup-wizard">
+	<ons-modal ng-if="::loadWizard" var="app.wizard.dialog" class="startup-wizard">
 		<ons-carousel var="app.wizard.carousel" class="wizard-carousel" ng-controller="StartupConfigController">
 			<ons-carousel-item class="flex-container-vertical">
 				<div class="wizard-header">
