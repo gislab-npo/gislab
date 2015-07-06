@@ -37,7 +37,7 @@ MD_EXTENSIONS = ['codehilite(css_class=highlight)', 'extra']
 THEME = os.path.join(os.path.abspath(os.curdir), "themes/blueidea")
 DISPLAY_CATEGORIES_ON_MENU = True
 PAGES_SORT_ATTRIBUTE = 'order'
-GITHUB_URL = 'https://github.com/imincik/gis-lab'
+GITHUB_URL = 'http://web.gislab.io'
 
 STATIC_PATHS = [
 	'robots.txt',
