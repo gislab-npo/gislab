@@ -335,11 +335,6 @@
 				$scope.loadProject(null);
 				if (!angular.isDefined($scope.loadWizard)) {
 					$scope.loadWizard = true;
-					setImmediate(function() {
-						$scope.$storage.serverUrl = 'web.gis.lab';
-						$scope.app.wizard.carousel.setActiveCarouselItemIndex(0);
-						$scope.app.wizard.dialog.show();
-					});
 				}
 			}
 		};

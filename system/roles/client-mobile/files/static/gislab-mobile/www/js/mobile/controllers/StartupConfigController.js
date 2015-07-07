@@ -6,7 +6,6 @@
 		.controller('StartupConfigController', StartupConfigController);
 
 	function StartupConfigController($scope, $timeout, gislabMobileClient) {
-		$scope.$storage.serverUrl = 'web.gis.lab';
 		$scope.wizardLogin = function() {
 			if (!$scope.$storage.serverUrl) {
 				return;
@@ -45,14 +44,28 @@
 			}
 		};
 		var updateCarouselLayout = function() {
-			var carousel = $scope.app.wizard.carousel;
-			var carouselIndex = carousel.getActiveCarouselItemIndex();
-			carousel._currentElementSize = null;
-			carousel.refresh();
-			carousel._scroll = carouselIndex * carousel._getCarouselItemSize();
-			carousel._scrollTo(carousel._scroll);
+			$timeout(function() {
+				var carousel = $scope.app.wizard.carousel;
+				var carouselIndex = carousel.getActiveCarouselItemIndex();
+				carousel._currentElementSize = null;
+				carousel.refresh();
+				carousel._scroll = carouselIndex * carousel._getCarouselItemSize();
+				carousel._scrollTo(carousel._scroll);
+			}, 150);
 		};
+		$scope.close = function() {
+			window.removeEventListener('orientationchange', updateCarouselLayout);
+			$scope.app.wizard.dialog.hide();
+		};
+		$scope.finish = function() {
+			$scope.close();
+			$scope.loadProjectInProgressBar();
+		};
+
+		$scope.$storage.serverUrl = 'web.gis.lab';
 		setImmediate(function() {
+			$scope.app.wizard.carousel.setActiveCarouselItemIndex(0);
+			$scope.app.wizard.dialog.show();
 			// fix carousel view after change of screen orientation
 			window.addEventListener('orientationchange', updateCarouselLayout);
 			$scope.app.wizard.dialog.getDeviceBackButtonHandler().setListener(function() {
@@ -63,14 +76,6 @@
 				}
 			});
 		});
-		$scope.close = function() {
-			window.removeEventListener('orientationchange', updateCarouselLayout);
-			$scope.app.wizard.dialog.hide();
-		};
-		$scope.finish = function() {
-			$scope.close();
-			$scope.loadProjectInProgressBar();
-		};
 		//$scope.userProjects = [{project: 'project1'}, {project: 'project2'}, {project: 'project3'}];
 	};
 })();
