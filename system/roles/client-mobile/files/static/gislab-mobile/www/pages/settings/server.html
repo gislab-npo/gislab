@@ -9,7 +9,7 @@
 		</div>
 		<div class="center">Server</div>
 	</ons-toolbar>
-	<ons-scroller style="width: 100%;" class="vertical-flexible">
+	<ons-scroller style="width: 100%; min-height: 70px;" class="vertical-flexible">
 		<ons-list>
 			<ons-list-header>
 				<svg class="list-header-icon">
@@ -19,7 +19,8 @@
 			</ons-list-header>
 			<ons-list-item class="list__item--text-input textarea-input">
 				<div style="width: 100%;">
-					<textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+					<textarea gl-focus-auto-scroll gl-scroll-offset="-30"
+						autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
 						class="text-input text-input--transparent" ng-model="$storage.serverUrl" placeholder="web.gis.lab"
 						onkeydown="if (event.keyCode == 13) document.getElementById('settings-username-field').focus()"></textarea>
 					<span class="multiline-wrapper" ng-bind="$storage.serverUrl"></span>
@@ -32,9 +33,10 @@
 				Username
 			</ons-list-header>
 			<ons-list-item class="list__item--text-input">
-				<input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+				<input id="settings-username-field" gl-focus-auto-scroll gl-scroll-offset="-30"
+					autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
 					class="text-input text-input--transparent" placeholder="username" ng-model="$storage.username"
-					id="settings-username-field" onkeydown="if (event.keyCode == 13) document.getElementById('settings-password-field').focus()">
+					onkeydown="if (event.keyCode == 13) document.getElementById('settings-password-field').focus()">
 				</input>
 			</ons-list-item>
 			<ons-list-header>
@@ -44,8 +46,9 @@
 				Password
 			</ons-list-header>
 			<ons-list-item class="list__item--text-input">
-				<input type="password" class="text-input text-input--transparent" placeholder="password" ng-model="$storage.password"
-					id="settings-password-field" onkeydown="if (event.keyCode == 13) document.getElementById('settings-password-field').blur()">
+				<input id="settings-password-field" gl-focus-auto-scroll gl-scroll-offset="-30"
+					type="password" class="text-input text-input--transparent" placeholder="password" ng-model="$storage.password"
+					onkeydown="if (event.keyCode == 13) document.getElementById('settings-password-field').blur()">
 				</input>
 			</ons-list-item>
 		</ons-list>

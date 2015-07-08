@@ -11,7 +11,7 @@ ons-carousel.wizard-carousel {
 	background: -webkit-linear-gradient(#00aad4, #00aad4, gray, #eee, #eee);
 	background: linear-gradient(#00aad4, #00aad4, gray, #eee, #eee);
 	border-radius: 10px;
-	overflow: hidden;
+	overflow: hidden!important;
 }
 
 .wizard-header {
@@ -60,7 +60,7 @@ div.wizzard-control {
 }
 
 .wizard-content {
-	min-height: 0;
+	min-height: 70px;
 	background-color: #fff;
 	flex-grow: 1;
 	flex-shrink: 1;

@@ -8,7 +8,13 @@
 			controller: function($scope) {}
 		}
 	})
-	.directive('glScrollIndicator', glScrollIndicator);
+	.directive('glScrollOffset', function() {
+		return {
+			controller: function($scope) {}
+		}
+	})
+	.directive('glScrollIndicator', glScrollIndicator)
+	.directive('glFocusAutoScroll', glFocusAutoScroll);
 
 	function glScrollIndicator() {
 		return {
@@ -70,6 +76,30 @@
 						scope.updateIndicator();
 					}, 50);
 				}
+			}
+		};
+	};
+
+	function glFocusAutoScroll() {
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs, ctrl) {
+				var offset = parseInt(attrs.glScrollOffset) || 0;
+				element.on('focus', function(evt, el) {
+					setTimeout(function() {
+						var scroll = element[0].getBoundingClientRect().top;
+						var listElem = element[0].parentElement;
+						while (listElem.tagName !== 'ONS-LIST') {
+							listElem = listElem.parentElement;
+						}
+						var scrollerElem = listElem.parentElement;
+						while (scrollerElem.tagName !== 'ONS-SCROLLER') {
+							scrollerElem = scrollerElem.parentElement;
+						}
+						var scroll = element[0].getBoundingClientRect().top - listElem.getBoundingClientRect().top;
+						scrollerElem.scrollTop = scroll + offset;
+					}, 500);
+				});
 			}
 		};
 	};

@@ -66,7 +66,7 @@
 	<script type="text/javascript" src="js/ui/controllers/AccordionController.js"></script>
 	<script type="text/javascript" src="js/ui/directives/tree.js"></script>
 	<script type="text/javascript" src="js/ui/directives/carousel-tab-slider.js"></script>
-	<script type="text/javascript" src="js/ui/directives/scroll-indicator.js"></script>
+	<script type="text/javascript" src="js/ui/directives/scroll.js"></script>
 	<script type="text/javascript" src="js/ui/directives/height-animation.js"></script>
 
 	<script type="text/javascript" src="js/utils/utils.module.js"></script>
@@ -180,7 +180,8 @@
 						</ons-list-header>
 						<ons-list-item class="textarea-input">
 							<div style="width: 100%;">
-								<textarea type="text" class="text-input text-input--transparent" ng-model="$storage.serverUrl" placeholder="web.gis.lab"
+								<textarea gl-focus-auto-scroll gl-scroll-offset="-30"
+									type="text" class="text-input text-input--transparent" ng-model="$storage.serverUrl" placeholder="web.gis.lab"
 									onkeydown="if (event.keyCode == 13) document.getElementById('wizard-username-field').focus()">
 								</textarea>
 								<span class="multiline-wrapper" ng-bind="$storage.serverUrl"></span>
@@ -193,8 +194,9 @@
 							Username
 						</ons-list-header>
 						<ons-list-item>
-							<input type="text" class="text-input text-input--transparent" placeholder="username" ng-model="$storage.username"
-								id="wizard-username-field" onkeydown="if (event.keyCode == 13) document.getElementById('wizard-password-field').focus()">
+							<input id="wizard-username-field" gl-focus-auto-scroll gl-scroll-offset="-30"
+								type="text" class="text-input text-input--transparent" placeholder="username" ng-model="$storage.username"
+								onkeydown="if (event.keyCode == 13) document.getElementById('wizard-password-field').focus()">
 							</input>
 						</ons-list-item>
 						<ons-list-header>
@@ -204,8 +206,9 @@
 							Password
 						</ons-list-header>
 						<ons-list-item>
-							<input type="password" class="text-input text-input--transparent" placeholder="password" ng-model="$storage.password"
-								id="wizard-password-field" onkeydown="if (event.keyCode == 13) document.getElementById('wizard-password-field').blur()">
+							<input id="wizard-password-field" gl-focus-auto-scroll gl-scroll-offset="-30"
+								type="password" class="text-input text-input--transparent" placeholder="password" ng-model="$storage.password"
+								onkeydown="if (event.keyCode == 13) document.getElementById('wizard-password-field').blur()">
 							</input>
 						</ons-list-item>
 					</ons-list>
