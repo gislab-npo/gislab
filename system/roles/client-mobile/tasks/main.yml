@@ -237,6 +237,10 @@
     - /dev/pts
     - /proc
 
+- name: Purge GIS.lab Mobile build directory
+  file: dest={{ GISLAB_INSTALL_CLIENT_MOBILE_ROOT }} state=absent
+  when: not GISLAB_DEBUG_INSTALL and not GISLAB_DEBUG_SERVICES
+
 
 - meta: flush_handlers
 
