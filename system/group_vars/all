@@ -254,3 +254,9 @@ GISLAB_DEBUG_SERVICES: no
 # * no: do not run tests
 # * yes: do run tests
 GISLAB_TESTS_ENABLE: no
+
+# Enable GIS.lab Mobile client interface. Mobile interface is still in development/testing. Therefore it is disabled by
+# default.
+# * no: do not enable mobile client interface
+# * yes: enable mobile client interface
+GISLAB_CLIENT_MOBILE: no

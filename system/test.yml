@@ -44,7 +44,7 @@
     - {
       role: client-mobile-test,
       tags: ['client-mobile-test'],
-      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab') and GISLAB_CLIENT_MOBILE"
     }
     - { role: account-admin-test, tags: ['account-admin-test'] }
     - {
