@@ -183,6 +183,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_LAB:
   - gdal-bin
   - git
   - grass7
+  - grass7-doc
   - ipython
   - josm
   - pgadmin3
