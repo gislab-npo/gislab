@@ -136,6 +136,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   - foomatic-db-engine
   - foomatic-filters
   - freerdp-x11
+  - libfreerdp-plugins-standard
   - gcalctool
   - gdisk
   - gimp
