@@ -5,6 +5,7 @@
 
 client
 remote <GIS.lab-SERVER-IP> 1194
+auth-user-pass  # use 'auth-user-pass password.txt' to load password from file
 
 dev tun
 proto udp
@@ -16,9 +17,9 @@ persist-key
 persist-tun
 mute-replay-warnings
 ns-cert-type server
-auth-user-pass
 auth-nocache
 comp-lzo
+explicit-exit-notify
 
 ca {{ GISLAB_UNIQUE_ID }}-vpn_ca.crt
 tls-auth {{ GISLAB_UNIQUE_ID }}-vpn_ta.key 1
