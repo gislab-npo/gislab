@@ -21,7 +21,7 @@ push "route {{ GISLAB_NETWORK }}.0 255.255.255.0 172.16.{{ GISLAB_NETWORK_AS_LIS
 push "dhcp-option DNS {{ GISLAB_NETWORK_SERVER_IP }}"
 push "dhcp-option DOMAIN gis.lab"
 
-plugin /usr/lib/openvpn/openvpn-auth-ldap.so /etc/openvpn/auth/auth-ldap.conf
+plugin /usr/lib/openvpn/openvpn-auth-pam.so login
 
 keepalive 10 120
 comp-lzo

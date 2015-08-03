@@ -11,7 +11,6 @@
   apt: pkg={{ item }} force=yes install_recommends=no state=latest
   with_items:
     - openvpn
-    - openvpn-auth-ldap
 
 - name: Create directory for 'easy-rsa' tools
   file: path=/etc/openvpn/easy-rsa state=directory
@@ -90,14 +89,6 @@
 
 - name: Install OpenVPN client configuration file
   template: src=client.conf.j2 dest=/etc/openvpn/client.conf
-  notify:
-    - service openvpn restart
-
-- name: Create directory for OpenVPN OpenLDAP configuration
-  file: path=/etc/openvpn/auth state=directory
-
-- name: Install OpenVPN OpenLDAP configuration file
-  template: src=auth-ldap.conf.j2 dest=/etc/openvpn/auth/auth-ldap.conf
   notify:
     - service openvpn restart
 
