@@ -3,6 +3,9 @@
 #
 # USAGE: adduser.sh <USERNAME>
 
+source /etc/gislab_version
+
+
 GISLAB_USER=$1
 
 # sanity check
@@ -48,14 +51,17 @@ chmod 750 /storage/publish/$GISLAB_USER
 
 
 ### VPN
-# place VPN certificates to ~/.gislab directory
+# place VPN configuration and certificates to ~/.gislab directory
 if [ -d "/etc/openvpn" ]; then
-	cp /etc/openvpn/gislab_vpn_ca.crt /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
-	chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ca.crt
+	cp /etc/openvpn/gislab_vpn_ca.crt /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn_ca.crt
+	chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn_ca.crt
 
-	cp /etc/openvpn/gislab_vpn_ta.key /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-	chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
-	chmod 0600 /storage/home/$GISLAB_USER/.gislab/gislab_vpn_ta.key
+	cp /etc/openvpn/gislab_vpn_ta.key /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn_ta.key
+	chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn_ta.key
+	chmod 0600 /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn_ta.key
+
+	cp /etc/openvpn/client.conf /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.conf
+	chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.conf
 fi
 
 

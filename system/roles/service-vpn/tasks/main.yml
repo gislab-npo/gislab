@@ -82,8 +82,14 @@
   notify:
     - service openvpn restart
 
+
 - name: Install OpenVPN configuration file
   template: src=server.conf.j2 dest=/etc/openvpn/server.conf
+  notify:
+    - service openvpn restart
+
+- name: Install OpenVPN client configuration file
+  template: src=client.conf.j2 dest=/etc/openvpn/client.conf
   notify:
     - service openvpn restart
 

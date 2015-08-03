@@ -1,7 +1,13 @@
+# GIS.lab VPN configuration file.
+# Replace <GIS.lab-SERVER-IP> with public IP address of GIS.lab server and run following command to connect:
+# $ sudo openvpn --config ./{{ GISLAB_UNIQUE_ID }}-vpn.conf
+
+
 client
+remote <GIS.lab-SERVER-IP> 1194
+
 dev tun
 proto udp
-remote <GIS.lab server public IP> 1194
 resolv-retry infinite
 nobind
 user nobody
@@ -9,9 +15,12 @@ group nogroup
 persist-key
 persist-tun
 mute-replay-warnings
-ca gislab-vpn-ca.crt
 ns-cert-type server
-tls-auth gislab-vpn-ta.key 1
 auth-user-pass
+auth-nocache
 comp-lzo
+
+ca {{ GISLAB_UNIQUE_ID }}-vpn_ca.crt
+tls-auth {{ GISLAB_UNIQUE_ID }}-vpn_ta.key 1
+
 verb 0
