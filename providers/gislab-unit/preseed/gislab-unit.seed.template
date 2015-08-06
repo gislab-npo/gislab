@@ -21,7 +21,7 @@ d-i mirror/suite string precise
 
 ### Clock and time zone setup
 d-i clock-setup/utc boolean true
-d-i time/zone string ###TIMEZONE###
+d-i time/zone string ###TIME_ZONE###
 d-i clock-setup/ntp boolean true
 
 
