@@ -58,12 +58,15 @@ fi
 
 
 # populate variables and prepare directories structure
-TEMP_BACKUP_DIR=/tmp/$GISLAB_USER.$$
-mkdir $TEMP_BACKUP_DIR
+DATE=$(date '+%Y-%m-%d:%H-%M-%S')
+
+BACKUP_DIR=/storage/backup
+TEMP_BACKUP_DIR=$BACKUP_DIR/tmp/${GISLAB_USER}-${DATE}.restore
+mkdir -p $TEMP_BACKUP_DIR
 
 
 # untar backup file
-tar -xf $BACKUP_FILE -C $TEMP_BACKUP_DIR
+tar -C $TEMP_BACKUP_DIR -xf $BACKUP_FILE
 cd $TEMP_BACKUP_DIR
 
 for file in *.bz2; do
@@ -77,6 +80,7 @@ while read line; do
 	VAL=$(echo $line | sed 's/^[[:alnum:]]\+::\? //')
 
 		case "$ATTR" in
+			uid) GISLAB_USER_ORIG="$VAL" ;;
 			givenName) GISLAB_USER_GIVEN_NAME="$VAL" ;;
 			sn) GISLAB_USER_SURNAME="$VAL" ;;
 			mail) GISLAB_USER_MAIL="$VAL" ;;
@@ -88,8 +92,12 @@ done < ldap.dump
 
 
 # create user account
-gislab-adduser -g "$GISLAB_USER_GIVEN_NAME" -l "$GISLAB_USER_SURNAME" \
-               -m "$GISLAB_USER_MAIL" -d "$GISLAB_USER_DESC" $SUDO_OPT $GISLAB_USER
+gislab-adduser	-g "$GISLAB_USER_GIVEN_NAME" \
+				-l "$GISLAB_USER_SURNAME" \
+				-m "$GISLAB_USER_MAIL" \
+				-d "$GISLAB_USER_DESC" \
+				$SUDO_OPT \
+				$GISLAB_USER
 
 
 # PASSWORD
@@ -102,10 +110,10 @@ gislab_print_info "Original password restored from backup"
 
 
 # HOME DATA
-cp -r storage/home/$GISLAB_USER /storage/home/
+rsync -a storage/home/$GISLAB_USER_ORIG/ /storage/home/$GISLAB_USER/
 
-if [ -f storage/home/$GISLAB_USER/.config/user-dirs.dirs ]; then
-	source storage/home/$GISLAB_USER/.config/user-dirs.dirs
+if [ -f storage/home/$GISLAB_USER_ORIG/.config/user-dirs.dirs ]; then
+	source storage/home/$GISLAB_USER_ORIG/.config/user-dirs.dirs
 	mkdir -p /storage/home/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR)
 fi
 
@@ -113,7 +121,7 @@ chown -R $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER
 
 
 # PUBLISHED DATA
-cp -r storage/publish/$GISLAB_USER /storage/publish/
+rsync -a storage/publish/$GISLAB_USER_ORIG/ /storage/publish/$GISLAB_USER/
 chown -R $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
 
 
@@ -125,8 +133,8 @@ ball_exist_src_sql="SELECT 1 FROM information_schema.tables WHERE
 						table_schema = '${GISLAB_USER}'
 						AND table_name = 'gislab_ball'"
 ball_exist_dest_sql="SELECT 1 FROM information_schema.tables WHERE table_name = 'storage_ball'"
-if [ $(psql -U postgres -d gislab -tAc "$ball_exist_src_sql") == "1" ]; then
-	if [ $(psql -U postgres -d gislab -tAc "$ball_exist_dest_sql") == "1" ]; then
+if [ "$(psql -U postgres -d gislab -tAc "$ball_exist_src_sql")" == "1" ]; then
+	if [ "$(psql -U postgres -d gislab -tAc "$ball_exist_dest_sql")" == "1" ]; then
 		psql -U postgres -d gislab -c "INSERT INTO storage_ball SELECT * FROM ${GISLAB_USER}.gislab_ball;"
 		psql -U postgres -d gislab -c "INSERT INTO storage_drawing SELECT * FROM ${GISLAB_USER}.gislab_drawing;"
 	else
@@ -142,7 +150,7 @@ psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawin
 rm -rf $TEMP_BACKUP_DIR
 
 
-gislab_print_info "Account '$GISLAB_USER' is restored"
+gislab_print_info "Account '$GISLAB_USER' restored from '$BACKUP_FILE'"
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
