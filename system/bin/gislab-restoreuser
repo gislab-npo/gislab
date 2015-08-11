@@ -61,7 +61,7 @@ fi
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
 
 BACKUP_DIR=/storage/backup
-TEMP_BACKUP_DIR=$BACKUP_DIR/tmp/${GISLAB_USER}-${DATE}.restore
+TEMP_BACKUP_DIR=$BACKUP_DIR/${GISLAB_USER}-${DATE}.restore
 mkdir -p $TEMP_BACKUP_DIR
 
 
