@@ -1,4 +1,4 @@
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:{{ GISLAB_ROOT }}/bin
 MAILTO=root
 
-15 0	* * *  www-data  nice {{ GISLAB_INSTALL_WEB_ROOT }}/virtualenv/gislab-web/bin/python {{ GISLAB_INSTALL_WEB_ROOT }}/gislab-web/manage.py mapcache_clean > /dev/null
+15 0	* * *  www-data  nice {{ GISLAB_INSTALL_WEB_ROOT }}/virtualenv/gislab-web/bin/python {{ GISLAB_INSTALL_WEB_ROOT }}/manage.py mapcache_clean > /dev/null
