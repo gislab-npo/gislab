@@ -588,13 +588,13 @@
   shell: cp /etc/gislab/gislab_serf.key {{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/gislab/gislab_serf.key
 
 - name: Create directory for Serf handlers
-  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/serf/handlers state=directory
+  file: path={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers state=directory
 
 - name: Install Serf handlers scripts 
-  copy: src=static/serf/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/serf/handlers mode=0774
+  copy: src=static/serf/ dest={{ GISLAB_INSTALL_CLIENT_ROOT }}{{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers mode=0774
 
 - name: Install reboot Serf handler
-  shell: ln -sf shutdown.sh {{ GISLAB_INSTALL_CLIENT_ROOT }}/opt/gislab/system/serf/handlers/reboot.sh
+  shell: ln -sf shutdown.sh {{ GISLAB_INSTALL_CLIENT_ROOT }}{{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/reboot.sh
 
 - name: Install Serf agent init script
   template: src=init/serf-agent.conf.j2 dest={{ GISLAB_INSTALL_CLIENT_ROOT }}/etc/init/serf-agent.conf

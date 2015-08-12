@@ -127,7 +127,7 @@ gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
 
 
 # run adduser hook
-/opt/gislab/system/account/hooks/adduser.sh $GISLAB_USER
+$GISLAB_INSTALL_ACCOUNT_ROOT/hooks/adduser.sh $GISLAB_USER
 
 
 # final message

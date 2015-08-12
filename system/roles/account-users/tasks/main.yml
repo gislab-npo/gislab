@@ -25,7 +25,7 @@
     executable: /bin/bash
 
 
-# provisioning user
+# PROVISIONING USER
 - name: Set strong password for provisioning user account
   shell: 'echo "{{ GISLAB_PROVISIONING_USER }}:$(pwgen -1 -n 24)" | chpasswd'
 
@@ -35,130 +35,128 @@
     - /home/{{ GISLAB_PROVISIONING_USER }}
     - /home/{{ GISLAB_PROVISIONING_USER }}/.ssh
 
-
-# shell
 - name: Configure shell prompt for provisioning user
-  lineinfile: dest=/home/{{ GISLAB_PROVISIONING_USER }}/.bashrc \
-    regexp="^PS1=.*h\.GIS.lab(.*).*$" \
-    line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "' \
-    state=present
-
-- name: Configure shell prompt for new user accounts
-  lineinfile: dest=/etc/skel/.bashrc \
-    regexp="^PS1=.*h\.GIS.lab(.*).*$" \
-    line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "' \
+  lineinfile: dest=/home/{{ GISLAB_PROVISIONING_USER }}/.bashrc
+    regexp="^PS1=.*h\.GIS.lab(.*).*$"
+    line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "'
     state=present
 
 
-# configuration files
-- name: Create backup of clean user account skeleton at first run
-  shell: cp -a /etc/skel /etc/skel.clean
-  args:
-    executable: /bin/bash
-    creates: /etc/skel.clean/.bashrc
+- name: Purge GIS.lab account installation directory
+  file: dest={{ GISLAB_INSTALL_ACCOUNT_ROOT }} state=absent
 
-- name: Re-create user account skeleton from clean backup
-  shell: rm -rf /etc/skel && cp -a /etc/skel.clean /etc/skel
-  args:
-    executable: /bin/bash
+
+# ACCOUNT SKELETON
+- name: Prepare directory for user accounts skeleton
+  file: path={{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel state=directory owner=root group=root
+
+- name: Copy basic user account skeleton files
+  shell: cp -a /etc/skel/.[a-zA-Z0-9]* {{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel
+
+
+- name: Configure shell prompt
+  lineinfile: dest={{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.bashrc
+    regexp="^PS1=.*h\.GIS.lab(.*).*$"
+    line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "'
+    state=present
 
 
 - name: Prepare .config directory in skeleton
-  file: path=/etc/skel/.config state=directory owner=root group=root
+  file: path={{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.config state=directory owner=root group=root
 
 - name: Prepare autostart directory in skeleton
-  file: path=/etc/skel/.config/autostart state=directory owner=root group=root
+  file: path={{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.config/autostart state=directory owner=root group=root
 
 
 - name: Install filesystem bookmarks
-  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root
   with_items:
-    - { src: bookmarks/gtk-bookmarks.j2, dest: /etc/skel/.gtk-bookmarks }
+    - { src: bookmarks/gtk-bookmarks.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.gtk-bookmarks" }
 
 
 - name: Install Conky autostart file
-  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root
   with_items:
-    - { src: conky/conky.desktop.j2, dest: /etc/skel/.config/autostart/conky.desktop }
+    - { src: conky/conky.desktop.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.config/autostart/conky.desktop" }
 
 
 - name: Install Mutt configuration
-  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root
   with_items:
-    - { src: mutt/muttrc.j2, dest: /etc/skel/.muttrc }
+    - { src: mutt/muttrc.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.muttrc" }
 
 
 - name: Prepare Pidgin directory in skeleton
-  file: path=/etc/skel/.purple state=directory owner=root group=root
+  file: path={{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.purple state=directory owner=root group=root
 
 - name: Install Pidgin configuration
-  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root
   with_items:
-    - { src: pidgin/accounts.xml.j2, dest: /etc/skel/.purple/accounts.xml }
-    - { src: pidgin/blist.xml.j2, dest: /etc/skel/.purple/blist.xml }
+    - { src: pidgin/accounts.xml.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.purple/accounts.xml" }
+    - { src: pidgin/blist.xml.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.purple/blist.xml" }
 
 
 - name: Install PGAdmin configuration
-  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root
   with_items:
-    - { src: pgadmin3/pgadmin3.j2, dest: /etc/skel/.pgadmin3 }
+    - { src: pgadmin3/pgadmin3.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.pgadmin3" }
 
 
 - name: Prepare QGIS directories
   file: path={{ item }} state=directory owner=root group=root
   with_items:
-    - /etc/skel/.config/QGIS
-    - /etc/skel/.qgis2
-    - /etc/skel/.qgis2/composer_templates
+    - "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.config/QGIS"
+    - "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.qgis2"
+    - "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.qgis2/composer_templates"
 
 - name: Install QGIS configuration
-  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root
   with_items:
-    - { src: qgis/QGIS2.conf.j2, dest: /etc/skel/.config/QGIS/QGIS2.conf }
-    - { src: qgis/composer_templates/north-arrow.svg.j2, dest: /etc/skel/.qgis2/composer_templates/north-arrow.svg }
-    - { src: qgis/composer_templates/print-template-a4.qpt.j2, dest: /etc/skel/.qgis2/composer_templates/print-template-a4.qpt }
-    - { src: qgis/composer_templates/print-template-a3.qpt.j2, dest: /etc/skel/.qgis2/composer_templates/print-template-a3.qpt }
+    - { src: qgis/QGIS2.conf.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.config/QGIS/QGIS2.conf" }
+    - { src: qgis/composer_templates/north-arrow.svg.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.qgis2/composer_templates/north-arrow.svg" }
+    - { src: qgis/composer_templates/print-template-a4.qpt.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.qgis2/composer_templates/print-template-a4.qpt" }
+    - { src: qgis/composer_templates/print-template-a3.qpt.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.qgis2/composer_templates/print-template-a3.qpt" }
 
 
 - name: Prepare GRASS directories
   file: path={{ item }} state=directory owner=root group=root
   with_items:
-    - /etc/skel/.grass7
-    - /etc/skel/.grassdata
+    - "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.grass7"
+    - "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.grassdata"
 
 - name: Install GRASS configuration
-  template: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root
   with_items:
-    - { src: grass/rc.j2, dest: /etc/skel/.grass7/rc }
+    - { src: grass/rc.j2, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.grass7/rc" }
 
 - name: Install GRASS locations
-  copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0755 owner=root group=root
+  copy: src={{ item.src }} dest={{ item.dest }} mode=0755 owner=root group=root
   with_items:
-    - { src: static/grassdata/, dest: /etc/skel/.grassdata }
+    - { src: static/grassdata/, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/.grassdata" }
 
 
 - name: Add symlinks to shared directories in skeleton
-  file: src="{{ item.src }}" dest="{{ item.dest }}" owner=root group=root state=link force=yes
+  file: src={{ item.src }} dest={{ item.dest }} owner=root group=root state=link force=yes
   with_items:
-    - { src: /mnt/repository, dest: /etc/skel/Repository }
-    - { src: /mnt/barrel, dest: /etc/skel/Barrel }
-    - { src: /mnt/publish, dest: /etc/skel/Publish }
+    - { src: /mnt/repository, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/Repository" }
+    - { src: /mnt/barrel, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/Barrel" }
+    - { src: /mnt/publish, dest: "{{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/Publish" }
 
 - name: Add symlinks to fast, in-memory file system
-  file: src=/mnt/booster dest=/etc/skel/Booster owner=root group=root state=link force=yes
+  file: src=/mnt/booster dest={{ GISLAB_INSTALL_ACCOUNT_ROOT }}/skel/Booster owner=root group=root state=link force=yes
 
 
-# storage
+# STORAGE
 - name: Create home storage for new user's accounts
   file: path=/storage/home state=directory owner=root group=root
 
 
-# account hooks
+# ACCOUNT HOOKS
 - name: Prepare directory for account hooks
-  file: path=/opt/gislab/system/account/hooks state=directory owner=root group=root
+  file: path={{ GISLAB_INSTALL_ACCOUNT_ROOT }}/hooks state=directory owner=root group=root
 
 - name: Install account hooks
-  copy: src=static/hooks/ dest=/opt/gislab/system/account/hooks mode=0755 owner=root group=root
+  copy: src=static/hooks/ dest={{ GISLAB_INSTALL_ACCOUNT_ROOT }}/hooks mode=0755 owner=root group=root
 
 
 # vim:ft=ansible:

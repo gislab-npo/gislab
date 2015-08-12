@@ -61,13 +61,25 @@
   set_fact:
     GISLAB_INSTALL_TMP_ROOT: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
 
-- name: Set GIS.lab client installation root directory
+- name: Set GIS.lab account installation root directory
   set_fact:
-    GISLAB_INSTALL_CLIENT_ROOT: "{{ GISLAB_ROOT }}/client-desktop/root"
+    GISLAB_INSTALL_ACCOUNT_ROOT: "{{ GISLAB_ROOT }}/system/accounts"
 
-- name: Set GIS.lab client image directory
+- name: Set GIS.lab desktop client installation root directory
   set_fact:
-    GISLAB_INSTALL_CLIENT_IMAGE: "{{ GISLAB_ROOT }}/client-desktop/image"
+    GISLAB_INSTALL_CLIENT_ROOT: "{{ GISLAB_ROOT }}/system/clients/desktop/root"
+
+- name: Set GIS.lab desktop client image directory
+  set_fact:
+    GISLAB_INSTALL_CLIENT_IMAGE: "{{ GISLAB_ROOT }}/system/clients/desktop/image"
+
+- name: Set GIS.lab web client installation root directory
+  set_fact:
+    GISLAB_INSTALL_WEB_ROOT: "{{ GISLAB_ROOT }}/system/clients/web"
+
+- name: Set GIS.lab cluster installation root directory
+  set_fact:
+    GISLAB_INSTALL_CLUSTER_ROOT: "{{ GISLAB_ROOT }}/system/cluster"
 
 
 - name: Detect current date and time
@@ -160,7 +172,6 @@
     - /storage/cache/packages/apt
     - /storage/cache/packages/tar
     - /storage/cache/packages/pip
-    - /usr/local/python-virtualenvs
     - "{{ GISLAB_INSTALL_TMP_ROOT }}"
 
 - name: Set safe permissions for /etc/gislab directory

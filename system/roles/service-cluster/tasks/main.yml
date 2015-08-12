@@ -27,11 +27,18 @@
     creates: /etc/gislab/gislab_serf.key
 
 
-- name: Create directory for Serf handlers
-  file: path=/opt/gislab/system/serf/handlers state=directory
+- name: Purge GIS.lab cluster installation directory
+  file: dest={{ GISLAB_INSTALL_CLUSTER_ROOT }} state=absent
+
+- name: Prepare directory for cluster installation
+  file: path={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers state=directory
+
+
+- name: Prepare directory for cluster handlers
+  file: path={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers state=directory
 
 - name: Install Serf handlers scripts 
-  copy: src=static/serf/ dest=/opt/gislab/system/serf/handlers mode=0774
+  copy: src=static/serf/ dest={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers mode=0774
   notify:
   - service serf-agent restart
 

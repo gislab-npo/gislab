@@ -17,7 +17,7 @@ fi
 
 ### HOME DIRECTORY
 # create home directory
-cp -pR /etc/skel /storage/home/$GISLAB_USER
+cp -pR $GISLAB_INSTALL_ACCOUNT_ROOT/skel /storage/home/$GISLAB_USER
 chown -R $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER
 chmod 0700 /storage/home/$GISLAB_USER
 
