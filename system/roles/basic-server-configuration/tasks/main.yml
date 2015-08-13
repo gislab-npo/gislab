@@ -327,7 +327,7 @@
   copy: src=functions.sh dest={{ GISLAB_ROOT }}/system/functions.sh mode=0644
 
 - name: Install GIS.lab administrator tools
-  copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0775 owner=root group=root
+  copy: src=bin/ dest={{ GISLAB_ROOT }}/bin/ mode=0775 owner=root group=root
 
 - name: Add GIS.lab administrator tools on path
   lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present
