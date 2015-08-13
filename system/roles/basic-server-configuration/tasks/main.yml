@@ -24,6 +24,11 @@
   when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
 
 
+- name: Set GIS.lab installation root directory
+  set_fact:
+    GISLAB_ROOT: /opt/gislab
+
+
 - name: Generate unique string for this installation
   shell: date +%s | md5sum | head -c 24
   register: gislab_install_unique_string
@@ -38,7 +43,7 @@
     GISLAB_UNIQUE_ID: "{{ inventory_hostname }}"
 
 - name: Detect GIS.lab install action (new installation or upgrade)
-  stat: path=/var/lib/gislab/installation.done
+  stat: path=/storage/log/installation.done
   register: installation_done
   changed_when: False
 
@@ -52,10 +57,6 @@
     GISLAB_INSTALL_ACTION: upgrade
   when: installation_done.stat.exists == true
 
-
-- name: Set GIS.lab installation root directory
-  set_fact:
-    GISLAB_ROOT: /opt/gislab
 
 - name: Set temporary directory for this installation
   set_fact:
@@ -163,15 +164,18 @@
   file: path="{{ item }}" state=directory
   with_items:
     - "{{ GISLAB_ROOT }}"
+    - "{{ GISLAB_ROOT }}/bin"
+    - "{{ GISLAB_ROOT }}/system"
     - /etc/gislab
-    - /var/lib/gislab
-    - /opt/gislab
-    - /opt/gislab/system
+    - /storage
     - /storage/applications
+    - /storage/backup
     - /storage/cache
     - /storage/cache/packages/apt
     - /storage/cache/packages/tar
     - /storage/cache/packages/pip
+    - /storage/home
+    - /storage/log
     - "{{ GISLAB_INSTALL_TMP_ROOT }}"
 
 - name: Set safe permissions for /etc/gislab directory
