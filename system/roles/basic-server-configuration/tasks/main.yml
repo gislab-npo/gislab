@@ -355,6 +355,8 @@
 # TODO: move also other cron jobs to anacron (GIS.lab Web cleanup, ...)
 - name: Configure jobs scheduler
   template: src=anacrontab.j2 dest=/etc/anacrontab
+  notify:
+    - service anacron restart
 
 
 # backup
