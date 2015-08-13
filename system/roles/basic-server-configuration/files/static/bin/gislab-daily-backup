@@ -3,9 +3,6 @@
 
 set -e
 
-source $GISLAB_ROOT/system/functions.sh
-
-
 # sanity checks
 if ! [ -f /storage/log/installation.done ]; then
 	logger -t gislab-daily-backup "GIS.lab installation not completed. Skipping ..."
