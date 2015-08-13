@@ -2,7 +2,7 @@
 #
 ### INSTALLATION DONE ###
 #
-# Perform system cleanup and mark successful installation by creating file in '/var/lib/gislab' directory.
+# Perform system cleanup and mark successful installation by creating '/storage/log/installation.done' directory.
 
 
 - name: Disable Apt cache proxy server
