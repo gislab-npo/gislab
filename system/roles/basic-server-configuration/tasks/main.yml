@@ -78,6 +78,10 @@
   set_fact:
     GISLAB_INSTALL_WEB_ROOT: "{{ GISLAB_ROOT }}/system/clients/web"
 
+- name: Set GIS.lab scheduled jobs installation root directory
+  set_fact:
+    GISLAB_INSTALL_JOBS_ROOT: "{{ GISLAB_ROOT }}/system/jobs"
+
 - name: Set GIS.lab cluster installation root directory
   set_fact:
     GISLAB_INSTALL_CLUSTER_ROOT: "{{ GISLAB_ROOT }}/system/cluster"
@@ -281,6 +285,7 @@
 - name: Install packages
   apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
+    - anacron
     - arp-scan
     - etherwake
     - ethtool
@@ -336,8 +341,25 @@
   mount: name=/mnt src=/storage fstype=none opts=bind state=mounted
 
 
-# Backup
-- name: Activate user accounts and system files backup
-  template: src=cron/gislab-backupall.j2 dest=/etc/cron.d/gislab-backupall
+# scheduled jobs
+- name: Purge installation directory for scheduled jobs
+  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }} state=absent
+
+- name: Create installation directories for scheduled jobs
+  file: dest={{ item }} state=directory
+  with_items:
+    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/daily"
+    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/weekly"
+    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/monthly"
+
+# TODO: move also other cron jobs to anacron (GIS.lab Web cleanup, ...)
+- name: Configure jobs scheduler
+  template: src=anacrontab.j2 dest=/etc/anacrontab
+
+
+# backup
+- name: Install daily backup job
+  copy: src=static/bin/gislab-daily-backup dest={{ GISLAB_INSTALL_JOBS_ROOT }}/daily/ mode=0775
+
 
 # vim:ft=ansible:
