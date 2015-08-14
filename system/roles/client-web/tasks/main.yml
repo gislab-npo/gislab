@@ -42,18 +42,18 @@
 
 # Prepare installation directory
 - name: Purge GIS.lab web client installation directory
-  file: dest={{ GISLAB_INSTALL_WEB_ROOT }} state=absent
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web state=absent
 
 - name: Create GIS.lab web client install directory
-  file: dest={{ GISLAB_INSTALL_WEB_ROOT }} state=directory
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web state=directory
 
 
 # Python virtual environment
 - name: Create Python virtualenv directory
-  file: dest={{ GISLAB_INSTALL_WEB_ROOT }}/virtualenv/gislab-web state=directory
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web state=directory
 
 - name: Create Python virtual environment
-  shell: virtualenv --clear --quiet --system-site-packages {{ GISLAB_INSTALL_WEB_ROOT }}/virtualenv/gislab-web
+  shell: virtualenv --clear --quiet --system-site-packages {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web
 
 
 # GIS.lab Web installation
@@ -62,7 +62,7 @@
 
 - name: Install GIS.lab Web requirements
   pip: requirements={{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web/requirements.txt
-       virtualenv={{ GISLAB_INSTALL_WEB_ROOT }}/virtualenv/gislab-web
+       virtualenv={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web
        extra_args="--download-cache=/storage/cache/packages/pip"
        virtualenv_site_packages=yes
        state=present
@@ -70,7 +70,7 @@
     - service gislab-web restart
 
 - name: Install GIS.lab Web
-  shell: source {{ GISLAB_INSTALL_WEB_ROOT }}/virtualenv/gislab-web/bin/activate
+  shell: source {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web/bin/activate
     && pip install {{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web
   args:
     executable: /bin/bash
@@ -91,25 +91,25 @@
 
 - name: Deploy GIS.lab Web project
 # we do not use Ansible django_manage module because of missing 'template' option
-  shell: source {{ GISLAB_INSTALL_WEB_ROOT }}/virtualenv/gislab-web/bin/activate
+  shell: source {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web/bin/activate
          && django-admin.py startproject
          --template={{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web/webgis/conf/project_template/
-         djproject {{ GISLAB_INSTALL_WEB_ROOT }}
+         djproject {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web
   args:
     executable: /bin/bash
   notify:
     - service gislab-web restart
 
 - name: Install secrets
-  template: src=gislab-web/settings_secret.py.j2 dest={{ GISLAB_INSTALL_WEB_ROOT }}/djproject/settings_secret.py
+  template: src=gislab-web/settings_secret.py.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/djproject/settings_secret.py
   notify:
     - service gislab-web restart
 
 - name: Sync database
   django_manage: command=syncdb
-    app_path={{ GISLAB_INSTALL_WEB_ROOT }}
+    app_path={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web
     settings=djproject.settings
-    virtualenv={{ GISLAB_INSTALL_WEB_ROOT }}/virtualenv/gislab-web
+    virtualenv={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web
   sudo_user: postgres
   notify:
     - service gislab-web restart
@@ -136,9 +136,9 @@
 
 - name: Collect static files
   django_manage: command=collectstatic
-    app_path={{ GISLAB_INSTALL_WEB_ROOT }}
+    app_path={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web
     settings=djproject.settings
-    virtualenv={{ GISLAB_INSTALL_WEB_ROOT }}/virtualenv/gislab-web
+    virtualenv={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web
   notify:
     - service gislab-web restart
 
@@ -148,12 +148,12 @@
 
 # GIS.lab Web servers
 - name: Install Gunicorn startup script
-  template: src=gunicorn/gunicorn.sh.j2 dest={{ GISLAB_INSTALL_WEB_ROOT }}/gunicorn.sh
+  template: src=gunicorn/gunicorn.sh.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/gunicorn.sh
   notify:
     - service gislab-web restart
 
 - name: Add executable permissions for Gunicorn startup script
-  command: chmod 755 {{ GISLAB_INSTALL_WEB_ROOT }}/gunicorn.sh
+  command: chmod 755 {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/gunicorn.sh
 
 
 - name: Generate self signed SSL certificate (run only once)
@@ -218,20 +218,20 @@
     executable: /bin/bash
 
 - name: Create Web plugin directory
-  file: dest={{ GISLAB_INSTALL_WEB_ROOT }}/qgis-plugin state=directory
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/qgis-plugin state=directory
 
 - name: Install GIS.lab Web plugin package
   shell: "{{ item }}"
   with_items:
     - mv {{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web-plugin/gislab_web/gislab_web.zip
-      {{ GISLAB_INSTALL_WEB_ROOT }}/qgis-plugin/
+      {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/qgis-plugin/
     - cp {{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web-plugin/gislab_web/icon.png
-      {{ GISLAB_INSTALL_WEB_ROOT }}/qgis-plugin/
+      {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/qgis-plugin/
   args:
     executable: /bin/bash
 
 - name: Install GIS.lab Web plugin repository file
-  template: src=gislab-web-plugin/plugins.xml.j2 dest={{ GISLAB_INSTALL_WEB_ROOT }}/qgis-plugin/plugins.xml
+  template: src=gislab-web-plugin/plugins.xml.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/qgis-plugin/plugins.xml
 
 
 - name: Configure Nginx virtualhost qgis.gis.lab

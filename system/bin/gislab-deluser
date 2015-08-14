@@ -88,7 +88,7 @@ ldapdeleteuser $GISLAB_USER
 
 
 # run deluser hook
-$GISLAB_INSTALL_ACCOUNT_ROOT/hooks/deluser.sh $GISLAB_USER
+$GISLAB_ROOT/system/accounts/hooks/deluser.sh $GISLAB_USER
 
 
 # final message

@@ -6,6 +6,12 @@
 
 
 # FACTS
+- name: Set GIS.lab installation root directory
+# system-wide path variable - can be used in Ansible and shell scripts
+  set_fact:
+    GISLAB_ROOT: /opt/gislab
+
+
 - name: Detect if it is possible to get GIS.lab version from Git
   local_action: shell git describe 2> /dev/null || echo "GIT NOT AVAILABLE"
   sudo: no
@@ -24,11 +30,6 @@
   when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
 
 
-- name: Set GIS.lab installation root directory
-  set_fact:
-    GISLAB_ROOT: /opt/gislab
-
-
 - name: Generate unique string for this installation
   shell: date +%s | md5sum | head -c 24
   register: gislab_install_unique_string
@@ -41,6 +42,7 @@
 - name: Detect GIS.lab unique ID
   set_fact:
     GISLAB_UNIQUE_ID: "{{ inventory_hostname }}"
+
 
 - name: Detect GIS.lab install action (new installation or upgrade)
   stat: path=/storage/log/installation.done
@@ -58,25 +60,18 @@
   when: installation_done.stat.exists == true
 
 
+# path variables only for Ansible
 - name: Set temporary directory for this installation
   set_fact:
     GISLAB_INSTALL_TMP_ROOT: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
 
 - name: Set GIS.lab account installation root directory
   set_fact:
-    GISLAB_INSTALL_ACCOUNT_ROOT: "{{ GISLAB_ROOT }}/system/accounts"
+    GISLAB_INSTALL_ACCOUNTS_ROOT: "{{ GISLAB_ROOT }}/system/accounts"
 
 - name: Set GIS.lab desktop client installation root directory
   set_fact:
-    GISLAB_INSTALL_CLIENT_ROOT: "{{ GISLAB_ROOT }}/system/clients/desktop/root"
-
-- name: Set GIS.lab desktop client image directory
-  set_fact:
-    GISLAB_INSTALL_CLIENT_IMAGE: "{{ GISLAB_ROOT }}/system/clients/desktop/image"
-
-- name: Set GIS.lab web client installation root directory
-  set_fact:
-    GISLAB_INSTALL_WEB_ROOT: "{{ GISLAB_ROOT }}/system/clients/web"
+    GISLAB_INSTALL_CLIENTS_ROOT: "{{ GISLAB_ROOT }}/system/clients"
 
 - name: Set GIS.lab scheduled jobs installation root directory
   set_fact:
@@ -343,7 +338,7 @@
 
 # scheduled jobs
 - name: Purge installation directory for scheduled jobs
-  file: dest={{ GISLAB_INSTALL_CLIENT_ROOT }} state=absent
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root state=absent
 
 - name: Create installation directories for scheduled jobs
   file: dest={{ item }} state=directory
@@ -363,5 +358,7 @@
 - name: Install daily backup job
   copy: src=static/bin/gislab-daily-backup dest={{ GISLAB_INSTALL_JOBS_ROOT }}/daily/ mode=0775
 
+
+- meta: flush_handlers
 
 # vim:ft=ansible:
