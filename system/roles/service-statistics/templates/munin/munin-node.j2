@@ -1,8 +1,10 @@
 [cpu_by_process]
 env.procs nbd-server postgres
 
-[df*]
-env.exclude none unknown iso9660 squashfs udf romfs ramfs debugfs
+[df]
+env.exclude none unknown iso9660 squashfs udf romfs ramfs debugfs devtmpfs tmpfs
+env.warning 90
+env.critical 95
 
 [multips_memory]
 env.names nbd-server postgres
