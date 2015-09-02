@@ -108,6 +108,11 @@ label gislab-unit\
   kernel /install/vmlinuz\
   append file=/cdrom/preseed/gislab-unit.seed vga=788 initrd=/install/initrd.gz debian-installer/locale=en_US.UTF-8 console-setup/ask_detect=false keyboard-configuration/layout="English (US)" keyboard-configuration/variant="English (US)" quiet --' isolinux/txt.cfg
 
+
+# Change GIS.lab ISO image name
+sed -i 's/Ubuntu-Server/GIS.lab/' README.diskdefines
+sed -i 's/Ubuntu-Server/GIS.lab/' .disk/info
+
 cd ..
 
 rm -f isolinux/boot.cat
