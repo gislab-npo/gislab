@@ -14,6 +14,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_BASE:
   # list of basic server packages (installed with recommended packages)
   - acpid
   - acpi-support
+  - apt-show-versions
   - bc
   - curl
   - genisoimage
