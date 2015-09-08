@@ -32,27 +32,27 @@ done
 
 
 # sanity checks
-if [ ! -f "$GISLAB_INSTALL_CLIENT_ROOT/etc/gislab_version" ]; then
+if [ ! -f "$GISLAB_ROOT/system/clients/desktop/root/etc/gislab_version" ]; then
 	gislab_print_error "GIS.lab client chroot doesn't exist. GISLAB_SUITE must be set to 'lab' to build client image"
 fi
 
 
 TFTP_DIR=/var/lib/tftpboot/gislab
-IMAGE_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/gislab.img
+IMAGE_FILE=$GISLAB_ROOT/system/clients/desktop/image/gislab.img
 IMAGE_BUILDSTAMP=$(date +%s)
-IMAGE_BUILDSTAMP_FILE=$GISLAB_INSTALL_CLIENT_IMAGE/gislab_desktop.buildstamp
+IMAGE_BUILDSTAMP_FILE=$GISLAB_ROOT/system/clients/desktop/image/gislab_desktop.buildstamp
 
 
 # install image version file in to client chroot
-echo "$IMAGE_BUILDSTAMP" > $GISLAB_INSTALL_CLIENT_ROOT/etc/gislab_desktop.buildstamp
+echo "$IMAGE_BUILDSTAMP" > $GISLAB_ROOT/system/clients/desktop/root/etc/gislab_desktop.buildstamp
 
 
 # create directory for image
-mkdir -p $GISLAB_INSTALL_CLIENT_IMAGE
+mkdir -p $GISLAB_ROOT/system/clients/desktop/image
 
 
 # copy /boot directory from client to server TFTP directory
-cp -a $GISLAB_INSTALL_CLIENT_ROOT/boot/. $TFTP_DIR/
+cp -a $GISLAB_ROOT/system/clients/desktop/root/boot/. $TFTP_DIR/
 
 # set permissions
 find $TFTP_DIR -mindepth 1 -type d -exec chmod 0755 "{}" \;
@@ -64,7 +64,7 @@ test -x /usr/bin/ionice && /usr/bin/ionice -c3 true 2>/dev/null && ionice=ionice
 
 rm -f $IMAGE_FILE.tmp
 
-$nice $ionice mksquashfs $GISLAB_INSTALL_CLIENT_ROOT $IMAGE_FILE.tmp -e cdrom
+$nice $ionice mksquashfs $GISLAB_ROOT/system/clients/desktop/root $IMAGE_FILE.tmp -e cdrom
 
 if [ $? -ne 0 ]; then
 	rm -f $IMAGE_FILE.tmp

@@ -46,34 +46,34 @@ fi
 
 
 # sanity checks
-if [ ! -f "$GISLAB_INSTALL_CLIENT_ROOT/etc/gislab_version" ]; then
+if [ ! -f "$GISLAB_ROOT/system/clients/desktop/root/etc/gislab_version" ]; then
 	gislab_print_error "GIS.lab client chroot doesn't exist. GISLAB_SUITE must be set to 'lab' to build client image"
 fi
 
 
 function pre_chroot {
-	chroot $GISLAB_INSTALL_CLIENT_ROOT mount -t devpts -o rw,noexec,nosuid,gid=5,mode=620 devpts /dev/pts
-	chroot $GISLAB_INSTALL_CLIENT_ROOT mount -t proc proc /proc
-	mount -o bind /storage/cache/packages/apt $GISLAB_INSTALL_CLIENT_ROOT/var/cache/apt
+	chroot $GISLAB_ROOT/system/clients/desktop/root mount -t devpts -o rw,noexec,nosuid,gid=5,mode=620 devpts /dev/pts
+	chroot $GISLAB_ROOT/system/clients/desktop/root mount -t proc proc /proc
+	mount -o bind /storage/cache/packages/apt $GISLAB_ROOT/system/clients/desktop/root/var/cache/apt
 
 	# policy-rc.d
-	cat <<EOF > $GISLAB_INSTALL_CLIENT_ROOT/usr/sbin/policy-rc.d
+	cat <<EOF > $GISLAB_ROOT/system/clients/desktop/root/usr/sbin/policy-rc.d
 #!/bin/sh
 #
 
 exit 101
 EOF
-	chmod +x $GISLAB_INSTALL_CLIENT_ROOT/usr/sbin/policy-rc.d
+	chmod +x $GISLAB_ROOT/system/clients/desktop/root/usr/sbin/policy-rc.d
 
 	# start-stop-daemon
-	mv -f $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon.real
-	cat <<EOF > $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon
+	mv -f $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon.real
+	cat <<EOF > $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon
 #!/bin/sh
 #
 
 exit 0
 EOF
-	chmod +x $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon
+	chmod +x $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon
 
 	# launch interactive shell
 	if [ "$INTERCTIVE" == "yes" ]; then
@@ -85,12 +85,12 @@ EOF
 function post_chroot {
 	trap - 0 HUP INT QUIT KILL SEGV PIPE TERM
 	
-	chroot $GISLAB_INSTALL_CLIENT_ROOT umount /dev/pts
-	chroot $GISLAB_INSTALL_CLIENT_ROOT umount /proc
-	umount $GISLAB_INSTALL_CLIENT_ROOT/var/cache/apt
+	chroot $GISLAB_ROOT/system/clients/desktop/root umount /dev/pts
+	chroot $GISLAB_ROOT/system/clients/desktop/root umount /proc
+	umount $GISLAB_ROOT/system/clients/desktop/root/var/cache/apt
 
-	rm -f $GISLAB_INSTALL_CLIENT_ROOT/usr/sbin/policy-rc.d
-	mv -f $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon.real $GISLAB_INSTALL_CLIENT_ROOT/sbin/start-stop-daemon
+	rm -f $GISLAB_ROOT/system/clients/desktop/root/usr/sbin/policy-rc.d
+	mv -f $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon.real $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon
 
 	if [ "$INTERCTIVE" == "yes" ]; then
 		gislab_print_info "Leaving GIS.lab client chroot. Run 'gislab-client-image' to build client image from chroot"
@@ -100,7 +100,7 @@ function post_chroot {
 
 pre_chroot
 trap "post_chroot" 0 HUP INT QUIT KILL SEGV PIPE TERM
-eval chroot $GISLAB_INSTALL_CLIENT_ROOT $COMMAND
+eval chroot $GISLAB_ROOT/system/clients/desktop/root $COMMAND
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

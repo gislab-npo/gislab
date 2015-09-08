@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="gislab-web"
-DJANGODIR=/var/www/gislab-web
-SOCKFILE=/var/www/gislab-web/gunicorn.sock
+DJANGODIR={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web
+SOCKFILE={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/gunicorn.sock
 USER=www-data
 GROUP=www-data
 DJANGO_SETTINGS_MODULE=djproject.settings
@@ -17,7 +17,7 @@ LOG_LEVEL=error
 
 
 cd $DJANGODIR
-source /usr/local/python-virtualenvs/gislab-web/bin/activate
+source {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$DJANGODIR:$PYTHONPATH
  

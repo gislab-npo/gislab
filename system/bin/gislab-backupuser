@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# TODO: backup configuration and data from other apps like Firefox
-
 set -e
 
 source /etc/gislab_version
@@ -49,20 +47,21 @@ fi
 
 
 # populate variables and prepare directories structure
-DATE=$(date '+%Y-%m-%d:%H-%M-%S')
 GISLAB_USER_HOME=/storage/home/$GISLAB_USER
 
-TEMP_BACKUP_DIR=/tmp/gislab-$GISLAB_USER-$DATE
+DATE=$(date '+%Y-%m-%d:%H-%M-%S')
+TEMP_BACKUP_DIR=${BACKUP_DIR}/${GISLAB_USER}-${DATE}.backup
+
 HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar
 PUBLISH_BACKUP_FILE=$TEMP_BACKUP_DIR/publish.tar.bz2
 DB_BACKUP_FILE=$TEMP_BACKUP_DIR/postgresql.dump
 LDAP_BACKUP_FILE=$TEMP_BACKUP_DIR/ldap.dump
-BACKUP_FILE=$BACKUP_DIR/gislab-$GISLAB_USER-$DATE.tar
+BACKUP_FILE=$BACKUP_DIR/$GISLAB_UNIQUE_ID-$GISLAB_USER-$DATE.tar
 
 mkdir -p $BACKUP_DIR
 chmod 700 $BACKUP_DIR
 
-mkdir $TEMP_BACKUP_DIR
+mkdir -p $TEMP_BACKUP_DIR
 
 
 # GIS.lab VERSION
@@ -76,15 +75,31 @@ if [ -f $GISLAB_USER_HOME/.config/user-dirs.dirs ]; then
 	EXCLUDE=" --exclude=$GISLAB_USER_HOME/$(basename $XDG_DOWNLOAD_DIR)"
 fi
 
-tar -cvf $HOME_BACKUP_FILE \
+tar -cf $HOME_BACKUP_FILE \
 	--exclude="$GISLAB_USER_HOME/.*" \
 	--exclude=$GISLAB_USER_HOME/Barrel \
 	--exclude=$GISLAB_USER_HOME/Booster \
 	--exclude=$GISLAB_USER_HOME/Publish \
-	--exclude=$GISLAB_USER_HOME/Repository $EXCLUDE $GISLAB_USER_HOME
+	--exclude=$GISLAB_USER_HOME/Repository \
+	$EXCLUDE \
+	$GISLAB_USER_HOME
 
 if ls $GISLAB_USER_HOME/.config/user-dirs.* >/dev/null 2>&1; then
 	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.config/user-dirs.*
+fi
+
+# .gislab directory
+tar -rf $HOME_BACKUP_FILE --exclude=$GISLAB_USER_HOME/.gislab/session.lock $GISLAB_USER_HOME/.gislab
+
+# BASH
+if ls $GISLAB_USER_HOME/.bash_history >/dev/null 2>&1; then
+	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.bash_history
+fi
+
+# FIREFOX
+if ls $GISLAB_USER_HOME/.mozilla/firefox/*.default >/dev/null 2>&1; then
+	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.mozilla/firefox/profiles.ini
+	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.mozilla/firefox/*.default
 fi
 
 # QGIS
@@ -121,8 +136,10 @@ psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawin
 # include data from GIS.lab Web client only if client is installed
 ball_exist_sql="SELECT 1 FROM information_schema.tables WHERE table_name = 'storage_ball'"
 if [[ $(psql -U postgres -d gislab -tAc "$ball_exist_sql") == "1" ]]; then
-	psql -U postgres -d gislab -c "CREATE TABLE ${GISLAB_USER}.gislab_ball AS SELECT * FROM storage_ball WHERE \"user\" = '$GISLAB_USER';"
-	psql -U postgres -d gislab -c "CREATE TABLE ${GISLAB_USER}.gislab_drawing AS SELECT * FROM storage_drawing WHERE \"user\" = '$GISLAB_USER';"
+	psql -U postgres -d gislab \
+		-c "CREATE TABLE ${GISLAB_USER}.gislab_ball AS SELECT * FROM storage_ball WHERE \"user\" = '$GISLAB_USER';"
+	psql -U postgres -d gislab \
+		-c "CREATE TABLE ${GISLAB_USER}.gislab_drawing AS SELECT * FROM storage_drawing WHERE \"user\" = '$GISLAB_USER';"
 fi
 
 pg_dump -U postgres -Fc --schema=$GISLAB_USER gislab > $DB_BACKUP_FILE # perform backup
@@ -131,19 +148,20 @@ psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawin
 
 
 # LDAP DATA
+ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 ldapfinger -u $GISLAB_USER > $LDAP_BACKUP_FILE
-id $GISLAB_USER | grep -q '(gislabadmins)' && echo "#superuser" >> $LDAP_BACKUP_FILE  # superuser permissions
-
+if [ "$($ldapsearch_cmd "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$GISLAB_USER))")" != "" ]; then
+	echo "#superuser" >> $LDAP_BACKUP_FILE  # superuser permissions
+fi
 
 # create backup file and clean up
-cd $TEMP_BACKUP_DIR
-tar -cf $BACKUP_FILE *
+tar -C $TEMP_BACKUP_DIR -cf $BACKUP_FILE *
 chmod 400 $BACKUP_FILE
 
 rm -rf $TEMP_BACKUP_DIR
 
 
-gislab_print_info "Backup of account '$GISLAB_USER' created in '$BACKUP_FILE'"
+gislab_print_info "Backup of account '$GISLAB_USER' created in '$BACKUP_FILE' ($(du -h $BACKUP_FILE | awk '{print $1}'))"
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

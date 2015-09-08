@@ -116,7 +116,7 @@ GISLAB_DNS_SERVERS:
 GISLAB_APT_REPOSITORY_COUNTRY_MIRROR: sk
 
 # Apt-cacher-ng proxy URL.
-# Example: http://192.168.49.5:3142
+# Example: http://192.168.50.6:3142
 # Change requires running upgrade.
 GISLAB_APT_HTTP_PROXY:
 

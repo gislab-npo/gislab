@@ -15,9 +15,9 @@
 - name: Create GIS.lab administrator user account 'gislab' if doesn't exist
   shell: gislab-adduser
     -s
-    -g "Administrator"
-    -l "GIS.lab"
-    -m "gislab@gis.lab"
+    -g "{{ GISLAB_ADMIN_FIRST_NAME }}"
+    -l "{{ GISLAB_ADMIN_SURNAME }} [GIS.lab ID{{ ":" }} {{ GISLAB_UNIQUE_ID }}]"
+    -m "{{ GISLAB_ADMIN_EMAIL }}"
     gislab
   when: admin_account_status.stdout == 'ADMIN DOES NOT EXIST'
 

@@ -9,4 +9,8 @@
 - name: reconfigure timezone
   shell: dpkg-reconfigure --frontend noninteractive tzdata
 
+- name: service anacron restart
+  shell: name=anacron state=restarted
+
+
 # vim:ft=ansible:

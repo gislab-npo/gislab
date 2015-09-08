@@ -3,6 +3,9 @@
 #
 # USAGE: deluser.sh <USERNAME>
 
+source /etc/gislab_version
+
+
 GISLAB_USER=$1
 
 # sanity check

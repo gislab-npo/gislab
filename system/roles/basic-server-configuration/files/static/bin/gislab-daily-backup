@@ -1,0 +1,43 @@
+#!/bin/bash
+# Perform daily backup job.
+
+set -e
+
+# sanity checks
+if ! [ -f /storage/log/installation.done ]; then
+	logger -t gislab-daily-backup "GIS.lab installation not completed. Skipping ..."
+	exit 0
+fi
+
+
+BACKUP_DIR=/storage/backup/daily-backup
+BACKUP_DONE_FILE=$BACKUP_DIR/$GISLAB_UNIQUE_ID-daily-backup.done
+
+PREVIOUS_BACKUP_MSG="Dear GIS.lab administrator.
+
+GIS.lab daily backups are created every day. To prevent low disk space problem,
+only one backup copy is stored in time. To keep history, it is required to move
+backup files to another storage medium before another backup process is started.
+This task is in competence of you as the local GIS.lab administrator.
+
+Now, previous backup files are removed and new backups are just about to be
+created. To keep them for future, it is safe to start moving files once
+'$BACKUP_DONE_FILE' will appear in
+'$BACKUP_DIR'.
+
+Sincerely yours daily GIS.lab backup job.
+"
+
+# test for obsolete backups
+if [ -f $BACKUP_DONE_FILE ]; then
+	logger -t gislab-daily-backup "Obsolete daily backup detected"
+	echo -e "$PREVIOUS_BACKUP_MSG" | mail -s "[GIS.lab ID: $GISLAB_UNIQUE_ID]: Obsolete daily backup detected" root
+	rm -rf $BACKUP_DIR
+fi
+
+# perform backup
+nice gislab-backupall -d $BACKUP_DIR
+touch $BACKUP_DONE_FILE
+
+
+# vim: set ts=4 sts=4 sw=4 noet:

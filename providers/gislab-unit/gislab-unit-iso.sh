@@ -32,7 +32,7 @@ while getopts "s:p:t:i:w:k:h" OPTION; do
 	case "$OPTION" in
 		s) COUNTRY_CODE="$OPTARG" ;;
 		p) APT_PROXY="$OPTARG" ;;
-		t) TIMEZONE="$OPTARG" ;;
+		t) TIME_ZONE="$OPTARG" ;;
 		i) SRC_IMAGE="$OPTARG" ;;
 		w) WORK_DIR="$OPTARG"
 		   ROOT_DIR="$WORK_DIR/root" ;;
@@ -44,7 +44,7 @@ done
 
 
 # sanity checks
-if [ -z "$COUNTRY_CODE" -o -z "$TIMEZONE" -o -z "$SRC_IMAGE" -o -z "$WORK_DIR" -o -z "$SSH_PUBLIC_KEY" ]; then
+if [ -z "$COUNTRY_CODE" -o -z "$TIME_ZONE" -o -z "$SRC_IMAGE" -o -z "$WORK_DIR" -o -z "$SSH_PUBLIC_KEY" ]; then
 	usage
 fi
 
@@ -56,6 +56,9 @@ fi
 
 PRESEED_CONF="$(dirname $(readlink -f $0))/preseed/gislab-unit.seed.template"
 MOUNT_DIR="/tmp/gislab-unit-iso-mnt"
+ISO_ID=$(pwgen -n 8 1)
+DATE=$(date '+%Y-%m-%d-%H:%M:%S')
+
 
 mkdir -p $MOUNT_DIR
 mkdir -p $WORK_DIR
@@ -86,7 +89,7 @@ cd $ROOT_DIR
 cp $PRESEED_CONF preseed/gislab-unit.seed
 sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" preseed/gislab-unit.seed
 sed -i "s;###APT_PROXY###;$APT_PROXY;" preseed/gislab-unit.seed
-sed -i "s;###TIMEZONE###;$TIMEZONE;" preseed/gislab-unit.seed
+sed -i "s;###TIME_ZONE###;$TIME_ZONE;" preseed/gislab-unit.seed
 
 cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_key.pub
 sed -i 's|.*###DUMMY_COMMAND###*.|mkdir /target/home/ubuntu/.ssh; \\\
@@ -105,6 +108,11 @@ label gislab-unit\
   kernel /install/vmlinuz\
   append file=/cdrom/preseed/gislab-unit.seed vga=788 initrd=/install/initrd.gz debian-installer/locale=en_US.UTF-8 console-setup/ask_detect=false keyboard-configuration/layout="English (US)" keyboard-configuration/variant="English (US)" quiet --' isolinux/txt.cfg
 
+
+# Change GIS.lab ISO image name
+sed -i 's/Ubuntu-Server/GIS.lab/' README.diskdefines
+sed -i 's/Ubuntu-Server/GIS.lab/' .disk/info
+
 cd ..
 
 rm -f isolinux/boot.cat
@@ -117,13 +125,25 @@ rm -f isolinux/boot.cat
 
 mkisofs -D -r -V "GIS.lab Unit" -cache-inodes -J -l -b isolinux/isolinux.bin \
 	-c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table \
-	-o gislab-unit.iso root/
+	-o gislab-unit-${ISO_ID}.iso root/
 
+# create meta file
+cat << EOF >> $WORK_DIR/gislab-unit-${ISO_ID}.meta
+DATE=$DATE
+COUNTRY_CODE=$COUNTRY_CODE
+APT_PROXY=$APT_PROXY
+TIME_ZONE=$TIME_ZONE
+SRC_IMAGE=$(basename $SRC_IMAGE)
+SSH_PUBLIC_KEY=$SSH_PUBLIC_KEY
+EOF
+
+# cleanup
 rm -rf $MOUNT_DIR
 rm -rf $ROOT_DIR
 
 
 # done
 echo
-echo "GIS.lab Unit ISO image: $WORK_DIR/gislab-unit.iso"
+echo "GIS.lab Unit ISO image: $WORK_DIR/gislab-unit-${ISO_ID}.iso"
+echo "GIS.lab Unit ISO meta:  $WORK_DIR/gislab-unit-${ISO_ID}.meta"
 echo

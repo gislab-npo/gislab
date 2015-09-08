@@ -6,6 +6,12 @@
 
 
 # FACTS
+- name: Set GIS.lab installation root directory
+# system-wide path variable - can be used in Ansible and shell scripts
+  set_fact:
+    GISLAB_ROOT: /opt/gislab
+
+
 - name: Detect if it is possible to get GIS.lab version from Git
   local_action: shell git describe 2> /dev/null || echo "GIT NOT AVAILABLE"
   sudo: no
@@ -37,8 +43,9 @@
   set_fact:
     GISLAB_UNIQUE_ID: "{{ inventory_hostname }}"
 
+
 - name: Detect GIS.lab install action (new installation or upgrade)
-  stat: path=/var/lib/gislab/installation.done
+  stat: path=/storage/log/installation.done
   register: installation_done
   changed_when: False
 
@@ -53,25 +60,26 @@
   when: installation_done.stat.exists == true
 
 
-- name: Set GIS.lab installation root directory
-  set_fact:
-    GISLAB_ROOT: /opt/gislab
-
+# path variables only for Ansible
 - name: Set temporary directory for this installation
   set_fact:
     GISLAB_INSTALL_TMP_ROOT: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
 
-- name: Set GIS.lab client installation root directory
+- name: Set GIS.lab account installation root directory
   set_fact:
-    GISLAB_INSTALL_CLIENT_ROOT: "{{ GISLAB_ROOT }}/client-desktop/root"
+    GISLAB_INSTALL_ACCOUNTS_ROOT: "{{ GISLAB_ROOT }}/system/accounts"
 
-- name: Set GIS.lab client image directory
+- name: Set GIS.lab desktop client installation root directory
   set_fact:
-    GISLAB_INSTALL_CLIENT_IMAGE: "{{ GISLAB_ROOT }}/client-desktop/image"
+    GISLAB_INSTALL_CLIENTS_ROOT: "{{ GISLAB_ROOT }}/system/clients"
 
-- name: Set GIS.lab Mobile build root directory
+- name: Set GIS.lab scheduled jobs installation root directory
   set_fact:
-    GISLAB_INSTALL_CLIENT_MOBILE_ROOT: "{{ GISLAB_ROOT }}/client-mobile/root"
+    GISLAB_INSTALL_JOBS_ROOT: "{{ GISLAB_ROOT }}/system/jobs"
+
+- name: Set GIS.lab cluster installation root directory
+  set_fact:
+    GISLAB_INSTALL_CLUSTER_ROOT: "{{ GISLAB_ROOT }}/system/cluster"
 
 
 - name: Detect current date and time
@@ -155,17 +163,18 @@
   file: path="{{ item }}" state=directory
   with_items:
     - "{{ GISLAB_ROOT }}"
+    - "{{ GISLAB_ROOT }}/bin"
+    - "{{ GISLAB_ROOT }}/system"
     - /etc/gislab
-    - /var/lib/gislab
-    - /opt/gislab
-    - /opt/gislab/system
+    - /storage
     - /storage/applications
+    - /storage/backup
     - /storage/cache
     - /storage/cache/packages/apt
-    - /storage/cache/packages/npm
-    - /storage/cache/packages/pip
     - /storage/cache/packages/tar
-    - /usr/local/python-virtualenvs
+    - /storage/cache/packages/pip
+    - /storage/home
+    - /storage/log
     - "{{ GISLAB_INSTALL_TMP_ROOT }}"
 
 - name: Set safe permissions for /etc/gislab directory
@@ -271,6 +280,7 @@
 - name: Install packages
   apt: pkg={{item}} force=yes install_recommends=no state=latest
   with_items:
+    - anacron
     - arp-scan
     - etherwake
     - ethtool
@@ -312,7 +322,7 @@
   copy: src=functions.sh dest={{ GISLAB_ROOT }}/system/functions.sh mode=0644
 
 - name: Install GIS.lab administrator tools
-  copy: src=bin dest={{ GISLAB_ROOT }}/ mode=0775 owner=root group=root
+  copy: src=bin/ dest={{ GISLAB_ROOT }}/bin/ mode=0775 owner=root group=root
 
 - name: Add GIS.lab administrator tools on path
   lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present
@@ -326,8 +336,29 @@
   mount: name=/mnt src=/storage fstype=none opts=bind state=mounted
 
 
-# Backup
-- name: Activate user accounts and system files backup
-  template: src=cron/gislab-backupall.j2 dest=/etc/cron.d/gislab-backupall
+# scheduled jobs
+- name: Purge installation directory for scheduled jobs
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root state=absent
+
+- name: Create installation directories for scheduled jobs
+  file: dest={{ item }} state=directory
+  with_items:
+    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/daily"
+    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/weekly"
+    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/monthly"
+
+# TODO: move also other cron jobs to anacron (GIS.lab Web cleanup, ...)
+- name: Configure jobs scheduler
+  template: src=anacrontab.j2 dest=/etc/anacrontab
+  notify:
+    - service anacron restart
+
+
+# backup
+- name: Install daily backup job
+  copy: src=static/bin/gislab-daily-backup dest={{ GISLAB_INSTALL_JOBS_ROOT }}/daily/ mode=0775
+
+
+- meta: flush_handlers
 
 # vim:ft=ansible:

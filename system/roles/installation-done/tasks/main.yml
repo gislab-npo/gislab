@@ -2,7 +2,7 @@
 #
 ### INSTALLATION DONE ###
 #
-# Perform system cleanup and mark successful installation by creating file in '/var/lib/gislab' directory.
+# Perform system cleanup and mark successful installation by creating '/storage/log/installation.done' directory.
 
 
 - name: Disable Apt cache proxy server
@@ -13,7 +13,7 @@
 
 
 - name: "Installation of GIS.lab is done"
-  shell: "echo '{{ GISLAB_INSTALL_DATETIME }} {{ GISLAB_INSTALL_ACTION }}' >> /var/lib/gislab/installation.done"
+  shell: "echo '{{ GISLAB_INSTALL_DATETIME }} {{ GISLAB_INSTALL_ACTION }}' >> /storage/log/installation.done"
 
 
 # vim:ft=ansible:
