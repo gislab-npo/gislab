@@ -16,7 +16,7 @@
   shell: gislab-adduser
     -s
     -g "{{ GISLAB_ADMIN_FIRST_NAME }}"
-    -l "{{ GISLAB_ADMIN_SURNAME }} [GIS.lab ID{{ ":" }} {{ GISLAB_UNIQUE_ID }}]"
+    -l "{{ GISLAB_ADMIN_SURNAME }} ({{ GISLAB_UNIQUE_ID }})"
     -m "{{ GISLAB_ADMIN_EMAIL }}"
     gislab
   when: admin_account_status.stdout == 'ADMIN DOES NOT EXIST'
