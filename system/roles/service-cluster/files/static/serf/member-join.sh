@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Perform actions when a machine requests to join the GIS.lab cluster:
-#  * activate statistics monitoring. Monitoring will stay activated even if machine leaves cluster.
+# Perform actions when GIS.lab cluster join event is received:
+#  * activate statistics monitoring (it will stay activated even if machine leaves cluster)
 
 
 while read line; do
