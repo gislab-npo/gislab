@@ -15,7 +15,6 @@ d-i mirror/protocol select http
 d-i mirror/country string ###COUNTRY_CODE###
 d-i mirror/http/hostname string archive.ubuntu.com
 d-i mirror/http/directory string /debian
-d-i mirror/http/proxy string ###APT_PROXY###
 d-i mirror/suite string precise
 
 
@@ -107,7 +106,7 @@ d-i apt-setup/local0/source boolean true
 
 ### Package selection
 tasksel tasksel/first multiselect server
-d-i base-installer/kernel/altmeta string lts-trusty
+d-i base-installer/kernel/altmeta string lts-saucy
 d-i pkgsel/language-pack-patterns string
 d-i pkgsel/install-language-support boolean false
 d-i pkgsel/include string openssh-server
@@ -125,12 +124,18 @@ d-i grub-installer/with_other_os boolean false
 
 
 ### Custom commands
+d-i preseed/early_command string /cdrom/configure-apt-proxy.sh
+
 d-i preseed/late_command string \
 in-target sed -i '/^#.*/d' /etc/apt/sources.list; \
 in-target sed -i '/^deb-src.*/d' /etc/apt/sources.list; \
 in-target sed -i '/^$/d' /etc/apt/sources.list; \
 in-target sed -i 's/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/' /etc/sudoers; \
-echo "###DUMMY_COMMAND###" >/dev/null
+in-target mkdir /home/ubuntu/.ssh; \
+cp /cdrom/ssh_key.pub /target/home/ubuntu/.ssh/authorized_keys; \
+in-target chown -R ubuntu:ubuntu /home/ubuntu/.ssh; \
+in-target chmod 0700 /home/ubuntu/.ssh; \
+in-target chmod 0600 /home/ubuntu/.ssh/authorized_keys >/dev/null
 
 
 ### Installation finish

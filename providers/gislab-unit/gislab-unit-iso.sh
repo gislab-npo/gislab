@@ -7,15 +7,14 @@ usage () {
 	echo "Create GIS.lab Unit installation ISO image from Ubuntu Server ISO. Script must be executed with superuser"
 	echo "privileges."
 	echo
-	echo "USAGE: $(basename $0) -s <country code> [-p <apt proxy server>] -t <timezone> -i <ISO image>"
-	echo "                          -k <SSH public key> -w <working directory>"
+	echo "USAGE: $(basename $0) -s <country code> -t <timezone> -k <SSH public key>"
+	echo "                          -w <working directory> -i <ISO image>"
 	echo
 	echo "  -s country code used for choosing closest repository mirror (e.g. SK)"
-	echo "  -p APT proxy server (e.g. http://192.168.1.10:3142) [optional]"
 	echo "  -t timezone (e.g. Europe/Bratislava)"
-	echo "  -i Ubuntu Server installation ISO image file"
 	echo "  -k SSH public key file, which will be used for GIS.lab installation or update"
 	echo "  -w working directory with enough disk space (2.5 x larger free space then ISO image size)"
+	echo "  -i Ubuntu Server installation ISO image file"
 	echo "  -h this help"
 	echo
 	exit 1
@@ -27,11 +26,10 @@ clean_up () {
 }
 	
 
-while getopts "s:p:t:i:w:k:h" OPTION; do
+while getopts "s:t:i:w:k:h" OPTION; do
 
 	case "$OPTION" in
 		s) COUNTRY_CODE="$OPTARG" ;;
-		p) APT_PROXY="$OPTARG" ;;
 		t) TIME_ZONE="$OPTARG" ;;
 		i) SRC_IMAGE="$OPTARG" ;;
 		w) WORK_DIR="$OPTARG"
@@ -54,7 +52,7 @@ if [ $(id -u) -ne 0 ]; then
 fi
 
 
-PRESEED_CONF="$(dirname $(readlink -f $0))/preseed/gislab-unit.seed.template"
+SRC_DIR="$(dirname $(readlink -f $0))"
 MOUNT_DIR="/tmp/gislab-unit-iso-mnt"
 ISO_ID=$(pwgen -n 8 1)
 DATE=$(date '+%Y-%m-%d-%H:%M:%S')
@@ -82,41 +80,38 @@ fi
 rsync -a $MOUNT_DIR/ $ROOT_DIR/
 umount $MOUNT_DIR
 
-
-# generate preseed file
 cd $ROOT_DIR
-
-cp $PRESEED_CONF preseed/gislab-unit.seed
-sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" preseed/gislab-unit.seed
-sed -i "s;###APT_PROXY###;$APT_PROXY;" preseed/gislab-unit.seed
-sed -i "s;###TIME_ZONE###;$TIME_ZONE;" preseed/gislab-unit.seed
-
-cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_key.pub
-sed -i 's|.*###DUMMY_COMMAND###*.|mkdir /target/home/ubuntu/.ssh; \\\
-cp /cdrom/ssh_key.pub /target/home/ubuntu/.ssh/authorized_keys; \\\
-chroot /target chown -R ubuntu:ubuntu /home/ubuntu/.ssh; \\\
-chroot /target chmod 0700 /home/ubuntu/.ssh; \\\
-chroot /target chmod 0600 /home/ubuntu/.ssh/authorized_keys|' preseed/gislab-unit.seed
 
 
 # boot options
-sed -i 's/^timeout.*/timeout 3/' isolinux/isolinux.cfg
-sed -i 's/^default.*/default gislab-unit/' isolinux/txt.cfg
-sed -i '/^default gislab-unit/a\
-label gislab-unit\
-  menu label ^Install GIS.lab Server\
-  kernel /install/vmlinuz\
-  append file=/cdrom/preseed/gislab-unit.seed vga=788 initrd=/install/initrd.gz debian-installer/locale=en_US.UTF-8 console-setup/ask_detect=false keyboard-configuration/layout="English (US)" keyboard-configuration/variant="English (US)" quiet --' isolinux/txt.cfg
+sed -i 's/^timeout.*/timeout 50/' $ROOT_DIR/isolinux/isolinux.cfg
+cp -f $SRC_DIR/preseed/menu.cfg $ROOT_DIR/isolinux/menu.cfg
+cp -f $SRC_DIR/preseed/txt.cfg $ROOT_DIR/isolinux/txt.cfg
+cp -f $SRC_DIR/preseed/splash.pcx $ROOT_DIR/isolinux/splash.pcx
+
+
+# generate preseed file
+cp $SRC_DIR/preseed/gislab-unit.seed.template $ROOT_DIR/preseed/gislab-unit.seed
+sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/preseed/gislab-unit.seed
+sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/preseed/gislab-unit.seed
+
+cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_key.pub
+
+cp $SRC_DIR/preseed/configure-apt-proxy.sh $ROOT_DIR/configure-apt-proxy.sh
+chmod 0755 $ROOT_DIR/configure-apt-proxy.sh
 
 
 # Change GIS.lab ISO image name
-sed -i 's/Ubuntu-Server/GIS.lab/' README.diskdefines
-sed -i 's/Ubuntu-Server/GIS.lab/' .disk/info
+sed -i 's/Ubuntu-Server/GIS.lab/' $ROOT_DIR/README.diskdefines
+sed -i 's/Ubuntu-Server/GIS.lab/' $ROOT_DIR/.disk/info
 
-cd ..
+rm -f $ROOT_DIR/isolinux/boot.cat
 
-rm -f isolinux/boot.cat
+# update md5sum file
+rm -f $ROOT_DIR/md5sum.txt
+find -type f -print0 | xargs -0 md5sum | grep -v 'isolinux/boot.cat' > $ROOT_DIR/md5sum.txt
 
+cd $WORK_DIR
 
 # create output ISO image file 
 #genisoimage -o gislab-unit.iso -b isolinux/isolinux.bin \
