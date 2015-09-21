@@ -102,8 +102,8 @@ chmod 0755 $ROOT_DIR/configure-apt-proxy.sh
 
 
 # Change GIS.lab ISO image name
-sed -i 's/Ubuntu-Server/GIS.lab/' $ROOT_DIR/README.diskdefines
-sed -i 's/Ubuntu-Server/GIS.lab/' $ROOT_DIR/.disk/info
+sed -i "s/Ubuntu-Server/GIS.lab $ISO_ID/" $ROOT_DIR/README.diskdefines
+sed -i "s/Ubuntu-Server/GIS.lab $ISO_ID/" $ROOT_DIR/.disk/info
 
 rm -f $ROOT_DIR/isolinux/boot.cat
 
