@@ -338,7 +338,7 @@
 
 # scheduled jobs
 - name: Purge installation directory for scheduled jobs
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root state=absent
+  file: dest={{ GISLAB_INSTALL_JOBS_ROOT }} state=absent
 
 - name: Create installation directories for scheduled jobs
   file: dest={{ item }} state=directory
