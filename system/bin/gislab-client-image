@@ -36,6 +36,10 @@ if [ ! -f "$GISLAB_ROOT/system/clients/desktop/root/etc/gislab_version" ]; then
 	gislab_print_error "GIS.lab client chroot doesn't exist. GISLAB_SUITE must be set to 'lab' to build client image"
 fi
 
+if [ -f "$GISLAB_ROOT/system/clients/desktop/root/proc/version" ]; then
+	gislab_print_error "GIS.lab client chroot session is active. Exit from it before running this command"
+fi
+
 
 TFTP_DIR=/var/lib/tftpboot/gislab
 IMAGE_FILE=$GISLAB_ROOT/system/clients/desktop/image/gislab.img
