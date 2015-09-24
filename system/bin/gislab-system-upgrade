@@ -12,7 +12,7 @@ gislab_require_root
 # usage
 function usage() {
 	echo "USAGE: $(basename $0)"
-	echo "Upgrade system and client image. Make shure that there are none running client machines."
+	echo "Upgrade GIS.lab system."
 	echo -e "\nOPTIONS
 	-h  display this help
 	"
@@ -30,30 +30,29 @@ done
 
 
 RUNNING_CLIENTS="$(gislab-cluster members -status=alive -tag role=client)"
-
 if [ -n "$RUNNING_CLIENTS" ]; then
-	gislab_print_error "There are still some client machines running"
+	gislab_print_error "GIS.lab client machines are running. Can't perform upgrade"
 fi
 
 
-# Upgrade server
+# upgrade server packages
 apt-get --assume-yes --force-yes update
 apt-get --assume-yes --force-yes dist-upgrade
 apt-get --assume-yes --force-yes autoremove
 
 
-# Upgrade client chroot and image only if there are available updates - it save time
+# detect if there are any upgradeable packages before running upgrade
 gislab-client-shell apt-get --assume-yes --force-yes update
 
 UPGRADEABLE_PACKAGES="$(gislab-client-shell apt-show-versions -u -b 2>/dev/null)"
 
 if [ -n "$UPGRADEABLE_PACKAGES" ]; then
-	# Upgrade client chroot
+	# upgrade client chroot
 	gislab-client-shell apt-get --assume-yes --force-yes dist-upgrade
 	gislab-client-shell apt-get --assume-yes --force-yes autoremove
 
-	# Rebuil client image
+	# rebuild client image
 	gislab-client-image
 fi
 
-gislab_print_info "System and client image has been successfully upgraded"
+gislab_print_info "GIS.lab system was successfully upgraded"
