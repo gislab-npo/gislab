@@ -126,7 +126,6 @@ mkisofs -D -r -V "GIS.lab Base System" -cache-inodes -J -l -b isolinux/isolinux.
 cat << EOF >> $WORK_DIR/gislab-base-system-${ISO_ID}.meta
 DATE=$DATE
 COUNTRY_CODE=$COUNTRY_CODE
-APT_PROXY=$APT_PROXY
 TIME_ZONE=$TIME_ZONE
 SRC_IMAGE=$(basename $SRC_IMAGE)
 SSH_PUBLIC_KEY=$SSH_PUBLIC_KEY
