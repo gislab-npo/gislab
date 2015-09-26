@@ -13,7 +13,7 @@ fi
 BACKUP_DIR=/storage/backup/daily-backup
 BACKUP_DONE_FILE=$BACKUP_DIR/$GISLAB_UNIQUE_ID-daily-backup.done
 
-PREVIOUS_BACKUP_MSG="Dear GIS.lab administrator.
+PREVIOUS_BACKUP_MSG="Dear GIS.lab Administrator.
 
 GIS.lab daily backups are created every day. To prevent low disk space problem,
 only one backup copy is stored in time. To keep history, it is required to move
