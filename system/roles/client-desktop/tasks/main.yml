@@ -766,21 +766,41 @@
   file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/boot/pxelinux.cfg state=directory
 
 - name: Install PXE configuration file
-  template: src=boot-pxe/gislab.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/boot/pxelinux.cfg/default
+  template: src=pxe-boot/gislab.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/boot/pxelinux.cfg/default
 
   
 # HTTP boot (alternative method using iPXE)
 # To boot via HTTP, client machine must boot iPXE boot image first. This boot image will launch HTTP boot.
-# Prepared iPXE boot image exists in 'http-boot/gislab-client-loader.iso.gz' of GIS.lab source code.
+# Prepared iPXE boot loader image file exists in 'http-boot/gislab-desktop-bootloader.iso'.
 
-- name: Install HTTP boot files (files can be launched by http://boot.gis.lab/<file> or http://GISLAB_NETWORK.5/<file>)
+- name: Install ramdisk and kernel files for HTTP boot
   file: src={{ item.src }} dest={{ item.dest }} owner=root group=root state=link force=yes
   with_items:
     - { src: "/var/lib/tftpboot/gislab/vmlinuz", dest: "/var/www/default/vmlinuz"}
     - { src: "/var/lib/tftpboot/gislab/initrd.img", dest: "/var/www/default/initrd.img"}
 
+- name: Install HTTP boot service requirements in Python virtualenv
+  pip: name=gunicorn
+       version=19.1.1
+       virtualenv={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/virtualenv/http-boot
+       extra_args="--download-cache=/storage/cache/packages/pip"
+       virtualenv_site_packages=yes
+       state=present
+  notify:
+    - service gislab-http-boot restart
+
+- name: Create directory for HTTP boot script
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/http-boot state=directory
+
 - name: Install HTTP boot script
-  template: src=boot-http/gislab.j2 dest=/var/www/default/gislab_desktop.init
+  copy: src=static/http-boot/gislab-http-boot.py dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/http-boot/gislab-http-boot.py
+  notify:
+    - service gislab-http-boot restart
+
+- name: Install HTTP boot service
+  template: src=init/gislab-http-boot.conf.j2 dest=/etc/init/gislab-http-boot.conf
+  notify:
+    - service gislab-http-boot restart
 
 
 #

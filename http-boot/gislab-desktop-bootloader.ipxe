@@ -11,16 +11,16 @@
 
 ### MENU
 :start
-menu GIS.lab client boot menu
+menu GIS.lab Boot Loader
+item --gap -- GIS.lab
+item auto        Automatic detection
+item manual      Manual selection
 item
-item auto        Automatic GIS.lab detection
-item manual      Manual GIS.lab detection
-item
-item --gap -- ------------------------------ Utilities -----------------------------------
-item shell              iPXE shell
-item reboot             Reboot
-item exit               Exit (boot local disk)
-choose --default auto --timeout 5000 target && goto ${target}
+item --gap -- Utilities
+item shell       iPXE shell
+item reboot      Reboot
+item exit        Exit (boot local disk)
+choose --default auto --timeout 10000 target && goto ${target}
 
 
 ### GIS.lab
@@ -31,16 +31,12 @@ sleep 3
 chain http://boot.gis.lab/gislab_desktop.init?mac=${net0/mac}
 
 :manual
-echo -n GIS.lab network [example: 192.168.50]: && read gnetwork
-isset ${gnetwork} || goto manual
-ifopen net0
-set net0/ip ${gnetwork}.251 || goto manual
-set net0/netmask 255.255.255.0
-set net0/gateway ${gnetwork}.5
-set dns ${gnetwork}.5
+echo -n GIS.lab IP address: && read ip
+isset ${ip} || goto manual
+dhcp
 route
 sleep 3
-chain http://${gnetwork}.5/gislab_desktop.init?mac=${net0/mac}
+chain http://${ip}:6700/?mac=${net0/mac}&ip=${ip}
 
 
 ### UTILITIES
