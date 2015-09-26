@@ -771,7 +771,7 @@
   
 # HTTP boot (alternative method using iPXE)
 # To boot via HTTP, client machine must boot iPXE boot image first. This boot image will launch HTTP boot.
-# Prepared iPXE boot loader image file exists in 'http-boot/gislab-desktop-bootloader.iso'.
+# Prepared iPXE boot loader image file exists in 'http-boot/gislab-bootloader.iso'.
 
 - name: Install ramdisk and kernel files for HTTP boot
   file: src={{ item.src }} dest={{ item.dest }} owner=root group=root state=link force=yes

@@ -5,8 +5,8 @@
 # How to compile
 # --------------
 # $ cd <iPXE src>/src
-# $ make EMBED=<GIS.lab src>/http-boot/gislab-desktop-bootloader.ipxe
-# $ cp bin/ipxe.iso <GIS.lab src>/http-boot/gislab-desktop-bootloader.ipxe
+# $ make EMBED=<GIS.lab src>/http-boot/gislab-bootloader.ipxe
+# $ cp bin/ipxe.iso <GIS.lab src>/http-boot/gislab-bootloader.ipxe
 
 
 ### MENU
