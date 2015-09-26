@@ -106,7 +106,7 @@ d-i apt-setup/local0/source boolean true
 
 ### Package selection
 tasksel tasksel/first multiselect server
-d-i base-installer/kernel/altmeta string lts-saucy
+d-i base-installer/kernel/altmeta string lts-trusty
 d-i pkgsel/language-pack-patterns string
 d-i pkgsel/install-language-support boolean false
 d-i pkgsel/include string openssh-server
