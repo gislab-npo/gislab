@@ -4,8 +4,8 @@ set -e
 
 usage () {
 	echo
-	echo "Create GIS.lab Unit installation ISO image from Ubuntu Server ISO. Script must be executed with superuser"
-	echo "privileges."
+	echo "Create GIS.lab base system installation ISO image from Ubuntu Server ISO."
+	echo "Script must be executed with superuser privileges."
 	echo
 	echo "USAGE: $(basename $0) -s <country code> -t <timezone> -k <SSH public key>"
 	echo "                          -w <working directory> -i <ISO image>"
@@ -13,7 +13,7 @@ usage () {
 	echo "  -s country code used for choosing closest repository mirror (e.g. SK)"
 	echo "  -t timezone (e.g. Europe/Bratislava)"
 	echo "  -k SSH public key file, which will be used for GIS.lab installation or update"
-	echo "  -w working directory with enough disk space (2.5 x larger free space then ISO image size)"
+	echo "  -w working directory with enough disk space (2.5 x larger than ISO image size)"
 	echo "  -i Ubuntu Server installation ISO image file"
 	echo "  -h this help"
 	echo
@@ -31,10 +31,10 @@ while getopts "s:t:i:w:k:h" OPTION; do
 	case "$OPTION" in
 		s) COUNTRY_CODE="$OPTARG" ;;
 		t) TIME_ZONE="$OPTARG" ;;
-		i) SRC_IMAGE="$OPTARG" ;;
+		k) SSH_PUBLIC_KEY="$OPTARG" ;;
 		w) WORK_DIR="$OPTARG"
 		   ROOT_DIR="$WORK_DIR/root" ;;
-		k) SSH_PUBLIC_KEY="$OPTARG" ;;
+		i) SRC_IMAGE="$OPTARG" ;;
 		h) usage ;;
 		\?) usage ;;
 	esac
@@ -53,7 +53,7 @@ fi
 
 
 SRC_DIR="$(dirname $(readlink -f $0))"
-MOUNT_DIR="/tmp/gislab-unit-iso-mnt"
+MOUNT_DIR="/tmp/gislab-base-system-iso-mnt"
 ISO_ID=$(pwgen -n 8 1)
 DATE=$(date '+%Y-%m-%d-%H:%M:%S')
 
@@ -91,9 +91,9 @@ cp -f $SRC_DIR/preseed/splash.pcx $ROOT_DIR/isolinux/splash.pcx
 
 
 # generate preseed file
-cp $SRC_DIR/preseed/gislab-unit.seed.template $ROOT_DIR/preseed/gislab-unit.seed
-sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/preseed/gislab-unit.seed
-sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/preseed/gislab-unit.seed
+cp $SRC_DIR/preseed/gislab.seed.template $ROOT_DIR/preseed/gislab.seed
+sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/preseed/gislab.seed
+sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/preseed/gislab.seed
 
 cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_key.pub
 
@@ -101,9 +101,9 @@ cp $SRC_DIR/preseed/configure-apt-proxy.sh $ROOT_DIR/configure-apt-proxy.sh
 chmod 0755 $ROOT_DIR/configure-apt-proxy.sh
 
 
-# Change GIS.lab ISO image name
-sed -i "s/Ubuntu-Server/GIS.lab $ISO_ID/" $ROOT_DIR/README.diskdefines
-sed -i "s/Ubuntu-Server/GIS.lab $ISO_ID/" $ROOT_DIR/.disk/info
+# change ISO image name
+sed -i "s/Ubuntu-Server/GIS.lab Base System ($ISO_ID)/" $ROOT_DIR/README.diskdefines
+sed -i "s/Ubuntu-Server/GIS.lab Base System ($ISO_ID)/" $ROOT_DIR/.disk/info
 
 rm -f $ROOT_DIR/isolinux/boot.cat
 
@@ -114,16 +114,16 @@ find -type f -print0 | xargs -0 md5sum | grep -v 'isolinux/boot.cat' > $ROOT_DIR
 cd $WORK_DIR
 
 # create output ISO image file 
-#genisoimage -o gislab-unit.iso -b isolinux/isolinux.bin \
+#genisoimage -o gislab-base-system.iso -b isolinux/isolinux.bin \
 #            -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
 #            -boot-info-table -iso-level 2 -r root/
 
-mkisofs -D -r -V "GIS.lab Unit" -cache-inodes -J -l -b isolinux/isolinux.bin \
+mkisofs -D -r -V "GIS.lab Base System" -cache-inodes -J -l -b isolinux/isolinux.bin \
 	-c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table \
-	-o gislab-unit-${ISO_ID}.iso root/
+	-o gislab-base-system-${ISO_ID}.iso root/
 
 # create meta file
-cat << EOF >> $WORK_DIR/gislab-unit-${ISO_ID}.meta
+cat << EOF >> $WORK_DIR/gislab-base-system-${ISO_ID}.meta
 DATE=$DATE
 COUNTRY_CODE=$COUNTRY_CODE
 APT_PROXY=$APT_PROXY
@@ -139,6 +139,6 @@ rm -rf $ROOT_DIR
 
 # done
 echo
-echo "GIS.lab Unit ISO image: $WORK_DIR/gislab-unit-${ISO_ID}.iso"
-echo "GIS.lab Unit ISO meta:  $WORK_DIR/gislab-unit-${ISO_ID}.meta"
+echo "GIS.lab Base System ISO: $WORK_DIR/gislab-base-system-${ISO_ID}.iso"
+echo "GIS.lab Base System ISO meta:  $WORK_DIR/gislab-base-system-${ISO_ID}.meta"
 echo

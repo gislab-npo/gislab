@@ -1,10 +1,10 @@
-#### Basic OS installation seed file for GIS.lab Unit
+#### Basic base system installation
 
 ### Network configuration
 d-i netcfg/choose_interface select eth0
 d-i netcfg/disable_autoconfig boolean false
 
-d-i netcfg/get_hostname string gislab-unit
+d-i netcfg/get_hostname string gislab
 d-i netcfg/get_domain string unassigned-domain
 
 d-i hw-detect/load_firmware boolean false
@@ -84,7 +84,7 @@ d-i partman-auto/expert_recipe string                   \
 
 
 ### Account setup
-d-i passwd/user-fullname string GIS.lab Unit Administrator
+d-i passwd/user-fullname string GIS.lab Administrator
 d-i passwd/username string ubuntu
 d-i passwd/user-password password ubuntu
 d-i passwd/user-password-again password ubuntu
@@ -127,11 +127,8 @@ d-i grub-installer/with_other_os boolean false
 d-i preseed/early_command string /cdrom/configure-apt-proxy.sh
 
 d-i preseed/late_command string \
-in-target sed -i '/^#.*/d' /etc/apt/sources.list; \
-in-target sed -i '/^deb-src.*/d' /etc/apt/sources.list; \
-in-target sed -i '/^$/d' /etc/apt/sources.list; \
-in-target sed -i 's/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/' /etc/sudoers; \
-in-target mkdir /home/ubuntu/.ssh; \
+in-target echo '%sudo ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/sudo-nopasswd; \
+in-target mkdir -p /home/ubuntu/.ssh; \
 cp /cdrom/ssh_key.pub /target/home/ubuntu/.ssh/authorized_keys; \
 in-target chown -R ubuntu:ubuntu /home/ubuntu/.ssh; \
 in-target chmod 0700 /home/ubuntu/.ssh; \
