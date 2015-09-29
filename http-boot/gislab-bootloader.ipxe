@@ -28,7 +28,7 @@ choose --default auto --timeout 10000 target && goto ${target}
 dhcp
 route
 sleep 3
-chain http://boot.gis.lab/gislab_desktop.init?mac=${net0/mac}
+chain http://boot.gis.lab:6700/?mac=${net0/mac}
 
 :manual
 echo -n GIS.lab IP address: && read ip
