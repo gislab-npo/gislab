@@ -13,6 +13,7 @@
     - debootstrap
     - tftpd-hpa
     - nbd-server
+    - python-virtualenv
     - squashfs-tools
 
 
