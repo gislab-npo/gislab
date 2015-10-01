@@ -7,7 +7,7 @@
 # Inventory file format:
 # <unique-host-name> ansible_ssh_host=<host-url> ansible_ssh_user=<provisioning-user-account-name>
 
-# If using local Vagrant provisioner (with VirtualBox or VMWare provider), create 'gislab_vagrant' configuration file in
+# If using local Vagrant provisioner (with VirtualBox or VMWare), create 'gislab_vagrant' configuration file in
 # 'host_vars' directory and place configuration there. It will be automatically loaded by Vagrant without needing
 # to create the inventory file.
 
