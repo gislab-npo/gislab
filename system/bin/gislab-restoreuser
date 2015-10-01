@@ -83,8 +83,8 @@ while read line; do
 			uid) GISLAB_USER_ORIG="$VAL" ;;
 			givenName) GISLAB_USER_GIVEN_NAME="$VAL" ;;
 			sn) GISLAB_USER_SURNAME="$VAL" ;;
-			mail) GISLAB_USER_MAIL="$VAL" ;;
-			description) GISLAB_USER_DESC="$VAL" ;;
+			mail) GISLAB_USER_EMAIL="$VAL" ;;
+			description) GISLAB_USER_DESCRIPTION="$VAL" ;;
 			userPassword) GISLAB_USER_PASS_CRYPT="$VAL" ;;
 			\#superuser) SUDO_OPT="-s" ;;
 		esac
@@ -94,8 +94,8 @@ done < ldap.dump
 # create user account
 gislab-adduser	-g "$GISLAB_USER_GIVEN_NAME" \
 				-l "$GISLAB_USER_SURNAME" \
-				-m "$GISLAB_USER_MAIL" \
-				-d "$GISLAB_USER_DESC" \
+				-m "$GISLAB_USER_EMAIL" \
+				-d "$GISLAB_USER_DESCRIPTION" \
 				$SUDO_OPT \
 				$GISLAB_USER
 

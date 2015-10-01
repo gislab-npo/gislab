@@ -33,11 +33,11 @@ GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overridden by 
 while getopts "d:g:l:m:p:sh" OPTION
 do
         case "$OPTION" in
-			d) GISLAB_USER_DESC="$OPTARG" ;;
 			g) GISLAB_USER_GIVEN_NAME=$OPTARG ;;
 			l) GISLAB_USER_SURNAME=$OPTARG ;;
-			m) GISLAB_USER_MAIL=$OPTARG ;;
+			m) GISLAB_USER_EMAIL=$OPTARG ;;
 			p) GISLAB_USER_PASSWORD=$OPTARG ;;
+			d) GISLAB_USER_DESCRIPTION="$OPTARG" ;;
 			s) SUDO=yes ;;
 			h) usage ;;
 			\?) exit 1 ;;
@@ -46,7 +46,7 @@ done
 shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; fi
 
-if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_USER_MAIL" ]; then
+if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_USER_EMAIL" ]; then
 	usage
 fi
 
@@ -65,13 +65,26 @@ if ! [[ "$GISLAB_USER" =~ ^[a-z][a-z0-9_]*$ ]]; then
 	exit 1
 fi
 
-if ! [[ "$GISLAB_USER_MAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
+if ! [[ "$GISLAB_USER_EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
 	gislab_print_error "Invalid e-mail address format"
 	exit 1
 fi
 
 
+# export variables
+export GISLAB_USER GISLAB_USER_GIVEN_NAME GISLAB_USER_SURNAME GISLAB_USER_EMAIL GISLAB_USER_DESCRIPTION
+
+
+# execute before-add hooks
+if [ -d $GISLAB_ROOT/custom/accounts/before-add ]; then
+	gislab_print_info "Running 'before-add' account hooks"
+	run-parts $GISLAB_ROOT/custom/accounts/before-add || true
+fi
+
+
 ### LDAP
+gislab_print_info "Adding user account"
+
 # create LDAP account (without creating home directory - CREATEHOMES="no")
 ldapadduser $GISLAB_USER gislabusers
 
@@ -88,17 +101,17 @@ add: givenName
 givenName: $GISLAB_USER_GIVEN_NAME
 -
 add: mail
-mail: $GISLAB_USER_MAIL
+mail: $GISLAB_USER_EMAIL
 -
 add: gecos
 gecos: $GISLAB_USER_FULL_NAME
 EOL
 
-if [ -n "$GISLAB_USER_DESC" ]; then
+if [ -n "$GISLAB_USER_DESCRIPTION" ]; then
 	ldapmodifyuser $GISLAB_USER > /dev/null << EOL
 changetype: modify
 add: description
-description: $GISLAB_USER_DESC
+description: $GISLAB_USER_DESCRIPTION
 EOL
 fi
 
@@ -111,14 +124,14 @@ fi
 # perform only if this email does not already exist in 'maildrop' (other user account
 # can be possibly created with same email address)
 ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
-maildrop_exists=$($ldapsearch_cmd -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$GISLAB_USER_MAIL)" 2>/dev/null)
+maildrop_exists=$($ldapsearch_cmd -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$GISLAB_USER_EMAIL)" 2>/dev/null)
 
 if [ "$SUDO" == "yes" -a -f /etc/postfix/sasl_passwd -a -z "$maildrop_exists" ]; then
 	ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
 dn: cn=root,ou=MailAliases,dc=gis,dc=lab
 changetype: modify
 add: maildrop
-maildrop: $GISLAB_USER_MAIL
+maildrop: $GISLAB_USER_EMAIL
 EOL
 fi
 
@@ -130,8 +143,15 @@ gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
 $GISLAB_ROOT/system/accounts/hooks/adduser.sh $GISLAB_USER
 
 
+# execute after-add hooks
+if [ -d $GISLAB_ROOT/custom/accounts/after-add ]; then
+	gislab_print_info "Running 'after-add' account hooks"
+	run-parts $GISLAB_ROOT/custom/accounts/after-add || true
+fi
+
+
 # final message
-gislab_print_info "Account '$GISLAB_USER' created with password '$GISLAB_USER_PASSWORD'"
+gislab_print_info "Account '$GISLAB_USER' was successfully added with password '$GISLAB_USER_PASSWORD'"
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

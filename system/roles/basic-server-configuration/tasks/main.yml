@@ -165,6 +165,7 @@
     - "{{ GISLAB_ROOT }}"
     - "{{ GISLAB_ROOT }}/bin"
     - "{{ GISLAB_ROOT }}/system"
+    - "{{ GISLAB_ROOT }}/custom"
     - /etc/gislab
     - /storage
     - /storage/applications

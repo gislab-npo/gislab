@@ -18,6 +18,10 @@ fi
 ### HOME DIRECTORY
 # create home directory
 cp -pR $GISLAB_ROOT/system/accounts/skel /storage/home/$GISLAB_USER
+
+# copy custom files
+rsync -a $GISLAB_ROOT/custom/accounts/files/ /storage/home/$GISLAB_USER
+
 chown -R $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER
 chmod 0700 /storage/home/$GISLAB_USER
 
@@ -65,6 +69,7 @@ if [ -d "/etc/openvpn" ]; then
 	chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
 	chmod 0600 /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
 fi
+
 
 ### DONE
 echo "$(date +%Y-%m-%d-%H:%M:%S)" > /storage/home/$GISLAB_USER/.gislab/account.done
