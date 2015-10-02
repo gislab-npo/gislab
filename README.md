@@ -10,8 +10,9 @@
  * Ivan Mincik, ivan.mincik@gmail.com
  * Matej Pastor, matej.pastor@initipi.sk
 
-## Contributors
+## Contributors (alphabetical order)
  * Peter Kolenic, peter.kolenic@gmail.com
+ * Martin Landa, landa.martin@gmail.com
  * Rastislav Micanik, rastomicanik@gmail.com
 
 ## License
