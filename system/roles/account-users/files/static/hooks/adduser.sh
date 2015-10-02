@@ -30,11 +30,11 @@ chown -R $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER
 chmod 0700 /storage/home/$GISLAB_USER
 
 # process template variables
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER }}/$GISLAB_USER/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER_GIVEN_NAME }}/$GISLAB_USER_GIVEN_NAME/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER_SURNAME }}/$GISLAB_USER_SURNAME/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER_EMAIL }}/$GISLAB_USER_EMAIL/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{{ GISLAB_USER_DESCRIPTION }}/$GISLAB_USER_DESCRIPTION/g" "{}" \;
+find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER +}/$GISLAB_USER/g" "{}" \;
+find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_GIVEN_NAME +}/$GISLAB_USER_GIVEN_NAME/g" "{}" \;
+find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_SURNAME +}/$GISLAB_USER_SURNAME/g" "{}" \;
+find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_EMAIL +}/$GISLAB_USER_EMAIL/g" "{}" \;
+find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_DESCRIPTION +}/$GISLAB_USER_DESCRIPTION/g" "{}" \;
 
 # create ~/.gislab directory
 mkdir -p /storage/home/$GISLAB_USER/.gislab
