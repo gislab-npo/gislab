@@ -3,13 +3,15 @@
 set -e
 
 echo "This is a list of available GIS.lab administrator commands.
-To get detailed usage help run command with '-h' option.
+To get more information run command with '-h' option.
 "
-for file in $GISLAB_ROOT/bin/gislab-*; do
+
+for file in $GISLAB_ROOT/admin/gislab-*; do
 	if [ $file != "$0" ]; then
 		echo -e "* $(basename $file)"
 	fi
 done
+
 echo
 
 
