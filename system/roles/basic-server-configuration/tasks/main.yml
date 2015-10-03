@@ -163,7 +163,7 @@
   file: path="{{ item }}" state=directory
   with_items:
     - "{{ GISLAB_ROOT }}"
-    - "{{ GISLAB_ROOT }}/bin"
+    - "{{ GISLAB_ROOT }}/admin"
     - "{{ GISLAB_ROOT }}/system"
     - "{{ GISLAB_ROOT }}/custom"
     - /etc/gislab
@@ -323,10 +323,10 @@
   copy: src=functions.sh dest={{ GISLAB_ROOT }}/system/functions.sh mode=0644
 
 - name: Install GIS.lab administrator tools
-  copy: src=bin/ dest={{ GISLAB_ROOT }}/bin/ mode=0775 owner=root group=root
+  copy: src=admin/ dest={{ GISLAB_ROOT }}/admin/ mode=0775 owner=root group=root
 
 - name: Add GIS.lab administrator tools on path
-  lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present
+  lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/admin" state=present
 
 
 # /storage bind mount

@@ -809,7 +809,7 @@
 #
 
 - name: Build GIS.lab client image
-  shell: /opt/gislab/bin/gislab-client-image > /dev/null
+  shell: gislab-client-image > /dev/null
   args:
     executable: /bin/bash
 
