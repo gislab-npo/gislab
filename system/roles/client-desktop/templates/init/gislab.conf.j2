@@ -1,6 +1,5 @@
 description "gislab client"
 
-start on runlevel [2345]
 start on (stopped udev-finish and runlevel [2345])
 
 stop on starting rc RUNLEVEL=[06]
