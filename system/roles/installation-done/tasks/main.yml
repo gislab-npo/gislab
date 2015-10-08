@@ -22,7 +22,7 @@
     executable: /bin/bash
 
 - name: Installation of GIS.lab is done
-  shell: echo
+  shell: date -R
 
 
 # vim:ft=ansible:
