@@ -386,7 +386,7 @@
 
 
 # Lightdm
-- name: Install Lightdm configuration file
+- name: Install Lightdm configuration
   template: src=lightdm/conf/lightdm.conf.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/lightdm/lightdm.conf
   when:
     GISLAB_SUITE in ('office', 'lab')
@@ -412,7 +412,13 @@
   when:
     GISLAB_SUITE in ('office', 'lab')
 
+- name: Install Lightdm theme
+  copy: src=static/desktop/themes/GIS.lab-lightdm
+    dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/usr/share/themes/
+  when:
+    GISLAB_SUITE in ('office', 'lab')
  
+
 # Disabling useless services
 - name: Disable useless system services
   command: "rm -f {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/rc?.d/???{{ item }}
@@ -496,18 +502,24 @@
   when:
     GISLAB_SUITE in ('office', 'lab')
 
-- name: Install XFCE desktop configuration file
-  template: src=desktop/xfce/xfce4-desktop.xml.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+- name: Install XFCE desktop configuration
+  template: src=desktop/xfce/{{ item }}.j2
+    dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/{{ item }}
+  with_items:
+    - keyboard-layout.xml
+    - thunar-volman.xml
+    - xfce4-desktop.xml
+    - xfce4-keyboard-shortcuts.xml
+    - xfce4-notifyd.xml
+    - xfce4-session.xml
+    - xfwm4.xml
+    - xsettings.xml
   when:
     GISLAB_SUITE in ('office', 'lab')
 
 - name: Install XFCE panel configuration file
-  template: src=desktop/panel/default.xml dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/xdg/xdg-xubuntu/xfce4/panel/default.xml
-  when:
-    GISLAB_SUITE in ('office', 'lab')
-
-- name: Install keyboard layouts configuration file
-  template: src=desktop/keyboard-layouts/keyboard-layout.xml.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml
+  template: src=desktop/panel/default.xml
+    dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/xdg/xdg-xubuntu/xfce4/panel/default.xml
   when:
     GISLAB_SUITE in ('office', 'lab')
 
@@ -527,20 +539,20 @@
   when:
     GISLAB_SUITE in ('office', 'lab')
 
-- name: Install office applications files
+- name: Install office suite applications files
   copy: src=static/desktop/menu/applications/office/ dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/usr/share/applications/
   when:
     GISLAB_SUITE in ('office', 'lab')
 
-- name: Install lab applications files
+- name: Install lab suite applications files
   copy: src=static/desktop/menu/applications/lab/ dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/usr/share/applications/
-  when: GISLAB_SUITE == 'lab'
+  when:
+    GISLAB_SUITE == 'lab'
 
 
-# Xubuntu Greybird theme originally provides very thin window borders, which are very
-# difficult to grab and resize. This is fixed version of Greybird (taken from OSGeo Live CD)
-- name: Install theme
-  copy: src=static/desktop/themes/greybird/ dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/usr/share/themes/Greybird/xfwm4/
+- name: Install desktop theme
+  copy: src=static/desktop/themes/GIS.lab
+    dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/usr/share/themes/
   when:
     GISLAB_SUITE in ('office', 'lab')
 
