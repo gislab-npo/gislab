@@ -77,18 +77,14 @@
       notify:
         - update grub
 
+
+    # Networking
+    - name: Disable some problematic network adapter features (see GH 407)
+      template: src=templates/network/fix-hardware-unit-hang.j2
+                dest=/etc/network/if-up.d/fix-hardware-unit-hang mode=0755
+
+
     - meta: flush_handlers
-
-
-    # Vendor specific optimization
-    - name: Detect network adapter model
-      shell: lspci -m | awk -F '"' '/Ethernet controller/ { print $6 }'
-      register: network_adapter_model
-
-    - name: Disable some network adapter features if using Intel 82579LM network adapter
-      template: src=templates/network/fix-hardware-unit-hang.j2 dest=/etc/network/if-up.d/fix-hardware-unit-hang mode=0755
-      when: network_adapter_model.stdout == "82579LM Gigabit Network Connection"
-
 
     # Restart
     - name: Restart GIS.lab Unit machine
