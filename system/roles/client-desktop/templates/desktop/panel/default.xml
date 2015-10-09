@@ -15,8 +15,11 @@
         <value type="int" value="18"/>
         <value type="int" value="12"/>
         <value type="int" value="8"/>
-{% if GISLAB_SUITE == 'lab' %}<value type="int" value="9"/>{% endif %}
-        <value type="int" value="15"/>
+{% if GISLAB_SUITE == 'lab' %}
+        <value type="int" value="19"/>
+        <value type="int" value="9"/>
+{% endif %}
+	<value type="int" value="15"/>
         <value type="int" value="26"/>
         <value type="int" value="2"/>
         <value type="int" value="14"/>
@@ -84,6 +87,11 @@
     <property name="plugin-14" type="string" value="xkb-plugin"/>
     <property name="plugin-8" type="string" value="separator"/>
 {% if GISLAB_SUITE == 'lab' %}
+    <property name="plugin-19" type="string" value="launcher">
+      <property name="items" type="array">
+        <value type="string" value="gislab-grass.desktop"/>
+      </property>
+    </property>
     <property name="plugin-9" type="string" value="launcher">
       <property name="items" type="array">
         <value type="string" value="gislab-desktop.desktop"/>
