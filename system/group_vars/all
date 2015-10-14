@@ -62,6 +62,72 @@ GISLAB_ADMIN_EMAIL: gislab@gis.lab
 
 
 # ******************************************************************************************************************* #
+###################################################### PROVIDER #######################################################
+# ******************************************************************************************************************* #
+# Configuration specific to Amazon EC2 provider.
+
+# Build GIS.lab client type according to GIS.lab server deployment environment.
+# Possible options are:
+# * lan: use this if installing GIS.lab server locally (generally in all cases except Amazon EC2 provider)
+# * aws: use this if deploying on Amazon EC2
+GISLAB_PROVIDER: lan
+
+
+# Amazon AWS security credentials
+# For more informations about AWS credentials see:
+# http://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
+
+# AWS account ID without dashes
+GISLAB_AWS_ACCOUNT:
+
+# AWS access key ID
+GISLAB_AWS_ACCESS_KEY_ID:
+
+# AWS secret access key
+GISLAB_AWS_SECRET_KEY:
+
+# Absolute path to AWS public key certificate file.
+GISLAB_AWS_CERTIFICATE:
+
+# Absolute path to AWS private key file.
+GISLAB_AWS_PRIVATE_KEY:
+
+
+# AWS location
+# For more information about EC2 locations see:
+# http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
+
+# Region to run instance in.
+# Supported regions:
+# eu-west-1, us-east-1, us-west-1, us-west-2, ap-northeast-1, ap-southeast-1, ap-southeast-2, sa-east-1
+GISLAB_AWS_REGION: eu-west-1
+
+# AWS availability zone
+# Zone to run instance in (must be within region).
+GISLAB_AWS_AVAILABILITY_ZONE: eu-west-1a
+
+
+# EC2 instance type for GIS.lab server.
+# For list of instance types see: http://aws.amazon.com/ec2/instance-types/
+# Supported all Amazon EC2 instance types.
+# Recommended instance types for production deployment are:
+# m3.xlarge - 4 x vCPU, 15 GB RAM
+# c3.2xlarge - 8 x vCPU, 15 GB RAM
+GISLAB_AWS_SERVER_INSTANCE_TYPE: t2.micro
+
+
+# AWS S3 bucket prefix
+# S3 bucket where GIS.lab client image will be uploaded to.
+GISLAB_AWS_BUCKET_PREFIX:
+
+
+# Absolute path to public SSH key which will be used for accessing GIS.lab server.
+GISLAB_AWS_SSH_PUBLIC_KEY:
+
+
+
+
+# ******************************************************************************************************************* #
 ############################################## LOCAL VAGRANT PROVISIONER ##############################################
 # ******************************************************************************************************************* #
 # Configuration specific to local Vagrant provisioner.
