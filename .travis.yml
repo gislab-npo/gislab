@@ -44,8 +44,8 @@ script:
       system/gislab.yml"
 
   # We are building only server suite. lab suite is failing because of some Travis memory problems
-  
-  # Installation 
+
+  # Installation
   - "ansible-playbook
       -i inventories/localhost
       --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
@@ -53,13 +53,13 @@ script:
       --connection=local
       --sudo"
 
-  - "ansible-playbook
-      -i inventories/localhost
-      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
-      -vv system/test.yml
-      --connection=local
-      --sudo"
- 
+#  - "ansible-playbook
+#      -i inventories/localhost
+#      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
+#      -vv system/test.yml
+#      --connection=local
+#      --sudo"
+
 
 #  # Upgrade
 #  - "ansible-playbook
