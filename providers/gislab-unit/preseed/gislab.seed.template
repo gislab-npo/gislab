@@ -127,7 +127,7 @@ d-i grub-installer/with_other_os boolean false
 d-i preseed/early_command string /cdrom/configure-apt-proxy.sh
 
 d-i preseed/late_command string \
-in-target echo '%sudo ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/sudo-nopasswd; \
+in-target sed -i 's/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/' /etc/sudoers; \
 in-target mkdir -p /home/ubuntu/.ssh; \
 cp /cdrom/ssh_key.pub /target/home/ubuntu/.ssh/authorized_keys; \
 in-target chown -R ubuntu:ubuntu /home/ubuntu/.ssh; \
