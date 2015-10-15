@@ -44,6 +44,16 @@
     GISLAB_UNIQUE_ID: "{{ inventory_hostname }}"
 
 
+- name: Detect GIS.lab provider
+  shell: cat /etc/gislab_provider || echo 'default'
+  register: gislab_provider
+  changed_when: False
+
+- name: Set GIS.lab provider variable
+  set_fact:
+    GISLAB_PROVIDER: "{{ gislab_provider.stdout }}"
+
+
 - name: Detect GIS.lab install action (new installation or upgrade)
   stat: path=/storage/log/installation.done
   register: installation_done

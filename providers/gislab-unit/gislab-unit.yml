@@ -9,6 +9,10 @@
 
 
   tasks:
+    - name: Set GIS.lab provider
+      shell: echo 'gislab-unit' > /etc/gislab_provider
+
+
     # Operating system upgrade
     - name: Clean the contents of /var/lib/apt/lists
       shell: "{{ item }}"
