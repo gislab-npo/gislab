@@ -750,8 +750,8 @@
 ## IMAGE ##############################################################################################################
 #
 
-- include: provider-lan.yml
-  when: GISLAB_PROVIDER == 'lan'
+- include: provider-default.yml
+  when: GISLAB_PROVIDER == 'default'
 
 - include: provider-aws.yml
   when: GISLAB_PROVIDER == 'aws'
