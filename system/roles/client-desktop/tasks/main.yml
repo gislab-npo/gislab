@@ -335,6 +335,11 @@
 ## CONFIGURATION ######################################################################################################
 #
 
+# SSH
+- name: Install SSH server configuration
+  command: cp /etc/ssh/sshd_config {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/ssh/sshd_config
+
+
 # NFS
 - name: Configure NFS
   template: src=nfs/idmapd.conf.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/idmapd.conf

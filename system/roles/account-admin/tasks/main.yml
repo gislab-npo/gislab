@@ -6,11 +6,12 @@
 
 
 - name: Detect if GIS.lab administrator user account is already created
-  shell: "id gislab || echo 'ADMIN DOES NOT EXIST'"
+  shell: "id gislab || echo 'GISLAB-DOES-NOT-EXIST'"
   args:
     executable: /bin/bash
   register: admin_account_status
   changed_when: False
+
 
 - name: Create GIS.lab administrator user account 'gislab' if doesn't exist
   shell: gislab-adduser
@@ -19,10 +20,20 @@
     -l "{{ GISLAB_ADMIN_SURNAME }} ({{ GISLAB_UNIQUE_ID }})"
     -m "{{ GISLAB_ADMIN_EMAIL }}"
     gislab
-  when: admin_account_status.stdout == 'ADMIN DOES NOT EXIST'
+  when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
+
+- name: Install public SSH key for GIS.lab administrator user account 'gislab'
+  shell: "{{ item }}"
+  with_items:
+    - mkdir -p /storage/home/gislab/.ssh
+    - cp -a /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys /storage/home/gislab/.ssh/authorized_keys
+    - chmod 700 /storage/home/gislab/.ssh
+    - chmod 600 /storage/home/gislab/.ssh/authorized_keys
+    - "chown -R gislab:gislabusers /storage/home/gislab/.ssh"
+  when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
 
 
-- name: Update password of GIS.lab administrator user account with given password
+- name: Update password of GIS.lab administrator user account 'gislab'
   shell: gislab-password
     -p "{{ GISLAB_ADMIN_PASSWORD }}"
     gislab
