@@ -9,13 +9,6 @@
 
 
   tasks:
-    # Hardware information
-    - name: Detect hardware model by processor
-    # * Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz: Intel NUC, CPU Intel Core i5 Ivy Bridge DC53427HYE
-      set_fact:
-        GISLAB_UNIT_HARDWARE_MODEL: "{{ ansible_processor[1] }}"
-
-
     # Operating system upgrade
     - name: Clean the contents of /var/lib/apt/lists
       shell: "{{ item }}"
