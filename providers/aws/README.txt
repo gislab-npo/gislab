@@ -7,7 +7,7 @@
 
 2. Run ansible playbook which launch EC2 instance
 
-    $ ansible-playbook --inventory 'localhost,' --extra-vars "GISLAB_UNIQUE_ID=<GISLAB_UNIQUE_ID>" providers/amazon/amazon.yml
+    $ ansible-playbook --inventory 'localhost,' --extra-vars "GISLAB_UNIQUE_ID=<GISLAB_UNIQUE_ID>" providers/aws/aws.yml
 
 
 3. In AWS console (or with ami-tools) create DHCP Options Sets:

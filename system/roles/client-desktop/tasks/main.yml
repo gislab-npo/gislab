@@ -8,13 +8,9 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
+  apt: pkg={{ item }} force=yes install_recommends=no state=latest
   with_items:
     - debootstrap
-    - tftpd-hpa
-    - nbd-server
-    - python-virtualenv
-    - squashfs-tools
 
 
 # Prepare installation directory
@@ -751,16 +747,17 @@
 
 
 #
-## IMAGE TYPE DEPENDS ON PROVIDER #####################################################################################
+## IMAGE ##############################################################################################################
 #
 
-- include: client-desktop-image-lan.yml
+- include: provider-lan.yml
   when: GISLAB_PROVIDER == 'lan'
 
-- include: client-desktop-image-aws.yml
+- include: provider-aws.yml
   when: GISLAB_PROVIDER == 'aws'
 
 
 - meta: flush_handlers
+
 
 # vim:ft=ansible:

@@ -1,7 +1,16 @@
 ---
 #
-### Build GIS.lab desktop client booting from LAN via PXE ###
+### Build GIS.lab Desktop client for LAN ###
 #
+
+- name: Install packages (LAN provider)
+  apt: pkg={{ item }} force=yes install_recommends=no state=latest
+  with_items:
+    - tftpd-hpa
+    - nbd-server
+    - python-virtualenv
+    - squashfs-tools
+
 
 # TFTP
 - name: Create TFTP directory

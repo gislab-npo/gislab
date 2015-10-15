@@ -1,10 +1,13 @@
 ---
 #
-### Build GIS.lab AWS client ###
+### Build GIS.lab Desktop client for AWS ###
 #
 
-- name: Install AMI tools package
-  apt: pkg=ec2-ami-tools force=yes install_recommends=no state=latest
+- name: Install packages (AWS provider)
+  apt: pkg={{ item }} force=yes install_recommends=no state=latest
+  with_items:
+    - ec2-ami-tools
+
 
 - name: Set appropriate form of client architecture for AMI tools
   shell: 'if [ "{{ GISLAB_CLIENT_ARCHITECTURE }}" == "amd64" ]; then echo x86_64; else echo i386; fi'
@@ -91,3 +94,5 @@
 - name: Remove temporary building directories
   file: path=/storage/tmp state=absent
 
+
+# vim:ft=ansible:

@@ -62,16 +62,36 @@ GISLAB_ADMIN_EMAIL: gislab@gis.lab
 
 
 # ******************************************************************************************************************* #
-###################################################### PROVIDER #######################################################
+############################################## LOCAL VAGRANT PROVISIONER ##############################################
 # ******************************************************************************************************************* #
-# Configuration specific to Amazon EC2 provider.
+# Configuration specific to local Vagrant provisioner.
 
-# Build GIS.lab client type according to GIS.lab server deployment environment.
+# Server memory size in MB.
+# Change requires GIS.lab server restart.
+GISLAB_SERVER_MEMORY: 1024
+
+# Determines if GIS.lab server should start with graphical console. This is useful to gain more control with server boot
+# process.
+# * no: do not launch GUI console
+# * yes: launch GUI console
+GISLAB_SERVER_GUI_CONSOLE: no
+
+
+
+
+# ******************************************************************************************************************* #
+###################################################### PROVIDERS ######################################################
+# ******************************************************************************************************************* #
+
+# GIS.lab provider.
 # Possible options are:
-# * lan: use this if installing GIS.lab server locally (generally in all cases except Amazon EC2 provider)
-# * aws: use this if deploying on Amazon EC2
+# * lan: deployment in local area network (LAN)
+# * aws: deployment in Amazon WS
 GISLAB_PROVIDER: lan
 
+
+### AWS ###
+# Configuration specific to Amazon WS provider.
 
 # Amazon AWS security credentials
 # For more informations about AWS credentials see:
@@ -123,24 +143,6 @@ GISLAB_AWS_BUCKET_PREFIX:
 
 # Absolute path to public SSH key which will be used for accessing GIS.lab server.
 GISLAB_AWS_SSH_PUBLIC_KEY:
-
-
-
-
-# ******************************************************************************************************************* #
-############################################## LOCAL VAGRANT PROVISIONER ##############################################
-# ******************************************************************************************************************* #
-# Configuration specific to local Vagrant provisioner.
-
-# Server memory size in MB.
-# Change requires GIS.lab server restart.
-GISLAB_SERVER_MEMORY: 1024
-
-# Determines if GIS.lab server should start with graphical console. This is useful to gain more control with server boot
-# process.
-# * no: do not launch GUI console
-# * yes: launch GUI console
-GISLAB_SERVER_GUI_CONSOLE: no
 
 
 
