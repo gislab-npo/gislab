@@ -1,0 +1,18 @@
+## Some additional thunar-specific theming
+
+style "sidepane"
+{
+	base[NORMAL]	= mix (0.3, @bg_color,shade (1.35,@selected_bg_color))
+	base[INSENSITIVE]	= shade (1.03,@selected_bg_color)
+	bg[NORMAL]	= mix (0.3, @bg_color,shade (1.35,@selected_bg_color))
+	bg[PRELIGHT]	= shade (1.2,@selected_bg_color)
+	engine "murrine"
+	{
+		gradient_shades	= {1.1,1.1,1.1,1.1}
+	}
+}
+
+widget_class "*ThunarShortcutsView*" style "sidepane"
+widget_class "*ThunarTreeView*" style "sidepane"
+widget_class "*GtkFileChooserWidget.GtkFileChooserDefault.GtkVBox.GtkHPaned.GtkVBox.GtkScrolledWindow.GtkTreeView*"	style "sidepane"
+widget_class "*.<GtkTreeView>.<GtkButton>" style "murrine-treeview-header"

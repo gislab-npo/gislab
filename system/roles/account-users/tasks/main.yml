@@ -159,4 +159,15 @@
   copy: src=static/hooks/ dest={{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/hooks mode=0755 owner=root group=root
 
 
+# CUSTOM
+- name: Prepare directories for accounts customization
+  file: path={{ GISLAB_ROOT }}/custom/accounts/{{ item }} state=directory owner=root group=root
+  with_items:
+    - before-add
+    - after-add
+    - before-delete
+    - after-delete
+    - files
+
+
 # vim:ft=ansible:

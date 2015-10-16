@@ -10,10 +10,10 @@ request subnet-mask, broadcast-address, time-offset, routers,
 
 
 # Fallback IP address configuration 
-# If no suitable response from DHCP server is received in 20 seconds, set fallback static IP address.
+# If no suitable response from DHCP server is received in 60 seconds, set fallback static IP address.
 # IP address of gateway, specified in 'routers', must respond to ping, otherwise fallback configuration will not be
 # performed. 
-timeout 20;
+timeout 60;
 lease {
 	interface "{{ GISLAB_SERVER_NETWORK_DEVICE }}";
 	fixed-address {{ GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS }};

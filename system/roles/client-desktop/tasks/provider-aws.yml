@@ -1,0 +1,98 @@
+---
+#
+### Build GIS.lab Desktop client for AWS ###
+#
+
+- name: Install packages (AWS provider)
+  apt: pkg={{ item }} force=yes install_recommends=no state=latest
+  with_items:
+    - ec2-ami-tools
+
+
+- name: Set appropriate form of client architecture for AMI tools
+  shell: 'if [ "{{ GISLAB_CLIENT_ARCHITECTURE }}" == "amd64" ]; then echo x86_64; else echo i386; fi'
+  args:
+    executable: /bin/bash
+  register: GISLAB_AWS_CLIENT_ARCHITECTURE
+
+- name: Create temporary building directory hierarchy
+  file: dest={{ item }} state=directory
+  with_items:
+    - /storage/tmp/aws-client
+    - /storage/tmp/aws-client/aws-credentials
+    - /storage/tmp/aws-client/image
+    - /storage/tmp/aws-client/mount-image
+
+- name: Set safe permissions for AWS credentials directory
+  file: path=/storage/tmp/aws-client/aws-credentials state=directory owner=root group=root mode=0700
+
+- name: Copy AWS certificate and private key to temporary installation directory
+  copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0400
+  with_items:
+    - { src: "{{ GISLAB_AWS_CERTIFICATE }}", dest: "/storage/tmp/aws-client/aws-credentials/aws_certificate.crt" }
+    - { src: "{{ GISLAB_AWS_PRIVATE_KEY }}", dest: "/storage/tmp/aws-client/aws-credentials/aws_private_key.key" }
+
+
+# Create GIS.lab AWS client image
+- name: Create empty file for GIS.lab AWS client image
+  command: dd if=/dev/zero of=/storage/tmp/aws-client/image/gislab.img bs=1M count=2000
+
+- name: Create filesystem in GIS.lab AWS client image
+  command: mkfs.ext4 -F -L gislab-rootfs /storage/tmp/aws-client/image/gislab.img
+
+- name: Mount GIS.lab AWS client image
+  command: mount -o loop,rw /storage/tmp/aws-client/image/gislab.img /storage/tmp/aws-client/mount-image
+
+- name: Copy GIS.lab client root to GIS.lab AWS client image
+  command: rsync -a {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/ /storage/tmp/aws-client/mount-image/
+
+
+# Install GRUB configuration
+- name: Create directory for GRUB configuration
+  file: path=/storage/tmp/aws-client/mount-image/boot/grub state=directory
+
+- name: Install GRUB configuration file
+  template: src=grub/menu.lst.j2 dest=/storage/tmp/aws-client/mount-image/boot/grub/menu.lst
+
+- name: Unmount GIS.lab AWS client image
+  command: umount /storage/tmp/aws-client/mount-image
+
+
+# Bundle image
+- name: Bundle GIS.lab AWS client image
+  command: "ec2-bundle-image --cert /storage/tmp/aws-client/aws-credentials/aws_certificate.crt
+                             --privatekey /storage/tmp/aws-client/aws-credentials/aws_private_key.key
+                             --user {{ GISLAB_AWS_ACCOUNT }}
+                             --image /storage/tmp/aws-client/image/gislab.img
+                             --destination /storage/tmp/aws-client/image
+                             --arch {{ GISLAB_AWS_CLIENT_ARCHITECTURE.stdout }}
+                             --prefix gislab-aws-client"
+
+# Upload image to Amazon S3
+- name: Upload GIS.lab AWS client to Amazon S3
+  command: "ec2-upload-bundle --bucket {{ GISLAB_AWS_BUCKET_PREFIX }}/{{ GISLAB_UNIQUE_ID }}
+                              --access-key {{ GISLAB_AWS_ACCESS_KEY_ID }}
+                              --secret-key {{ GISLAB_AWS_SECRET_KEY }}
+                              --manifest /storage/tmp/aws-client/image/gislab-aws-client.manifest.xml
+                              --location {{ GISLAB_AWS_REGION }}
+                              --retry"
+
+
+# Save GIS.lab AWS client manifest file which is needed for AMI registration
+- name: Save path to GIS.lab AWS client manifest file uploaded to Amazon S3
+  lineinfile: dest="/etc/gislab_version"
+              line=' GISLAB_AWS_CLIENT_MANIFEST_FILE="{{ GISLAB_AWS_BUCKET_PREFIX }}/{{ GISLAB_UNIQUE_ID }}/gislab-aws-client.manifest.xml"'
+              state=present
+
+
+# Clean up
+- name: Remove AWS certificate and private key
+  # This ensure that the AWS credential files will be deleted even if the
+  # deleting temporary building directories in next step will fail for some error.
+  file: path=/storage/tmp/aws-client/aws-credentials state=absent
+
+- name: Remove temporary building directories
+  file: path=/storage/tmp state=absent
+
+
+# vim:ft=ansible:

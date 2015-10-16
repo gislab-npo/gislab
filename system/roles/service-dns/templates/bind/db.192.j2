@@ -14,6 +14,18 @@ $ORIGIN {{ GISLAB_NETWORK_SERVER_IP|reverse_ip }}.IN-ADDR.ARPA.
 5        IN    PTR       server.gis.lab.
 
 ; clients
+{% if GISLAB_PROVIDER == 'aws' %}
+3  IN  PTR  c3.gis.lab.
+4  IN  PTR  c4.gis.lab.
+{% for ip in range(6,50) %}
+{{ ip }}  IN  PTR  c{{ ip }}.gis.lab.
+{% endfor %}
+{% endif %}
 {% for ip in range(50,150) %}
 {{ ip }}  IN  PTR  c{{ ip }}.gis.lab.
 {% endfor %}
+{% if GISLAB_PROVIDER == 'aws' %}
+{% for ip in range(150,255) %}
+{{ ip }}  IN  PTR  c{{ ip }}.gis.lab.
+{% endfor %}
+{% endif %}

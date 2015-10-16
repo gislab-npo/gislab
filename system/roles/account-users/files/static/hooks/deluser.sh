@@ -1,12 +1,16 @@
 #!/bin/bash
 # GIS.lab user account hook for completing account removal once it is dropped from LDAP database.
 #
-# USAGE: deluser.sh <USERNAME>
+# USAGE: deluser.sh [GISLAB_USER]
 
 source /etc/gislab_version
 
 
-GISLAB_USER=$1
+# read GISLAB_USER from script parameter if given
+if [ "$1" != "" ]; then
+	GISLAB_USER=$1
+fi
+
 
 # sanity check
 if [ "$(ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// "(uid=$GISLAB_USER)")" != "" ]; then

@@ -14,8 +14,10 @@
 
 
 - name: Send a test email to root user
-  shell: echo "This is a test message sent by GIS.lab test {{ GISLAB_TEST_UNIQUE_STRING }}"
-    | mail -s "Test message" root
+  shell: "echo -e 'This is a test message sent by GIS.lab test {{ GISLAB_TEST_UNIQUE_STRING }}'
+    | mail -s '[GIS.lab test: {{ GISLAB_TEST_UNIQUE_STRING }}]: Test message' root"
+  args:
+    executable: /bin/bash
   ignore_errors: yes
   changed_when: False
 

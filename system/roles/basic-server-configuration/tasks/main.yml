@@ -44,6 +44,16 @@
     GISLAB_UNIQUE_ID: "{{ inventory_hostname }}"
 
 
+- name: Detect GIS.lab provider
+  shell: cat /etc/gislab_provider || echo 'default'
+  register: gislab_provider
+  changed_when: False
+
+- name: Set GIS.lab provider variable
+  set_fact:
+    GISLAB_PROVIDER: "{{ gislab_provider.stdout }}"
+
+
 - name: Detect GIS.lab install action (new installation or upgrade)
   stat: path=/storage/log/installation.done
   register: installation_done
@@ -163,8 +173,9 @@
   file: path="{{ item }}" state=directory
   with_items:
     - "{{ GISLAB_ROOT }}"
-    - "{{ GISLAB_ROOT }}/bin"
+    - "{{ GISLAB_ROOT }}/admin"
     - "{{ GISLAB_ROOT }}/system"
+    - "{{ GISLAB_ROOT }}/custom"
     - /etc/gislab
     - /storage
     - /storage/applications
@@ -322,10 +333,10 @@
   copy: src=functions.sh dest={{ GISLAB_ROOT }}/system/functions.sh mode=0644
 
 - name: Install GIS.lab administrator tools
-  copy: src=bin/ dest={{ GISLAB_ROOT }}/bin/ mode=0775 owner=root group=root
+  copy: src=admin/ dest={{ GISLAB_ROOT }}/admin/ mode=0775 owner=root group=root
 
 - name: Add GIS.lab administrator tools on path
-  lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/bin" state=present
+  lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/admin" state=present
 
 
 # /storage bind mount
@@ -338,7 +349,7 @@
 
 # scheduled jobs
 - name: Purge installation directory for scheduled jobs
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root state=absent
+  file: dest={{ GISLAB_INSTALL_JOBS_ROOT }} state=absent
 
 - name: Create installation directories for scheduled jobs
   file: dest={{ item }} state=directory

@@ -1,0 +1,53 @@
+#!ipxe
+
+# iPXE version: git+d644ad41f5a17315ab72f6ebeeecf895f7d41679
+
+# How to compile
+# --------------
+# $ cd <iPXE src>/src
+# $ make EMBED=<GIS.lab src>/http-boot/gislab-bootloader.ipxe
+# $ cp bin/ipxe.iso <GIS.lab src>/http-boot/gislab-bootloader.ipxe
+
+
+### MENU
+:start
+menu GIS.lab Boot Loader
+item --gap -- GIS.lab
+item auto        Automatic detection
+item manual      Manual selection
+item
+item --gap -- Utilities
+item shell       iPXE shell
+item reboot      Reboot
+item exit        Exit (boot local disk)
+choose --default auto --timeout 10000 target && goto ${target}
+
+
+### GIS.lab
+:auto
+dhcp
+route
+sleep 3
+chain http://boot.gis.lab:6700/?mac=${net0/mac}
+
+:manual
+echo -n GIS.lab IP address: && read ip
+isset ${ip} || goto manual
+dhcp
+route
+sleep 3
+chain http://${ip}:6700/?mac=${net0/mac}&ip=${ip}
+
+
+### UTILITIES
+:shell
+echo Type exit to get the back to the menu
+shell
+set menu-timeout 0
+goto start
+
+:reboot
+reboot
+
+:exit
+exit
