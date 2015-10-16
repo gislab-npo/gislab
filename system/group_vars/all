@@ -70,6 +70,10 @@ GISLAB_ADMIN_EMAIL: gislab@gis.lab
 # Change requires GIS.lab server restart.
 GISLAB_SERVER_MEMORY: 1024
 
+# Server number of CPUs.
+# Change requires GIS.lab server restart.
+GISLAB_SERVER_CPUS: 1
+
 # Determines if GIS.lab server should start with graphical console. This is useful to gain more control with server boot
 # process.
 # * no: do not launch GUI console
