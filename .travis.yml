@@ -22,7 +22,7 @@ before_install:
   # print memory utilization and running processes
   - sudo free
   - sudo ps aux
- 
+
 
 install:
   # Install Apparmor, which is required by GIS.lab
@@ -32,6 +32,9 @@ install:
   - sudo apt-get install --assume-yes --force-yes python-pip
   - sudo pip install ansible
 
+  # Install fake SSH key required by GIS.lab installer
+  - mkdir -p /home/travis/.ssh
+  - touch /home/travis/.ssh/authorized_keys
 
 script:
   # Run outside of Python virtual environment automatically provided by Travis
