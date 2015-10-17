@@ -6,6 +6,9 @@
 
 
   tasks:
+    - name: Set GIS.lab provider
+      shell: echo 'aws' > /etc/gislab_provider
+
     - name: Read default configuration file 'group_vars/all'
       include_vars: "../../system/group_vars/all"
 

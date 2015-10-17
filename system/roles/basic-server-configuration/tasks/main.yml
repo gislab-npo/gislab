@@ -45,7 +45,7 @@
 
 
 - name: Detect GIS.lab provider
-  shell: cat /etc/gislab_provider || echo 'default'
+  shell: cat /etc/gislab_provider 2>/dev/null || echo 'default'
   register: gislab_provider
   changed_when: False
 

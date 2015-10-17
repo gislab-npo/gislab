@@ -751,7 +751,7 @@
 #
 
 - include: provider-default.yml
-  when: GISLAB_PROVIDER == 'default'
+  when: GISLAB_PROVIDER in ('default', 'gislab-unit')
 
 - include: provider-aws.yml
   when: GISLAB_PROVIDER == 'aws'
