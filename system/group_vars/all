@@ -104,9 +104,11 @@ GISLAB_AWS_ACCESS_KEY_ID:
 GISLAB_AWS_SECRET_KEY:
 
 # Absolute path to AWS public key certificate file.
+# Example: /home/john/.ec2/cert-CC4EFBF62935A317CB3E5F756381EA11.pem
 GISLAB_AWS_CERTIFICATE:
 
 # Absolute path to AWS private key file.
+# Example: /home/john/.ec2/pk-C508B48174135E760AF6A1A40E9BC433.pem
 GISLAB_AWS_PRIVATE_KEY:
 
 
@@ -120,10 +122,14 @@ GISLAB_AWS_PRIVATE_KEY:
 # us-east-1, us-west-1, us-west-2
 # ap-northeast-1, ap-southeast-1, ap-southeast-2
 # sa-east-1
+# Example: eu-west-1        - run instance in EU (Ireland) region
+# Example: us-east-1        - run instance in US East (N. Virginia) region
 GISLAB_AWS_REGION: eu-west-1
 
 # AWS availability zone
 # Zone to run instance in (must be within region).
+# Example: eu-west-1a       - run instance in eu-west-1a availability zone in EU (Ireland) region
+# Example: us-east-1a       - run instance in us-east-1a availability zone in US East (N. Virginia) region
 GISLAB_AWS_AVAILABILITY_ZONE: eu-west-1a
 
 
@@ -136,10 +142,14 @@ GISLAB_AWS_SERVER_INSTANCE_TYPE: t2.micro
 
 
 # AWS S3 bucket prefix used for storing GIS.lab client images.
+# GIS.lab client image will be stored on S3 in folder
+#  s3://<GISLAB_AWS_BUCKET_PREFIX>/<GISLAB_UNIQUE_ID>/
+# Example: devel
 GISLAB_AWS_BUCKET_PREFIX:
 
 
 # Absolute path to public SSH key used for accessing GIS.lab server.
+# Example: /home/john/.ssh/id_rsa.pub
 GISLAB_AWS_SSH_PUBLIC_KEY:
 
 
