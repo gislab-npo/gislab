@@ -6,8 +6,6 @@
 
 
   tasks:
-    - name: Set GIS.lab provider
-      shell: echo 'aws' > /etc/gislab_provider
 
     - name: Read default configuration file 'group_vars/all'
       include_vars: "../../system/group_vars/all"
@@ -20,10 +18,6 @@
     - name: Fail if GISLAB_SUITE is not set to server
       fail: msg="Setting GISLAB_SUITE variable to server is required."
       when: GISLAB_SUITE != 'server'
-
-    - name: Fail if provider is not set to aws
-      fail: msg="Setting GISLAB_PROVIDER variable to 'aws' is required."
-      when: GISLAB_PROVIDER != 'aws'
 
     - name: Fail if AWS credentials are not defined
       fail: msg="Setting GISLAB_AWS_ACCOUNT, GISLAB_AWS_ACCESS_KEY_ID, GISLAB_AWS_SECRET_KEY,
@@ -162,6 +156,9 @@
 
 
   tasks:
+    - name: Set GIS.lab provider
+      shell: echo 'aws' > /etc/gislab_provider
+
     - name: Unmount /mnt
       shell: "umount /mnt || true"
       args:
