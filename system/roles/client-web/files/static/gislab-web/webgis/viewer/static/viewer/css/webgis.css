@@ -306,13 +306,13 @@ div.x-border-panel.layers-panel {
 }
 
 .main-toolbar .x-btn-over button, .main-toolbar .x-btn-pressed button {
-	background-image: url('../images/toolbar/buttons-toolbar-color.png') !important;
+	background-image: url('../images/toolbar/sprite-active.png') !important;
 }
 
 .zoom-to-max-icon {
 	height: 24px !important;
 	width: 24px !important;
-	background-image: url('../images/toolbar/buttons-toolbar-gray.png') !important;
+	background-image: url('../images/toolbar/sprite-gray.png') !important;
 	background: no-repeat;
 	background-position: 0px 0px !important;
 	background-position-x: 0px !important;
@@ -322,7 +322,7 @@ div.x-border-panel.layers-panel {
 .previous-icon {
 	height: 24px !important;
 	width: 24px !important;
-	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
+	background-image: url('../images/toolbar/sprite-gray.png')!important;
 	background: no-repeat;
 	background-position: -24px 0px !important;
 	background-position-x: -24px !important;
@@ -332,7 +332,7 @@ div.x-border-panel.layers-panel {
 .next-icon {
 	height: 24px !important;
 	width: 24px !important;
-	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
+	background-image: url('../images/toolbar/sprite-gray.png')!important;
 	background: no-repeat;
 	background-position: -48px 0px !important;
 	background-position-x: -48px !important;
@@ -342,62 +342,53 @@ div.x-border-panel.layers-panel {
 .search-icon {
 	height: 24px !important;
 	width: 24px !important;
-	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
+	background-image: url('../images/toolbar/sprite-gray.png')!important;
 	background: no-repeat;
-	background-position: -24px -24px !important;
-	background-position-x: -24px !important;
-	background-position-y: -24px !important;
+	background-position: -96px 0px !important;
+	background-position-x: -96px !important;
+	background-position-y: 0px !important;
 }
 
 .featureinfo-icon {
 	height: 24px !important;
 	width: 24px !important;
-	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
+	background-image: url('../images/toolbar/sprite-gray.png')!important;
 	background: no-repeat;
-	background-position: -48px -24px !important;
-	background-position-x: -48px !important;
-	background-position-y: -24px !important;
+	background-position: -120px 0px !important;
+	background-position-x: -120px !important;
+	background-position-y: 0px !important;
 }
 
 .measure-icon {
 	height: 24px !important;
 	width: 24px !important;
-	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
+	background-image: url('../images/toolbar/sprite-gray.png')!important;
 	background: no-repeat;
-	background-position: -24px -48px !important;
-	background-position-x: -24px !important;
-	background-position-y: -48px !important;
+	background-position: -144px 0px !important;
+	background-position-x: -144px !important;
+	background-position-y: 0px !important;
 }
 
 .draw-icon {
 	height: 24px !important;
 	width: 24px !important;
-	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
+	background-image: url('../images/toolbar/sprite-gray.png')!important;
 	background: no-repeat;
-	background-position: 0px -24px !important;
-	background-position-x: 0px !important;
-	background-position-y: -24px !important;
+	background-position: -168px 0px !important;
+	background-position-x: -168px !important;
+	background-position-y: 0px !important;
 }
 
 .print-icon {
 	height: 24px !important;
 	width: 24px !important;
-	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
+	background-image: url('../images/toolbar/sprite-gray.png')!important;
 	background: no-repeat;
-	background-position: 0px -48px !important;
-	background-position-x: 0px !important;
-	background-position-y: -48px !important;
+	background-position: -72px 0px !important;
+	background-position-x: -72px !important;
+	background-position-y: 0px !important;
 }
 
-.topics-icon {
-	height: 24px !important;
-	width: 24px !important;
-	background-image: url('../images/toolbar/buttons-toolbar-gray.png')!important;
-	background: no-repeat;
-	background-position: -48px -48px !important;
-	background-position-x: -48px !important;
-	background-position-y: -48px !important;
-}
 
 .point-layer-icon, .point-layer-icon-queryable, .line-layer-icon, .line-layer-icon-queryable, .polygon-layer-icon, .polygon-layer-icon-queryable, .raster-layer-icon {
 	background-image: url('../images/toolbar/layer-geometry.png')!important;
@@ -409,24 +400,24 @@ div.x-border-panel.layers-panel {
 	background-position-y: 0px !important;
 }
 .point-layer-icon-queryable {
-	background-position: 0px -18px !important;
-	background-position-x: 0px !important;
-	background-position-y: -18px !important;
-}
-.line-layer-icon {
-	background-position: 0px -36px !important;
-	background-position-x: 0px !important;
-	background-position-y: -36px !important;
-}
-.line-layer-icon-queryable {
 	background-position: 0px -54px !important;
 	background-position-x: 0px !important;
 	background-position-y: -54px !important;
 }
-.polygon-layer-icon {
+.line-layer-icon {
+	background-position: 0px -18px !important;
+	background-position-x: 0px !important;
+	background-position-y: -18px !important;
+}
+.line-layer-icon-queryable {
 	background-position: 0px -72px !important;
 	background-position-x: 0px !important;
 	background-position-y: -72px !important;
+}
+.polygon-layer-icon {
+	background-position: 0px -36px !important;
+	background-position-x: 0px !important;
+	background-position-y: -36px !important;
 }
 .polygon-layer-icon-queryable {
 	background-position: 0px -90px !important;
@@ -450,44 +441,29 @@ div.x-border-panel.layers-panel {
 	background-position-y: 0px !important;
 }
 .draw-line-icon, .measure-line-icon {
-	background-position: 0px -72px !important;
-	background-position-x: 0px !important;
-	background-position-y: -72px !important;
-}
-.draw-polygon-icon, .measure-polygon-icon {
-	background-position: 0px -144px !important;
-	background-position-x: 0px !important;
-	background-position-y: -144px !important;
-}
-.x-tab-strip-active .draw-point-icon {
 	background-position: 0px -24px !important;
 	background-position-x: 0px !important;
 	background-position-y: -24px !important;
 }
-.x-tab-strip-active .draw-line-icon {
-	background-position: 0px -96px !important;
-	background-position-x: 0px !important;
-	background-position-y: -96px !important;
-}
-.x-tab-strip-active .draw-polygon-icon {
-	background-position: 0px -168px !important;
-	background-position-x: 0px !important;
-	background-position-y: -168px !important;
-}
-.x-tab-strip-active .measure-point-icon {
+.draw-polygon-icon, .measure-polygon-icon {
 	background-position: 0px -48px !important;
 	background-position-x: 0px !important;
 	background-position-y: -48px !important;
 }
-.x-tab-strip-active .measure-line-icon {
+.x-tab-strip-active .draw-point-icon, .x-tab-strip-active .measure-point-icon {
+	background-position: 0px -72px !important;
+	background-position-x: 0px !important;
+	background-position-y: -72px !important;
+}
+.x-tab-strip-active .draw-line-icon, .x-tab-strip-active .measure-line-icon {
+	background-position: 0px -96px !important;
+	background-position-x: 0px !important;
+	background-position-y: -96px !important;
+}
+.x-tab-strip-active .draw-polygon-icon, .x-tab-strip-active .measure-polygon-icon {
 	background-position: 0px -120px !important;
 	background-position-x: 0px !important;
 	background-position-y: -120px !important;
-}
-.x-tab-strip-active .measure-polygon-icon {
-	background-position: 0px -192px !important;
-	background-position-x: 0px !important;
-	background-position-y: -192px !important;
 }
 
 .logout-icon {

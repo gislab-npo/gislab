@@ -12,8 +12,8 @@ fi
 
 
 # restart machine if new client image is available
-GISLAB_CLIENT_IMAGE_VERSION_SERVER=$(curl http://server.gis.lab/gislab_desktop.version)
-GISLAB_CLIENT_IMAGE_VERSION_CLIENT=$(cat /etc/gislab_desktop.version)
+GISLAB_CLIENT_IMAGE_VERSION_SERVER=$(curl http://server.gis.lab/gislab_desktop.buildstamp)
+GISLAB_CLIENT_IMAGE_VERSION_CLIENT=$(cat /etc/gislab_desktop.buildstamp)
 
 if [ "$GISLAB_CLIENT_IMAGE_VERSION_SERVER" != "$GISLAB_CLIENT_IMAGE_VERSION_CLIENT" ]; then
 	for i in $(seq 10 10 100); do
@@ -23,7 +23,7 @@ if [ "$GISLAB_CLIENT_IMAGE_VERSION_SERVER" != "$GISLAB_CLIENT_IMAGE_VERSION_CLIE
 			--progress \
 			--auto-close \
 			--no-cancel \
-			--text="A new version of the system is available, rebooting in 10s." \
+			--text="A new version of the system is available, rebooting in 10s."
 	/sbin/reboot
 	exit 0
 fi

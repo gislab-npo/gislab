@@ -1,0 +1,189 @@
+---
+
+- hosts: localhost
+  connection: local
+  gather_facts: False
+
+
+  tasks:
+
+    - name: Read default configuration file 'group_vars/all'
+      include_vars: "../../system/group_vars/all"
+
+    - name: Read host file 'system/host_vars/{{ GISLAB_UNIQUE_ID }}'
+      include_vars: "../../system/host_vars/{{ GISLAB_UNIQUE_ID }}"
+
+
+    # Sanity checks
+    - name: Fail if GISLAB_SUITE is not set to server
+      fail: msg="Setting GISLAB_SUITE variable to server is required."
+      when: GISLAB_SUITE != 'server'
+
+    - name: Fail if AWS credentials are not defined
+      fail: msg="Setting GISLAB_AWS_ACCOUNT, GISLAB_AWS_ACCESS_KEY_ID, GISLAB_AWS_SECRET_KEY,
+                 GISLAB_AWS_CERTIFICATE and GISLAB_AWS_PRIVATE_KEY variables is required on AWS."
+      when: GISLAB_AWS_ACCOUNT|default(None) == None
+            or GISLAB_AWS_ACCESS_KEY_ID|default(None) == None
+            or GISLAB_AWS_SECRET_KEY|default(None) == None
+            or GISLAB_AWS_CERTIFICATE|default(None) == None
+            or GISLAB_AWS_PRIVATE_KEY|default(None) == None
+
+    - name: Fail if SSH key not defined
+      fail: msg="Setting GISLAB_AWS_SSH_PUBLIC_KEY variable is required on AWS." 
+      when: GISLAB_AWS_SSH_PUBLIC_KEY|default(None) == None
+
+    - name: Fail if GISLAB_AWS_BUCKET_PREFIX not defined
+      fail: msg=" Setting GISLAB_AWS_BUCKET_PREFIX variable is required on AWS."
+      when: GISLAB_AWS_BUCKET_PREFIX|default(None) == None
+
+
+    - name: Create SSH key pair
+      local_action:
+        module: ec2_key
+        name: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+        key_material: "{{ item }}"
+      with_file: "{{ GISLAB_AWS_SSH_PUBLIC_KEY }}"
+
+    - name: Create network
+      local_action:
+        module: ec2_vpc
+        state: present
+        resource_tags: { "Name": "GIS.lab ({{ GISLAB_NETWORK | cidr_block_from_network_16 }})" }
+        region: "{{ GISLAB_AWS_REGION }}"
+        cidr_block: "{{ GISLAB_NETWORK | cidr_block_from_network_16 }}"
+        subnets:
+          - cidr: "{{ GISLAB_NETWORK }}.0/24"
+            az: "{{ GISLAB_AWS_AVAILABILITY_ZONE }}"
+            resource_tags: { "Name": "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})", "GISLAB_UNIQUE_ID": "{{ GISLAB_UNIQUE_ID }}" }
+        internet_gateway: True
+        route_tables:
+          - subnets:
+            - "{{ GISLAB_NETWORK }}.0/24"
+            routes:
+            - dest: 0.0.0.0/0
+              gw: igw
+      register: vpc
+
+    - name: Create security group
+      local_action:
+        module: ec2_group
+        name: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+        description: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+        region: "{{ GISLAB_AWS_REGION }}"
+        vpc_id: "{{ vpc.vpc_id }}"
+        rules:
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 0.0.0.0/0
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+          - proto: tcp
+            from_port: 1936
+            to_port: 1936
+            cidr_ip: 0.0.0.0/0
+          - proto: icmp
+            from_port: 8
+            to_port: 0
+            cidr_ip: 0.0.0.0/0
+          - proto: -1
+            from_port: -1
+            to_port: -1
+            group_name: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+        state: present
+
+    - name: Get the Ubuntu Precise AMI
+      local_action:
+        module: ec2_ami_search
+        distro: ubuntu
+        release: precise
+        arch: amd64
+        region: "{{ GISLAB_AWS_REGION }}"
+        store: ebs
+        virt: hvm
+      register: ubuntu_image
+
+    - name: Launch EC2 instance
+      local_action:
+        module: ec2
+        image: "{{ ubuntu_image.ami }}"
+        instance_type: "{{ GISLAB_AWS_SERVER_INSTANCE_TYPE }}"
+        keypair: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+        region: "{{ GISLAB_AWS_REGION }}"
+        zone: "{{ GISLAB_AWS_AVAILABILITY_ZONE }}"
+        group: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+        vpc_subnet_id: "{{ vpc.subnets[0].id }}"
+        assign_public_ip: yes
+        private_ip: "{{ GISLAB_NETWORK }}.5"
+        volumes:
+         - device_name: /dev/sda1
+           volume_size: 20
+           volume_type: gp2
+           delete_on_termination: false
+         - device_name: /dev/sdb
+           volume_size: 30
+           volume_type: gp2
+           delete_on_termination: false
+        instance_tags:
+          Name: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+          GISLAB_UNIQUE_ID: "{{ GISLAB_UNIQUE_ID }}"
+        count: 1
+        wait: True
+        state: present
+      register: ec2
+
+    - name: Add instance public IP to hosts group
+      add_host: name={{ item.public_ip }} groups=ec2_instances
+      with_items: ec2.instances
+
+    - name: Wait until SSH is available
+      local_action:
+        module: wait_for
+        host: "{{ item.public_dns_name }}"
+        port: 22
+        delay: 60
+        state: started
+      with_items: ec2.instances
+
+
+# Mount storage device to /storage
+- hosts: ec2_instances
+  user: ubuntu
+  sudo: yes
+  gather_facts: True
+
+
+  tasks:
+    - name: Set GIS.lab provider
+      shell: echo 'aws' > /etc/gislab_provider
+
+    - name: Unmount /mnt
+      shell: "umount /mnt || true"
+      args:
+        executable: /bin/bash
+
+    - name: Disable mount /mnt on boot
+      lineinfile: dest=/etc/fstab regexp=' /mnt ' state=absent
+
+    - name: Mount /storage on boot
+      lineinfile: dest=/etc/fstab line='/dev/xvdb  /storage  ext4  defaults,nobootwait  0  0'
+
+    - name: Create filesystem on storage device
+      command: mkfs.ext4 -F /dev/xvdb
+
+    - name: Mount storage device to /storage
+      mount: name=/storage src=/dev/xvdb fstype=ext4 state=mounted
+
+
+- hosts: localhost
+  connection: local
+  gather_facts: False  
+
+
+  tasks:
+    - name: Print AWS launch summary
+      local_action:
+        module: debug msg="Instance ID -> {{ ec2.instances[0].id }} | Inventory -> '{{ GISLAB_UNIQUE_ID }} ansible_ssh_host={{ ec2.instances[0].public_dns_name }} ansible_ssh_user=ubuntu'"
+

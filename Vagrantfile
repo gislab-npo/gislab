@@ -17,9 +17,9 @@ conf.each do |key, value|
   end
 end
 
-# Configuration file for machine running under Vagrant provider.
+# Configuration file for machine running under Vagrant provisioner.
 # Use this file to override default GIS.lab configuration when
-# using Vagrant provider.
+# using Vagrant provisioner.
 if File.exist?('system/host_vars/gislab_vagrant')
   conf = YAML.load_file('system/host_vars/gislab_vagrant')
   conf.each do |key, value|
@@ -70,6 +70,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # VirtualBox configuration
     server.vm.provider "virtualbox" do |vb, override|
       vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY']]
+      vb.customize ["modifyvm", :id, "--cpus", CONFIG['GISLAB_SERVER_CPUS']]
       vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
       vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
 

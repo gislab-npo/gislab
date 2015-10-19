@@ -3,4 +3,7 @@
 - name: service nbd-server restart
   service: name=nbd-server state=restarted
 
+- name: service gislab-http-boot restart
+  service: name=gislab-http-boot state=restarted
+
 # vim:ft=ansible:

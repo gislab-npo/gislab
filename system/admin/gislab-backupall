@@ -1,0 +1,76 @@
+#!/bin/bash
+# Backup all GIS.lab user's accounts and system files.
+
+set -e
+
+source $GISLAB_ROOT/system/functions.sh
+
+
+# require root privileges
+gislab_require_root
+
+
+# usage
+function usage() {
+	echo "USAGE: $(basename $0)"
+	echo "Backup all GIS.lab user's accounts and system files."
+	echo -e "\nOPTIONS
+	-d backup directory (optional, default: /storage/backup)
+	-h display this help
+	"
+	exit 255
+}
+
+
+# options
+BACKUP_DIR=/storage/backup
+
+while getopts "d:h" OPTION
+do
+	case "$OPTION" in
+		d) BACKUP_DIR="$OPTARG" ;;
+		h) usage ;;
+		\?) exit 1 ;;
+	esac
+done
+
+
+# populate variables and prepare directories structure
+DATE=$(date '+%Y-%m-%d:%H-%M-%S')
+TEMP_BACKUP_SYSTEM_DIR=${BACKUP_DIR}/${GISLAB_UNIQUE_ID}-${DATE}.backup
+
+SYSTEM_FILES_BACKUP_FILE=$TEMP_BACKUP_SYSTEM_DIR/gislab.tar.bz2
+BACKUP_SYSTEM_FILE=$BACKUP_DIR/$GISLAB_UNIQUE_ID-$DATE.tar
+BACKUP_SYSTEM_DONE_FILE=$BACKUP_DIR/$GISLAB_UNIQUE_ID-$DATE.done
+
+mkdir -p $BACKUP_DIR
+chmod 700 $BACKUP_DIR
+
+mkdir -p $TEMP_BACKUP_SYSTEM_DIR
+
+
+# backup all user accounts
+ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+for user in $($ldapsearch_cmd -b "ou=People,dc=gis,dc=lab" uid | awk '/^uid: / { print $2 }'); do
+	gislab-backupuser -d $BACKUP_DIR $user
+done
+
+
+# backup content of /etc/gislab after running user accounts backups
+cd $TEMP_BACKUP_SYSTEM_DIR
+
+echo $GISLAB_VERSION > $TEMP_BACKUP_SYSTEM_DIR/GISLAB_VERSION
+tar -cjf $SYSTEM_FILES_BACKUP_FILE /etc/gislab
+
+tar -cf $BACKUP_SYSTEM_FILE *
+chmod 400 $BACKUP_SYSTEM_FILE
+
+touch $BACKUP_SYSTEM_DONE_FILE
+
+rm -rf $TEMP_BACKUP_SYSTEM_DIR
+
+
+gislab_print_info "Backup of system files created in '$BACKUP_SYSTEM_FILE' ($(du -h $BACKUP_SYSTEM_FILE | awk '{print $1}'))"
+
+
+# vim: set ts=4 sts=4 sw=4 noet:

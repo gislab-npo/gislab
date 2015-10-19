@@ -15,10 +15,16 @@
 
 - name: Activate HAProxy server
   template: src=haproxy/haproxy.j2 dest=/etc/default/haproxy
+  notify:
+    - service haproxy restart
 
-# TODO: always start server (after restart) with empty list of workers
-- name: Configure HAProxy server
-  template: src=haproxy/haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
+- name: Install HAProxy init script
+  template: src=init/haproxy.j2 dest=/etc/init.d/haproxy mode=0755
+  notify:
+    - service haproxy restart
+
+- name: Install HAProxy configuration template
+  template: src=haproxy/haproxy.cfg.templ.j2 dest=/etc/haproxy/haproxy.cfg.templ
   notify:
     - service haproxy restart
 

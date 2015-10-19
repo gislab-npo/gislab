@@ -26,6 +26,8 @@ stats    IN    CNAME    server
 qgis     IN    CNAME    server
 
 ; clients
-{% for ip in range(50,150) %}
+c3  IN  A  {{ GISLAB_NETWORK }}.3
+c4  IN  A  {{ GISLAB_NETWORK }}.4
+{% for ip in range(6,255) %}
 c{{ ip }}  IN  A  {{ GISLAB_NETWORK }}.{{ ip }}
 {% endfor %}

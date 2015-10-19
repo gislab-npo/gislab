@@ -1,0 +1,133 @@
+#!/bin/bash
+
+set -e
+
+source /etc/gislab_version
+source $GISLAB_ROOT/system/functions.sh
+
+# require root privileges
+gislab_require_root
+
+
+# usage
+function usage() {
+	echo "USAGE: $(basename $0) [OPTIONS] MAC,MAC,..."
+	echo "Add or remove GIS.lab client machines to/from list of known machines."
+	echo "If 'unknown machines' policy is set to 'deny', only known machines will be authorized for connection to"
+	echo "GIS.lab network. If 'unknown machines' policy is set to 'allow', all machines will be authorized to connect."
+	echo
+	echo "MAC addresses must be specified in format MM:MM:MM:SS:SS:SS."
+	echo -e "\nOPTIONS
+	-h  display this help
+	-l  print a list of known machines
+	-a  add machines to known list. If value 'all' is given instead of MAC address, 'unknown machines' policy will be
+            set to 'allow'
+	-r  remove machines from known list. If value 'all' is given instead of MAC address, 'unknown machines' policy will
+            be set to 'deny'
+	"
+	exit 255
+}
+
+
+# options
+while getopts "larh" OPTION
+do
+        case "$OPTION" in
+			l) ACTION="list" ;;
+			a) ACTION="add" ;;
+			r) ACTION="remove" ;;
+			h) usage ;;
+			\?) exit 1;;
+        esac
+done
+shift $(($OPTIND - 1))
+if [ $# -eq 0 -a "$ACTION" != "list" ]; then usage; fi
+
+
+POLICY_FILE=/etc/gislab/gislab_unknown_machines_policy.conf
+KNOWN_MACHINES_LIST_FILE=/etc/gislab/gislab_known_machines.txt
+KNOWN_MACHINES_DHCP_FILE=/etc/dhcp/gislab_known_machines.conf
+
+function known_machines_policy {
+	# set known machines policy to 'allow' or 'deny'
+
+	msg="Setting 'unknown machines' policy to '$1'"
+	gislab_print_warning "$msg"
+	logger -t gislab-machines $msg
+	sed "s/{+ GISLAB_UNKNOWN_MACHINES_POLICY +}/$1/g" /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
+	echo "$1" > $POLICY_FILE
+}
+
+function known_machines_dhcp_file {
+	# generate DHCP configuration file from MAC list file located in /etc/gislab
+
+	echo -e "group {" > $KNOWN_MACHINES_DHCP_FILE	# opening bracket
+
+	for mac in $(cat $KNOWN_MACHINES_LIST_FILE); do
+		hostname=$(echo $mac | sed 's/://g')
+		echo -e "\thost $hostname { hardware ethernet $mac; }" >> $KNOWN_MACHINES_DHCP_FILE
+	done
+
+	echo -e "}" >> $KNOWN_MACHINES_DHCP_FILE		# closing bracket
+}
+
+
+# LIST
+if [ "$ACTION" == "list" ]; then
+	echo "Policy: $(cat $POLICY_FILE)"
+	echo "Known machines:"
+	for mac in $(cat $KNOWN_MACHINES_LIST_FILE); do echo -e "  * $mac"; done
+
+# ADD
+elif [ "$ACTION" == "add" ]; then
+	IFS=', ' read -a maclist <<< "$1"
+
+	for mac in "${maclist[@]}"; do
+
+		# change policy to 'allow'
+		if [ "$mac" == "all" ]; then
+			known_machines_policy allow
+
+		# add MAC address if format is valid
+		else
+			if [[ $mac =~ ^[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}$ ]]; then
+				echo "Adding MAC address $mac"
+				# add records to known machines list file in /etc/gislab
+				sed -i "/^$mac/ d" $KNOWN_MACHINES_LIST_FILE # avoid duplicate records
+				echo -e "$mac"  >> $KNOWN_MACHINES_LIST_FILE
+				# generate known machines DHCP configuration file
+				known_machines_dhcp_file
+			else
+				echo "Skipping MAC address $mac - invalid format"
+			fi
+		fi
+	done
+
+	service isc-dhcp-server restart
+	gislab_print_info "Machines added successfully"
+
+# REMOVE
+elif [ "$ACTION" == "remove" ]; then 
+	IFS=', ' read -a maclist <<< "$1"
+
+	for mac in "${maclist[@]}"; do
+
+		# change policy to 'deny'
+		if [ "$mac" == "all" ]; then
+			known_machines_policy deny
+
+		# remove MAC address
+		else
+			echo "Removing MAC $mac"
+			sed -i "/^$mac/ d" $KNOWN_MACHINES_LIST_FILE
+			# generate known machines DHCP configuration file
+			known_machines_dhcp_file
+		fi
+	done
+
+	service isc-dhcp-server restart
+	gislab_print_info "Machines removed successfully"
+fi
+
+
+# vim: set ts=4 sts=4 sw=4 noet:

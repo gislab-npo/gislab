@@ -1,0 +1,61 @@
+====================================
+ Android build installation script:
+====================================
+
+
+Java environment
+================
+
+sudo apt-get install openjdk-7-jdk
+
+
+Android SDK
+===========
+
+
+wget http://dl.google.com/android/android-sdk_r24.1.2-linux.tgz
+tar zxvf android-sdk_r24.1.2-linux.tgz
+
+
+export ANDROID_HOME="/home/vagrant/android-sdk-linux"
+export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+# Install:
+# * Android SDK Platform-tools
+# * Android SDK Build-tools
+# * SDK Platform Android 5.1.1, API 22
+
+# To show list of available packages: android list sdk --all
+
+
+( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --no-ui --all --filter platform-tools,build-tools-22.0.1,android-22
+
+
+Install Node.js, NPM package manager, Cordova
+=============================================
+
+wget http://nodejs.org/dist/v0.10.32/node-v0.10.32-linux-x86.tar.gz
+tar zxvf node-v0.10.32-linux-x86.tar.gz
+
+sudo ln -s $PWD/node-v0.10.32-linux-x86/bin/node /usr/local/bin/node
+sudo ln -s $PWD/node-v0.10.32-linux-x86/bin/npm /usr/local/bin/npm
+sudo npm install -g cordova@5.1.1
+
+
+Install Ant
+===========
+
+sudo apt-get install ant
+
+
+Build project
+=============
+
+cd <project-dir>
+
+cordova platform add android
+
+# Install required Cordova plugins (from package.json)
+node tasks/plugins.js
+
+ANDROID_BUILD=ant cordova build android

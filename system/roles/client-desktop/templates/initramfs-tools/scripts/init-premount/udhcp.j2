@@ -71,7 +71,11 @@ do_dhcp()
 
 	while [ -z "$configured" ]; do
 		# Make a DHCP request for interface eth0
+		{% if GISLAB_PROVIDER == 'aws' %}
+		if udhcpc -n -C -s /tmp/dhcp-script.sh -i $iface >/dev/null 2>&1; then
+		{% else %}
 		if udhcpc -n -C -s /tmp/dhcp-script.sh -i $iface -I {{ GISLAB_NETWORK_SERVER_IP }} -x nisdomain:{{ GISLAB_UNIQUE_ID }} >/dev/null 2>&1; then
+		{% endif %}
 			grep "=" /tmp/dhcp-info.conf # print response provided by the DHCP server
 			configured="true"
 			break

@@ -1,0 +1,42 @@
+---
+
+GISLAB_CLIENT_MOBILE_INSTALL_PACKAGES:
+  - ant
+  - expect
+  - openjdk-7-jdk
+
+
+# Android
+android_sdk_url_base: http://dl.google.com/android
+android_sdk_version: 24.1.2
+android_build_tools_version: 22.0.1
+android_api_version: 22
+android_root: /build/android-sdk-linux
+
+# NodeJS
+nodejs_url_base: http://nodejs.org/dist
+nodejs_version: 0.10.32
+nodejs_root: /build/nodejs
+
+# Cordova
+cordova_version: 5.1.1
+
+# GIS.lab Mobile
+gislab_mobile_root: /build/gislab-mobile
+
+
+apt_get_opts: "
+ --assume-yes
+ --force-yes"
+
+wget_opts: "
+ --continue
+ --no-verbose
+ --retry-connrefused
+ --waitretry=1
+ --read-timeout=20
+ --timeout=15
+ --tries=0"
+
+
+# vim:ft=ansible:

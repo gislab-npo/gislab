@@ -320,6 +320,9 @@ class WebGisPlugin:
 		if self.dialog and self.dialog.isVisible():
 			return
 		self.project = QgsProject.instance()
+		if not self.project.fileName():
+			QMessageBox.critical(None, 'Error', 'Create new QGIS project or open existing one before publishing to GIS.lab Web')
+			return
 		project_filename = os.path.splitext(self.project.fileName())[0]
 		current_metadata = None
 		metadata_pattern = re.compile(re.escape(os.path.basename(project_filename))+'_(\d{10})\.meta')

@@ -7,7 +7,7 @@
 # Inventory file format:
 # <unique-host-name> ansible_ssh_host=<host-url> ansible_ssh_user=<provisioning-user-account-name>
 
-# If using local Vagrant provisioner (with VirtualBox or VMWare provider), create 'gislab_vagrant' configuration file in
+# If using local Vagrant provisioner (with VirtualBox or VMWare), create 'gislab_vagrant' configuration file in
 # 'host_vars' directory and place configuration there. It will be automatically loaded by Vagrant without needing
 # to create the inventory file.
 
@@ -70,11 +70,87 @@ GISLAB_ADMIN_EMAIL: gislab@gis.lab
 # Change requires GIS.lab server restart.
 GISLAB_SERVER_MEMORY: 1024
 
+# Server number of CPUs.
+# Change requires GIS.lab server restart.
+GISLAB_SERVER_CPUS: 1
+
 # Determines if GIS.lab server should start with graphical console. This is useful to gain more control with server boot
 # process.
 # * no: do not launch GUI console
 # * yes: launch GUI console
 GISLAB_SERVER_GUI_CONSOLE: no
+
+
+
+
+# ******************************************************************************************************************* #
+###################################################### PROVIDERS ######################################################
+# ******************************************************************************************************************* #
+
+### AWS ###
+# Configuration specific to Amazon WS provider.
+
+# Amazon AWS security credentials
+# For more informations about AWS credentials see:
+# http://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
+
+# AWS account ID without dashes
+GISLAB_AWS_ACCOUNT:
+
+# AWS access key ID
+GISLAB_AWS_ACCESS_KEY_ID:
+
+# AWS secret access key
+GISLAB_AWS_SECRET_KEY:
+
+# Absolute path to AWS public key certificate file.
+# Example: /home/john/.ec2/cert-CC4EFBF62935A317CB3E5F756381EA11.pem
+GISLAB_AWS_CERTIFICATE:
+
+# Absolute path to AWS private key file.
+# Example: /home/john/.ec2/pk-C508B48174135E760AF6A1A40E9BC433.pem
+GISLAB_AWS_PRIVATE_KEY:
+
+
+# AWS location
+# For more information about EC2 locations see:
+# http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
+
+# Region to run instance in.
+# Supported regions:
+# eu-west-1
+# us-east-1, us-west-1, us-west-2
+# ap-northeast-1, ap-southeast-1, ap-southeast-2
+# sa-east-1
+# Example: eu-west-1        - run instance in EU (Ireland) region
+# Example: us-east-1        - run instance in US East (N. Virginia) region
+GISLAB_AWS_REGION: eu-west-1
+
+# AWS availability zone
+# Zone to run instance in (must be within region).
+# Example: eu-west-1a       - run instance in eu-west-1a availability zone in EU (Ireland) region
+# Example: us-east-1a       - run instance in us-east-1a availability zone in US East (N. Virginia) region
+GISLAB_AWS_AVAILABILITY_ZONE: eu-west-1a
+
+
+# EC2 instance type.
+# For list of instance types see: http://aws.amazon.com/ec2/instance-types/
+# Recommended instance types for production deployment are:
+# m3.xlarge - 4 x vCPU, 15 GB RAM
+# c3.2xlarge - 8 x vCPU, 15 GB RAM
+GISLAB_AWS_SERVER_INSTANCE_TYPE: t2.micro
+
+
+# AWS S3 bucket prefix used for storing GIS.lab client images.
+# GIS.lab client image will be stored on S3 in folder
+#  s3://<GISLAB_AWS_BUCKET_PREFIX>/<GISLAB_UNIQUE_ID>/
+# Example: devel
+GISLAB_AWS_BUCKET_PREFIX:
+
+
+# Absolute path to public SSH key used for accessing GIS.lab server.
+# Example: /home/john/.ssh/id_rsa.pub
+GISLAB_AWS_SSH_PUBLIC_KEY:
 
 
 
@@ -116,7 +192,7 @@ GISLAB_DNS_SERVERS:
 GISLAB_APT_REPOSITORY_COUNTRY_MIRROR: sk
 
 # Apt-cacher-ng proxy URL.
-# Example: http://192.168.49.5:3142
+# Example: http://192.168.50.6:3142
 # Change requires running upgrade.
 GISLAB_APT_HTTP_PROXY:
 
@@ -254,3 +330,9 @@ GISLAB_DEBUG_SERVICES: no
 # * no: do not run tests
 # * yes: do run tests
 GISLAB_TESTS_ENABLE: no
+
+# Enable GIS.lab Mobile client interface. Mobile interface is still in development/testing. Therefore it is disabled by
+# default.
+# * no: do not enable mobile client interface
+# * yes: enable mobile client interface
+GISLAB_CLIENT_MOBILE: no

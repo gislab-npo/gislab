@@ -40,9 +40,11 @@
       tags: ['client-web-test'],
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
     }
+    - { role: client-desktop-test, tags: ['client-desktop-test'] }
     - {
-      role: client-desktop-test,
-      tags: ['client-desktop-test'],
+      role: client-mobile-test,
+      tags: ['client-mobile-test'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab') and GISLAB_CLIENT_MOBILE"
     }
     - { role: account-admin-test, tags: ['account-admin-test'] }
     - {
