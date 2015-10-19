@@ -75,6 +75,12 @@
 
 
 # Cron
+- name: Create directory for Munin script
+  file: path=/opt/gislab/system/munin state=directory
+
+- name: Install Munin script
+  template: src=munin/munin.sh.j2 dest=/opt/gislab/system/munin/munin.sh mode=0755
+
 - name: Activate Munin cron job
   template: src=cron/munin.j2 dest=/etc/cron.d/munin
 
