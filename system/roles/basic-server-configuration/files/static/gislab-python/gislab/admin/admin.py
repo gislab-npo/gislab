@@ -139,7 +139,7 @@ class GISLabAdmin(object):
 		
 		:param mac: MAC address to be added
 		"""
-		p = re.compile('^[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}$')
+		p = re.compile('^[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}$')
 		if not p.match(mac):
 			raise GISLabAdminError("Skipping MAC address {} - invalid format".format(mac))
 		
