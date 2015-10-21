@@ -29,6 +29,7 @@ if File.exist?('system/host_vars/gislab_vagrant')
   end
 end
 
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box
   # or
@@ -36,19 +37,29 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # fix for https://github.com/ansible/ansible/issues/8644
   ENV['PYTHONIOENCODING'] = "utf-8"
-	
-  config.vm.box = "precise-canonical"
-  
-  config.vm.synced_folder '.', '/vagrant', disabled: true
 
+  config.vm.box = "precise-canonical"
+  config.vm.synced_folder '.', '/vagrant', disabled: true
   config.ssh.forward_agent = true
 
 
-  # GIS.lab server
+  # provisioning
   config.vm.define :gislab_vagrant do |server|
     server.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
 
-    # provisioning
+    # VirtualBox configuration
+    server.vm.provider "virtualbox" do |vb, override|
+      vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY']]
+      vb.customize ["modifyvm", :id, "--cpus", CONFIG['GISLAB_SERVER_CPUS']]
+      vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+      vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
+
+      if CONFIG['GISLAB_SERVER_GUI_CONSOLE'] == true
+        vb.gui = true
+      end
+    end
+
+    # installation
     server.vm.provision "install", type: "ansible" do |ansible|
       ansible.playbook = "system/gislab.yml"
       if CONFIG['GISLAB_DEBUG_INSTALL'] == true
@@ -67,16 +78,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
     end
 
-    # VirtualBox configuration
-    server.vm.provider "virtualbox" do |vb, override|
-      vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY']]
-      vb.customize ["modifyvm", :id, "--cpus", CONFIG['GISLAB_SERVER_CPUS']]
-      vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
-      vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
-
-      if CONFIG['GISLAB_SERVER_GUI_CONSOLE'] == true
-        vb.gui = true
-      end
-    end
   end
 end
