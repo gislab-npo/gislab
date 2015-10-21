@@ -212,24 +212,22 @@ GISLAB_APT_CUSTOM_REPOSITORIES:
 ################################################### SERVER ############################################################
 # ******************************************************************************************************************* #
 
-# Network device on GIS.lab server which will be used for network communication if no device(s) are explicitly defined
-# by provider (Vagrant: eth0, eth1, AWS: eth0).
+# Network device on GIS.lab server dedicated for GIS.lab network.
 # Example: eth0
 # Change requires running upgrade.
 GISLAB_SERVER_NETWORK_DEVICE: eth0
 
 
-# GIS.lab server is using separate network configuration for integration in to the network, where it is deployed. This
-# configuration is usually used for connection to Internet and in most cases it is received from provider (Vagrant,
-# AWS) or from DHCP server, which exists in network, where GIS.lab is deployed.
+# GIS.lab server is always trying to integrate itself to the connected local network via DHCP request. If no DHCP
+# response is received, fallback network configuration is set.
 
-# IP address which will be assigned to GIS.lab server, when no IP address is received from network, where GIS.lab is
-# deployed. Make sure, that this IP address does not already exist in network, to avoid IP conflict !
+# Fallback IP address, which will be assigned to GIS.lab server, when no IP address is received from local network.
+# Double check that this IP address doesn't already exist in network to avoid IP conflict !
 # Example: 192.168.5.5
 GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS: 192.168.5.5
 
-# IP address of gateway, which will be used for communication with Internet, when no gateway address is received from
-# network, where GIS.lab is deployed.
+# Fallback gateway, which will be used for communication with Internet, when no gateway address is received from
+# local network.
 # Example: 192.168.5.1
 GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY: 192.168.5.1
 
