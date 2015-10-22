@@ -74,10 +74,21 @@ GISLAB_SERVER_MEMORY: 1024
 # Change requires GIS.lab server restart.
 GISLAB_SERVER_CPUS: 1
 
+# Determines if Vagrant should try to integrate GIS.lab to the connected local network via DHCP request. Allow
+# integration only if GIS.lab machine is set in bridge with active Ethernet network adapter on host machine.
+# To enable connection from other networks (Internet), manual default gateway configuration is required, which
+# means dropping default gateway via 'eth0' and setting default gateway via 'eth1' device.
+# Possible values are:
+# * no: do not try to integrate
+# * yes: try to integrate
+# Change requires running upgrade.
+GISLAB_SERVER_INTEGRATION: no
+
 # Determines if GIS.lab server should start with graphical console. This is useful to gain more control with server boot
 # process.
 # * no: do not launch GUI console
 # * yes: launch GUI console
+# Change requires GIS.lab server restart.
 GISLAB_SERVER_GUI_CONSOLE: no
 
 
