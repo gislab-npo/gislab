@@ -164,6 +164,10 @@ GISLAB_AWS_BUCKET_PREFIX:
 GISLAB_AWS_SSH_PUBLIC_KEY:
 
 
+# How many GIS.lab clients launch
+GISLAB_AWS_CLIENTS_COUNT: 1
+
+
 
 
 # ******************************************************************************************************************* #
