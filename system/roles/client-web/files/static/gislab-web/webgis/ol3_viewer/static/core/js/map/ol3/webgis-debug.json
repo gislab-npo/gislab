@@ -1,0 +1,27 @@
+{
+  "exports": [
+    "ol.Map",
+    "ol.source.WebgisTileImage",
+    "ol.source.WebgisImageWMS"
+  ],
+  "compile": {
+    "externs": [
+      "externs/geojson.js",
+      "externs/oli.js",
+      "externs/olx.js",
+      "externs/proj4js.js",
+      "externs/tilejson.js",
+      "externs/topojson.js"
+    ],
+    "define": [
+      "ol.ENABLE_VECTOR=false",
+      "ol.ENABLE_DOM=false",
+      "ol.ENABLE_WEBGL=false",
+      "ol.ENABLE_PROJ4JS=true"
+    ],
+    "compilation_level": "SIMPLE",
+    "output_wrapper": "(function(){%output%})();",
+    "use_types_for_optimization": false,
+    "manage_closure_dependencies": true
+  }
+}

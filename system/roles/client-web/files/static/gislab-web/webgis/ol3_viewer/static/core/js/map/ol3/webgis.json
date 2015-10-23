@@ -1,0 +1,56 @@
+{
+  "exports": [
+    "ol.Map",
+    "ol.Map#*",
+    "ol.View",
+    "ol.View#*",
+    "ol.Attribution",
+    "ol.layer.Image",
+    "ol.layer.Image#*",
+    "ol.layer.Tile",
+    "ol.layer.Tile#*",
+    "ol.source.ImageWMS",
+    "ol.source.ImageWMS#*",
+    "ol.source.OSM",
+    "ol.proj.METERS_PER_UNIT",
+
+    "ol.tilegrid.TileGrid",
+    "ol.proj.Projection",
+    "ol.control.defaults",
+    "ol.control.Rotate",
+    "ol.extent.getBottomLeft",
+    "ol.Collection#extend",
+
+    "ol.source.WebgisTileImage",
+    "ol.source.WebgisTileImage#setVisibleLayers",
+    "ol.source.WebgisTileImage#getVisibleLayers",
+    "ol.source.WebgisTileImage#getLegendUrl",
+    "ol.source.WebgisImageWMS",
+    "ol.source.WebgisImageWMS#*"
+  ],
+  "compile": {
+    "externs": [
+      "externs/bingmaps.js",
+      "externs/geojson.js",
+      "externs/oli.js",
+      "externs/olx.js",
+      "externs/proj4js.js",
+      "externs/tilejson.js",
+      "externs/topojson.js",
+
+      "externs/webgis.js"
+    ],
+    "define": [
+      "goog.dom.ASSUME_STANDARDS_MODE=true",
+      "goog.DEBUG=false",
+      "ol.ENABLE_VECTOR=false",
+      "ol.ENABLE_DOM=false",
+      "ol.ENABLE_WEBGL=false",
+      "ol.ENABLE_PROJ4JS=true"
+    ],
+    "compilation_level": "ADVANCED_OPTIMIZATIONS",
+    "output_wrapper": "(function(){%output%})();",
+    "use_types_for_optimization": true,
+    "manage_closure_dependencies": true
+  }
+}
