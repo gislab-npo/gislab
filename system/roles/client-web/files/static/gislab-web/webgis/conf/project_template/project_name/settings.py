@@ -79,6 +79,10 @@ AUTH_LDAP_GROUP_CACHE_TIMEOUT = 3600
 ### OTHER ###
 ALLOWED_HOSTS = ['*']
 
+# Enable CORS requests
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
@@ -92,6 +96,7 @@ else:
 MIDDLEWARE_CLASSES = (
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.locale.LocaleMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'webgis.libs.middleware.GislabHeaderMiddleware',
@@ -99,6 +104,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 INSTALLED_APPS = (
+	'corsheaders',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
 	'django.contrib.sessions',
