@@ -1,0 +1,171 @@
+
+Install lighttpd server:
+========================
+sudo apt-get install lighttpd, xvfb
+
+
+Configure Virtual frame buffer
+------------------------------
+http://www.itopen.it/qgis-server-setup-notes/
+
+Create file /etc/init.d/xvfb:
+---------------------------------------------------------------------------------------------------------------
+
+### BEGIN INIT INFO
+# Provides: Xvfb
+# Required-Start: $local_fs $remote_fs
+# Required-Stop:
+# X-Start-Before:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Loads X Virtual Frame Buffer
+### END INIT INFO
+ 
+XVFB=/usr/bin/Xvfb
+XVFBARGS=":99 -screen 0 1024x768x24 -ac +extension GLX +render -noreset"
+PIDFILE=/var/run/xvfb.pid
+case "$1" in
+  start)
+    echo -n "Starting virtual X frame buffer: Xvfb"
+    start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $XVFB -- $XVFBARGS
+    echo "."
+    ;;
+  stop)
+    echo -n "Stopping virtual X frame buffer: Xvfb"
+    start-stop-daemon --stop --quiet --pidfile $PIDFILE
+    echo "."
+    ;;
+  restart)
+    $0 stop
+    $0 start
+    ;;
+  *)
+    echo "Usage: /etc/init.d/xvfb {start|stop|restart}"
+    exit 1
+esac
+ 
+exit 0
+
+---------------------------------------------------------------------------------------------------------------
+
+$ chmod +x /etc/init.d/xvfb
+$ update-rc.d xvfb defaults
+$ sudo /etc/init.d/xvfb start
+
+
+Configure lighttpd server (/etc/lighttpd/lighttpd.conf)
+========================================================
+
+server.modules = (
+    "mod_access",
+    "mod_alias",
+    "mod_compress",
+    "mod_redirect",
+    "mod_fastcgi",
+    "mod_rewrite",
+)
+
+server.document-root        = "/var/www"
+server.upload-dirs          = ( "/var/cache/lighttpd/uploads" )
+server.errorlog             = "/var/log/lighttpd/error.log"
+server.pid-file             = "/var/run/lighttpd.pid"
+server.username             = "www-data"
+server.groupname            = "www-data"
+server.port                 = 80
+
+
+index-file.names            = ( "index.php", "index.html", "index.lighttpd.html" )
+url.access-deny             = ( "~", ".inc" )
+static-file.exclude-extensions = ( ".php", ".pl", ".fcgi" )
+
+compress.cache-dir          = "/var/cache/lighttpd/compress/"
+compress.filetype           = ( "application/javascript", "text/css", "text/html", "text/plain" )
+
+# default listening port for IPv6 falls back to the IPv4 port
+## Use ipv6 if available
+#include_shell "/usr/share/lighttpd/use-ipv6.pl " + server.port
+include_shell "/usr/share/lighttpd/create-mime.assign.pl"
+include_shell "/usr/share/lighttpd/include-conf-enabled.pl"
+
+
+# QGIS Mapserver configuration
+
+fastcgi.server = (
+    "/cgi-bin/qgis_mapserv.fcgi" => ((
+        "socket" => "/tmp/fastcgi-qgis-server.socket",
+        "bin-path" => "/usr/lib/cgi-bin/qgis_mapserv.fcgi",
+        "bin-environment" => (
+            "DISPLAY" => ":99"
+        ),
+        "max-procs" => 1,
+        "check-local" => "disable"
+    ))
+)
+
+url.rewrite-once = (
+    "^(.*)MAP=(.*)$" => "$1MAP=<QGIS-DATA>/publish/$2",
+)
+
+----------------------------------------------------------------------------------------------------------
+
+$ sudo service lighttpd restart
+
+
+
+Configure gislab-web runserver
+==============================
+
+create file /etc/gislab_version
+----------------------------------------
+GISLAB_VERSION="dev"
+----------------------------------------
+
+GISLAB_VERSION
+
+$ workon webgis
+$ pip install django-sslserver
+$ pip install django-cors-headers
+
+$ cd <gis-lab>/system/roles/client-web/files/static/gislab-web
+$ django-admin.py startproject --template=webgis/conf/project_template/ <project name> [<project directory>]
+
+configure <project directory>/<project name>/settings.py - set following values:
+------------------------------------------------------------------------------------
+
+DEBUG = True
+TEMPLATE_DEBUG = True
+
+### DATABASE ###
+DATABASES = {
+   'default': {
+       'ENGINE': 'django.db.backends.sqlite3',
+       'NAME': os.path.join(BASE_DIR, 'webgis.sqlite3'),
+   }
+}
+
+### GIS.lab Web ###
+GISLAB_WEB_PROJECT_ROOT = '<QGIS-DATA>/publish/'
+GISLAB_WEB_MAPSERVER_URL = 'http://localhost/cgi-bin/qgis_mapserv.fcgi'
+
+
+INSTALLED_APPS = (
+    'sslserver',
+    'corsheaders',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.staticfiles',
+    'webgis.viewer',
+    'webgis.storage',
+    'webgis.mapcache',
+    'webgis.mobile',
+)
+
+SECRET_KEY='<some unique random string>'
+
+------------------------------------------------------------------------------------
+
+$ export PYTHONPATH=<gis-lab>/system/roles/client-web/files/static/gislab-web/
+
+$ cd <project directory>
+$ python manage.py runsslserver
