@@ -1,0 +1,273 @@
+<ons-page ng-controller="LayersController" ng-init="headers=[]" class="layers-panel flex-container-vertical">
+	<div class="panel-header" ng-if="$storage.showHeader">
+		<span>{{ headers[app.panel.carousel._lastActiveIndex] }}</span>
+	</div>
+	<ons-carousel var="app.panel.carousel" class="vertical-flexible" swipeable auto-scroll>
+		</ons-carousel-cover>
+		<ons-carousel-item ng-if="::topics" ng-init="headers.splice(0,0,'Topics')">
+			<ons-scroller style="height: 100%;">
+				<ons-list class="gl-tree" ng-controller="AccordionController2">
+					<div ng-repeat="topic in ::topics" gl-accordion ng-class="{expanded: $accordion.expanded}">
+						<ons-list-item class="list__item--checkbox list__item--accordion leaf" modifier="tappable">
+							<ons-row>
+								<ons-col width="36px">
+									<label class="radio-button">
+										<input type="radio" name="topics-radio" ng-model="selectedTopic.index" value="{{ ::$index }}" ng-change="loadTopic(selectedTopic.index)"/>
+										<svg class="checkbox-icon">
+											<use class="unchecked" xlink:href="#icon-checkbox-border"></use>
+											<use class="checked" xlink:href="#icon-radio-button-checked"></use>
+										</svg>
+									</label>
+								</ons-col>
+								<ons-col class="left-center">
+									<div class="title list__item--two-lines-max">
+										<span>{{ ::topic.title }}</span>
+									</div>
+								</ons-col>
+								<div class="list-button-right expand" ng-click="topicDetail(topic) || toggleAccordion($accordion)">
+									<svg class="expand-icon">
+										<use class="expanded" xlink:href="#icon-arrow-up"></use>
+										<use class="collapsed" xlink:href="#icon-arrow-down"></use>
+									</svg>
+								</div>
+							<ons-row>
+						</ons-list-item>
+						<ons-list-item gl-accordion-content class="list__item--accordion-content list__item--info-content" xng-if="topic.detail">
+							<div>
+								<label>Abstract:</label>
+								<span>{{ ::topic.detail.abstract }}</span><br />
+								<label>Visible layers:</label>
+								<div class="topic-visible-layers">
+<!--								<span>{{ ::topic.visible_overlays.join(', ') }}</span>-->
+									<span ng-bind-html="::topic.detail.visibleLayers"></span>
+								</div>
+								<div style="height: 8px;"></div>
+							</div>
+						</ons-list-item>
+					</div>
+				</ons-list>
+			</ons-scroller>
+		</ons-carousel-item>
+
+		<ons-carousel-item ng-if="::baseLayers" ng-init="headers.splice(1,0,'Base Layers')">
+			<ons-scroller style="height: 100%;">
+				<ons-list class="baselayer-container gl-tree"
+					gl-tree-view="baseLayers"
+					gl-tree-id-attribute="name"
+					gl-tree-label-attribute="title"
+					gl-tree-children-attribute="layers"
+					gl-tree-selected-value="getVisibleBaseLayer()"
+					gl-tree-view-change-handler="setBaseLayer(value)">
+
+					<div gl-tree-group-template>
+						<div gl-independent-accordion="{expanded: true}">
+							<ons-list-item class="group" modifier="tappable" depth="{{ ::$node.treeDepth }}"
+								ng-click="toggleAccordion($accordion)" ng-class="{expanded: $accordion.expanded}">
+								<ons-row>
+									<ons-col class="indent" width="24px">
+										<svg class="toggle-button-icon" ng-class="{expanded: $accordion.expanded}">
+											<use class="collapsed" xlink:href="#icon-square-plus"></use>
+											<use class="expanded" xlink:href="#icon-square-minus"></use>
+										</svg>
+										<label style="display:inline-block;"></label>
+									</ons-col>
+									<ons-col class="left-center">
+										<div class="title list__item--two-lines-max">
+											<span>{{ ::node.title }}</span>
+										</div>
+									</ons-col>
+								</ons-row>
+							</ons-list-item>
+							<ons-list-item gl-accordion-content class="height-animation group-content list__item--accordion-content">
+								<div ng-repeat="node in node.layers" gl-tree-node="node"></div>
+							</ons-list-item>
+						</div>
+					</div>
+
+					<div gl-tree-leaf-template>
+						<div ng-non-bindable gl-accordion ng-class="{expanded: $accordion.expanded}">
+							<ons-list-item modifier="tappable" class="list__item--checkbox list__item--accordion leaf" depth="{{ ::$node.treeDepth }}">
+								<ons-row>
+									<ons-col class="indent" width="36px">
+										<label class="radio-button">
+											<input type="radio" name="baselayer-radio"
+												ng-value="::node.name"
+												ng-model="$node.tree.selectedValue"
+												ng-change="nodeSelected($node.tree.selectedValue)"/>
+											<svg class="checkbox-icon">
+												<use class="unchecked" xlink:href="#icon-checkbox-border"></use>
+												<use class="checked" xlink:href="#icon-radio-button-checked"></use>
+											</svg>
+										</label>
+									</ons-col>
+									<ons-col class="left-center">
+										<div class="title list__item--two-lines-max">
+											<span>{{ ::node.title }}</span>
+										</div>
+									</ons-col>
+									<div class="list-button-right expand" ng-click="toggleAccordion($accordion)">
+										<svg class="expand-icon">
+											<use class="expanded" xlink:href="#icon-arrow-up"></use>
+											<use class="collapsed" xlink:href="#icon-arrow-down"></use>
+										</svg>
+									</div>
+								</ons-row>
+							</ons-list-item>
+							<ons-list-item gl-accordion-content class="list__item--accordion-content list__item--info-content">
+								<label>Abstract:</label><span> {{ ::node.metadata.abstract }}</span><br />
+								<label>Keywords list:</label><span> {{ ::node.metadata.keyword_list }}</span><br />
+								<label>Maximal scale:</label><span> 1: {{ ::node.visibility_scale_min | number : 0 }}</span><br />
+								<label>Minimal scale:</label><span> 1: {{ ::node.visibility_scale_max | number : 0 }}</span><br />
+								<div style="height: 8px;"></div>
+							</ons-list-item>
+						</div>
+					</div>
+					<div ng-controller="AccordionController2" xng-init="$node.data.selected='OSM'" xng-init="$node.data.selected=getVisibleBaseLayer()">
+						<div ng-repeat="node in rootNodes" gl-tree-node="node"></div>
+					</div>
+				</ons-list>
+			</ons-scroller>
+		</ons-carousel-item>
+
+		<ons-carousel-item ng-if="::layers" ng-init="headers.splice(2,0,'Layers')">
+			<ons-scroller style="height: 100%;">
+				<ons-list class="layers-container gl-tree"
+					gl-var="app.panel.layersTreeView"
+					gl-check-tree-view="layers"
+					gl-tree-id-attribute="name"
+					gl-tree-label-attribute="title"
+					gl-tree-children-attribute="layers"
+					gl-tree-selected-attribute="visible"
+					gl-tree-view-change-handler="layersVisibilityChanged(node)">
+
+						<div gl-tree-group-template>
+							<div ng-non-bindable gl-independent-accordion="{expanded: true}">
+								<ons-list-item class="group list__item--checkbox" modifier="tappable"
+									depth="{{ ::$node.treeDepth }}" gl-click="toggleAccordion($accordion)">
+									<ons-row>
+										<ons-col class="indent" width="52px">
+											<svg class="toggle-button-icon" ng-class="{expanded: $accordion.expanded}">
+	<!--											<use class="collapsed" xlink:href="#icon-circle-plus"></use>-->
+	<!--											<use class="expanded" xlink:href="#icon-circle-minus"></use>-->
+												<use class="collapsed" xlink:href="#icon-square-plus"></use>
+												<use class="expanded" xlink:href="#icon-square-minus"></use>
+											</svg>
+											<label class="checkbox" gl-click="$event.stopPropagation();">
+												<input type="checkbox"
+													ng-model="$node.isChecked"
+													ng-disabled="!$node.parent.isEnabled"
+													ng-change="nodeSelected($node)"/>
+												<svg class="checkbox-icon">
+													<use class="unchecked" xlink:href="#icon-checkbox-border"></use>
+													<use class="checked" xlink:href="#icon-checkbox-checked"></use>
+													<use class="indeterminate" xlink:href="#icon-checkbox-indeterminate"></use>
+												</svg>
+											</label>
+										</ons-col>
+										<ons-col class="left-center">
+											<div class="title list__item--two-lines-max">
+												<span>{{ ::node.title }}</span>
+											</div>
+										</ons-col>
+									</ons-row>
+								</ons-list-item>
+								<ons-list-item gl-accordion-content class="height-animation group-content list__item--accordion-content">
+									<div ng-repeat="node in node.layers" gl-check-tree-node="node"></div>
+								</ons-list-item>
+							</div>
+						</div>
+
+						<div gl-tree-leaf-template>
+							<div ng-non-bindable gl-accordion ng-class="{expanded: $accordion.expanded}">
+								<ons-list-item modifier="tappable" class="list__item--checkbox list__item--accordion leaf" depth="{{ ::$node.treeDepth }}">
+									<ons-row>
+										<ons-col class="indent" width="{{ ::$node.treeDepth==1? '35px' : '39px' }}">
+											<label class="checkbox">
+												<input type="checkbox"
+													ng-model="$node.isChecked"
+													ng-disabled="!$node.parent.isEnabled"
+													ng-change="nodeSelected($node)"/>
+												<svg class="checkbox-icon">
+													<use class="unchecked" xlink:href="#icon-checkbox-border"></use>
+													<use class="checked" xlink:href="#icon-checkbox-checked"></use>
+												</svg>
+											</label>
+										</ons-col>
+										<ons-col class="left-center">
+											<div class="title list__item--two-lines-max2" gl-multiline-ellipsis="2">
+												<span>{{ ::node.title }}</span>
+											</div>
+										</ons-col>
+										<div class="list-button-right expand" ng-click="toggleAccordion($accordion)">
+											<svg class="expand-icon">
+												<use class="expanded" xlink:href="#icon-arrow-up"></use>
+												<use class="collapsed" xlink:href="#icon-arrow-down"></use>
+											</svg>
+										</div>
+									</ons-row>
+								</ons-list-item>
+								<ons-list-item gl-accordion-content class="list__item--accordion-content list__item--info-content">
+									<label>Geometry:</label>
+									<svg class="layer-metadata-icon">
+										<use xlink:href="{{::'#icon-'+node.geom_type | lowercase}}"></use>
+									</svg><br />
+									<label>Identification:</label>
+	<!--									<span> {{ ::node.queryable? 'Yes' : 'No' }}</span>-->
+									<svg class="layer-metadata-icon">
+										<use xlink:href="{{:: node.queryable? '#icon-check' : '#icon-minus'}}"></use>
+									</svg><br />
+									<label>Abstract:</label><span> {{ ::node.metadata.abstract }}</span><br />
+									<label>Keywords list:</label><span> {{ ::node.metadata.keyword_list }}</span><br />
+									<label>Maximal scale:</label><span> 1: {{ ::node.visibility_scale_min | number : 0 }}</span><br />
+									<label>Minimal scale:</label><span> 1: {{ ::node.visibility_scale_max | number : 0 }}</span><br />
+									<label>Labels:</label>
+									<svg class="layer-metadata-icon">
+										<use xlink:href="{{:: node.labels? '#icon-check' : '#icon-minus'}}"></use>
+									</svg>
+									<div style="height: 8px;"></div>
+								</ons-list-item>
+							</div>
+						</div>
+
+						<div ng-controller="AccordionController2">
+							<div ng-repeat="node in rootNodes" gl-check-tree-node="node"></div>
+						</div>
+				</ons-list>
+			</ons-scroller>
+			<div class="empty-tab" ng-if="::!layers">
+				<span>Project doesn't have any overlay layers.</span>
+			</div>
+		</ons-carousel-item>
+	</ons-carousel>
+	<div ng-if="headers.length > 1" class="vertical-fit">
+		<gl-carousel-tab-slider gl-tab-model="ui.tools_layers_tab" gl-carousel="app.panel.carousel"></gl-carousel-tab-slider>
+		<div class="tab-bar tab-bar--bottom">
+			<label class="tab-bar__item border-right" ng-if="::topics">
+				<input type="radio" name="layers-tab-radio" value="0" ng-model="ui.tools_layers_tab">
+				<button class="tab-bar__button">
+					<svg class="icon icon-topics">
+						<use xlink:href="#icon-topics"></use>
+					</svg>
+				</button>
+			</label>
+
+			<label class="tab-bar__item">
+				<input type="radio" name="layers-tab-radio" value="{{::topics? '1' : '0'}}" ng-model="ui.tools_layers_tab">
+				<button class="tab-bar__button">
+					<svg class="icon icon-base-layer">
+						<use xlink:href="#icon-base-layer"></use>
+					</svg>
+				</button>
+			</label>
+
+			<label class="tab-bar__item border-left" ng-if="::layers">
+				<input type="radio" name="layers-tab-radio" value="{{::topics? '2' : '1'}}" ng-model="ui.tools_layers_tab">
+				<button class="tab-bar__button">
+					<svg class="icon icon-overlays">
+						<use xlink:href="#icon-overlays"></use>
+					</svg>
+				</button>
+			</label>
+		</div>
+	</div>
+</ons-page>

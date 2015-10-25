@@ -1,0 +1,108 @@
+<ons-page class="settings server-settings flex-container-vertical" ng-controller="ServerSettingsController">
+	<ons-toolbar class="settings-navigator-toolbar" fixed-style>
+		<div class="left">
+			<ons-toolbar-button class="backbutton" ng-click="app.navigator.popPage();">
+				<svg class="toolbar-button-icon">
+					<use xlink:href="#icon-arrow-left"></use>
+				</svg>
+			</ons-toolbar-button>
+		</div>
+		<div class="center">Server</div>
+	</ons-toolbar>
+	<ons-scroller style="width: 100%; min-height: 70px;" class="vertical-flexible">
+		<ons-list>
+			<ons-list-header>
+				<svg class="list-header-icon">
+					<use xlink:href="#icon-earth"></use>
+				</svg>
+				Server URL
+			</ons-list-header>
+			<ons-list-item class="list__item--text-input textarea-input">
+				<div style="width: 100%;">
+					<textarea gl-focus-auto-scroll gl-scroll-offset="-30"
+						autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+						class="text-input text-input--transparent" ng-model="$storage.serverUrl" placeholder="web.gis.lab"
+						onkeydown="if (event.keyCode == 13) document.getElementById('settings-username-field').focus()"></textarea>
+					<span class="multiline-wrapper" ng-bind="$storage.serverUrl"></span>
+				</div>
+			</ons-list-item>
+			<ons-list-header>
+				<svg class="list-header-icon">
+					<use xlink:href="#icon-user"></use>
+				</svg>
+				Username
+			</ons-list-header>
+			<ons-list-item class="list__item--text-input">
+				<input id="settings-username-field" gl-focus-auto-scroll gl-scroll-offset="-30"
+					autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text"
+					class="text-input text-input--transparent" placeholder="username" ng-model="$storage.username"
+					onkeydown="if (event.keyCode == 13) document.getElementById('settings-password-field').focus()">
+				</input>
+			</ons-list-item>
+			<ons-list-header>
+				<svg class="list-header-icon">
+					<use xlink:href="#icon-lock"></use>
+				</svg>
+				Password
+			</ons-list-header>
+			<ons-list-item class="list__item--text-input">
+				<input id="settings-password-field" gl-focus-auto-scroll gl-scroll-offset="-30"
+					type="password" class="text-input text-input--transparent" placeholder="password" ng-model="$storage.password"
+					onkeydown="if (event.keyCode == 13) document.getElementById('settings-password-field').blur()">
+				</input>
+			</ons-list-item>
+		</ons-list>
+	</ons-scroller>
+	<div class="toolbar bottom-toolbar vertical-fit">
+		<ons-row>
+			<ons-col>
+				<ons-toolbar-button class="toolbar-button--icon-text" ng-click="saveServerProfile($storage.serverUrl, $storage.username, $storage.password)">
+<!--					<svg class="toolbar-text-button-icon">-->
+<!--						<use xlink:href="#icon-circle-plus-outline"></use>-->
+<!--					</svg>-->
+					Save profile
+				</ons-toolbar-button>
+			</ons-col>
+			<ons-col width="1px" class="vertical-separator"></ons-col>
+			<ons-col>
+				<ons-toolbar-button class="toolbar-button--icon-text" ng-click="app.navigator.pushPage('server_profiles.html')">
+<!--					<svg class="toolbar-text-button-icon">-->
+<!--						<use xlink:href="#icon-users"></use>-->
+<!--					</svg>-->
+					Select profile
+				</ons-toolbar-button>
+			</ons-col>
+		</ons-row>
+	</div>
+
+	<ons-template id="server_profiles.html">
+		<ons-page class="settings server-settings" ng-controller="ServerSettingsController">
+			<ons-toolbar class="settings-navigator-toolbar" fixed-style>
+				<div class="left">
+					<ons-toolbar-button class="backbutton" ng-click="app.navigator.popPage();">
+						<svg class="toolbar-button-icon">
+							<use xlink:href="#icon-arrow-left"></use>
+						</svg>
+					</ons-toolbar-button>
+				</div>
+				<div class="center">Server profiles</div>
+			</ons-toolbar>
+			<ons-list class="gl-tree">
+				<ons-list-item ng-repeat="profile in $storage.serverProfiles" class="list__item--right-btn" modifier="tappable">
+					<ons-row>
+						<ons-col class="left-center" ng-click="loadProfile(profile);app.navigator.popPage()">
+							<div class="title"><span>{{ profile.name }}</span></div>
+						</ons-col>
+						<ons-col width="30px">
+							<div class="list-button-right expand" ng-click="removeProfile(profile)">
+								<svg class="list-item-icon center-vertical">
+									<use xlink:href="#icon-circle-x-outline"></use>
+								</svg>
+							</div>
+						</ons-col>
+					</ons-row>
+				</ons-list-item>
+			</ons-list>
+		</ons-page>
+	</ons-template>
+</ons-page>
