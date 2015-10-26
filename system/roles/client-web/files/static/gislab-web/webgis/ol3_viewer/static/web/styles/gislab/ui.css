@@ -61,7 +61,7 @@ md-list-item .md-list-item-inner > md-checkbox:first-child {
 	padding: 0;
 }
 
-md-list-item .md-list-item-inner > md-icon:first-child {
+.gl-tree md-list-item .md-list-item-inner > md-icon:first-child {
     margin-right: 0px;
 }
 
@@ -106,7 +106,7 @@ md-icon.md-secondary,
 	font-weight: bold;
 }
 
-md-list-item, md-list-item .md-list-item-inner {
+.gl-tree md-list-item, .gl-tree md-list-item .md-list-item-inner {
 	min-height: 26px;
 	max-height: 26px;
 }
@@ -170,10 +170,54 @@ img.legend-item {
 
 .ui-splitbar {
 	background-color: rgb(57, 73, 171);
+	opacity: 0.5;
 	box-sizing: border-box;
 	max-height: 6px;
 	border: 2px solid white;
 }
+
+.ui-splitbar-icon-up, .ui-splitbar-icon-down {
+	position: fixed;
+	width: 7px;
+	height: 7px;
+	color: rgb(57, 73, 171);
+	background-color: white;
+	border-radius: 3px;
+}
+
+.ui-splitbar-container-h {
+	position: absolute;
+	z-index: 2000;
+	bottom: -7px;
+	left: calc(50% - 10px);
+	height: 7px;
+	pointer-events: none;
+}
+.ui-splitbar-container-h .ui-splitbar-icon-up, .ui-splitbar-container-h .ui-splitbar-icon-down {
+	padding-left: 3px;
+	padding-right: 2px;
+}
+.ui-splitbar-container-h .ui-splitbar-icon-down {
+	margin-left: 9px;
+}
+
+.ui-splitbar-container-v {
+	position: absolute;
+	z-index: 2000;
+	bottom: -11px;
+	left: calc(50% - 3px);
+	height: 14px;
+	pointer-events: none;
+}
+
+.ui-splitbar-container-v .ui-splitbar-icon-up, .ui-splitbar-container-v .ui-splitbar-icon-down {
+	padding-left: 5px;
+	padding-right: 4px;
+}
+.ui-splitbar-container-v .ui-splitbar-icon-down {
+	margin-top: 6px;
+}
+
 .md-subheader .md-subheader-inner {
     display: block;
     padding: 2px 0 12px 5px;
@@ -197,4 +241,23 @@ md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item
 .md-subheader.md-default-theme, .md-subheader,
 md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item.md-active:not([disabled]) {
 	color: rgb(57, 73, 171);
+}
+.full-height {
+	height: 100%;
+}
+
+.properties-list {
+	height: 100%;
+	width: 100%;
+	font-size: 13.5px;
+}
+.properties-list label {
+	font-weight: bold;
+	display: inline-block;
+}
+.properties-list md-list-item {
+	display: block;
+	min-height: 30px;
+	padding-left: 5px;
+	padding-right: 5px;
 }

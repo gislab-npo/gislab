@@ -75,7 +75,6 @@
 			.constant('projectPath', 'marcel/central-europe')
 			.constant('resourcesRoot', './')
 			.config(function(gislabClientProvider) {
-				console.log('CONFIG');
 				gislabClientProvider.configure({
 					server: 'https://localhost:8000'
 				});
@@ -99,7 +98,20 @@
 			</div>
 		</md-toolbar>
 		<section layout="row" flex>
-			<div ng-include="'panel.html'" flex></div>
+			<md-sidenav md-component-id="left" class="md-sidenav-left" md-is-locked-open="$mdMedia('min-width: 333px')" layout="column" flex>
+				<div ui-layout="{disableToggle: true}" fill-layout ng-if="::project" layout-fill>
+					<div ui-layout-container size="50%" xclass="no-scrollbar">
+						<div class="full-height" ng-include="'layers_control.html'"></div>
+						<div class="ui-splitbar-container-v">
+							<md-icon class="ui-splitbar-icon-up" md-svg-icon="arrow-up"></md-icon>
+							<md-icon class="ui-splitbar-icon-down" md-svg-icon="arrow-down"></md-icon>
+						</div>
+					</div>
+					<div ui-layout-container size="50%">
+						<div class="full-height" ng-include="'project_info.html'"></div>
+					</div>
+				</div>
+			</md-sidenav>
 			<div id="map"></div>
 		</section>
 	</div>
