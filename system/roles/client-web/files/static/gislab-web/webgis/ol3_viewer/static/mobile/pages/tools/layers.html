@@ -56,10 +56,12 @@
 					gl-tree-id-attribute="name"
 					gl-tree-label-attribute="title"
 					gl-tree-children-attribute="layers"
+					gl-tree-group-tpl="base-layer-group-node.html"
+					gl-tree-leaf-tpl="base-layer-leaf-node.html"
 					gl-tree-selected-value="getVisibleBaseLayer()"
 					gl-tree-view-change-handler="setBaseLayer(value)">
 
-					<div gl-tree-group-template>
+					<script type="text/ng-template" id="base-layer-group-node.html">
 						<div gl-independent-accordion="{expanded: true}">
 							<ons-list-item class="group" modifier="tappable" depth="{{ ::$node.treeDepth }}"
 								ng-click="toggleAccordion($accordion)" ng-class="{expanded: $accordion.expanded}">
@@ -82,10 +84,10 @@
 								<div ng-repeat="node in node.layers" gl-tree-node="node"></div>
 							</ons-list-item>
 						</div>
-					</div>
+					</script>
 
-					<div gl-tree-leaf-template>
-						<div ng-non-bindable gl-accordion ng-class="{expanded: $accordion.expanded}">
+					<script type="text/ng-template" id="base-layer-leaf-node.html">
+						<div gl-accordion ng-class="{expanded: $accordion.expanded}">
 							<ons-list-item modifier="tappable" class="list__item--checkbox list__item--accordion leaf" depth="{{ ::$node.treeDepth }}">
 								<ons-row>
 									<ons-col class="indent" width="36px">
@@ -121,7 +123,7 @@
 								<div style="height: 8px;"></div>
 							</ons-list-item>
 						</div>
-					</div>
+					</script>
 					<div ng-controller="AccordionController2" xng-init="$node.data.selected='OSM'" xng-init="$node.data.selected=getVisibleBaseLayer()">
 						<div ng-repeat="node in rootNodes" gl-tree-node="node"></div>
 					</div>
@@ -138,100 +140,102 @@
 					gl-tree-label-attribute="title"
 					gl-tree-children-attribute="layers"
 					gl-tree-selected-attribute="visible"
+					gl-tree-group-tpl="layer-group-node.html"
+					gl-tree-leaf-tpl="layer-leaf-node.html"
 					gl-tree-view-change-handler="layersVisibilityChanged(node)">
 
-						<div gl-tree-group-template>
-							<div ng-non-bindable gl-independent-accordion="{expanded: true}">
-								<ons-list-item class="group list__item--checkbox" modifier="tappable"
-									depth="{{ ::$node.treeDepth }}" gl-click="toggleAccordion($accordion)">
-									<ons-row>
-										<ons-col class="indent" width="52px">
-											<svg class="toggle-button-icon" ng-class="{expanded: $accordion.expanded}">
-	<!--											<use class="collapsed" xlink:href="#icon-circle-plus"></use>-->
-	<!--											<use class="expanded" xlink:href="#icon-circle-minus"></use>-->
-												<use class="collapsed" xlink:href="#icon-square-plus"></use>
-												<use class="expanded" xlink:href="#icon-square-minus"></use>
+					<script type="text/ng-template" id="layer-group-node.html">
+						<div gl-independent-accordion="{expanded: true}">
+							<ons-list-item class="group list__item--checkbox" modifier="tappable"
+								depth="{{ ::$node.treeDepth }}" gl-click="toggleAccordion($accordion)">
+								<ons-row>
+									<ons-col class="indent" width="52px">
+										<svg class="toggle-button-icon" ng-class="{expanded: $accordion.expanded}">
+<!--											<use class="collapsed" xlink:href="#icon-circle-plus"></use>-->
+<!--											<use class="expanded" xlink:href="#icon-circle-minus"></use>-->
+											<use class="collapsed" xlink:href="#icon-square-plus"></use>
+											<use class="expanded" xlink:href="#icon-square-minus"></use>
+										</svg>
+										<label class="checkbox" gl-click="$event.stopPropagation();">
+											<input type="checkbox"
+												ng-model="$node.isChecked"
+												ng-disabled="!$node.parent.isEnabled"
+												ng-change="nodeSelected($node)"/>
+											<svg class="checkbox-icon">
+												<use class="unchecked" xlink:href="#icon-checkbox-border"></use>
+												<use class="checked" xlink:href="#icon-checkbox-checked"></use>
+												<use class="indeterminate" xlink:href="#icon-checkbox-indeterminate"></use>
 											</svg>
-											<label class="checkbox" gl-click="$event.stopPropagation();">
-												<input type="checkbox"
-													ng-model="$node.isChecked"
-													ng-disabled="!$node.parent.isEnabled"
-													ng-change="nodeSelected($node)"/>
-												<svg class="checkbox-icon">
-													<use class="unchecked" xlink:href="#icon-checkbox-border"></use>
-													<use class="checked" xlink:href="#icon-checkbox-checked"></use>
-													<use class="indeterminate" xlink:href="#icon-checkbox-indeterminate"></use>
-												</svg>
-											</label>
-										</ons-col>
-										<ons-col class="left-center">
-											<div class="title list__item--two-lines-max">
-												<span>{{ ::node.title }}</span>
-											</div>
-										</ons-col>
-									</ons-row>
-								</ons-list-item>
-								<ons-list-item gl-accordion-content class="height-animation group-content list__item--accordion-content">
-									<div ng-repeat="node in node.layers" gl-check-tree-node="node"></div>
-								</ons-list-item>
-							</div>
-						</div>
-
-						<div gl-tree-leaf-template>
-							<div ng-non-bindable gl-accordion ng-class="{expanded: $accordion.expanded}">
-								<ons-list-item modifier="tappable" class="list__item--checkbox list__item--accordion leaf" depth="{{ ::$node.treeDepth }}">
-									<ons-row>
-										<ons-col class="indent" width="{{ ::$node.treeDepth==1? '35px' : '39px' }}">
-											<label class="checkbox">
-												<input type="checkbox"
-													ng-model="$node.isChecked"
-													ng-disabled="!$node.parent.isEnabled"
-													ng-change="nodeSelected($node)"/>
-												<svg class="checkbox-icon">
-													<use class="unchecked" xlink:href="#icon-checkbox-border"></use>
-													<use class="checked" xlink:href="#icon-checkbox-checked"></use>
-												</svg>
-											</label>
-										</ons-col>
-										<ons-col class="left-center">
-											<div class="title list__item--two-lines-max2" gl-multiline-ellipsis="2">
-												<span>{{ ::node.title }}</span>
-											</div>
-										</ons-col>
-										<div class="list-button-right expand" ng-click="toggleAccordion($accordion)">
-											<svg class="expand-icon">
-												<use class="expanded" xlink:href="#icon-arrow-up"></use>
-												<use class="collapsed" xlink:href="#icon-arrow-down"></use>
-											</svg>
+										</label>
+									</ons-col>
+									<ons-col class="left-center">
+										<div class="title list__item--two-lines-max">
+											<span>{{ ::node.title }}</span>
 										</div>
-									</ons-row>
-								</ons-list-item>
-								<ons-list-item gl-accordion-content class="list__item--accordion-content list__item--info-content">
-									<label>Geometry:</label>
-									<svg class="layer-metadata-icon">
-										<use xlink:href="{{::'#icon-'+node.geom_type | lowercase}}"></use>
-									</svg><br />
-									<label>Identification:</label>
-	<!--									<span> {{ ::node.queryable? 'Yes' : 'No' }}</span>-->
-									<svg class="layer-metadata-icon">
-										<use xlink:href="{{:: node.queryable? '#icon-check' : '#icon-minus'}}"></use>
-									</svg><br />
-									<label>Abstract:</label><span> {{ ::node.metadata.abstract }}</span><br />
-									<label>Keywords list:</label><span> {{ ::node.metadata.keyword_list }}</span><br />
-									<label>Maximal scale:</label><span> 1: {{ ::node.visibility_scale_min | number : 0 }}</span><br />
-									<label>Minimal scale:</label><span> 1: {{ ::node.visibility_scale_max | number : 0 }}</span><br />
-									<label>Labels:</label>
-									<svg class="layer-metadata-icon">
-										<use xlink:href="{{:: node.labels? '#icon-check' : '#icon-minus'}}"></use>
-									</svg>
-									<div style="height: 8px;"></div>
-								</ons-list-item>
-							</div>
+									</ons-col>
+								</ons-row>
+							</ons-list-item>
+							<ons-list-item gl-accordion-content class="height-animation group-content list__item--accordion-content">
+								<div ng-repeat="node in node.layers" gl-check-tree-node="node"></div>
+							</ons-list-item>
 						</div>
+					</script>
 
-						<div ng-controller="AccordionController2">
-							<div ng-repeat="node in rootNodes" gl-check-tree-node="node"></div>
+					<script type="text/ng-template" id="layer-leaf-node.html">
+						<div gl-accordion ng-class="{expanded: $accordion.expanded}">
+							<ons-list-item modifier="tappable" class="list__item--checkbox list__item--accordion leaf" depth="{{ ::$node.treeDepth }}">
+								<ons-row>
+									<ons-col class="indent" width="{{ ::$node.treeDepth==1? '35px' : '39px' }}">
+										<label class="checkbox">
+											<input type="checkbox"
+												ng-model="$node.isChecked"
+												ng-disabled="!$node.parent.isEnabled"
+												ng-change="nodeSelected($node)"/>
+											<svg class="checkbox-icon">
+												<use class="unchecked" xlink:href="#icon-checkbox-border"></use>
+												<use class="checked" xlink:href="#icon-checkbox-checked"></use>
+											</svg>
+										</label>
+									</ons-col>
+									<ons-col class="left-center">
+										<div class="title list__item--two-lines-max2" gl-multiline-ellipsis="2">
+											<span>{{ ::node.title }}</span>
+										</div>
+									</ons-col>
+									<div class="list-button-right expand" ng-click="toggleAccordion($accordion)">
+										<svg class="expand-icon">
+											<use class="expanded" xlink:href="#icon-arrow-up"></use>
+											<use class="collapsed" xlink:href="#icon-arrow-down"></use>
+										</svg>
+									</div>
+								</ons-row>
+							</ons-list-item>
+							<ons-list-item gl-accordion-content class="list__item--accordion-content list__item--info-content">
+								<label>Geometry:</label>
+								<svg class="layer-metadata-icon">
+									<use xlink:href="{{::'#icon-'+node.geom_type | lowercase}}"></use>
+								</svg><br />
+								<label>Identification:</label>
+<!--									<span> {{ ::node.queryable? 'Yes' : 'No' }}</span>-->
+								<svg class="layer-metadata-icon">
+									<use xlink:href="{{:: node.queryable? '#icon-check' : '#icon-minus'}}"></use>
+								</svg><br />
+								<label>Abstract:</label><span> {{ ::node.metadata.abstract }}</span><br />
+								<label>Keywords list:</label><span> {{ ::node.metadata.keyword_list }}</span><br />
+								<label>Maximal scale:</label><span> 1: {{ ::node.visibility_scale_min | number : 0 }}</span><br />
+								<label>Minimal scale:</label><span> 1: {{ ::node.visibility_scale_max | number : 0 }}</span><br />
+								<label>Labels:</label>
+								<svg class="layer-metadata-icon">
+									<use xlink:href="{{:: node.labels? '#icon-check' : '#icon-minus'}}"></use>
+								</svg>
+								<div style="height: 8px;"></div>
+							</ons-list-item>
 						</div>
+					</script>
+
+					<div ng-controller="AccordionController2">
+						<div ng-repeat="node in rootNodes" gl-check-tree-node="node"></div>
+					</div>
 				</ons-list>
 			</ons-scroller>
 			<div class="empty-tab" ng-if="::!layers">

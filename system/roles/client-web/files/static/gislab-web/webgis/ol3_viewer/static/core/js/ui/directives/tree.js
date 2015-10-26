@@ -6,9 +6,7 @@
 	.directive('glTreeView', glTreeView)
 	.directive('glTreeNode', glTreeNode)
 	.directive('glCheckTreeView', glCheckTreeView)
-	.directive('glCheckTreeNode', glCheckTreeNode)
-	.directive('glTreeGroupTemplate', glTreeGroupTemplate)
-	.directive('glTreeLeafTemplate', glTreeLeafTemplate);
+	.directive('glCheckTreeNode', glCheckTreeNode);
 
 	function glTreeView() {
 		return {
@@ -18,8 +16,10 @@
 				idAttribute: '@glTreeIdAttribute',
 				labelAttribute: '@glTreeLabelAttribute',
 				childrenAttribute: '@glTreeChildrenAttribute',
-				changeHandler: '&glTreeViewChangeHandler',
-				selectedValue: '@glTreeSelectedValue'
+				selectedValue: '@glTreeSelectedValue',
+				groupTemplateId: '@glTreeGroupTpl',
+				leafTemplateId: '@glTreeLeafTpl',
+				changeHandler: '&glTreeViewChangeHandler'
 			},
 			transclude: true,
 			link: function(scope, iElem, iAttrs, ctrl, transclude) {
@@ -52,9 +52,10 @@
 			restrict: 'A',
 			scope: true,
 			transclude: true,
-			controller: ['$scope', '$compile', '$element', function($scope, $compile, $element) {
+			controller: ['$scope', '$compile', '$element','$templateCache', function($scope, $compile, $element, $templateCache) {
 				$scope.buildHtml = function() {
-					var template = $scope.$node.isGroup? $scope.groupTemplate : $scope.leafTemplate;
+					var templateId = $scope.$node.isGroup? $scope.groupTemplateId : $scope.leafTemplateId;
+					var template = $templateCache.get(templateId);
 					var tElem = angular.element(template);
 					$element.append(tElem);
 					$compile(tElem)($scope);
@@ -131,6 +132,8 @@
 				idAttribute: '@glTreeIdAttribute',
 				selectAttribute: '@glTreeSelectedAttribute',
 				childrenAttribute: '@glTreeChildrenAttribute',
+				groupTemplateId: '@glTreeGroupTpl',
+				leafTemplateId: '@glTreeLeafTpl',
 				changeHandler: '&glTreeViewChangeHandler'
 			},
 			transclude: true,
@@ -172,9 +175,10 @@
 		return {
 			restrict: 'A',
 			scope: true,
-			controller: ['$scope', '$compile', '$element', function($scope, $compile, $element) {
+			controller: ['$scope', '$compile', '$element', '$templateCache', function($scope, $compile, $element, $templateCache) {
 				$scope.buildHtml = function() {
-					var template = $scope.$node.isGroup? $scope.groupTemplate : $scope.leafTemplate;
+					var templateId = $scope.$node.isGroup? $scope.groupTemplateId : $scope.leafTemplateId;
+					var template = $templateCache.get(templateId);
 					//$element.append($compile(angular.element(template))($scope));
 					var tElem = angular.element(template);
 					$element.append(tElem);
@@ -211,37 +215,5 @@
 				};
 			}
 		};
-	}
-
-	function glTreeGroupTemplate() {
-		return {
-			restrict: 'A',
-			compile: function(tElem, tAttrs) {
-				var template = tElem.html();
-				template = template.replace("ng-non-bindable", "x");
-				return {
-					pre: function(scope, iElem, iAttrs) {
-						scope.groupTemplate = template;
-						iElem.remove();
-					}
-				}
-			}
-		}
-	}
-
-	function glTreeLeafTemplate() {
-		return {
-			restrict: 'A',
-			compile: function(tElem, tAttrs) {
-				var template = tElem.html();
-				template = template.replace("ng-non-bindable", "x");
-				return {
-					pre: function(scope, iElem, iAttrs) {
-						scope.leafTemplate = template;
-						iElem.remove();
-					}
-				}
-			}
-		}
 	}
 })();
