@@ -10,9 +10,9 @@
 							<div ng-repeat="topic in topics" gl-accordion
 								depth="1" class="gl-tree-leaf" ng-class="{expanded: $accordion.expanded}">
 								<md-list-item class="md-with-secondary radio-button-item">
-									<md-radio-button md-no-ink ng-value="::$index"></md-radio-button>
+									<md-radio-button md-no-ink ng-value="::$index" aria-label="{{ ::topic.title }}"></md-radio-button>
 									<p>{{ ::topic.title }}</p>
-									<md-button class="md-secondary-container md-icon-button"
+									<md-button class="md-secondary-container md-icon-button" aria-label="Info"
 										ng-click="topicDetail(topic) || toggleAccordion($accordion)">
 										<md-icon class="md-secondary" style="color: #444;"
 											md-svg-icon="{{ $accordion.expanded? 'arrow-up' : 'arrow-down'}}">
@@ -53,7 +53,7 @@
 						<div class="gl-tree-group" depth="{{ ::$node.treeDepth }}" gl-independent-accordion="{expanded: true}">
 							<md-list-item>
 								<div class="indent"></div>
-								<md-button class="toggle-button" ng-click="toggleAccordion($accordion)">
+								<md-button class="toggle-button" ng-click="toggleAccordion($accordion)" aria-label="Toggle">
 									<md-icon md-svg-icon="{{ $accordion.expanded? 'square-minus': 'square-plus' }}" style="color: #444;"></md-icon>
 								</md-button>
 								<p>{{ ::node.title }}</p>
@@ -69,9 +69,9 @@
 							class="gl-tree-leaf" ng-class="{expanded: $accordion.expanded}">
 							<md-list-item class="md-with-secondary radio-button-item">
 								<div class="indent"></div>
-								<md-radio-button md-no-ink ng-value="::node.name"></md-radio-button>
+								<md-radio-button md-no-ink ng-value="::node.name" aria-label="{{ ::node.title }}"></md-radio-button>
 								<p>{{ ::node.title }}</p>
-								<md-button class="md-secondary-container md-icon-button" ng-click="toggleAccordion($accordion)">
+								<md-button class="md-secondary-container md-icon-button" aria-label="Info" ng-click="toggleAccordion($accordion)">
 									<md-icon class="md-secondary" style="color: #444;"
 										md-svg-icon="{{ $accordion.expanded? 'arrow-up' : 'arrow-down'}}">
 									</md-icon>
@@ -112,7 +112,7 @@
 						<div class="gl-tree-group" depth="{{ ::$node.treeDepth }}" gl-independent-accordion="{expanded: true}">
 							<md-list-item>
 								<div class="indent"></div>
-								<md-button class="toggle-button" ng-click="toggleAccordion($accordion)">
+								<md-button class="toggle-button" ng-click="toggleAccordion($accordion)" aria-label="Toggle">
 									<md-icon md-svg-icon="{{ $accordion.expanded? 'square-minus': 'square-plus' }}" style="color: #444;"></md-icon>
 								</md-button>
 								<md-checkbox md-no-ink class="md-primary"
@@ -139,7 +139,7 @@
 									ng-change="nodeSelected($node)">
 								</md-checkbox>
 								<p>{{ ::$node.data.title }}</p>
-								<md-icon class="md-secondary" style="color: #444;"
+								<md-icon class="md-secondary" style="color: #444;" aria-label="Info"
 									md-svg-icon="{{ $accordion.expanded? 'arrow-up' : 'arrow-down'}}"
 									ng-click="toggleAccordion($accordion)"></md-icon>
 							</md-list-item>
