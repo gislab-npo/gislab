@@ -73,8 +73,9 @@ md-list-item .md-button.md-icon-button {
 	line-height: 26px;
 	margin: 0;
 }
-md-list-item.radio-button-item .md-button.md-icon-button {
-	line-height: 38px;
+md-list-item .md-icon-button md-icon {
+	width: 12px;
+	height: 12px;
 }
 
 md-list-item .toggle-button {
@@ -260,4 +261,18 @@ md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item
 	min-height: 30px;
 	padding-left: 5px;
 	padding-right: 5px;
+}
+
+.ol-control.ol-zoom {
+	right: 0.5em;
+	left: auto;
+}
+
+
+.accordion-icon {
+	transition: 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+}
+.expanded .accordion-icon {
+	transform: rotate(180deg);
+	transform-origin: 50% 50%;
 }
