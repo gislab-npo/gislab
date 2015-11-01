@@ -1,18 +1,17 @@
-# This file contains default values of GIS.lab configuration variables.
+# This file contains default values for GIS.lab configuration.
 
 # Do not modify this file directly, rather create a new configuration file in
 # 'system/host_vars' directory and place custom configuration there.
-# Then create Ansible inventory file, with the same 'unique-host-name' as the
-# name of the file in 'system/host_vars' directory containing custom
-# configuration.
+# Then create Ansible inventory file, with the same 'host-name' as the name of
+# the file in 'system/host_vars' directory containing custom configuration.
 
 # Ansible inventory file format:
 # <host-name> ansible_ssh_host=<url> ansible_ssh_user=<user-name>
 
-# If using Vagrant provisioner (with VirtualBox or VMWare), create
-# 'gislab_vagrant' configuration file in 'host_vars' directory and place custom
-# configuration there. It will be automatically loaded by Vagrant without need
-# to create the inventory file.
+# If using Vagrant provisioner, create 'gislab_vagrant' configuration file in
+# 'system/host_vars' directory and place custom configuration there. It will
+# be loaded automatically by Vagrant without need to create the Ansible
+# inventory file.
 
 
 # Example configuration
@@ -53,15 +52,15 @@
 # *************************************************************************** #
 ######################### ADMINISTRATOR DETAILS ###############################
 # *************************************************************************** #
-# GIS.lab administrator first name.
+# First name of GIS.lab administrator.
 # Example: Ivan
 GISLAB_ADMIN_FIRST_NAME: Administrator
 
-# GIS.lab administrator surname.
+# Surname/last name of GIS.lab administrator.
 # Example: Mincik
 GISLAB_ADMIN_SURNAME: GIS.lab
 
-# GIS.lab administrator email.
+# Email of GIS.lab administrator.
 # Example: ivan.mincik@gmail.com
 GISLAB_ADMIN_EMAIL: gislab@gis.lab
 
@@ -83,18 +82,18 @@ GISLAB_SERVER_CPUS: 1
 
 # Determines if Vagrant should try to integrate GIS.lab to the connected local
 # network via DHCP request. Allow integration only if GIS.lab machine is set in
-# bridge with active Ethernet network adapter on host machine.
-# To enable connection from other networks (Internet), manual default gateway
-# configuration is required, which means dropping default gateway via 'eth0'
-# and setting default gateway via 'eth1' device.
+# bridge with active Ethernet network adapter on the host machine.
+# To enable connection from other networks (Internet), it is required to update
+# default gateway configuration by hand. It means dropping default gateway via
+# 'eth0' and setting default gateway via 'eth1' device (see 'ip route' command).
 # Possible values are:
 # * no: do not try to integrate
 # * yes: try to integrate
 # Change requires running upgrade.
 GISLAB_SERVER_INTEGRATION: no
 
-# Determines if GIS.lab server should start with graphical console. This is
-# useful to gain more control with server boot process.
+# Determines if GIS.lab server should start with GUI console. This is useful to
+# gain more control with server boot process.
 # Possible values are:
 # * no: do not launch GUI console
 # * yes: launch GUI console
@@ -191,8 +190,8 @@ GISLAB_AWS_CLIENTS_COUNT: 1
 # Change requires running upgrade.
 GISLAB_SUITE: lab
 
-# First three octets of private IP range 192.168.0.0 - 192.168.255.255,
-# which will define network number used for GIS.lab.
+# GIS.lab network number - first three octets of private IP range
+# 192.168.0-255.0-255 which will define network number used for GIS.lab.
 # Example: 192.168.1
 # Change requires GIS.lab re-installation.
 GISLAB_NETWORK: 192.168.50
@@ -210,7 +209,7 @@ GISLAB_TIMEZONE: Europe/Bratislava
 # Change requires running upgrade.
 GISLAB_DNS_SERVERS:
 
-# Country code of localized Ubuntu repository used to choose closest mirror.
+# Local country code of Ubuntu repository used to choose closest mirror.
 # For Amazon AWS provider use value <region-name>.ec2
 # Example: sk             - Slovak Ubuntu mirror
 # Example: eu-west-1.ec2  - AWS mirror running in eu-west-1 region
@@ -245,11 +244,11 @@ GISLAB_SERVER_NETWORK_DEVICE: eth0
 
 # GIS.lab server is always trying to integrate itself to the connected local
 # network via DHCP request. If no DHCP response is received, fallback network
-# configuration is set.
+# configuration is automatically set.
 
 # Fallback IP address, which will be assigned to GIS.lab server, when no IP
 # address is received from local network. Double check, that this IP address
-# doesn't already exist in network to avoid IP conflict !
+# doesn't already exist in the network to avoid IP conflict !
 # Example: 192.168.5.5
 GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS: 192.168.5.5
 
@@ -260,7 +259,7 @@ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY: 192.168.5.1
 
 
 # Email account which will be used as a relay to send emails from GIS.lab.
-# SMTP server must support TLS encryption on port 587. If no account configured
+# SMTP server must support TLS encryption on port 587. If no account configured,
 # email messages from GIS.lab will be delivered locally to Linux user on server
 # (vagrant or ubuntu).
 # Change requires running upgrade.
@@ -286,7 +285,7 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 ############################## CLIENT #######################################
 # ************************************************************************* #
 
-# GIS.lab client architecture
+# GIS.lab client architecture.
 # Possible values are:
 # * i386:  use this if you are working in mixed environment containing older
 #          and new machines
@@ -326,7 +325,7 @@ GISLAB_CLIENT_VIRTUALBOX_SUPPORT: yes
 
 # Relative path to VBoxGuestAdditions.iso file which should be used for
 # installation of VirtualBox guest additions. If none provided, guest additions
-# will be installed from default Ubuntu repository which could does match
+# will be installed from default Ubuntu repository which could not match
 # VirtualBox version on client, although no problems are expected.
 # VBoxGuestAdditions.iso file can be copied from VirtualBox installation
 # directory (/usr/share/virtualbox/ on Linux).
@@ -352,7 +351,7 @@ GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY: 2000
 # * yes: enable debug mode
 GISLAB_DEBUG_INSTALL: no
 
-# Determines if debug mode will be enabled for important server services.
+# Determines if debug mode will be enabled for logging of server services.
 # Possible values are:
 # * no:  do not enable debug mode
 # * yes: enable debug mode
