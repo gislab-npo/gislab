@@ -52,7 +52,7 @@
 					this.mapClickListener = projectProvider.map.on('singleclick', function(evt) {
 						var source = projectProvider.map.getLayer('qgislayer').getSource();
 						var layers = this.identificationLayer? [this.identificationLayer] : source.getVisibleLayers();
-						var featureInfoUrl = source.getFeatureInfoUrl(projectProvider.map, evt.pixel, layers);
+						var featureInfoUrl = source.getGetFeatureInfoUrl(projectProvider.map, evt.pixel, layers);
 						var featureType = [];
 						layers.forEach(function(layer) {
 							featureType.push('qgs:'+layer.replace(' ', ''));
@@ -109,7 +109,7 @@
 					tool.deactivate();
 				}
 			}
-		}
+		};
 
 		$scope.openLeftMenu = function() {
 			$mdSidenav('left').toggle();

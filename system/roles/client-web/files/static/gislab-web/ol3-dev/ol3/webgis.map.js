@@ -130,7 +130,7 @@ ol.source.WebgisTileImage.prototype.getLegendUrl = function(layername, view) {
 /**
  * @api
  */
-ol.source.WebgisTileImage.prototype.getFeatureInfoUrl = function(map, coordinates, layers) {
+ol.source.WebgisTileImage.prototype.getGetFeatureInfoUrl = function(map, coordinates, layers) {
 	var size = map.getSize();
 	var layersString = (layers || this.visibleLayers).join(',');
 	params = {
@@ -240,8 +240,9 @@ ol.source.WebgisImageWMS.prototype.getLegendUrl = function(layername, view) {
 
 /**
  * @api
+ * @override
  */
-ol.source.WebgisImageWMS.prototype.getFeatureInfoUrl = function(map, coordinates, layers) {
+ol.source.WebgisImageWMS.prototype.getGetFeatureInfoUrl = function(map, coordinates, layers) {
 	var size = map.getSize();
 	var layersString = (layers || this.visibleLayers).join(',');
 	params = {

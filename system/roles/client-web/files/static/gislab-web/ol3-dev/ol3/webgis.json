@@ -45,12 +45,12 @@
     "ol.source.WebgisTileImage#setVisibleLayers",
     "ol.source.WebgisTileImage#getVisibleLayers",
     "ol.source.WebgisTileImage#getLegendUrl",
-    "ol.source.WebgisTileImage#getFeatureInfoUrl",
+    "ol.source.WebgisTileImage#getGetFeatureInfoUrl",
     "ol.source.WebgisImageWMS",
     "ol.source.WebgisImageWMS#setVisibleLayers",
     "ol.source.WebgisImageWMS#getVisibleLayers",
     "ol.source.WebgisImageWMS#getLegendUrl",
-    "ol.source.WebgisImageWMS#getFeatureInfoUrl"
+    "ol.source.WebgisImageWMS#getGetFeatureInfoUrl"
   ],
   "compile": {
     "externs": [
