@@ -85,7 +85,9 @@ GISLAB_SERVER_CPUS: 1
 # bridge with active Ethernet network adapter on the host machine.
 # To enable connection from other networks (Internet), it is required to update
 # default gateway configuration by hand. It means dropping default gateway via
-# 'eth0' and setting default gateway via 'eth1' device (see 'ip route' command).
+# 'eth0' and setting default gateway via 'eth1' device.
+# Removing original default gateway: ip route del default via 10.0.2.2 dev eth0
+# Setting new default gateway: ip route add default via 192.168.151.254 dev eth1
 # Possible values are:
 # * no: do not try to integrate
 # * yes: try to integrate
