@@ -147,10 +147,10 @@
 							</md-list-item>
 							<div class="layer-metadata" gl-accordion-content>
 								<label>Geometry:</label>
-								<md-icon md-svg-icon="{{::$node.data.geom_type | lowercase}}" style="color: #f00;width:32px;height:16px;"></md-icon><br />
+								<md-icon md-svg-icon="{{::$node.data.geom_type | lowercase}}" style="width:32px;height:16px;"></md-icon><br />
 								<label>Identification:</label>
 									<use xlink:href=" '#icon-check' : '#icon-minus'}}"></use>
-									<md-icon md-svg-icon="{{:: $node.data.queryable? 'check' : 'minus' }}" style="color: #f00;width:32px;height:16px;"></md-icon><br />
+									<md-icon md-svg-icon="{{:: $node.data.queryable? 'check' : 'minus' }}" style="width:32px;height:16px;"></md-icon><br />
 								<label>Abstract:</label><span> {{ ::$node.data.metadata.abstract }}</span><br />
 								<label>Keywords list:</label><span> {{ ::$node.data.metadata.keyword_list }}</span><br />
 								<label>Maximal scale:</label><span> 1: {{ ::$node.data.visibility_scale_min | number : 0 }}</span><br />
