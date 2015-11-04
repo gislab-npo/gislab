@@ -9,7 +9,108 @@
 				.defaultIconSet(resourcesRoot+'styles/gislab/icons.svg', 32);
 		});
 
-	function AppController($scope, $timeout, $q, $mdSidenav, projectProvider, layersControl, projectPath, gislabClient) {
+	function AppController($scope, $timeout, $q, $mdSidenav, projectProvider, layersControl, projectPath, resourcesRoot, gislabClient, $mdBottomSheet) {
+		$scope.tools = [
+			{
+				title: 'Zoom to max extent',
+				icon: 'zoom-max',
+				action: function() {
+					var map = projectProvider.map;
+					var pan = ol.animation.pan({
+						duration: 300,
+						source: map.getView().getCenter()
+					});
+					var zoom = ol.animation.zoom({
+						duration: 300,
+						resolution: map.getView().getResolution()
+					});
+					map.beforeRender(pan, zoom);
+					map.getView().fit(projectProvider.config.project_extent, map.getSize());
+				}
+			}, {
+				title: 'Print output creation',
+				icon: 'printer',
+				toggleGroup: '1',
+				disabled: true
+			}, {
+				title: 'Draw points, lines, polygons',
+				icon: 'pen',
+				toggleGroup: '2',
+				disabled: true
+			}, {
+				title: 'Search features by attributes',
+				icon: 'binocular',
+				toggleGroup: '1',
+				activate: function() {},
+				deactivate: function() {}
+			}, {
+				title: 'Identify features by mouse click',
+				icon: 'circle-i',
+				toggleGroup: '1',
+				activate: function() {
+					var featuresScope;
+					this.mapClickListener = projectProvider.map.on('singleclick', function(evt) {
+						var source = projectProvider.map.getLayer('qgislayer').getSource();
+						var layers = this.identificationLayer? [this.identificationLayer] : source.getVisibleLayers();
+						var featureInfoUrl = source.getFeatureInfoUrl(projectProvider.map, evt.pixel, layers);
+						var featureType = [];
+						layers.forEach(function(layer) {
+							featureType.push('qgs:'+layer.replace(' ', ''));
+						});
+						gislabClient.get(featureInfoUrl).then(function(data) {
+							var gml = new ol.format.GML2({
+								featureNS: {'qgs': 'http://qgis.org/gml'},
+								featureType: featureType
+							});
+							var features = gml.readFeatures(data);
+							if (!featuresScope) {
+								featuresScope = $scope.$new(true, $scope);
+								featuresScope.features = features;
+								$mdBottomSheet.show({
+									templateUrl: resourcesRoot+'features_panel.html',
+									clickOutsideToClose: false,
+									disableParentScroll: false,
+									controller: 'FeaturesController',
+									scope: featuresScope,
+									parent: '.bottom-bar'
+								}).finally(function() {
+									featuresScope.setFeatures([]);
+									featuresScope = null;
+								});
+							} else {
+								featuresScope.setFeatures(features);
+							}
+						});
+					}, this);
+				},
+				deactivate: function() {
+					projectProvider.map.unByKey(this.mapClickListener);
+					$mdBottomSheet.hide();
+				}
+			}
+		];
+		$scope.toolClicked = function(tool) {
+			if (angular.isFunction(tool.action)) {
+				tool.action();
+			}
+			if (tool.toggleGroup) {
+				if (!tool.activated) {
+					$scope.tools.forEach(function(t) {
+						if (t.activated && tool !== t && t.toggleGroup === tool.toggleGroup) {
+							t.activated = false;
+							t.deactivate();
+						}
+					});
+				}
+				tool.activated = !tool.activated;
+				if (tool.activated) {
+					tool.activate();
+				} else {
+					tool.deactivate();
+				}
+			}
+		}
+
 		$scope.openLeftMenu = function() {
 			$mdSidenav('left').toggle();
 		};
@@ -17,91 +118,13 @@
 			.then(function(data) {
 				$scope.title = data.root_title;
 				projectProvider.load(data);
+				console.log(data);
 				if (projectProvider.map) {
 					projectProvider.map.setTarget('map');
 					projectProvider.map.getView().fit(data.zoom_extent, projectProvider.map.getSize());
-					//layersControl.setVisibleLayers(projectProvider.map, ['Places', 'Roads', 'Visegrad Four']);
-					$scope.project = projectProvider.config;
+					projectProvider.map.addControl(new ol.control.ScaleLine());
+					$scope.project = projectProvider;
 				}
 			})
-		/*
-		var baseLayers = [
-			{
-				title: "Blank",
-				name: "blank",
-				visible: false
-			}, {
-				title: "Open Street Map",
-				name: "OSM",
-				visible: false
-			}, {
-				title: "Ortofoto",
-				name: "ortofoto",
-				layers: [
-					{
-						title: "Whole world",
-						name: "world"
-					}, {
-						title: "Half world",
-						name: "half"
-					}
-				]
-			}
-		];
-		var layers = [
-			{
-				title: "Capitals",
-				name: "Layer1",
-				geom_type: "point",
-				visible: true,
-				queryable: true,
-				metadata: {
-					abstract: "The capitals of central Europe",
-				}
-			}, {
-				title: "Group",
-				name: "group",
-				layers: [
-					{
-						title: "Layer 2",
-						name: "Layer2",
-						geom_type: "line",
-						visible: false
-					}, {
-						title: "Layer 3",
-						name: "Layer3",
-						geom_type: "polygon",
-						visible: true,
-						queryable: true
-					}, {
-						title: "Other",
-						name: "nested_group",
-						layers: [
-							{
-								title: "Other Countries",
-								name: "layer4",
-								geom_type: "polygon",
-								visible: true,
-								metadata: {
-									abstract: "Other Central European countries"
-								}
-							}
-						]
-					}
-
-				]
-			}
-		];
-		var project = {topics: [
-			{
-				title: 'Topic',
-				abstract: ''
-			}
-		]};
-		projectProvider.config = project;
-		projectProvider.layers = {tree: layers, list: []};
-		projectProvider.baseLayers = {tree: baseLayers, list: []};
-		$scope.project = project;
-		*/
 	};
 })();

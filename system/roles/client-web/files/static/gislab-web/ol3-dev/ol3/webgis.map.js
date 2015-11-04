@@ -31,6 +31,7 @@ ol.source.WebgisTileImage = function(options) {
 	//goog.base(this,  /** @type {olx.source.TileImageOptions} */ (options));
 	//this.layers = (goog.isDef(options.layers) ? options.layers : []);
 	this.tilesUrl = goog.isDef(options.tilesUrl) ? options.tilesUrl : '';
+	this.owsUrl = goog.isDef(options.owsUrl) ? options.owsUrl : '';
 	this.project = goog.isDef(options.project) ? options.project : '';
 	this.layersAttributions = goog.isDef(options.layersAttributions) ? options.layersAttributions : {};
 	this.layersOrder = goog.isDef(options.layersOrder) ? options.layersOrder : {};
@@ -127,6 +128,30 @@ ol.source.WebgisTileImage.prototype.getLegendUrl = function(layername, view) {
 };
 
 /**
+ * @api
+ */
+ol.source.WebgisTileImage.prototype.getFeatureInfoUrl = function(map, coordinates, layers) {
+	var size = map.getSize();
+	var layersString = (layers || this.visibleLayers).join(',');
+	params = {
+		'SERVICE': 'WMS',
+		'VERSION': '1.1.1',
+		'REQUEST': 'GetFeatureInfo',
+		'INFO_FORMAT': 'application/vnd.ogc.gml',
+		'FEATURE_COUNT': '10',
+		'SRS': map.getView().getProjection().getCode(),
+		'LAYERS': layersString,
+		'QUERY_LAYERS': layersString,
+		'BBOX': map.getView().calculateExtent(size).join(','),
+		'WIDTH': size[0],
+		'HEIGHT': size[1],
+		'X': coordinates[0],
+		'Y': coordinates[1]
+	};
+	return goog.uri.utils.appendParamsFromMap(this.owsUrl, params);
+};
+
+/**
  * @classdesc
  * Source for ...
  *
@@ -191,7 +216,7 @@ ol.source.WebgisImageWMS.prototype.setVisibleLayers = function(layers) {
 		}, this);
 		this.setAttributions(attributions);
 	}
-	this.updateParams({LAYERS: ordered_layers.join(",")});
+	this.updateParams({'LAYERS': ordered_layers.join(",")});
 	this.visibleLayers = ordered_layers;
 };
 
@@ -207,10 +232,34 @@ ol.source.WebgisImageWMS.prototype.getVisibleLayers = function() {
  */
 ol.source.WebgisImageWMS.prototype.getLegendUrl = function(layername, view) {
 	var legendUrl = goog.uri.utils.appendParamsFromMap(this.legendUrlTemplate, {
-		LAYER: layername,
-		SCALE: Math.round(view.getScale()).toString()
+		'LAYER': layername,
+		'SCALE': Math.round(view.getScale()).toString()
 	});
 	return legendUrl;
+};
+
+/**
+ * @api
+ */
+ol.source.WebgisImageWMS.prototype.getFeatureInfoUrl = function(map, coordinates, layers) {
+	var size = map.getSize();
+	var layersString = (layers || this.visibleLayers).join(',');
+	params = {
+		'SERVICE': 'WMS',
+		'VERSION': '1.1.1',
+		'REQUEST': 'GetFeatureInfo',
+		'INFO_FORMAT': 'application/vnd.ogc.gml',
+		'FEATURE_COUNT': '10',
+		'SRS': map.getView().getProjection().getCode(),
+		'LAYERS': layersString,
+		'QUERY_LAYERS': layersString,
+		'BBOX': map.getView().calculateExtent(size).join(','),
+		'WIDTH': size[0],
+		'HEIGHT': size[1],
+		'X': coordinates[0],
+		'Y': coordinates[1]
+	};
+	return goog.uri.utils.appendParamsFromMap(this.getUrl(), params);
 };
 
 

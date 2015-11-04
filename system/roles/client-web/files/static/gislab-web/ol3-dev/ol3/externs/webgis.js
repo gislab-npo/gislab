@@ -4,6 +4,7 @@ var olx;
  * @typedef {{
  *     project: (string|undefined),
  *     tilesUrl: (string|undefined),
+       owsUrl: (string|undefined),
  *     legendUrl: (string|undefined),
  *     visibleLayers: (Array.<string>|undefined),
  *     layersOrder: (Object.<string,*>|undefined),
@@ -41,6 +42,13 @@ olx.source.WebgisTileImageOptions.prototype.project;
  * @api
  */
 olx.source.WebgisTileImageOptions.prototype.tilesUrl;
+
+/**
+ * OWS Server URL.
+ * @type {string|undefined}
+ * @api
+ */
+olx.source.WebgisTileImageOptions.prototype.owsUrl;
 
 /**
  * Legend URL.
@@ -189,28 +197,28 @@ olx.source.WebgisTileImageOptions.prototype.wrapX;
  * }}
  * @api
  */
-olx.source.WebgisWebgisTileImageOptions;
+olx.source.ImageWMSOptions;
 
 /**
  * List of visible layers.
  * @type {Array.<string>|undefined}
  * @api
  */
-olx.source.WebgisTileImageOptions.prototype.visibleLayers;
+olx.source.ImageWMSOptions.prototype.visibleLayers;
 
 /**
  * Layers order.
  * @type {Object.<string,*>|undefined}
  * @api
  */
-olx.source.WebgisTileImageOptions.prototype.layersOrder;
+olx.source.ImageWMSOptions.prototype.layersOrder;
 
 /**
  * Layers attributions.
  * @type {Object.<string,ol.Attribution>|undefined}
  * @api
  */
-olx.source.WebgisTileImageOptions.prototype.layersAttributions;
+olx.source.ImageWMSOptions.prototype.layersAttributions;
 
 
 /**
@@ -218,7 +226,7 @@ olx.source.WebgisTileImageOptions.prototype.layersAttributions;
  * @type {Array.<ol.Attribution>|undefined}
  * @api stable
  */
-olx.source.WebgisTileImageOptions.prototype.attributions;
+olx.source.ImageWMSOptions.prototype.attributions;
 
 /**
  * The `crossOrigin` attribute for loaded images.  Note that you must provide a
@@ -229,7 +237,7 @@ olx.source.WebgisTileImageOptions.prototype.attributions;
  * @type {null|string|undefined}
  * @api stable
  */
-olx.source.WebgisTileImageOptions.prototype.crossOrigin;
+olx.source.ImageWMSOptions.prototype.crossOrigin;
 
 /**
  * Use the `ol.Map#pixelRatio` value when requesting the image from the remote
@@ -237,7 +245,7 @@ olx.source.WebgisTileImageOptions.prototype.crossOrigin;
  * @type {boolean|undefined}
  * @api
  */
-olx.source.WebgisTileImageOptions.prototype.hidpi;
+olx.source.ImageWMSOptions.prototype.hidpi;
 
 /**
  * The type of the remote WMS server: `mapserver`, `geoserver` or `qgis`. Only
@@ -245,21 +253,21 @@ olx.source.WebgisTileImageOptions.prototype.hidpi;
  * @type {ol.source.wms.ServerType|string|undefined}
  * @api
  */
-olx.source.WebgisTileImageOptions.prototype.serverType;
+olx.source.ImageWMSOptions.prototype.serverType;
 
 /**
  * Optional function to load an image given a URL.
  * @type {ol.TileLoadFunctionType|undefined}
  * @api
  */
-olx.source.WebgisTileImageOptions.prototype.imageLoadFunction;
+olx.source.ImageWMSOptions.prototype.imageLoadFunction;
 
 /**
  * Logo.
  * @type {string|olx.LogoOptions|undefined}
  * @api stable
  */
-olx.source.WebgisTileImageOptions.prototype.logo;
+olx.source.ImageWMSOptions.prototype.logo;
 
 /**
  * WMS request parameters. At least a `LAYERS` param is required. `STYLES` is
@@ -268,14 +276,14 @@ olx.source.WebgisTileImageOptions.prototype.logo;
  * @type {Object.<string,*>}
  * @api stable
  */
-olx.source.WebgisTileImageOptions.prototype.params;
+olx.source.ImageWMSOptions.prototype.params;
 
 /**
  * Projection.
  * @type {ol.proj.ProjectionLike}
  * @api
  */
-olx.source.WebgisTileImageOptions.prototype.projection;
+olx.source.ImageWMSOptions.prototype.projection;
 
 /**
  * Ratio. `1` means image requests are the size of the map viewport, `2` means
@@ -284,18 +292,18 @@ olx.source.WebgisTileImageOptions.prototype.projection;
  * @type {number|undefined}
  * @api stable
  */
-olx.source.WebgisTileImageOptions.prototype.ratio;
+olx.source.ImageWMSOptions.prototype.ratio;
 
 /**
  * Resolutions. If specified, requests will be made for these resolutions only.
  * @type {Array.<number>|undefined}
  * @api stable
  */
-olx.source.WebgisTileImageOptions.prototype.resolutions;
+olx.source.ImageWMSOptions.prototype.resolutions;
 
 /**
  * WMS service URL.
  * @type {string|undefined}
  * @api stable
  */
-olx.source.WebgisTileImageOptions.prototype.url;
+olx.source.ImageWMSOptions.prototype.url;

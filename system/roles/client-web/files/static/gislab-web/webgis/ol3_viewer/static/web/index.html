@@ -1,119 +1,109 @@
 <!doctype html>
 <html lang="en" ng-app="gl.web">
-<head>
-	<meta charset="utf-8">
+	<head>
+		<meta charset="utf-8">
 
-	<title>GIS.lab web client</title>
+		<title>GIS.lab web client</title>
 
-	<!-- <link rel="stylesheet" href="bower_components/lumx/dist/lumx.css"> -->
-	<link rel="stylesheet" type="text/css" href="core/lib/ol.css"/>
-	<link rel="stylesheet" type="text/css" href="bower_components/angular-material/angular-material.css">
-	<link rel="stylesheet" type="text/css" href="bower_components/angular-ui-layout/ui-layout.css"/>
-	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
-	<link rel="stylesheet" type="text/css" href="styles/gislab/ui.css">
+		<link rel="stylesheet" type="text/css" href="core/lib/ol.css"/>
+		<link rel="stylesheet" type="text/css" href="bower_components/angular-material/angular-material.css"/>
+		<link rel="stylesheet" type="text/css" href="bower_components/angular-ui-layout/ui-layout.css"/>
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700"/>
+		<link rel="stylesheet" type="text/css" href="bower_components/angular-material-data-table/dist/md-data-table.min.css"/>
+		<link rel="stylesheet" type="text/css" href="styles/gislab/ui.css"/>
 
-	<!-- Before body closing tag -->
-	<!-- 
-	<script src="bower_components/jquery/dist/jquery.js"></script>
-	<script src="bower_components/moment/min/moment-with-locales.js"></script> -->
-	<script src="bower_components/velocity/velocity.js"></script>
+		<!-- Before body closing tag -->
+		<script src="bower_components/angular/angular.js"></script>
+		<script src="bower_components/angular-animate/angular-animate.js"></script>
+		<script src="bower_components/angular-material/angular-material.js"></script>
+		<script src="bower_components/angular-aria/angular-aria.js"></script>
+		<script type="text/javascript" src="bower_components/raf/index.js"></script>
+		<script type="text/javascript" src="bower_components/angular-ui-layout/ui-layout.js"></script>
+		<script type="text/javascript" src="bower_components/angular-material-data-table/dist/md-data-table.min.js"></script>
 
-	<script src="bower_components/angular/angular.js"></script>
-	<script src="bower_components/angular-animate/angular-animate.js"></script>
-	<!-- <script src="bower_components/lumx/dist/lumx.js"></script> -->
-	<script src="bower_components/angular-material/angular-material.js"></script>
-	<script src="bower_components/angular-aria/angular-aria.js"></script>
-	<script type="text/javascript" src="bower_components/raf/index.js"></script>
-	<script type="text/javascript" src="bower_components/angular-ui-layout/ui-layout.js"></script>
+		<script type="text/javascript" src="core/lib/proj4.js"></script>
+		<script type="text/javascript" src="core/lib/md5.js"></script>
+		<script type="text/javascript" src="core/lib/ol.min.js"></script>
 
-	<script type="text/javascript" src="core/lib/proj4.js"></script>
-	<script type="text/javascript" src="core/lib/md5.js"></script>
-	<script type="text/javascript" src="core/lib/ol.min.js"></script>
-	<!-- <script type="text/javascript" src="core/lib/ol.debug.js"></script>-->
-
-	<script type="text/javascript">
-	// First, checks if it isn't implemented yet.
-	if (!String.prototype.format) {
-		String.prototype.format = function() {
-			var args = arguments;
-			return this.replace(/{(\d+)}/g, function(match, number) {
-				return typeof args[number] != 'undefined'
-					? args[number]
-					: match
-				;
-			});
-		};
-	}
-	</script>
-
-	<script type="text/javascript" src="js/web.module.js"></script>
-	<script type="text/javascript" src="js/controllers/AppController.js"></script>
-	<script type="text/javascript" src="js/services/gislab-web-client.js"></script>
-
-	<script type="text/javascript" src="core/js/map/map.module.js"></script>
-	<script type="text/javascript" src="core/js/map/services/map-builder.js"></script>
-	<script type="text/javascript" src="core/js/map/services/project-provider.js"></script>
-
-	<script type="text/javascript" src="core/js/ui/ui.module.js"></script>
-	<script type="text/javascript" src="core/js/ui/controllers/AccordionController.js"></script>
-	<script type="text/javascript" src="core/js/ui/controllers/AccordionController3.js"></script>
-	<script type="text/javascript" src="core/js/ui/directives/tree.js"></script>
-	<script type="text/javascript" src="core/js/ui/directives/accordion.js"></script>
-
-	<script type="text/javascript" src="core/js/utils/utils.module.js"></script>
-	<script type="text/javascript" src="core/js/utils/directives/gl-con-attr.js"></script>
-	<script type="text/javascript" src="core/js/utils/directives/gl-click.js"></script>
-
-	<script type="text/javascript" src="core/js/map-tools/layers-control/layers-control.module.js"></script>
-	<script type="text/javascript" src="core/js/map-tools/layers-control/layers-control.js"></script>
-	<script type="text/javascript" src="core/js/map-tools/layers-control/LayersController.js"></script>
-	<script type="text/javascript" src="core/js/map-tools/legend/legend.module.js"></script>
-	<script type="text/javascript" src="core/js/map-tools/legend/LegendController.js"></script>
-
-	<script type="text/javascript">
-		angular.module('gl.web')
-			.constant('projectPath', 'marcel/central-europe')
-			.constant('resourcesRoot', './')
-			.config(function(gislabClientProvider) {
-				gislabClientProvider.configure({
-					server: 'https://localhost:8000'
+		<script type="text/javascript">
+		// First, checks if it isn't implemented yet.
+		if (!String.prototype.format) {
+			String.prototype.format = function() {
+				var args = arguments;
+				return this.replace(/{(\d+)}/g, function(match, number) {
+					return typeof args[number] != 'undefined'
+						? args[number]
+						: match
+					;
 				});
-			});
-	</script>
-</head>
+			};
+		}
+		</script>
 
-<body ng-controller="AppController" class="no-scrollbar">
+		<script type="text/javascript" src="js/web.module.js"></script>
+		<script type="text/javascript" src="js/controllers/AppController.js"></script>
+		<script type="text/javascript" src="js/services/gislab-web-client.js"></script>
 
-	<div layout="column" layout-fill flex>
-		<md-toolbar>
-			<div class="md-toolbar-tools">
-				<h3>GIS.lab Web <sub>Next Generation</sub></h3>
-				<!-- fill up the space between left and right area -->
-				<span flex></span>
-				<h3><span>{{ title }}</span></h3>
-				<span flex></span>
-				<md-button class="md-icon-button" aria-label="User">
-					<md-icon md-svg-icon="user" style="color: #fff;"></md-icon>
-				</md-button>
-			</div>
-		</md-toolbar>
-		<section layout="row" flex>
-			<md-sidenav md-component-id="left" class="md-sidenav-left" md-is-locked-open="$mdMedia('min-width: 333px')" layout="column" flex>
-				<div ui-layout="{disableToggle: true}" fill-layout ng-if="::project" layout-fill>
-					<div ui-layout-container size="50%" xclass="no-scrollbar">
-						<div class="full-height" ng-include="'layers_control.html'"></div>
-						<div class="ui-splitbar-container-v">
-							<md-icon class="ui-splitbar-icon-up" md-svg-icon="arrow-up"></md-icon>
-							<md-icon class="ui-splitbar-icon-down" md-svg-icon="arrow-down"></md-icon>
+		<script type="text/javascript" src="core/js/map/map.module.js"></script>
+		<script type="text/javascript" src="core/js/map/services/map-builder.js"></script>
+		<script type="text/javascript" src="core/js/map/services/project-provider.js"></script>
+
+		<script type="text/javascript" src="core/js/ui/ui.module.js"></script>
+		<script type="text/javascript" src="core/js/ui/controllers/AccordionController.js"></script>
+		<script type="text/javascript" src="core/js/ui/controllers/AccordionController3.js"></script>
+		<script type="text/javascript" src="core/js/ui/directives/tree.js"></script>
+		<script type="text/javascript" src="core/js/ui/directives/accordion.js"></script>
+
+		<script type="text/javascript" src="core/js/utils/utils.module.js"></script>
+		<script type="text/javascript" src="core/js/utils/directives/gl-con-attr.js"></script>
+		<script type="text/javascript" src="core/js/utils/directives/gl-click.js"></script>
+
+		<script type="text/javascript" src="core/js/map-tools/layers-control/layers-control.module.js"></script>
+		<script type="text/javascript" src="core/js/map-tools/layers-control/layers-control.js"></script>
+		<script type="text/javascript" src="core/js/map-tools/layers-control/LayersController.js"></script>
+		<script type="text/javascript" src="core/js/map-tools/legend/legend.module.js"></script>
+		<script type="text/javascript" src="core/js/map-tools/legend/LegendController.js"></script>
+		<script type="text/javascript" src="core/js/map-tools/features/features.module.js"></script>
+		<script type="text/javascript" src="core/js/map-tools/features/FeaturesController.js"></script>
+
+		<script type="text/javascript">
+			QueryStringParam = function(item) {
+				var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
+				return decodeURIComponent(svalue ? svalue[1] : svalue);
+			}
+			angular.module('gl.web')
+				.constant('projectPath', QueryStringParam("PROJECT"))
+				.constant('resourcesRoot', './')
+				.config(function(gislabClientProvider) {
+					gislabClientProvider.configure({
+						server: 'https://localhost:8000'
+					});
+				});
+		</script>
+	</head>
+
+	<body ng-controller="AppController" class="no-scrollbar">
+		<div layout="column" layout-fill flex class="no-scrollbar">
+			<md-toolbar ng-include="'toolbar.html'">
+			</md-toolbar>
+			<section layout="row" flex>
+				<md-sidenav md-component-id="left" class="md-sidenav-left" md-is-locked-open="$mdMedia('min-width: 333px')" layout="column" flex>
+					<div ui-layout="{disableToggle: true}" fill-layout ng-if="::project" layout-fill>
+						<div ui-layout-container size="50%" xclass="no-scrollbar">
+							<div class="full-height" ng-include="'layers_control.html'"></div>
+							<div class="ui-splitbar-container-v">
+								<md-icon class="ui-splitbar-icon-up" md-svg-icon="arrow-up"></md-icon>
+								<md-icon class="ui-splitbar-icon-down" md-svg-icon="arrow-down"></md-icon>
+							</div>
+						</div>
+						<div ui-layout-container size="50%">
+							<div class="full-height" ng-include="'project_info.html'"></div>
 						</div>
 					</div>
-					<div ui-layout-container size="50%">
-						<div class="full-height" ng-include="'project_info.html'"></div>
-					</div>
-				</div>
-			</md-sidenav>
-			<div id="map"></div>
-		</section>
-	</div>
-</body>
+				</md-sidenav>
+				<div id="map"></div>
+				<div class="bottom-bar"></div>
+			</section>
+		</div>
+	</body>
 </html>

@@ -1,0 +1,26 @@
+<div class="md-toolbar-tools">
+	<div class="toolbar-logo">
+		<h3>GIS.lab Web <sub>Next Generation</sub></h3>
+	</div>
+	<md-button ng-repeat="tool in tools"
+		aria-label="{{ ::tool.title }}"
+		class="md-icon-button"
+		ng-class="{activated: tool.activated}"
+		ng-disabled="tool.disabled"
+		ng-click="toolClicked(tool)">
+		<md-icon md-svg-icon="{{ ::tool.icon }}"></md-icon>
+	</md-button>
+	<md-select placeholder="Select layer"
+		ng-model="tools[4].identificationLayer" ng-show="tools[4].activated">
+		<md-option value="">All visible</md-option>
+		<md-option ng-repeat="layer in project.layers.list | filter:{queryable:true, visible:true}" value="{{ layer.name }}">
+			{{layer.title}}
+		</md-option>
+	</md-select>
+	<!-- fill up the space between left and right area -->
+	<span class="title">{{ title }}</span>
+	<span flex></span>
+	<md-button class="md-icon-button" aria-label="User">
+		<md-icon md-svg-icon="user"></md-icon>
+	</md-button>
+</div>

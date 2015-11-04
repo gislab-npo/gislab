@@ -101,13 +101,13 @@
 				});
 
 				if (config.mapcache_url) {
-					console.log(config.project);
-					console.log(visible_layers);
 					overlays_layer = new ol.layer.Tile({
 						source: new ol.source.WebgisTileImage({
 							project: config.project,
 							tilesUrl: config.mapcache_url,
 							legendUrl: config.legend_url,
+							owsUrl: config.ows_url,
+							projection: config.projection.code, //ol.proj.projections_[config.projection.code]
 							tileGrid: new ol.tilegrid.TileGrid ({
 								origin: ol.extent.getBottomLeft(config.project_extent),
 								resolutions: config.tile_resolutions,
@@ -120,7 +120,6 @@
 						}),
 						extent: config.project_extent,
 					});
-					console.log(overlays_layer.getSource());
 				} else {
 					overlays_layer = new ol.layer.Image({
 						source: new ol.source.WebgisImageWMS({
@@ -129,7 +128,7 @@
 							layersAttributions: attributions,
 							layersOrder: layers_order,
 							params: {
-								'FORMAT': 'image/png',
+								'FORMAT': 'image/png'
 							},
 							serverType: 'qgis'
 						}),
@@ -143,6 +142,10 @@
 		};
 
 		MapBuilder.prototype.createMap = function(config) {
+			if (Object.keys(ol.proj.projections_).indexOf(config.projection.code) === -1) {
+				proj4.defs(config.projection.code, config.projection.proj4);
+			}
+
 			var layers = [];
 			var base_layers_configs = this.layersTreeToList({layers: config.base_layers}, true);
 			base_layers_configs.forEach(function(baselayer_config) {
@@ -151,16 +154,10 @@
 					layers.push(base_layer);
 				}
 			}, this);
-			console.log('create overlay layers');
 			var overlays_layer = this.createProjectLayer(config);
 			if (overlays_layer) {
 				layers.push(overlays_layer);
 			}
-			console.log('create projection');
-			if (Object.keys(ol.proj.projections_).indexOf(config.projection.code) === -1) {
-				proj4.defs(config.projection.code, config.projection.proj4);
-			}
-			console.log('create map');
 			var map = new ol.Map({
 				layers: layers,
 				view: new ol.View({

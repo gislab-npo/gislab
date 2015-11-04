@@ -3,13 +3,94 @@ md-toolbar {
 }
 .md-toolbar-tools {
 	max-height: 36px;
+	padding-left: 0px;
+	padding-right: 12px;
+	font-size: 15px;
 }
 .md-toolbar-tools h3 {
 	font-size: 17px;
 }
+.md-toolbar-tools .toolbar-logo {
+	padding-left: 8px;
+	width: 270px;
+	border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+.md-toolbar-tools .md-icon-button {
+	xmargin: 2px;
+	width: 36px;
+	height: 36px;
+	min-height: 36px;
+	line-height: 36px;
+}
 .md-toolbar-tools .md-icon-button md-icon {
-	width: 20px;
-	height: 20px;
+	width: 24px;
+	height: 24px;
+}
+/*
+.md-button.md-default-theme[disabled],
+.md-button.md-default-theme.md-raised[disabled],
+.md-button.md-raised[disabled] md-icon,
+.md-button.md-default-theme.md-fab[disabled],
+.md-button.md-fab[disabled] md-icon,
+.md-button.md-default-theme.md-accent[disabled],
+.md-button.md-accent[disabled] md-icon,
+.md-button.md-default-theme.md-warn[disabled],
+.md-button.md-warn[disabled] md-icon,*/
+.md-toolbar-tools .md-button[disabled] md-icon {
+	color: rgba(255, 255, 255, 0.3);
+}
+.md-toolbar-tools .md-icon-button.activated {
+	background-color: rgba(255, 255, 255, 0.0);
+	xborder-bottom: 2px solid rgba(255, 255, 255, 1);
+	xborder-radius: 0;
+}
+.md-toolbar-tools .md-icon-button md-icon {
+	color: rgba(255, 255, 255, 0.85);
+}
+.md-toolbar-tools .md-icon-button.activated md-icon {
+	xcolor: rgba(255, 255, 255, 1);
+	xcolor: #fcf4a8;
+	color: #fcf48e;
+}
+
+.md-toolbar-tools .title {
+	font-size: 17px;
+	position: absolute;
+	line-height: 36px;
+	top: 0;
+	left: 50%;
+}
+
+md-option {
+	height: 36px;
+}
+
+md-option .md-text {
+	font-size: 15px;
+}
+.md-toolbar-tools md-select {
+	overflow: hidden;
+	opacity: 1;
+	width: 170px;
+	transition: 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+}
+.md-toolbar-tools md-select.ng-hide {
+	opacity: 0;
+	width: 0;
+	transform: translate(-50%, 0);
+}
+.md-toolbar-tools md-select:focus:not([disabled]) .md-select-value {
+    color: rgba(255, 255, 255, 0.87);
+}
+.md-toolbar-tools md-select .md-select-value {
+    border-bottom-width: 0;
+}
+.md-toolbar-tools md-select:focus:not([disabled]) .md-select-value {
+	border-bottom-color: rgba(255, 255, 255, 0.22);
+    border-bottom-width: 1px;
+}
+.md-toolbar-tools md-select .md-select-value.md-select-placeholder {
+    color: rgba(255, 255, 255, 0.36);
 }
 
 md-tabs-canvas, md-pagination-wrapper {
@@ -26,6 +107,7 @@ md-tabs-content-wrapper {
 md-backdrop {
 	display: none;
 }
+
 md-sidenav {
 	border-right: 1px solid #ccc;
 	height: 100%;
@@ -101,6 +183,7 @@ md-icon.md-secondary,
 .layer-metadata-icon {
 	width: 16px;
 	height: 16px;
+	color: #444;
 }
 
 .gl-tree-group > md-list-item {
@@ -130,7 +213,7 @@ md-list-item p {
 }
 
 .gl-tree-leaf[depth="3"] .layer-metadata {
-	margin-left: 55px;
+	padding-left: 55px;
 }
 
 .layer-metadata {
@@ -147,10 +230,10 @@ md-list-item p {
 }
 
 .gl-tree-leaf.expanded md-list-item {
-	background-color: #ccc;
+	background-color: #ddd;
 }
 .gl-tree-leaf.expanded .layer-metadata {
-	background-color: #ddd;
+	background-color: #eee;
 }
 
 button::-moz-focus-inner {
@@ -275,4 +358,52 @@ md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item
 .expanded .accordion-icon {
 	transform: rotate(180deg);
 	transform-origin: 50% 50%;
+}
+
+md-bottom-sheet {
+	left: 270px;
+	height: 346px;
+	padding: 0;
+}
+md-bottom-sheet md-data-table-container {
+	max-height: 196px;
+	min-height: 196px;
+	overflow-y: hidden;
+}
+
+md-data-table-pagination.top {
+	position: absolute;
+	right: 0;
+	transform: translate(0, -100%);
+	z-index: 2000;
+}
+
+md-data-table-pagination > div > span.label,  md-data-table-pagination > div > md-select {
+	display: none;
+}
+md-bottom-sheet md-data-table-pagination > div {
+	min-height: 36px;
+}
+table[md-data-table] > tbody > tr {
+	height: 32px;
+}
+
+table[md-data-table] > thead:not([md-table-progress]) > tr > th > div {
+	height: 36px;
+}
+
+.panel-close-button {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	display:;
+}
+.panel-close-button md-icon {
+	width: 18px;
+	height: 18px;
+}
+.features-panel .md-subheader {
+	color: gray;
+	padding-left: 12px;
+	line-height: 42px;
 }

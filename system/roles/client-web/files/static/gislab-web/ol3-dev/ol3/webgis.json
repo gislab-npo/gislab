@@ -9,10 +9,29 @@
     "ol.layer.Image#*",
     "ol.layer.Tile",
     "ol.layer.Tile#*",
+    "ol.layer.Vector",
+    "ol.layer.Vector#*",
     "ol.source.ImageWMS",
     "ol.source.ImageWMS#*",
+    "ol.source.Vector",
+    "ol.source.Vector#*",
     "ol.source.OSM",
     "ol.proj.METERS_PER_UNIT",
+    "ol.style.Style",
+    "ol.style.Stroke",
+    "ol.style.Fill",
+    "ol.style.Circle",
+    "ol.interaction.Select",
+    "ol.interaction.Select#setMap",
+    "ol.interaction.Select#setActive",
+    "ol.interaction.Select#getFeatures",
+    "ol.Feature",
+    "ol.Feature#*",
+    "ol.format.GML2",
+    "ol.format.GML2#readFeatures",
+    "ol.events.condition.never",
+    "ol.animation.pan",
+    "ol.animation.zoom",
 
     "ol.tilegrid.TileGrid",
     "ol.proj.Projection",
@@ -26,10 +45,12 @@
     "ol.source.WebgisTileImage#setVisibleLayers",
     "ol.source.WebgisTileImage#getVisibleLayers",
     "ol.source.WebgisTileImage#getLegendUrl",
+    "ol.source.WebgisTileImage#getFeatureInfoUrl",
     "ol.source.WebgisImageWMS",
     "ol.source.WebgisImageWMS#setVisibleLayers",
     "ol.source.WebgisImageWMS#getVisibleLayers",
-    "ol.source.WebgisImageWMS#getLegendUrl"
+    "ol.source.WebgisImageWMS#getLegendUrl",
+    "ol.source.WebgisImageWMS#getFeatureInfoUrl"
   ],
   "compile": {
     "externs": [
@@ -46,7 +67,7 @@
     "define": [
       "goog.dom.ASSUME_STANDARDS_MODE=true",
       "goog.DEBUG=false",
-      "ol.ENABLE_VECTOR=false",
+      "ol.ENABLE_VECTOR=true",
       "ol.ENABLE_DOM=false",
       "ol.ENABLE_WEBGL=false",
       "ol.ENABLE_PROJ4JS=true"

@@ -143,6 +143,14 @@
 			});
 		};
 
+		GislabClient.prototype.get = function(url) {
+			return this._deferredRequest({
+				url: url,
+				method: 'get',
+				withCredentials: true
+			});
+		};
+
 		return new GislabClient();
 	};
 })();

@@ -12,3 +12,5 @@ $ cp dist/ol.css ../../../webgis/ol3_viewer/static/core/lib/
 
 $ node tasks/build.js build/webgis-debug.json build/ol.debug.js
 $ cp build/ol.debug.js ../../../webgis/ol3_viewer/static/core/lib/
+
+Note: After some changes in API, delete file build/info.json and compile it twice
