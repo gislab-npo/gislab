@@ -92,6 +92,12 @@ GISLAB_SERVER_CPUS: 1
 # Change requires running upgrade.
 GISLAB_SERVER_INTEGRATION: no
 
+# Set GIS.lab server MAC address.
+# Example: 080027C247F6
+# Change requires GIS.lab server restart and removing
+# /etc/udev/rules.d/70-persistent-net.rules file.
+GISLAB_SERVER_MAC:
+
 # Determines if GIS.lab server should start with GUI console. This is useful to
 # gain more control with server boot process.
 # Possible values are:
