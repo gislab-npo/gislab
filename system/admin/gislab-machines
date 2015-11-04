@@ -90,7 +90,7 @@ elif [ "$ACTION" == "add" ]; then
 
 		# add MAC address if format is valid
 		else
-			if [[ $mac =~ ^[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}:[0-9a-zA-Z]{2}$ ]]; then
+			if [[ $mac =~ ^[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}$ ]]; then
 				echo "Adding MAC address $mac"
 				# add records to known machines list file in /etc/gislab
 				sed -i "/^$mac/ d" $KNOWN_MACHINES_LIST_FILE # avoid duplicate records

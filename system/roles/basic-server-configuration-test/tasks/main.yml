@@ -35,7 +35,7 @@
 
 
 - name: Test if GIS.lab server network IP address is assigned
-  shell: ip addr show | grep "inet {{ GISLAB_NETWORK }}.5/24 brd {{ GISLAB_NETWORK }}.255 scope global"
+  shell: ip addr show | grep "inet {{ GISLAB_NETWORK }}.5/24"
   ignore_errors: yes
   changed_when: False
 

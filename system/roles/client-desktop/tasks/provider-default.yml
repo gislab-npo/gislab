@@ -3,7 +3,7 @@
 ### Build GIS.lab Desktop client for LAN ###
 #
 
-- name: Install packages (LAN provider)
+- name: Install packages (default provider)
   apt: pkg={{ item }} force=yes install_recommends=no state=latest
   with_items:
     - tftpd-hpa

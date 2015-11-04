@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 
 source /etc/gislab_version
 source $GISLAB_ROOT/system/functions.sh
@@ -32,16 +33,18 @@ done
 
 
 # sanity checks
-if [ ! -f "$GISLAB_ROOT/system/clients/desktop/root/etc/gislab_version" ]; then
-	gislab_print_error "GIS.lab client chroot doesn't exist. GISLAB_SUITE must be set to 'lab' to build client image"
-fi
-
 if [ -f "$GISLAB_ROOT/system/clients/desktop/root/proc/version" ]; then
 	gislab_print_error "GIS.lab client chroot session is active. Exit from it before running this command"
 fi
 
 
-TFTP_DIR=/var/lib/tftpboot/gislab
+# get GIS.lab provider
+if [ -f /etc/gislab_provider ]; then
+	GISLAB_PROVIDER="$(cat /etc/gislab_provider)"
+fi
+
+GISLAB_PROVIDER="${GISLAB_PROVIDER:-default}"
+
 IMAGE_FILE=$GISLAB_ROOT/system/clients/desktop/image/gislab.img
 IMAGE_BUILDSTAMP=$(date +%s)
 IMAGE_BUILDSTAMP_FILE=$GISLAB_ROOT/system/clients/desktop/image/gislab_desktop.buildstamp
@@ -55,30 +58,60 @@ echo "$IMAGE_BUILDSTAMP" > $GISLAB_ROOT/system/clients/desktop/root/etc/gislab_d
 mkdir -p $GISLAB_ROOT/system/clients/desktop/image
 
 
-# copy /boot directory from client to server TFTP directory
-cp -a $GISLAB_ROOT/system/clients/desktop/root/boot/. $TFTP_DIR/
+if [ "$GISLAB_PROVIDER" == "aws" ]; then
+	### Build GIS.lab AWS client image ###
 
-# set permissions
-find $TFTP_DIR -mindepth 1 -type d -exec chmod 0755 "{}" \;
-find $TFTP_DIR -mindepth 1 \! -type d -exec chmod 0644 "{}" \;
+	# create temporary mount dir for image
+	TEMP_MNT_DIR="$GISLAB_ROOT/system/clients/desktop/mount-client-image-$GISLAB_INSTALL_UNIQUE_STRING"
+	mkdir $TEMP_MNT_DIR
 
-# build image
-test -x /usr/bin/nice && nice=nice || unset nice
-test -x /usr/bin/ionice && /usr/bin/ionice -c3 true 2>/dev/null && ionice=ionice || unset ionice
+	# calculate the size of image = client root size + 500MB
+	ROOT_SIZE=$(du -sm $GISLAB_ROOT/system/clients/desktop/root | cut -f 1)
+	IMAGE_SIZE=$(echo $(($ROOT_SIZE+500)))
 
-rm -f $IMAGE_FILE.tmp
+	dd if=/dev/zero of=$IMAGE_FILE bs=1M count=$IMAGE_SIZE
+	mkfs.ext4 -F -L gislab-rootfs $IMAGE_FILE
 
-$nice $ionice mksquashfs $GISLAB_ROOT/system/clients/desktop/root $IMAGE_FILE.tmp -e cdrom
+	# mount image
+	mount -o loop,rw $IMAGE_FILE $TEMP_MNT_DIR
 
-if [ $? -ne 0 ]; then
+	# copy GIS.lab client root to AWS client image
+	rsync -a $GISLAB_ROOT/system/clients/desktop/root/ $TEMP_MNT_DIR/
+
+	# unmount GIS.lab AWS client image
+	umount $TEMP_MNT_DIR
+
+	# clean up
+	rm -rf $TEMP_MNT_DIR
+else
+	### Build default GIS.lab client image ###
+
+	TFTP_DIR=/var/lib/tftpboot/gislab
+
+	# copy /boot directory from client to server TFTP directory
+	cp -a $GISLAB_ROOT/system/clients/desktop/root/boot/. $TFTP_DIR/
+
+	# set permissions
+	find $TFTP_DIR -mindepth 1 -type d -exec chmod 0755 "{}" \;
+	find $TFTP_DIR -mindepth 1 \! -type d -exec chmod 0644 "{}" \;
+
+	# build image
+	test -x /usr/bin/nice && nice=nice || unset nice
+	test -x /usr/bin/ionice && /usr/bin/ionice -c3 true 2>/dev/null && ionice=ionice || unset ionice
+
 	rm -f $IMAGE_FILE.tmp
-	gislab_print_error "'mksquashfs' failed to build the GIS.lab client image"
+
+	$nice $ionice mksquashfs $GISLAB_ROOT/system/clients/desktop/root $IMAGE_FILE.tmp -e cdrom
+
+	if [ $? -ne 0 ]; then
+		rm -f $IMAGE_FILE.tmp
+		gislab_print_error "'mksquashfs' failed to build the GIS.lab client image"
+	fi
+
+	# place image to final destionation
+	mv $IMAGE_FILE.tmp $IMAGE_FILE
 fi
 
-
-# place image to final destionation
-mv $IMAGE_FILE.tmp $IMAGE_FILE
 echo "$IMAGE_BUILDSTAMP" > $IMAGE_BUILDSTAMP_FILE
-
 
 # vim: set ts=4 sts=4 sw=4 noet:

@@ -52,7 +52,7 @@
     - {
       role: client-mobile,
       tags: ['client-mobile'],
-      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab') and GISLAB_CLIENT_MOBILE"
+      when: "'{{ GISLAB_SUITE }}' == 'lab' and GISLAB_CLIENT_MOBILE"
     }
     - { role: account-admin, tags: ['account-admin'] }
     - {

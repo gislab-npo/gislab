@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+
+GISLAB_HOSTS="--host server"
+GISLAB_HOSTS+=" $(/usr/local/bin/serf members -tag role=client -status=alive | \
+                  awk -F " " '{printf "--host %s.gis.lab ", $1}')"
+
+sudo -u munin /usr/bin/munin-cron $GISLAB_HOSTS

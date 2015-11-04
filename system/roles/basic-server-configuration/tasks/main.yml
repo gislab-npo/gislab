@@ -45,7 +45,7 @@
 
 
 - name: Detect GIS.lab provider
-  shell: cat /etc/gislab_provider || echo 'default'
+  shell: cat /etc/gislab_provider 2>/dev/null || echo 'default'
   register: gislab_provider
   changed_when: False
 
@@ -233,18 +233,16 @@
 
 
 # networking
-- name: Add GIS.lab network server IP address if not received from provider
-  template: src=network/gislab.j2 dest=/etc/network/if-up.d/gislab mode=0755
-  when: GISLAB_NETWORK_SERVER_IP not in ansible_all_ipv4_addresses
-
-- name: Activate GIS.lab network server IP address
-  shell: ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_SERVER_NETWORK_DEVICE }}
-  args:
-    executable: /bin/bash
-  when: GISLAB_NETWORK_SERVER_IP not in ansible_all_ipv4_addresses
-
 - name: Install DHCP client configuration with fallback support
   template: src=network/dhclient.conf.j2 dest=/etc/dhcp/dhclient.conf
+
+
+- name: Activate GIS.lab network IP address if not received from provider
+  shell: ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_SERVER_NETWORK_DEVICE }}
+  when: GISLAB_NETWORK_SERVER_IP not in ansible_all_ipv4_addresses
+
+- name: Install GIS.lab network hook
+  template: src=network/gislab.j2 dest=/etc/network/if-up.d/gislab mode=0755
 
 
 # Apt
@@ -276,7 +274,7 @@
 - name: Update apt cache
   apt: update_cache=yes
 
-- name: Remove not needed packages possibly comming with OS image
+- name: Remove not needed packages possibly coming with OS image
   apt: pkg={{item}} state=absent
   with_items:
     - landscape-client

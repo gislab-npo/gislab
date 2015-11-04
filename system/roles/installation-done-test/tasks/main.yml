@@ -5,9 +5,13 @@
     | mail -s '[GIS.lab test: {{ GISLAB_TEST_UNIQUE_STRING }}]: Testing is done' root"
   args:
     executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
 
 - name: Testing of GIS.lab is done
   shell: date -R
+  ignore_errors: yes
   changed_when: False
+
 
 # vim:ft=ansible:

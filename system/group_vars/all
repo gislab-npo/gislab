@@ -1,70 +1,76 @@
-# This file contains default values of GIS.lab configuration variables.
+# This file contains default values for GIS.lab configuration.
 
-# Do not modify this file directly, rather create a new configuration file in 'system/host_vars' directory and place
-# there variables, which you want to change. Than create Ansible inventory file, with the same 'unique-host-name' as
-# a file name in 'system/host_vars' directory.
+# Do not modify this file directly, rather create a new configuration file in
+# 'system/host_vars' directory and place custom configuration there.
+# Then create Ansible inventory file, with the same 'host-name' as the name of
+# the file in 'system/host_vars' directory containing custom configuration.
 
-# Inventory file format:
-# <unique-host-name> ansible_ssh_host=<host-url> ansible_ssh_user=<provisioning-user-account-name>
+# Ansible inventory file format:
+# <host-name> ansible_ssh_host=<url> ansible_ssh_user=<user-name>
 
-# If using local Vagrant provisioner (with VirtualBox or VMWare), create 'gislab_vagrant' configuration file in
-# 'host_vars' directory and place configuration there. It will be automatically loaded by Vagrant without needing
-# to create the inventory file.
+# If using Vagrant provisioner, create 'gislab_vagrant' configuration file in
+# 'system/host_vars' directory and place custom configuration there. It will
+# be loaded automatically by Vagrant without need to create the Ansible
+# inventory file.
 
 
-# Example configuration file with corresponding Ansible inventory file:
-# configuration file 'system/host_vars/gislab-unit-10':
+# Example configuration
+# =====================
+
+# Custom configuration file 'system/host_vars/gislab-unit-10'
+# ----------------------------------------------------------
 # GISLAB_NETWORK: 192.168.10
 # GISLAB_CLIENT_LANGUAGES:
 #  - sk
 #  - cs
 
-# Ansible inventory file 'gislab-unit':
+# Ansible inventory file 'gislab-unit-10'
+# ---------------------------------------
 # gislab-unit-10 ansible_ssh_host=192.168.5.155 ansible_ssh_user=ubuntu
 
 
-# In most cases, changing configuration once GIS.lab is installed requires performing server upgrade.
-# Here is a list of useful commands:
+# Useful commands
+# ===============
 
-# Vagrant provisioner
-# ----------------------
-# * GIS.lab installation:     $ vagrant up
-# * GIS.lab upgrade:          $ vagrant provision
-# * GIS.lab server restart:   $ vagrant reload
-# * GIS.lab re-installation:  $ vagrant destroy && vagrant up
+# Vagrant
+# -------
+# * installation:             $ vagrant up
+# * upgrade:                  $ vagrant provision
+# * restart:                  $ vagrant reload
+# * re-installation:          $ vagrant destroy && vagrant up
 
-# Ansible provisioner
-# ------------
-# * GIS.lab installation:     $ ansible-playbook --inventory=<INVENTORY-FILE> --private-key=<PRIVATE-KEY> system/gislab.yml
-# * GIS.lab upgrade:          $ ansible-playbook --inventory=<INVENTORY-FILE> --private-key=<PRIVATE-KEY> system/gislab.yml
-# * GIS.lab server restart:   $ ansible --inventory=<INVENTORY-FILE> --private-key=<PRIVATE-KEY> --module-name=shell --args='sudo reboot' <HOST-NAME> 
-# * GIS.lab server shutdown:  $ ansible --inventory=<INVENTORY-FILE> --private-key=<PRIVATE-KEY> --module-name=shell --args='sudo halt' <HOST-NAME> 
-
-
+# Ansible
+# -------
+# * installation/upgrade:     $ ansible-playbook
+#                                 --inventory=<INVENTORY-FILE>
+#                                 --private-key=<PRIVATE-KEY>
+#                               system/gislab.yml
 
 
-# ******************************************************************************************************************* #
-############################################# ADMINISTRATOR DETAILS ###################################################
-# ******************************************************************************************************************* #
-# GIS.lab administrator first name.
+
+
+# *************************************************************************** #
+######################### ADMINISTRATOR DETAILS ###############################
+# *************************************************************************** #
+# First name of GIS.lab administrator.
 # Example: Ivan
 GISLAB_ADMIN_FIRST_NAME: Administrator
 
-# GIS.lab administrator surname.
+# Surname/last name of GIS.lab administrator.
 # Example: Mincik
 GISLAB_ADMIN_SURNAME: GIS.lab
 
-# GIS.lab administrator email.
+# Email of GIS.lab administrator.
 # Example: ivan.mincik@gmail.com
 GISLAB_ADMIN_EMAIL: gislab@gis.lab
 
 
 
 
-# ******************************************************************************************************************* #
-############################################## LOCAL VAGRANT PROVISIONER ##############################################
-# ******************************************************************************************************************* #
-# Configuration specific to local Vagrant provisioner.
+# *************************************************************************** #
+############################# VAGRANT PROVISIONER #############################
+# *************************************************************************** #
+# Configuration specific to Vagrant provisioner.
 
 # Server memory size in MB.
 # Change requires GIS.lab server restart.
@@ -74,121 +80,157 @@ GISLAB_SERVER_MEMORY: 1024
 # Change requires GIS.lab server restart.
 GISLAB_SERVER_CPUS: 1
 
-# Determines if GIS.lab server should start with graphical console. This is useful to gain more control with server boot
-# process.
+# Determines if Vagrant should try to integrate GIS.lab to the connected local
+# network via DHCP request. Allow integration only if GIS.lab machine is set in
+# bridge with active Ethernet network adapter on the host machine.
+# To enable connection from other networks (Internet), it is required to update
+# default gateway configuration by hand. It means dropping default gateway via
+# 'eth0' and setting default gateway via 'eth1' device.
+# Removing original default gateway: ip route del default via 10.0.2.2 dev eth0
+# Setting new default gateway: ip route add default via 192.168.151.254 dev eth1
+# Possible values are:
+# * no: do not try to integrate
+# * yes: try to integrate
+# Change requires running upgrade.
+GISLAB_SERVER_INTEGRATION: no
+
+# Set GIS.lab server MAC address.
+# Example: 080027C247F6
+# Change requires GIS.lab server restart and removing
+# /etc/udev/rules.d/70-persistent-net.rules file.
+GISLAB_SERVER_MAC:
+
+# Determines if GIS.lab server should start with GUI console. This is useful to
+# gain more control with server boot process.
+# Possible values are:
 # * no: do not launch GUI console
 # * yes: launch GUI console
+# Change requires GIS.lab server restart.
 GISLAB_SERVER_GUI_CONSOLE: no
 
 
 
 
-# ******************************************************************************************************************* #
-###################################################### PROVIDERS ######################################################
-# ******************************************************************************************************************* #
+# *************************************************************************** #
+################################### PROVIDERS #################################
+# *************************************************************************** #
+# TODO: consider moving provider specific configuration to provider's directory
 
 ### AWS ###
 # Configuration specific to Amazon WS provider.
 
-# Amazon AWS security credentials
+# Amazon AWS security credentials.
 # For more informations about AWS credentials see:
 # http://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html
 
-# AWS account ID without dashes
+# AWS account ID (without dashes).
 GISLAB_AWS_ACCOUNT:
 
-# AWS access key ID
+# AWS access key ID.
 GISLAB_AWS_ACCESS_KEY_ID:
 
-# AWS secret access key
+# AWS secret access key.
 GISLAB_AWS_SECRET_KEY:
 
 # Absolute path to AWS public key certificate file.
+# Example: /home/user/.ec2/cert-CC4EFBF62935A317CB3E5F756381EA11.pem
 GISLAB_AWS_CERTIFICATE:
 
 # Absolute path to AWS private key file.
+# Example: /home/user/.ec2/pk-C508B48174135E760AF6A1A40E9BC433.pem
 GISLAB_AWS_PRIVATE_KEY:
 
 
-# AWS location
+# AWS location.
 # For more information about EC2 locations see:
 # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
 
 # Region to run instance in.
 # Supported regions:
-# eu-west-1
-# us-east-1, us-west-1, us-west-2
-# ap-northeast-1, ap-southeast-1, ap-southeast-2
-# sa-east-1
+# * eu-west-1
+# * us-east-1, us-west-1, us-west-2
+# * ap-northeast-1, ap-southeast-1, ap-southeast-2
+# * sa-east-1
+# Example: eu-west-1        - run instance in EU (Ireland) region
 GISLAB_AWS_REGION: eu-west-1
 
 # AWS availability zone
 # Zone to run instance in (must be within region).
+# Example: eu-west-1a       - run instance in eu-west-1a availability zone
 GISLAB_AWS_AVAILABILITY_ZONE: eu-west-1a
 
 
 # EC2 instance type.
 # For list of instance types see: http://aws.amazon.com/ec2/instance-types/
-# Recommended instance types for production deployment are:
-# m3.xlarge - 4 x vCPU, 15 GB RAM
-# c3.2xlarge - 8 x vCPU, 15 GB RAM
+# Recommended instance types:
+# * m3.xlarge  - 4 x vCPU, 15 GB RAM
+# * c3.2xlarge - 8 x vCPU, 15 GB RAM
 GISLAB_AWS_SERVER_INSTANCE_TYPE: t2.micro
 
-
-# AWS S3 bucket prefix used for storing GIS.lab client images.
+# FIXME: not sure about the implementation
+# Prefix used for creating S3 bucket name for storing GIS.lab client images.
+# GIS.lab client image will be stored on S3 in folder
+#  s3://<GISLAB_AWS_BUCKET_PREFIX>/<GISLAB_UNIQUE_ID>/
+# Example: devel
 GISLAB_AWS_BUCKET_PREFIX:
 
-
+# TODO: replace with GISLAB_AWS_SSH_KEY already created in AWS
 # Absolute path to public SSH key used for accessing GIS.lab server.
+# Example: /home/user/.ssh/id_rsa.pub
 GISLAB_AWS_SSH_PUBLIC_KEY:
 
 
+# How many GIS.lab clients launch
+GISLAB_AWS_CLIENTS_COUNT: 1
 
 
-# ******************************************************************************************************************* #
-############################################# GENERAL CONFIGURATION ###################################################
-# ******************************************************************************************************************* #
 
-# Type of GIS.lab infrastructure suite to install.
+
+# ************************************************************************* #
+######################## GENERAL CONFIGURATION ##############################
+# ************************************************************************* #
+
+# GIS.lab infrastructure suite to install.
 # Possible options are:
 # * server: GIS server with horizontal scaling support
 # * office: general purpose server and desktop clients with no GIS support
-# * lab: complete GIS server with desktop GIS clients with horizontal scaling support
+# * lab: complete GIS infrastructure with horizontal scaling support
 # Change requires running upgrade.
 GISLAB_SUITE: lab
 
-# First three octets of private IP range 192.168.0.0 - 192.168.255.255, which will define network number used for
-# GIS.lab network.
+# GIS.lab network number - first three octets of private IP range
+# 192.168.0-255.0-255 which will define network number used for GIS.lab.
 # Example: 192.168.1
 # Change requires GIS.lab re-installation.
 GISLAB_NETWORK: 192.168.50
 
-# Time zone. Check list of time zones here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
+# Time zone. For list of time zones see:
+# http://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
 # Change requires running upgrade.
 GISLAB_TIMEZONE: Europe/Bratislava
 
-# List of DNS servers which will be used in addition to GIS.lab's internal DNS server (for example for resolving local
-# DNS records of your LAN).
+# List of additional DNS servers used with GIS.lab's internal DNS server
+# for resolving local DNS records in LAN.
 # Example:
 # - 192.168.0.8
 # - 192.168.0.9
 # Change requires running upgrade.
 GISLAB_DNS_SERVERS:
 
-# Ubuntu packages repository country code. For Amazon AWS provider use value <region-name>.ec2
+# Local country code of Ubuntu repository used to choose closest mirror.
+# For Amazon AWS provider use value <region-name>.ec2
 # Example: sk             - Slovak Ubuntu mirror
 # Example: eu-west-1.ec2  - AWS mirror running in eu-west-1 region
 # Change requires running upgrade.
 GISLAB_APT_REPOSITORY_COUNTRY_MIRROR: sk
 
-# Apt-cacher-ng proxy URL.
+# URL of Debian/Ubuntu packages caching service (apt-cacher-ng).
 # Example: http://192.168.50.6:3142
 # Change requires running upgrade.
 GISLAB_APT_HTTP_PROXY:
 
-# List of custom Apt repositories which should be enabled for server and client as installation resources. Repositories
-# must provide Ubuntu Precise packages and it is recommended, that they are using 'ppa:imincik/gis' as a build
-# dependency.
+# List of additional Apt repositories, which will be used during the
+# installation.
 # Example:
 # - http://ppa.launchpad.net/my-ppa1/ubuntu precise main
 # - http://dl.google.com/linux/earth/deb/ stable main
@@ -198,44 +240,46 @@ GISLAB_APT_CUSTOM_REPOSITORIES:
 
 
 
-# ******************************************************************************************************************* #
-################################################### SERVER ############################################################
-# ******************************************************************************************************************* #
+# ************************************************************************* #
+############################## SERVER #######################################
+# ************************************************************************* #
 
-# Network device on GIS.lab server which will be used for network communication if no device(s) are explicitly defined
-# by provider (Vagrant: eth0, eth1, AWS: eth0).
+# Network device of GIS.lab server dedicated for GIS.lab network.
 # Example: eth0
 # Change requires running upgrade.
 GISLAB_SERVER_NETWORK_DEVICE: eth0
 
 
-# GIS.lab server is using separate network configuration for integration in to the network, where it is deployed. This
-# configuration is usually used for connection to Internet and in most cases it is received from provider (Vagrant,
-# AWS) or from DHCP server, which exists in network, where GIS.lab is deployed.
+# GIS.lab server is always trying to integrate itself to the connected local
+# network via DHCP request. If no DHCP response is received, fallback network
+# configuration is automatically set.
 
-# IP address which will be assigned to GIS.lab server, when no IP address is received from network, where GIS.lab is
-# deployed. Make sure, that this IP address does not already exist in network, to avoid IP conflict !
+# Fallback IP address, which will be assigned to GIS.lab server, when no IP
+# address is received from local network. Double check, that this IP address
+# doesn't already exist in the network to avoid IP conflict !
 # Example: 192.168.5.5
 GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS: 192.168.5.5
 
-# IP address of gateway, which will be used for communication with Internet, when no gateway address is received from
-# network, where GIS.lab is deployed.
+# Fallback gateway, which will be used for communication with Internet, when
+# no gateway address is received from local network.
 # Example: 192.168.5.1
 GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY: 192.168.5.1
 
 
-# Email account which will be used as a relay to send emails from GIS.lab server. SMTP server must support TLS
-# encryption on port 587. If no account configured email messages from GIS.lab server will be delivered locally to Linux
-# user on server (vagrant or ubuntu).
+# Email account which will be used as a relay to send emails from GIS.lab.
+# SMTP server must support TLS encryption on port 587. If no account configured,
+# email messages from GIS.lab will be delivered locally to Linux user on server
+# (vagrant or ubuntu).
 # Change requires running upgrade.
 
 # SMTP address
-# If using GMail account, allowing less secure access is required (https://www.google.com/settings/security/lesssecureapps)
+# If using GMail account, it is required to allow less secure access
+# (https://www.google.com/settings/security/lesssecureapps)
 # Example: smtp.gmail.com
 GISLAB_SERVER_EMAIL_RELAY_SERVER:
 
-# Email account login.
-# Example: gislab-server@gmail.com 
+# Email account user name.
+# Example: gislab-relay@gmail.com
 GISLAB_SERVER_EMAIL_RELAY_LOGIN:
 
 # Email account password.
@@ -245,28 +289,32 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 
 
 
-# ******************************************************************************************************************* #
-################################################### CLIENT ############################################################
-# ******************************************************************************************************************* #
+# ************************************************************************* #
+############################## CLIENT #######################################
+# ************************************************************************* #
 
-# GIS.lab client architecture
+# GIS.lab client architecture.
 # Possible values are:
-# * i386: use this if you are working in mixed environment containing older and new machines
-# * amd64: use this only if all client machines are capable to run 64 bit OS (including virtual clients)
+# * i386:  use this if you are working in mixed environment containing older
+#          and new machines
+# * amd64: use this only if all client machines are capable to run 64 bit OS
+#          (including virtual clients)
 GISLAB_CLIENT_ARCHITECTURE: i386
 
-# List of country codes of languages which should be installed on client beside English language.
+# List of country codes for languages which will be installed for beside
+# English language.
 # Example:
 # - sk
 # - cs
 # Change requires running upgrade.
 GISLAB_CLIENT_LANGUAGES:
 
-# List of keyboard layout codes and their variants which should be installed on client beside English keyboard
-# layout. 'variant' value is optional and can be omitted. For complete list of keyboard layouts and their corresponding
-# variants see 'man xkeyboard-config'. Due to X11 protocol limitation, it possible to specify only up to four keyboard
-# layouts here.
-# Example: 
+# List of keyboard layout codes and their variants which will be installed
+# beside English keyboard layout. 'variant' value is optional and can be
+# omitted. For complete list of keyboard layouts and their corresponding
+# variants see 'man xkeyboard-config'. Due to X11 protocol limitation, it
+# possible to specify only up to four keyboard layouts here.
+# Example:
 # - layout: sk
 #   variant: qwerty
 # - layout: cz
@@ -276,53 +324,55 @@ GISLAB_CLIENT_LANGUAGES:
 GISLAB_CLIENT_KEYBOARDS:
   - layout: us
 
-# Determines if client image should provide full support for VirtualBox client
-# * no: do not support VirtualBox client
-# * yes: provide support for VirtualBox client (VirtualBox guest additions installed)
+# Determines if VirtualBox support will be enabled via VirtualBox guest
+# additions.
+# * yes: enable VirtualBox support
+# * no: do not enable VirtualBox support
 # Change requires running upgrade.
 GISLAB_CLIENT_VIRTUALBOX_SUPPORT: yes
 
-# Relative path to VBoxGuestAdditions.iso file which should be used for VirtualBox guest additions installation. If none
-# provided, guest additions will be installed from default Ubuntu repository which could does match VirtualBox version
-# on client, although no problems are expected.
-# You can copy VBoxGuestAdditions.iso file from VirtualBox installation directory (/usr/share/virtualbox/ on Linux).
-# Example: user/VBoxGuestAdditions.iso
+# Relative path to VBoxGuestAdditions.iso file which should be used for
+# installation of VirtualBox guest additions. If none provided, guest additions
+# will be installed from default Ubuntu repository which could not match
+# VirtualBox version on client, although no problems are expected.
+# VBoxGuestAdditions.iso file can be copied from VirtualBox installation
+# directory (/usr/share/virtualbox/ on Linux).
+# Example: iso/VBoxGuestAdditions.iso
 # Change requires running upgrade.
 GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO:
 
-# Minimal amount of memory specified in MB, which must be present on client machine to utilize it horizontal scaling of
-# OWS services. In reality, it means, that GIS.lab client machine will be requested to process some OWS requests
-# generated by other members of GIS.lab cluster.
+# Minimal amount of memory in MB, which must be present on client machine to
+# enable it OWS cluster.
 # Change requires running upgrade.
 GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY: 2000
 
 
 
 
-# ******************************************************************************************************************* #
-############################################# DEVELOPER SECTION #######################################################
-# ******************************************************************************************************************* #
+# ************************************************************************* #
+######################## DEVELOPER SECTION ##################################
+# ************************************************************************* #
 
-# Determines if enable installation in debug mode.
+# Determines if debug mode will be enabled for installation.
 # Possible values are:
-# * no: do not activate debug mode
-# * yes: activate debug mode
+# * no:  do not enable debug mode
+# * yes: enable debug mode
 GISLAB_DEBUG_INSTALL: no
 
-# Determines if enable running important server services in debug mode.
+# Determines if debug mode will be enabled for logging of server services.
 # Possible values are:
-# * no: do not activate debug mode
-# * yes: activate debug mode
+# * no:  do not enable debug mode
+# * yes: enable debug mode
 GISLAB_DEBUG_SERVICES: no
 
-# Run tests after installation is finished
+# Run tests after installation is finished.
 # # Possible values are:
-# * no: do not run tests
+# * no:  do not run tests
 # * yes: do run tests
 GISLAB_TESTS_ENABLE: no
 
-# Enable GIS.lab Mobile client interface. Mobile interface is still in development/testing. Therefore it is disabled by
-# default.
-# * no: do not enable mobile client interface
+# Enable GIS.lab Mobile client interface. Mobile interface is still in
+# development/testing. Therefore it is disabled by default.
+# * no:  do not enable mobile client interface
 # * yes: enable mobile client interface
 GISLAB_CLIENT_MOBILE: no
