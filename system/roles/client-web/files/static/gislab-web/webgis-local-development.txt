@@ -1,3 +1,4 @@
+Note: Replace <QGIS-DATA> with directory of published QGIS projects (for example: /home/user/qgis/publish)
 
 Install lighttpd server:
 ========================
@@ -103,7 +104,7 @@ fastcgi.server = (
 )
 
 url.rewrite-once = (
-    "^(.*)MAP=(.*)$" => "$1MAP=<QGIS-DATA>/publish/$2",
+    "^(.*)MAP=(.*)$" => "$1MAP=<QGIS-DATA>/$2",
 )
 
 ----------------------------------------------------------------------------------------------------------
@@ -124,7 +125,6 @@ GISLAB_VERSION
 
 $ workon webgis
 $ pip install django-sslserver
-$ pip install django-cors-headers
 
 $ cd <gis-lab>/system/roles/client-web/files/static/gislab-web
 $ django-admin.py startproject --template=webgis/conf/project_template/ <project name> [<project directory>]
@@ -144,7 +144,7 @@ DATABASES = {
 }
 
 ### GIS.lab Web ###
-GISLAB_WEB_PROJECT_ROOT = '<QGIS-DATA>/publish/'
+GISLAB_WEB_PROJECT_ROOT = '<QGIS-DATA>/'
 GISLAB_WEB_MAPSERVER_URL = 'http://localhost/cgi-bin/qgis_mapserv.fcgi'
 
 
@@ -169,3 +169,8 @@ $ export PYTHONPATH=<gis-lab>/system/roles/client-web/files/static/gislab-web/
 
 $ cd <project directory>
 $ python manage.py runsslserver
+
+https://localhost:8000/ol3/?PROJECT=<project-path>
+Add security exception in web browser
+
+
