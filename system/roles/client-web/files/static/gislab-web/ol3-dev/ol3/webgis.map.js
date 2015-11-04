@@ -83,7 +83,7 @@ ol.source.WebgisTileImage.prototype.setVisibleLayers = function(layers) {
 	var layers_names = ordered_layers.join(",");
 	this.tileUrlTemplate = "{mapcache_url}{hash}/{z}/{x}/{y}.png?PROJECT={project}&LAYERS={layers}"
 			.replace('{mapcache_url}', this.tilesUrl)
-			.replace('{hash}', CryptoJS['MD5'](layers_names).toString())
+			.replace('{hash}', CryptoJS.MD5(layers_names).toString())
 			.replace('{project}', this.project)
 			.replace('{layers}', layers_names);
 	this.tileCache.clear();
@@ -118,7 +118,7 @@ ol.source.WebgisTileImage.prototype.getLegendUrl = function(layername, view) {
 	var tile_grid = this.getTileGrid();
 	var zoom_level = tile_grid.getZForResolution(view.getResolution());
 	var legendUrl = this.legendUrlTemplate
-		.replace('{hash}', CryptoJS['MD5'](layername).toString())
+		.replace('{hash}', CryptoJS.MD5(layername).toString())
 		.replace('{zoom}', Number(zoom_level).toString());
 	legendUrl = goog.uri.utils.appendParamsFromMap(legendUrl, {
 		'LAYER': layername,

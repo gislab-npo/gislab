@@ -307,3 +307,12 @@ olx.source.ImageWMSOptions.prototype.resolutions;
  * @api stable
  */
 olx.source.ImageWMSOptions.prototype.url;
+
+var CryptoJS;
+
+/**
+ * MD5 ...
+ * @param {string} layer names
+ * @return {Object}
+ */
+CryptoJS.MD5;
