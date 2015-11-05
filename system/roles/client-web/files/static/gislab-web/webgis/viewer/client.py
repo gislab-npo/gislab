@@ -15,8 +15,8 @@ from django.http import HttpResponse, Http404
 from django.contrib.auth import login
 from django.utils.translation import ugettext as _
 
-from webgis.viewer import forms
 from webgis.viewer import models
+from webgis.viewer import forms
 from webgis.viewer.metadata_parser import MetadataParser
 from webgis.libs.utils import secure_url, set_query_parameters
 from webgis.mapcache import get_tile_response, get_legendgraphic_response, WmsLayer, TileNotFoundException

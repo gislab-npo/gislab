@@ -5,11 +5,11 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-		<link rel="icon" type="image/png" href="{% static 'viewer/images/gislab-web-16.png' %}"/>
-		<link rel="stylesheet" type="text/css" href="{% static 'viewer/lib/ext-3.4.1/resources/css/ext-all.css' %}"/>
-		<link rel="stylesheet" type="text/css" href="{% static 'viewer/lib/ext-3.4.1/resources/css/xtheme-gray.css' %}"/>
-		<link rel="stylesheet" type="text/css" href="{% static 'viewer/lib/extensions/css/Spinner.css' %}" />
-		<link rel="stylesheet" type="text/css" href="{% static 'viewer/css/webgis.css' %}"/>
+		<link rel="icon" type="image/png" href="{% static 'viewer_old/images/gislab-web-16.png' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'viewer_old/lib/ext-3.4.1/resources/css/ext-all.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'viewer_old/lib/ext-3.4.1/resources/css/xtheme-gray.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'viewer_old/lib/extensions/css/Spinner.css' %}" />
+		<link rel="stylesheet" type="text/css" href="{% static 'viewer_old/css/webgis.css' %}"/>
 		<style>
 			#loading-mask {
 				position: absolute;
@@ -52,34 +52,34 @@
 
 		<script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
 		{% if debug %}
-		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/adapter/ext/ext-base-debug.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/ext-all-debug.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/lib/OpenLayers-2.13/OpenLayers.debug.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/ext-3.4.1/adapter/ext/ext-base-debug.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/ext-3.4.1/ext-all-debug.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/OpenLayers-2.13/OpenLayers.debug.js' %}"></script>
 		{% else %}
-		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/adapter/ext/ext-base.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/ext-all.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/lib/OpenLayers-2.13/OpenLayers.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/ext-3.4.1/adapter/ext/ext-base.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/ext-3.4.1/ext-all.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/OpenLayers-2.13/OpenLayers.js' %}"></script>
 		{% endif %}
 		{% if LANGUAGE_CODE and LANGUAGE_CODE != 'en-us' %}
-		<script type="text/javascript" src="{% static 'viewer/lib/OpenLayers-2.13/Lang/' %}{{ LANGUAGE_CODE }}.js"></script>
-		<script type="text/javascript" src="{% static 'viewer/lib/ext-3.4.1/locale/ext-lang-' %}{{ LANGUAGE_CODE }}.js"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/OpenLayers-2.13/Lang/' %}{{ LANGUAGE_CODE }}.js"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/ext-3.4.1/locale/ext-lang-' %}{{ LANGUAGE_CODE }}.js"></script>
 		{% endif %}
-		<script type="text/javascript" src="{% static 'viewer/lib/md5.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/lib/extensions/Spinner.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/lib/extensions/SpinnerField.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/lib/GeoExt-1.1/GeoExt.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/md5.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/extensions/Spinner.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/extensions/SpinnerField.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/lib/GeoExt-1.1/GeoExt.js' %}"></script>
 
-		<script type="text/javascript" src="{% static 'viewer/js/styles.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/baselayers_panel.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/wms_layers_node.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/wms_layers_legend.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/featureinfo_panel.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/search_action.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/measure_action.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/draw_action.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/topics_panel.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/control_display.js' %}"></script>
-		<script type="text/javascript" src="{% static 'viewer/js/link_list.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/styles.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/baselayers_panel.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/wms_layers_node.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/wms_layers_legend.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/featureinfo_panel.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/search_action.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/measure_action.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/draw_action.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/topics_panel.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/control_display.js' %}"></script>
+		<script type="text/javascript" src="{% static 'viewer_old/js/link_list.js' %}"></script>
 		{% if google %}<script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>{% endif %}
 
 		<title id="page-title">{{ root_title }}</title>
@@ -143,7 +143,7 @@
 			});
 			function main() {
 
-				Ext.BLANK_IMAGE_URL = "{% static 'viewer/images/s.gif' %}";
+				Ext.BLANK_IMAGE_URL = "{% static 'viewer_old/images/s.gif' %}";
 				OpenLayers.DOTS_PER_INCH = {{ dpi }};
 				OpenLayers.Lang.setCode("{{ LANGUAGE_CODE }}");
 
@@ -524,19 +524,19 @@
 				});
 
 				mappanel.getTopToolbar().add(' ', ' ', '-', ' ');
-				{% include "viewer/actions/basic.js" %}
+				{% include "viewer_old/actions/basic.js" %}
 
 				{% if project != "empty" and print_composers %}
-				{% include "viewer/actions/print.js" %}
+				{% include "viewer_old/actions/print.js" %}
 				{% endif %}
 
-				{% include "viewer/actions/measurement.js" %}
+				{% include "viewer_old/actions/measurement.js" %}
 				//mappanel.getTopToolbar().add(' ');
-				{% include "viewer/actions/draw.js" %}
+				{% include "viewer_old/actions/draw.js" %}
 
 				{% if project != "empty" %}
-					{% include "viewer/actions/search.js" %}
-					{% include "viewer/actions/featureinfo.js" %}
+					{% include "viewer_old/actions/search.js" %}
+					{% include "viewer_old/actions/featureinfo.js" %}
 				{% endif %}
 
 				// viewport
@@ -744,7 +744,7 @@
 				geojson_links.setLinks(drawings_links);
 				{% endif %}
 
-				{% include "viewer/permalink.js" %}
+				{% include "viewer_old/permalink.js" %}
 				{% if project != "empty" %}
 				var expand_button = new Ext.Toolbar.Button({
 					id: 'featureinfo-expand-button',

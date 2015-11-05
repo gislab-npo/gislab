@@ -5,7 +5,7 @@
 		.module('gl.features')
 		.controller('FeaturesController', FeaturesController);
 
-	function FeaturesController($scope, projectProvider, gislabClient) {
+	function FeaturesController($scope, projectProvider) {
 		var featuresLayers = {};
 		var selectionControls = {};
 		var selectControl;

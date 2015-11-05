@@ -26,20 +26,20 @@ from webgis.libs.utils import secure_url, set_query_parameters
 class WebClient(WebgisClient):
 
 	def get_ows_url(self, request):
-		return set_query_parameters(reverse('viewer:owsrequest'), {'MAP': self.ows_project+'.qgs'})
+		return set_query_parameters(reverse('viewer_old:owsrequest'), {'MAP': self.ows_project+'.qgs'})
 
 	def get_mapcache_tile_url(self, request):
 		project_hash = hashlib.md5(self.project).hexdigest()
-		mapcache_url = reverse('viewer:tile', kwargs={'project_hash': project_hash, 'publish': self.project_metadata.publish_date_unix, 'layers_hash': '__layers__', 'x': 0, 'y': 0, 'z': 0, 'format': 'png'})
+		mapcache_url = reverse('viewer_old:tile', kwargs={'project_hash': project_hash, 'publish': self.project_metadata.publish_date_unix, 'layers_hash': '__layers__', 'x': 0, 'y': 0, 'z': 0, 'format': 'png'})
 		return mapcache_url.split('/__layers__/')[0]+'/'
 
 	def get_mapcache_legend_url(self, request):
 		project_hash = hashlib.md5(self.project).hexdigest()
-		legend_url = reverse('viewer:legend', kwargs={'project_hash': project_hash, 'publish': self.project_metadata.publish_date_unix, 'layer_hash': '__layer__', 'zoom': 0, 'format': 'png'})
+		legend_url = reverse('viewer_old:legend', kwargs={'project_hash': project_hash, 'publish': self.project_metadata.publish_date_unix, 'layer_hash': '__layer__', 'zoom': 0, 'format': 'png'})
 		return legend_url.split('/__layer__/')[0]+'/'
 
 	def get_vectorlayers_url(self, request):
-		return set_query_parameters(reverse('viewer:vectorlayers'), {'PROJECT': self.ows_project})
+		return set_query_parameters(reverse('viewer_old:vectorlayers'), {'PROJECT': self.ows_project})
 
 
 	def render(self, request, project_data):
@@ -51,7 +51,7 @@ class WebClient(WebgisClient):
 		if settings.DEBUG:
 			project_data['debug'] = True
 			project_data['config'] = dict(project_data)
-		return render(request, "viewer/webgis.html", project_data, content_type="text/html")
+		return render(request, "viewer_old/webgis.html", project_data, content_type="text/html")
 
 client = WebClient()
 
@@ -86,7 +86,7 @@ def user_projects(request, username):
 		login_url = secure_url(request, reverse('login'))
 		return HttpResponseRedirect(set_query_parameters(login_url, {'next': secure_url(request)}))
 	if not username:
-		redirect_url = secure_url(request, reverse('viewer:user_projects', kwargs={'username': request.user.username}))
+		redirect_url = secure_url(request, reverse('viewer_old:user_projects', kwargs={'username': request.user.username}))
 		return HttpResponseRedirect(redirect_url)
 	if username != request.user.username:
 		if not request.user.is_superuser:
@@ -107,7 +107,7 @@ def user_projects(request, username):
 		'projects': projects,
 		'debug': settings.DEBUG
 	}
-	return render(request, "viewer/user_projects.html", context, content_type="text/html")
+	return render(request, "viewer_old/user_projects.html", context, content_type="text/html")
 
 
 def gislab_version_json(request):

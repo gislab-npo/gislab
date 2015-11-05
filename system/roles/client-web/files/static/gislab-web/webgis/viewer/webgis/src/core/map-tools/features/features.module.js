@@ -1,2 +1,2 @@
 angular
-	.module('gl.features', []);
+	.module('gl.features', ['gl.map']);

@@ -17,7 +17,7 @@ var concat = require('gulp-concat');
 
 gulp.task('uglify', function() {
 
-  gulp.src(['src/core/**/*.js', 'src/web/**/*.js'])
+  gulp.src(['src/core/**/*.module.js', 'src/web/**/*.module.js', 'src/core/**/*.js', 'src/web/**/*.js'])
     .pipe(ngAnnotate({ add: true }))
     .pipe(uglify())
     .pipe(concat('app.min.js'))

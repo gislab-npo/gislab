@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns("webgis.viewer.views",
+urlpatterns = patterns("webgis.viewer_old.views",
 	url(r"^$", "page", name="page"),
 	url(r"^user/(?P<username>[^/]*)/?$", "user_projects", name="user_projects"),
 	url("^owsrequest/$", "ows_request", name="owsrequest"),

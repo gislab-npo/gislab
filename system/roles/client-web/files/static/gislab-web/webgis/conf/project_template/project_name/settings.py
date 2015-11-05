@@ -109,10 +109,11 @@ INSTALLED_APPS = (
 	'django.contrib.contenttypes',
 	'django.contrib.sessions',
 	'django.contrib.staticfiles',
-	'webgis.viewer',
+	'webgis.viewer_old',
 	'webgis.storage',
 	'webgis.mapcache',
 	'webgis.mobile',
+	'webgis.viewer'
 )
 
 ROOT_URLCONF = '{{ project_name }}.urls'

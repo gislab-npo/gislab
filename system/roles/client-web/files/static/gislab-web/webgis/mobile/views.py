@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from webgis.mobile import forms
-from webgis.viewer.views import WebClient
+from webgis.viewer_old.views import WebClient
 from webgis.viewer.client import LoginRequired
 
 

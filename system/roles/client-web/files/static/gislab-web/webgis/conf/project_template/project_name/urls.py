@@ -6,13 +6,14 @@ from django.conf.urls.static import static
 
 
 js_info_dict = {
-	'packages': ('webgis.viewer',),
+	'packages': ('webgis.viewer_old',),
 }
 
 urlpatterns = patterns('',
-	url(r'', include('webgis.viewer.urls', namespace='viewer')),
+	url(r'', include('webgis.viewer_old.urls', namespace='viewer_old')),
 	url(r'', include('webgis.storage.urls', namespace='storage')),
 	url(r'^mobile/', include('webgis.mobile.urls', namespace='mobile')),
+	url(r'^ol3/', include('webgis.viewer.urls', namespace='viewer')),
 	url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
 	url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
 	url(r'^jsi18n/$', javascript_catalog, js_info_dict),

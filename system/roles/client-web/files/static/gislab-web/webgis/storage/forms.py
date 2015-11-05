@@ -16,6 +16,7 @@ class BallDataForm(CaseInsensitiveModelForm):
 class DrawingRecordForm(CaseInsensitiveModelForm):
 	class Meta:
 		model = Drawing
+		exclude = ("timestamp", )
 
 class DrawingHistoryForm(CaseInsensitiveForm):
 	user = forms.CharField(required=True)

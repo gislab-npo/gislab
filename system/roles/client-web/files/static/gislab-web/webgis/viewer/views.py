@@ -15,7 +15,7 @@ def app(request):
 	}
 	return render(
 		request,
-		"ol3_viewer/index.html",
+		"viewer/index.html",
 		data,
 		content_type="text/html"
 	)
