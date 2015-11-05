@@ -1,3 +1,12 @@
+Build
+=====
+
+npm install
+gulp lint
+gulp default
+gulp uglify
+
+-----
 $ npm install openlayers
 
 $ cp ol3/webgis.map.js node_modules/openlayers/src/ol/

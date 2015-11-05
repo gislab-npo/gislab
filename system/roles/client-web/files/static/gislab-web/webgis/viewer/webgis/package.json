@@ -21,7 +21,10 @@
     "gulp": "",
     "gulp-shell": "",
     "gulp-clean": "",
-    "gulp-jslint": ""
+    "gulp-jslint": "",
+    "gulp-ng-annotate": "",
+    "gulp-uglify": "",
+    "gulp-concat": ""
   },
   "devDependencies": {
   },

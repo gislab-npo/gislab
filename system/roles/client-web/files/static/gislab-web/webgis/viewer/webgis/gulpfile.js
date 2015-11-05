@@ -1,10 +1,32 @@
+/**
+ * TODO:
+ * 0 - Add comments
+ * 1 - separate to more files
+ * 2 - replace jslint with jshint
+ * 3 - add fixmyjs
+ */
+
 var gulp = require('gulp');
 var shell = require('gulp-shell');
 var clean = require('gulp-clean');
 var jslint = require('gulp-jslint');
+var ngAnnotate = require('gulp-ng-annotate');
+var uglify = require('gulp-uglify');
+var concat = require('gulp-concat');
 
+
+gulp.task('uglify', function() {
+
+  gulp.src(['src/core/**/*.js', 'src/web/**/*.js'])
+    .pipe(ngAnnotate({ add: true }))
+    .pipe(uglify())
+    .pipe(concat('app.min.js'))
+    .pipe(gulp.dest('../static/web/'));
+
+});
 
 gulp.task('lint', function() {
+
   gulp.src('src/**/*.js')
     .pipe(jslint({
       predef: [
@@ -31,7 +53,7 @@ gulp.task('copy', ['clean'], function() {
   gulp.src('webgis-debug.json')
     .pipe(gulp.dest('node_modules/openlayers/build/'));
 
-  gulp.src('src/**/*.js')
+  gulp.src('src/ol3/**/*.js')
     .pipe(gulp.dest('node_modules/openlayers/src/ol/gislab'));
 
   gulp.src('externs/webgis.js')
