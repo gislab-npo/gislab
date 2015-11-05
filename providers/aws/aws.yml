@@ -31,21 +31,14 @@
             or GISLAB_AWS_CERTIFICATE|default(None) == None
             or GISLAB_AWS_PRIVATE_KEY|default(None) == None
 
-    - name: Fail if SSH key not defined
-      fail: msg="Setting GISLAB_AWS_SSH_PUBLIC_KEY variable is required on AWS." 
-      when: GISLAB_AWS_SSH_PUBLIC_KEY|default(None) == None
+    - name: Fail if SSH key pair not defined
+      fail: msg="Setting GISLAB_AWS_SSH_KEY_PAIR variable is required on AWS."
+      when: GISLAB_AWS_SSH_KEY_PAIR|default(None) == None
 
     - name: Fail if GISLAB_AWS_BUCKET not defined
       fail: msg=" Setting GISLAB_AWS_BUCKET variable is required on AWS."
       when: GISLAB_AWS_BUCKET|default(None) == None
 
-
-    - name: Create SSH key pair
-      local_action:
-        module: ec2_key
-        name: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
-        key_material: "{{ item }}"
-      with_file: "{{ GISLAB_AWS_SSH_PUBLIC_KEY }}"
 
     - name: Create network
       local_action:
@@ -113,7 +106,7 @@
         module: ec2
         image: "{{ ubuntu_image.ami }}"
         instance_type: "{{ GISLAB_AWS_SERVER_INSTANCE_TYPE }}"
-        keypair: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+        keypair: "{{ GISLAB_AWS_SSH_KEY_PAIR }}"
         region: "{{ GISLAB_AWS_REGION }}"
         zone: "{{ GISLAB_AWS_AVAILABILITY_ZONE }}"
         group: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
