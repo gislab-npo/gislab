@@ -10,6 +10,9 @@
     - name: Read default configuration file 'group_vars/all'
       include_vars: "../../system/group_vars/all"
 
+    - name: Read default configuration file for AWS
+      include_vars: "aws"
+
     - name: Read host file 'system/host_vars/{{ GISLAB_UNIQUE_ID }}'
       include_vars: "../../system/host_vars/{{ GISLAB_UNIQUE_ID }}"
 
