@@ -52,12 +52,10 @@ GISLAB_AWS_AVAILABILITY_ZONE: eu-west-1a
 # * c3.2xlarge - 8 x vCPU, 15 GB RAM
 GISLAB_AWS_SERVER_INSTANCE_TYPE: t2.micro
 
-# FIXME: not sure about the implementation
-# Prefix used for creating S3 bucket name for storing GIS.lab client images.
-# GIS.lab client image will be stored on S3 in folder
-#  s3://<GISLAB_AWS_BUCKET_PREFIX>/<GISLAB_UNIQUE_ID>/
+# S3 bucket name, which be used for storing GIS.lab client images.
+# s3://<GISLAB_AWS_BUCKET>/<GISLAB_UNIQUE_ID>/
 # Example: devel
-GISLAB_AWS_BUCKET_PREFIX:
+GISLAB_AWS_BUCKET:
 
 # TODO: replace with GISLAB_AWS_SSH_KEY already created in AWS
 # Absolute path to public SSH key used for accessing GIS.lab server.

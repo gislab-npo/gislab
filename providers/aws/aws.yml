@@ -35,9 +35,9 @@
       fail: msg="Setting GISLAB_AWS_SSH_PUBLIC_KEY variable is required on AWS." 
       when: GISLAB_AWS_SSH_PUBLIC_KEY|default(None) == None
 
-    - name: Fail if GISLAB_AWS_BUCKET_PREFIX not defined
-      fail: msg=" Setting GISLAB_AWS_BUCKET_PREFIX variable is required on AWS."
-      when: GISLAB_AWS_BUCKET_PREFIX|default(None) == None
+    - name: Fail if GISLAB_AWS_BUCKET not defined
+      fail: msg=" Setting GISLAB_AWS_BUCKET variable is required on AWS."
+      when: GISLAB_AWS_BUCKET|default(None) == None
 
 
     - name: Create SSH key pair
