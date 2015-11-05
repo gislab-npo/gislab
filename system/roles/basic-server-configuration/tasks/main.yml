@@ -242,7 +242,7 @@
   when: GISLAB_NETWORK_SERVER_IP not in ansible_all_ipv4_addresses
 
 - name: Install GIS.lab network hook
-  template: src=network/gislab.j2 dest=/etc/network/if-up.d/gislab mode=0755
+  template: src=network/gislab.j2 dest=/etc/network/if-up.d/001gislab mode=0755
 
 
 # Apt
