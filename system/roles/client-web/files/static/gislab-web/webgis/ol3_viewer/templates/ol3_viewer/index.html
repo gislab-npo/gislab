@@ -76,26 +76,30 @@
 
 	<body ng-controller="AppController" class="no-scrollbar">
 		<div layout="column" layout-fill flex class="no-scrollbar">
-			<md-toolbar ng-include="'{% static "web/toolbar.html" %}'">
-			</md-toolbar>
-			<section layout="row" flex>
-				<md-sidenav md-component-id="left" class="md-sidenav-left" md-is-locked-open="$mdMedia('min-width: 333px')" layout="column" flex>
-					<div ui-layout="{disableToggle: true}" fill-layout ng-if="::project" layout-fill>
-						<div ui-layout-container size="50%" xclass="no-scrollbar">
+			<div class="toolbar-container">
+				<md-toolbar ng-include="'{% static "web/toolbar.html" %}'" flex="none">
+				</md-toolbar>
+			</div>
+			<div layout="row" flex>
+				<div class="main-panel" flex="none">
+					<div ui-layout="{disableToggle: true, dividerSize: 10}" ng-if="::project">
+						<div ui-layout-container size="50%" min-size="20%" class="no-scrollbar" style="padding-bottom:10px">
 							<div class="full-height" ng-include="'{% static "web/layers_control.html" %}'"></div>
 							<div class="ui-splitbar-container-v">
 								<md-icon class="ui-splitbar-icon-up" md-svg-icon="arrow-up"></md-icon>
 								<md-icon class="ui-splitbar-icon-down" md-svg-icon="arrow-down"></md-icon>
 							</div>
 						</div>
-						<div ui-layout-container size="50%">
+						<div ui-layout-container size="50%" class="no-scrollbar">
 							<div class="full-height" ng-include="'{% static "web/project_info.html" %}'"></div>
 						</div>
 					</div>
-				</md-sidenav>
-				<div id="map"></div>
-				<div class="bottom-bar"></div>
-			</section>
+				</div>
+				<div class="map-container" flex>
+					<div id="map"></div>
+				</div>
+			</div>
+			<div class="bottom-bar"></div>
 		</div>
 	</body>
 </html>

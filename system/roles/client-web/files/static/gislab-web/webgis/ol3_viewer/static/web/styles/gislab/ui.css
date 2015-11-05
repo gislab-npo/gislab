@@ -1,4 +1,9 @@
-md-toolbar {
+.main-panel {
+	position: relative;
+	width: 270px;
+	border-right: 1px solid #ccc;
+}
+.toolbar-container, md-toolbar {
 	min-height: 36px;
 }
 .md-toolbar-tools {
@@ -16,7 +21,6 @@ md-toolbar {
 	border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 .md-toolbar-tools .md-icon-button {
-	xmargin: 2px;
 	width: 36px;
 	height: 36px;
 	min-height: 36px;
@@ -48,8 +52,6 @@ md-toolbar {
 	color: rgba(255, 255, 255, 0.85);
 }
 .md-toolbar-tools .md-icon-button.activated md-icon {
-	xcolor: rgba(255, 255, 255, 1);
-	xcolor: #fcf4a8;
 	color: #fcf48e;
 }
 
@@ -112,6 +114,7 @@ md-sidenav {
 	border-right: 1px solid #ccc;
 	height: 100%;
 }
+
 md-sidenav.md-locked-open {
 	max-width: 270px;
 	min-width: 270px;
@@ -253,11 +256,10 @@ img.legend-item {
 }
 
 .ui-splitbar {
-	background-color: rgb(57, 73, 171);
-	opacity: 0.5;
+	background-color: rgba(57, 73, 171, 0.5);
 	box-sizing: border-box;
-	max-height: 6px;
-	border: 2px solid white;
+	max-height: 14px;
+	border-bottom: 8px solid white;
 }
 
 .ui-splitbar-icon-up, .ui-splitbar-icon-down {
@@ -269,27 +271,16 @@ img.legend-item {
 	border-radius: 3px;
 }
 
-.ui-splitbar-container-h {
-	position: absolute;
-	z-index: 2000;
-	bottom: -7px;
-	left: calc(50% - 10px);
-	height: 7px;
-	pointer-events: none;
-}
-.ui-splitbar-container-h .ui-splitbar-icon-up, .ui-splitbar-container-h .ui-splitbar-icon-down {
-	padding-left: 3px;
-	padding-right: 2px;
-}
-.ui-splitbar-container-h .ui-splitbar-icon-down {
-	margin-left: 9px;
+.ui-splitbar-icon-up, .ui-splitbar-icon-down {
+
 }
 
 .ui-splitbar-container-v {
 	position: absolute;
-	z-index: 2000;
-	bottom: -11px;
+	z-index: 20000;
+	bottom: 1px;
 	left: calc(50% - 3px);
+	width: 7px;
 	height: 14px;
 	pointer-events: none;
 }
@@ -329,7 +320,12 @@ md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item
 .full-height {
 	height: 100%;
 }
-
+.ui-layout-container {
+	xoverflow: visible;
+}
+.main-panel md-tabs:not(.md-no-tab-content) {
+	min-height: 50px;
+}
 .properties-list {
 	height: 100%;
 	width: 100%;
@@ -392,16 +388,6 @@ table[md-data-table] > thead:not([md-table-progress]) > tr > th > div {
 	height: 36px;
 }
 
-.panel-close-button {
-	position: absolute;
-	right: 10px;
-	top: 10px;
-	display:;
-}
-.panel-close-button md-icon {
-	width: 18px;
-	height: 18px;
-}
 .features-panel .md-subheader {
 	color: gray;
 	padding-left: 12px;

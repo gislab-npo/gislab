@@ -119,11 +119,14 @@
 				$scope.title = data.root_title;
 				projectProvider.load(data);
 				console.log(data);
+				var mapElem = angular.element(document.getElementById('map'));
+				mapElem.css('height', mapElem.parent()[0].scrollHeight+'px');
 				if (projectProvider.map) {
 					projectProvider.map.setTarget('map');
 					projectProvider.map.getView().fit(data.zoom_extent, projectProvider.map.getSize());
 					projectProvider.map.addControl(new ol.control.ScaleLine());
 					$scope.project = projectProvider;
+					//mapElem.css('height', '100%');
 				}
 			})
 	};

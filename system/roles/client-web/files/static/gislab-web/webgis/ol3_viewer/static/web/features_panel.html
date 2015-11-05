@@ -1,9 +1,4 @@
 <md-bottom-sheet class="features-panel">
-	<div class="panel-close-button">
-		<!-- <md-button ng-click="$mdBottomSheet.hide()"> -->
-			<!-- <md-icon md-svg-icon="circle-x-outline"></md-icon> -->
-		<!-- </md-button> -->
-	</div>
 	<md-tabs md-no-ink ng-if="featuresCategories" layout-fill>
 		<md-tab ng-repeat="category in featuresCategories" ng-init="setFeaturesLayer(featuresCategories[0].layer)"
 			md-on-select="setFeaturesLayer(category.layer)">
