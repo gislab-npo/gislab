@@ -2,4 +2,11 @@ build/
 dist/
 MANIFEST
 /ol3-dev/node_modules/
-/webgis/ol3_viewer/static/web/bower_components/
+/webgis/viewer/static/web/bower_components/
+/webgis/viewer/static/core/lib
+/webgis/viewer/webgis/node_modules
+
+
+# vim files
+.*.sw*
+.*.un~*

@@ -1,0 +1,35 @@
+{
+  "name": "gislab-web",
+  "version": "2.0.0",
+  "description": "Build tools for developing of the GIS.lab web client",
+  "keywords": [],
+  "homepage": "http://gislab.github.io/",
+  "scripts": {
+  },
+  "main": "src/webgis.map.js",
+  "repository": {
+  },
+  "license": "GNU/GPL v3",
+  "bugs": {
+    "url": ""
+  },
+  "dependencies": {
+    "openlayers": "3.10.1",
+    "proj4": "2.3.12",
+    "cryptojs": "",
+    "browserify": "12.0.1",
+    "gulp": "",
+    "gulp-shell": "",
+    "gulp-clean": "",
+    "gulp-jslint": ""
+  },
+  "devDependencies": {
+  },
+  "ext": [],
+  "maintainers": [
+  ],
+  "dist": {
+  },
+  "directories": {},
+  "readme": "ERROR: No README data found!"
+}
