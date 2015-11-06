@@ -5,6 +5,7 @@
   "keywords": [],
   "homepage": "http://gislab.github.io/",
   "scripts": {
+    "postinstall": "cd node_modules/angular-ui-layout; npm install; gulp dist"
   },
   "main": "src/webgis.map.js",
   "repository": {
@@ -16,15 +17,24 @@
   "dependencies": {
     "openlayers": "3.10.1",
     "proj4": "2.3.12",
-    "cryptojs": "",
+    "crypto-js": "",
     "browserify": "12.0.1",
     "gulp": "",
     "gulp-shell": "",
     "gulp-clean": "",
-    "gulp-jslint": "",
+    "gulp-chug": "",
+    "gulp-install": "",
+    "gulp-jshint": "",
+    "gulp-fixmyjs": "",
+    "jshint-stylish": "",
     "gulp-ng-annotate": "",
     "gulp-uglify": "",
-    "gulp-concat": ""
+    "gulp-concat": "",
+    "gulp-watch": "",
+    "gulp-minify-css":"",
+    "angular-material": "0.11.4",
+    "angular-ui-layout": "1.3.1",
+    "angular-material-data-table": "0.8.11"
   },
   "devDependencies": {
   },

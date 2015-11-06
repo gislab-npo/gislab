@@ -7,25 +7,14 @@
 
 		<title>GIS.lab web client</title>
 
-		<link rel="stylesheet" type="text/css" href="{% static "core/lib/ol.css" %}"/>
-		<link rel="stylesheet" type="text/css" href="{% static "web/bower_components/angular-material/angular-material.css" %}">
-		<link rel="stylesheet" type="text/css" href="{% static "web/bower_components/angular-ui-layout/ui-layout.css" %}"/>
-		<link rel="stylesheet" type="text/css" href="{% static "web/bower_components/angular-material-data-table/dist/md-data-table.min.css" %}"/>
 		<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700">
-		<link rel="stylesheet" type="text/css" href="{% static "web/styles/gislab/ui.css" %}">
+		<link rel="stylesheet" type="text/css" href="{% static "web/styles/styles.min.css" %}"/>
 
 		<!-- Before body closing tag -->
-		<script src="{% static "web/bower_components/angular/angular.js" %}"></script>
-		<script src="{% static "web/bower_components/angular-animate/angular-animate.js" %}"></script>
-		<script src="{% static "web/bower_components/angular-material/angular-material.js" %}"></script>
-		<script src="{% static "web/bower_components/angular-aria/angular-aria.js" %}"></script>
-		<script type="text/javascript" src="{% static "web/bower_components/raf/index.js" %}"></script>
-		<script type="text/javascript" src="{% static "web/bower_components/angular-ui-layout/ui-layout.js" %}"></script>
-		<script type="text/javascript" src="{% static "web/bower_components/angular-material-data-table/dist/md-data-table.min.js" %}"></script>
+		<script src="{% static "web/js/deps.min.js" %}"></script>
+		<!-- script type="text/javascript" src="{% static "web/bower_components/raf/index.js" %}" --><!-- /script-->
 
-		<script type="text/javascript" src="{% static "core/lib/proj4.js" %}"></script>
-		<script type="text/javascript" src="{% static "core/lib/md5.js" %}"></script>
-		<script type="text/javascript" src="{% static "core/lib/ol.debug.js" %}"></script>
+		<script type="text/javascript" src="{% static "web/js/ol3-deps.min.js" %}"></script>
 
 		<script type="text/javascript">
 		// First, checks if it isn't implemented yet.
@@ -41,7 +30,7 @@
 			};
 		}
 		</script>
-		<script type="text/javascript" src="{% static "web/app.min.js" %}"></script>
+		<script type="text/javascript" src="{% static "web/js/app.min.js" %}"></script>
 
 		<script type="text/javascript">
 			angular.module('gl.web')

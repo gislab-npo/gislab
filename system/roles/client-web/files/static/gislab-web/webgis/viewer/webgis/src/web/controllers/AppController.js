@@ -6,7 +6,7 @@
 		.controller('AppController', AppController)
 		.config(function($mdIconProvider, resourcesRoot) {
 			$mdIconProvider
-				.defaultIconSet(resourcesRoot+'styles/gislab/icons.svg', 32);
+				.defaultIconSet(resourcesRoot+'styles/icons.svg', 32);
 		});
 
 	function AppController($scope, $timeout, $q, $mdSidenav, projectProvider, layersControl, projectPath, resourcesRoot, gislabClient, $mdBottomSheet) {
