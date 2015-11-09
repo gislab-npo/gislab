@@ -114,6 +114,7 @@
 
 
 ### CAPABILITIES
+# VPN
 - name: Detect capability to provide VPN service
   # tun device can be missing on systems running in container
   stat: path=/dev/net/tun
@@ -124,6 +125,11 @@
   set_fact:
     GISLAB_SERVER_CAPABILITY_VPN: yes
   when: cap_tun_device_status.stat.ischr is defined and cap_tun_device_status.stat.ischr
+
+- name: Disable capability to provide VPN service
+  set_fact:
+    GISLAB_SERVER_CAPABILITY_VPN: no
+  when: cap_tun_device_status.stat.ischr is not defined
 
 
 ### SANITY CHECKS
