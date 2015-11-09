@@ -4,6 +4,7 @@
   sudo: yes
 
   roles:
+    - { role: installation-setup-test, tags: ['installation-setup-test'] }
     - { role: basic-server-configuration-test, tags: ['basic-server-configuration-test'] }
     - { role: account-users-test, tags: ['account-users-test'] }
     - { role: service-syslog-test, tags: ['service-syslog-test'] }
@@ -44,7 +45,7 @@
     - {
       role: client-mobile-test,
       tags: ['client-mobile-test'],
-      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab') and GISLAB_CLIENT_MOBILE"
+      when: "'{{ GISLAB_SUITE }}' == 'lab' and GISLAB_CLIENT_MOBILE"
     }
     - { role: account-admin-test, tags: ['account-admin-test'] }
     - {

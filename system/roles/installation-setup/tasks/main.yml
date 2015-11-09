@@ -1,0 +1,138 @@
+---
+#
+### INSTALLATION SETUP ###
+#
+# Set basic environment for installation.
+
+
+# FACTS
+- name: Set GIS.lab installation root directory
+# system-wide path variable - can be used in Ansible and shell scripts
+  set_fact:
+    GISLAB_ROOT: /opt/gislab
+
+
+- name: Detect if it is possible to get GIS.lab version from Git
+  local_action: shell git describe 2> /dev/null || echo "GIT NOT AVAILABLE"
+  sudo: no
+  register: gislab_version_git_status
+  changed_when: False
+
+- name: Detect GIS.lab version from Git
+  local_action: shell git describe
+  sudo: no
+  register: gislab_version
+  when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
+
+- name: Set GIS.lab version from Git
+  set_fact:
+    GISLAB_VERSION: "{{ gislab_version.stdout }}"
+  when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
+
+
+- name: Generate unique string for this installation
+  shell: date +%s | md5sum | head -c 24
+  register: gislab_install_unique_string
+  changed_when: False
+
+- name: Set unique string for this installation
+  set_fact:
+    GISLAB_INSTALL_UNIQUE_STRING: "{{ gislab_install_unique_string.stdout }}"
+
+- name: Detect GIS.lab unique ID
+  set_fact:
+    GISLAB_UNIQUE_ID: "{{ inventory_hostname }}"
+
+
+- name: Detect GIS.lab provider
+  shell: cat /etc/gislab_provider 2>/dev/null || echo 'default'
+  register: gislab_provider
+  changed_when: False
+
+- name: Set GIS.lab provider variable
+  set_fact:
+    GISLAB_PROVIDER: "{{ gislab_provider.stdout }}"
+
+
+- name: Detect GIS.lab install action (new installation or upgrade)
+  stat: path=/storage/log/installation.done
+  register: installation_done
+  changed_when: False
+
+- name: Set GIS.lab install action variable (install)
+  set_fact:
+    GISLAB_INSTALL_ACTION: install
+  when: installation_done.stat.exists == false
+
+- name: Set GIS.lab install action variable (upgrade)
+  set_fact:
+    GISLAB_INSTALL_ACTION: upgrade
+  when: installation_done.stat.exists == true
+
+
+# path variables only for Ansible
+- name: Set temporary directory for this installation
+  set_fact:
+    GISLAB_INSTALL_TMP_ROOT: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
+
+- name: Set GIS.lab account installation root directory
+  set_fact:
+    GISLAB_INSTALL_ACCOUNTS_ROOT: "{{ GISLAB_ROOT }}/system/accounts"
+
+- name: Set GIS.lab desktop client installation root directory
+  set_fact:
+    GISLAB_INSTALL_CLIENTS_ROOT: "{{ GISLAB_ROOT }}/system/clients"
+
+- name: Set GIS.lab scheduled jobs installation root directory
+  set_fact:
+    GISLAB_INSTALL_JOBS_ROOT: "{{ GISLAB_ROOT }}/system/jobs"
+
+- name: Set GIS.lab cluster installation root directory
+  set_fact:
+    GISLAB_INSTALL_CLUSTER_ROOT: "{{ GISLAB_ROOT }}/system/cluster"
+
+
+- name: Detect current date and time
+  set_fact:
+    GISLAB_INSTALL_DATETIME: "{{ ansible_date_time.date }}-{{ ansible_date_time.time }}"
+
+- name: Detect provisioning user name
+  set_fact:
+    GISLAB_PROVISIONING_USER: "{{ ansible_ssh_user }}"
+
+- name: Detect architecture
+  set_fact:
+    GISLAB_SERVER_ARCHITECTURE: "{{ ansible_architecture }}"
+
+- name: Set GIS.lab network as list
+  set_fact:
+    GISLAB_NETWORK_AS_LIST: "{{ GISLAB_NETWORK|split_string('.') }}"
+
+- name: Set GIS.lab network server IP
+  set_fact:
+    GISLAB_NETWORK_SERVER_IP: "{{ GISLAB_NETWORK }}.5"
+
+
+### CAPABILITIES
+- name: Detect capability to provide VPN service
+  # tun device can be missing on systems running in container
+  stat: path=/dev/net/tun
+  register: cap_tun_device_status
+  changed_when: False
+
+- name: Enable capability to provide VPN service
+  set_fact:
+    GISLAB_SERVER_CAPABILITY_VPN: yes
+  when: cap_tun_device_status.stat.ischr is defined and cap_tun_device_status.stat.ischr
+
+
+### SANITY CHECKS
+# OS version
+- name: Check if server is running supported operating system
+  assert:
+    that:
+      - ansible_distribution == "Ubuntu"
+      - ansible_distribution_version in [ '12.04', ]
+
+
+# vim:ft=ansible:
