@@ -155,7 +155,7 @@
                                 --region {{ GISLAB_AWS_REGION }}
                                 --availability-zone {{ GISLAB_AWS_AVAILABILITY_ZONE }}
                                 {{ ami_id.stdout }}
-                                --key 'GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})'
+                                --key "{{ GISLAB_AWS_SSH_KEY_PAIR }}"
                                 --group {{ sg_id.stdout }}
                                 --subnet {{ subnet_id.stdout }}
                                 --instance-initiated-shutdown-behavior terminate

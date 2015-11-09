@@ -57,10 +57,10 @@ GISLAB_AWS_SERVER_INSTANCE_TYPE: t2.micro
 # Example: devel
 GISLAB_AWS_BUCKET:
 
-# TODO: replace with GISLAB_AWS_SSH_KEY already created in AWS
-# Absolute path to public SSH key used for accessing GIS.lab server.
-# Example: /home/user/.ssh/id_rsa.pub
-GISLAB_AWS_SSH_PUBLIC_KEY:
+# Name of the SSH key pair already created in AWS.
+# This key will be used for accessing GIS.lab server.
+# Example: id_amazon
+GISLAB_AWS_SSH_KEY_PAIR:
 
 
 # How many GIS.lab clients launch
