@@ -13,13 +13,8 @@
     - debootstrap
 
 
-# Prepare installation directory
-- name: Purge GIS.lab client installation directory
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root state=absent
-
-- name: Create GIS.lab client install directory
+- name: Create GIS.lab Desktop client install directory
   file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root state=directory
-
 
 - name: Create custom GIS.lab directories structure
   file: path={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root{{ item }} state=directory
@@ -37,13 +32,28 @@
 #
 
 # Debootstrap
+- name: Detect if base system is already installed by debootstrap
+  stat: path={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/bin/bash
+  register: debootstrap_status
+  changed_when: False
+
 - name: Install base system (without apt proxy)
-  command: debootstrap --arch {{ GISLAB_CLIENT_ARCHITECTURE }} {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
-  when: GISLAB_APT_HTTP_PROXY|default(None) == None
+  command:
+    debootstrap
+      --arch {{ GISLAB_CLIENT_ARCHITECTURE }}
+      {{ ansible_distribution_release }}
+      {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root
+      http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
+  when: not debootstrap_status.stat.exists and GISLAB_APT_HTTP_PROXY|default(None) == None
 
 - name: Install base system (with apt proxy)
-  command: debootstrap --arch {{ GISLAB_CLIENT_ARCHITECTURE }} {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root {{ GISLAB_APT_HTTP_PROXY }}/{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
-  when: GISLAB_APT_HTTP_PROXY|default(None) != None
+  command:
+    debootstrap
+      --arch {{ GISLAB_CLIENT_ARCHITECTURE }}
+      {{ ansible_distribution_release }}
+      {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root
+      {{ GISLAB_APT_HTTP_PROXY }}/{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
+  when: not debootstrap_status.stat.exists and GISLAB_APT_HTTP_PROXY|default(None) != None
 
 
 # Locale
@@ -79,7 +89,7 @@
 - name: Clean resolvconf files
 # 'tail' file is installed as symbolic link to 'original' file by default (it may change in next Ubuntu versions).
 # 'original' file is containing 'resolv.conf' configuration from GIS.lab server. We do not want this, thus this task
-# is creating clean 'tail' file
+# is creating clean 'tail' file.
   command: "{{ item }}"
   with_items:
     - rm -f {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/resolvconf/resolv.conf.d/tail
@@ -90,15 +100,15 @@
 - name: Configure mount points
   template: src=fstab/fstab.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/fstab
 
-- name: Divert /etc/mtab and point it to /proc/mounts
+- name: Replace '/etc/mtab' file with symlink to '/proc/mounts'
   command: chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root {{ item }}
   with_items:
-    - dpkg-divert --add --rename --divert /etc/mtab.real /etc/mtab
+    - rm -f /etc/mtab
     - ln -sf /proc/mounts /etc/mtab
 
 
 # root password
-- name: Lock root password
+- name: Disable root login
   command: chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root passwd -l root
 
 
@@ -315,7 +325,7 @@
   when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
         and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) == None
 
-        
+
 # Remove not needed packages
 - name: Remove packages
   shell: "export DEBIAN_FRONTEND=noninteractive
@@ -415,10 +425,10 @@
 
 - name: Install Lightdm theme
   copy: src=static/desktop/themes/GIS.lab-lightdm
-    dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/usr/share/themes/
+        dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/usr/share/themes/
   when:
     GISLAB_SUITE in ('office', 'lab')
- 
+
 
 # Disabling useless services
 - name: Disable useless system services
@@ -442,7 +452,7 @@
     - urandom
     - ureadahead
     - ureadahead-other
-    
+
 - name: Disable all cron jobs by default
   shell: find {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/cron.* -type f | grep -v "placeholder" | xargs rm -f
 
@@ -458,17 +468,19 @@
 # 'reboot' binary performs 'reboot' and also 'poweroff' task depending on the file name called. This is the reason why
 # '/sbin/poweroff' is a symlink to '/sbin/reboot'. This fix takes to account this behavior.
 
-- name: Create directory for original 'reboot' command
+- name: Create new directory for 'reboot' binary
   file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/gislab state=directory
 
-- name: Remove original 'poweroff' command (symlink)
+- name: Remove 'poweroff' command (symlink)
   file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/poweroff state=absent
 
-- name: Remove original 'shutdown' command
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/poweroff state=absent
+- name: Remove 'shutdown' command
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/shutdown state=absent
 
-- name: Move 'reboot' binary
+- name: Move 'reboot' binary to new directory
   command: mv {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/reboot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/gislab/reboot
+  args:
+    creates: "{{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/gislab/reboot"
 
 - name: Re-create poweroff command as a symlink to moved reboot binary
   command: ln -sf reboot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/gislab/poweroff
@@ -643,7 +655,7 @@
 #
 
 # Xvfb
-- name: Copy Xvfb configuration files from server
+- name: INstall Xvfb configuration files
   command: cp --parents {{ item }} {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/
   with_items:
     - /etc/init/xvfb.conf
