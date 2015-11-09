@@ -1,16 +1,16 @@
 ---
 
 # get list of Ubuntu installer tasks: $ tasksel --list-tasks
-# get list of packages included in task: $ tasksel --task-packages <task> 
+# get list of packages included in task: $ tasksel --task-packages <task>
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_KERNEL:
+packages_kernel:
   # list of Linux kernel packages (installed without recommended packages)
   - linux-image-generic-lts-raring
   - linux-headers-generic-lts-raring
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_BASE:
+packages_base:
   # list of basic server packages (installed with recommended packages)
   - acpid
   - acpi-support
@@ -32,9 +32,9 @@ GISLAB_CLIENT_INSTALL_PACKAGES_BASE:
   - udhcpc
   - unzip
   - zip
-  
 
-GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
+
+packages_desktop:
   # list of basic desktop packages (installed with recommended packages)
   - alsa-base
   - alsa-utils
@@ -123,7 +123,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - zenity
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
+packages_office:
   # list of default office packages (installed without recommended packages)
   - conky-std
   - cups
@@ -180,7 +180,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   - xtightvncviewer
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_LAB:
+packages_lab:
   # list of GIS.lab client GIS packages (installed without recommended packages)
   - gdal-bin
   - git
@@ -202,7 +202,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_LAB:
   - sqlite3
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_WORKER:
+packages_worker:
   # OWS worker packages
   - lighttpd
   - python-gdal
@@ -212,7 +212,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_WORKER:
   - xvfb
 
 
-GISLAB_CLIENT_REMOVE_PACKAGES:
+packages_remove:
   # List of packages which have been installed automatically as dependency but we don't want them to be installed.
   # Run  '$ aptitude why <package>' find out the reason why package was installed.
   - network-manager

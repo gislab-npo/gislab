@@ -186,34 +186,34 @@
 
 - name: Install GIS.lab client base packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_BASE|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get {{ apt_get_opts }} install {{ packages_base|join(' ') }}"
   args:
     executable: /bin/bash
 
 - name: Install GIS.lab client desktop packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get {{ apt_get_opts }} install {{ packages_desktop|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_SUITE in ('office', 'lab')
 
 - name: Install GIS.lab client office packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_office|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_SUITE in ('office', 'lab')
 
 - name: Install GIS.lab client GIS packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_LAB|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_lab|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_SUITE == 'lab'
 
 - name: Install OWS worker packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_WORKER|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_worker|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_SUITE in ('server', 'lab')
@@ -260,7 +260,7 @@
 
 - name: Install kernel
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_KERNEL|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_kernel|join(' ') }}"
   args:
     executable: /bin/bash
 
@@ -333,7 +333,7 @@
   args:
     executable: /bin/bash
   with_items:
-    - apt-get --assume-yes purge {{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}
+    - apt-get --assume-yes purge {{ packages_remove|join(' ') }}
     - apt-get --assume-yes autoremove
 
 
