@@ -256,16 +256,6 @@ GISLAB_CLIENT_KEYBOARDS:
 # Change requires running upgrade.
 GISLAB_CLIENT_VIRTUALBOX_SUPPORT: yes
 
-# Relative path to VBoxGuestAdditions.iso file which should be used for
-# installation of VirtualBox guest additions. If none provided, guest additions
-# will be installed from default Ubuntu repository which could not match
-# VirtualBox version on client, although no problems are expected.
-# VBoxGuestAdditions.iso file can be copied from VirtualBox installation
-# directory (/usr/share/virtualbox/ on Linux).
-# Example: iso/VBoxGuestAdditions.iso
-# Change requires running upgrade.
-GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO:
-
 # Minimal amount of memory in MB, which must be present on client machine to
 # enable it OWS cluster.
 # Change requires running upgrade.

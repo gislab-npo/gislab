@@ -266,56 +266,10 @@
 
 
 # Install VirtualBox Guest additions.
-# Latest kernel supported by VirtualBox Guest additions on Ubuntu 12.04 is 3.8
-# else install VirtualBox additions from Ubuntu repository - could not match version used on client
-# for manual installation run: $ dkms install -m virtualbox-guest/<vbox-version> -k <kernel-version>/<ARCH>
-
-- name: Install build-essential package if VirtualBox Guest additions are going to be build from ISO file
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install build-essential"
-  args:
-    executable: /bin/bash
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Create directory for VirtualBox Guest additions ISO file and mount point
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root{{ item }} state=directory recurse=yes
-  with_items:
-    - /tmp/virtualbox/iso
-    - /tmp/virtualbox/mnt
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Copy VirtualBox Guest additions ISO file
-  copy: src={{ GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO }} dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/tmp/virtualbox/iso
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Mount VirtualBox Guest additions ISO file
-  command: chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root mount -o loop /tmp/virtualbox/iso/VBoxGuestAdditions.iso /tmp/virtualbox/mnt
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Install VirtualBox Guest additions from ISO file
-  shell: "if [ '{{ GISLAB_CLIENT_ARCHITECTURE }}' == 'amd64' ]; then export BUILD_TARGET_ARCH=amd64; else export BUILD_TARGET_ARCH=x86; fi
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root /bin/bash /tmp/virtualbox/mnt/VBoxLinuxAdditions.run | tee /dev/null"
-  args:
-    executable: /bin/bash
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Unmount VirtualBox Guest additions ISO file
-  command: chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root umount /tmp/virtualbox/mnt
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Clean up after VirtualBox Guest additions installation from ISO file
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/tmp/virtualbox state=absent
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-
-- name: Install VirtualBox Guest additions from repository
+# Latest kernel version supported by VirtualBox Guest additions on Ubuntu 12.04 is
+# version 3.8. For manual installation run following command:
+# $ dkms install -m virtualbox-guest/<vbox-version> -k <kernel-version>/<ARCH>
+- name: Install VirtualBox Guest additions
   shell: "if [ '{{ GISLAB_CLIENT_ARCHITECTURE }}' == 'amd64' ]; then export BUILD_TARGET_ARCH=amd64; else export BUILD_TARGET_ARCH=x86; fi
     && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ item }}"
   with_items:
@@ -323,7 +277,6 @@
   args:
     executable: /bin/bash
   when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) == None
 
 
 # Remove not needed packages
