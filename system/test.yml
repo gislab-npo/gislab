@@ -5,7 +5,7 @@
 
   roles:
     - { role: installation-setup-test, tags: ['installation-setup-test'] }
-    - { role: basic-server-configuration-test, tags: ['basic-server-configuration-test'] }
+    - { role: basic-configuration-test, tags: ['basic-configuration-test'] }
     - { role: account-users-test, tags: ['account-users-test'] }
     - { role: service-syslog-test, tags: ['service-syslog-test'] }
     - { role: service-logcheck-test, tags: ['service-logcheck-test'] }

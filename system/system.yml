@@ -13,7 +13,7 @@
 
   roles:
     - { role: installation-setup, tags: ['installation-setup'] }
-    - { role: basic-server-configuration, tags: ['basic-server-configuration'] }
+    - { role: basic-configuration, tags: ['basic-configuration'] }
     - { role: account-users, tags: ['account-users'] }
     - { role: service-syslog, tags: ['service-syslog'] }
     - { role: service-logcheck, tags: ['service-logcheck'] }
