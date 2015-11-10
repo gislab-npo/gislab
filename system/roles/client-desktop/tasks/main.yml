@@ -535,7 +535,7 @@
 
 # Start Gnome Keyring also in XFCE session
 - name: Fix gnome keyring
-  command: sed -i "s/OnlyShowIn=GNOME;Unity;/OnlyShowIn=GNOME;Unity;XFCE/" {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/xdg/autostart/gnome-keyring-pkcs11.desktop
+  command: sed -i "s/OnlyShowIn=.*/OnlyShowIn=GNOME;Unity;XFCE/" {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/xdg/autostart/gnome-keyring-pkcs11.desktop
   when:
     GISLAB_SUITE in ('office', 'lab')
 
