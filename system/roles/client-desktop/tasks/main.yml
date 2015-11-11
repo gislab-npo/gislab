@@ -13,10 +13,10 @@
     - debootstrap
 
 
-- name: Create GIS.lab Desktop client install directory
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root state=directory
+- name: Create GIS.lab Desktop client root directory
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop state=directory
 
-- name: Create custom GIS.lab directories structure
+- name: Create basic directories structure
   file: path={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root{{ item }} state=directory
   with_items:
     - /etc/gislab
