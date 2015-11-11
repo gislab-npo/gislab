@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import re
 from setuptools import setup, find_packages
 
 
@@ -21,16 +22,30 @@ exclude_from_packages = [
 	'webgis.conf.project_template',
 ]
 
+# version
+try:
+	with open('/etc/gislab_version') as f:
+		for line in f:
+			if re.match('^GISLAB_VERSION=', line):
+				version = line.split('=')[1].replace('"', '').replace("'", "")
+except IOError:
+	version='unknown'
+
+# requirements
+with open("requirements.txt") as f:
+	requirements = f.read().splitlines()
+
 # setup
 setup(name='gislab-web',
-	version=".".join(map(str, __import__('webgis').VERSION)),
-	description='GIS.lab Web application',
+	version=version,
+	description='GIS.lab Web client',
 	author='Marcel Dancak, Ivan Mincik',
 	author_email='dancakm@gmail.com, ivan.mincik@gmail.com',
 	url='https://github.com/imincik/gis-lab/',
 	packages=find_packages(),
 	include_package_data=True,
-	classifiers=classifiers
+	classifiers=classifiers,
+	install_requires=requirements
 )
 
 # vim: set ts=4 sts=4 sw=4 noet:

@@ -78,6 +78,10 @@
   notify:
     - service gislab-http-boot restart
 
+- name: Register HTTP boot service
+  file: src=/lib/init/upstart-job dest=/etc/init.d/gislab-http-boot state=link
+  notify:
+    - service gislab-http-boot restart
 
 #
 ## IMAGE BUILD ########################################################################################################

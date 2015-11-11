@@ -13,15 +13,10 @@
     - debootstrap
 
 
-# Prepare installation directory
-- name: Purge GIS.lab client installation directory
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root state=absent
+- name: Create GIS.lab Desktop client root directory
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop state=directory
 
-- name: Create GIS.lab client install directory
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root state=directory
-
-
-- name: Create custom GIS.lab directories structure
+- name: Create basic directories structure
   file: path={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root{{ item }} state=directory
   with_items:
     - /etc/gislab
@@ -37,13 +32,28 @@
 #
 
 # Debootstrap
+- name: Detect if base system is already installed by debootstrap
+  stat: path={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/bin/bash
+  register: debootstrap_status
+  changed_when: False
+
 - name: Install base system (without apt proxy)
-  command: debootstrap --arch {{ GISLAB_CLIENT_ARCHITECTURE }} {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
-  when: GISLAB_APT_HTTP_PROXY|default(None) == None
+  command:
+    debootstrap
+      --arch {{ GISLAB_CLIENT_ARCHITECTURE }}
+      {{ ansible_distribution_release }}
+      {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root
+      http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
+  when: not debootstrap_status.stat.exists and GISLAB_APT_HTTP_PROXY|default(None) == None
 
 - name: Install base system (with apt proxy)
-  command: debootstrap --arch {{ GISLAB_CLIENT_ARCHITECTURE }} {{ ansible_distribution_release }} {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root {{ GISLAB_APT_HTTP_PROXY }}/{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
-  when: GISLAB_APT_HTTP_PROXY|default(None) != None
+  command:
+    debootstrap
+      --arch {{ GISLAB_CLIENT_ARCHITECTURE }}
+      {{ ansible_distribution_release }}
+      {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root
+      {{ GISLAB_APT_HTTP_PROXY }}/{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
+  when: not debootstrap_status.stat.exists and GISLAB_APT_HTTP_PROXY|default(None) != None
 
 
 # Locale
@@ -79,7 +89,7 @@
 - name: Clean resolvconf files
 # 'tail' file is installed as symbolic link to 'original' file by default (it may change in next Ubuntu versions).
 # 'original' file is containing 'resolv.conf' configuration from GIS.lab server. We do not want this, thus this task
-# is creating clean 'tail' file
+# is creating clean 'tail' file.
   command: "{{ item }}"
   with_items:
     - rm -f {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/resolvconf/resolv.conf.d/tail
@@ -90,15 +100,15 @@
 - name: Configure mount points
   template: src=fstab/fstab.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/fstab
 
-- name: Divert /etc/mtab and point it to /proc/mounts
+- name: Replace '/etc/mtab' file with symlink to '/proc/mounts'
   command: chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root {{ item }}
   with_items:
-    - dpkg-divert --add --rename --divert /etc/mtab.real /etc/mtab
+    - rm -f /etc/mtab
     - ln -sf /proc/mounts /etc/mtab
 
 
 # root password
-- name: Lock root password
+- name: Disable root login
   command: chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root passwd -l root
 
 
@@ -176,34 +186,34 @@
 
 - name: Install GIS.lab client base packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_BASE|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get {{ apt_get_opts }} install {{ packages_base|join(' ') }}"
   args:
     executable: /bin/bash
 
 - name: Install GIS.lab client desktop packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get {{ apt_get_opts }} install {{ packages_desktop|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_SUITE in ('office', 'lab')
 
 - name: Install GIS.lab client office packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_office|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_SUITE in ('office', 'lab')
 
 - name: Install GIS.lab client GIS packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_LAB|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_lab|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_SUITE == 'lab'
 
 - name: Install OWS worker packages
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_WORKER|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_worker|join(' ') }}"
   args:
     executable: /bin/bash
   when: GISLAB_SUITE in ('server', 'lab')
@@ -250,62 +260,16 @@
 
 - name: Install kernel
   shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ GISLAB_CLIENT_INSTALL_PACKAGES_KERNEL|join(' ') }}"
+    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_kernel|join(' ') }}"
   args:
     executable: /bin/bash
 
 
 # Install VirtualBox Guest additions.
-# Latest kernel supported by VirtualBox Guest additions on Ubuntu 12.04 is 3.8
-# else install VirtualBox additions from Ubuntu repository - could not match version used on client
-# for manual installation run: $ dkms install -m virtualbox-guest/<vbox-version> -k <kernel-version>/<ARCH>
-
-- name: Install build-essential package if VirtualBox Guest additions are going to be build from ISO file
-  shell: "export DEBIAN_FRONTEND=noninteractive
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install build-essential"
-  args:
-    executable: /bin/bash
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Create directory for VirtualBox Guest additions ISO file and mount point
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root{{ item }} state=directory recurse=yes
-  with_items:
-    - /tmp/virtualbox/iso
-    - /tmp/virtualbox/mnt
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Copy VirtualBox Guest additions ISO file
-  copy: src={{ GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO }} dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/tmp/virtualbox/iso
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Mount VirtualBox Guest additions ISO file
-  command: chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root mount -o loop /tmp/virtualbox/iso/VBoxGuestAdditions.iso /tmp/virtualbox/mnt
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Install VirtualBox Guest additions from ISO file
-  shell: "if [ '{{ GISLAB_CLIENT_ARCHITECTURE }}' == 'amd64' ]; then export BUILD_TARGET_ARCH=amd64; else export BUILD_TARGET_ARCH=x86; fi
-    && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root /bin/bash /tmp/virtualbox/mnt/VBoxLinuxAdditions.run | tee /dev/null"
-  args:
-    executable: /bin/bash
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Unmount VirtualBox Guest additions ISO file
-  command: chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root umount /tmp/virtualbox/mnt
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-- name: Clean up after VirtualBox Guest additions installation from ISO file
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/tmp/virtualbox state=absent
-  when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) != None
-
-
-- name: Install VirtualBox Guest additions from repository
+# Latest kernel version supported by VirtualBox Guest additions on Ubuntu 12.04 is
+# version 3.8. For manual installation run following command:
+# $ dkms install -m virtualbox-guest/<vbox-version> -k <kernel-version>/<ARCH>
+- name: Install VirtualBox Guest additions
   shell: "if [ '{{ GISLAB_CLIENT_ARCHITECTURE }}' == 'amd64' ]; then export BUILD_TARGET_ARCH=amd64; else export BUILD_TARGET_ARCH=x86; fi
     && chroot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root apt-get --no-install-recommends {{ apt_get_opts }} install {{ item }}"
   with_items:
@@ -313,9 +277,8 @@
   args:
     executable: /bin/bash
   when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
-        and GISLAB_CLIENT_VIRTUALBOX_ADDITIONS_ISO|default(None) == None
 
-        
+
 # Remove not needed packages
 - name: Remove packages
   shell: "export DEBIAN_FRONTEND=noninteractive
@@ -323,7 +286,7 @@
   args:
     executable: /bin/bash
   with_items:
-    - apt-get --assume-yes purge {{ GISLAB_CLIENT_REMOVE_PACKAGES|join(' ') }}
+    - apt-get --assume-yes purge {{ packages_remove|join(' ') }}
     - apt-get --assume-yes autoremove
 
 
@@ -415,10 +378,10 @@
 
 - name: Install Lightdm theme
   copy: src=static/desktop/themes/GIS.lab-lightdm
-    dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/usr/share/themes/
+        dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/usr/share/themes/
   when:
     GISLAB_SUITE in ('office', 'lab')
- 
+
 
 # Disabling useless services
 - name: Disable useless system services
@@ -442,7 +405,7 @@
     - urandom
     - ureadahead
     - ureadahead-other
-    
+
 - name: Disable all cron jobs by default
   shell: find {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/cron.* -type f | grep -v "placeholder" | xargs rm -f
 
@@ -458,17 +421,19 @@
 # 'reboot' binary performs 'reboot' and also 'poweroff' task depending on the file name called. This is the reason why
 # '/sbin/poweroff' is a symlink to '/sbin/reboot'. This fix takes to account this behavior.
 
-- name: Create directory for original 'reboot' command
+- name: Create new directory for 'reboot' binary
   file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/gislab state=directory
 
-- name: Remove original 'poweroff' command (symlink)
+- name: Remove 'poweroff' command (symlink)
   file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/poweroff state=absent
 
-- name: Remove original 'shutdown' command
-  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/poweroff state=absent
+- name: Remove 'shutdown' command
+  file: dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/shutdown state=absent
 
-- name: Move 'reboot' binary
+- name: Move 'reboot' binary to new directory
   command: mv {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/reboot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/gislab/reboot
+  args:
+    creates: "{{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/gislab/reboot"
 
 - name: Re-create poweroff command as a symlink to moved reboot binary
   command: ln -sf reboot {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/sbin/gislab/poweroff
@@ -570,7 +535,7 @@
 
 # Start Gnome Keyring also in XFCE session
 - name: Fix gnome keyring
-  command: sed -i "s/OnlyShowIn=GNOME;Unity;/OnlyShowIn=GNOME;Unity;XFCE/" {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/xdg/autostart/gnome-keyring-pkcs11.desktop
+  command: sed -i "s/OnlyShowIn=.*/OnlyShowIn=GNOME;Unity;XFCE/" {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/etc/xdg/autostart/gnome-keyring-pkcs11.desktop
   when:
     GISLAB_SUITE in ('office', 'lab')
 
@@ -643,7 +608,7 @@
 #
 
 # Xvfb
-- name: Copy Xvfb configuration files from server
+- name: INstall Xvfb configuration files
   command: cp --parents {{ item }} {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/
   with_items:
     - /etc/init/xvfb.conf

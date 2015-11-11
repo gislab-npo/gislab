@@ -12,7 +12,8 @@
       confirm: yes
 
   roles:
-    - { role: basic-server-configuration, tags: ['basic-server-configuration'] }
+    - { role: installation-setup, tags: ['installation-setup'] }
+    - { role: basic-configuration, tags: ['basic-configuration'] }
     - { role: account-users, tags: ['account-users'] }
     - { role: service-syslog, tags: ['service-syslog'] }
     - { role: service-logcheck, tags: ['service-logcheck'] }
@@ -25,7 +26,7 @@
     - { role: service-files, tags: ['service-files'] }
     - { role: service-chat, tags: ['service-chat'] }
     - { role: service-database, tags: ['service-database'] }
-    - { 
+    - {
       role: service-mapserver,
       tags: ['service-mapserver'],
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"

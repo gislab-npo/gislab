@@ -1,0 +1,245 @@
+---
+#
+### BASIC SERVER CONFIGURATION ###
+#
+# Run basic server configuration.
+
+
+# Configuration and basic directory structure
+- name: Create '/etc/gislab_version' file
+  copy:
+    content: |
+      GISLAB_ADMIN_EMAIL="{{ GISLAB_ADMIN_EMAIL }}"
+      GISLAB_ADMIN_FIRST_NAME="{{ GISLAB_ADMIN_FIRST_NAME }}"
+      GISLAB_ADMIN_SURNAME="{{ GISLAB_ADMIN_SURNAME }}"
+      GISLAB_APT_CUSTOM_REPOSITORIES="{% if GISLAB_APT_CUSTOM_REPOSITORIES %}{{ GISLAB_APT_CUSTOM_REPOSITORIES|join(",") }}{% else %}{% endif %}"
+      GISLAB_APT_HTTP_PROXY="{{ GISLAB_APT_HTTP_PROXY }}"
+      GISLAB_APT_REPOSITORY_COUNTRY_MIRROR="{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}"
+      GISLAB_CLIENT_ARCHITECTURE="{{ GISLAB_CLIENT_ARCHITECTURE }}"
+      GISLAB_CLIENT_KEYBOARDS="{% if GISLAB_CLIENT_KEYBOARDS %}{{ GISLAB_CLIENT_KEYBOARDS|keyboard_layouts }}{% else %}{% endif %}"
+      GISLAB_CLIENT_LANGUAGES="{% if GISLAB_CLIENT_LANGUAGES %}{{ GISLAB_CLIENT_LANGUAGES|join(",") }}{% else %}{% endif %}"
+      GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY="{{ GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY }}"
+      GISLAB_CLIENT_VIRTUALBOX_SUPPORT="{{ GISLAB_CLIENT_VIRTUALBOX_SUPPORT }}"
+      GISLAB_DEBUG_INSTALL="{{ GISLAB_DEBUG_INSTALL }}"
+      GISLAB_DEBUG_SERVICES="{{ GISLAB_DEBUG_SERVICES }}"
+      GISLAB_DNS_SERVERS="{{ GISLAB_DNS_SERVERS }}"
+      GISLAB_INSTALL_DATETIME="{{ GISLAB_INSTALL_DATETIME }}"
+      GISLAB_NETWORK="{{ GISLAB_NETWORK }}"
+      GISLAB_NETWORK_SERVER_IP="{{ GISLAB_NETWORK_SERVER_IP }}"
+      GISLAB_PROVISIONING_USER="{{ GISLAB_PROVISIONING_USER }}"
+      GISLAB_ROOT="{{ GISLAB_ROOT }}"
+      GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"
+      GISLAB_SERVER_CAPABILITY_VPN="{{ GISLAB_SERVER_CAPABILITY_VPN }}"
+      GISLAB_SERVER_EMAIL_RELAY_SERVER="{{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}"
+      GISLAB_SERVER_GUI_CONSOLE="{{ GISLAB_SERVER_GUI_CONSOLE }}"
+      GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY }}"
+      GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS }}"
+      GISLAB_SERVER_NETWORK_DEVICE="{{ GISLAB_SERVER_NETWORK_DEVICE }}"
+      GISLAB_SUITE="{{ GISLAB_SUITE }}"
+      GISLAB_TIMEZONE="{{ GISLAB_TIMEZONE }}"
+      GISLAB_UNIQUE_ID="{{ GISLAB_UNIQUE_ID }}"
+      GISLAB_VERSION="{{ GISLAB_VERSION }}"
+    dest: /etc/gislab_version
+
+- name: Create custom GIS.lab directories structure
+  file: path="{{ item }}" state=directory
+  with_items:
+    - "{{ GISLAB_ROOT }}"
+    - "{{ GISLAB_ROOT }}/admin"
+    - "{{ GISLAB_ROOT }}/system"
+    - "{{ GISLAB_ROOT }}/custom"
+    - /etc/gislab
+    - /storage
+    - /storage/applications
+    - /storage/backup
+    - /storage/cache
+    - /storage/cache/packages/apt
+    - /storage/cache/packages/tar
+    - /storage/cache/packages/pip
+    - /storage/home
+    - /storage/log
+    - "{{ GISLAB_INSTALL_TMP_ROOT }}"
+
+- name: Set safe permissions for /etc/gislab directory
+  file: path=/etc/gislab state=directory owner=root group=root mode=0700
+
+
+# Basic server configuration
+- name: Set system wide environment variables
+  template: src=environment.j2 dest=/etc/environment
+
+
+- name: Set hostname
+  hostname: name=server
+
+- name: Update hosts file
+  template: src=hosts.j2 dest=/etc/hosts
+  notify:
+    - service rsyslog restart
+
+
+- name: Generate en_US.UTF-8 locale
+  # we don't use 'locale_gen' here, because it fails with travis-ci (https://github.com/ansible/ansible/issues/7289)
+  # locale_gen: name=en_US.UTF-8 state=present
+  shell: /usr/sbin/locale-gen en_US.UTF-8
+
+- name: Set en_US.UTF-8 locale
+  shell: /usr/sbin/update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 LANGUAGE=en
+
+- name: Set timezone
+  template: src=timezone.j2 dest=/etc/timezone
+  notify:
+    - reconfigure timezone
+
+
+- name: Set local aliases table
+  template: src=aliases.j2 dest=/etc/aliases
+
+
+- name: Configure SSH server
+  template: src=ssh/sshd_config.j2 dest=/etc/ssh/sshd_config
+  notify:
+    - service ssh restart
+
+- meta: flush_handlers
+
+
+# networking
+- name: Install DHCP client configuration with fallback support
+  template: src=network/dhclient.conf.j2 dest=/etc/dhcp/dhclient.conf
+
+
+- name: Activate GIS.lab network IP address if not received from provider
+  shell: ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_SERVER_NETWORK_DEVICE }}
+  when: GISLAB_NETWORK_SERVER_IP not in ansible_all_ipv4_addresses
+
+- name: Install GIS.lab network hook
+  template: src=network/gislab.j2 dest=/etc/network/if-up.d/001gislab mode=0755
+
+
+# Apt
+- name: Configure apt repositories
+  template: src=apt/sources.list.j2 dest=/etc/apt/sources.list
+
+- name: Remove possible third party apt repositories
+  file: dest=/etc/apt/sources.list.d state=absent
+
+- name: Add imincik PPA signing key
+  apt_key: data="{{ lookup('file', 'static/ppa_imincik.key') }}" state=present
+
+
+- name: Configure Apt cache proxy server
+  template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
+
+- name: Move apt cache to '/storage' directory
+  shell: mv -f /var/cache/apt/* /storage/cache/packages/apt/
+  args:
+    creates: /storage/cache/packages/apt/pkgcache.bin
+
+- name: Deactivate original apt cache
+  file: dest=/var/cache/apt state=absent
+
+- name: Activate shared apt cache
+  file: src=/storage/cache/packages/apt dest=/var/cache/apt state=link
+
+
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Remove not needed packages possibly coming with OS image
+  apt: pkg={{item}} state=absent
+  with_items:
+    - landscape-client
+    - landscape-common
+
+- name: Install aptitude which is required for running system upgrade
+  apt: pkg=aptitude force=yes install_recommends=no state=latest
+
+- name: Upgrade system
+  apt: upgrade=full force=yes
+
+- name: Install packages
+  apt: pkg={{item}} force=yes install_recommends=no state=latest
+  with_items:
+    - anacron
+    - arp-scan
+    - etherwake
+    - ethtool
+    - htop
+    - iotop
+    - mc
+    - pwgen
+    - pssh
+    - tmux
+    - vim
+
+
+# Shell
+- name: Configure shell prompt system wide
+  lineinfile:
+    dest=/etc/profile
+    regexp="^PS1=.*h\.GIS.lab(.*).*$"
+    line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "'
+    state=present
+
+
+# MOTD
+- name: Set MOTD header
+  template: src=motd/00-header.j2 dest=/etc/update-motd.d/00-header
+
+- name: Remove not needed MOTD messages
+  shell: rm -f {{ item }}
+  with_items:
+    - /etc/update-motd.d/*-help-text
+    - /etc/update-motd.d/*-cloudguest
+    - /etc/update-motd.d/*-release-upgrade
+
+- name: Update MOTD
+  shell: run-parts /etc/update-motd.d
+
+
+# GIS.lab administrator tools
+- name: Install GIS.lab shell functions library
+  copy: src=functions.sh dest={{ GISLAB_ROOT }}/system/functions.sh mode=0644
+
+- name: Install GIS.lab administrator tools
+  copy: src=admin/ dest={{ GISLAB_ROOT }}/admin/ mode=0775 owner=root group=root
+
+- name: Add GIS.lab administrator tools on path
+  lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/admin" state=present
+
+
+# /storage bind mount
+- name: Configure universal '/storage to /mnt' mount to keep the same paths on server and clients
+  lineinfile: dest=/etc/fstab line="/storage  /mnt  none  bind  0  0" state=present
+
+- name: Mount '/storage' to '/mnt'
+  mount: name=/mnt src=/storage fstype=none opts=bind state=mounted
+
+
+# scheduled jobs
+- name: Purge installation directory for scheduled jobs
+  file: dest={{ GISLAB_INSTALL_JOBS_ROOT }} state=absent
+
+- name: Create installation directories for scheduled jobs
+  file: dest={{ item }} state=directory
+  with_items:
+    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/daily"
+    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/weekly"
+    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/monthly"
+
+# TODO: move also other cron jobs to anacron (GIS.lab Web cleanup, ...)
+- name: Configure jobs scheduler
+  template: src=anacrontab.j2 dest=/etc/anacrontab
+  notify:
+    - service anacron restart
+
+
+# backup
+- name: Install daily backup job
+  copy: src=static/bin/gislab-daily-backup dest={{ GISLAB_INSTALL_JOBS_ROOT }}/daily/ mode=0775
+
+
+- meta: flush_handlers
+
+# vim:ft=ansible:

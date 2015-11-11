@@ -13,6 +13,9 @@
   tasks:
     - name: Read default configuration file 'group_vars/all'
       include_vars: "../../system/group_vars/all"
+
+    - name: Read default configuration file for AWS
+      include_vars: "aws"
           
     - name: Read host file 'system/host_vars/{{ GISLAB_UNIQUE_ID }}'
       include_vars: "../../system/host_vars/{{ GISLAB_UNIQUE_ID }}"
@@ -67,7 +70,7 @@
     - name: Upload GIS.lab AWS client to Amazon S3
       shell: "ec2-upload-bundle --access-key {{ GISLAB_AWS_ACCESS_KEY_ID }}
                                   --secret-key {{ GISLAB_AWS_SECRET_KEY }}
-                                  --bucket {{ GISLAB_AWS_BUCKET_PREFIX }}/{{ GISLAB_UNIQUE_ID }}
+                                  --bucket {{ GISLAB_AWS_BUCKET }}/{{ GISLAB_UNIQUE_ID }}
                                   --manifest {{ MANIFEST }}
                                   --location {{ GISLAB_AWS_REGION }}
                                   --retry"
@@ -94,7 +97,7 @@
               ec2-register --private-key {{ AWS_CREDENTIALS_DIR }}/aws_private_key.key
                            --cert {{ AWS_CREDENTIALS_DIR }}/aws_certificate.crt
                            --region {{ GISLAB_AWS_REGION }}
-                           {{ GISLAB_AWS_BUCKET_PREFIX }}/{{ GISLAB_UNIQUE_ID }}/gislab-aws-client.manifest.xml
+                           {{ GISLAB_AWS_BUCKET }}/{{ GISLAB_UNIQUE_ID }}/gislab-aws-client.manifest.xml
                            --name 'GIS.lab-AWS-Client-{{ GISLAB_UNIQUE_ID }}'
                            --description 'GIS.lab AWS client AMI (ID: {{ GISLAB_UNIQUE_ID }})'
                            --architecture {{ GISLAB_AWS_CLIENT_ARCHITECTURE.stdout }}
@@ -152,7 +155,7 @@
                                 --region {{ GISLAB_AWS_REGION }}
                                 --availability-zone {{ GISLAB_AWS_AVAILABILITY_ZONE }}
                                 {{ ami_id.stdout }}
-                                --key 'GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})'
+                                --key "{{ GISLAB_AWS_SSH_KEY_PAIR }}"
                                 --group {{ sg_id.stdout }}
                                 --subnet {{ subnet_id.stdout }}
                                 --instance-initiated-shutdown-behavior terminate
