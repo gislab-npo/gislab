@@ -304,7 +304,7 @@
 - name: Add GIS.lab administrator tools on path
   lineinfile:
     dest: /etc/profile
-    line: "PATH: $PATH={{ GISLAB_ROOT }}/admin"
+    line: "PATH=$PATH:{{ GISLAB_ROOT }}/admin"
     state: present
 
 

@@ -1,9 +1,9 @@
 server {
-	server_name stats.*;
-	root /var/cache/munin/www;
-	index index.html index.htm;
+    server_name stats.*;
+    root /var/cache/munin/www;
+    index index.html index.htm;
 
-	location / {
-		try_files $uri $uri/ /index.html;
-	}
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
 }

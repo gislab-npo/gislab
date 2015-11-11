@@ -6,30 +6,46 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
+  apt:
+    pkg: "{{ item }}"
+    force: yes
+    install_recommends: no
+    state: latest
   with_items:
     - munin
     - munin-node
 
 
-# Munin
+### MUNIN
 - name: Configure Munin master
-  template: src=munin/munin.conf.j2 dest=/etc/munin/munin.conf
+  template:
+    src: munin/munin.conf.j2
+    dest: /etc/munin/munin.conf
   notify:
     - service munin-node restart
 
 - name: Configure Munin node
-  template: src={{ item.src }} dest={{ item.dest }}
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - { src: "munin/munin-node.conf.j2", dest: "/etc/munin/munin-node.conf" }
-    - { src: "munin/munin-node.j2", dest: "/etc/munin/plugin-conf.d/munin-node" }
+    - {
+        src: "munin/munin-node.conf.j2",
+        dest: "/etc/munin/munin-node.conf"
+      }
+    - {
+        src: "munin/munin-node.j2",
+        dest: "/etc/munin/plugin-conf.d/munin-node"
+      }
   notify:
     - service munin-node restart
 
 
-# Munin plugins
+### MUNIN PLUGINS
 - name: Install custom Munin plugins
-  copy: src=static/munin-plugins/ dest=/usr/share/munin/plugins
+  copy:
+    src: static/munin-plugins/
+    dest: /usr/share/munin/plugins
   notify:
     - service munin-node restart
 
@@ -55,39 +71,56 @@
 
 
 - name: Remove unnecessary Munin configuration
-  file: path={{ item }} state=absent
+  file:
+    path: "{{ item }}"
+    state: absent
   with_items:
     - /etc/cron.d/munin-node
   notify:
     - service nginx restart
 
 
-# Nginx
+### NGINX
 - name: Create NGINX virtualhost stats.gis.lab
-  template: src=nginx/site-stats.j2 dest=/etc/nginx/sites-available/stats
+  template:
+    src: nginx/site-stats.j2
+    dest: /etc/nginx/sites-available/stats
   notify:
     - service nginx restart
 
 - name: Activate NGINX virtualhost stats.gis.lab
-  file: src=/etc/nginx/sites-available/stats dest=/etc/nginx/sites-enabled/stats state=link
+  file:
+    src: /etc/nginx/sites-available/stats
+    dest: /etc/nginx/sites-enabled/stats
+    state: link
   notify:
     - service nginx restart
 
 
-# Cron
+### CRON
 - name: Create directory for Munin script
-  file: path=/opt/gislab/system/stats state=directory
+  file:
+    path: /opt/gislab/system/stats
+    state: directory
 
 - name: Install Munin statistics update script
-  template: src=munin/update-stats.sh.j2 dest=/opt/gislab/system/stats/update-stats.sh mode=0755
+  template:
+    src: munin/update-stats.sh.j2
+    dest: /opt/gislab/system/stats/update-stats.sh
+    mode: 0755
 
 - name: Activate Munin cron job
-  template: src=cron/munin.j2 dest=/etc/cron.d/munin
+  template:
+    src: cron/munin.j2
+    dest: /etc/cron.d/munin
 
 
-# Email
+### EMAIL
 - name: Add service user mail alias
-  lineinfile: "dest=/etc/aliases line='munin: root' state=present"
+  lineinfile:
+    dest: /etc/aliases
+    line: "munin: root"
+    state: present
 
 - name: Activate new mail alias
   command: newaliases
@@ -95,4 +128,4 @@
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

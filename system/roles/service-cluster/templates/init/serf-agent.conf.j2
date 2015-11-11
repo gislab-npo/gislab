@@ -10,15 +10,15 @@ kill timeout 90
 normal exit 0 TERM INT
 
 exec serf agent \
-	-bind {{ GISLAB_NETWORK_SERVER_IP }} \
-	-keyring-file /etc/gislab/gislab_serf.key \
-	-event-handler "member-join={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/member-join.sh" \
-	-event-handler "member-leave,member-failed={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/member-leave.sh" \
-	-event-handler "user:member-join-lb={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/member-join-lb.sh" \
-	-event-handler "user:adduser={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/adduser.sh" \
-	-event-handler "query:uptime=uptime" \
-	-event-handler "query:test=echo 'yes'" \
-	-node="server.gis.lab" \
-	-tag role=server \
-	-log-level=err \
-	-syslog
+    -bind {{ GISLAB_NETWORK_SERVER_IP }} \
+    -keyring-file /etc/gislab/gislab_serf.key \
+    -event-handler "member-join={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/member-join.sh" \
+    -event-handler "member-leave,member-failed={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/member-leave.sh" \
+    -event-handler "user:member-join-lb={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/member-join-lb.sh" \
+    -event-handler "user:adduser={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/adduser.sh" \
+    -event-handler "query:uptime=uptime" \
+    -event-handler "query:test=echo 'yes'" \
+    -node="server.gis.lab" \
+    -tag role=server \
+    -log-level=err \
+    -syslog
