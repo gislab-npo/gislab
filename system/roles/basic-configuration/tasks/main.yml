@@ -5,7 +5,7 @@
 # Run basic server configuration.
 
 
-# configuration and basic directory structure
+### CONFIGURATION AND BASIC DIRECTORY STRUCTURE
 - name: Create '/etc/gislab_version' file
   copy:
     content: |
@@ -71,7 +71,7 @@
     mode: 0700
 
 
-# basic server configuration
+### BASIC SERVER CONFIGURATION
 - name: Set system wide environment variables
   template:
     src: environment.j2
@@ -120,7 +120,7 @@
 - meta: flush_handlers
 
 
-# networking
+### NETWORKING
 - name: Install DHCP client configuration with fallback support
   template:
     src: network/dhclient.conf.j2
@@ -139,7 +139,7 @@
     mode: 0755
 
 
-# apt
+### APT
 - name: Configure apt repositories
   template:
     src: apt/sources.list.j2
@@ -222,7 +222,7 @@
     - vim
 
 
-# shell
+### SHELL
 - name: Configure shell prompt system wide
   lineinfile:
     dest: /etc/profile
@@ -231,7 +231,7 @@
     state: present
 
 
-# motd
+### MOTD
 - name: Set MOTD header
   template:
     src: motd/00-header.j2
@@ -248,7 +248,7 @@
   command: run-parts /etc/update-motd.d
 
 
-# /storage bind mount
+### MOUNT POINTS
 - name: Configure universal '/storage to /mnt' mount to keep the same paths on server and clients
   lineinfile:
     dest: /etc/fstab
@@ -264,7 +264,7 @@
     state: mounted
 
 
-# scheduled jobs
+### JOBS
 - name: Purge installation directory for scheduled jobs
   file:
     dest: "{{ GISLAB_INSTALL_JOBS_ROOT }}"
@@ -288,7 +288,7 @@
     - service anacron restart
 
 
-# admin tools
+### ADMIN TOOLS
 - name: Install GIS.lab shell functions library
   copy:
     src: functions.sh
@@ -308,7 +308,7 @@
     state: present
 
 
-# ssh
+### SSH
 - name: Configure SSH server
   template:
     src: ssh/sshd_config.j2
@@ -317,7 +317,7 @@
     - service ssh restart
 
 
-# backup
+### BACKUP
 - name: Install daily backup job
   copy:
     src: static/bin/gislab-daily-backup
