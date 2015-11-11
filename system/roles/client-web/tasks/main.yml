@@ -6,7 +6,8 @@
 #
 # Logging:
 #   production: /storage/log/syslog /storage/log/nginx-error.log
-#   debug:      /storage/log/nginx-access.log /storage/log/nginx-error.log /storage/log/syslog
+#   debug:      /storage/log/nginx-access.log /storage/log/nginx-error.log
+#               /storage/log/syslog
 
 
 - name: Install packages
@@ -38,7 +39,8 @@
 - name: Generate 'gislab_web' database user password (run only once)
   shell: >
     pwgen -s -N 1 10 > /etc/gislab/gislab-web_db_user_password.txt
-    && chmod 600 /etc/gislab/gislab-web_db_user_password.txt
+    &&
+    chmod 600 /etc/gislab/gislab-web_db_user_password.txt
   args:
     creates: /etc/gislab/gislab-web_db_user_password.txt
 
@@ -47,12 +49,21 @@
   register: gislab_web_db_user_password
 
 
-- name: Create database user 'gislab_web' if not exists
+- name: Create database user 'gislab_web'
   postgresql_user:
     name: gislab_web
     role_attr_flags: NOCREATEDB,NOCREATEROLE,NOSUPERUSER
     password: "{{ gislab_web_db_user_password.stdout }}"
     state: present
+  sudo_user: postgres
+
+- name: Grant privileges for user 'gislab_web'
+  postgresql_privs:
+    db: gislab
+    privs: ALL
+    type: schema
+    objs: public
+    role: gislab_web
   sudo_user: postgres
 
 
@@ -79,7 +90,8 @@
   shell: >
     python {{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web/utils/secret_key.py
     > /etc/gislab/gislab-web_secret_key.txt
-    && chmod 600 /etc/gislab/gislab-web_secret_key.txt
+    &&
+    chmod 600 /etc/gislab/gislab-web_secret_key.txt
   args:
     creates: /etc/gislab/gislab-web_secret_key.txt
 
@@ -97,7 +109,8 @@
 # we do not use Ansible django_manage module because of missing 'template' option
   shell: >
     source {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web/bin/activate
-    && django-admin.py startproject
+    &&
+    django-admin.py startproject
     --template={{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web/webgis/conf/project_template/
     djproject {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/www
   args:
@@ -119,31 +132,8 @@
     app_path: "{{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/www"
     settings: djproject.settings
     virtualenv: "{{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web"
-  sudo_user: postgres
   notify:
     - service gislab-web restart
-
-- name: Grant privileges to database tables
-  command: >
-    psql -U postgres -d gislab
-    -c "GRANT SELECT, INSERT, UPDATE, DELETE ON {{ item }} TO gislab_web"
-  with_items:
-    - auth_group
-    - auth_group_permissions
-    - auth_permission
-    - django_content_type
-    - django_session
-    - storage_ball
-    - storage_drawing
-    - viewer_gislabuser
-    - viewer_gislabuser_groups
-    - viewer_gislabuser_user_permissions
-    - viewer_project_registry
-
-- name: Grant privileges to sequences
-  command: >
-    psql -U postgres -d gislab
-    -c "GRANT SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO gislab_web"
 
 - name: Collect static files
   django_manage:
@@ -163,23 +153,16 @@
 
 
 ### GIS.lab Web SERVERS
-- name: Install Gunicorn startup script
-  template:
-    src: gunicorn/gunicorn.sh.j2
-    dest: "{{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/www/gunicorn.sh"
-    mode: 0755
-  notify:
-    - service gislab-web restart
-
-
 - name: Generate self signed SSL certificate (run only once)
   shell: >
     openssl req -x509 -nodes -days 3650 -newkey rsa:2048
     -keyout /etc/gislab/gislab-web.key
     -out /etc/gislab/gislab-web.crt
     -subj "/C=GL/ST=GIS.lab/L=GIS.lab/O=GIS.lab/OU=GIS.lab/CN=GIS.lab"
-    && chmod 600 /etc/gislab/gislab-web.key
-    && chmod 600 /etc/gislab/gislab-web.crt
+    &&
+    chmod 600 /etc/gislab/gislab-web.key
+    &&
+    chmod 600 /etc/gislab/gislab-web.crt
   args:
     executable: /bin/bash
     creates: /etc/gislab/gislab-web.crt
@@ -190,6 +173,15 @@
     - mkdir -p /etc/nginx/ssl
     - cp /etc/gislab/gislab-web.key /etc/nginx/ssl/gislab-web.key
     - cp /etc/gislab/gislab-web.crt /etc/nginx/ssl/gislab-web.crt
+
+
+- name: Install Gunicorn startup script
+  template:
+    src: gunicorn/gunicorn.sh.j2
+    dest: "{{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/www/gunicorn.sh"
+    mode: 0755
+  notify:
+    - service gislab-web restart
 
 
 - name: Configure Nginx virtualhost
@@ -245,7 +237,8 @@
 - name: Build GIS.lab Web plugin package
   shell: >
     cd {{ GISLAB_INSTALL_TMP_ROOT }}/gislab-web-plugin/gislab_web
-    && make zip
+    &&
+    make zip
 
 - name: Create Web plugin directory
   file:
@@ -286,7 +279,7 @@
 - name: Activate GIS.lab Web error logs checking
   lineinfile:
     dest: /etc/logcheck/logcheck.logfiles
-    line: "/storage/log/nginx-error.log"
+    line: /storage/log/nginx-error.log
     state: present
 
 
