@@ -1,8 +1,9 @@
 #!/bin/bash
 
 NAME="gislab-web"
-DJANGODIR={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web
-SOCKFILE={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/gunicorn.sock
+WWW_ROOT={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/www
+VIRTUALENV={{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web
+SOCKET=$WWW_ROOT/gunicorn.sock
 USER=www-data
 GROUP=www-data
 DJANGO_SETTINGS_MODULE=djproject.settings
@@ -16,18 +17,18 @@ LOG_LEVEL=error
 {% endif %}
 
 
-cd $DJANGODIR
-source {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/virtualenv/gislab-web/bin/activate
+source $VIRTUALENV/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
-export PYTHONPATH=$DJANGODIR:$PYTHONPATH
- 
-RUNDIR=$(dirname $SOCKFILE)
+export PYTHONPATH=$WWW_ROOT:$PYTHONPATH
+
+cd $WWW_ROOT
+RUNDIR=$(dirname $SOCKET)
 test -d $RUNDIR || mkdir -p $RUNDIR
- 
+
 exec gunicorn ${DJANGO_WSGI_MODULE}:application \
---name $NAME \
---workers $NUM_WORKERS \
---user=$USER --group=$GROUP \
---log-syslog \
---log-level $LOG_LEVEL \
---bind=unix:$SOCKFILE
+    --name $NAME \
+    --workers $NUM_WORKERS \
+    --user=$USER --group=$GROUP \
+    --log-syslog \
+    --log-level $LOG_LEVEL \
+    --bind=unix:$SOCKET

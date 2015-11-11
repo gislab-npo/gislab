@@ -1,5 +1,5 @@
 upstream gislab-web {
-	server unix:{{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/gunicorn.sock fail_timeout=0;
+	server unix:{{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/www/gunicorn.sock fail_timeout=0;
 }
  
 server {
@@ -12,7 +12,7 @@ server {
 	ssl_certificate_key /etc/nginx/ssl/gislab-web.key;
 
 	location /static/ {
-		alias {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/static/;
+		alias {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/www/static/;
 
 		expires 1h;
 		add_header Pragma public;
@@ -68,6 +68,6 @@ server {
 
 	error_page 500 502 503 504 /500.html;
 	location = /500.html {
-		root {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/static/;
+		root {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/www/static/;
 	}
 }
