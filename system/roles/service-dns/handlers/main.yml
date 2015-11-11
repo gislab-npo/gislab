@@ -1,9 +1,11 @@
 ---
 
 - name: service bind9 restart
-  service: name=bind9 state=restarted
+  service:
+    name: bind9
+    state: restarted
 
 - name: resolvconf update
   shell: resolvconf -u
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

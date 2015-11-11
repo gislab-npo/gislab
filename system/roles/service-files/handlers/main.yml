@@ -1,9 +1,13 @@
 ---
 
 - name: service nfs-kernel-server restart
-  service: name=nfs-kernel-server state=restarted
+  service:
+    name: nfs-kernel-server
+    state: restarted
 
 - name: service idmapd restart
-  service: name=idmapd state=restarted
+  service:
+    name: idmapd
+    state: restarted
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:
