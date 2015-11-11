@@ -5,7 +5,7 @@
 # Run basic server configuration.
 
 
-# Configuration and basic directory structure
+# configuration and basic directory structure
 - name: Create '/etc/gislab_version' file
   copy:
     content: |
@@ -42,7 +42,9 @@
     dest: /etc/gislab_version
 
 - name: Create custom GIS.lab directories structure
-  file: path="{{ item }}" state=directory
+  file:
+    path: "{{ item }}"
+    state: directory
   with_items:
     - "{{ GISLAB_ROOT }}"
     - "{{ GISLAB_ROOT }}/admin"
@@ -61,75 +63,103 @@
     - "{{ GISLAB_INSTALL_TMP_ROOT }}"
 
 - name: Set safe permissions for /etc/gislab directory
-  file: path=/etc/gislab state=directory owner=root group=root mode=0700
+  file:
+    path: /etc/gislab
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
 
 
-# Basic server configuration
+# basic server configuration
 - name: Set system wide environment variables
-  template: src=environment.j2 dest=/etc/environment
+  template:
+    src: environment.j2
+    dest: /etc/environment
 
 
 - name: Set hostname
-  hostname: name=server
+  hostname:
+    name: server
 
 - name: Update hosts file
-  template: src=hosts.j2 dest=/etc/hosts
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
   notify:
     - service rsyslog restart
 
 
 - name: Generate en_US.UTF-8 locale
-  # we don't use 'locale_gen' here, because it fails with travis-ci (https://github.com/ansible/ansible/issues/7289)
+  # we don't use 'locale_gen' here, because it fails with travis-ci
+  # (https://github.com/ansible/ansible/issues/7289)
   # locale_gen: name=en_US.UTF-8 state=present
-  shell: /usr/sbin/locale-gen en_US.UTF-8
+  command: /usr/sbin/locale-gen en_US.UTF-8
 
 - name: Set en_US.UTF-8 locale
-  shell: /usr/sbin/update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 LANGUAGE=en
+  command: >
+    /usr/sbin/update-locale
+    LANG=en_US.UTF-8
+    LC_ALL=en_US.UTF-8
+    LANGUAGE=en
 
 - name: Set timezone
-  template: src=timezone.j2 dest=/etc/timezone
+  template:
+    src: timezone.j2
+    dest: /etc/timezone
   notify:
     - reconfigure timezone
 
 
 - name: Set local aliases table
-  template: src=aliases.j2 dest=/etc/aliases
+  template:
+    src: aliases.j2
+    dest: /etc/aliases
 
-
-- name: Configure SSH server
-  template: src=ssh/sshd_config.j2 dest=/etc/ssh/sshd_config
-  notify:
-    - service ssh restart
 
 - meta: flush_handlers
 
 
 # networking
 - name: Install DHCP client configuration with fallback support
-  template: src=network/dhclient.conf.j2 dest=/etc/dhcp/dhclient.conf
+  template:
+    src: network/dhclient.conf.j2
+    dest: /etc/dhcp/dhclient.conf
 
 
 - name: Activate GIS.lab network IP address if not received from provider
-  shell: ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_SERVER_NETWORK_DEVICE }}
+  command: >
+    ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_SERVER_NETWORK_DEVICE }}
   when: GISLAB_NETWORK_SERVER_IP not in ansible_all_ipv4_addresses
 
 - name: Install GIS.lab network hook
-  template: src=network/gislab.j2 dest=/etc/network/if-up.d/001gislab mode=0755
+  template:
+    src: network/gislab.j2
+    dest: /etc/network/if-up.d/001gislab
+    mode: 0755
 
 
-# Apt
+# apt
 - name: Configure apt repositories
-  template: src=apt/sources.list.j2 dest=/etc/apt/sources.list
+  template:
+    src: apt/sources.list.j2
+    dest: /etc/apt/sources.list
 
 - name: Remove possible third party apt repositories
-  file: dest=/etc/apt/sources.list.d state=absent
+  file:
+    dest: /etc/apt/sources.list.d
+    state: absent
 
 - name: Add imincik PPA signing key
-  apt_key: data="{{ lookup('file', 'static/ppa_imincik.key') }}" state=present
+  apt_key:
+    data: "{{ lookup('file', 'static/ppa_imincik.key') }}"
+    state: present
 
 
 - name: Configure Apt cache proxy server
-  template: src=apt/02proxy.j2 dest=/etc/apt/apt.conf.d/02proxy
+  template:
+    src: apt/02proxy.j2
+    dest: /etc/apt/apt.conf.d/02proxy
 
 - name: Move apt cache to '/storage' directory
   shell: mv -f /var/cache/apt/* /storage/cache/packages/apt/
@@ -137,29 +167,47 @@
     creates: /storage/cache/packages/apt/pkgcache.bin
 
 - name: Deactivate original apt cache
-  file: dest=/var/cache/apt state=absent
+  file:
+    dest: /var/cache/apt
+    state: absent
 
 - name: Activate shared apt cache
-  file: src=/storage/cache/packages/apt dest=/var/cache/apt state=link
+  file:
+    src: /storage/cache/packages/apt
+    dest: /var/cache/apt
+    state: link
 
 
 - name: Update apt cache
-  apt: update_cache=yes
+  apt:
+    update_cache: yes
 
-- name: Remove not needed packages possibly coming with OS image
-  apt: pkg={{item}} state=absent
+- name: Remove not needed packages installed by default
+  apt:
+    pkg: "{{ item }}"
+    state: absent
   with_items:
     - landscape-client
     - landscape-common
 
 - name: Install aptitude which is required for running system upgrade
-  apt: pkg=aptitude force=yes install_recommends=no state=latest
+  apt:
+    pkg: aptitude
+    force: yes
+    install_recommends: no
+    state: latest
 
 - name: Upgrade system
-  apt: upgrade=full force=yes
+  apt:
+    upgrade: full
+    force: yes
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
+  apt:
+    pkg: "{{ item }}"
+    force: yes
+    install_recommends: no
+    state: latest
   with_items:
     - anacron
     - arp-scan
@@ -174,18 +222,20 @@
     - vim
 
 
-# Shell
+# shell
 - name: Configure shell prompt system wide
   lineinfile:
-    dest=/etc/profile
-    regexp="^PS1=.*h\.GIS.lab(.*).*$"
-    line='PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "'
-    state=present
+    dest: /etc/profile
+    regexp: "^PS1=.*h.GIS.lab(.*).*$"
+    line: 'PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "'
+    state: present
 
 
-# MOTD
+# motd
 - name: Set MOTD header
-  template: src=motd/00-header.j2 dest=/etc/update-motd.d/00-header
+  template:
+    src: motd/00-header.j2
+    dest: /etc/update-motd.d/00-header
 
 - name: Remove not needed MOTD messages
   shell: rm -f {{ item }}
@@ -195,34 +245,35 @@
     - /etc/update-motd.d/*-release-upgrade
 
 - name: Update MOTD
-  shell: run-parts /etc/update-motd.d
-
-
-# GIS.lab administrator tools
-- name: Install GIS.lab shell functions library
-  copy: src=functions.sh dest={{ GISLAB_ROOT }}/system/functions.sh mode=0644
-
-- name: Install GIS.lab administrator tools
-  copy: src=admin/ dest={{ GISLAB_ROOT }}/admin/ mode=0775 owner=root group=root
-
-- name: Add GIS.lab administrator tools on path
-  lineinfile: dest=/etc/profile line="PATH=$PATH:{{ GISLAB_ROOT }}/admin" state=present
+  command: run-parts /etc/update-motd.d
 
 
 # /storage bind mount
 - name: Configure universal '/storage to /mnt' mount to keep the same paths on server and clients
-  lineinfile: dest=/etc/fstab line="/storage  /mnt  none  bind  0  0" state=present
+  lineinfile:
+    dest: /etc/fstab
+    line: "/storage  /mnt  none  bind  0  0"
+    state: present
 
 - name: Mount '/storage' to '/mnt'
-  mount: name=/mnt src=/storage fstype=none opts=bind state=mounted
+  mount:
+    name: /mnt
+    src: /storage
+    fstype: none
+    opts: bind
+    state: mounted
 
 
 # scheduled jobs
 - name: Purge installation directory for scheduled jobs
-  file: dest={{ GISLAB_INSTALL_JOBS_ROOT }} state=absent
+  file:
+    dest: "{{ GISLAB_INSTALL_JOBS_ROOT }}"
+    state: absent
 
 - name: Create installation directories for scheduled jobs
-  file: dest={{ item }} state=directory
+  file:
+    dest: "{{ item }}"
+    state: directory
   with_items:
     - "{{ GISLAB_INSTALL_JOBS_ROOT }}/daily"
     - "{{ GISLAB_INSTALL_JOBS_ROOT }}/weekly"
@@ -230,16 +281,50 @@
 
 # TODO: move also other cron jobs to anacron (GIS.lab Web cleanup, ...)
 - name: Configure jobs scheduler
-  template: src=anacrontab.j2 dest=/etc/anacrontab
+  template:
+    src: anacrontab.j2
+    dest: /etc/anacrontab
   notify:
     - service anacron restart
 
 
+# admin tools
+- name: Install GIS.lab shell functions library
+  copy:
+    src: functions.sh
+    dest: "{{ GISLAB_ROOT }}/system/functions.sh"
+    mode: 0644
+
+- name: Install GIS.lab administrator tools
+  copy:
+    src: admin/
+    dest: "{{ GISLAB_ROOT }}/admin/"
+    mode: 0775
+
+- name: Add GIS.lab administrator tools on path
+  lineinfile:
+    dest: /etc/profile
+    line: "PATH: $PATH={{ GISLAB_ROOT }}/admin"
+    state: present
+
+
+# ssh
+- name: Configure SSH server
+  template:
+    src: ssh/sshd_config.j2
+    dest: /etc/ssh/sshd_config
+  notify:
+    - service ssh restart
+
+
 # backup
 - name: Install daily backup job
-  copy: src=static/bin/gislab-daily-backup dest={{ GISLAB_INSTALL_JOBS_ROOT }}/daily/ mode=0775
+  copy:
+    src: static/bin/gislab-daily-backup
+    dest: "{{ GISLAB_INSTALL_JOBS_ROOT }}/daily/"
+    mode: 0775
 
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

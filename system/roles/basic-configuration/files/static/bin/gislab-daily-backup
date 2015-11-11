@@ -5,8 +5,8 @@ set -e
 
 # sanity checks
 if ! [ -f /storage/log/installation.done ]; then
-	logger -t gislab-daily-backup "GIS.lab installation not completed. Skipping ..."
-	exit 0
+    logger -t gislab-daily-backup "GIS.lab installation not completed. Skipping ..."
+    exit 0
 fi
 
 
@@ -30,14 +30,13 @@ Sincerely yours daily GIS.lab backup job.
 
 # test for obsolete backups
 if [ -f $BACKUP_DONE_FILE ]; then
-	logger -t gislab-daily-backup "Obsolete daily backup detected"
-	echo -e "$PREVIOUS_BACKUP_MSG" | mail -s "[GIS.lab ID: $GISLAB_UNIQUE_ID]: Obsolete daily backup detected" root
-	rm -rf $BACKUP_DIR
+    logger -t gislab-daily-backup "Obsolete daily backup detected"
+    echo -e "$PREVIOUS_BACKUP_MSG" | mail -s "[GIS.lab ID: $GISLAB_UNIQUE_ID]: Obsolete daily backup detected" root
+    rm -rf $BACKUP_DIR
 fi
 
 # perform backup
 nice gislab-backupall -d $BACKUP_DIR
 touch $BACKUP_DONE_FILE
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

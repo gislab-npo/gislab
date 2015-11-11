@@ -2,25 +2,25 @@ option rfc3442-classless-static-routes code 121 = array of unsigned integer 8;
 
 send host-name "<hostname>";
 request subnet-mask, broadcast-address, time-offset, routers,
-	domain-name, domain-name-servers, domain-search, host-name,
-	netbios-name-servers, netbios-scope, interface-mtu,
-	rfc3442-classless-static-routes, ntp-servers,
-	dhcp6.domain-search, dhcp6.fqdn,
-	dhcp6.name-servers, dhcp6.sntp-servers;
+    domain-name, domain-name-servers, domain-search, host-name,
+    netbios-name-servers, netbios-scope, interface-mtu,
+    rfc3442-classless-static-routes, ntp-servers,
+    dhcp6.domain-search, dhcp6.fqdn,
+    dhcp6.name-servers, dhcp6.sntp-servers;
 
 
-# Fallback IP address configuration 
+# Fallback IP address configuration
 # If no suitable response from DHCP server is received in 60 seconds, set fallback static IP address.
 # IP address of gateway, specified in 'routers', must respond to ping, otherwise fallback configuration will not be
-# performed. 
+# performed.
 timeout 60;
 lease {
-	interface "{{ GISLAB_SERVER_NETWORK_DEVICE }}";
-	fixed-address {{ GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS }};
-	option subnet-mask 255.255.255.0;
-	option routers 127.0.0.1,{{ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY }};
-	option domain-name-servers 8.8.8.8;
-	renew never;
-	rebind never;
-	expire never;
+    interface "{{ GISLAB_SERVER_NETWORK_DEVICE }}";
+    fixed-address {{ GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS }};
+    option subnet-mask 255.255.255.0;
+    option routers 127.0.0.1,{{ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY }};
+    option domain-name-servers 8.8.8.8;
+    renew never;
+    rebind never;
+    expire never;
 }

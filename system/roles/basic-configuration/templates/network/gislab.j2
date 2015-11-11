@@ -5,7 +5,7 @@
 
 
 if [ "$IFACE" = "{{ GISLAB_SERVER_NETWORK_DEVICE }}" ]; then
-	ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_SERVER_NETWORK_DEVICE }} 2> /dev/null || true
+    ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_SERVER_NETWORK_DEVICE }} 2> /dev/null || true
 fi
 
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:
