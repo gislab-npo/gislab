@@ -1,6 +1,6 @@
 ---
 
-- name: service connection-forwarding restart
-  service: name=connection-forwarding state=restarted
+- name: service gislab-connection-forwarding restart
+  service: name=gislab-connection-forwarding state=restarted
 
 # vim:ft=ansible:
