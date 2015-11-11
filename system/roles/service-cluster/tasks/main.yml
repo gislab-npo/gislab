@@ -30,8 +30,10 @@
 
 - name: Install Serf
   shell: >
-    . {{ GISLAB_ROOT }}/system/functions.sh
+    source {{ GISLAB_ROOT }}/system/functions.sh
     && gislab_serf_install 0.6.4
+  args:
+    executable: /bin/bash
 
 
 - name: Generate encryption key (run only once)
