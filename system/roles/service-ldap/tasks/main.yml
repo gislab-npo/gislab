@@ -18,6 +18,7 @@
     - libpam-cracklib
     - ldap-utils
     - libnss-ldap
+    - members
     - pwgen
     - python-ldap
     - slapd
