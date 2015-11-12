@@ -84,7 +84,10 @@ fi
 
 # manunaly delete user from additional groups (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
 GISLAB_USER_GROUPS=$(id -nG $GISLAB_USER | grep '[[:space:]]' | sed -r -e 's/^[^ ]* //' -e 's/[[:space:]]+/,/g')
-gislab-moduser -A $GISLAB_USER_GROUPS $GISLAB_USER
+
+if [ -n "$GISLAB_USER_GROUPS" ]; then
+	gislab-moduser -A $GISLAB_USER_GROUPS $GISLAB_USER
+fi
 
 # remove LDAP account
 ldapdeleteuser $GISLAB_USER
