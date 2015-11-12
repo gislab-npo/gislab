@@ -14,6 +14,7 @@
     - logcheck
     - logcheck-database
 
+
 - name: Configure logcheck
   template:
     src: "{{ item.src }}"

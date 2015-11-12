@@ -1,6 +1,8 @@
 ---
 
 - name: service postfix restart
-  service: name=postfix state=restarted
+  service:
+    name: postfix
+    state: restarted
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:
