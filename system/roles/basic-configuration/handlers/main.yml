@@ -1,16 +1,21 @@
 ---
 
 - name: service rsyslog restart
-  service: name=rsyslog state=restarted
+  service:
+    name: rsyslog
+    state: restarted
 
 - name: service ssh restart
-  service: name=ssh state=restarted
+  service:
+    name: ssh
+    state: restarted
 
 - name: reconfigure timezone
-  shell: dpkg-reconfigure --frontend noninteractive tzdata
+  command: dpkg-reconfigure --frontend noninteractive tzdata
 
 - name: service anacron restart
-  shell: name=anacron state=restarted
+  service:
+    name: anacron
+    state: restarted
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

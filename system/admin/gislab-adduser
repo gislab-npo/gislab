@@ -21,6 +21,7 @@ function usage() {
 	-p password (optional, default: automatically generated)
 	-d user description (optional)
 	-s add user to superuser's group (optional)
+	-a add user to supplementary group(s) separated by comma (optional)
 	-h display this help
 	"
 	exit 255
@@ -28,9 +29,7 @@ function usage() {
 
 
 # options
-GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overridden by '-p' option 
-
-while getopts "d:g:l:m:p:sh" OPTION
+while getopts "a:d:g:l:m:p:sh" OPTION
 do
         case "$OPTION" in
 			g) GISLAB_USER_GIVEN_NAME=$OPTARG ;;
@@ -39,6 +38,7 @@ do
 			p) GISLAB_USER_PASSWORD=$OPTARG ;;
 			d) GISLAB_USER_DESCRIPTION="$OPTARG" ;;
 			s) SUDO=yes ;;
+			a) GISLAB_USER_GROUPS=$OPTARG ;;
 			h) usage ;;
 			\?) exit 1 ;;
         esac
@@ -88,6 +88,11 @@ gislab_print_info "Adding user account"
 # create LDAP account (without creating home directory - CREATEHOMES="no")
 ldapadduser $GISLAB_USER gislabusers
 
+# add user to supplementary group(s)
+if [ -n "$GISLAB_USER_GROUPS" ]; then
+	gislab-moduser -a $GISLAB_USER_GROUPS $GISLAB_USER
+fi
+
 # add LDAP user attributes
 ldapmodifyuser $GISLAB_USER > /dev/null << EOL
 changetype: modify
@@ -117,26 +122,11 @@ fi
 
 # allow sudo for user if creating superuser account
 if [ "$SUDO" == "yes" ]; then
-	ldapaddusertogroup $GISLAB_USER gislabadmins
-fi
-
-# forward system mails to user if creating superuser account
-# perform only if this email does not already exist in 'maildrop' (other user account
-# can be possibly created with same email address)
-ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
-maildrop_exists=$($ldapsearch_cmd -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$GISLAB_USER_EMAIL)" 2>/dev/null)
-
-if [ "$SUDO" == "yes" -a -f /etc/postfix/sasl_passwd -a -z "$maildrop_exists" ]; then
-	ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
-dn: cn=root,ou=MailAliases,dc=gis,dc=lab
-changetype: modify
-add: maildrop
-maildrop: $GISLAB_USER_EMAIL
-EOL
+	gislab-moduser -s $GISLAB_USER
 fi
 
 # set user password
-gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
+gislab-moduser -p $GISLAB_USER_PASSWORD $GISLAB_USER
 
 
 # run adduser hook
@@ -151,7 +141,7 @@ fi
 
 
 # final message
-gislab_print_info "Account '$GISLAB_USER' was successfully added with password '$GISLAB_USER_PASSWORD'"
+gislab_print_info "Account '$GISLAB_USER' was successfully added"
 
 
 # vim: set ts=4 sts=4 sw=4 noet:

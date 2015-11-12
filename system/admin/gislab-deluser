@@ -76,25 +76,15 @@ fi
 ### LDAP
 gislab_print_info "Deleting user account"
 
-# disable forwarding system mails to user, if user was superuser
-ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
-GISLAB_USER_EMAIL=$($ldapsearch_cmd "uid=$GISLAB_USER" mail 2>/dev/null | awk '/^mail: / { print $2 }')
-
+# disable forwarding system mails to user and remove user
+# from superuser's group, if user was superuser
 if id $GISLAB_USER 2>/dev/null | grep -q '(gislabadmins)'; then
-	if [ -n "$($ldapsearch_cmd -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$GISLAB_USER_EMAIL)" 2>/dev/null)" ]; then
-		ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
-dn: cn=root,ou=MailAliases,dc=gis,dc=lab
-changetype: modify
-delete: maildrop
-maildrop: $GISLAB_USER_EMAIL
-EOL
-	fi
+	gislab-moduser -S $GISLAB_USER
 fi
 
 # manunaly delete user from additional groups (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
-for GROUP in $(id -nG $GISLAB_USER | grep '[[:space:]]' | sed -r 's/^[^ ]* //'); do
-	ldapdeleteuserfromgroup $GISLAB_USER $GROUP
-done
+GISLAB_USER_GROUPS=$(id -nG $GISLAB_USER | grep '[[:space:]]' | sed -r -e 's/^[^ ]* //' -e 's/[[:space:]]+/,/g')
+gislab-moduser -A $GISLAB_USER_GROUPS $GISLAB_USER
 
 # remove LDAP account
 ldapdeleteuser $GISLAB_USER

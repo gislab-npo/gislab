@@ -2,27 +2,32 @@
 #
 ### INSTALLATION DONE ###
 #
-# Perform system cleanup and mark successful installation by creating '/storage/log/installation.done' directory.
+# Perform system cleanup and mark successful installation by creating
+# '/storage/log/installation.done' directory.
 
 
 - name: Disable Apt cache proxy server
   shell: sed -i "s/^/# /g" /etc/apt/apt.conf.d/02proxy
 
 - name: Remove temporary directory for this installation
-  file: dest={{ GISLAB_INSTALL_TMP_ROOT }} state=absent
+  file:
+    dest: "{{ GISLAB_INSTALL_TMP_ROOT }}"
+    state: absent
 
 
 - name: Log successful installation to file
-  shell: "echo '{{ GISLAB_INSTALL_DATETIME }} {{ GISLAB_INSTALL_ACTION }}' >> /storage/log/installation.done"
+  shell: >
+    echo '{{ GISLAB_INSTALL_DATETIME }} {{ GISLAB_INSTALL_ACTION }}'
+    >> /storage/log/installation.done
 
 - name: Send email notification to GIS.lab administrator
-  shell: "echo -e 'Dear GIS.lab Administrator,\ninstallation of your system is successfully done.'
-    | mail -s '[GIS.lab ID: {{ GISLAB_UNIQUE_ID }}]: Installation is done' root"
+  shell: >
+    echo -e 'Dear GIS.lab Administrator,\ninstallation of your system is successfully done.'
+    | mail -s '[GIS.lab ID: {{ GISLAB_UNIQUE_ID }}]: Installation is done' root
   args:
     executable: /bin/bash
 
 - name: Installation of GIS.lab is done
   shell: date -R
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

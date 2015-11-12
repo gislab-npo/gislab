@@ -5,4 +5,4 @@
 
 exit 0
 
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

@@ -112,9 +112,9 @@
   changed_when: False
 
 
-# gislab-password|passwd
+# gislab-moduser|passwd
 - name: Change password of ordinary test user
-  shell: gislab-password
+  shell: gislab-moduser
     -p test
     test{{ GISLAB_TEST_UNIQUE_STRING }}
   ignore_errors: yes

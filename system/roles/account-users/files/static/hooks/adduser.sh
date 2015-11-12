@@ -8,14 +8,14 @@ source /etc/gislab_version
 
 # read GISLAB_USER from script parameter if given
 if [ "$1" != "" ]; then
-	GISLAB_USER=$1
+    GISLAB_USER=$1
 fi
 
 
 # sanity check
 if [ "$(ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// "(uid=$GISLAB_USER)")" == "" ]; then
-	echo "User '$GISLAB_USER' doesn't exist in LDAP database !"
-	exit 1
+    echo "User '$GISLAB_USER' doesn't exist in LDAP database !"
+    exit 1
 fi
 
 
@@ -51,7 +51,7 @@ psql -U postgres -d gislab -c "CREATE SCHEMA AUTHORIZATION $GISLAB_USER;"
 # add user to the database superusers group if creating superuser account
 id $GISLAB_USER | grep gislabadmins &> /dev/null && SUDO=yes || SUDO=no
 if [ "$SUDO" == "yes" ]; then
-	psql -U postgres -c "GRANT gislabadmins TO $GISLAB_USER;"
+    psql -U postgres -c "GRANT gislabadmins TO $GISLAB_USER;"
 fi
 
 
@@ -65,22 +65,21 @@ chmod 750 /storage/publish/$GISLAB_USER
 ### VPN
 # place VPN configuration and certificates to ~/.gislab directory
 if [ -d "/etc/openvpn" ]; then
-	mkdir -p /storage/home/$GISLAB_USER/.gislab
+    mkdir -p /storage/home/$GISLAB_USER/.gislab
 
-	tar -C /etc \
-		-czf /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz \
-		--transform s/^openvpn/$GISLAB_UNIQUE_ID-vpn/ \
-		openvpn/gislab_vpn_ca.crt \
-		openvpn/gislab_vpn_ta.key \
-		openvpn/client.conf
+    tar -C /etc \
+        -czf /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz \
+        --transform s/^openvpn/$GISLAB_UNIQUE_ID-vpn/ \
+        openvpn/gislab_vpn_ca.crt \
+        openvpn/gislab_vpn_ta.key \
+        openvpn/client.conf
 
-	chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
-	chmod 0600 /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
+    chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
+    chmod 0600 /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
 fi
 
 
 ### DONE
 echo "$(date +%Y-%m-%d-%H:%M:%S)" > /storage/home/$GISLAB_USER/.gislab/account.done
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

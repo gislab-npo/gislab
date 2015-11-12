@@ -1,11 +1,11 @@
 server {
-	root /var/www/default;
-	index index.html index.htm;
+    root /var/www/default;
+    index index.html index.htm;
 
-	listen 80 default_server;
-	server_name _; # catch all
+    listen 80 default_server;
+    server_name _; # catch all
 
-	location / {
-		try_files $uri $uri/ /index.html;
-		}
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
 }

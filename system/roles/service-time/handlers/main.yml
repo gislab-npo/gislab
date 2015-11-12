@@ -1,6 +1,8 @@
 ---
 
 - name: service ntp restart
-  service: name=ntp state=restarted
+  service:
+    name: ntp
+    state: restarted
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

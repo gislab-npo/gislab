@@ -1,9 +1,13 @@
 ---
 
 - name: service munin-node restart
-  service: name=munin-node state=restarted
+  service:
+    name: munin-node
+    state: restarted
 
 - name: service nginx restart
-  service: name=nginx state=restarted
+  service:
+    name: nginx
+    state: restarted
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

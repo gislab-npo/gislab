@@ -1,27 +1,28 @@
 server.modules += (
-	"mod_fastcgi",
-	"mod_alias",
-	"mod_rewrite",
+    "mod_fastcgi",
+    "mod_alias",
+    "mod_rewrite",
 )
 
 alias.url = ( "/cgi-bin/" => "/usr/lib/cgi-bin/" )
 
 # variable DISPLAY enables Xvfb support for QGIS GetPrint requests
-# variable MAX_CACHE_LAYERS is workaround for problem with projects containing more than 100 layers (fixed in QGIS 2.6)
+# variable MAX_CACHE_LAYERS is workaround for problem with projects containing
+# more than 100 layers (fixed in QGIS 2.6)
 # TODO: set QGIS_SERVER_CONFIG_DIR
 fastcgi.server = (
-	"/cgi-bin/" => (( 
-		"bin-path" => "/usr/lib/cgi-bin/qgis_mapserv.fcgi",
-		"socket" => "/tmp/qgs_mapserv.socket",
-		"bin-environment" => (
-			"DISPLAY" => ":99",
-			"MAX_CACHE_LAYERS" => "200"
-		),
-		"max-procs" => 2,
-		"check-local" => "disable"
-	))
+    "/cgi-bin/" => ((
+        "bin-path" => "/usr/lib/cgi-bin/qgis_mapserv.fcgi",
+        "socket" => "/tmp/qgs_mapserv.socket",
+        "bin-environment" => (
+            "DISPLAY" => ":99",
+            "MAX_CACHE_LAYERS" => "200"
+        ),
+        "max-procs" => 2,
+        "check-local" => "disable"
+    ))
 )
 
 url.rewrite-once = (
-	"^(.*[?&])(?i)MAP=(.*)$" => "$1MAP=/mnt/publish/$2",
+    "^(.*[?&])(?i)MAP=(.*)$" => "$1MAP=/mnt/publish/$2",
 )

@@ -5,7 +5,7 @@
 # Set basic environment for installation.
 
 
-# FACTS
+### FACTS
 - name: Set GIS.lab installation root directory
 # system-wide path variable - can be used in Ansible and shell scripts
   set_fact:
@@ -140,5 +140,4 @@
       - ansible_distribution == "Ubuntu"
       - ansible_distribution_version in [ '12.04', ]
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

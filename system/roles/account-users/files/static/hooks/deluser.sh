@@ -8,14 +8,14 @@ source /etc/gislab_version
 
 # read GISLAB_USER from script parameter if given
 if [ "$1" != "" ]; then
-	GISLAB_USER=$1
+    GISLAB_USER=$1
 fi
 
 
 # sanity check
 if [ "$(ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// "(uid=$GISLAB_USER)")" != "" ]; then
-	echo "User '$GISLAB_USER' still exist in LDAP database !"
-	exit 1
+    echo "User '$GISLAB_USER' still exist in LDAP database !"
+    exit 1
 fi
 
 
@@ -32,8 +32,8 @@ psql -U postgres -d gislab -c "DROP OWNED BY $GISLAB_USER CASCADE"
 # delete data from GIS.lab Web client if installed
 ball_exist_sql="SELECT 1 FROM information_schema.tables WHERE table_name = 'storage_ball'"
 if [[ $(psql -U postgres -d gislab -tAc "$ball_exist_sql") == "1" ]]; then
-	psql -U postgres -d gislab -c "DELETE FROM storage_drawing WHERE \"user\" = '$GISLAB_USER'"
-	psql -U postgres -d gislab -c "DELETE FROM storage_ball WHERE \"user\" = '$GISLAB_USER'"
+    psql -U postgres -d gislab -c "DELETE FROM storage_drawing WHERE \"user\" = '$GISLAB_USER'"
+    psql -U postgres -d gislab -c "DELETE FROM storage_ball WHERE \"user\" = '$GISLAB_USER'"
 fi
 
 # drop database user
@@ -43,5 +43,4 @@ dropuser -U postgres $GISLAB_USER
 ### PUBLISH DIRECTORY
 rm -rf /storage/publish/$GISLAB_USER
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

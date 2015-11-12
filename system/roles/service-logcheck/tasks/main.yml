@@ -6,18 +6,31 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no
+  apt:
+    pkg: "{{ item }}"
+    force: yes
+    install_recommends: no
   with_items:
     - logcheck
     - logcheck-database
 
 - name: Configure logcheck
-  template: src={{ item.src }} dest={{ item.dest }}
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - { src: 'logcheck/logcheck.conf.j2', dest: '/etc/logcheck/logcheck.conf' }
-    - { src: 'logcheck/logcheck.logfiles.j2', dest: '/etc/logcheck/logcheck.logfiles' }
+    - {
+        src: 'logcheck/logcheck.conf.j2',
+        dest: '/etc/logcheck/logcheck.conf'
+      }
+    - {
+        src: 'logcheck/logcheck.logfiles.j2',
+        dest: '/etc/logcheck/logcheck.logfiles'
+      }
 
 - name: Activate logcheck
-  template: src=cron/logcheck.j2 dest=/etc/cron.d/logcheck
+  template:
+    src: cron/logcheck.j2
+    dest: /etc/cron.d/logcheck
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

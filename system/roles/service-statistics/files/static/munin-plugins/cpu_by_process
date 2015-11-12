@@ -21,7 +21,7 @@
 #%# capabilities=autoconf
 
 
-if [ "$1" = "autoconf" ] ; then 
+if [ "$1" = "autoconf" ] ; then
     if [ -n "$procs" ] ; then
         echo "yes"
     else
@@ -40,20 +40,20 @@ if [ "$1" = "config" ] ; then
     echo 'graph_period second'
 
     echo "graph_order $procs"
-    
+
     FIRSTPROC=1;
-    for proc in $procs; do  
+    for proc in $procs; do
         echo "${proc}.label $proc"
         echo "${proc}.info CPU used by process $proc"
         echo "${proc}.type GAUGE"
         if [ $FIRSTPROC -eq 1 ] ; then
             echo "${proc}.draw AREA"
             export FIRSTPROC=0;
-        else    
+        else
             echo "${proc}.draw STACK"
         fi
     done ;
-    
+
     exit
 fi
 
@@ -69,8 +69,10 @@ for proc in $procs ; do {
         CPU_PROC+=$0
     }
 
-    END { 
+    END {
     print  "'$proc'.value "CPU_PROC
-    }'  
+    }'
 }
 done;
+
+# vim: set ts=8 sts=4 sw=4 et:
