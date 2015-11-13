@@ -10,16 +10,16 @@ kill timeout 90
 normal exit 0 TERM INT
 
 exec serf agent \
-	-iface $(/sbin/route -n | grep "^{{ GISLAB_NETWORK }}.0" | awk -F " " '{print $NF}') \
-	-keyring-file /etc/gislab/gislab_serf.key \
-	-event-handler "user:reboot={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/reboot.sh" \
-	-event-handler "user:shutdown={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/shutdown.sh" \
-	-event-handler "query:uptime=uptime" \
-	-event-handler "query:test=echo 'yes'" \
-	-tag role=client \
-	-log-level=err \
-	-syslog
+    -iface $(/sbin/route -n | grep "^{{ GISLAB_NETWORK }}.0" | awk -F " " '{print $NF}') \
+    -keyring-file /etc/gislab/gislab_serf.key \
+    -event-handler "user:reboot={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/reboot.sh" \
+    -event-handler "user:shutdown={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers/shutdown.sh" \
+    -event-handler "query:uptime=uptime" \
+    -event-handler "query:test=echo 'yes'" \
+    -tag role=client \
+    -log-level=err \
+    -syslog
 
 post-stop script
-	sleep 3
+    sleep 3
 end script

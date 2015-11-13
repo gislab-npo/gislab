@@ -7,3 +7,5 @@ if [ "$ROOT" = /dev/nbd0 ] && [ -z "$FSTYPE" ]; then
         echo "FSTYPE='$FSTYPE'" > /conf/param.conf
     fi
 fi
+
+# vim: set ts=8 sts=4 sw=4 et:

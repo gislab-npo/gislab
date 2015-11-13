@@ -213,16 +213,14 @@ packages_worker:
 
 
 packages_remove:
-  # List of packages which have been installed automatically as dependency but we don't want them to be installed.
-  # Run  '$ aptitude why <package>' find out the reason why package was installed.
+  # List of packages which have been installed automatically as dependency but
+  # we don't want them to be installed. Run  '$ aptitude why <package>' find out
+  # the reason why package was installed.
   - network-manager
   - network-manager-pptp
   - xscreensaver
 
 
-apt_get_opts: "
- --assume-yes
- --force-yes"
+apt_get_opts: "--assume-yes --force-yes"
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

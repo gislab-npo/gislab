@@ -1,10 +1,11 @@
 #!/bin/sh
 
-# This is a GIS.lab's fork of "client/initramfs/scripts/init-premount/udhcp" file located in
-# LTSP 5.3.7 source code. See "doc/patch/udhcp.patch" for changes.
+# This is a GIS.lab's fork of "client/initramfs/scripts/init-premount/udhcp"
+# file located in LTSP 5.3.7 source code. See "doc/patch/udhcp.patch" for
+# changes.
 
-# To get this script working, we also need to use patched version of "busybox". See
-# "doc/patch/fix-NAK-response-from-other-server.patch" for changes.
+# To get this script working, we also need to use patched version of "busybox".
+# See "doc/patch/fix-NAK-response-from-other-server.patch" for changes.
 
 iface=eth0
 PREREQ=""
@@ -15,11 +16,11 @@ prereqs()
 }
 
 case $1 in
-	# get pre-requisites
-	prereqs)
-		prereqs
-		exit 0
-	;;
+    # get pre-requisites
+    prereqs)
+        prereqs
+        exit 0
+    ;;
 esac
 
 # Exit if a GIS.lab boot was not requested
@@ -27,24 +28,24 @@ grep -Eqsw "init=/sbin/init-gislab" /proc/cmdline || exit 0
 
 bring_up_interface()
 {
-	while ! ip link show > /dev/null 2>&1; do
-		sleep 0.1
-	done
-	sleep 1
+    while ! ip link show > /dev/null 2>&1; do
+        sleep 0.1
+    done
+    sleep 1
 
-	if ! ip link show $iface >/dev/null 2>&1; then
-		echo "Cannot find interface $iface! Aborting..." 1>&2
-		exit 1
-	fi
+    if ! ip link show $iface >/dev/null 2>&1; then
+        echo "Cannot find interface $iface! Aborting..." 1>&2
+        exit 1
+    fi
 
-	# Bring up the interface
-	ip link set $iface up
-	sleep 0.1
+    # Bring up the interface
+    ip link set $iface up
+    sleep 0.1
 }
 
 generate_dhcp_script()
 {
-	echo '#!/bin/sh
+    echo '#!/bin/sh
 
 [ "$1" = "bound" ] || exit;
 
@@ -53,94 +54,94 @@ for var in interface ip siaddr sname boot_file subnet timezone router \
   timesvr namesvr dns logsvr cookiesvr lprsvr hostname bootsize domain \
   swapsvr rootpath ipttl mtu broadcast ntpsrv wins lease dhcptype serverid \
   message tftp bootfile; do
-	eval value=\"\$$var\"
-		if [ -n "$value" ]; then
-			echo $var="\"$value\"" >> /tmp/dhcp-info.conf
-		fi
+    eval value=\"\$$var\"
+        if [ -n "$value" ]; then
+            echo $var="\"$value\"" >> /tmp/dhcp-info.conf
+        fi
 done' > /tmp/dhcp-script.sh
 
-	chmod +x /tmp/dhcp-script.sh
+    chmod +x /tmp/dhcp-script.sh
 }
 
 do_dhcp()
 {
-	# Clear screen when quiet to dampen some noise
-	[ "$quiet" = "y" ] && clear
+    # Clear screen when quiet to dampen some noise
+    [ "$quiet" = "y" ] && clear
 
-	[ "$quiet" != "y" ] && echo "DHCP request for $iface..."
+    [ "$quiet" != "y" ] && echo "DHCP request for $iface..."
 
-	while [ -z "$configured" ]; do
-		# Make a DHCP request for interface eth0
-		{% if GISLAB_PROVIDER == 'aws' %}
-		if udhcpc -n -C -s /tmp/dhcp-script.sh -i $iface >/dev/null 2>&1; then
-		{% else %}
-		if udhcpc -n -C -s /tmp/dhcp-script.sh -i $iface -I {{ GISLAB_NETWORK_SERVER_IP }} -x nisdomain:{{ GISLAB_UNIQUE_ID }} >/dev/null 2>&1; then
-		{% endif %}
-			grep "=" /tmp/dhcp-info.conf # print response provided by the DHCP server
-			configured="true"
-			break
-		fi
-	done
+    while [ -z "$configured" ]; do
+        # Make a DHCP request for interface eth0
+        {% if GISLAB_PROVIDER == 'aws' %}
+        if udhcpc -n -C -s /tmp/dhcp-script.sh -i $iface >/dev/null 2>&1; then
+        {% else %}
+        if udhcpc -n -C -s /tmp/dhcp-script.sh -i $iface -I {{ GISLAB_NETWORK_SERVER_IP }} -x nisdomain:{{ GISLAB_UNIQUE_ID }} >/dev/null 2>&1; then
+        {% endif %}
+            grep "=" /tmp/dhcp-info.conf # print response provided by the DHCP server
+            configured="true"
+            break
+        fi
+    done
 
-	[ "$quiet" != "y" ] && echo "Done."
+    [ "$quiet" != "y" ] && echo "Done."
 
-	# Source the generated dhcp-info.conf file which contains the dhcp variables.
-	. /tmp/dhcp-info.conf
+    # Source the generated dhcp-info.conf file which contains the dhcp variables.
+    . /tmp/dhcp-info.conf
 }
 
 sanitize_configuration()
 {
-	bootfile=${bootfile:-$boot_file}    # There are 2 bootfile options in DHCP
-	boot_file=$bootfile
+    bootfile=${bootfile:-$boot_file}    # There are 2 bootfile options in DHCP
+    boot_file=$bootfile
 
-	tftp=${tftp:-$siaddr}
-	tftp=${tftp:-$sname}
-	tftp=${tftp:-$serverid}
+    tftp=${tftp:-$siaddr}
+    tftp=${tftp:-$sname}
+    tftp=${tftp:-$serverid}
 }
 
 # Converts a decimal subnet mask to the bit count needed for the CIDR notation
 subnet_to_cidr()
 {
-	local bits=32
-	local oldifs="${IFS-not set}"
-	IFS='.'
+    local bits=32
+    local oldifs="${IFS-not set}"
+    IFS='.'
 
-	for byte in $1; do
-		byte=$((255-$byte))
+    for byte in $1; do
+        byte=$((255-$byte))
 
-		while [ $byte -gt 0 ]; do
-			bits=$(($bits-1))
-			byte=$(($byte/2))
-		done
-	done
-	
-	test "$oldifs" = "not set" && unset IFS || IFS="$oldifs"
-	echo $bits
+        while [ $byte -gt 0 ]; do
+            bits=$(($bits-1))
+            byte=$(($byte/2))
+        done
+    done
+
+    test "$oldifs" = "not set" && unset IFS || IFS="$oldifs"
+    echo $bits
 }
 
 apply_configuration()
 {
-	ip address add $ip/$(subnet_to_cidr $subnet) broadcast ${broadcast:-+} dev $interface
+    ip address add $ip/$(subnet_to_cidr $subnet) broadcast ${broadcast:-+} dev $interface
 
-	for i in $router; do
-		ip route add default via $i dev $interface
-	done
+    for i in $router; do
+        ip route add default via $i dev $interface
+    done
 
-	[ "$quiet" != "y" ] && echo "$interface configured at $ip:$tftp:$router:$subnet:$hostname"
+    [ "$quiet" != "y" ] && echo "$interface configured at $ip:$tftp:$router:$subnet:$hostname"
 }
 
 export_configuration()
 {
-	# dns and router may contain multiple values
-	read dns0 dns1 rest_dns <<EOF
+    # dns and router may contain multiple values
+    read dns0 dns1 rest_dns <<EOF
 $dns
 EOF
 
-	read router0 rest_routers <<EOF
+    read router0 rest_routers <<EOF
 $router
 EOF
 
-	echo "DEVICE='$interface'
+    echo "DEVICE='$interface'
 IPV4ADDR='$ip'
 IPV4BROADCAST='$broadcast'
 IPV4NETMASK='$subnet'
@@ -156,11 +157,11 @@ filename='$bootfile'
 DNS_SERVER='$dns'
 SEARCH_DOMAIN='$domain'" > /tmp/net-$interface.conf
 
-	# Write the file that'll be sourced by the callee function run_scripts
-	mkdir -p /conf
+    # Write the file that'll be sourced by the callee function run_scripts
+    mkdir -p /conf
 
-	# Only export the lines that have something after the =
-	sed -n "/[^=]*=[' ]*$/!s/.*/export &/p" "/tmp/net-$interface.conf" > /conf/param.conf
+    # Only export the lines that have something after the =
+    sed -n "/[^=]*=[' ]*$/!s/.*/export &/p" "/tmp/net-$interface.conf" > /conf/param.conf
 }
 
 [ "$xtrace" = "udhcp" ] && set -x    # Provide a kernel parameter to enable tracing
@@ -171,3 +172,5 @@ do_dhcp
 sanitize_configuration
 apply_configuration
 export_configuration
+
+# vim: set ts=8 sts=4 sw=4 et:

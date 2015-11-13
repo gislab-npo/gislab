@@ -19,7 +19,7 @@
         <value type="int" value="19"/>
         <value type="int" value="9"/>
 {% endif %}
-	<value type="int" value="15"/>
+        <value type="int" value="15"/>
         <value type="int" value="26"/>
         <value type="int" value="2"/>
         <value type="int" value="14"/>

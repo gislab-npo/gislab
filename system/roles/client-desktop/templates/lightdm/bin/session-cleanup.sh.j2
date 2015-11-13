@@ -1,5 +1,6 @@
 #!/bin/bash
-# LightDM session cleanup script. This script is run after a greeter or user session stops. It is run as root.
+# LightDM session cleanup script. This script is run after a greeter or user
+# session stops. It is run as root.
 
 source /etc/gislab_version
 
@@ -19,15 +20,14 @@ GISLAB_CLIENT_IMAGE_VERSION_SERVER=$(curl http://server.gis.lab/gislab_desktop.b
 GISLAB_CLIENT_IMAGE_VERSION_CLIENT=$(cat /etc/gislab_desktop.buildstamp)
 
 if [ "$GISLAB_CLIENT_IMAGE_VERSION_SERVER" != "$GISLAB_CLIENT_IMAGE_VERSION_CLIENT" ]; then
-	for i in $(seq 10 10 100); do
-		echo $i;
-		sleep 1;
-	done | zenity --title=Info --progress \
-			--text="A new version of the system is available, rebooting in 10s." \
-			--auto-close --no-cancel
-	/sbin/reboot
-	exit 0
+    for i in $(seq 10 10 100); do
+        echo $i;
+        sleep 1;
+    done | zenity --title=Info --progress \
+            --text="A new version of the system is available, rebooting in 10s." \
+            --auto-close --no-cancel
+    /sbin/reboot
+    exit 0
 fi
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

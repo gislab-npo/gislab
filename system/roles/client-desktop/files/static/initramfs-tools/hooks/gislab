@@ -28,3 +28,5 @@ force_load aufs
 
 # Copy across the binary
 copy_exec /sbin/nbd-client /sbin
+
+# vim: set ts=8 sts=4 sw=4 et:

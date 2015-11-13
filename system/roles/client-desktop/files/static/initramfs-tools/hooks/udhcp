@@ -24,3 +24,5 @@ esac
 if [ -x /sbin/udhcpc ]; then
     copy_exec /sbin/udhcpc /sbin
 fi
+
+# vim: set ts=8 sts=4 sw=4 et:

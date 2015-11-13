@@ -1,20 +1,24 @@
 ---
 #
-### Build GIS.lab Desktop client for AWS ###
+### Build GIS.lab Desktop client image for AWS
 #
 
-# Install GRUB configuration
+### GRUB
 - name: Create directory for GRUB configuration
-  file: path={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/boot/grub state=directory
+  file:
+    path: "{{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/boot/grub"
+    state: directory
 
 - name: Install GRUB configuration file
-  template: src=grub/menu.lst.j2 dest={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/boot/grub/menu.lst
+  template:
+    src: grub/menu.lst.j2
+    dest: "{{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/root/boot/grub/menu.lst"
 
-# Build image
+
+### IMAGE
 - name: Build GIS.lab client image
   shell: gislab-client-image > /dev/null
   args:
     executable: /bin/bash
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

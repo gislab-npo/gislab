@@ -3,8 +3,8 @@
 
 for x in $(cat /proc/cmdline); do
     case "$x" in
-	init=/sbin/init-gislab)
-	    GISLAB_BOOT=true
+        init=/sbin/init-gislab)
+            GISLAB_BOOT=true
             break
             ;;
     esac
@@ -23,7 +23,7 @@ if ! chroot ${rootmnt} /usr/bin/test -w "/" ; then
     while read x ; do
         for y in $x ; do
             case $y in
-                aufs) 
+                aufs)
                     UNION_TYPE=aufs
                     UNION_OPTS="dirs=/cow=rw:/rofs=ro"
                     ;;
@@ -33,13 +33,15 @@ if ! chroot ${rootmnt} /usr/bin/test -w "/" ; then
                     ;;
             esac
         done
-    done < /proc/filesystems    
+    done < /proc/filesystems
     mount -t ${UNION_TYPE} -o ${UNION_OPTS} ${UNION_TYPE} ${rootmnt}
     for dir in /rofs /cow ; do
         mkdir -p ${rootmnt}${dir}
-    	mount -o move ${dir} ${rootmnt}${dir}
+        mount -o move ${dir} ${rootmnt}${dir}
     done
 fi
 
 mkdir -p "$rootmnt/var/cache/gislab"
 cp /tmp/net-*.conf "$rootmnt/var/cache/gislab/"
+
+# vim: set ts=8 sts=4 sw=4 et:
