@@ -8,7 +8,11 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
+  apt:
+    pkg: "{{ item }}"
+    force: yes
+    install_recommends: no
+    state: latest
   with_items:
     - libpq-dev
     - pgtune
@@ -20,9 +24,12 @@
     - python-psycopg2
 
 
-# Version and paths detection
+# version and paths detection
 - name: Detect PostgreSQL version
-  shell: "pg_config --version | awk -F ' ' '{print $2}' | awk -F '.' '{print $1 \".\" $2}'"
+  shell: >
+    pg_config --version
+    | awk -F ' ' '{print $2}'
+    | awk -F '.' '{print $1 "." $2}'
   register: pg_version
   changed_when: False
 
@@ -32,52 +39,82 @@
   changed_when: False
 
 
-# Installation of additional tools
+# installation of additional tools
 - name: Install Audit trigger
-  copy: src=static/audit-trigger/audit.sql dest="{{ pg_sharedir.stdout }}/contrib/audit.sql"
+  copy:
+    src: static/audit-trigger/audit.sql
+    dest: "{{ pg_sharedir.stdout }}/contrib/audit.sql"
 
 - name: Install PostGIS template script
-  copy: src=static/template-postgis/template-postgis.sql dest="{{ pg_sharedir.stdout }}/contrib/template-postgis.sql"
+  copy:
+    src: static/template-postgis/template-postgis.sql
+    dest: "{{ pg_sharedir.stdout }}/contrib/template-postgis.sql"
 
 
-# Kernel tuning
+# kernel tuning
 - name: Adjust system shmmax value to one fourth of system memory size
-  sysctl: name=kernel.shmmax value="{{ ansible_memtotal_mb|postgresql_shm }}" state=present sysctl_set=yes
+  sysctl:
+    name: kernel.shmmax
+    value: "{{ ansible_memtotal_mb|postgresql_shm }}"
+    state: present
+    sysctl_set: yes
 
 
-# PostgreSQL cluster storage
+# postgreSQL cluster storage
 - name: Drop initial PostgreSQL cluster from '/var/lib/postgresql' if exists
   shell: pg_dropcluster --stop {{ pg_version.stdout }} main
   args:
     removes: /var/lib/postgresql/{{ pg_version.stdout }}/main/PG_VERSION
 
 - name: Prepare directory for new PostgreSQL cluster storage
-  file: path=/storage/applications/postgresql state=directory owner=postgres group=postgres
+  file:
+    path: /storage/applications/postgresql
+    state: directory
+    owner: postgres
+    group: postgres
 
 - name: Create new PostgreSQL cluster in '/storage/applications/postgresql' if not exists
-  shell: LC_ALL=en_US.UTF-8 pg_createcluster --locale en_US.UTF-8 --datadir=/storage/applications/postgresql {{ pg_version.stdout }} main
+  shell: >
+    LC_ALL=en_US.UTF-8
+    pg_createcluster
+    --locale en_US.UTF-8
+    --datadir=/storage/applications/postgresql
+    {{ pg_version.stdout }} main
   args:
     creates: /storage/applications/postgresql/PG_VERSION
 
 
-# PostgreSQL configuration
+# postgresql configuration
 - name: Configure PostgreSQL
-  template: src=postgresql/postgresql.conf.j2 dest=/etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
+  template:
+    src: postgresql/postgresql.conf.j2
+    dest: /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
   notify:
     - service postgresql restart
 
 - name: Configure PostgreSQL access policy
-  template: src="{{ item.src }}" dest="{{ item.dest }}"
+  template:
+    src="{{ item.src }}"
+    dest="{{ item.dest }}"
   with_items:
-    - { src: postgresql/pg_hba.conf.j2, dest: "/etc/postgresql/{{ pg_version.stdout }}/main/pg_hba.conf" }
-    - { src: postgresql/pg_ident.conf.j2, dest: "/etc/postgresql/{{ pg_version.stdout }}/main/pg_ident.conf" }
+    - {
+        src: postgresql/pg_hba.conf.j2,
+        dest: "/etc/postgresql/{{ pg_version.stdout }}/main/pg_hba.conf"
+      }
+    - {
+        src: postgresql/pg_ident.conf.j2,
+        dest: "/etc/postgresql/{{ pg_version.stdout }}/main/pg_ident.conf"
+      }
   notify:
     - service postgresql restart
 
 
-# PostgreSQL tuning
+# postgresql tuning
 - name: Fine tune database configuration
-  command: pgtune -T Mixed -c 200
+  command: >
+    pgtune
+    -T Mixed
+    -c 200
     -i /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
     -o /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
   notify:
@@ -86,40 +123,59 @@
 - meta: flush_handlers
 
 
-# User groups
+# user groups
 - name: Create database superusers group (gislabadmins)
-  postgresql_user: name=gislabadmins role_attr_flags=CREATEDB,CREATEROLE,SUPERUSER,NOLOGIN state=present
+  postgresql_user:
+    name: gislabadmins
+    role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER,NOLOGIN
+    state: present
   sudo_user: postgres
 
 - name: Create database users group
-  postgresql_user: name=gislabusers role_attr_flags=NOCREATEDB,NOCREATEROLE,NOSUPERUSER,NOLOGIN state=present
+  postgresql_user:
+    name: gislabusers
+    role_attr_flags: NOCREATEDB,NOCREATEROLE,NOSUPERUSER,NOLOGIN
+    state: present
   sudo_user: postgres
 
 
-# PostGIS template database
+# postgis template database
 - name: Remove template status from PostGIS template database if exists
-  command: psql -U postgres -c "UPDATE pg_database SET datistemplate='false' WHERE datname='template_postgis';"
+  command: >
+    psql -U postgres
+    -c "UPDATE pg_database SET datistemplate='false' WHERE datname='template_postgis';"
 
 - name: Drop PostGIS template database if exists
-  postgresql_db: name=template_postgis state=absent
+  postgresql_db:
+    name: template_postgis
+    state: absent
   sudo_user: postgres
 
 - name: Create PostGIS template database
-  postgresql_db: name=template_postgis encoding='UTF-8' template=template0 state=present
+  postgresql_db:
+    name: template_postgis
+    encoding: 'UTF-8'
+    template: template0
+    state: present
   sudo_user: postgres
 
 - name: Add PostGIS support to PostGIS template database
-  command: psql -U postgres -d template_postgis -f {{ pg_sharedir.stdout }}/contrib/template-postgis.sql
+  command: >
+    psql -U postgres -d template_postgis
+    -f {{ pg_sharedir.stdout }}/contrib/template-postgis.sql
 
 - name: Add PostgreSQL Comparator support to PostGIS template database
-  command: "{{ item }}"
+  command: >
+    psql -U postgres -d template_postgis -f {{ pg_sharedir.stdout }}"{{ item }}"
   with_items:
-    - psql -U postgres -d template_postgis -f {{ pg_sharedir.stdout }}/contrib/pgc_checksum.sql
-    - psql -U postgres -d template_postgis -f {{ pg_sharedir.stdout }}/contrib/pgc_casts.sql
-    - psql -U postgres -d template_postgis -f {{ pg_sharedir.stdout }}/contrib/xor_aggregate.sql
+    - /contrib/pgc_checksum.sql
+    - /contrib/pgc_casts.sql
+    - /contrib/xor_aggregate.sql
 
 - name: Add History Audit support to PostGIS template database (run SELECT audit.audit_table('<schema>.<table>'); to enable)
-  command: psql -U postgres -d template_postgis -f {{ pg_sharedir.stdout }}/contrib/audit.sql
+  command: >
+    psql -U postgres -d template_postgis
+    -f {{ pg_sharedir.stdout }}/contrib/audit.sql
 
 - name: Vacuum FULL PostGIS template database
   command: psql -U postgres -d template_postgis -c "VACUUM FULL;"
@@ -128,24 +184,36 @@
   command: psql -U postgres -d template_postgis -c "VACUUM FREEZE;"
 
 - name: Set template status to PostGIS template database
-  command: psql -U postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
+  command: >
+    psql -U postgres
+    -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
 
 - name: Do not accept any connections to PostGIS template database
-  command: psql -U postgres -c "UPDATE pg_database SET datallowconn='false' WHERE datname='template_postgis';"
+  command: >
+    psql -U postgres
+    -c "UPDATE pg_database SET datallowconn='false' WHERE datname='template_postgis';"
 
 
-# Production database 'gislab'
+# database 'gislab'
 - name: Create production database 'gislab'
-  postgresql_db: name=gislab template=template_postgis state=present
+  postgresql_db:
+    name: gislab
+    template: template_postgis
+    state: present
   sudo_user: postgres
 
 - name: Grant connection to 'gislab' database for 'gislabusers'
-  command: psql -U postgres -c "GRANT CONNECT ON DATABASE gislab TO gislabusers;"
+  command: >
+    psql -U postgres
+    -c "GRANT CONNECT ON DATABASE gislab TO gislabusers;"
 
 
-# Email
+# email
 - name: Add service user mail alias
-  lineinfile: "dest=/etc/aliases line='postgres: root' state=present"
+  lineinfile:
+    dest: /etc/aliases
+    line: "postgres: root"
+    state: present
 
 - name: Activate new mail alias
   command: newaliases
@@ -153,4 +221,4 @@
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:
