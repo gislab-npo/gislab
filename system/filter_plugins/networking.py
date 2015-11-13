@@ -19,5 +19,4 @@ class FilterModule(object):
             'cidr_block_from_network_16' : cidr_block_from_network_16
         }
 
-
-# vim: set ts=8 et sw=4 sts=4
+# vim: set ts=8 sts=4 sw=4 et:

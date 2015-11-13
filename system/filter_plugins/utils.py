@@ -11,9 +11,9 @@ def split_regex(string, seperator_pattern):
 
 # Dedicated filters
 def keyboard_layouts(keyboards, f=None):
-    """ Return keyboards layout configuration as a string of comma separated layouts
-    and variants separated by colon or only as comma separated layouts or variants if
-    'f' (filter) is set.
+    """ Return keyboards layout configuration as a string of comma separated
+    layouts and variants separated by colon or only as comma separated layouts
+    or variants if 'f' (filter) is set.
     """
     layouts = []
     variants = []
@@ -39,10 +39,9 @@ def keyboard_layouts(keyboards, f=None):
 
 
 def postgresql_shm(mem):
-    """ Get recommended value of kernel shmmax configuration
-    based on total server RAM for running PostgreSQL db.
-    System shmmax value which must be something little bit higher
-    than one fourth of system memory size.
+    """ Get recommended value of kernel shmmax configuration based on total
+    server RAM for running PostgreSQL db. System shmmax value which must be
+    something little bit higher than one fourth of system memory size.
     """
     return int(round(mem * 1000000 / 3.5))
 
@@ -57,5 +56,4 @@ class FilterModule(object):
             'keyboard_layouts': keyboard_layouts
         }
 
-
-# vim: set ts=8 et sw=4 sts=4
+# vim: set ts=8 sts=4 sw=4 et:
