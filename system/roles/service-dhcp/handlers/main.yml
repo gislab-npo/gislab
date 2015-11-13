@@ -1,9 +1,13 @@
 ---
 
 - name: service apparmor restart
-  service: name=apparmor state=restarted
+  service:
+    name: apparmor
+    state: restarted
 
 - name: service isc-dhcp-server restart
-  service: name=isc-dhcp-server state=restarted
+  service:
+    name: isc-dhcp-server
+    state: restarted
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

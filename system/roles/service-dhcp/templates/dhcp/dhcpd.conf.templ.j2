@@ -30,7 +30,7 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         allow members of "gislab-clients";
         deny members of "third-party-clients";
         allow known-clients;
-	{+ GISLAB_UNKNOWN_MACHINES_POLICY +} unknown-clients;
+        {+ GISLAB_UNKNOWN_MACHINES_POLICY +} unknown-clients;
         range {{ GISLAB_NETWORK }}.50 {{ GISLAB_NETWORK }}.149;
         # return specified DHCP options in offer
         option dhcp-parameter-request-list 1,3,6,14,15,17,51,54,224;
@@ -49,7 +49,7 @@ subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
         allow members of "third-party-clients";
         deny members of "gislab-clients";
         allow known-clients;
-	{+ GISLAB_UNKNOWN_MACHINES_POLICY +} unknown-clients;
+        {+ GISLAB_UNKNOWN_MACHINES_POLICY +} unknown-clients;
         range {{ GISLAB_NETWORK }}.150 {{ GISLAB_NETWORK }}.250;
         option domain-name "gis.lab";
         option domain-search "gis.lab";
