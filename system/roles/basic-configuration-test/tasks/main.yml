@@ -40,13 +40,29 @@
   changed_when: False
 
 
-# gislab-adduser|deluser
-# ordinary user account
+# admin tools
 - name: Test if GIS.lab administrator tools are on path
   shell: which gislab-help
   ignore_errors: yes
   changed_when: False
 
+# gislab-addgroup
+- name: Create test user group
+  shell: gislab-addgroup
+    -d "Test user group"
+    testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+# gislab-listgroups
+- name: Test if test user group exists in LDAP database
+  shell: gislab-listgroups
+    | grep '^testgroup{{ GISLAB_TEST_UNIQUE_STRING }}$'
+  ignore_errors: yes
+  changed_when: False
+
+# gislab-adduser
+# ordinary user account
 - name: Create ordinary test user account
   shell: gislab-adduser
     -g Test
@@ -129,6 +145,47 @@
   ignore_errors: yes
   changed_when: False
 
+# gislab-moduser - add user to group
+- name: Add ordinary user to supplementary test user group
+  shell: gislab-moduser
+    -a testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+# gislab-listusers - list group members
+- name: Test if ordinary user is member of test user group
+  shell: gislab-listusers -g testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+    | grep '^test{{ GISLAB_TEST_UNIQUE_STRING }}$'
+  ignore_errors: yes
+  changed_when: False
+
+# gislad-moduser - remove user from group
+- name: Remove ordinary user from supplementary test user group
+  shell: gislab-moduser -A testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if ordinary user was removed from supplementary test user group
+  shell: "! gislab-listusers -g testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+     | grep test{{ GISLAB_TEST_UNIQUE_STRING }}"
+  ignore_errors: yes
+  changed_when: False
+
+# gislab-moduser - change email
+- name: Change user email
+  shell: gislab-moduser
+    -m test{{ GISLAB_TEST_UNIQUE_STRING }}@test.lab
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if user email has been changed
+  shell: ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// "uid=test{{ GISLAB_TEST_UNIQUE_STRING }}" mail
+    | grep -q 'test{{ GISLAB_TEST_UNIQUE_STRING }}@test.lab'
+  ignore_errors: yes
+  changed_when: False
 
 # gislab-backupuser|restoreuser
 - name: Create test files in user's directories
@@ -202,5 +259,9 @@
   ignore_errors: yes
   changed_when: False
 
+- name: Remove test user group
+  shell: gislab-delgroup -f testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
 
 # vim:ft=ansible:
