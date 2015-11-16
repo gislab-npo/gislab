@@ -1,5 +1,6 @@
 #!/bin/bash
-# GIS.lab user account hook for completing account creation once it is created in LDAP database.
+# GIS.lab user account hook for completing account creation once it is created
+# in LDAP database.
 #
 # USAGE: adduser.sh [GISLAB_USER]
 
@@ -30,11 +31,21 @@ chown -R $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER
 chmod 0700 /storage/home/$GISLAB_USER
 
 # process template variables
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER +}/$GISLAB_USER/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_GIVEN_NAME +}/$GISLAB_USER_GIVEN_NAME/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_SURNAME +}/$GISLAB_USER_SURNAME/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_EMAIL +}/$GISLAB_USER_EMAIL/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_DESCRIPTION +}/$GISLAB_USER_DESCRIPTION/g" "{}" \;
+find /storage/home/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER +}/$GISLAB_USER/g" "{}" \;
+find /storage/home/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER_GIVEN_NAME +}/$GISLAB_USER_GIVEN_NAME/g" "{}" \;
+find /storage/home/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER_SURNAME +}/$GISLAB_USER_SURNAME/g" "{}" \;
+find /storage/home/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER_EMAIL +}/$GISLAB_USER_EMAIL/g" "{}" \;
+find /storage/home/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER_DESCRIPTION +}/$GISLAB_USER_DESCRIPTION/g" "{}" \;
 
 # create ~/.gislab directory
 mkdir -p /storage/home/$GISLAB_USER/.gislab
@@ -74,8 +85,12 @@ if [ -d "/etc/openvpn" ]; then
         openvpn/gislab_vpn_ta.key \
         openvpn/client.conf
 
-    chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
-    chmod 0600 /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
+    chown \
+        $GISLAB_USER:gislabusers \
+        /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
+    chmod \
+        0600 \
+        /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
 fi
 
 

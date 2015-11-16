@@ -1,5 +1,6 @@
 #!/bin/bash
-# GIS.lab user account hook for completing account removal once it is dropped from LDAP database.
+# GIS.lab user account hook for completing account removal once it is dropped
+# from LDAP database.
 #
 # USAGE: deluser.sh [GISLAB_USER]
 
@@ -32,8 +33,10 @@ psql -U postgres -d gislab -c "DROP OWNED BY $GISLAB_USER CASCADE"
 # delete data from GIS.lab Web client if installed
 ball_exist_sql="SELECT 1 FROM information_schema.tables WHERE table_name = 'storage_ball'"
 if [[ $(psql -U postgres -d gislab -tAc "$ball_exist_sql") == "1" ]]; then
-    psql -U postgres -d gislab -c "DELETE FROM storage_drawing WHERE \"user\" = '$GISLAB_USER'"
-    psql -U postgres -d gislab -c "DELETE FROM storage_ball WHERE \"user\" = '$GISLAB_USER'"
+    psql -U postgres -d gislab \
+        -c "DELETE FROM storage_drawing WHERE \"user\" = '$GISLAB_USER'"
+    psql -U postgres -d gislab \
+        -c "DELETE FROM storage_ball WHERE \"user\" = '$GISLAB_USER'"
 fi
 
 # drop database user
