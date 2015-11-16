@@ -13,34 +13,37 @@ gislab_require_root
 
 # usage
 function usage() {
-	echo "USAGE: $(basename $0)"
-	echo "Build GIS.lab client image from current GIS.lab client chroot."
-	echo -e "\nOPTIONS
-	-h display this help
-	"
-	exit 255
+    echo "USAGE: $(basename $0)"
+    echo "Build GIS.lab client image from current GIS.lab client chroot."
+    echo -e "\nOPTIONS
+    -h display this help
+    "
+    exit 255
 }
 
 
 # options
 while getopts "h" OPTION
 do
-	case "$OPTION" in
-		h) usage ;;
-		\?) exit 255 ;;
+    case "$OPTION" in
+        h) usage ;;
+        \?) exit 255 ;;
     esac
 done
 
 
 # sanity checks
 if [ -f "$GISLAB_ROOT/system/clients/desktop/root/proc/version" ]; then
-	gislab_print_error "GIS.lab client chroot session is active. Exit from it before running this command"
+    gislab_print_error "
+        GIS.lab client chroot session is active.
+        Exit from it before running this command
+    "
 fi
 
 
 # get GIS.lab provider
 if [ -f /etc/gislab_provider ]; then
-	GISLAB_PROVIDER="$(cat /etc/gislab_provider)"
+    GISLAB_PROVIDER="$(cat /etc/gislab_provider)"
 fi
 
 GISLAB_PROVIDER="${GISLAB_PROVIDER:-default}"
@@ -59,59 +62,68 @@ mkdir -p $GISLAB_ROOT/system/clients/desktop/image
 
 
 if [ "$GISLAB_PROVIDER" == "aws" ]; then
-	### Build GIS.lab AWS client image ###
+    ### Build GIS.lab AWS client image ###
 
-	# create temporary mount dir for image
-	TEMP_MNT_DIR="$GISLAB_ROOT/system/clients/desktop/mount-client-image-$GISLAB_INSTALL_UNIQUE_STRING"
-	mkdir $TEMP_MNT_DIR
+    # create temporary mount dir for image
+    TEMP_MNT_DIR="$GISLAB_ROOT/system/clients/desktop/mount-client-image-$GISLAB_INSTALL_UNIQUE_STRING"
+    mkdir $TEMP_MNT_DIR
 
-	# calculate the size of image = client root size + 500MB
-	ROOT_SIZE=$(du -sm $GISLAB_ROOT/system/clients/desktop/root | cut -f 1)
-	IMAGE_SIZE=$(echo $(($ROOT_SIZE+500)))
+    # calculate the size of image = client root size + 500MB
+    ROOT_SIZE=$(du -sm $GISLAB_ROOT/system/clients/desktop/root | cut -f 1)
+    IMAGE_SIZE=$(echo $(($ROOT_SIZE+500)))
 
-	dd if=/dev/zero of=$IMAGE_FILE bs=1M count=$IMAGE_SIZE
-	mkfs.ext4 -F -L gislab-rootfs $IMAGE_FILE
+    dd if=/dev/zero of=$IMAGE_FILE bs=1M count=$IMAGE_SIZE
+    mkfs.ext4 -F -L gislab-rootfs $IMAGE_FILE
 
-	# mount image
-	mount -o loop,rw $IMAGE_FILE $TEMP_MNT_DIR
+    # mount image
+    mount -o loop,rw $IMAGE_FILE $TEMP_MNT_DIR
 
-	# copy GIS.lab client root to AWS client image
-	rsync -a $GISLAB_ROOT/system/clients/desktop/root/ $TEMP_MNT_DIR/
+    # copy GIS.lab client root to AWS client image
+    rsync -a $GISLAB_ROOT/system/clients/desktop/root/ $TEMP_MNT_DIR/
 
-	# unmount GIS.lab AWS client image
-	umount $TEMP_MNT_DIR
+    # unmount GIS.lab AWS client image
+    umount $TEMP_MNT_DIR
 
-	# clean up
-	rm -rf $TEMP_MNT_DIR
+    # clean up
+    rm -rf $TEMP_MNT_DIR
 else
-	### Build default GIS.lab client image ###
+    ### Build default GIS.lab client image ###
 
-	TFTP_DIR=/var/lib/tftpboot/gislab
+    TFTP_DIR=/var/lib/tftpboot/gislab
 
-	# copy /boot directory from client to server TFTP directory
-	cp -a $GISLAB_ROOT/system/clients/desktop/root/boot/. $TFTP_DIR/
+    # copy /boot directory from client to server TFTP directory
+    cp -a $GISLAB_ROOT/system/clients/desktop/root/boot/. $TFTP_DIR/
 
-	# set permissions
-	find $TFTP_DIR -mindepth 1 -type d -exec chmod 0755 "{}" \;
-	find $TFTP_DIR -mindepth 1 \! -type d -exec chmod 0644 "{}" \;
+    # set permissions
+    find $TFTP_DIR -mindepth 1 -type d -exec chmod 0755 "{}" \;
+    find $TFTP_DIR -mindepth 1 \! -type d -exec chmod 0644 "{}" \;
 
-	# build image
-	test -x /usr/bin/nice && nice=nice || unset nice
-	test -x /usr/bin/ionice && /usr/bin/ionice -c3 true 2>/dev/null && ionice=ionice || unset ionice
+    # build image
+    test -x /usr/bin/nice \
+        && nice=nice \
+        || unset nice
+    test -x /usr/bin/ionice \
+        && /usr/bin/ionice -c3 true 2>/dev/null \
+        && ionice=ionice \
+        || unset ionice
 
-	rm -f $IMAGE_FILE.tmp
+    rm -f $IMAGE_FILE.tmp
 
-	$nice $ionice mksquashfs $GISLAB_ROOT/system/clients/desktop/root $IMAGE_FILE.tmp -e cdrom
+    $nice $ionice \
+        mksquashfs $GISLAB_ROOT/system/clients/desktop/root $IMAGE_FILE.tmp \
+        -e cdrom
 
-	if [ $? -ne 0 ]; then
-		rm -f $IMAGE_FILE.tmp
-		gislab_print_error "'mksquashfs' failed to build the GIS.lab client image"
-	fi
+    if [ $? -ne 0 ]; then
+        rm -f $IMAGE_FILE.tmp
+        gislab_print_error "
+            'mksquashfs' failed to build the GIS.lab client image
+        "
+    fi
 
-	# place image to final destionation
-	mv $IMAGE_FILE.tmp $IMAGE_FILE
+    # place image to final destionation
+    mv $IMAGE_FILE.tmp $IMAGE_FILE
 fi
 
 echo "$IMAGE_BUILDSTAMP" > $IMAGE_BUILDSTAMP_FILE
 
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

@@ -11,14 +11,14 @@ gislab_require_root
 
 # usage
 function usage() {
-	echo "USAGE: $(basename $0) [OPTIONS] username"
-	echo "Delete GIS.lab user account."
-	echo -e "\nOPTIONS
-	-b  backup user data
-	-f  force running this command (do not ask before deleting account)
-	-h  display this help
-	"
-	exit 255
+    echo "USAGE: $(basename $0) [OPTIONS] username"
+    echo "Delete GIS.lab user account."
+    echo -e "\nOPTIONS
+    -b  backup user data
+    -f  force running this command (do not ask before deleting account)
+    -h  display this help
+    "
+    exit 255
 }
 
 
@@ -27,10 +27,10 @@ FORCE="no"
 while getopts "bhf" OPTION
 do
         case "$OPTION" in
-			b) BACKUP="yes" ;;
-			f) FORCE="yes" ;;
-			h) usage ;;
-			\?) exit 1;;
+            b) BACKUP="yes" ;;
+            f) FORCE="yes" ;;
+            h) usage ;;
+            \?) exit 1;;
         esac
 done
 shift $(($OPTIND - 1))
@@ -41,24 +41,27 @@ GISLAB_USER=$1
 
 # sanity checks
 if ! id $GISLAB_USER >/dev/null 2>&1; then
-	gislab_print_error "GIS.lab user '$GISLAB_USER' does not exists"
-	exit 1
+    gislab_print_error "GIS.lab user '$GISLAB_USER' does not exists"
+    exit 1
 fi
 
 if [ -f /storage/home/${GISLAB_USER}/.gislab/session.lock ]; then
-	gislab_print_error "GIS.lab user '$GISLAB_USER' is still running session"
-	exit 1
+    gislab_print_error "GIS.lab user '$GISLAB_USER' is still running session"
+    exit 1
 fi
 
 
 if [ "$FORCE" != "yes" ]; then
-	gislab_print_warning "This command will completely remove user account '$GISLAB_USER' including all data"
-	echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
-	read
+    gislab_print_warning "
+        This command will completely remove user account
+        '$GISLAB_USER' including all data
+    "
+    echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
+    read
 fi
 
 if [ "$BACKUP" == "yes" ]; then
-	gislab-backupuser $GISLAB_USER
+    gislab-backupuser $GISLAB_USER
 fi
 
 
@@ -68,8 +71,8 @@ export GISLAB_USER
 
 # execute before-delete hooks
 if [ -d $GISLAB_ROOT/custom/accounts/before-delete ]; then
-	gislab_print_info "Running 'before-delete' account hooks"
-	run-parts $GISLAB_ROOT/custom/accounts/before-delete || true
+    gislab_print_info "Running 'before-delete' account hooks"
+    run-parts $GISLAB_ROOT/custom/accounts/before-delete || true
 fi
 
 
@@ -79,14 +82,17 @@ gislab_print_info "Deleting user account"
 # disable forwarding system mails to user and remove user
 # from superuser's group, if user was superuser
 if id $GISLAB_USER 2>/dev/null | grep -q '(gislabadmins)'; then
-	gislab-moduser -S $GISLAB_USER
+    gislab-moduser -S $GISLAB_USER
 fi
 
-# manunaly delete user from additional groups (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
-GISLAB_USER_GROUPS=$(id -nG $GISLAB_USER | grep '[[:space:]]' | sed -r -e 's/^[^ ]* //' -e 's/[[:space:]]+/,/g')
+# manunaly delete user from additional groups
+# (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
+GISLAB_USER_GROUPS=$(id -nG $GISLAB_USER \
+    | grep '[[:space:]]' \
+    | sed -r -e 's/^[^ ]* //' -e 's/[[:space:]]+/,/g')
 
 if [ -n "$GISLAB_USER_GROUPS" ]; then
-	gislab-moduser -A $GISLAB_USER_GROUPS $GISLAB_USER
+    gislab-moduser -A $GISLAB_USER_GROUPS $GISLAB_USER
 fi
 
 # remove LDAP account
@@ -99,13 +105,12 @@ $GISLAB_ROOT/system/accounts/hooks/deluser.sh $GISLAB_USER
 
 # execute after-delete hooks
 if [ -d $GISLAB_ROOT/custom/accounts/after-delete ]; then
-	gislab_print_info "Running 'after-delete' account hooks"
-	run-parts $GISLAB_ROOT/custom/accounts/after-delete || true
+    gislab_print_info "Running 'after-delete' account hooks"
+    run-parts $GISLAB_ROOT/custom/accounts/after-delete || true
 fi
 
 
-# final message
+# confirmation message
 gislab_print_info "Account '$GISLAB_USER' was successfully deleted"
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

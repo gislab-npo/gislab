@@ -12,13 +12,13 @@ gislab_require_root
 
 # usage
 function usage() {
-	echo "USAGE: $(basename $0)"
-	echo "Backup all GIS.lab user's accounts and system files."
-	echo -e "\nOPTIONS
-	-d backup directory (optional, default: /storage/backup)
-	-h display this help
-	"
-	exit 255
+    echo "USAGE: $(basename $0)"
+    echo "Backup all GIS.lab user's accounts and system files."
+    echo -e "\nOPTIONS
+    -d backup directory (optional, default: /storage/backup)
+    -h display this help
+    "
+    exit 255
 }
 
 
@@ -27,11 +27,11 @@ BACKUP_DIR=/storage/backup
 
 while getopts "d:h" OPTION
 do
-	case "$OPTION" in
-		d) BACKUP_DIR="$OPTARG" ;;
-		h) usage ;;
-		\?) exit 1 ;;
-	esac
+    case "$OPTION" in
+        d) BACKUP_DIR="$OPTARG" ;;
+        h) usage ;;
+        \?) exit 1 ;;
+    esac
 done
 
 
@@ -52,7 +52,7 @@ mkdir -p $TEMP_BACKUP_SYSTEM_DIR
 # backup all user accounts
 ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 for user in $($ldapsearch_cmd -b "ou=People,dc=gis,dc=lab" uid | awk '/^uid: / { print $2 }'); do
-	gislab-backupuser -d $BACKUP_DIR $user
+    gislab-backupuser -d $BACKUP_DIR $user
 done
 
 
@@ -70,7 +70,7 @@ touch $BACKUP_SYSTEM_DONE_FILE
 rm -rf $TEMP_BACKUP_SYSTEM_DIR
 
 
-gislab_print_info "Backup of system files created in '$BACKUP_SYSTEM_FILE' ($(du -h $BACKUP_SYSTEM_FILE | awk '{print $1}'))"
+# confirmation message
+gislab_print_info "Backup of system files created in '$BACKUP_SYSTEM_FILE'"
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

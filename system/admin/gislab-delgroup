@@ -11,13 +11,13 @@ gislab_require_root
 
 # usage
 function usage() {
-	echo "USAGE: $(basename $0) [OPTIONS] group"
-	echo "Delete GIS.lab group. Only empty group can be deleted."
-	echo -e "\nOPTIONS
-	-f  force running this command (do not ask before deleting group)
-	-h  display this help
-	"
-	exit 255
+    echo "USAGE: $(basename $0) [OPTIONS] group"
+    echo "Delete GIS.lab group. Only empty group can be deleted."
+    echo -e "\nOPTIONS
+    -f  force running this command (do not ask before deleting group)
+    -h  display this help
+    "
+    exit 255
 }
 
 
@@ -26,9 +26,9 @@ FORCE="no"
 while getopts "hf" OPTION
 do
         case "$OPTION" in
-			f) FORCE="yes" ;;
-			h) usage ;;
-			\?) exit 1;;
+            f) FORCE="yes" ;;
+            h) usage ;;
+            \?) exit 1;;
         esac
 done
 shift $(($OPTIND - 1))
@@ -39,20 +39,20 @@ GISLAB_GROUP=$1
 
 # sanity checks
 if ! getent group $GISLAB_GROUP >/dev/null 2>&1; then
-	gislab_print_error "Cannot delete group. Group '$GISLAB_GROUP' does not exists"
-	exit 1
+    gislab_print_error "Cannot delete group. Group '$GISLAB_GROUP' does not exists"
+    exit 1
 fi
 
 if members $GISLAB_GROUP >/dev/null; then
-	gislab_print_error "Cannot delete group. Group '$GISLAB_GROUP' has a members"
-	exit 1
+    gislab_print_error "Cannot delete group. Group '$GISLAB_GROUP' has a members"
+    exit 1
 fi
 
 
 if [ "$FORCE" != "yes" ]; then
-	gislab_print_warning "This command will remove group '$GISLAB_GROUP'"
-	echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
-	read
+    gislab_print_warning "This command will remove group '$GISLAB_GROUP'"
+    echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
+    read
 fi
 
 
@@ -63,8 +63,7 @@ gislab_print_info "Deleting group"
 ldapdeletegroup $GISLAB_GROUP
 
 
-# final message
+# confirmation message
 gislab_print_info "Group '$GISLAB_GROUP' was successfully deleted"
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

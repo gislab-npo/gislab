@@ -11,13 +11,13 @@ gislab_require_root
 
 # usage
 function usage() {
-	echo "USAGE: $(basename $0) [OPTIONS]"
-	echo "List GIS.lab users."
-	echo -e "\nOPTIONS
-	-g list members of group
-	-h display this help
-	"
-	exit 255
+    echo "USAGE: $(basename $0) [OPTIONS]"
+    echo "List GIS.lab users."
+    echo -e "\nOPTIONS
+    -g list members of group
+    -h display this help
+    "
+    exit 255
 }
 
 
@@ -25,25 +25,26 @@ function usage() {
 while getopts "g:h" OPTION
 do
         case "$OPTION" in
-			g) GISLAB_GROUP=$OPTARG ;;
-			h) usage ;;
-			\?) exit 1;;
+            g) GISLAB_GROUP=$OPTARG ;;
+            h) usage ;;
+            \?) exit 1;;
         esac
 done
 
 
 if [ -n "$GISLAB_GROUP" ]; then
-	# list group members
-	# sanity checks
-	if ! getent group $GISLAB_GROUP >/dev/null 2>&1; then
-		gislab_print_error "Group '$GISLAB_GROUP' does not exists"
-	fi
+    # list group members
+    # sanity checks
+    if ! getent group $GISLAB_GROUP >/dev/null 2>&1; then
+        gislab_print_error "Group '$GISLAB_GROUP' does not exists"
+    fi
 
-	for user in $(members $GISLAB_GROUP); do
-		echo $user
-	done
+    for user in $(members $GISLAB_GROUP); do
+        echo $user
+    done
 else
-	# list GIS.lab users
-	lsldap -u | awk -F "=" '/^dn: uid=/ { print $2 }' | sed 's/,ou$//'
+    # list GIS.lab users
+    lsldap -u | awk -F "=" '/^dn: uid=/ { print $2 }' | sed 's/,ou$//'
 fi
 
+# vim: set ts=8 sts=4 sw=4 et:

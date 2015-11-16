@@ -12,24 +12,25 @@ gislab_require_root
 
 # usage
 function usage() {
-	echo "USAGE: $(basename $0) [OPTIONS] group"
-	echo "Create GIS.lab group. Group name can contain only lower case digits and numbers."
-	echo -e "\nOPTIONS
-	-d group description (optional)
-	-h display this help
-	"
-	exit 255
+    echo "USAGE: $(basename $0) [OPTIONS] group"
+    echo "Create GIS.lab group."
+    echo "Group name can contain only lower case digits and numbers."
+    echo -e "\nOPTIONS
+    -d group description (optional)
+    -h display this help
+    "
+    exit 255
 }
 
 
 # options
 while getopts "d:h" OPTION
 do
-        case "$OPTION" in
-			d) GISLAB_GROUP_DESCRIPTION="$OPTARG" ;;
-			h) usage ;;
-			\?) exit 1 ;;
-        esac
+    case "$OPTION" in
+        d) GISLAB_GROUP_DESCRIPTION="$OPTARG" ;;
+        h) usage ;;
+        \?) exit 1 ;;
+    esac
 done
 shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; fi
@@ -40,13 +41,13 @@ GISLAB_GROUP=$1
 
 # sanity checks
 if getent group $GISLAB_GROUP > /dev/null 2>&1; then
-	gislab_print_error "Cannot add group. Group '$GISLAB_GROUP' already exists"
-	exit 1
+    gislab_print_error "Cannot add group. Group '$GISLAB_GROUP' already exists"
+    exit 1
 fi
 
 if ! [[ "$GISLAB_GROUP" =~ ^[a-z][a-z0-9_]*$ ]]; then
-	gislab_print_error "Cannot add group. Invalid characters in group name"
-	exit 1
+    gislab_print_error "Cannot add group. Invalid characters in group name"
+    exit 1
 fi
 
 
@@ -57,7 +58,7 @@ gislab_print_info "Adding group"
 ldapaddgroup $GISLAB_GROUP
 
 if [ -n "$GISLAB_GROUP_DESCRIPTION" ]; then
-	ldapmodifygroup $GISLAB_GROUP > /dev/null << EOL
+    ldapmodifygroup $GISLAB_GROUP > /dev/null << EOL
 changetype: modify
 add: description
 description: $GISLAB_GROUP_DESCRIPTION
@@ -65,8 +66,7 @@ EOL
 fi
 
 
-# final message
-gislab_print_info "Group '$GISLAB_GROUP' was successfully added"
+# confirmation message
+gislab_print_info "Group '$GISLAB_GROUP' was successfully created"
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:
