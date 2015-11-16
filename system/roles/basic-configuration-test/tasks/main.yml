@@ -1,15 +1,5 @@
 ---
 
-- name: Generate unique string for this test run
-  shell: date +%s | md5sum | head -c 24
-  register: gislab_test_unique_string
-  changed_when: False
-
-- name: Set unique string for this test run
-  set_fact:
-    GISLAB_TEST_UNIQUE_STRING: "{{ gislab_test_unique_string.stdout }}"
-
-
 - name: Get value of GISLAB_ROOT variable
   shell: echo $GISLAB_ROOT
   register: test_gislab_root
