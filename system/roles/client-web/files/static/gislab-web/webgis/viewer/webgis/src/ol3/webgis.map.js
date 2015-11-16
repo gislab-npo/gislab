@@ -138,15 +138,15 @@ ol.source.WebgisTileImage.prototype.getLegendUrl = function(layername, view) {
 /**
  * @api
  */
-ol.source.WebgisTileImage.prototype.getGetFeatureInfoUrl = function(map, coordinates, layers) {
+ol.source.WebgisTileImage.prototype.getGetFeatureInfoUrl = function(map, coordinates, layers, limit) {
         var size = map.getSize();
         var layersString = (layers || this.visibleLayers).join(',');
-        params = {
+        var params = {
                 'SERVICE': 'WMS',
                 'VERSION': '1.1.1',
                 'REQUEST': 'GetFeatureInfo',
                 'INFO_FORMAT': 'application/vnd.ogc.gml',
-                'FEATURE_COUNT': '10',
+                'FEATURE_COUNT': limit || 10,
                 'SRS': map.getView().getProjection().getCode(),
                 'LAYERS': layersString,
                 'QUERY_LAYERS': layersString,
@@ -250,15 +250,15 @@ ol.source.WebgisImageWMS.prototype.getLegendUrl = function(layername, view) {
  * @api
  * @override
  */
-ol.source.WebgisImageWMS.prototype.getGetFeatureInfoUrl = function(map, coordinates, layers) {
+ol.source.WebgisImageWMS.prototype.getGetFeatureInfoUrl = function(map, coordinates, layers, limit) {
         var size = map.getSize();
         var layersString = (layers || this.visibleLayers).join(',');
-        params = {
+        var params = {
                 'SERVICE': 'WMS',
                 'VERSION': '1.1.1',
                 'REQUEST': 'GetFeatureInfo',
                 'INFO_FORMAT': 'application/vnd.ogc.gml',
-                'FEATURE_COUNT': '10',
+                'FEATURE_COUNT': limit || 10,
                 'SRS': map.getView().getProjection().getCode(),
                 'LAYERS': layersString,
                 'QUERY_LAYERS': layersString,

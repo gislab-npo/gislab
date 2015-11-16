@@ -68,7 +68,12 @@
 		var mapClickListener = projectProvider.map.on('singleclick', function (evt) {
 			var source = projectProvider.map.getLayer('qgislayer').getSource();
 			var layers = $scope.tool.identificationLayer? [$scope.tool.identificationLayer] : source.getVisibleLayers();
-			var featureInfoUrl = source.getGetFeatureInfoUrl(projectProvider.map, evt.pixel, layers);
+			var featureInfoUrl = source.getGetFeatureInfoUrl(
+				projectProvider.map,
+				evt.pixel,
+				layers,
+				$scope.tool.limit
+			);
 			var featureType = [];
 			layers.forEach(function(layer) {
 				featureType.push('qgs:'+layer.replace(' ', ''));

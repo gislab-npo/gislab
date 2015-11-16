@@ -439,10 +439,12 @@ table[md-data-table] > thead > tr > th {
     padding: 0 10px 0 10px!important;
 }
 table td.icon {
-	width: 20px;
+	width: 18px;
 }
 td.icon md-icon {
 	color: #555;
+	width: 18px;
+	height: 18px;
 }
 
 .filter-row .md-input-has-placeholder:not(.md-input-has-value) .md-input,
