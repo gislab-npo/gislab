@@ -438,6 +438,12 @@ table[md-data-table] > tfoot > tr > td,
 table[md-data-table] > thead > tr > th {
     padding: 0 10px 0 10px!important;
 }
+table td.icon {
+	width: 20px;
+}
+td.icon md-icon {
+	color: #555;
+}
 
 .filter-row .md-input-has-placeholder:not(.md-input-has-value) .md-input,
 .filter-row md-select .md-select-value.md-select-placeholder {

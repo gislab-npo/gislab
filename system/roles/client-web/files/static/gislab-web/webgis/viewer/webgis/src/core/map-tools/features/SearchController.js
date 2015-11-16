@@ -207,6 +207,10 @@
 			$scope.selectedFeature = feature;
 		};
 
+		$scope.zoomToFeature = function (feature) {
+			featuresViewer.zoomToFeature(feature);
+		}
+
 		function fetchFeatures (query) {
 			var layername = $scope.layers[$scope.tool.layerIndex].name;
 			console.log('fetchFeatures: '+layername);

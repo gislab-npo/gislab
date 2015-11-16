@@ -22,6 +22,10 @@
 			$scope.selectedFeature = feature;
 		};
 
+		$scope.zoomToFeature = function (feature) {
+			featuresViewer.zoomToFeature(feature);
+		}
+
 		function setFeatures (features) {
 			// clear prevoius selection
 

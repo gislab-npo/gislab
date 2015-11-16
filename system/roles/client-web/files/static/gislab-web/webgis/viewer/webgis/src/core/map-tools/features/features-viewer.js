@@ -118,6 +118,21 @@
 			}
 		};
 
+		FeaturesViewer.prototype.zoomToFeature = function (feature) {
+			console.log(feature);
+			var map = projectProvider.map;
+			var pan = ol.animation.pan({
+				duration: 300,
+				source: map.getView().getCenter()
+			});
+			var zoom = ol.animation.zoom({
+				duration: 300,
+				resolution: map.getView().getResolution()
+			});
+			map.beforeRender(pan, zoom);
+			map.getView().fit(feature.get('boundedBy'), map.getSize());
+		};
+
 		FeaturesViewer.prototype.getFeatureAttributes = function (layername) {
 			var layerAttrs = this.layersAttributes[layername];
 			var attributes = [];

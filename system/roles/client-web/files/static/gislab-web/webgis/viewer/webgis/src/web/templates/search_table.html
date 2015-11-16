@@ -7,6 +7,7 @@
 				<table md-data-table ng-init="layer.page=1" md-progress="progress">
 					<thead>
 						<tr>
+							<th></th>
 							<th ng-repeat="attribute in ::layer.attributes" name="">
 								<div class="filter-row" layout="column" xng-init="attributeFilter=attributesFilters[attribute.name]">
 									<label>{{ ::attribute.label }}</label>
@@ -30,6 +31,9 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat="feature in layer.features | limitTo: tool.rowsPerPage: (layer.page - 1) * tool.rowsPerPage" ng-click="selectFeature(feature)" ng-class="{'md-selected': selectedFeature === feature}">
+							<td class="icon">
+								<md-icon md-svg-icon="zoom-max" ng-click="zoomToFeature(feature)"></md-icon>
+							</td>
 							<td ng-repeat="attribute in layer.attributes">{{ feature.get(attribute.name) }}</td>
 						</tr>
 					</tbody>
