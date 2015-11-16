@@ -35,6 +35,7 @@
 
     "ol.tilegrid.TileGrid",
     "ol.proj.Projection",
+    "ol.proj.Projection#getCode",
     "ol.control.defaults",
     "ol.control.Rotate",
     "ol.control.ScaleLine",

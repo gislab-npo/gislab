@@ -19,16 +19,21 @@ var watch = require('gulp-watch');
 var install = require('gulp-install');
 var chug = require('gulp-chug');
 var minifyCss = require('gulp-minify-css');
+var templateCache = require('gulp-angular-templatecache');
+var series = require('stream-series');
 
 var TARGET = '../static/web/';
 
 var CSSS = [
-  'node_modules/angular/angular-csp.css',
-  'node_modules/angular-material/angular-material.min.css',
-  'node_modules/angular-material-data-table/dist/md-data-table.min.css',
-  'node_modules/angular-ui-layout/dist/ui-layout.css',
-  'node_modules/openlayers/build/ol.min.js',
-  'styles/gislab/ui.css'
+  'node_modules/openlayers/dist/ol.css',
+  'node_modules/angular-material/angular-material.css',
+  'node_modules/angular-ui-layout/src/ui-layout.css',
+  'node_modules/angular-material-data-table/dist/md-data-table.css',
+  'src/web/styles/ui.css'
+];
+
+var WEB_TEMPLATES = [
+  'src/web/**/*.html'
 ];
 
 var CORE_WEB_LIBS = [
@@ -45,7 +50,7 @@ var DEPS = [
   'node_modules/angular-aria/angular-aria.min.js',
   'node_modules/angular-material/angular-material.min.js',
   'node_modules/angular-material-data-table/dist/md-data-table.min.js',
-  'node_modules/angular-ui-layout/dist/ui-layout.js.min.js'
+  'node_modules/angular-ui-layout/dist/ui-layout.min.js'
 ];
 
 var OL3DEPS = [
@@ -69,13 +74,14 @@ gulp.task('stream', ['uglify', 'lint'], function() {
  * compile all source code to one file
  */
 gulp.task('uglify', function() {
-
-  gulp.src(CORE_WEB_LIBS)
-    .pipe(ngAnnotate({ add: true }))
-    .pipe(uglify())
+  series(
+    gulp.src(CORE_WEB_LIBS)
+      .pipe(ngAnnotate({ add: true })),
+    gulp.src(WEB_TEMPLATES)
+      .pipe(templateCache())
+  ).pipe(uglify())
     .pipe(concat('app.min.js'))
     .pipe(gulp.dest(TARGET + 'js/'));
-
 });
 
 /**
@@ -87,7 +93,7 @@ gulp.task('csss', function() {
     .pipe(concat('styles.min.css'))
     .pipe(gulp.dest(TARGET + 'styles'));
 
-  gulp.src('styles/gislab/icons.svg')
+  gulp.src('src/web/styles/icons.svg')
     .pipe(gulp.dest(TARGET + 'styles'));
 });
 
@@ -188,3 +194,67 @@ gulp.task('buildol3-debug', ['copyol3-src'],
 gulp.task('default', ['deps', 'csss', 'uglify'], function() {
 
 });
+
+
+/**
+ * Tasks for development
+ */
+var connect = require('gulp-connect');
+
+gulp.task('devserver', function() {
+  connect.server({
+    root: ['.', 'dev/web/', 'src/web/', 'src/'],
+    port: 8100,
+    livereload: true
+  });
+});
+
+gulp.task('dev-js', function () {
+  gulp.src(CORE_WEB_LIBS)
+    .pipe(connect.reload());
+});
+
+gulp.task('dev-styles', function () {
+  gulp.src('src/web/styles/*.css')
+    .pipe(connect.reload());
+});
+
+gulp.task('dev-templates', function () {
+  gulp.src(WEB_TEMPLATES)
+    .pipe(connect.reload());
+});
+
+gulp.task('dev-index', function () {
+  gulp.src('index.html')
+    .pipe(connect.reload());
+});
+
+gulp.task('watch', function () {
+  gulp.watch(CORE_WEB_LIBS, ['dev-js']);
+  gulp.watch(WEB_TEMPLATES, ['dev-templates']);
+  gulp.watch(['src/web/styles/*.css'], ['dev-styles']);
+  gulp.watch(['index.html'], ['dev-index']);
+});
+
+gulp.task('compile-templates', function () {
+  return gulp.src('src/web/**/*.html')
+    .pipe(templateCache())
+    .pipe(gulp.dest('../static/web/js/'));
+});
+
+gulp.task('dev', ['devserver', 'watch']);
+
+// With livereload chrome extension
+// var livereload = require('gulp-livereload');
+// gulp.task('styles', function () {
+//   gulp.src('src/web/styles/*.css')
+//     .pipe(livereload());
+// });
+
+// gulp.task('watch', function () {
+//   livereload.listen();
+//   gulp.watch(['src/web/styles/*.css'], ['styles']);
+//   gulp.watch(['src/web/**/*.js'], ['web-js']);
+//   gulp.watch(['src/core/*.js'], ['core-js']);
+//   gulp.watch(['index.html'], ['web-html']);
+// });

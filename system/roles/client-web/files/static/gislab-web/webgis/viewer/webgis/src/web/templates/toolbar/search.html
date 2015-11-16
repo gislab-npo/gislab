@@ -1,0 +1,7 @@
+<md-select placeholder="Select layer"
+	class="layers-list"
+	ng-model="tool.layerIndex" ng-show="tool.activated" ng-change="tool.showTable()">
+	<md-option ng-repeat="layer in project.layers.list | filter:{queryable:true}" ng-show="layer.visible" value="{{ $index }}">
+		{{layer.title}}
+	</md-option>
+</md-select>

@@ -3,7 +3,7 @@
 
 	angular
 		.module('gl.map')
-		.factory('projectProvider', ['mapBuilder', projectProvider]);
+		.factory('projectProvider', projectProvider);
 
 	function projectProvider(mapBuilder) {
 		function ProjectProvider() {

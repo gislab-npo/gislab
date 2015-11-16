@@ -4,12 +4,23 @@
 	angular
 		.module('gl.web')
 		.controller('AppController', AppController)
+		.controller('LayoutAnimationController', LayoutAnimationController)
 		.config(function($mdIconProvider, resourcesRoot) {
 			$mdIconProvider
 				.defaultIconSet(resourcesRoot+'styles/icons.svg', 32);
 		});
 
-	function AppController($scope, $timeout, $q, $mdSidenav, projectProvider, layersControl, projectPath, resourcesRoot, gislabClient, $mdBottomSheet) {
+	function LayoutAnimationController($scope, $timeout) {
+		$scope.$on('ui.layout.toggle', function(e, container) {
+			var layoutElem = container.element.parent();
+			layoutElem.addClass('ui-layout-animation');
+			$timeout(function() {
+				layoutElem.removeClass('ui-layout-animation');
+			}, 600);
+		});
+	}
+	function AppController($scope, $timeout, $q, projectProvider, layersControl, projectPath, gislabClient, $mdBottomSheet) {
+		var bottomSheetPromise = $q.when('');
 		$scope.tools = [
 			{
 				title: 'Zoom to max extent',
@@ -41,50 +52,59 @@
 				title: 'Search features by attributes',
 				icon: 'binocular',
 				toggleGroup: '1',
-				activate: function() {},
-				deactivate: function() {}
+				rowsPerPage: 5,
+				limit: 50,
+				template: 'templates/toolbar/search.html',
+				showTable: function () {
+					var tool = this;
+					bottomSheetPromise.finally(function() {
+						bottomSheetPromise = $mdBottomSheet.show({
+							templateUrl: 'templates/search_table.html',
+							disableParentScroll: false,
+							hasBackdrop: false,
+							parent: '.bottom-bar',
+							controller: 'SearchController',
+							locals: {tool: tool}
+						});
+						bottomSheetPromise.catch(function() {
+							bottomSheetPromise = $q.when('');
+							tool.activated = false;
+						});
+					});
+				},
+				activate: function () {
+					if (this.layerIndex) {
+						this.showTable();
+					}
+				},
+				deactivate: function () {
+					$mdBottomSheet.hide();
+				}
 			}, {
 				title: 'Identify features by mouse click',
 				icon: 'circle-i',
 				toggleGroup: '1',
-				activate: function() {
-					var featuresScope;
-					this.mapClickListener = projectProvider.map.on('singleclick', function(evt) {
-						var source = projectProvider.map.getLayer('qgislayer').getSource();
-						var layers = this.identificationLayer? [this.identificationLayer] : source.getVisibleLayers();
-						var featureInfoUrl = source.getGetFeatureInfoUrl(projectProvider.map, evt.pixel, layers);
-						var featureType = [];
-						layers.forEach(function(layer) {
-							featureType.push('qgs:'+layer.replace(' ', ''));
+				rowsPerPage: 5,
+				limit: 10,
+				template: 'templates/toolbar/identification.html',
+				activate: function () {
+					var tool = this;
+					bottomSheetPromise.finally(function() {
+						bottomSheetPromise = $mdBottomSheet.show({
+							templateUrl: 'templates/identification_table.html',
+							clickOutsideToClose: false,
+							disableParentScroll: false,
+							parent: '.bottom-bar',
+							controller: 'IdentificationController',
+							locals: {tool: tool}
 						});
-						gislabClient.get(featureInfoUrl).then(function(data) {
-							var gml = new ol.format.GML2({
-								featureNS: {'qgs': 'http://qgis.org/gml'},
-								featureType: featureType
-							});
-							var features = gml.readFeatures(data);
-							if (!featuresScope) {
-								featuresScope = $scope.$new(true, $scope);
-								featuresScope.features = features;
-								$mdBottomSheet.show({
-									templateUrl: resourcesRoot+'features_panel.html',
-									clickOutsideToClose: false,
-									disableParentScroll: false,
-									controller: 'FeaturesController',
-									scope: featuresScope,
-									parent: '.bottom-bar'
-								}).finally(function() {
-									featuresScope.setFeatures([]);
-									featuresScope = null;
-								});
-							} else {
-								featuresScope.setFeatures(features);
-							}
+						bottomSheetPromise.catch(function() {
+							bottomSheetPromise = $q.when('');
+							tool.activated = false;
 						});
-					}, this);
+					});
 				},
 				deactivate: function() {
-					projectProvider.map.unByKey(this.mapClickListener);
 					$mdBottomSheet.hide();
 				}
 			}
@@ -111,9 +131,6 @@
 			}
 		};
 
-		$scope.openLeftMenu = function() {
-			$mdSidenav('left').toggle();
-		};
 		gislabClient.project(projectPath)
 			.then(function(data) {
 				$scope.title = data.root_title;
@@ -127,6 +144,7 @@
 					projectProvider.map.addControl(new ol.control.ScaleLine());
 					$scope.project = projectProvider;
 					//mapElem.css('height', '100%');
+					$scope.toolClicked($scope.tools[4]);
 				}
 			})
 	};

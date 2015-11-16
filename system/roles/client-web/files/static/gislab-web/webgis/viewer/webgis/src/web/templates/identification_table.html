@@ -1,0 +1,40 @@
+<md-bottom-sheet class="features-panel">
+	<div>
+		<md-tabs md-no-ink md-dynamic-height
+			ng-class="{'tabs-no-header': !showTabsHeader}"
+			md-selected="selectedTab"
+			md-autoselect="false">
+			<md-tab ng-repeat="layer in layers"
+				label="{{ layer.name }}"
+				md-on-select="setActiveLayer(layer)">
+				<md-data-table-container ng-init="page=1" style="height: {{ 36+32*tool.rowsPerPage }}px;">
+					<table md-data-table>
+						<thead>
+							<tr>
+								<th ng-repeat="attribute in layer.attributes" name="{{ ::attribute.label }}"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="feature in layer.features | limitTo: tool.rowsPerPage: (page - 1) * tool.rowsPerPage" ng-click="selectFeature(feature)" ng-class="{'md-selected': selectedFeature === feature}">
+								<td ng-repeat="attribute in layer.attributes">{{ ::feature.get(attribute.name) }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</md-data-table-container>
+				<div class="search-settings" layout="row">
+					<md-input-container class="md-block">
+						<label class="md-label md-no-float">Limit:</label>
+						<input ng-model="tool.limit" type="number"></input>
+					</md-input-container>
+					<md-input-container class="md-block">
+						<label class="md-label md-no-float">Rows per page:</label>
+						<input ng-model="tool.rowsPerPage" type="number" min="1" max="10"></input>
+					</md-input-container>
+					<md-data-table-pagination md-row-select="null" md-limit="tool.rowsPerPage" md-page="page" md-total="{{ layer.features.length }}"></md-data-table-pagination>
+				</div>
+			</md-tab>
+		</md-tabs>
+	</div>
+	<!-- <div class="md-subheader"><span>NO RESULTS<span></div> -->
+	<div style="height: 80px;"></div>
+</md-bottom-sheet>

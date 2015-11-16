@@ -1,0 +1,11 @@
+<!-- <md-input-container> -->
+<md-select placeholder="Select layer"
+	class="layers-list"
+	ng-model="tool.identificationLayer" ng-show="tool.activated">
+	<!-- <md-select-label>layers:</md-select-label> -->
+	<md-option value="">All visible</md-option>
+	<md-option ng-repeat="layer in project.layers.list | filter:{queryable:true, visible:true}" value="{{ layer.name }}">
+		{{layer.title}}
+	</md-option>
+</md-select>
+<!-- </md-input-container> -->

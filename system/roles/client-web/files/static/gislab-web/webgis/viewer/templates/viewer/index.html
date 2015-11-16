@@ -12,7 +12,6 @@
 
 		<!-- Before body closing tag -->
 		<script src="{% static "web/js/deps.min.js" %}"></script>
-		<!-- script type="text/javascript" src="{% static "web/bower_components/raf/index.js" %}" --><!-- /script-->
 
 		<script type="text/javascript" src="{% static "web/js/ol3-deps.min.js" %}"></script>
 
@@ -42,21 +41,17 @@
 	<body ng-controller="AppController" class="no-scrollbar">
 		<div layout="column" layout-fill flex class="no-scrollbar">
 			<div class="toolbar-container">
-				<md-toolbar ng-include="'{% static "web/toolbar.html" %}'" flex="none">
+				<md-toolbar ng-include="'templates/toolbar/toolbar.html'" flex="none">
 				</md-toolbar>
 			</div>
 			<div layout="row" flex>
 				<div class="main-panel" flex="none">
-					<div ui-layout="{disableToggle: true, dividerSize: 10}" ng-if="::project">
+					<div ng-if="::project" ui-layout="{disableToggle: false, dividerSize: 10}" class="no-scrollbar" ng-controller="LayoutAnimationController">
 						<div ui-layout-container size="50%" min-size="20%" class="no-scrollbar" style="padding-bottom:10px">
-							<div class="full-height" ng-include="'{% static "web/layers_control.html" %}'"></div>
-							<div class="ui-splitbar-container-v">
-								<md-icon class="ui-splitbar-icon-up" md-svg-icon="arrow-up"></md-icon>
-								<md-icon class="ui-splitbar-icon-down" md-svg-icon="arrow-down"></md-icon>
-							</div>
+							<div class="full-height" ng-include="'templates/layers_control.html'"></div>
 						</div>
 						<div ui-layout-container size="50%" class="no-scrollbar">
-							<div class="full-height" ng-include="'{% static "web/project_info.html" %}'"></div>
+							<div class="full-height" ng-include="'templates/project_info.html'"></div>
 						</div>
 					</div>
 				</div>
