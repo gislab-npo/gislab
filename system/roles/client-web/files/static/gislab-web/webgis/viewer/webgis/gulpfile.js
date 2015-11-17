@@ -154,16 +154,16 @@ gulp.task('cleanol3', function() {
  * copy our source files to openlayer3
  */
 gulp.task('copyol3-src', ['cleanol3'], function() {
-  gulp.src('webgis.json')
+  gulp.src('src/ol3/webgis.json')
     .pipe(gulp.dest('node_modules/openlayers/build/'));
 
-  gulp.src('webgis-debug.json')
+  gulp.src('src/ol3/webgis-debug.json')
     .pipe(gulp.dest('node_modules/openlayers/build/'));
 
-  gulp.src('src/ol3/**/*.js')
-    .pipe(gulp.dest('node_modules/openlayers/src/ol/gislab'));
+  gulp.src('src/ol3/webgis/**/*.js')
+    .pipe(gulp.dest('node_modules/openlayers/src/ol/webgis'));
 
-  gulp.src('externs/webgis.js')
+  gulp.src('src/ol3/externs/webgis.js')
     .pipe(gulp.dest('node_modules/openlayers/externs/'));
 
 });
