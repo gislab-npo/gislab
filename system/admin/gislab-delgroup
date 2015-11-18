@@ -37,15 +37,16 @@ if [ $# -eq 0 ]; then usage; fi
 GISLAB_GROUP=$1
 
 
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
 # sanity checks
-if ! getent group $GISLAB_GROUP >/dev/null 2>&1; then
-    gislab_print_error "Cannot delete group. Group '$GISLAB_GROUP' does not exists"
-    exit 1
+if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" == "" ]; then
+    gislab_print_error "Group '$GISLAB_GROUP' does not exists"
 fi
 
-if members $GISLAB_GROUP >/dev/null; then
-    gislab_print_error "Cannot delete group. Group '$GISLAB_GROUP' has a members"
-    exit 1
+if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))" memberUid \
+        | grep -v "^dn:")" != "" ]; then
+    gislab_print_error "Group '$GISLAB_GROUP' has a members"
 fi
 
 

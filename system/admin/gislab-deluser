@@ -26,12 +26,12 @@ function usage() {
 FORCE="no"
 while getopts "bhf" OPTION
 do
-        case "$OPTION" in
-            b) BACKUP="yes" ;;
-            f) FORCE="yes" ;;
-            h) usage ;;
-            \?) exit 1;;
-        esac
+    case "$OPTION" in
+        b) BACKUP="yes" ;;
+        f) FORCE="yes" ;;
+        h) usage ;;
+        \?) exit 1;;
+    esac
 done
 shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; fi
@@ -39,15 +39,15 @@ if [ $# -eq 0 ]; then usage; fi
 GISLAB_USER=$1
 
 
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
 # sanity checks
-if ! id $GISLAB_USER >/dev/null 2>&1; then
-    gislab_print_error "GIS.lab user '$GISLAB_USER' does not exists"
-    exit 1
+if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" == "" ]; then
+    gislab_print_error "User '$GISLAB_USER' does not exists"
 fi
 
 if [ -f /storage/home/${GISLAB_USER}/.gislab/session.lock ]; then
     gislab_print_error "GIS.lab user '$GISLAB_USER' is still running session"
-    exit 1
 fi
 
 
@@ -81,12 +81,13 @@ gislab_print_info "Deleting user account"
 
 # disable forwarding system mails to user and remove user
 # from superuser's group, if user was superuser
-if id $GISLAB_USER 2>/dev/null | grep -q '(gislabadmins)'; then
+if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$GISLAB_USER))")" != "" ]; then
     gislab-moduser -S $GISLAB_USER
 fi
 
 # manunaly delete user from additional groups
 # (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
+# TODO: use ldapsearch for getting list of groups
 GISLAB_USER_GROUPS=$(id -nG $GISLAB_USER \
     | grep '[[:space:]]' \
     | sed -r -e 's/^[^ ]* //' -e 's/[[:space:]]+/,/g')

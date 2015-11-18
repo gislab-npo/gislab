@@ -14,7 +14,7 @@ function usage() {
     echo "USAGE: $(basename $0) [OPTIONS]"
     echo "List GIS.lab users."
     echo -e "\nOPTIONS
-    -g list members of group
+    -g list only members of group
     -h display this help
     "
     exit 255
@@ -32,19 +32,24 @@ do
 done
 
 
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
 if [ -n "$GISLAB_GROUP" ]; then
-    # list group members
     # sanity checks
-    if ! getent group $GISLAB_GROUP >/dev/null 2>&1; then
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" == "" ]; then
         gislab_print_error "Group '$GISLAB_GROUP' does not exists"
     fi
 
-    for user in $(members $GISLAB_GROUP); do
-        echo $user
+    # list users belonging to group
+    for user in \
+            $($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))" memberUid \
+            | grep -v "^dn:" \
+            | awk -F ":" '{print $2}'); do
+        $lds "(&(objectClass=posixAccount)(uid=$user))"
     done
 else
-    # list GIS.lab users
-    lsldap -u | awk -F "=" '/^dn: uid=/ { print $2 }' | sed 's/,ou$//'
+    # list all users
+    lsldap -u
 fi
 
 # vim: set ts=8 sts=4 sw=4 et:

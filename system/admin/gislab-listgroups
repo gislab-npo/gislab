@@ -29,7 +29,8 @@ do
         esac
 done
 
-# parse GIS.lab groups
-lsldap -g | awk -F "=" '/^dn: cn=/ { print $2 }' | sed 's/,ou$//'
+
+# list GIS.lab groups
+lsldap -g
 
 # vim: set ts=8 sts=4 sw=4 et:

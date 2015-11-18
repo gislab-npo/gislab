@@ -33,42 +33,42 @@ GISLAB_USER_GEN_PASSWORD=$(pwgen -1 -n 8) # generate password
 
 while getopts "a:A:sSm:pd:h" OPTION
 do
-        case "$OPTION" in
-            a) CMD=add_to_group; GISLAB_USER_GROUPS=$OPTARG; shift; break ;;
-            A) CMD=delete_from_group; GISLAB_USER_GROUPS=$OPTARG; shift; break ;;
-            s) CMD=enable_sudo; break ;;
-            S) CMD=disable_sudo; break ;;
-            m) CMD=change_mail; GISLAB_USER_EMAIL=$OPTARG; shift; break ;;
-            p) CMD=set_password
-               if [ $# -eq 3 ]; then
-                GISLAB_USER_PASSWORD=$2
-                shift
-                   break
-               else
-                   GISLAB_USER_PASSWORD=$GISLAB_USER_GEN_PASSWORD
-                   break
-               fi ;;
-            d) CMD=change_description; GISLAB_USER_DESCRIPTION="$OPTARG"; shift; break ;;
-            h) usage ;;
-        esac
+    case "$OPTION" in
+        a) CMD=add_to_group; GISLAB_USER_GROUPS=$OPTARG; shift; break ;;
+        A) CMD=delete_from_group; GISLAB_USER_GROUPS=$OPTARG; shift; break ;;
+        s) CMD=enable_sudo; break ;;
+        S) CMD=disable_sudo; break ;;
+        m) CMD=change_mail; GISLAB_USER_EMAIL=$OPTARG; shift; break ;;
+        p) CMD=set_password
+            if [ $# -eq 3 ]; then
+            GISLAB_USER_PASSWORD=$2
+            shift
+                break
+            else
+                GISLAB_USER_PASSWORD=$GISLAB_USER_GEN_PASSWORD
+                break
+            fi ;;
+        d) CMD=change_description; GISLAB_USER_DESCRIPTION="$OPTARG"; shift; break ;;
+        h) usage ;;
+    esac
 done
 
 shift || true
 if [ $# -ne 1 ]; then usage; fi
 
 GISLAB_USER=$1
-ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
 
 # helping functions
 get_user_email() {
-    email=$($ldapsearch_cmd \
+    email=$($lds \
         "uid=$1" mail 2>/dev/null | awk '/^mail: / { print $2 }')
     echo "$email"
 }
 
 check_maildrop() {
-    maildrop=$($ldapsearch_cmd \
+    maildrop=$($lds \
         -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$1)" 2>/dev/null)
     echo "$maildrop"
 }

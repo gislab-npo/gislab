@@ -49,9 +49,12 @@ chmod 700 $BACKUP_DIR
 mkdir -p $TEMP_BACKUP_SYSTEM_DIR
 
 
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
 # backup all user accounts
-ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
-for user in $($ldapsearch_cmd -b "ou=People,dc=gis,dc=lab" uid | awk '/^uid: / { print $2 }'); do
+for user in \
+        $($lds "(objectClass=posixAccount)" uid \
+        | awk '/^uid: / { print $2 }'); do
     gislab-backupuser -d $BACKUP_DIR $user
 done
 

@@ -35,19 +35,18 @@ done
 shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; fi
 
-
 GISLAB_GROUP=$1
 
 
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
 # sanity checks
-if getent group $GISLAB_GROUP > /dev/null 2>&1; then
-    gislab_print_error "Cannot add group. Group '$GISLAB_GROUP' already exists"
-    exit 1
+if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" != "" ]; then
+    gislab_print_error "Group '$GISLAB_GROUP' already exists"
 fi
 
 if ! [[ "$GISLAB_GROUP" =~ ^[a-z][a-z0-9_]*$ ]]; then
-    gislab_print_error "Cannot add group. Invalid characters in group name"
-    exit 1
+    gislab_print_error "Invalid characters in group name"
 fi
 
 

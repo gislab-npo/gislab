@@ -24,11 +24,11 @@ function usage() {
 # options
 while getopts "b:f:h" OPTION
 do
-        case "$OPTION" in
-            f) BACKUP_FILE="$OPTARG" ;;
-            h) usage ;;
-            \?) exit 1 ;;
-        esac
+    case "$OPTION" in
+        f) BACKUP_FILE="$OPTARG" ;;
+        h) usage ;;
+        \?) exit 1 ;;
+    esac
 done
 shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; fi
@@ -40,18 +40,17 @@ fi
 GISLAB_USER=$1
 
 
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
 # sanity checks
 if [ ! -f "$BACKUP_FILE" ]; then
     gislab_print_error "Backup file does not exist"
-    exit 1
 fi
 
-if id $GISLAB_USER >/dev/null 2>&1; then
-    gislab_print_error "
-        User account '$GISLAB_USER' already exist. Remove it first
-    "
-    exit 1
+if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" != "" ]; then
+    gislab_print_error "User '$GISLAB_USER' already exists"
 fi
+
 
 BACKUP_VERSION=$(tar --to-stdout -xf $BACKUP_FILE GISLAB_VERSION)
 if [ "$BACKUP_VERSION" != "$GISLAB_VERSION" ]; then

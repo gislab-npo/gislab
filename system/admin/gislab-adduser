@@ -57,20 +57,19 @@ GISLAB_USER=$1
 GISLAB_USER_FULL_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
 
 
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
 # sanity checks
-if id -u $GISLAB_USER > /dev/null 2>&1; then
+if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" != "" ]; then
     gislab_print_error "User '$GISLAB_USER' already exists"
-    exit 1
 fi
 
 if ! [[ "$GISLAB_USER" =~ ^[a-z][a-z0-9_]*$ ]]; then
     gislab_print_error "Invalid characters in user name"
-    exit 1
 fi
 
 if ! [[ "$GISLAB_USER_EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
     gislab_print_error "Invalid e-mail address format"
-    exit 1
 fi
 
 
