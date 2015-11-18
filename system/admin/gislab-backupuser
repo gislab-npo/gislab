@@ -43,7 +43,7 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
 # sanity checks
 if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" == "" ]; then
-    gislab_print_error "User '$GISLAB_USER' doesn't exists"
+    gislab_error "User '$GISLAB_USER' doesn't exists"
 fi
 
 
@@ -171,6 +171,6 @@ rm -rf $TEMP_BACKUP_DIR
 
 
 # confirmation message
-gislab_print_info "Backup of account '$GISLAB_USER' created in '$BACKUP_FILE'"
+gislab_info "Backup of account '$GISLAB_USER' created in '$BACKUP_FILE'"
 
 # vim: set ts=8 sts=4 sw=4 et:

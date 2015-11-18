@@ -31,21 +31,21 @@ done
 
 RUNNING_CLIENTS="$(gislab-cluster members -status=alive -tag role=client)"
 if [ -n "$RUNNING_CLIENTS" ]; then
-    gislab_print_error "
+    gislab_error "
         Some GIS.lab client machines are running. Can't perform upgrade
     "
 fi
 
 
 # upgrade server packages
-gislab_print_info "Upgrading server packages ..."
+gislab_info "Upgrading server packages ..."
 apt-get --assume-yes --force-yes update
 apt-get --assume-yes --force-yes dist-upgrade
 apt-get --assume-yes --force-yes autoremove
 
 
 # upgrade client packages
-gislab_print_info "Upgrading client packages ..."
+gislab_info "Upgrading client packages ..."
 
 # detect if there are any upgradeable packages before running upgrade
 gislab-client-shell apt-get --assume-yes --force-yes update
@@ -62,6 +62,6 @@ fi
 
 
 # confirmation message
-gislab_print_info "GIS.lab system upgrade was successfully done"
+gislab_info "GIS.lab system upgrade was successfully done"
 
 # vim: set ts=8 sts=4 sw=4 et:

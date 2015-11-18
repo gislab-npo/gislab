@@ -74,6 +74,6 @@ rm -rf $TEMP_BACKUP_SYSTEM_DIR
 
 
 # confirmation message
-gislab_print_info "Backup of system files created in '$BACKUP_SYSTEM_FILE'"
+gislab_info "Backup of system files created in '$BACKUP_SYSTEM_FILE'"
 
 # vim: set ts=8 sts=4 sw=4 et:

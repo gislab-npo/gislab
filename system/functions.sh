@@ -2,7 +2,7 @@
 # UTILITY FUNCTIONS
 #
 
-gislab_print_info () {
+gislab_info () {
     m=$(echo $1 | sed "s/\n//g")
 
     # print informative message
@@ -12,7 +12,7 @@ gislab_print_info () {
 }
 
 
-gislab_print_warning () {
+gislab_warning () {
     m=$(echo $1 | sed "s/\n//g")
 
     # print warning message
@@ -23,7 +23,7 @@ gislab_print_warning () {
 }
 
 
-gislab_print_error () {
+gislab_error () {
     m=$(echo $1 | sed "s/\n//g")
 
     # print error message
@@ -39,7 +39,7 @@ gislab_print_error () {
 gislab_require_root () {
     # exit if user is not root
     if [[ $EUID -ne 0 ]]; then
-        gislab_print_error "This command can only be be run with superuser privileges"
+        gislab_error "This command can only be be run with superuser privileges"
         exit 1
     fi
 }

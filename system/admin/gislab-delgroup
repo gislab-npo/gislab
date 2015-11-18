@@ -41,30 +41,30 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
 # sanity checks
 if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" == "" ]; then
-    gislab_print_error "Group '$GISLAB_GROUP' does not exists"
+    gislab_error "Group '$GISLAB_GROUP' does not exists"
 fi
 
 if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))" memberUid \
         | grep -v "^dn:")" != "" ]; then
-    gislab_print_error "Group '$GISLAB_GROUP' has a members"
+    gislab_error "Group '$GISLAB_GROUP' has a members"
 fi
 
 
 if [ "$FORCE" != "yes" ]; then
-    gislab_print_warning "This command will remove group '$GISLAB_GROUP'"
+    gislab_warning "This command will remove group '$GISLAB_GROUP'"
     echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
     read
 fi
 
 
 ### LDAP
-gislab_print_info "Deleting group"
+gislab_info "Deleting group"
 
 # remove LDAP group
 ldapdeletegroup $GISLAB_GROUP
 
 
 # confirmation message
-gislab_print_info "Group '$GISLAB_GROUP' was successfully deleted"
+gislab_info "Group '$GISLAB_GROUP' was successfully deleted"
 
 # vim: set ts=8 sts=4 sw=4 et:

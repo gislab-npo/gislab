@@ -42,16 +42,16 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
 # sanity checks
 if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" != "" ]; then
-    gislab_print_error "Group '$GISLAB_GROUP' already exists"
+    gislab_error "Group '$GISLAB_GROUP' already exists"
 fi
 
 if ! [[ "$GISLAB_GROUP" =~ ^[a-z][a-z0-9_]*$ ]]; then
-    gislab_print_error "Invalid characters in group name"
+    gislab_error "Invalid characters in group name"
 fi
 
 
 ### LDAP
-gislab_print_info "Adding group"
+gislab_info "Adding group"
 
 # create LDAP group
 ldapaddgroup $GISLAB_GROUP
@@ -66,6 +66,6 @@ fi
 
 
 # confirmation message
-gislab_print_info "Group '$GISLAB_GROUP' was successfully created"
+gislab_info "Group '$GISLAB_GROUP' was successfully created"
 
 # vim: set ts=8 sts=4 sw=4 et:

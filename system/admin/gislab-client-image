@@ -34,7 +34,7 @@ done
 
 # sanity checks
 if [ -f "$GISLAB_ROOT/system/clients/desktop/root/proc/version" ]; then
-    gislab_print_error "
+    gislab_error "
         GIS.lab client chroot session is active.
         Exit from it before running this command
     "
@@ -115,7 +115,7 @@ else
 
     if [ $? -ne 0 ]; then
         rm -f $IMAGE_FILE.tmp
-        gislab_print_error "
+        gislab_error "
             'mksquashfs' failed to build the GIS.lab client image
         "
     fi

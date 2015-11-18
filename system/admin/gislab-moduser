@@ -83,19 +83,19 @@ add_user_to_group() {
     for G_GROUP in $G_GROUPS; do
         # check superuser's group
         if [ "$G_GROUP" == "gislabadmins" ]; then
-            gislab_print_error "
+            gislab_error "
                 To add user to superuser's group use '-s' option
             "
         fi
 
         # check if group exists
         if ! getent group $G_GROUP >/dev/null 2>&1; then
-            gislab_print_error "Group '$G_GROUP' does not exists"
+            gislab_error "Group '$G_GROUP' does not exists"
         fi
 
         # check if user is already in a group
         if id $G_USER | grep -q "($G_GROUP)"; then
-            gislab_print_error "
+            gislab_error "
                 User '$G_USER' is already member of a group '$G_GROUP'
             "
         fi
@@ -115,14 +115,14 @@ delete_user_from_group() {
     for G_GROUP in $G_GROUPS; do
         # check superuser's group
         if [ "$G_GROUP" == "gislabadmins" ]; then
-            gislab_print_error "
+            gislab_error "
                 To delete user from superuser's group use '-S' option
             "
         fi
 
         # check default group 'gislabusers'
         if [ "$G_GROUP" == "gislabusers" ]; then
-            gislab_print_error "
+            gislab_error "
                 Cannot delete user from group 'gislabusers'.
                 It is a mandatory group
             "
@@ -130,12 +130,12 @@ delete_user_from_group() {
 
         # check if group exists
         if ! getent group $G_GROUP >/dev/null 2>&1; then
-            gislab_print_error "Group '$G_GROUP' does not exists"
+            gislab_error "Group '$G_GROUP' does not exists"
         fi
 
         # check if user is a member of a group
         if ! id $G_USER | grep -q "($G_GROUP)"; then
-            gislab_print_error "
+            gislab_error "
                 User '$G_USER' is not a member of a group '$G_GROUP'
             "
         fi
@@ -152,7 +152,7 @@ enable_sudo() {
 
     # check if user is already in a group
     if id $G_USER | grep -q "(gislabadmins)"; then
-        gislab_print_error "
+        gislab_error "
             User '$G_USER' is already member of a superusers's group
         "
     fi
@@ -184,7 +184,7 @@ disable_sudo() {
 
     # check if user is member of superuser's group
     if ! id $G_USER | grep -q "(gislabadmins)"; then
-        gislab_print_error "
+        gislab_error "
             User '$G_USER' is not a member of a superusers's group
         "
     fi
@@ -215,7 +215,7 @@ change_user_mail() {
 
     # sanity check
     if ! [[ "$G_USER_EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
-        gislab_print_error "Invalid e-mail address format"
+        gislab_error "Invalid e-mail address format"
         exit 1
     fi
 
@@ -272,7 +272,7 @@ EOL
 
 # check if user exists
 if ! id -u $GISLAB_USER > /dev/null 2>&1; then
-    gislab_print_error "User '$GISLAB_USER' does not exists"
+    gislab_error "User '$GISLAB_USER' does not exists"
     exit 1
 fi
 
@@ -280,53 +280,53 @@ fi
 case "$CMD" in
     add_to_group)
         add_user_to_group $GISLAB_USER $GISLAB_USER_GROUPS
-        gislab_print_info "
+        gislab_info "
             User '$GISLAB_USER' was successfully added to
             group(s) '$GISLAB_USER_GROUPS'
         "
     ;;
     delete_from_group)
         delete_user_from_group $GISLAB_USER $GISLAB_USER_GROUPS
-        gislab_print_info "
+        gislab_info "
             User '$GISLAB_USER' was successfully deleted from
             group(s) '$GISLAB_USER_GROUPS'
         "
     ;;
     enable_sudo)
         enable_sudo $GISLAB_USER
-        gislab_print_info "
+        gislab_info "
             User '$GISLAB_USER' was successfully
             added to the superuser's group
         "
     ;;
     disable_sudo)
         disable_sudo $GISLAB_USER
-        gislab_print_info "
+        gislab_info "
             User '$GISLAB_USER' was successfully deleted from superuser's group
         "
     ;;
     change_mail)
         change_user_mail $GISLAB_USER $GISLAB_USER_EMAIL
-        gislab_print_info "
+        gislab_info "
             User '$GISLAB_USER' email was successfully
             updated to '$GISLAB_USER_EMAIL'
         "
     ;;
     set_password)
         set_user_password $GISLAB_USER $GISLAB_USER_PASSWORD
-        gislab_print_info "
+        gislab_info "
             Account '$GISLAB_USER' updated with password
             '$GISLAB_USER_PASSWORD'
         "
     ;;
     change_description)
         change_user_description $GISLAB_USER "$GISLAB_USER_DESCRIPTION"
-        gislab_print_info "
+        gislab_info "
             User '$GISLAB_USER' description was successfully updated
         "
     ;;
     *)
-        gislab_print_error "Internal error"
+        gislab_error "Internal error"
     ;;
 esac
 

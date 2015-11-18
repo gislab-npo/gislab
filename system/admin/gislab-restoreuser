@@ -44,17 +44,17 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
 # sanity checks
 if [ ! -f "$BACKUP_FILE" ]; then
-    gislab_print_error "Backup file does not exist"
+    gislab_error "Backup file does not exist"
 fi
 
 if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" != "" ]; then
-    gislab_print_error "User '$GISLAB_USER' already exists"
+    gislab_error "User '$GISLAB_USER' already exists"
 fi
 
 
 BACKUP_VERSION=$(tar --to-stdout -xf $BACKUP_FILE GISLAB_VERSION)
 if [ "$BACKUP_VERSION" != "$GISLAB_VERSION" ]; then
-    gislab_print_warning "
+    gislab_warning "
         Backup source version doesn't match target version
         ('$BACKUP_VERSION' != '$GISLAB_VERSION')
     "
@@ -110,7 +110,7 @@ changetype: modify
 replace: userPassword
 userPassword:: $GISLAB_USER_PASS_CRYPT
 EOL
-gislab_print_info "Original password restored from backup"
+gislab_info "Original password restored from backup"
 
 
 # HOME DATA
@@ -147,7 +147,7 @@ if [ "$(psql -U postgres -d gislab -tAc "$ball_exist_src_sql")" == "1" ]; then
         psql -U postgres -d gislab \
             -c "INSERT INTO storage_drawing SELECT * FROM ${GISLAB_USER}.gislab_drawing;"
     else
-        gislab_print_warning "
+        gislab_warning "
             GIS.lab Web client is not installed. Skipping data restore
         "
     fi
@@ -164,6 +164,6 @@ rm -rf $TEMP_BACKUP_DIR
 
 
 # confirmation message
-gislab_print_info "Account '$GISLAB_USER' restored from '$BACKUP_FILE'"
+gislab_info "Account '$GISLAB_USER' restored from '$BACKUP_FILE'"
 
 # vim: set ts=8 sts=4 sw=4 et:

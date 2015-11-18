@@ -37,7 +37,7 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 if [ -n "$GISLAB_GROUP" ]; then
     # sanity checks
     if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" == "" ]; then
-        gislab_print_error "Group '$GISLAB_GROUP' does not exists"
+        gislab_error "Group '$GISLAB_GROUP' does not exists"
     fi
 
     # list users belonging to group

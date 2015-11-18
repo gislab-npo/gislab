@@ -54,7 +54,7 @@ function known_machines_policy {
     # set known machines policy to 'allow' or 'deny'
 
     msg="Setting 'unknown machines' policy to '$1'"
-    gislab_print_warning "$msg"
+    gislab_warning "$msg"
     logger -t gislab-machines $msg
     sed "s/{+ GISLAB_UNKNOWN_MACHINES_POLICY +}/$1/g" \
         /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
@@ -109,7 +109,7 @@ elif [ "$ACTION" == "add" ]; then
     done
 
     service isc-dhcp-server restart
-    gislab_print_info "Machines added successfully"
+    gislab_info "Machines added successfully"
 
 # REMOVE
 elif [ "$ACTION" == "remove" ]; then
@@ -131,7 +131,7 @@ elif [ "$ACTION" == "remove" ]; then
     done
 
     service isc-dhcp-server restart
-    gislab_print_info "Machines removed successfully"
+    gislab_info "Machines removed successfully"
 fi
 
 # vim: set ts=8 sts=4 sw=4 et:

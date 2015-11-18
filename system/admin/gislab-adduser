@@ -61,15 +61,15 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
 # sanity checks
 if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" != "" ]; then
-    gislab_print_error "User '$GISLAB_USER' already exists"
+    gislab_error "User '$GISLAB_USER' already exists"
 fi
 
 if ! [[ "$GISLAB_USER" =~ ^[a-z][a-z0-9_]*$ ]]; then
-    gislab_print_error "Invalid characters in user name"
+    gislab_error "Invalid characters in user name"
 fi
 
 if ! [[ "$GISLAB_USER_EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
-    gislab_print_error "Invalid e-mail address format"
+    gislab_error "Invalid e-mail address format"
 fi
 
 
@@ -83,13 +83,13 @@ export GISLAB_USER_DESCRIPTION
 
 # execute before-add hooks
 if [ -d $GISLAB_ROOT/custom/accounts/before-add ]; then
-    gislab_print_info "Running 'before-add' account hooks"
+    gislab_info "Running 'before-add' account hooks"
     run-parts $GISLAB_ROOT/custom/accounts/before-add || true
 fi
 
 
 ### LDAP
-gislab_print_info "Adding user account"
+gislab_info "Adding user account"
 
 # create LDAP account (without creating home directory - CREATEHOMES="no")
 ldapadduser $GISLAB_USER gislabusers
@@ -141,12 +141,12 @@ $GISLAB_ROOT/system/accounts/hooks/adduser.sh $GISLAB_USER
 
 # execute after-add hooks
 if [ -d $GISLAB_ROOT/custom/accounts/after-add ]; then
-    gislab_print_info "Running 'after-add' account hooks"
+    gislab_info "Running 'after-add' account hooks"
     run-parts $GISLAB_ROOT/custom/accounts/after-add || true
 fi
 
 
 # confirmation message
-gislab_print_info "Account '$GISLAB_USER' was successfully created"
+gislab_info "Account '$GISLAB_USER' was successfully created"
 
 # vim: set ts=8 sts=4 sw=4 et:

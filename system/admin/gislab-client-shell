@@ -48,14 +48,14 @@ fi
 
 # sanity checks
 if [ ! -f "$GISLAB_ROOT/system/clients/desktop/root/etc/gislab_version" ]; then
-    gislab_print_error "
+    gislab_error "
         GIS.lab client chroot doesn't exist.
         GISLAB_SUITE must be set to 'lab' to build client image
     "
 fi
 
 if [ -f "$GISLAB_ROOT/system/clients/desktop/root/proc/version" ]; then
-    gislab_print_error "
+    gislab_error "
         Only one active GIS.lab client chroot session is allowed
     "
 fi
@@ -93,7 +93,7 @@ EOF
 
     # launch interactive shell
     if [ "$INTERCTIVE" == "yes" ]; then
-        gislab_print_info "
+        gislab_info "
             Entering GIS.lab client chroot.
             Run 'exit' command or press 'CTRL-D' to exit
         "
@@ -114,7 +114,7 @@ function post_chroot {
         $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon
 
     if [ "$INTERCTIVE" == "yes" ]; then
-        gislab_print_info "
+        gislab_info "
             Leaving GIS.lab client chroot.
             Run 'gislab-client-image' to build client image from chroot
         "
