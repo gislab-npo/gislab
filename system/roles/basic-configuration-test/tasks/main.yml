@@ -160,6 +160,7 @@
   ignore_errors: yes
   changed_when: False
 
+
 - name: Test if publish directory of ordinary test user exists and is a directory
   assert:
     that:
@@ -179,7 +180,7 @@
   ignore_errors: yes
   changed_when: False
 
-- name: Change password of ordinary test user to previous value using 'passwd' command
+- name: Change password of ordinary test user to previous value
   # must use /bin/bash, otherwise 'echo -e' was not working
   shell: >
     echo -e "test\n{{ GISLAB_TEST_UNIQUE_STRING }}\n{{ GISLAB_TEST_UNIQUE_STRING }}"
