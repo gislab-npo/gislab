@@ -153,7 +153,7 @@ enable_sudo() {
     # check if user is already in a group
     if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$G_USER))")" != "" ]; then
         gislab_error "
-            User '$G_USER' is already member of a superusers's group
+            User '$G_USER' is already member of a superuser's group
         "
     fi
 
@@ -185,7 +185,7 @@ disable_sudo() {
     # check if user is member of superuser's group
     if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$G_USER))")" == "" ]; then
         gislab_error "
-            User '$G_USER' is not a member of a superusers's group
+            User '$G_USER' is not a member of a superuser's group
         "
     fi
 
