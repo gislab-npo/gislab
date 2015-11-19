@@ -72,6 +72,11 @@ if ! [[ "$GISLAB_USER_EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}
     gislab_error "Invalid e-mail address format"
 fi
 
+for G_GROUP in $(echo $GISLAB_USER_GROUPS | sed 's/,/ /g'); do
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=$G_GROUP))")" == "" ]; then
+        gislab_error "Group '$G_GROUP' does not exists"
+    fi
+done
 
 # export variables
 export GISLAB_USER
