@@ -63,13 +63,13 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 # helping functions
 get_user_email() {
     email=$($lds \
-        "uid=$1" mail 2>/dev/null | awk '/^mail: / { print $2 }')
+        "uid=$1" mail | awk '/^mail: / { print $2 }')
     echo "$email"
 }
 
 check_maildrop() {
     maildrop=$($lds \
-        -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$1)" 2>/dev/null)
+        -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$1)")
     echo "$maildrop"
 }
 
@@ -89,12 +89,12 @@ add_user_to_group() {
         fi
 
         # check if group exists
-        if ! getent group $G_GROUP >/dev/null 2>&1; then
+        if [ "$($lds "(&(objectClass=posixGroup)(cn=$G_GROUP))")" == "" ]; then
             gislab_error "Group '$G_GROUP' does not exists"
         fi
 
         # check if user is already in a group
-        if id $G_USER | grep -q "($G_GROUP)"; then
+        if [ "$($lds "(&(objectClass=posixGroup)(cn=$G_GROUP)(memberUid=$G_USER))")" != "" ]; then
             gislab_error "
                 User '$G_USER' is already member of a group '$G_GROUP'
             "
@@ -129,12 +129,12 @@ delete_user_from_group() {
         fi
 
         # check if group exists
-        if ! getent group $G_GROUP >/dev/null 2>&1; then
+        if [ "$($lds "(&(objectClass=posixGroup)(cn=$G_GROUP))")" == "" ]; then
             gislab_error "Group '$G_GROUP' does not exists"
         fi
 
         # check if user is a member of a group
-        if ! id $G_USER | grep -q "($G_GROUP)"; then
+        if [ "$($lds "(&(objectClass=posixGroup)(cn=$G_GROUP)(memberUid=$G_USER))")" == "" ]; then
             gislab_error "
                 User '$G_USER' is not a member of a group '$G_GROUP'
             "
@@ -151,7 +151,7 @@ enable_sudo() {
     G_USER=$1
 
     # check if user is already in a group
-    if id $G_USER | grep -q "(gislabadmins)"; then
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$G_USER))")" != "" ]; then
         gislab_error "
             User '$G_USER' is already member of a superusers's group
         "
@@ -183,7 +183,7 @@ disable_sudo() {
     G_USER=$1
 
     # check if user is member of superuser's group
-    if ! id $G_USER | grep -q "(gislabadmins)"; then
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$G_USER))")" == "" ]; then
         gislab_error "
             User '$G_USER' is not a member of a superusers's group
         "
@@ -220,7 +220,7 @@ change_user_mail() {
     fi
 
     # forward system mails to new email address (if user is superuser)
-    if id $G_USER | grep -q "(gislabadmins)"; then
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$G_USER))")" != "" ]; then
         G_USER_EMAIL_CUR=$(get_user_email $G_USER)
         maildrop_exists=$(check_maildrop $G_USER_EMAIL_CUR)
 
@@ -271,7 +271,7 @@ EOL
 
 
 # check if user exists
-if ! id -u $GISLAB_USER > /dev/null 2>&1; then
+if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" == "" ]; then
     gislab_error "User '$GISLAB_USER' does not exists"
     exit 1
 fi
