@@ -14,6 +14,6 @@ START_HOURS_RANGE=1-4
 @monthly        15      cron.monthly nice run-parts --report /etc/cron.monthly
 
 # GIS.lab jobs
-1       120      gislab.daily       nice run-parts --report {{ GISLAB_INSTALL_JOBS_ROOT }}/daily
-7       120      gislab.weekly      nice run-parts --report {{ GISLAB_INSTALL_JOBS_ROOT }}/weekly
-@monthly        120      gislab.monthly nice run-parts --report {{ GISLAB_INSTALL_JOBS_ROOT }}/monthly
+1       120      gislab.daily       nice run-parts --report {{ GISLAB_PATH_JOBS }}/daily
+7       120      gislab.weekly      nice run-parts --report {{ GISLAB_PATH_JOBS }}/weekly
+@monthly        120      gislab.monthly nice run-parts --report {{ GISLAB_PATH_JOBS }}/monthly

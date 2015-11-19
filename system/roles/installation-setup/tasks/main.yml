@@ -7,7 +7,7 @@
 
 ### FACTS
 - name: Set GIS.lab installation root directory
-# system-wide path variable - can be used in Ansible and shell scripts
+  # system-wide path variable, can be used in Ansible and shell scripts
   set_fact:
     GISLAB_ROOT: /opt/gislab
 
@@ -73,23 +73,23 @@
 # path variables only for Ansible
 - name: Set temporary directory for this installation
   set_fact:
-    GISLAB_INSTALL_TMP_ROOT: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
+    GISLAB_PATH_TMP: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
 
 - name: Set GIS.lab account installation root directory
   set_fact:
-    GISLAB_INSTALL_ACCOUNTS_ROOT: "{{ GISLAB_ROOT }}/system/accounts"
+    GISLAB_PATH_ACCOUNTS: "{{ GISLAB_ROOT }}/system/accounts"
 
 - name: Set GIS.lab desktop client installation root directory
   set_fact:
-    GISLAB_INSTALL_CLIENTS_ROOT: "{{ GISLAB_ROOT }}/system/clients"
+    GISLAB_PATH_CLIENTS: "{{ GISLAB_ROOT }}/system/clients"
 
 - name: Set GIS.lab scheduled jobs installation root directory
   set_fact:
-    GISLAB_INSTALL_JOBS_ROOT: "{{ GISLAB_ROOT }}/system/jobs"
+    GISLAB_PATH_JOBS: "{{ GISLAB_ROOT }}/system/jobs"
 
 - name: Set GIS.lab cluster installation root directory
   set_fact:
-    GISLAB_INSTALL_CLUSTER_ROOT: "{{ GISLAB_ROOT }}/system/cluster"
+    GISLAB_PATH_CLUSTER: "{{ GISLAB_ROOT }}/system/cluster"
 
 
 - name: Detect current date and time

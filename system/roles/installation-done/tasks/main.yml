@@ -11,7 +11,7 @@
 
 - name: Remove temporary directory for this installation
   file:
-    dest: "{{ GISLAB_INSTALL_TMP_ROOT }}"
+    dest: "{{ GISLAB_PATH_TMP }}"
     state: absent
 
 

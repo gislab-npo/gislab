@@ -3,4 +3,4 @@ start on runlevel [2345]
 stop on runlevel [06]
 respawn
 respawn limit 10 5
-exec {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/www/gunicorn.sh
+exec {{ GISLAB_PATH_CLIENTS }}/web/www/gunicorn.sh

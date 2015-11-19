@@ -19,12 +19,12 @@
 
 - name: Purge GIS.lab cluster installation directory
   file:
-    dest: "{{ GISLAB_INSTALL_CLUSTER_ROOT }}"
+    dest: "{{ GISLAB_PATH_CLUSTER }}"
     state: absent
 
 - name: Prepare directory for cluster installation
   file:
-    path: "{{ GISLAB_INSTALL_CLUSTER_ROOT }}"
+    path: "{{ GISLAB_PATH_CLUSTER }}"
     state: directory
 
 
@@ -47,13 +47,13 @@
 
 - name: Prepare directory for cluster handlers
   file:
-    path: "{{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers"
+    path: "{{ GISLAB_PATH_CLUSTER }}/handlers"
     state: directory
 
 - name: Install Serf handlers scripts
   copy:
     src: static/serf/
-    dest: "{{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers"
+    dest: "{{ GISLAB_PATH_CLUSTER }}/handlers"
     mode: 0774
   notify:
   - service serf-agent restart

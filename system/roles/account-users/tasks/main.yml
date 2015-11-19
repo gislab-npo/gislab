@@ -58,23 +58,23 @@
 ### ACCOUNT SKELETON
 - name: Purge GIS.lab account installation directory
   file:
-    dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}"
+    dest: "{{ GISLAB_PATH_ACCOUNTS }}"
     state: absent
 
 
 - name: Prepare directory for user accounts skeleton
   file:
-    path: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel"
+    path: "{{ GISLAB_PATH_ACCOUNTS }}/skel"
     state: directory
 
 - name: Copy basic user account skeleton files
   shell: >
-    cp -a /etc/skel/.[a-zA-Z0-9]* {{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel
+    cp -a /etc/skel/.[a-zA-Z0-9]* {{ GISLAB_PATH_ACCOUNTS }}/skel
 
 
 - name: Configure shell prompt
   lineinfile:
-    dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.bashrc"
+    dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.bashrc"
     regexp: "^PS1=.*h.GIS.lab(.*).*$"
     line: 'PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "'
     state: present
@@ -82,12 +82,12 @@
 
 - name: Prepare .config directory in skeleton
   file:
-    path: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.config"
+    path: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.config"
     state: directory
 
 - name: Prepare autostart directory in skeleton
   file:
-    path: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.config/autostart"
+    path: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.config/autostart"
     state: directory
 
 
@@ -98,7 +98,7 @@
   with_items:
     - {
         src: bookmarks/gtk-bookmarks.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.gtk-bookmarks"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.gtk-bookmarks"
       }
 
 
@@ -109,7 +109,7 @@
   with_items:
     - {
         src: conky/conky.desktop.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.config/autostart/conky.desktop"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.config/autostart/conky.desktop"
       }
 
 
@@ -120,13 +120,13 @@
   with_items:
     - {
         src: mutt/muttrc.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.muttrc"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.muttrc"
       }
 
 
 - name: Prepare Pidgin directory in skeleton
   file:
-    path: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.purple"
+    path: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.purple"
     state: directory
 
 - name: Install Pidgin configuration
@@ -136,11 +136,11 @@
   with_items:
     - {
         src: pidgin/accounts.xml.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.purple/accounts.xml"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.purple/accounts.xml"
       }
     - {
         src: pidgin/blist.xml.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.purple/blist.xml"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.purple/blist.xml"
       }
 
 
@@ -151,7 +151,7 @@
   with_items:
     - {
         src: pgadmin3/pgadmin3.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.pgadmin3"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.pgadmin3"
       }
 
 
@@ -160,9 +160,9 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.config/QGIS"
-    - "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.qgis2"
-    - "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.qgis2/composer_templates"
+    - "{{ GISLAB_PATH_ACCOUNTS }}/skel/.config/QGIS"
+    - "{{ GISLAB_PATH_ACCOUNTS }}/skel/.qgis2"
+    - "{{ GISLAB_PATH_ACCOUNTS }}/skel/.qgis2/composer_templates"
 
 - name: Install QGIS configuration
   template:
@@ -171,19 +171,19 @@
   with_items:
     - {
         src: qgis/QGIS2.conf.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.config/QGIS/QGIS2.conf"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.config/QGIS/QGIS2.conf"
       }
     - {
         src: qgis/composer_templates/north-arrow.svg.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.qgis2/composer_templates/north-arrow.svg"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.qgis2/composer_templates/north-arrow.svg"
       }
     - {
         src: qgis/composer_templates/print-template-a4.qpt.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.qgis2/composer_templates/print-template-a4.qpt"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.qgis2/composer_templates/print-template-a4.qpt"
       }
     - {
         src: qgis/composer_templates/print-template-a3.qpt.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.qgis2/composer_templates/print-template-a3.qpt"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.qgis2/composer_templates/print-template-a3.qpt"
       }
 
 
@@ -192,8 +192,8 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.grass7"
-    - "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.grassdata"
+    - "{{ GISLAB_PATH_ACCOUNTS }}/skel/.grass7"
+    - "{{ GISLAB_PATH_ACCOUNTS }}/skel/.grassdata"
 
 - name: Install GRASS configuration
   template:
@@ -202,7 +202,7 @@
   with_items:
     - {
         src: grass/rc.j2,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.grass7/rc"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.grass7/rc"
       }
 
 - name: Install GRASS locations
@@ -213,7 +213,7 @@
   with_items:
     - {
         src: static/grassdata/,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/.grassdata"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.grassdata"
       }
 
 
@@ -226,21 +226,21 @@
   with_items:
     - {
         src: /mnt/repository,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/Repository"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/Repository"
       }
     - {
         src: /mnt/barrel,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/Barrel"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/Barrel"
       }
     - {
         src: /mnt/publish,
-        dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/Publish"
+        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/Publish"
       }
 
 - name: Add symlinks to fast, in-memory file system
   file:
     src: /mnt/booster
-    dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/skel/Booster"
+    dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/Booster"
     state: link
     force: yes
 
@@ -255,13 +255,13 @@
 ### ACCOUNT HOOKS
 - name: Prepare directory for account hooks
   file:
-    path: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/hooks"
+    path: "{{ GISLAB_PATH_ACCOUNTS }}/hooks"
     state: directory
 
 - name: Install account hooks
   copy:
     src: static/hooks/
-    dest: "{{ GISLAB_INSTALL_ACCOUNTS_ROOT }}/hooks"
+    dest: "{{ GISLAB_PATH_ACCOUNTS }}/hooks"
     mode: 0755
 
 

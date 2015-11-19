@@ -41,7 +41,7 @@
       GISLAB_VERSION="{{ GISLAB_VERSION }}"
     dest: /etc/gislab_version
 
-- name: Create custom GIS.lab directories structure
+- name: Create GIS.lab directories structure
   file:
     path: "{{ item }}"
     state: directory
@@ -60,7 +60,7 @@
     - /storage/cache/packages/pip
     - /storage/home
     - /storage/log
-    - "{{ GISLAB_INSTALL_TMP_ROOT }}"
+    - "{{ GISLAB_PATH_TMP }}"
 
 - name: Set safe permissions for /etc/gislab directory
   file:
@@ -267,7 +267,7 @@
 ### JOBS
 - name: Purge installation directory for scheduled jobs
   file:
-    dest: "{{ GISLAB_INSTALL_JOBS_ROOT }}"
+    dest: "{{ GISLAB_PATH_JOBS }}"
     state: absent
 
 - name: Create installation directories for scheduled jobs
@@ -275,9 +275,9 @@
     dest: "{{ item }}"
     state: directory
   with_items:
-    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/daily"
-    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/weekly"
-    - "{{ GISLAB_INSTALL_JOBS_ROOT }}/monthly"
+    - "{{ GISLAB_PATH_JOBS }}/daily"
+    - "{{ GISLAB_PATH_JOBS }}/weekly"
+    - "{{ GISLAB_PATH_JOBS }}/monthly"
 
 # TODO: move also other cron jobs to anacron (GIS.lab Web cleanup, ...)
 - name: Configure jobs scheduler
@@ -321,7 +321,7 @@
 - name: Install daily backup job
   copy:
     src: static/bin/gislab-daily-backup
-    dest: "{{ GISLAB_INSTALL_JOBS_ROOT }}/daily/"
+    dest: "{{ GISLAB_PATH_JOBS }}/daily/"
     mode: 0775
 
 

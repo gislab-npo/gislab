@@ -5,9 +5,9 @@ respawn
 respawn limit 10 5
 
 script
-. {{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/virtualenv/http-boot/bin/activate
-export PYTHONPATH={{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/http-boot
-{{ GISLAB_INSTALL_CLIENTS_ROOT }}/desktop/virtualenv/http-boot/bin/gunicorn \
+. {{ GISLAB_PATH_CLIENTS }}/desktop/virtualenv/http-boot/bin/activate
+export PYTHONPATH={{ GISLAB_PATH_CLIENTS }}/desktop/http-boot
+{{ GISLAB_PATH_CLIENTS }}/desktop/virtualenv/http-boot/bin/gunicorn \
   --name gislab-http-boot \
   --bind 0.0.0.0:6700 \
   --user www-data \
