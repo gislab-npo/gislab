@@ -5,8 +5,7 @@
 
 IFS=', ' read -a maclist <<< "$1"
 for mac in "${maclist[@]}"; do
-	sudo etherwake -D $mac
+    sudo etherwake -D $mac
 done
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:
