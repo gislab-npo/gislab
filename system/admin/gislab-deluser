@@ -87,10 +87,10 @@ fi
 
 # manunaly delete user from additional groups
 # (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
-# TODO: use ldapsearch for getting list of groups
-GISLAB_USER_GROUPS=$(id -nG $GISLAB_USER \
-    | grep '[[:space:]]' \
-    | sed -r -e 's/^[^ ]* //' -e 's/[[:space:]]+/,/g')
+GISLAB_USER_GROUPS="$($lds "(&(objectClass=posixGroup)(memberUid=$GISLAB_USER))" memberUid \
+    | sed -n 's/^dn: cn=\(.*\),ou=.*$/\1/p' \
+    | tr '\n' ',' \
+    | sed 's/,$//')"
 
 if [ -n "$GISLAB_USER_GROUPS" ]; then
     gislab-moduser -A $GISLAB_USER_GROUPS $GISLAB_USER
