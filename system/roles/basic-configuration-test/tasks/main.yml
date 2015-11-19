@@ -66,6 +66,7 @@
   changed_when: False
 
 
+
 # gislab-adduser
 # ordinary user account
 - name: Create ordinary test user account
@@ -199,12 +200,11 @@
   ignore_errors: yes
   changed_when: False
 
-# gislab-listusers - list group members
 - name: Test if ordinary user is member of test user group
   shell: >
-    gislab-listusers
-    -g testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
-    | grep '^uid: test{{ GISLAB_TEST_UNIQUE_STRING }}$'
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "(&(objectClass=posixGroup)(cn=testgroup{{ GISLAB_TEST_UNIQUE_STRING }})(memberUid=test{{ GISLAB_TEST_UNIQUE_STRING }}))"
+    | grep '^memberUid: test{{ GISLAB_TEST_UNIQUE_STRING }}$'
   ignore_errors: yes
   changed_when: False
 
@@ -219,8 +219,52 @@
 
 - name: Test if ordinary user was removed from supplementary test user group
   shell: >
-    ! gislab-listusers -g testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
-    | grep test{{ GISLAB_TEST_UNIQUE_STRING }}
+    ! ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "(&(objectClass=posixGroup)(cn=testgroup{{ GISLAB_TEST_UNIQUE_STRING }})(memberUid=test{{ GISLAB_TEST_UNIQUE_STRING }}))"
+    | grep '^memberUid: test{{ GISLAB_TEST_UNIQUE_STRING }}$'
+  ignore_errors: yes
+  changed_when: False
+
+# gislab-moduser - add user to superuser's group
+- name: Add ordinary user to superuser's group
+  shell: >
+    gislab-moduser -s test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if ordinary user was added to superuser's group
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=test{{ GISLAB_TEST_UNIQUE_STRING }}))"
+    | grep '^memberUid: test{{ GISLAB_TEST_UNIQUE_STRING }}'
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if adding ordinary user again to superuser's group will be correctly denied
+  shell: >
+    gislab-moduser -s test{{ GISLAB_TEST_UNIQUE_STRING }}
+    | grep "User 'test{{ GISLAB_TEST_UNIQUE_STRING }}' is already member of a superuser's group"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Remove ordinary user from superuser's group
+  shell: >
+    gislab-moduser -S test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if removing ordinary user again from superuser's group will be correctly denied
+  shell: >
+    gislab-moduser -S test{{ GISLAB_TEST_UNIQUE_STRING }}
+    | grep "User 'test{{ GISLAB_TEST_UNIQUE_STRING }}' is not a member of a superuser's group"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if ordinary user was removed from superuser's group
+  shell: >
+    ! ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=test{{ GISLAB_TEST_UNIQUE_STRING }}))"
+    | grep '^memberUid: test{{ GISLAB_TEST_UNIQUE_STRING }}'
   ignore_errors: yes
   changed_when: False
 
@@ -238,6 +282,21 @@
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
     "uid=test{{ GISLAB_TEST_UNIQUE_STRING }}" mail
     | grep -q 'test{{ GISLAB_TEST_UNIQUE_STRING }}@test.lab'
+  ignore_errors: yes
+  changed_when: False
+
+# gislab-moduser - change description
+- name: Change ordinary user description
+  shell: >
+    gislab-moduser -d "Test user account {{ GISLAB_TEST_UNIQUE_STRING }}" test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if user description has been changed
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "(&(objectClass=posixAccount)(uid=test{{ GISLAB_TEST_UNIQUE_STRING }}))" description
+    | grep '^description: Test user account {{ GISLAB_TEST_UNIQUE_STRING }}$'
   ignore_errors: yes
   changed_when: False
 
@@ -313,6 +372,22 @@
     WHERE pg_user.usename='testsu{{ GISLAB_TEST_UNIQUE_STRING }}'
     AND rolname='gislabadmins'"
     | grep 1
+  ignore_errors: yes
+  changed_when: False
+
+
+# gislab-listusers|groups
+- name: Test 'gislab-listusers' admin tool
+  shell: >
+    gislab-listusers
+    | grep 'dn: uid=test{{ GISLAB_TEST_UNIQUE_STRING }},ou=People,dc=gis,dc=lab'
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test 'gislab-listgroups' admin tool
+  shell: >
+    gislab-listgroups
+    | grep 'dn: cn=testgroup{{ GISLAB_TEST_UNIQUE_STRING }},ou=Groups,dc=gis,dc=lab'
   ignore_errors: yes
   changed_when: False
 
