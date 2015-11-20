@@ -4,7 +4,7 @@
 #
 # Install and configure GIS.lab's internal DNS records 'gis.lab'.
 #
-# Logging: /storage/log/syslog
+# Logging: syslog
 
 
 - name: Install packages

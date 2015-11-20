@@ -4,7 +4,7 @@
 #
 # Install OWS services load balancer.
 #
-# Logging: /storage/log/syslog
+# Logging: syslog
 
 
 - name: Install packages

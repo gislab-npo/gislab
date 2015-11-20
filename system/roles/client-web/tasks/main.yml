@@ -5,9 +5,9 @@
 # Install and configure GIS.lab Web client.
 #
 # Logging:
-#   production: /storage/log/syslog /storage/log/nginx-error.log
-#   debug:      /storage/log/nginx-access.log /storage/log/nginx-error.log
-#               /storage/log/syslog
+#   production: syslog, /storage/log/nginx-error.log
+#   debug:      /storage/log/nginx-access.log, /storage/log/nginx-error.log
+#               syslog
 
 
 - name: Install packages
@@ -31,7 +31,7 @@
 
 - name: Create GIS.lab Web client root directory
   file:
-    dest: "{{ GISLAB_PATH_CLIENTS }}/web"
+    dest: "{{ root_dir }}"
     state: directory
 
 
@@ -77,9 +77,9 @@
 - name: Install GIS.lab Web with dependencies
   pip:
     name: "{{ GISLAB_PATH_TMP }}/gislab-web"
-    virtualenv: "{{ GISLAB_PATH_CLIENTS }}/web/virtualenv/gislab-web"
+    virtualenv: "{{ root_dir }}/virtualenv/gislab-web"
     virtualenv_site_packages: yes
-    extra_args: "--download-cache=/storage/cache/packages/pip"
+    extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
     state: present
   notify:
     - service gislab-web restart
@@ -102,51 +102,51 @@
 
 - name: Create GIS.lab Web project deployment directory
   file:
-    path: "{{ GISLAB_PATH_CLIENTS }}/web/www"
+    path: "{{ root_dir }}/www"
     state: directory
 
 - name: Deploy GIS.lab Web project
 # we do not use Ansible django_manage module because of missing 'template' option
   shell: >
-    source {{ GISLAB_PATH_CLIENTS }}/web/virtualenv/gislab-web/bin/activate
+    source {{ root_dir }}/virtualenv/gislab-web/bin/activate
     &&
     django-admin.py startproject
     --template={{ GISLAB_PATH_TMP }}/gislab-web/webgis/conf/project_template/
-    djproject {{ GISLAB_PATH_CLIENTS }}/web/www
+    djproject {{ root_dir }}/www
   args:
     executable: /bin/bash
-    creates: "{{ GISLAB_PATH_CLIENTS }}/web/www/djproject/settings.py"
+    creates: "{{ root_dir }}/www/djproject/settings.py"
   notify:
     - service gislab-web restart
 
 - name: Install secrets
   template:
     src: gislab-web/settings_secret.py.j2
-    dest: "{{ GISLAB_PATH_CLIENTS }}/web/www/djproject/settings_secret.py"
+    dest: "{{ root_dir }}/www/djproject/settings_secret.py"
   notify:
     - service gislab-web restart
 
 - name: Sync database
   django_manage:
     command: syncdb
-    app_path: "{{ GISLAB_PATH_CLIENTS }}/web/www"
+    app_path: "{{ root_dir }}/www"
     settings: djproject.settings
-    virtualenv: "{{ GISLAB_PATH_CLIENTS }}/web/virtualenv/gislab-web"
+    virtualenv: "{{ root_dir }}/virtualenv/gislab-web"
   notify:
     - service gislab-web restart
 
 - name: Collect static files
   django_manage:
     command: collectstatic
-    app_path: "{{ GISLAB_PATH_CLIENTS }}/web/www"
+    app_path: "{{ root_dir }}/www"
     settings: djproject.settings
-    virtualenv: "{{ GISLAB_PATH_CLIENTS }}/web/virtualenv/gislab-web"
+    virtualenv: "{{ root_dir }}/virtualenv/gislab-web"
   notify:
     - service gislab-web restart
 
 - name: Create media directory
   file:
-    path: /storage/applications/gislab-web/media
+    path: "{{ GISLAB_PATH_APPLICATIONS }}/gislab-web/media"
     state: directory
     owner: www-data
     group: www-data
@@ -178,7 +178,7 @@
 - name: Install Gunicorn startup script
   template:
     src: gunicorn/gunicorn.sh.j2
-    dest: "{{ GISLAB_PATH_CLIENTS }}/web/www/gunicorn.sh"
+    dest: "{{ root_dir }}/www/gunicorn.sh"
     mode: 0755
   notify:
     - service gislab-web restart
@@ -242,21 +242,21 @@
 
 - name: Create Web plugin directory
   file:
-    dest: "{{ GISLAB_PATH_CLIENTS }}/web/qgis-plugin"
+    dest: "{{ root_dir }}/qgis-plugin"
     state: directory
 
 - name: Install GIS.lab Web plugin package
   shell: "{{ item }}"
   with_items:
     - mv {{ GISLAB_PATH_TMP }}/gislab-web-plugin/gislab_web/gislab_web.zip
-         {{ GISLAB_PATH_CLIENTS }}/web/qgis-plugin/
+         {{ root_dir }}/qgis-plugin/
     - cp {{ GISLAB_PATH_TMP }}/gislab-web-plugin/gislab_web/icon.png
-         {{ GISLAB_PATH_CLIENTS }}/web/qgis-plugin/
+         {{ root_dir }}/qgis-plugin/
 
 - name: Install GIS.lab Web plugin repository file
   template:
     src: gislab-web-plugin/plugins.xml.j2
-    dest: "{{ GISLAB_PATH_CLIENTS }}/web/qgis-plugin/plugins.xml"
+    dest: "{{ root_dir }}/qgis-plugin/plugins.xml"
 
 
 - name: Configure Nginx virtualhost qgis.gis.lab
@@ -279,7 +279,7 @@
 - name: Activate GIS.lab Web error logs checking
   lineinfile:
     dest: /etc/logcheck/logcheck.logfiles
-    line: /storage/log/nginx-error.log
+    line: "{{ GISLAB_PATH_LOG }}/nginx-error.log"
     state: present
 
 

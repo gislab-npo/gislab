@@ -2,6 +2,7 @@
 
 set -e
 
+source /etc/gislab_version
 source $GISLAB_ROOT/system/functions.sh
 
 
@@ -46,7 +47,7 @@ if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" == "" ]; then
     gislab_error "User '$GISLAB_USER' does not exists"
 fi
 
-if [ -f /storage/home/${GISLAB_USER}/.gislab/session.lock ]; then
+if [ -f $GISLAB_PATH_HOME/${GISLAB_USER}/.gislab/session.lock ]; then
     gislab_error "GIS.lab user '$GISLAB_USER' is still running session"
 fi
 
@@ -70,9 +71,9 @@ export GISLAB_USER
 
 
 # execute before-delete hooks
-if [ -d $GISLAB_ROOT/custom/accounts/before-delete ]; then
+if [ -d $GISLAB_PATH_CUSTOM/accounts/before-delete ]; then
     gislab_info "Running 'before-delete' account hooks"
-    run-parts $GISLAB_ROOT/custom/accounts/before-delete || true
+    run-parts $GISLAB_PATH_CUSTOM/accounts/before-delete || true
 fi
 
 
@@ -101,13 +102,13 @@ ldapdeleteuser $GISLAB_USER
 
 
 # run deluser hook
-$GISLAB_ROOT/system/accounts/hooks/deluser.sh $GISLAB_USER
+$GISLAB_PATH_SYSTEM/accounts/hooks/deluser.sh $GISLAB_USER
 
 
 # execute after-delete hooks
-if [ -d $GISLAB_ROOT/custom/accounts/after-delete ]; then
+if [ -d $GISLAB_PATH_CUSTOM/accounts/after-delete ]; then
     gislab_info "Running 'after-delete' account hooks"
-    run-parts $GISLAB_ROOT/custom/accounts/after-delete || true
+    run-parts $GISLAB_PATH_CUSTOM/accounts/after-delete || true
 fi
 
 

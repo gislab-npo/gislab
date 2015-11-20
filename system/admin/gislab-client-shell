@@ -47,14 +47,14 @@ fi
 
 
 # sanity checks
-if [ ! -f "$GISLAB_ROOT/system/clients/desktop/root/etc/gislab_version" ]; then
+if [ ! -f "$GISLAB_PATH_SYSTEM/clients/desktop/root/etc/gislab_version" ]; then
     gislab_error "
         GIS.lab client chroot doesn't exist.
         GISLAB_SUITE must be set to 'lab' to build client image
     "
 fi
 
-if [ -f "$GISLAB_ROOT/system/clients/desktop/root/proc/version" ]; then
+if [ -f "$GISLAB_PATH_SYSTEM/clients/desktop/root/proc/version" ]; then
     gislab_error "
         Only one active GIS.lab client chroot session is allowed
     "
@@ -62,34 +62,34 @@ fi
 
 
 function pre_chroot {
-    chroot $GISLAB_ROOT/system/clients/desktop/root \
+    chroot $GISLAB_PATH_SYSTEM/clients/desktop/root \
         mount -t devpts -o rw,noexec,nosuid,gid=5,mode=620 devpts /dev/pts
-    chroot $GISLAB_ROOT/system/clients/desktop/root \
+    chroot $GISLAB_PATH_SYSTEM/clients/desktop/root \
         mount -t proc proc /proc
     mount -o bind \
-        /storage/cache/packages/apt \
-        $GISLAB_ROOT/system/clients/desktop/root/var/cache/apt
+        $GISLAB_PATH_CACHE/packages/apt \
+        $GISLAB_PATH_SYSTEM/clients/desktop/root/var/cache/apt
 
     # policy-rc.d
-    cat <<EOF > $GISLAB_ROOT/system/clients/desktop/root/usr/sbin/policy-rc.d
+    cat <<EOF > $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/sbin/policy-rc.d
 #!/bin/sh
 #
 
 exit 101
 EOF
-    chmod +x $GISLAB_ROOT/system/clients/desktop/root/usr/sbin/policy-rc.d
+    chmod +x $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/sbin/policy-rc.d
 
     # start-stop-daemon
     mv -f \
-        $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon \
-        $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon.real
-    cat <<EOF > $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon
+        $GISLAB_PATH_SYSTEM/clients/desktop/root/sbin/start-stop-daemon \
+        $GISLAB_PATH_SYSTEM/clients/desktop/root/sbin/start-stop-daemon.real
+    cat <<EOF > $GISLAB_PATH_SYSTEM/clients/desktop/root/sbin/start-stop-daemon
 #!/bin/sh
 #
 
 exit 0
 EOF
-    chmod +x $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon
+    chmod +x $GISLAB_PATH_SYSTEM/clients/desktop/root/sbin/start-stop-daemon
 
     # launch interactive shell
     if [ "$INTERCTIVE" == "yes" ]; then
@@ -104,14 +104,14 @@ EOF
 function post_chroot {
     trap - 0 HUP INT QUIT KILL SEGV PIPE TERM
 
-    chroot $GISLAB_ROOT/system/clients/desktop/root umount /dev/pts
-    chroot $GISLAB_ROOT/system/clients/desktop/root umount /proc
-    umount $GISLAB_ROOT/system/clients/desktop/root/var/cache/apt
+    chroot $GISLAB_PATH_SYSTEM/clients/desktop/root umount /dev/pts
+    chroot $GISLAB_PATH_SYSTEM/clients/desktop/root umount /proc
+    umount $GISLAB_PATH_SYSTEM/clients/desktop/root/var/cache/apt
 
-    rm -f $GISLAB_ROOT/system/clients/desktop/root/usr/sbin/policy-rc.d
+    rm -f $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/sbin/policy-rc.d
     mv -f \
-        $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon.real \
-        $GISLAB_ROOT/system/clients/desktop/root/sbin/start-stop-daemon
+        $GISLAB_PATH_SYSTEM/clients/desktop/root/sbin/start-stop-daemon.real \
+        $GISLAB_PATH_SYSTEM/clients/desktop/root/sbin/start-stop-daemon
 
     if [ "$INTERCTIVE" == "yes" ]; then
         gislab_info "
@@ -124,6 +124,6 @@ function post_chroot {
 
 pre_chroot
 trap "post_chroot" 0 HUP INT QUIT KILL SEGV PIPE TERM
-eval chroot $GISLAB_ROOT/system/clients/desktop/root $COMMAND
+eval chroot $GISLAB_PATH_SYSTEM/clients/desktop/root $COMMAND
 
 # vim: set ts=8 sts=4 sw=4 et:

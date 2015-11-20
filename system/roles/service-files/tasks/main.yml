@@ -19,7 +19,7 @@
 # repository - readable for all, writable only for gislabadmins
 - name: Create 'repository' mount directory
   file:
-    path: /storage/repository
+    path: "{{ GISLAB_PATH_STORAGE }}/repository"
     state: directory
     owner: root
     group: gislabadmins
@@ -28,7 +28,7 @@
 # publish - readable for file owners and www-data, writable for file owners
 - name: Create 'publish' mount directory
   file:
-    path: /storage/publish
+    path: "{{ GISLAB_PATH_STORAGE }}/publish"
     state: directory
     owner: root
     group: root
@@ -37,7 +37,7 @@
 # barrel - readable and writable for all gislabusers
 - name: Create 'barrel' mount directory
   file:
-    path: /storage/barrel
+    path: "{{ GISLAB_PATH_STORAGE }}/barrel"
     state: directory
     owner: root
     group: nogroup
@@ -64,13 +64,13 @@
 - name: Mount shares also to /mnt directory to keep the same paths as on clients
   lineinfile:
     dest: /etc/fstab
-    line: "/storage  /mnt  none  bind  0  0"
+    line: "{{ GISLAB_PATH_STORAGE }}  /mnt  none  bind  0  0"
     state: present
 
 - name: Mount /mnt
   mount:
     name: /mnt
-    src: /storage
+    src: "{{ GISLAB_PATH_STORAGE }}"
     fstype: none
     opts: bind
     state: mounted

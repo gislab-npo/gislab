@@ -1,0 +1,3 @@
+---
+
+root_dir_accounts: "{{ GISLAB_PATH_SYSTEM }}/accounts"

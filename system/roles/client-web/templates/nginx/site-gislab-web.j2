@@ -1,5 +1,5 @@
 upstream gislab-web {
-    server unix:{{ GISLAB_PATH_CLIENTS }}/web/www/gunicorn.sock fail_timeout=0;
+    server unix:{{ root_dir }}/www/gunicorn.sock fail_timeout=0;
 }
 
 server {
@@ -12,7 +12,7 @@ server {
     ssl_certificate_key /etc/nginx/ssl/gislab-web.key;
 
     location /static/ {
-        alias {{ GISLAB_PATH_CLIENTS }}/web/www/static/;
+        alias {{ root_dir }}/www/static/;
 
         expires 1h;
         add_header Pragma public;
@@ -20,7 +20,7 @@ server {
     }
 
     location /media/ {
-        alias /storage/applications/gislab-web/media/;
+        alias {{ GISLAB_PATH_APPLICATIONS }}/gislab-web/media/;
 
         expires 1h;
         add_header Pragma public;
@@ -28,7 +28,7 @@ server {
     }
 
     location ~ ^/tile/(?<tile_path>.*)$ {
-        alias /storage/applications/gislab-web/media/cache/;
+        alias {{ GISLAB_PATH_APPLICATIONS }}/gislab-web/media/cache/;
 
         add_header X-Static super;
         expires 365d;
@@ -39,7 +39,7 @@ server {
     }
 
     location ~ ^/legend/(?<legend_path>.*)$ {
-        alias /storage/applications/gislab-web/media/cache/;
+        alias {{ GISLAB_PATH_APPLICATIONS }}/gislab-web/media/cache/;
 
         add_header X-Static super;
         expires 365d;
@@ -68,6 +68,6 @@ server {
 
     error_page 500 502 503 504 /500.html;
     location = /500.html {
-        root {{ GISLAB_PATH_CLIENTS }}/web/www/static/;
+        root {{ root_dir }}/www/static/;
     }
 }

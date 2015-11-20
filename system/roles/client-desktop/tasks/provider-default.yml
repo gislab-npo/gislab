@@ -55,8 +55,8 @@
 - name: Install syslinux files
   command: >
     cp
-    {{ GISLAB_PATH_CLIENTS }}/desktop/root{{ item.src }}
-    {{ GISLAB_PATH_CLIENTS }}/desktop/root{{ item.dest }}
+    {{ root_dir }}/root{{ item.src }}
+    {{ root_dir }}/root{{ item.dest }}
   with_items:
     - {
         src: "/usr/lib/syslinux/pxelinux.0",
@@ -69,13 +69,13 @@
 
 - name: Create PXE boot configuration directory
   file:
-    dest: "{{ GISLAB_PATH_CLIENTS }}/desktop/root/boot/pxelinux.cfg"
+    dest: "{{ root_dir }}/root/boot/pxelinux.cfg"
     state: directory
 
 - name: Install PXE configuration file
   template:
     src: pxe-boot/gislab.j2
-    dest: "{{ GISLAB_PATH_CLIENTS }}/desktop/root/boot/pxelinux.cfg/default"
+    dest: "{{ root_dir }}/root/boot/pxelinux.cfg/default"
 
 
 # HTTP boot (alternative method using iPXE)
@@ -102,8 +102,8 @@
   pip:
     name: gunicorn
     version: 19.1.1
-    virtualenv: "{{ GISLAB_PATH_CLIENTS }}/desktop/virtualenv/http-boot"
-    extra_args: "--download-cache=/storage/cache/packages/pip"
+    virtualenv: "{{ root_dir }}/virtualenv/http-boot"
+    extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
     virtualenv_site_packages: yes
     state: present
   notify:
@@ -111,13 +111,13 @@
 
 - name: Create directory for HTTP boot script
   file:
-    dest: "{{ GISLAB_PATH_CLIENTS }}/desktop/http-boot"
+    dest: "{{ root_dir }}/http-boot"
     state: directory
 
 - name: Install HTTP boot script
   copy:
     src: static/http-boot/gislab-http-boot.py
-    dest: "{{ GISLAB_PATH_CLIENTS }}/desktop/http-boot/gislab-http-boot.py"
+    dest: "{{ root_dir }}/http-boot/gislab-http-boot.py"
   notify:
     - service gislab-http-boot restart
 
@@ -145,7 +145,7 @@
 
 - name: Publish GIS.lab client build stamp file
   file:
-    src: "{{ GISLAB_PATH_CLIENTS }}/desktop/image/gislab_desktop.buildstamp"
+    src: "{{ root_dir }}/image/gislab_desktop.buildstamp"
     dest: /var/www/default/gislab_desktop.buildstamp
     state: link
     force: yes

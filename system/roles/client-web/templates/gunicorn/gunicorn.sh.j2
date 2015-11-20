@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME="gislab-web"
-WWW_ROOT={{ GISLAB_PATH_CLIENTS }}/web/www
-VIRTUALENV={{ GISLAB_PATH_CLIENTS }}/web/virtualenv/gislab-web
+WWW_ROOT={{ root_dir }}/www
+VIRTUALENV={{ root_dir }}/virtualenv/gislab-web
 SOCKET=$WWW_ROOT/gunicorn.sock
 USER=www-data
 GROUP=www-data

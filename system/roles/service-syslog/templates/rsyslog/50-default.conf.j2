@@ -17,6 +17,6 @@
 :msg, contains, "DHCPINFORM from" ~
 
 
-*.*;kern.none                   -/storage/log/syslog
-kern.*                          -/storage/log/kern.log
+*.*;kern.none                   -{{ GISLAB_PATH_LOG }}/syslog
+kern.*                          -{{ GISLAB_PATH_LOG }}/kern.log
 *.emerg                         :omusrmsg:*

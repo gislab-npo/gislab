@@ -33,7 +33,7 @@ done
 
 
 # sanity checks
-if [ -f "$GISLAB_ROOT/system/clients/desktop/root/proc/version" ]; then
+if [ -f "$GISLAB_PATH_SYSTEM/clients/desktop/root/proc/version" ]; then
     gislab_error "
         GIS.lab client chroot session is active.
         Exit from it before running this command
@@ -48,28 +48,28 @@ fi
 
 GISLAB_PROVIDER="${GISLAB_PROVIDER:-default}"
 
-IMAGE_FILE=$GISLAB_ROOT/system/clients/desktop/image/gislab.img
+IMAGE_FILE=$GISLAB_PATH_SYSTEM/clients/desktop/image/gislab.img
 IMAGE_BUILDSTAMP=$(date +%s)
-IMAGE_BUILDSTAMP_FILE=$GISLAB_ROOT/system/clients/desktop/image/gislab_desktop.buildstamp
+IMAGE_BUILDSTAMP_FILE=$GISLAB_PATH_SYSTEM/clients/desktop/image/gislab_desktop.buildstamp
 
 
 # install image version file in to client chroot
-echo "$IMAGE_BUILDSTAMP" > $GISLAB_ROOT/system/clients/desktop/root/etc/gislab_desktop.buildstamp
+echo "$IMAGE_BUILDSTAMP" > $GISLAB_PATH_SYSTEM/clients/desktop/root/etc/gislab_desktop.buildstamp
 
 
 # create directory for image
-mkdir -p $GISLAB_ROOT/system/clients/desktop/image
+mkdir -p $GISLAB_PATH_SYSTEM/clients/desktop/image
 
 
 if [ "$GISLAB_PROVIDER" == "aws" ]; then
     ### Build GIS.lab AWS client image ###
 
     # create temporary mount dir for image
-    TEMP_MNT_DIR="$GISLAB_ROOT/system/clients/desktop/mount-client-image-$GISLAB_INSTALL_UNIQUE_STRING"
+    TEMP_MNT_DIR="$GISLAB_PATH_SYSTEM/clients/desktop/mount-client-image-$GISLAB_INSTALL_UNIQUE_STRING"
     mkdir $TEMP_MNT_DIR
 
     # calculate the size of image = client root size + 500MB
-    ROOT_SIZE=$(du -sm $GISLAB_ROOT/system/clients/desktop/root | cut -f 1)
+    ROOT_SIZE=$(du -sm $GISLAB_PATH_SYSTEM/clients/desktop/root | cut -f 1)
     IMAGE_SIZE=$(echo $(($ROOT_SIZE+500)))
 
     dd if=/dev/zero of=$IMAGE_FILE bs=1M count=$IMAGE_SIZE
@@ -79,7 +79,7 @@ if [ "$GISLAB_PROVIDER" == "aws" ]; then
     mount -o loop,rw $IMAGE_FILE $TEMP_MNT_DIR
 
     # copy GIS.lab client root to AWS client image
-    rsync -a $GISLAB_ROOT/system/clients/desktop/root/ $TEMP_MNT_DIR/
+    rsync -a $GISLAB_PATH_SYSTEM/clients/desktop/root/ $TEMP_MNT_DIR/
 
     # unmount GIS.lab AWS client image
     umount $TEMP_MNT_DIR
@@ -92,7 +92,7 @@ else
     TFTP_DIR=/var/lib/tftpboot/gislab
 
     # copy /boot directory from client to server TFTP directory
-    cp -a $GISLAB_ROOT/system/clients/desktop/root/boot/. $TFTP_DIR/
+    cp -a $GISLAB_PATH_SYSTEM/clients/desktop/root/boot/. $TFTP_DIR/
 
     # set permissions
     find $TFTP_DIR -mindepth 1 -type d -exec chmod 0755 "{}" \;
@@ -110,7 +110,7 @@ else
     rm -f $IMAGE_FILE.tmp
 
     $nice $ionice \
-        mksquashfs $GISLAB_ROOT/system/clients/desktop/root $IMAGE_FILE.tmp \
+        mksquashfs $GISLAB_PATH_SYSTEM/clients/desktop/root $IMAGE_FILE.tmp \
         -e cdrom
 
     if [ $? -ne 0 ]; then

@@ -3,7 +3,7 @@ proc            /proc           proc    nodev,noexec,nosuid              0   0
 tmpfs           /mnt/booster    tmpfs   defaults,noatime,noexec,size=50% 0   0
 
 # NFS
-server.gis.lab:/storage/home          /mnt/home         nfs   defaults   0   0
-server.gis.lab:/storage/repository    /mnt/repository   nfs   defaults   0   0
-server.gis.lab:/storage/publish       /mnt/publish      nfs   defaults   0   0
-server.gis.lab:/storage/barrel        /mnt/barrel       nfs   defaults   0   0
+server.gis.lab:{{ GISLAB_PATH_HOME }}                /mnt/home        nfs  defaults  0  0
+server.gis.lab:{{ GISLAB_PATH_STORAGE }}/repository  /mnt/repository  nfs  defaults  0  0
+server.gis.lab:{{ GISLAB_PATH_STORAGE }}/publish     /mnt/publish     nfs  defaults  0  0
+server.gis.lab:{{ GISLAB_PATH_STORAGE }}/barrel      /mnt/barrel      nfs  defaults  0  0

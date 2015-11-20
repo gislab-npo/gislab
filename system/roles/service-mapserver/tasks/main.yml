@@ -5,8 +5,8 @@
 # Install and configure OWS server (mapserver).
 #
 # Logging:
-#   production: /storage/log/syslog
-#   debug:      /storage/log/syslog
+#   production: syslog
+#   debug:      syslog
 
 
 - name: Install packages

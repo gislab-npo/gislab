@@ -6,13 +6,13 @@
 ### GRUB
 - name: Create directory for GRUB configuration
   file:
-    path: "{{ GISLAB_PATH_CLIENTS }}/desktop/root/boot/grub"
+    path: "{{ root_dir }}/root/boot/grub"
     state: directory
 
 - name: Install GRUB configuration file
   template:
     src: grub/menu.lst.j2
-    dest: "{{ GISLAB_PATH_CLIENTS }}/desktop/root/boot/grub/menu.lst"
+    dest: "{{ root_dir }}/root/boot/grub/menu.lst"
 
 
 ### IMAGE

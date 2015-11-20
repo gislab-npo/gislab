@@ -1,0 +1,53 @@
+---
+#
+### JOBS ###
+#
+# Scheduled jobs
+
+
+- name: Install packages
+  apt:
+    pkg: "{{ item }}"
+    force: yes
+    install_recommends: no
+    state: latest
+  with_items:
+    - anacron
+
+
+### JOBS
+- name: Purge installation directory for scheduled jobs
+  file:
+    dest: "{{ root_dir }}"
+    state: absent
+
+- name: Create installation directories for scheduled jobs
+  file:
+    dest: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ root_dir }}/daily"
+    - "{{ root_dir }}/weekly"
+    - "{{ root_dir }}/monthly"
+
+# TODO: move also other cron jobs to anacron (GIS.lab Web cleanup, ...)
+- name: Configure jobs scheduler
+  template:
+    src: anacrontab.j2
+    dest: /etc/anacrontab
+  notify:
+    - service anacron restart
+
+
+### BACKUP
+# TODO: move backup to separate role
+- name: Install daily backup job
+  copy:
+    src: static/bin/gislab-daily-backup
+    dest: "{{ root_dir }}/daily/"
+    mode: 0775
+
+
+- meta: flush_handlers
+
+# vim: set ts=8 sts=2 sw=2 et:

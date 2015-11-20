@@ -3,6 +3,7 @@
 
 set -e
 
+source /etc/gislab_version
 source $GISLAB_ROOT/system/functions.sh
 
 
@@ -23,7 +24,7 @@ function usage() {
 
 
 # options
-BACKUP_DIR=/storage/backup
+BACKUP_DIR="$GISLAB_PATH_BACKUP"
 
 while getopts "d:h" OPTION
 do

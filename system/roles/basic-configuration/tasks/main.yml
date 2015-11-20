@@ -5,7 +5,7 @@
 # Run basic server configuration.
 
 
-### CONFIGURATION AND BASIC DIRECTORY STRUCTURE
+### CONFIGURATION
 - name: Create '/etc/gislab_version' file
   copy:
     content: |
@@ -40,35 +40,6 @@
       GISLAB_UNIQUE_ID="{{ GISLAB_UNIQUE_ID }}"
       GISLAB_VERSION="{{ GISLAB_VERSION }}"
     dest: /etc/gislab_version
-
-- name: Create GIS.lab directories structure
-  file:
-    path: "{{ item }}"
-    state: directory
-  with_items:
-    - "{{ GISLAB_ROOT }}"
-    - "{{ GISLAB_ROOT }}/admin"
-    - "{{ GISLAB_ROOT }}/system"
-    - "{{ GISLAB_ROOT }}/custom"
-    - /etc/gislab
-    - /storage
-    - /storage/applications
-    - /storage/backup
-    - /storage/cache
-    - /storage/cache/packages/apt
-    - /storage/cache/packages/tar
-    - /storage/cache/packages/pip
-    - /storage/home
-    - /storage/log
-    - "{{ GISLAB_PATH_TMP }}"
-
-- name: Set safe permissions for /etc/gislab directory
-  file:
-    path: /etc/gislab
-    state: directory
-    owner: root
-    group: root
-    mode: 0700
 
 
 ### BASIC SERVER CONFIGURATION
@@ -139,6 +110,17 @@
     mode: 0755
 
 
+### PACKAGES CACHE
+- name: Create directories for non-debian packages cache
+  file:
+    path: "{{ GISLAB_PATH_CACHE }}/packages/{{ item }}"
+    state: directory
+  with_items:
+    - apt
+    - tar
+    - pip
+
+
 ### APT
 - name: Configure apt repositories
   template:
@@ -161,10 +143,13 @@
     src: apt/02proxy.j2
     dest: /etc/apt/apt.conf.d/02proxy
 
-- name: Move apt cache to '/storage' directory
-  shell: mv -f /var/cache/apt/* /storage/cache/packages/apt/
+- name: Move apt cache to storage directory
+  shell: >
+    mv -f
+    /var/cache/apt/*
+    {{ GISLAB_PATH_CACHE }}/packages/apt/
   args:
-    creates: /storage/cache/packages/apt/pkgcache.bin
+    creates: "{{ GISLAB_PATH_CACHE }}/packages/apt/pkgcache.bin"
 
 - name: Deactivate original apt cache
   file:
@@ -173,7 +158,7 @@
 
 - name: Activate shared apt cache
   file:
-    src: /storage/cache/packages/apt
+    src: "{{ GISLAB_PATH_CACHE }}/packages/apt"
     dest: /var/cache/apt
     state: link
 
@@ -209,7 +194,6 @@
     install_recommends: no
     state: latest
   with_items:
-    - anacron
     - arp-scan
     - etherwake
     - ethtool
@@ -220,6 +204,51 @@
     - pssh
     - tmux
     - vim
+
+
+### MOUNT POINTS
+- name: Configure universal mount directory
+  lineinfile:
+    dest: /etc/fstab
+    line: "{{ GISLAB_PATH_STORAGE }}  /mnt  none  bind  0  0"
+    state: present
+
+- name: Mount universal directory
+  mount:
+    name: /mnt
+    src: "{{ GISLAB_PATH_STORAGE }}"
+    fstype: none
+    opts: bind
+    state: mounted
+
+
+### ADMIN TOOLS
+- name: Install GIS.lab shell functions library
+  copy:
+    src: functions.sh
+    dest: "{{ GISLAB_PATH_SYSTEM }}/functions.sh"
+    mode: 0644
+
+- name: Install GIS.lab administrator tools
+  copy:
+    src: admin/
+    dest: "{{ GISLAB_PATH_ADMIN }}/"
+    mode: 0775
+
+- name: Add GIS.lab administrator tools on path
+  lineinfile:
+    dest: /etc/profile
+    line: "PATH=$PATH:{{ GISLAB_PATH_ADMIN }}"
+    state: present
+
+
+### SSH
+- name: Configure SSH server
+  template:
+    src: ssh/sshd_config.j2
+    dest: /etc/ssh/sshd_config
+  notify:
+    - service ssh restart
 
 
 ### SHELL
@@ -246,83 +275,6 @@
 
 - name: Update MOTD
   command: run-parts /etc/update-motd.d
-
-
-### MOUNT POINTS
-- name: Configure universal '/storage to /mnt' mount to keep the same paths on server and clients
-  lineinfile:
-    dest: /etc/fstab
-    line: "/storage  /mnt  none  bind  0  0"
-    state: present
-
-- name: Mount '/storage' to '/mnt'
-  mount:
-    name: /mnt
-    src: /storage
-    fstype: none
-    opts: bind
-    state: mounted
-
-
-### JOBS
-- name: Purge installation directory for scheduled jobs
-  file:
-    dest: "{{ GISLAB_PATH_JOBS }}"
-    state: absent
-
-- name: Create installation directories for scheduled jobs
-  file:
-    dest: "{{ item }}"
-    state: directory
-  with_items:
-    - "{{ GISLAB_PATH_JOBS }}/daily"
-    - "{{ GISLAB_PATH_JOBS }}/weekly"
-    - "{{ GISLAB_PATH_JOBS }}/monthly"
-
-# TODO: move also other cron jobs to anacron (GIS.lab Web cleanup, ...)
-- name: Configure jobs scheduler
-  template:
-    src: anacrontab.j2
-    dest: /etc/anacrontab
-  notify:
-    - service anacron restart
-
-
-### ADMIN TOOLS
-- name: Install GIS.lab shell functions library
-  copy:
-    src: functions.sh
-    dest: "{{ GISLAB_ROOT }}/system/functions.sh"
-    mode: 0644
-
-- name: Install GIS.lab administrator tools
-  copy:
-    src: admin/
-    dest: "{{ GISLAB_ROOT }}/admin/"
-    mode: 0775
-
-- name: Add GIS.lab administrator tools on path
-  lineinfile:
-    dest: /etc/profile
-    line: "PATH=$PATH:{{ GISLAB_ROOT }}/admin"
-    state: present
-
-
-### SSH
-- name: Configure SSH server
-  template:
-    src: ssh/sshd_config.j2
-    dest: /etc/ssh/sshd_config
-  notify:
-    - service ssh restart
-
-
-### BACKUP
-- name: Install daily backup job
-  copy:
-    src: static/bin/gislab-daily-backup
-    dest: "{{ GISLAB_PATH_JOBS }}/daily/"
-    mode: 0775
 
 
 - meta: flush_handlers

@@ -15,7 +15,7 @@ post-stop script
     grep -Eqsw "init=/sbin/init-gislab" /proc/cmdline || exit 0
     grep -Eqsw "root=/dev/nbd0" /proc/cmdline || exit 0
 
-    if [ -x /opt/gislab/system/nbd-disconnect ]; then
-        /opt/gislab/system/nbd-disconnect&
+    if [ -x {{ GISLAB_PATH_SYSTEM }}/nbd-disconnect ]; then
+        {{ GISLAB_PATH_SYSTEM }}/nbd-disconnect&
     fi
 end script

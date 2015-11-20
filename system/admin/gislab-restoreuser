@@ -64,7 +64,7 @@ fi
 # populate variables and prepare directories structure
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
 
-BACKUP_DIR=/storage/backup
+BACKUP_DIR="$GISLAB_PATH_BACKUP"
 TEMP_BACKUP_DIR=$BACKUP_DIR/${GISLAB_USER}-${DATE}.restore
 mkdir -p $TEMP_BACKUP_DIR
 
@@ -114,14 +114,14 @@ gislab_info "Original password restored from backup"
 
 
 # HOME DATA
-rsync -a storage/home/$GISLAB_USER_ORIG/ /storage/home/$GISLAB_USER/
+rsync -a storage/home/$GISLAB_USER_ORIG/ $GISLAB_PATH_HOME/$GISLAB_USER/
 
 if [ -f storage/home/$GISLAB_USER_ORIG/.config/user-dirs.dirs ]; then
     source storage/home/$GISLAB_USER_ORIG/.config/user-dirs.dirs
-    mkdir -p /storage/home/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR)
+    mkdir -p $GISLAB_PATH_HOME/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR)
 fi
 
-chown -R $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER
+chown -R $GISLAB_USER:gislabusers $GISLAB_PATH_HOME/$GISLAB_USER
 
 
 # PUBLISHED DATA

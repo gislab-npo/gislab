@@ -2,6 +2,7 @@
 
 set -e
 
+source /etc/gislab_version
 source $GISLAB_ROOT/system/functions.sh
 
 

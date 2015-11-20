@@ -5,6 +5,7 @@ set -e
 source /etc/gislab_version
 source $GISLAB_ROOT/system/functions.sh
 
+
 # require root privileges
 gislab_require_root
 

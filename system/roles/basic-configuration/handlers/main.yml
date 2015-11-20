@@ -13,9 +13,4 @@
 - name: reconfigure timezone
   command: dpkg-reconfigure --frontend noninteractive tzdata
 
-- name: service anacron restart
-  service:
-    name: anacron
-    state: restarted
-
 # vim: set ts=8 sts=2 sw=2 et:

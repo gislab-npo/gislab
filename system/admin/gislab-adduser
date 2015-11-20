@@ -87,9 +87,9 @@ export GISLAB_USER_DESCRIPTION
 
 
 # execute before-add hooks
-if [ -d $GISLAB_ROOT/custom/accounts/before-add ]; then
+if [ -d $GISLAB_PATH_CUSTOM/accounts/before-add ]; then
     gislab_info "Running 'before-add' account hooks"
-    run-parts $GISLAB_ROOT/custom/accounts/before-add || true
+    run-parts $GISLAB_PATH_CUSTOM/accounts/before-add || true
 fi
 
 
@@ -141,13 +141,13 @@ gislab-moduser -p $GISLAB_USER_PASSWORD $GISLAB_USER
 
 
 # run adduser hook
-$GISLAB_ROOT/system/accounts/hooks/adduser.sh $GISLAB_USER
+$GISLAB_PATH_SYSTEM/accounts/hooks/adduser.sh $GISLAB_USER
 
 
 # execute after-add hooks
-if [ -d $GISLAB_ROOT/custom/accounts/after-add ]; then
+if [ -d $GISLAB_PATH_CUSTOM/accounts/after-add ]; then
     gislab_info "Running 'after-add' account hooks"
-    run-parts $GISLAB_ROOT/custom/accounts/after-add || true
+    run-parts $GISLAB_PATH_CUSTOM/accounts/after-add || true
 fi
 
 

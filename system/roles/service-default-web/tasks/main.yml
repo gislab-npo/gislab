@@ -6,7 +6,7 @@
 #
 # Logging:
 #   production: /storage/log/nginx-error.log
-#   debug:      /storage/log/nginx-access.log /storage/log/nginx-error.log
+#   debug:      /storage/log/nginx-access.log, /storage/log/nginx-error.log
 
 
 - name: Install packages
@@ -66,7 +66,7 @@
 - name: Activate Nginx error logs checking
   lineinfile:
     dest: /etc/logcheck/logcheck.logfiles
-    line: "/storage/log/nginx-error.log"
+    line: "{{ GISLAB_PATH_LOG }}/nginx-error.log"
     state: present
 
 

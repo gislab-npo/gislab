@@ -5,6 +5,7 @@ set -e
 source /etc/gislab_version
 source $GISLAB_ROOT/system/functions.sh
 
+
 # require root privileges
 gislab_require_root
 
@@ -29,6 +30,7 @@ do
 done
 
 
+# sanity checks
 RUNNING_CLIENTS="$(gislab-cluster members -status=alive -tag role=client)"
 if [ -n "$RUNNING_CLIENTS" ]; then
     gislab_error "

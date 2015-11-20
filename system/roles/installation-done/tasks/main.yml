@@ -18,7 +18,7 @@
 - name: Log successful installation to file
   shell: >
     echo '{{ GISLAB_INSTALL_DATETIME }} {{ GISLAB_INSTALL_ACTION }}'
-    >> /storage/log/installation.done
+    >> {{ GISLAB_PATH_LOG }}/installation.done
 
 - name: Send email notification to GIS.lab administrator
   shell: >

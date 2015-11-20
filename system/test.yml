@@ -30,6 +30,7 @@
     }
     - { role: service-statistics-test, tags: ['service-statistics-test'] }
     - { role: service-cluster-test, tags: ['service-cluster-test'] }
+    - { role: service-jobs-test, tags: ['service-jobs-test'] }
     - { role: service-connection-forwarding-test, tags: ['service-connection-forwarding-test'] }
     - {
       role: service-vpn-test,

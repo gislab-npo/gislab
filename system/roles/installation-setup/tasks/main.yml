@@ -5,13 +5,16 @@
 # Set basic environment for installation.
 
 
+### SANITY CHECKS
+# OS version
+- name: Check if server is running supported operating system
+  assert:
+    that:
+      - ansible_distribution == "Ubuntu"
+      - ansible_distribution_version in [ '12.04', ]
+
+
 ### FACTS
-- name: Set GIS.lab installation root directory
-  # system-wide path variable, can be used in Ansible and shell scripts
-  set_fact:
-    GISLAB_ROOT: /opt/gislab
-
-
 - name: Detect if it is possible to get GIS.lab version from Git
   local_action: shell git describe 2> /dev/null || echo "GIT NOT AVAILABLE"
   sudo: no
@@ -70,28 +73,6 @@
   when: installation_done.stat.exists == true
 
 
-# path variables only for Ansible
-- name: Set temporary directory for this installation
-  set_fact:
-    GISLAB_PATH_TMP: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
-
-- name: Set GIS.lab account installation root directory
-  set_fact:
-    GISLAB_PATH_ACCOUNTS: "{{ GISLAB_ROOT }}/system/accounts"
-
-- name: Set GIS.lab desktop client installation root directory
-  set_fact:
-    GISLAB_PATH_CLIENTS: "{{ GISLAB_ROOT }}/system/clients"
-
-- name: Set GIS.lab scheduled jobs installation root directory
-  set_fact:
-    GISLAB_PATH_JOBS: "{{ GISLAB_ROOT }}/system/jobs"
-
-- name: Set GIS.lab cluster installation root directory
-  set_fact:
-    GISLAB_PATH_CLUSTER: "{{ GISLAB_ROOT }}/system/cluster"
-
-
 - name: Detect current date and time
   set_fact:
     GISLAB_INSTALL_DATETIME: "{{ ansible_date_time.date }}-{{ ansible_date_time.time }}"
@@ -124,7 +105,10 @@
 - name: Enable capability to provide VPN service
   set_fact:
     GISLAB_SERVER_CAPABILITY_VPN: yes
-  when: cap_tun_device_status.stat.ischr is defined and cap_tun_device_status.stat.ischr
+  when:
+    cap_tun_device_status.stat.ischr is defined
+    and
+    cap_tun_device_status.stat.ischr
 
 - name: Disable capability to provide VPN service
   set_fact:
@@ -132,12 +116,137 @@
   when: cap_tun_device_status.stat.ischr is not defined
 
 
-### SANITY CHECKS
-# OS version
-- name: Check if server is running supported operating system
-  assert:
-    that:
-      - ansible_distribution == "Ubuntu"
-      - ansible_distribution_version in [ '12.04', ]
+### PATH VARIABLES
+# system-wide path variables
+# can be used in Ansible and shell scripts
+# don't forget to add to 'functions.sh' when adding variable here !
+- name: Set GIS.lab installation root directory
+  set_fact:
+    GISLAB_ROOT: /opt/gislab
+
+- name: Set GIS.lab system installation root directory
+  set_fact:
+    GISLAB_PATH_SYSTEM: "{{ GISLAB_ROOT }}/system"
+
+- name: Set GIS.lab admin tools installation root directory
+  set_fact:
+    GISLAB_PATH_ADMIN: "{{ GISLAB_ROOT }}/admin"
+
+- name: Set GIS.lab custom installation root directory
+  set_fact:
+    GISLAB_PATH_CUSTOM: "{{ GISLAB_ROOT }}/custom"
+
+- name: Set GIS.lab storage root directory
+  set_fact:
+    GISLAB_PATH_STORAGE: "/storage"
+
+- name: Set GIS.lab applications storage root directory
+  set_fact:
+    GISLAB_PATH_APPLICATIONS: "{{ GISLAB_PATH_STORAGE }}/applications"
+
+- name: Set GIS.lab backup storage root directory
+  set_fact:
+    GISLAB_PATH_BACKUP: "{{ GISLAB_PATH_STORAGE }}/backup"
+
+- name: Set GIS.lab cache storage root directory
+  set_fact:
+    GISLAB_PATH_CACHE: "{{ GISLAB_PATH_STORAGE }}/cache"
+
+- name: Set GIS.lab home root directory
+  set_fact:
+    GISLAB_PATH_HOME: "{{ GISLAB_PATH_STORAGE }}/home"
+
+- name: Set GIS.lab logs root directory
+  set_fact:
+    GISLAB_PATH_LOG: "{{ GISLAB_PATH_STORAGE }}/log"
+
+
+# temporary variable valid only for Ansible during installation or update
+- name: Set temporary directory for this installation
+  set_fact:
+    GISLAB_PATH_TMP: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
+
+
+### DIRECTORIES STRUCTURE
+- name: Create GIS.lab directories structure
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  with_items:
+    - {
+        path: /etc/gislab,
+        owner: root,
+        group: root,
+        mode: "0700"
+      }
+    - {
+        path: "{{ GISLAB_ROOT }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_SYSTEM }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_ADMIN }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_CUSTOM }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_STORAGE }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_APPLICATIONS }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_BACKUP }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_CACHE }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_HOME }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_LOG }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_TMP }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
 
 # vim: set ts=8 sts=2 sw=2 et:

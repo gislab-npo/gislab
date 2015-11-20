@@ -1,6 +1,9 @@
 ---
 
-GISLAB_CLIENT_MOBILE_INSTALL_PACKAGES:
+root_dir: "{{ GISLAB_PATH_SYSTEM }}/clients/mobile"
+
+
+packages:
   - ant
   - expect
   - openjdk-7-jdk

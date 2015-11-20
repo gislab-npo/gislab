@@ -1,8 +1,11 @@
 ---
 
+root_dir: "{{ GISLAB_PATH_SYSTEM }}/clients/desktop"
+root_dir_cluster: "{{ GISLAB_PATH_SYSTEM }}/cluster"
+
+
 # get list of Ubuntu installer tasks: $ tasksel --list-tasks
 # get list of packages included in task: $ tasksel --task-packages <task>
-
 
 packages_kernel:
   # list of Linux kernel packages (installed without recommended packages)

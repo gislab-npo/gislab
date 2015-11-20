@@ -4,7 +4,7 @@
 #
 # Install and configure database server and create GIS template database.
 #
-# Logging: /storage/log/syslog
+# Logging: syslog
 
 
 - name: Install packages
@@ -68,20 +68,20 @@
 
 - name: Prepare directory for new PostgreSQL cluster storage
   file:
-    path: /storage/applications/postgresql
+    path: "{{ GISLAB_PATH_APPLICATIONS }}/postgresql"
     state: directory
     owner: postgres
     group: postgres
 
-- name: Create new PostgreSQL cluster in '/storage/applications/postgresql' if not exists
+- name: Create new PostgreSQL cluster in storage if not exists
   shell: >
     LC_ALL=en_US.UTF-8
     pg_createcluster
     --locale en_US.UTF-8
-    --datadir=/storage/applications/postgresql
+    --datadir={{ GISLAB_PATH_APPLICATIONS }}/postgresql
     {{ pg_version.stdout }} main
   args:
-    creates: /storage/applications/postgresql/PG_VERSION
+    creates: "{{ GISLAB_PATH_APPLICATIONS }}/postgresql/PG_VERSION"
 
 
 # postgresql configuration

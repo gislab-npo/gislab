@@ -8,6 +8,6 @@
 - name: Install example GIS.lab project to 'Repository' shared directory
   copy:
     src: ../gislab-project
-    dest: /storage/repository/
+    dest: "{{ GISLAB_PATH_STORAGE }}/repository/"
 
 # vim: set ts=8 sts=2 sw=2 et:

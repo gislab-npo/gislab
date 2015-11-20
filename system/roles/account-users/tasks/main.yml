@@ -58,23 +58,23 @@
 ### ACCOUNT SKELETON
 - name: Purge GIS.lab account installation directory
   file:
-    dest: "{{ GISLAB_PATH_ACCOUNTS }}"
+    dest: "{{ root_dir }}"
     state: absent
 
 
 - name: Prepare directory for user accounts skeleton
   file:
-    path: "{{ GISLAB_PATH_ACCOUNTS }}/skel"
+    path: "{{ root_dir }}/skel"
     state: directory
 
 - name: Copy basic user account skeleton files
   shell: >
-    cp -a /etc/skel/.[a-zA-Z0-9]* {{ GISLAB_PATH_ACCOUNTS }}/skel
+    cp -a /etc/skel/.[a-zA-Z0-9]* {{ root_dir }}/skel
 
 
 - name: Configure shell prompt
   lineinfile:
-    dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.bashrc"
+    dest: "{{ root_dir }}/skel/.bashrc"
     regexp: "^PS1=.*h.GIS.lab(.*).*$"
     line: 'PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "'
     state: present
@@ -82,12 +82,12 @@
 
 - name: Prepare .config directory in skeleton
   file:
-    path: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.config"
+    path: "{{ root_dir }}/skel/.config"
     state: directory
 
 - name: Prepare autostart directory in skeleton
   file:
-    path: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.config/autostart"
+    path: "{{ root_dir }}/skel/.config/autostart"
     state: directory
 
 
@@ -98,7 +98,7 @@
   with_items:
     - {
         src: bookmarks/gtk-bookmarks.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.gtk-bookmarks"
+        dest: "{{ root_dir }}/skel/.gtk-bookmarks"
       }
 
 
@@ -109,7 +109,7 @@
   with_items:
     - {
         src: conky/conky.desktop.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.config/autostart/conky.desktop"
+        dest: "{{ root_dir }}/skel/.config/autostart/conky.desktop"
       }
 
 
@@ -120,13 +120,13 @@
   with_items:
     - {
         src: mutt/muttrc.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.muttrc"
+        dest: "{{ root_dir }}/skel/.muttrc"
       }
 
 
 - name: Prepare Pidgin directory in skeleton
   file:
-    path: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.purple"
+    path: "{{ root_dir }}/skel/.purple"
     state: directory
 
 - name: Install Pidgin configuration
@@ -136,11 +136,11 @@
   with_items:
     - {
         src: pidgin/accounts.xml.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.purple/accounts.xml"
+        dest: "{{ root_dir }}/skel/.purple/accounts.xml"
       }
     - {
         src: pidgin/blist.xml.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.purple/blist.xml"
+        dest: "{{ root_dir }}/skel/.purple/blist.xml"
       }
 
 
@@ -151,7 +151,7 @@
   with_items:
     - {
         src: pgadmin3/pgadmin3.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.pgadmin3"
+        dest: "{{ root_dir }}/skel/.pgadmin3"
       }
 
 
@@ -160,9 +160,9 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ GISLAB_PATH_ACCOUNTS }}/skel/.config/QGIS"
-    - "{{ GISLAB_PATH_ACCOUNTS }}/skel/.qgis2"
-    - "{{ GISLAB_PATH_ACCOUNTS }}/skel/.qgis2/composer_templates"
+    - "{{ root_dir }}/skel/.config/QGIS"
+    - "{{ root_dir }}/skel/.qgis2"
+    - "{{ root_dir }}/skel/.qgis2/composer_templates"
 
 - name: Install QGIS configuration
   template:
@@ -171,19 +171,19 @@
   with_items:
     - {
         src: qgis/QGIS2.conf.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.config/QGIS/QGIS2.conf"
+        dest: "{{ root_dir }}/skel/.config/QGIS/QGIS2.conf"
       }
     - {
         src: qgis/composer_templates/north-arrow.svg.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.qgis2/composer_templates/north-arrow.svg"
+        dest: "{{ root_dir }}/skel/.qgis2/composer_templates/north-arrow.svg"
       }
     - {
         src: qgis/composer_templates/print-template-a4.qpt.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.qgis2/composer_templates/print-template-a4.qpt"
+        dest: "{{ root_dir }}/skel/.qgis2/composer_templates/print-template-a4.qpt"
       }
     - {
         src: qgis/composer_templates/print-template-a3.qpt.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.qgis2/composer_templates/print-template-a3.qpt"
+        dest: "{{ root_dir }}/skel/.qgis2/composer_templates/print-template-a3.qpt"
       }
 
 
@@ -192,8 +192,8 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ GISLAB_PATH_ACCOUNTS }}/skel/.grass7"
-    - "{{ GISLAB_PATH_ACCOUNTS }}/skel/.grassdata"
+    - "{{ root_dir }}/skel/.grass7"
+    - "{{ root_dir }}/skel/.grassdata"
 
 - name: Install GRASS configuration
   template:
@@ -202,7 +202,7 @@
   with_items:
     - {
         src: grass/rc.j2,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.grass7/rc"
+        dest: "{{ root_dir }}/skel/.grass7/rc"
       }
 
 - name: Install GRASS locations
@@ -213,7 +213,7 @@
   with_items:
     - {
         src: static/grassdata/,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/.grassdata"
+        dest: "{{ root_dir }}/skel/.grassdata"
       }
 
 
@@ -226,21 +226,21 @@
   with_items:
     - {
         src: /mnt/repository,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/Repository"
+        dest: "{{ root_dir }}/skel/Repository"
       }
     - {
         src: /mnt/barrel,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/Barrel"
+        dest: "{{ root_dir }}/skel/Barrel"
       }
     - {
         src: /mnt/publish,
-        dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/Publish"
+        dest: "{{ root_dir }}/skel/Publish"
       }
 
 - name: Add symlinks to fast, in-memory file system
   file:
     src: /mnt/booster
-    dest: "{{ GISLAB_PATH_ACCOUNTS }}/skel/Booster"
+    dest: "{{ root_dir }}/skel/Booster"
     state: link
     force: yes
 
@@ -248,27 +248,27 @@
 ### STORAGE
 - name: Create home storage for user's accounts
   file:
-    path: /storage/home
+    path: "{{ GISLAB_PATH_HOME }}"
     state: directory
 
 
 ### ACCOUNT HOOKS
 - name: Prepare directory for account hooks
   file:
-    path: "{{ GISLAB_PATH_ACCOUNTS }}/hooks"
+    path: "{{ root_dir }}/hooks"
     state: directory
 
 - name: Install account hooks
   copy:
     src: static/hooks/
-    dest: "{{ GISLAB_PATH_ACCOUNTS }}/hooks"
+    dest: "{{ root_dir }}/hooks"
     mode: 0755
 
 
 ### CUSTOM
 - name: Prepare directories for accounts customization
   file:
-    path: "{{ GISLAB_ROOT }}/custom/accounts/{{ item }}"
+    path: "{{ GISLAB_PATH_CUSTOM }}/accounts/{{ item }}"
     state: directory
   with_items:
     - before-add

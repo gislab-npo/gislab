@@ -2,11 +2,14 @@
 
 set -e
 
-echo "This is a list of available GIS.lab administrator commands.
-To get more information run command with '-h' option.
-"
+source /etc/gislab_version
+source $GISLAB_ROOT/system/functions.sh
 
-for file in $GISLAB_ROOT/admin/gislab-*; do
+
+echo "This is a list of available GIS.lab administrator commands.
+To get more information run command with '-h' option."
+
+for file in $GISLAB_PATH_ADMIN/gislab-*; do
     if [ $file != "$0" ]; then
         echo -e "* $(basename $file)"
     fi

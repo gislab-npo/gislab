@@ -1,4 +1,4 @@
-/storage/log/syslog
+{{ GISLAB_PATH_LOG }}/syslog
 {
     rotate 7
     daily
@@ -11,7 +11,7 @@
     endscript
 }
 
-/storage/log/kern.log
+{{ GISLAB_PATH_LOG }}/kern.log
 {
     rotate 4
     weekly

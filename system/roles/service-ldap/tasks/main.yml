@@ -4,7 +4,7 @@
 #
 # Install and configure authentication server.
 #
-# Logging: /storage/log/syslog
+# Logging: syslog
 
 
 - name: Install packages
@@ -47,7 +47,7 @@
 
 ### LDAP STORAGE
 # update apparmor
-- name: Allow access for slapd to /storage directory
+- name: Allow access for slapd to storage directory
   template:
     src: apparmor/usr.sbin.slapd.j2
     dest: /etc/apparmor.d/local/usr.sbin.slapd
@@ -58,19 +58,19 @@
     state: reloaded
 
 
-# move ldap to /storage
+# move ldap to storage
 - name: Stop LDAP database
   service:
     name: slapd
     state: stopped
 
-- name: Move LDAP database to /storage directory (run only once)
+- name: Move LDAP database to storage directory (run only once)
   shell: >
-    mv -f /var/lib/ldap /storage/applications/
+    mv -f /var/lib/ldap {{ GISLAB_PATH_APPLICATIONS }}/
     &&
-    ln -s /storage/applications/ldap /var/lib/ldap
+    ln -s {{ GISLAB_PATH_APPLICATIONS }}/ldap /var/lib/ldap
   args:
-    creates: /storage/applications/ldap/DB_CONFIG
+    creates: "{{ GISLAB_PATH_APPLICATIONS }}/ldap/DB_CONFIG"
 
 - name: Start LDAP service
   service:

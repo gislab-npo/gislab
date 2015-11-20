@@ -4,7 +4,7 @@
 #
 # Install GIS.lab clustering support.
 #
-# Logging: /storage/log/syslog
+# Logging: syslog
 
 
 - name: Install packages
@@ -19,19 +19,20 @@
 
 - name: Purge GIS.lab cluster installation directory
   file:
-    dest: "{{ GISLAB_PATH_CLUSTER }}"
+    dest: "{{ root_dir }}"
     state: absent
 
 - name: Prepare directory for cluster installation
   file:
-    path: "{{ GISLAB_PATH_CLUSTER }}"
+    path: "{{ root_dir }}"
     state: directory
 
 
 - name: Install Serf
   shell: >
-    source {{ GISLAB_ROOT }}/system/functions.sh
-    && gislab_serf_install 0.6.4
+    source {{ GISLAB_PATH_SYSTEM }}/functions.sh
+    &&
+    gislab_serf_install 0.6.4
   args:
     executable: /bin/bash
 
@@ -39,7 +40,8 @@
 - name: Generate encryption key (run only once)
   shell: >
     echo -e "[\"$(serf keygen)\"]" > /etc/gislab/gislab_serf.key
-    && chmod 600 /etc/gislab/gislab_serf.key
+    &&
+    chmod 600 /etc/gislab/gislab_serf.key
   args:
     executable: /bin/bash
     creates: /etc/gislab/gislab_serf.key
@@ -47,13 +49,13 @@
 
 - name: Prepare directory for cluster handlers
   file:
-    path: "{{ GISLAB_PATH_CLUSTER }}/handlers"
+    path: "{{ root_dir }}/handlers"
     state: directory
 
 - name: Install Serf handlers scripts
   copy:
     src: static/serf/
-    dest: "{{ GISLAB_PATH_CLUSTER }}/handlers"
+    dest: "{{ root_dir }}/handlers"
     mode: 0774
   notify:
   - service serf-agent restart

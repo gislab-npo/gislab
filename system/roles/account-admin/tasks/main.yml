@@ -27,11 +27,13 @@
 - name: Install public SSH key for GIS.lab administrator user account 'gislab'
   shell: "{{ item }}"
   with_items:
-    - mkdir -p /storage/home/gislab/.ssh
-    - cp -a /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys /storage/home/gislab/.ssh/authorized_keys
-    - chmod 700 /storage/home/gislab/.ssh
-    - chmod 600 /storage/home/gislab/.ssh/authorized_keys
-    - "chown -R gislab:gislabusers /storage/home/gislab/.ssh"
+    - mkdir -p {{ GISLAB_PATH_HOME }}/gislab/.ssh
+    - cp -a
+      /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys
+      {{ GISLAB_PATH_HOME }}/gislab/.ssh/authorized_keys
+    - chmod 700 {{ GISLAB_PATH_HOME }}/gislab/.ssh
+    - chmod 600 {{ GISLAB_PATH_HOME }}/gislab/.ssh/authorized_keys
+    - chown -R gislab:gislabusers {{ GISLAB_PATH_HOME }}/gislab/.ssh
   when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
 
 

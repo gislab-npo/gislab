@@ -5,6 +5,7 @@
 # USAGE: deluser.sh [GISLAB_USER]
 
 source /etc/gislab_version
+source $GISLAB_ROOT/system/functions.sh
 
 
 # read GISLAB_USER from script parameter if given
@@ -13,8 +14,10 @@ if [ "$1" != "" ]; then
 fi
 
 
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
 # sanity check
-if [ "$(ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// "(uid=$GISLAB_USER)")" != "" ]; then
+if [ "$($lds "(uid=$GISLAB_USER)")" != "" ]; then
     echo "User '$GISLAB_USER' still exist in LDAP database !"
     exit 1
 fi
@@ -22,7 +25,7 @@ fi
 
 ### HOME DIRECTORY
 # remove home directory
-rm -rf /storage/home/$GISLAB_USER
+rm -rf $GISLAB_PATH_HOME/$GISLAB_USER
 
 
 ### POSTGRESQL

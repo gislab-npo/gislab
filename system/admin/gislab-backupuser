@@ -23,7 +23,7 @@ function usage() {
 
 
 # options
-BACKUP_DIR=/storage/backup
+BACKUP_DIR="$GISLAB_PATH_BACKUP"
 
 while getopts "d:h" OPTION
 do
@@ -48,7 +48,7 @@ fi
 
 
 # populate variables and prepare directories structure
-GISLAB_USER_HOME=/storage/home/$GISLAB_USER
+GISLAB_USER_HOME=$GISLAB_PATH_HOME/$GISLAB_USER
 
 DATE=$(date '+%Y-%m-%d:%H-%M-%S')
 TEMP_BACKUP_DIR=${BACKUP_DIR}/${GISLAB_USER}-${DATE}.backup
