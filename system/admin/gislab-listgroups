@@ -10,7 +10,7 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
     echo "USAGE: $(basename $0) [OPTIONS]"
     echo "List GIS.lab groups."
@@ -21,7 +21,7 @@ function usage() {
 }
 
 
-# options
+### OPTIONS
 while getopts "h" OPTION
 do
         case "$OPTION" in
@@ -31,6 +31,7 @@ do
 done
 
 
+### MAIN SCRIPT
 # list GIS.lab groups
 lsldap -g
 

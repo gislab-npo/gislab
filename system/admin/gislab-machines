@@ -10,7 +10,7 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
     echo "USAGE: $(basename $0) [OPTIONS] MAC,MAC,..."
     echo "Add or remove GIS.lab client machines to/from list of known machines."
@@ -32,25 +32,29 @@ MAC addresses must be specified in format MM:MM:MM:SS:SS:SS."
 }
 
 
-# options
+### OPTIONS
 while getopts "larh" OPTION
 do
         case "$OPTION" in
-            l) ACTION="list" ;;
-            a) ACTION="add" ;;
-            r) ACTION="remove" ;;
+            l) opt_action="list" ;;
+            a) opt_action="add" ;;
+            r) opt_action="remove" ;;
             h) usage ;;
             \?) exit 1;;
         esac
 done
 shift $(($OPTIND - 1))
-if [ $# -eq 0 -a "$ACTION" != "list" ]; then usage; fi
+if [ $# -eq 0 -a "$opt_action" != "list" ]; then usage; fi
 
 
-POLICY_FILE=/etc/gislab/gislab_unknown_machines_policy.conf
-KNOWN_MACHINES_LIST_FILE=/etc/gislab/gislab_known_machines.txt
-KNOWN_MACHINES_DHCP_FILE=/etc/dhcp/gislab_known_machines.conf
+### VARIABLES
+policy_file=/etc/gislab/gislab_unknown_machines_policy.conf
+list_file=/etc/gislab/gislab_known_machines.txt
+dhcp_file=/etc/dhcp/gislab_known_machines.conf
+mac_rx="^[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}$"
 
+
+### FUNCTIONS
 function known_machines_policy {
     # set known machines policy to 'allow' or 'deny'
 
@@ -59,33 +63,34 @@ function known_machines_policy {
     logger -t gislab-machines $msg
     sed "s/{+ GISLAB_UNKNOWN_MACHINES_POLICY +}/$1/g" \
         /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
-    echo "$1" > $POLICY_FILE
+    echo "$1" > $policy_file
 }
 
 function known_machines_dhcp_file {
     # generate DHCP configuration file from MAC list file located in /etc/gislab
 
-    echo -e "group {" > $KNOWN_MACHINES_DHCP_FILE    # opening bracket
+    echo -e "group {" > $dhcp_file    # opening bracket
 
-    for mac in $(cat $KNOWN_MACHINES_LIST_FILE); do
+    for mac in $(cat $list_file); do
         hostname=$(echo $mac | sed 's/://g')
-        echo -e "\thost $hostname { hardware ethernet $mac; }" >> $KNOWN_MACHINES_DHCP_FILE
+        echo -e "\thost $hostname { hardware ethernet $mac; }" >> $dhcp_file
     done
 
-    echo -e "}" >> $KNOWN_MACHINES_DHCP_FILE        # closing bracket
+    echo -e "}" >> $dhcp_file        # closing bracket
 }
 
 
+### MAIN SCRIPT
 # LIST
-if [ "$ACTION" == "list" ]; then
-    echo "Policy: $(cat $POLICY_FILE)"
+if [ "$opt_action" == "list" ]; then
+    echo "Policy: $(cat $policy_file)"
     echo "Known machines:"
-    for mac in $(cat $KNOWN_MACHINES_LIST_FILE); do
+    for mac in $(cat $list_file); do
         echo -e "  * $mac"
     done
 
 # ADD
-elif [ "$ACTION" == "add" ]; then
+elif [ "$opt_action" == "add" ]; then
     IFS=', ' read -a maclist <<< "$1"
 
     for mac in "${maclist[@]}"; do
@@ -96,15 +101,15 @@ elif [ "$ACTION" == "add" ]; then
 
         # add MAC address if format is valid
         else
-            if [[ $mac =~ ^[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}$ ]]; then
+            if [[ "$mac" =~ $mac_rx ]]; then
                 echo "Adding MAC address $mac"
                 # add records to known machines list file in /etc/gislab
-                sed -i "/^$mac/ d" $KNOWN_MACHINES_LIST_FILE # avoid duplicates
-                echo -e "$mac"  >> $KNOWN_MACHINES_LIST_FILE
+                sed -i "/^$mac/ d" $list_file # avoid duplicates
+                echo -e "$mac"  >> $list_file
                 # generate known machines DHCP configuration file
                 known_machines_dhcp_file
             else
-                echo "Skipping MAC address $mac - invalid format"
+                gislab_warning "Invalid MAC format ($mac). Skipping ..."
             fi
         fi
     done
@@ -113,7 +118,7 @@ elif [ "$ACTION" == "add" ]; then
     gislab_info "Machines added successfully"
 
 # REMOVE
-elif [ "$ACTION" == "remove" ]; then
+elif [ "$opt_action" == "remove" ]; then
     IFS=', ' read -a maclist <<< "$1"
 
     for mac in "${maclist[@]}"; do
@@ -125,7 +130,7 @@ elif [ "$ACTION" == "remove" ]; then
         # remove MAC address
         else
             echo "Removing MAC $mac"
-            sed -i "/^$mac/ d" $KNOWN_MACHINES_LIST_FILE
+            sed -i "/^$mac/ d" $list_file
             # generate known machines DHCP configuration file
             known_machines_dhcp_file
         fi

@@ -11,7 +11,7 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
     echo "USAGE: $(basename $0)"
     echo "Build GIS.lab client image from current GIS.lab client chroot."
@@ -22,7 +22,7 @@ function usage() {
 }
 
 
-# options
+### OPTIONS
 while getopts "h" OPTION
 do
     case "$OPTION" in
@@ -32,7 +32,15 @@ do
 done
 
 
-# sanity checks
+### VARIABLES
+image_file=$GISLAB_PATH_SYSTEM/clients/desktop/image/gislab.img
+buildstamp=$(date +%s)
+buildstamp_file=$GISLAB_PATH_SYSTEM/clients/desktop/image/gislab_desktop.buildstamp
+mnt_dir="$GISLAB_PATH_SYSTEM/clients/desktop/mount-client-image-$GISLAB_INSTALL_UNIQUE_STRING"
+tftp_dir=/var/lib/tftpboot/gislab
+
+
+### SANITY CHECKS
 if [ -f "$GISLAB_PATH_SYSTEM/clients/desktop/root/proc/version" ]; then
     gislab_error "
         GIS.lab client chroot session is active.
@@ -41,6 +49,7 @@ if [ -f "$GISLAB_PATH_SYSTEM/clients/desktop/root/proc/version" ]; then
 fi
 
 
+### MAIN SCRIPT
 # get GIS.lab provider
 if [ -f /etc/gislab_provider ]; then
     GISLAB_PROVIDER="$(cat /etc/gislab_provider)"
@@ -48,13 +57,9 @@ fi
 
 GISLAB_PROVIDER="${GISLAB_PROVIDER:-default}"
 
-IMAGE_FILE=$GISLAB_PATH_SYSTEM/clients/desktop/image/gislab.img
-IMAGE_BUILDSTAMP=$(date +%s)
-IMAGE_BUILDSTAMP_FILE=$GISLAB_PATH_SYSTEM/clients/desktop/image/gislab_desktop.buildstamp
-
 
 # install image version file in to client chroot
-echo "$IMAGE_BUILDSTAMP" > $GISLAB_PATH_SYSTEM/clients/desktop/root/etc/gislab_desktop.buildstamp
+echo "$buildstamp" > $GISLAB_PATH_SYSTEM/clients/desktop/root/etc/gislab_desktop.buildstamp
 
 
 # create directory for image
@@ -63,40 +68,35 @@ mkdir -p $GISLAB_PATH_SYSTEM/clients/desktop/image
 
 if [ "$GISLAB_PROVIDER" == "aws" ]; then
     ### Build GIS.lab AWS client image ###
-
     # create temporary mount dir for image
-    TEMP_MNT_DIR="$GISLAB_PATH_SYSTEM/clients/desktop/mount-client-image-$GISLAB_INSTALL_UNIQUE_STRING"
-    mkdir $TEMP_MNT_DIR
+    mkdir $mnt_dir
 
     # calculate the size of image = client root size + 500MB
-    ROOT_SIZE=$(du -sm $GISLAB_PATH_SYSTEM/clients/desktop/root | cut -f 1)
-    IMAGE_SIZE=$(echo $(($ROOT_SIZE+500)))
+    root_size=$(du -sm $GISLAB_PATH_SYSTEM/clients/desktop/root | cut -f 1)
+    image_size=$(echo $(($root_size+500)))
 
-    dd if=/dev/zero of=$IMAGE_FILE bs=1M count=$IMAGE_SIZE
-    mkfs.ext4 -F -L gislab-rootfs $IMAGE_FILE
+    dd if=/dev/zero of=$image_file bs=1M count=$image_size
+    mkfs.ext4 -F -L gislab-rootfs $image_file
 
     # mount image
-    mount -o loop,rw $IMAGE_FILE $TEMP_MNT_DIR
+    mount -o loop,rw $image_file $mnt_dir
 
     # copy GIS.lab client root to AWS client image
-    rsync -a $GISLAB_PATH_SYSTEM/clients/desktop/root/ $TEMP_MNT_DIR/
+    rsync -a $GISLAB_PATH_SYSTEM/clients/desktop/root/ $mnt_dir/
 
     # unmount GIS.lab AWS client image
-    umount $TEMP_MNT_DIR
+    umount $mnt_dir
 
     # clean up
-    rm -rf $TEMP_MNT_DIR
+    rm -rf $mnt_dir
 else
     ### Build default GIS.lab client image ###
-
-    TFTP_DIR=/var/lib/tftpboot/gislab
-
     # copy /boot directory from client to server TFTP directory
-    cp -a $GISLAB_PATH_SYSTEM/clients/desktop/root/boot/. $TFTP_DIR/
+    cp -a $GISLAB_PATH_SYSTEM/clients/desktop/root/boot/. $tftp_dir/
 
     # set permissions
-    find $TFTP_DIR -mindepth 1 -type d -exec chmod 0755 "{}" \;
-    find $TFTP_DIR -mindepth 1 \! -type d -exec chmod 0644 "{}" \;
+    find $tftp_dir -mindepth 1 -type d -exec chmod 0755 "{}" \;
+    find $tftp_dir -mindepth 1 \! -type d -exec chmod 0644 "{}" \;
 
     # build image
     test -x /usr/bin/nice \
@@ -107,23 +107,27 @@ else
         && ionice=ionice \
         || unset ionice
 
-    rm -f $IMAGE_FILE.tmp
+    rm -f $image_file.tmp
 
     $nice $ionice \
-        mksquashfs $GISLAB_PATH_SYSTEM/clients/desktop/root $IMAGE_FILE.tmp \
+        mksquashfs $GISLAB_PATH_SYSTEM/clients/desktop/root $image_file.tmp \
         -e cdrom
 
     if [ $? -ne 0 ]; then
-        rm -f $IMAGE_FILE.tmp
+        rm -f $image_file.tmp
         gislab_error "
             'mksquashfs' failed to build the GIS.lab client image
         "
     fi
 
-    # place image to final destionation
-    mv $IMAGE_FILE.tmp $IMAGE_FILE
+    # place image to final destination
+    mv $image_file.tmp $image_file
 fi
 
-echo "$IMAGE_BUILDSTAMP" > $IMAGE_BUILDSTAMP_FILE
+echo "$buildstamp" > $buildstamp_file
+
+
+### CONFIRMATION MESSAGE
+gislab_info "Image was successfully created"
 
 # vim: set ts=8 sts=4 sw=4 et:

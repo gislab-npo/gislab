@@ -10,7 +10,7 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
     echo "USAGE: $(basename $0) [OPTIONS] group"
     echo "Delete GIS.lab group. Only empty group can be deleted."
@@ -22,12 +22,12 @@ function usage() {
 }
 
 
-# options
-FORCE="no"
+### OPTIONS
+opt_force="no"
 while getopts "hf" OPTION
 do
         case "$OPTION" in
-            f) FORCE="yes" ;;
+            f) opt_force="yes" ;;
             h) usage ;;
             \?) exit 1;;
         esac
@@ -38,9 +38,11 @@ if [ $# -eq 0 ]; then usage; fi
 GISLAB_GROUP=$1
 
 
+### VARIABLES
 lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
-# sanity checks
+
+### SANITY CHECKS
 if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" == "" ]; then
     gislab_error "Group '$GISLAB_GROUP' does not exists"
 fi
@@ -51,21 +53,22 @@ if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))" memberUid \
 fi
 
 
-if [ "$FORCE" != "yes" ]; then
+if [ "$opt_force" != "yes" ]; then
     gislab_warning "This command will remove group '$GISLAB_GROUP'"
     echo "Continue ? [ENTER to continue, CTRL-C to cancel]"
     read
 fi
 
 
-### LDAP
+### MAIN SCRIPT
+# LDAP
 gislab_info "Deleting group"
 
 # remove LDAP group
 ldapdeletegroup $GISLAB_GROUP
 
 
-# confirmation message
+### CONFIRMATION MESSAGE
 gislab_info "Group '$GISLAB_GROUP' was successfully deleted"
 
 # vim: set ts=8 sts=4 sw=4 et:

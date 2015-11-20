@@ -400,6 +400,44 @@
   changed_when: False
 
 
+### gislab-machines
+- name: Add machines
+  shell: >
+    gislab-machines
+    -a 08:00:27:19:fc:b3,08:00:27:da:db:07
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if machines are correctly added
+  shell: grep "{{ item }}" /etc/dhcp/gislab_known_machines.conf
+  with_items:
+    - "hardware ethernet 08:00:27:19:fc:b3;"
+    - "hardware ethernet 08:00:27:da:db:07;"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Remove machines
+  shell: >
+    gislab-machines
+    -r 08:00:27:19:fc:b3,08:00:27:da:db:07
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Test if invalid MAC address correctly denied
+  shell: >
+    gislab-machines
+    -a {{ item }}
+    | grep "Invalid MAC format ({{ item }})."
+  with_items:
+    - 08-00-27-19-fc-b3
+    - 08002719fcb3
+    - 08:00:27:19:fc
+    - 08:00:27:19:fc:b3:b3
+  ignore_errors: yes
+  changed_when: False
+
+
 ### FINAL CLEANUP
 - name: Remove test users accounts
   shell: gislab-deluser -f "{{ item }}"

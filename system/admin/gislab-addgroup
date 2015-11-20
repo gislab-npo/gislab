@@ -10,7 +10,7 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
     echo "USAGE: $(basename $0) [OPTIONS] group"
     echo "Create GIS.lab group."
@@ -23,11 +23,11 @@ function usage() {
 }
 
 
-# options
+### OPTIONS
 while getopts "d:h" OPTION
 do
     case "$OPTION" in
-        d) GISLAB_GROUP_DESCRIPTION="$OPTARG" ;;
+        d) opt_description="$OPTARG" ;;
         h) usage ;;
         \?) exit 1 ;;
     esac
@@ -38,9 +38,11 @@ if [ $# -eq 0 ]; then usage; fi
 GISLAB_GROUP=$1
 
 
+### VARIABLES
 lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
-# sanity checks
+
+### SANITY CHECKS
 if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" != "" ]; then
     gislab_error "Group '$GISLAB_GROUP' already exists"
 fi
@@ -50,22 +52,23 @@ if ! [[ "$GISLAB_GROUP" =~ ^[a-z][a-z0-9_]*$ ]]; then
 fi
 
 
-### LDAP
+### MAIN SCRIPT
+# LDAP
 gislab_info "Adding group"
 
 # create LDAP group
 ldapaddgroup $GISLAB_GROUP
 
-if [ -n "$GISLAB_GROUP_DESCRIPTION" ]; then
+if [ -n "$opt_description" ]; then
     ldapmodifygroup $GISLAB_GROUP > /dev/null << EOL
 changetype: modify
 add: description
-description: $GISLAB_GROUP_DESCRIPTION
+description: $opt_description
 EOL
 fi
 
 
-# confirmation message
+### CONFIRMATION MESSAGE
 gislab_info "Group '$GISLAB_GROUP' was successfully created"
 
 # vim: set ts=8 sts=4 sw=4 et:

@@ -10,7 +10,7 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
     echo "USAGE: $(basename $0) [OPTIONS]"
     echo "List GIS.lab users."
@@ -22,28 +22,35 @@ function usage() {
 }
 
 
-# options
+### OPTIONS
 while getopts "g:h" OPTION
 do
         case "$OPTION" in
-            g) GISLAB_GROUP=$OPTARG ;;
+            g) opt_group=$OPTARG ;;
             h) usage ;;
             \?) exit 1;;
         esac
 done
 
 
+### VARIABLES
 lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
-if [ -n "$GISLAB_GROUP" ]; then
-    # sanity checks
-    if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" == "" ]; then
-        gislab_error "Group '$GISLAB_GROUP' does not exists"
-    fi
 
+### SANITY CHECKS
+if [ -n "$opt_group" ]; then
+    # sanity checks
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=$opt_group))")" == "" ]; then
+        gislab_error "Group '$opt_group' does not exists"
+    fi
+fi
+
+
+### MAIN SCRIPT
+if [ -n "$opt_group" ]; then
     # list users belonging to group
     for user in \
-            $($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))" memberUid \
+            $($lds "(&(objectClass=posixGroup)(cn=$opt_group))" memberUid \
             | grep -v "^dn:" \
             | awk -F ":" '{print $2}'); do
         $lds "(&(objectClass=posixAccount)(uid=$user))"

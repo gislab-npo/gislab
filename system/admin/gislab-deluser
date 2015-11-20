@@ -10,7 +10,7 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
     echo "USAGE: $(basename $0) [OPTIONS] username"
     echo "Delete GIS.lab user account."
@@ -23,13 +23,13 @@ function usage() {
 }
 
 
-# options
-FORCE="no"
+### OPTIONS
+opt_force="no"
 while getopts "bhf" OPTION
 do
     case "$OPTION" in
-        b) BACKUP="yes" ;;
-        f) FORCE="yes" ;;
+        b) opt_backup="yes" ;;
+        f) opt_force="yes" ;;
         h) usage ;;
         \?) exit 1;;
     esac
@@ -40,9 +40,11 @@ if [ $# -eq 0 ]; then usage; fi
 GISLAB_USER=$1
 
 
+### VARIABLES
 lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
-# sanity checks
+
+### SANITY CHECKS
 if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" == "" ]; then
     gislab_error "User '$GISLAB_USER' does not exists"
 fi
@@ -52,7 +54,8 @@ if [ -f $GISLAB_PATH_HOME/${GISLAB_USER}/.gislab/session.lock ]; then
 fi
 
 
-if [ "$FORCE" != "yes" ]; then
+### USER CONFIRMATION
+if [ "$opt_force" != "yes" ]; then
     gislab_warning "
         This command will completely remove user account
         '$GISLAB_USER' including all data
@@ -61,13 +64,15 @@ if [ "$FORCE" != "yes" ]; then
     read
 fi
 
-if [ "$BACKUP" == "yes" ]; then
-    gislab-backupuser $GISLAB_USER
-fi
-
-
+### MAIN SCRIPT
 # export variables
 export GISLAB_USER
+
+
+# perform backup
+if [ "$opt_backup" == "yes" ]; then
+    gislab-backupuser $GISLAB_USER
+fi
 
 
 # execute before-delete hooks
@@ -77,7 +82,7 @@ if [ -d $GISLAB_PATH_CUSTOM/accounts/before-delete ]; then
 fi
 
 
-### LDAP
+# LDAP
 gislab_info "Deleting user account"
 
 # disable forwarding system mails to user and remove user
@@ -88,13 +93,13 @@ fi
 
 # manunaly delete user from additional groups
 # (bug https://bugs.launchpad.net/ubuntu/+source/ldapscripts/+bug/1292143)
-GISLAB_USER_GROUPS="$($lds "(&(objectClass=posixGroup)(memberUid=$GISLAB_USER))" memberUid \
+groups="$($lds "(&(objectClass=posixGroup)(memberUid=$GISLAB_USER))" memberUid \
     | sed -n 's/^dn: cn=\(.*\),ou=.*$/\1/p' \
     | tr '\n' ',' \
     | sed 's/,$//')"
 
-if [ -n "$GISLAB_USER_GROUPS" ]; then
-    gislab-moduser -A $GISLAB_USER_GROUPS $GISLAB_USER
+if [ -n "$groups" ]; then
+    gislab-moduser -A $groups $GISLAB_USER
 fi
 
 # remove LDAP account
@@ -112,7 +117,7 @@ if [ -d $GISLAB_PATH_CUSTOM/accounts/after-delete ]; then
 fi
 
 
-# confirmation message
+### CONFIRMATION MESSAGE
 gislab_info "Account '$GISLAB_USER' was successfully deleted"
 
 # vim: set ts=8 sts=4 sw=4 et:

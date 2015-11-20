@@ -10,7 +10,7 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
     echo "USAGE: $(basename $0) [ -i ] [ COMMAND [ARG] ]"
     echo "Run command or launch interactive shell in GIS.lab client's chroot."
@@ -23,18 +23,18 @@ function usage() {
 }
 
 
-# options
+### OPTIONS
 while getopts "ih" OPTION
 do
     case "$OPTION" in
-        i) INTERCTIVE="yes" ;;
+        i) opt_interactive="yes" ;;
         h) usage ;;
         \?) exit 1 ;;
     esac
 done
 if [ $# -eq 0 ]; then usage; fi
 
-if [ -n "$INTERCTIVE" ]; then
+if [ -n "$opt_interactive" ]; then
     shift
     COMMAND="$@"
 
@@ -46,7 +46,7 @@ else
 fi
 
 
-# sanity checks
+### SANITY CHECKS
 if [ ! -f "$GISLAB_PATH_SYSTEM/clients/desktop/root/etc/gislab_version" ]; then
     gislab_error "
         GIS.lab client chroot doesn't exist.
@@ -61,6 +61,7 @@ if [ -f "$GISLAB_PATH_SYSTEM/clients/desktop/root/proc/version" ]; then
 fi
 
 
+### FUNCTIONS
 function pre_chroot {
     chroot $GISLAB_PATH_SYSTEM/clients/desktop/root \
         mount -t devpts -o rw,noexec,nosuid,gid=5,mode=620 devpts /dev/pts
@@ -92,7 +93,7 @@ EOF
     chmod +x $GISLAB_PATH_SYSTEM/clients/desktop/root/sbin/start-stop-daemon
 
     # launch interactive shell
-    if [ "$INTERCTIVE" == "yes" ]; then
+    if [ "$opt_interactive" == "yes" ]; then
         gislab_info "
             Entering GIS.lab client chroot.
             Run 'exit' command or press 'CTRL-D' to exit
@@ -113,7 +114,7 @@ function post_chroot {
         $GISLAB_PATH_SYSTEM/clients/desktop/root/sbin/start-stop-daemon.real \
         $GISLAB_PATH_SYSTEM/clients/desktop/root/sbin/start-stop-daemon
 
-    if [ "$INTERCTIVE" == "yes" ]; then
+    if [ "$opt_interactive" == "yes" ]; then
         gislab_info "
             Leaving GIS.lab client chroot.
             Run 'gislab-client-image' to build client image from chroot
@@ -122,6 +123,7 @@ function post_chroot {
 }
 
 
+### MAIN SCRIPT
 pre_chroot
 trap "post_chroot" 0 HUP INT QUIT KILL SEGV PIPE TERM
 eval chroot $GISLAB_PATH_SYSTEM/clients/desktop/root $COMMAND

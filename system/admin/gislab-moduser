@@ -10,7 +10,7 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
     echo "USAGE: $(basename $0) [OPTIONS] username"
     echo "Modify GIS.lab user account."
@@ -28,27 +28,27 @@ function usage() {
 }
 
 
-# options
-GISLAB_USER_GEN_PASSWORD=$(pwgen -1 -n 8) # generate password
+### OPTIONS
+password_random=$(pwgen -1 -n 8) # generate password
 
 while getopts "a:A:sSm:pd:h" OPTION
 do
     case "$OPTION" in
-        a) CMD=add_to_group; GISLAB_USER_GROUPS=$OPTARG; shift; break ;;
-        A) CMD=delete_from_group; GISLAB_USER_GROUPS=$OPTARG; shift; break ;;
-        s) CMD=enable_sudo; break ;;
-        S) CMD=disable_sudo; break ;;
-        m) CMD=change_mail; GISLAB_USER_EMAIL=$OPTARG; shift; break ;;
-        p) CMD=set_password
+        a) opt_cmd=add_to_group; opt_groups=$OPTARG; shift; break ;;
+        A) opt_cmd=delete_from_group; opt_groups=$OPTARG; shift; break ;;
+        s) opt_cmd=enable_sudo; break ;;
+        S) opt_cmd=disable_sudo; break ;;
+        m) opt_cmd=change_mail; opt_email=$OPTARG; shift; break ;;
+        p) opt_cmd=set_password
             if [ $# -eq 3 ]; then
-            GISLAB_USER_PASSWORD=$2
+            opt_password=$2
             shift
                 break
             else
-                GISLAB_USER_PASSWORD=$GISLAB_USER_GEN_PASSWORD
+                opt_password=$password_random
                 break
             fi ;;
-        d) CMD=change_description; GISLAB_USER_DESCRIPTION="$OPTARG"; shift; break ;;
+        d) opt_cmd=change_description; opt_description="$OPTARG"; shift; break ;;
         h) usage ;;
     esac
 done
@@ -57,71 +57,81 @@ shift || true
 if [ $# -ne 1 ]; then usage; fi
 
 GISLAB_USER=$1
+
+
+### VARIABLES
 lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 
 
-# helping functions
+### SANITY CHECKS
+# check if user exists
+if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" == "" ]; then
+    gislab_error "User '$GISLAB_USER' does not exists"
+fi
+
+
+### HELPER FUNCTIONS
 get_user_email() {
-    email=$($lds \
+    local email=$($lds \
         "uid=$1" mail | awk '/^mail: / { print $2 }')
     echo "$email"
 }
 
 check_maildrop() {
-    maildrop=$($lds \
+    local maildrop=$($lds \
         -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$1)")
     echo "$maildrop"
 }
 
 
-# main functions
+### MAIN FUNCTIONS
 add_user_to_group() {
-    G_USER=$1
-    G_GROUPS="$(echo $2 | sed 's/,/ /g')"
+    local user=$1
+    local groups="$(echo $2 | sed 's/,/ /g')"
 
     # sanity checks
-    for G_GROUP in $G_GROUPS; do
+    for group in $groups; do
         # check superuser's group
-        if [ "$G_GROUP" == "gislabadmins" ]; then
+        if [ "$group" == "gislabadmins" ]; then
             gislab_error "
                 To add user to superuser's group use '-s' option
             "
         fi
 
         # check if group exists
-        if [ "$($lds "(&(objectClass=posixGroup)(cn=$G_GROUP))")" == "" ]; then
-            gislab_error "Group '$G_GROUP' does not exists"
+        if [ "$($lds "(&(objectClass=posixGroup)(cn=$group))")" == "" ]; then
+            gislab_error "Group '$group' does not exists"
         fi
 
         # check if user is already in a group
-        if [ "$($lds "(&(objectClass=posixGroup)(cn=$G_GROUP)(memberUid=$G_USER))")" != "" ]; then
+        if [ "$($lds "(&(objectClass=posixGroup)(cn=$group)(memberUid=$user))")" != "" ]; then
             gislab_error "
-                User '$G_USER' is already member of a group '$G_GROUP'
+                User '$user' is already member of a group '$group'
             "
         fi
     done
 
     # add user to group(s)
-    for G_GROUP in $G_GROUPS; do
-        ldapaddusertogroup $G_USER $G_GROUP
+    for group in $groups; do
+        ldapaddusertogroup $user $group
     done
 }
 
 delete_user_from_group() {
-    G_USER=$1
-    G_GROUPS="$(echo $2 | tr ',' '\n')"
+    local user=$1
+    local groups="$(echo $2 | tr ',' '\n')"
 
     # sanity checks
-    for G_GROUP in $G_GROUPS; do
+    for group in $groups; do
         # check superuser's group
-        if [ "$G_GROUP" == "gislabadmins" ]; then
+        if [ "$group" == "gislabadmins" ]; then
             gislab_error "
                 To delete user from superuser's group use '-S' option
             "
         fi
 
         # check default group 'gislabusers'
-        if [ "$G_GROUP" == "gislabusers" ]; then
+        if [ "$group" == "gislabusers" ]; then
             gislab_error "
                 Cannot delete user from group 'gislabusers'.
                 It is a mandatory group
@@ -129,167 +139,160 @@ delete_user_from_group() {
         fi
 
         # check if group exists
-        if [ "$($lds "(&(objectClass=posixGroup)(cn=$G_GROUP))")" == "" ]; then
-            gislab_error "Group '$G_GROUP' does not exists"
+        if [ "$($lds "(&(objectClass=posixGroup)(cn=$group))")" == "" ]; then
+            gislab_error "Group '$group' does not exists"
         fi
 
         # check if user is a member of a group
-        if [ "$($lds "(&(objectClass=posixGroup)(cn=$G_GROUP)(memberUid=$G_USER))")" == "" ]; then
+        if [ "$($lds "(&(objectClass=posixGroup)(cn=$group)(memberUid=$user))")" == "" ]; then
             gislab_error "
-                User '$G_USER' is not a member of a group '$G_GROUP'
+                User '$user' is not a member of a group '$group'
             "
         fi
     done
 
     # delete user from group(s)
-    for G_GROUP in $G_GROUPS; do
-        ldapdeleteuserfromgroup $G_USER $G_GROUP
+    for group in $groups; do
+        ldapdeleteuserfromgroup $user $group
     done
 }
 
 enable_sudo() {
-    G_USER=$1
+    local user=$1
 
     # check if user is already in a group
-    if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$G_USER))")" != "" ]; then
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$user))")" != "" ]; then
         gislab_error "
-            User '$G_USER' is already member of a superuser's group
+            User '$user' is already member of a superuser's group
         "
     fi
 
     # add user to superuser's group
-    ldapaddusertogroup $G_USER gislabadmins
+    ldapaddusertogroup $user gislabadmins
 
 
     # forward system mails to user if creating superuser account
     # perform only if this email does not already exist in 'maildrop'
     # (other user account can be possibly created with same email address)
-    G_USER_EMAIL=$(get_user_email $G_USER)
-    maildrop_exists=$(check_maildrop $G_USER_EMAIL)
+    email=$(get_user_email $user)
+    maildrop=$(check_maildrop $email)
 
-    if [ -f /etc/postfix/sasl_passwd -a -z "$maildrop_exists" ]; then
+    if [ -f /etc/postfix/sasl_passwd -a -z "$maildrop" ]; then
         ldapadd -Z \
             -y /etc/ldapscripts/ldapscripts.passwd \
             -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
 dn: cn=root,ou=MailAliases,dc=gis,dc=lab
 changetype: modify
 add: maildrop
-maildrop: $G_USER_EMAIL
+maildrop: $email
 EOL
     fi
 }
 
 disable_sudo() {
-    G_USER=$1
+    local user=$1
 
     # check if user is member of superuser's group
-    if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$G_USER))")" == "" ]; then
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$user))")" == "" ]; then
         gislab_error "
-            User '$G_USER' is not a member of a superuser's group
+            User '$user' is not a member of a superuser's group
         "
     fi
 
     # delete user from superuser's group
-    ldapdeleteuserfromgroup $G_USER gislabadmins
+    ldapdeleteuserfromgroup $user gislabadmins
 
 
     # disable forwarding system mails to user
-    G_USER_EMAIL=$(get_user_email $G_USER)
-    maildrop_exists=$(check_maildrop $G_USER_EMAIL)
+    email=$(get_user_email $user)
+    maildrop=$(check_maildrop $email)
 
-    if [ -n "$maildrop_exists" ]; then
+    if [ -n "$maildrop" ]; then
         ldapadd -Z \
             -y /etc/ldapscripts/ldapscripts.passwd \
             -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
 dn: cn=root,ou=MailAliases,dc=gis,dc=lab
 changetype: modify
 delete: maildrop
-maildrop: $G_USER_EMAIL
+maildrop: $email
 EOL
     fi
 }
 
 change_user_mail() {
-    G_USER=$1
-    G_USER_EMAIL=$2
+    local user=$1
+    local email=$2
 
     # sanity check
-    if ! [[ "$G_USER_EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
+    if ! [[ "$email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
         gislab_error "Invalid e-mail address format"
-        exit 1
     fi
 
     # forward system mails to new email address (if user is superuser)
-    if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$G_USER))")" != "" ]; then
-        G_USER_EMAIL_CUR=$(get_user_email $G_USER)
-        maildrop_exists=$(check_maildrop $G_USER_EMAIL_CUR)
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$user))")" != "" ]; then
+        email_cur=$(get_user_email $user)
+        maildrop=$(check_maildrop $email_cur)
 
-        if [ -n "$maildrop_exists" ]; then
+        if [ -n "$maildrop" ]; then
             ldapadd -Z \
                 -y /etc/ldapscripts/ldapscripts.passwd \
                 -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
 dn: cn=root,ou=MailAliases,dc=gis,dc=lab
 changetype: modify
 delete: maildrop
-maildrop: $G_USER_EMAIL_CUR
+maildrop: $email_cur
 -
 add: maildrop
-maildrop: $G_USER_EMAIL
+maildrop: $email
 EOL
         fi
     fi
 
     # change email address
-    ldapmodifyuser $G_USER > /dev/null << EOL
+    ldapmodifyuser $user > /dev/null << EOL
 changetype: modify
 replace: mail
-mail: $G_USER_EMAIL
+mail: $email
 EOL
 }
 
 set_user_password() {
-    G_USER=$1
-    G_USER_PASSWORD=$2
+    local user=$1
+    local password=$2
 
-    G_USER_PASSWORD_HASH=$(slappasswd -s $G_USER_PASSWORD -h {SSHA})
+    hash=$(slappasswd -s $password -h {SSHA})
 
     # set user's password
-    ldapsetpasswd $G_USER $G_USER_PASSWORD_HASH
+    ldapsetpasswd $user $hash
 }
 
 change_user_description() {
-    G_USER=$1
-    G_USER_DESCRIPTION=$2
+    local user=$1
+    local description=$2
 
     # change user's description
-    ldapmodifyuser $G_USER > /dev/null << EOL
+    ldapmodifyuser $user > /dev/null << EOL
 changetype: modify
 replace: description
-description: $G_USER_DESCRIPTION
+description: $description
 EOL
 }
 
 
-# check if user exists
-if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" == "" ]; then
-    gislab_error "User '$GISLAB_USER' does not exists"
-    exit 1
-fi
-
-
-case "$CMD" in
+### MAIN SCRIPT
+case "$opt_cmd" in
     add_to_group)
-        add_user_to_group $GISLAB_USER $GISLAB_USER_GROUPS
+        add_user_to_group $GISLAB_USER $opt_groups
         gislab_info "
             User '$GISLAB_USER' was successfully added to
-            group(s) '$GISLAB_USER_GROUPS'
+            group(s) '$opt_groups'
         "
     ;;
     delete_from_group)
-        delete_user_from_group $GISLAB_USER $GISLAB_USER_GROUPS
+        delete_user_from_group $GISLAB_USER $opt_groups
         gislab_info "
             User '$GISLAB_USER' was successfully deleted from
-            group(s) '$GISLAB_USER_GROUPS'
+            group(s) '$opt_groups'
         "
     ;;
     enable_sudo)
@@ -306,27 +309,27 @@ case "$CMD" in
         "
     ;;
     change_mail)
-        change_user_mail $GISLAB_USER $GISLAB_USER_EMAIL
+        change_user_mail $GISLAB_USER $opt_email
         gislab_info "
             User '$GISLAB_USER' email was successfully
-            updated to '$GISLAB_USER_EMAIL'
+            updated to '$opt_email'
         "
     ;;
     set_password)
-        set_user_password $GISLAB_USER $GISLAB_USER_PASSWORD
+        set_user_password $GISLAB_USER $opt_password
         gislab_info "
             Account '$GISLAB_USER' updated with password
-            '$GISLAB_USER_PASSWORD'
+            '$opt_password'
         "
     ;;
     change_description)
-        change_user_description $GISLAB_USER "$GISLAB_USER_DESCRIPTION"
+        change_user_description $GISLAB_USER "$opt_description"
         gislab_info "
             User '$GISLAB_USER' description was successfully updated
         "
     ;;
     *)
-        gislab_error "Internal error"
+        gislab_error "Unknown operation"
     ;;
 esac
 
