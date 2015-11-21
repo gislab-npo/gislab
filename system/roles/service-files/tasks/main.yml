@@ -60,22 +60,6 @@
     - service idmapd restart
 
 
-### BIND MOUNT
-- name: Mount shares also to /mnt directory to keep the same paths as on clients
-  lineinfile:
-    dest: /etc/fstab
-    line: "{{ GISLAB_PATH_STORAGE }}  /mnt  none  bind  0  0"
-    state: present
-
-- name: Mount /mnt
-  mount:
-    name: /mnt
-    src: "{{ GISLAB_PATH_STORAGE }}"
-    fstype: none
-    opts: bind
-    state: mounted
-
-
 - meta: flush_handlers
 
 # vim: set ts=8 sts=2 sw=2 et:
