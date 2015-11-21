@@ -1,7 +1,11 @@
 ---
 
 - name: Install packages for tests
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
+  apt:
+    pkg: "{{ item }}"
+    force: yes
+    install_recommends: no
+    state: latest
   with_items:
     - nbd-client
   changed_when: False
@@ -10,34 +14,44 @@
 - name: Test HTTP boot service
   shell: >
     curl http://localhost:6700/?ip=192.168.77.7
-    | grep "kernel http://192.168.77.7/vmlinuz ro root=/dev/nbd0 init=/sbin/init-gislab nbdroot=192.168.15.5:gislab"
+    | grep "kernel http://192.168.77.7/vmlinuz
+    ro root=/dev/nbd0 init=/sbin/init-gislab nbdroot=192.168.15.5:gislab"
   ignore_errors: yes
   changed_when: False
 
 
 - name: Prepare mount point for test NBD mount
-  file: path="/tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount" state=directory
+  file:
+    path: /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount
+    state: directory
   ignore_errors: yes
   changed_when: False
 
 - name: Test NBD mount
-  shell: modprobe nbd
-    && nbd-client -name gislab {{ GISLAB_NETWORK }}.5 /dev/nbd0
-    && mount /dev/nbd0 /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount
+  shell: >
+    modprobe nbd
+    &&
+    nbd-client -name gislab {{ GISLAB_NETWORK }}.5 /dev/nbd0
+    &&
+    mount /dev/nbd0 /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount
   args:
     executable: /bin/bash
   ignore_errors: yes
   changed_when: False
 
 - name: Test to run command in NBD chroot
-  shell: chroot /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount id
+  shell: >
+    chroot /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount id
+    | grep "uid=0(root) gid=0(root) groups=0(root)"
   args:
     executable: /bin/bash
   ignore_errors: yes
   changed_when: False
 
 - name: Test if VirtualBox guest additions are installed
-  shell: chroot /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount find /lib/modules | grep "vboxguest.ko"
+  shell: >
+    chroot /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount find /lib/modules
+    | grep "vboxguest.ko"
   args:
     executable: /bin/bash
   when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
@@ -45,8 +59,10 @@
   changed_when: False
 
 - name: Umount NBD
-  shell: umount /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount
-    && nbd-client -disconnect /dev/nbd0
+  shell: >
+    umount /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount
+    &&
+    nbd-client -disconnect /dev/nbd0
   args:
     executable: /bin/bash
   ignore_errors: yes
@@ -54,10 +70,13 @@
 
 
 - name: Uninstall packages for tests
-  apt: pkg={{item}} force=yes purge=yes state=absent
+  apt:
+    pkg: "{{ item }}"
+    force: yes
+    purge: yes
+    state: absent
   with_items:
     - nbd-client
   changed_when: False
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:
