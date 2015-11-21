@@ -7,6 +7,14 @@
   changed_when: False
 
 
+- name: Test HTTP boot service
+  shell: >
+    curl http://localhost:6700/?ip=192.168.77.7
+    | grep "kernel http://192.168.77.7/vmlinuz ro root=/dev/nbd0 init=/sbin/init-gislab nbdroot=192.168.15.5:gislab"
+  ignore_errors: yes
+  changed_when: False
+
+
 - name: Prepare mount point for test NBD mount
   file: path="/tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount" state=directory
   ignore_errors: yes
