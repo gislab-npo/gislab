@@ -58,11 +58,11 @@ for user in \
 done
 
 
-# backup content of /etc/gislab after running user accounts backups
+# backup content of secret directory after running user accounts backups
 cd $tmp_dir
 
 echo $GISLAB_VERSION > $tmp_dir/GISLAB_VERSION
-tar -cjf $tmp_dir/gislab.tar.bz2 /etc/gislab
+tar -cjf $tmp_dir/gislab.tar.bz2 $GISLAB_PATH_SECRET
 
 tar -cf $system_backup_file *
 chmod 400 $system_backup_file

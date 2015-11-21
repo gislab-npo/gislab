@@ -16,7 +16,7 @@
 
 ### FACTS
 - name: Detect if it is possible to get GIS.lab version from Git
-  local_action: shell git describe 2> /dev/null || echo "GIT NOT AVAILABLE"
+  local_action: shell git describe 2> /dev/null || echo "GIT-NOT-AVAILABLE"
   sudo: no
   register: gislab_version_git_status
   changed_when: False
@@ -25,12 +25,12 @@
   local_action: shell git describe
   sudo: no
   register: gislab_version
-  when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
+  when: gislab_version_git_status.stdout != "GIT-NOT-AVAILABLE"
 
 - name: Set GIS.lab version from Git
   set_fact:
     GISLAB_VERSION: "{{ gislab_version.stdout }}"
-  when: gislab_version_git_status.stdout != "GIT NOT AVAILABLE"
+  when: gislab_version_git_status.stdout != "GIT-NOT-AVAILABLE"
 
 
 - name: Generate unique string for this installation
@@ -124,9 +124,6 @@
   set_fact:
     GISLAB_ROOT: /opt/gislab
 
-- name: Set GIS.lab system installation root directory
-  set_fact:
-    GISLAB_PATH_SYSTEM: "{{ GISLAB_ROOT }}/system"
 
 - name: Set GIS.lab admin tools installation root directory
   set_fact:
@@ -135,6 +132,15 @@
 - name: Set GIS.lab custom installation root directory
   set_fact:
     GISLAB_PATH_CUSTOM: "{{ GISLAB_ROOT }}/custom"
+
+- name: Set GIS.lab secret files installation root directory
+  set_fact:
+    GISLAB_PATH_SECRET: "{{ GISLAB_ROOT }}/secret"
+
+- name: Set GIS.lab system installation root directory
+  set_fact:
+    GISLAB_PATH_SYSTEM: "{{ GISLAB_ROOT }}/system"
+
 
 - name: Set GIS.lab storage root directory
   set_fact:
@@ -177,19 +183,7 @@
     state: directory
   with_items:
     - {
-        path: /etc/gislab,
-        owner: root,
-        group: root,
-        mode: "0700"
-      }
-    - {
         path: "{{ GISLAB_ROOT }}",
-        owner: root,
-        group: root,
-        mode: "0755"
-      }
-    - {
-        path: "{{ GISLAB_PATH_SYSTEM }}",
         owner: root,
         group: root,
         mode: "0755"
@@ -202,6 +196,18 @@
       }
     - {
         path: "{{ GISLAB_PATH_CUSTOM }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_SECRET }}",
+        owner: root,
+        group: root,
+        mode: "0700"
+      }
+    - {
+        path: "{{ GISLAB_PATH_SYSTEM }}",
         owner: root,
         group: root,
         mode: "0755"

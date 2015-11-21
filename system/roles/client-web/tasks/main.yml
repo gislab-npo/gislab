@@ -38,14 +38,14 @@
 ### POSTGRESQL
 - name: Generate 'gislab_web' database user password (run only once)
   shell: >
-    pwgen -s -N 1 10 > /etc/gislab/gislab-web_db_user_password.txt
+    pwgen -s -N 1 10 > {{ GISLAB_PATH_SECRET }}/gislab-web_db_user_password.txt
     &&
-    chmod 600 /etc/gislab/gislab-web_db_user_password.txt
+    chmod 600 {{ GISLAB_PATH_SECRET }}/gislab-web_db_user_password.txt
   args:
-    creates: /etc/gislab/gislab-web_db_user_password.txt
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab-web_db_user_password.txt"
 
 - name: Get 'gislab_web' database user password
-  shell: cat /etc/gislab/gislab-web_db_user_password.txt
+  shell: cat {{ GISLAB_PATH_SECRET }}/gislab-web_db_user_password.txt
   register: gislab_web_db_user_password
 
 
@@ -89,14 +89,14 @@
 - name: Generate secret key (run only once)
   shell: >
     python {{ GISLAB_PATH_TMP }}/gislab-web/utils/secret_key.py
-    > /etc/gislab/gislab-web_secret_key.txt
+    > {{ GISLAB_PATH_SECRET }}/gislab-web_secret_key.txt
     &&
-    chmod 600 /etc/gislab/gislab-web_secret_key.txt
+    chmod 600 {{ GISLAB_PATH_SECRET }}/gislab-web_secret_key.txt
   args:
-    creates: /etc/gislab/gislab-web_secret_key.txt
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab-web_secret_key.txt"
 
 - name: Get secret key
-  shell: cat /etc/gislab/gislab-web_secret_key.txt
+  shell: cat {{ GISLAB_PATH_SECRET }}/gislab-web_secret_key.txt
   register: gislab_web_secret_key
 
 
@@ -156,23 +156,23 @@
 - name: Generate self signed SSL certificate (run only once)
   shell: >
     openssl req -x509 -nodes -days 3650 -newkey rsa:2048
-    -keyout /etc/gislab/gislab-web.key
-    -out /etc/gislab/gislab-web.crt
+    -keyout {{ GISLAB_PATH_SECRET }}/gislab-web.key
+    -out {{ GISLAB_PATH_SECRET }}/gislab-web.crt
     -subj "/C=GL/ST=GIS.lab/L=GIS.lab/O=GIS.lab/OU=GIS.lab/CN=GIS.lab"
     &&
-    chmod 600 /etc/gislab/gislab-web.key
+    chmod 600 {{ GISLAB_PATH_SECRET }}/gislab-web.key
     &&
-    chmod 600 /etc/gislab/gislab-web.crt
+    chmod 600 {{ GISLAB_PATH_SECRET }}/gislab-web.crt
   args:
     executable: /bin/bash
-    creates: /etc/gislab/gislab-web.crt
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab-web.crt"
 
 - name: Install SSL certificate
   shell: "{{ item }}"
   with_items:
     - mkdir -p /etc/nginx/ssl
-    - cp /etc/gislab/gislab-web.key /etc/nginx/ssl/gislab-web.key
-    - cp /etc/gislab/gislab-web.crt /etc/nginx/ssl/gislab-web.crt
+    - cp {{ GISLAB_PATH_SECRET }}/gislab-web.key /etc/nginx/ssl/gislab-web.key
+    - cp {{ GISLAB_PATH_SECRET }}/gislab-web.crt /etc/nginx/ssl/gislab-web.crt
 
 
 - name: Install Gunicorn startup script

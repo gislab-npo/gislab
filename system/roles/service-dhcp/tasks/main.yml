@@ -38,13 +38,13 @@
 
 
 - name: Set unknown machines policy to 'deny' if not set
-  shell: echo 'deny' > /etc/gislab/gislab_unknown_machines_policy.conf
+  shell: echo 'deny' > {{ GISLAB_PATH_SECRET }}/gislab_unknown_machines_policy.conf
   args:
     executable: /bin/bash
-    creates: /etc/gislab/gislab_unknown_machines_policy.conf
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_unknown_machines_policy.conf"
 
 - name: Detect unknown machines policy
-  shell: cat /etc/gislab/gislab_unknown_machines_policy.conf
+  shell: cat {{ GISLAB_PATH_SECRET }}/gislab_unknown_machines_policy.conf
   args:
     executable: /bin/bash
   register: gislab_unknown_machines_policy
@@ -87,7 +87,7 @@
 
 - name: Detect if known machines file is created
   stat:
-    path: /etc/gislab/gislab_known_machines.txt
+    path: "{{ GISLAB_PATH_SECRET }}/gislab_known_machines.txt"
   register: gislab_known_machines_status
   changed_when: False
 
@@ -98,7 +98,7 @@
   with_items:
     - {
         src: dhcp/dhcpd-known-machines.txt.j2,
-        dest: /etc/gislab/gislab_known_machines.txt
+        dest: "{{ GISLAB_PATH_SECRET }}/gislab_known_machines.txt"
       }
     - {
         src: dhcp/dhcpd-known-machines.conf.j2,

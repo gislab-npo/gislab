@@ -11,7 +11,7 @@ normal exit 0 TERM INT
 
 exec serf agent \
     -bind {{ GISLAB_NETWORK_SERVER_IP }} \
-    -keyring-file /etc/gislab/gislab_serf.key \
+    -keyring-file {{ GISLAB_PATH_SECRET }}/gislab_serf.key \
     -event-handler "member-join={{ root_dir }}/handlers/member-join.sh" \
     -event-handler "member-leave,member-failed={{ root_dir }}/handlers/member-leave.sh" \
     -event-handler "user:member-join-lb={{ root_dir }}/handlers/member-join-lb.sh" \

@@ -29,7 +29,7 @@
     /usr/share/doc/openvpn/examples/easy-rsa/2.0/*
     /etc/openvpn/easy-rsa/
   args:
-    creates: /etc/gislab/gislab_vpn_ta.key
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
 - name: Create configuration file with filled certificate fields
   template:
@@ -41,40 +41,40 @@
   args:
     chdir: /etc/openvpn/easy-rsa/
     executable: /bin/bash
-    creates: /etc/gislab/gislab_vpn_ta.key
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
 - name: Generate CA certificate
   shell: source ./vars && ./pkitool --initca
   args:
     chdir: /etc/openvpn/easy-rsa/
     executable: /bin/bash
-    creates: /etc/gislab/gislab_vpn_ta.key
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
 - name: Generate server certificate and private key
   shell: source ./vars && ./pkitool --server server.gis.lab
   args:
     chdir: /etc/openvpn/easy-rsa/
     executable: /bin/bash
-    creates: /etc/gislab/gislab_vpn_ta.key
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
 - name: Generate Diffie Hellman Parameters
   shell: source ./vars && ./build-dh
   args:
     chdir: /etc/openvpn/easy-rsa/
     executable: /bin/bash
-    creates: /etc/gislab/gislab_vpn_ta.key
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
 - name: Generate private key for HMAC authentication
   shell: openvpn --genkey --secret ta.key
   args:
     chdir: /etc/openvpn/easy-rsa/keys/
-    creates: /etc/gislab/gislab_vpn_ta.key
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
-- name: Copy certificates and keys to '/etc/gislab' directory
+- name: Copy certificates and keys to secret directory
   shell: >
     cp
     /etc/openvpn/easy-rsa/keys/{{ item.src }}
-    /etc/gislab/{{ item.dest }}
+    {{ GISLAB_PATH_SECRET }}/{{ item.dest }}
   with_items:
     - {
         src: 'ca.crt',
@@ -101,12 +101,12 @@
         dest: 'gislab_vpn_ta.key'
       }
   args:
-    creates: /etc/gislab/gislab_vpn_ta.key
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
 - name: Install certificates and keys
   shell: >
     cp
-    /etc/gislab/{{ item }}
+    {{ GISLAB_PATH_SECRET }}/{{ item }}
     /etc/openvpn/{{ item }}
   with_items:
     - gislab_vpn_ca.crt

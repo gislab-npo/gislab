@@ -48,8 +48,8 @@ if [ $# -eq 0 -a "$opt_action" != "list" ]; then usage; fi
 
 
 ### VARIABLES
-policy_file=/etc/gislab/gislab_unknown_machines_policy.conf
-list_file=/etc/gislab/gislab_known_machines.txt
+policy_file=$GISLAB_PATH_SECRET/gislab_unknown_machines_policy.conf
+list_file=$GISLAB_PATH_SECRET/gislab_known_machines.txt
 dhcp_file=/etc/dhcp/gislab_known_machines.conf
 mac_rx="^[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}$"
 
@@ -67,7 +67,7 @@ function known_machines_policy {
 }
 
 function known_machines_dhcp_file {
-    # generate DHCP configuration file from MAC list file located in /etc/gislab
+    # generate DHCP server configuration from MACs list file
 
     echo -e "group {" > $dhcp_file    # opening bracket
 
@@ -103,7 +103,7 @@ elif [ "$opt_action" == "add" ]; then
         else
             if [[ "$mac" =~ $mac_rx ]]; then
                 echo "Adding MAC address $mac"
-                # add records to known machines list file in /etc/gislab
+                # add records to MACs list file
                 sed -i "/^$mac/ d" $list_file # avoid duplicates
                 echo -e "$mac"  >> $list_file
                 # generate known machines DHCP configuration file

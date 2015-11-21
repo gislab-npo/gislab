@@ -129,14 +129,14 @@
 # LDAP admin credentials
 - name: Generate LDAP admin password (run only once)
   shell: >
-    pwgen -s -N 1 10 > /etc/gislab/gislab_ldap_admin_password.txt
+    pwgen -s -N 1 10 > {{ GISLAB_PATH_SECRET }}/gislab_ldap_admin_password.txt
     &&
-    chmod 600 /etc/gislab/gislab_ldap_admin_password.txt
+    chmod 600 {{ GISLAB_PATH_SECRET }}/gislab_ldap_admin_password.txt
   args:
-    creates: /etc/gislab/gislab_ldap_admin_password.txt
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_ldap_admin_password.txt"
 
 - name: Get LDAP admin password
-  shell: cat /etc/gislab/gislab_ldap_admin_password.txt
+  shell: cat {{ GISLAB_PATH_SECRET }}/gislab_ldap_admin_password.txt
   register: gislab_ldap_admin_password
   changed_when: False
 
@@ -162,23 +162,29 @@
 - name: Generate self signed certificates and private key for encrypted LDAP communication (run only once)
   shell: "{{ item }}"
   with_items:
-    - certtool --generate-privkey > /etc/gislab/gislab_ldap_private_cakey.pem
+    - certtool --generate-privkey > {{ GISLAB_PATH_SECRET }}/gislab_ldap_private_cakey.pem
     - certtool --generate-self-signed
-      --load-privkey /etc/gislab/gislab_ldap_private_cakey.pem
+      --load-privkey {{ GISLAB_PATH_SECRET }}/gislab_ldap_private_cakey.pem
       --template /etc/ssl/ca.info
-      --outfile /etc/gislab/gislab_ldap_cert_cacert.pem
+      --outfile {{ GISLAB_PATH_SECRET }}/gislab_ldap_cert_cacert.pem
     - certtool --generate-privkey
       --bits 1024
-      --outfile /etc/gislab/gislab_ldap_private_server_slapd_key.pem
+      --outfile {{ GISLAB_PATH_SECRET }}/gislab_ldap_private_server_slapd_key.pem
   args:
-    creates: /etc/gislab/gislab_ldap_private_server_slapd_key.pem
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_ldap_private_server_slapd_key.pem"
 
 - name: Install self signed certificates and private key for encrypted LDAP communication
   shell: "{{ item }}"
   with_items:
-    - cp /etc/gislab/gislab_ldap_private_cakey.pem /etc/ssl/private/cakey.pem
-    - cp /etc/gislab/gislab_ldap_cert_cacert.pem /etc/ssl/certs/cacert.pem
-    - cp /etc/gislab/gislab_ldap_private_server_slapd_key.pem /etc/ssl/private/server_slapd_key.pem
+    - cp
+      {{ GISLAB_PATH_SECRET }}/gislab_ldap_private_cakey.pem
+      /etc/ssl/private/cakey.pem
+    - cp
+      {{ GISLAB_PATH_SECRET }}/gislab_ldap_cert_cacert.pem
+      /etc/ssl/certs/cacert.pem
+    - cp
+      {{ GISLAB_PATH_SECRET }}/gislab_ldap_private_server_slapd_key.pem
+      /etc/ssl/private/server_slapd_key.pem
     - chgrp ssl-cert /etc/ssl/private/server_slapd_key.pem
     - chmod g+r /etc/ssl/private/server_slapd_key.pem
     - chmod o-r /etc/ssl/private/server_slapd_key.pem
@@ -199,14 +205,14 @@
     --load-ca-certificate /etc/ssl/certs/cacert.pem
     --load-ca-privkey /etc/ssl/private/cakey.pem
     --template /etc/ssl/server.info
-    --outfile /etc/gislab/gislab_ldap_cert_server_slapd_cert.pem
+    --outfile {{ GISLAB_PATH_SECRET }}/gislab_ldap_cert_server_slapd_cert.pem
   args:
-    creates: /etc/gislab/gislab_ldap_cert_server_slapd_cert.pem
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_ldap_cert_server_slapd_cert.pem"
 
 - name: Install certificate for encrypted LDAP communication
   shell: >
     cp
-    /etc/gislab/gislab_ldap_cert_server_slapd_cert.pem
+    {{ GISLAB_PATH_SECRET }}/gislab_ldap_cert_server_slapd_cert.pem
     /etc/ssl/certs/server_slapd_cert.pem
   notify:
     - service slapd restart

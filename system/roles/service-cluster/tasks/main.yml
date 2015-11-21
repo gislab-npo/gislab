@@ -39,12 +39,12 @@
 
 - name: Generate encryption key (run only once)
   shell: >
-    echo -e "[\"$(serf keygen)\"]" > /etc/gislab/gislab_serf.key
+    echo -e "[\"$(serf keygen)\"]" > {{ GISLAB_PATH_SECRET }}/gislab_serf.key
     &&
-    chmod 600 /etc/gislab/gislab_serf.key
+    chmod 600 {{ GISLAB_PATH_SECRET }}/gislab_serf.key
   args:
     executable: /bin/bash
-    creates: /etc/gislab/gislab_serf.key
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_serf.key"
 
 
 - name: Prepare directory for cluster handlers

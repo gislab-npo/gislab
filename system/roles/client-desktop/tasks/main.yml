@@ -22,20 +22,33 @@
     dest: "{{ root_dir }}"
     state: directory
 
+
 - name: Create basic directories structure
   file:
-    path: "{{ root_dir }}/root{{ item }}"
+    path: "{{ root_dir }}/root{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
     state: directory
   with_items:
-    - /etc/gislab
-    - "{{ GISLAB_ROOT }}"
-    - "{{ GISLAB_PATH_SYSTEM }}"
-
-- name: Set safe permissions for /etc/gislab directory
-  file:
-    path: "{{ root_dir }}/root/etc/gislab"
-    state: directory
-    mode: 0700
+    - {
+        path: "{{ GISLAB_ROOT }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_SECRET }}",
+        owner: root,
+        group: root,
+        mode: "0700"
+      }
+    - {
+        path: "{{ GISLAB_PATH_SYSTEM }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
 
 
 ### INITIAL SYSTEM INSTALLATION
@@ -742,8 +755,8 @@
 - name: Install Serf encryption key
   shell: >
     cp
-    /etc/gislab/gislab_serf.key
-    {{ root_dir }}/root/etc/gislab/gislab_serf.key
+    {{ GISLAB_PATH_SECRET }}/gislab_serf.key
+    {{ root_dir }}/root/{{ GISLAB_PATH_SECRET }}/gislab_serf.key
 
 - name: Create directory for Serf handlers
   file:
