@@ -35,8 +35,9 @@ done
 ### VARIABLES
 image_file=$GISLAB_PATH_SYSTEM/clients/desktop/image/gislab.img
 buildstamp=$(date +%s)
-buildstamp_file=$GISLAB_PATH_SYSTEM/clients/desktop/image/gislab_desktop.buildstamp
-mnt_dir="$GISLAB_PATH_SYSTEM/clients/desktop/mount-client-image-$GISLAB_INSTALL_UNIQUE_STRING"
+bstamp_file_image=$GISLAB_PATH_SYSTEM/clients/desktop/image/gislab_desktop.buildstamp
+bstamp_file_root=$GISLAB_PATH_SYSTEM/clients/desktop/root/etc/gislab_desktop.buildstamp
+mnt_dir="$GISLAB_PATH_SYSTEM/clients/desktop/mnt-$GISLAB_INSTALL_UNIQUE_STRING"
 tftp_dir=/var/lib/tftpboot/gislab
 
 
@@ -59,7 +60,7 @@ GISLAB_PROVIDER="${GISLAB_PROVIDER:-default}"
 
 
 # install image version file in to client chroot
-echo "$buildstamp" > $GISLAB_PATH_SYSTEM/clients/desktop/root/etc/gislab_desktop.buildstamp
+echo "$buildstamp" > $bstamp_file_root
 
 
 # create directory for image
@@ -124,7 +125,7 @@ else
     mv $image_file.tmp $image_file
 fi
 
-echo "$buildstamp" > $buildstamp_file
+echo "$buildstamp" > $bstamp_file_image
 
 
 ### CONFIRMATION MESSAGE
