@@ -1,8 +1,8 @@
 ---
 #
-### DHCP SERVER ###
+### BOOT SERVICE ###
 #
-# Install and configure DHCP server.
+# Install and configure DHCP, TFTP, NBD server and PXE and HTTP boot service.
 #
 # Logging: syslog
 
@@ -14,8 +14,10 @@
     install_recommends: no
     state: latest
   with_items:
-    - arp-scan
     - isc-dhcp-server
+    - nbd-server
+    - python-virtualenv
+    - tftpd-hpa
 
 
 ### DHCP SERVER
@@ -107,6 +109,84 @@
   when: not gislab_known_machines_status.stat.exists
   notify:
     - service isc-dhcp-server restart
+
+
+### PXE BOOT
+- name: Create TFTP directory
+  file:
+    dest: /var/lib/tftpboot/gislab
+    state: directory
+    recurse: yes
+
+
+### HTTP BOOT
+- name: Install Python virtualenv for HTTP boot service
+  pip:
+    name: gunicorn
+    version: 19.1.1
+    virtualenv: "{{ root_dir_boot }}/virtualenv/http-boot"
+    extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
+    virtualenv_site_packages: yes
+    state: present
+  notify:
+    - service gislab-http-boot restart
+
+- name: Create directory for HTTP boot script
+  file:
+    dest: "{{ root_dir_boot }}/http"
+    state: directory
+
+- name: Install HTTP boot script
+  copy:
+    src: static/boot/gislab-http-boot.py
+    dest: "{{ root_dir_boot }}/http/gislab-http-boot.py"
+  notify:
+    - service gislab-http-boot restart
+
+- name: Install HTTP boot service
+  template:
+    src: init/gislab-http-boot.conf.j2
+    dest: /etc/init/gislab-http-boot.conf
+  notify:
+    - service gislab-http-boot restart
+
+- name: Register HTTP boot service
+  file:
+    src: /lib/init/upstart-job
+    dest: /etc/init.d/gislab-http-boot
+    state: link
+  notify:
+    - service gislab-http-boot restart
+
+
+### NBD
+- name: Create NBD configuration directories
+  file:
+    dest: /etc/nbd-server/conf.d
+    state: directory
+    recurse: yes
+
+- name: Install NBD configuration files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {
+        src: "nbd-server/config.j2",
+        dest: "/etc/nbd-server/config"
+      }
+    - {
+        src: "nbd-server/gislab.conf.j2",
+        dest: "/etc/nbd-server/conf.d/gislab.conf"
+      }
+  notify:
+    - service nbd-server restart
+
+- name: Enable keepalive option for nbdrootd
+  lineinfile:
+    dest: /etc/hosts.allow
+    line: "nbdrootd: ALL: keepalive"
+    state: present
 
 
 - meta: flush_handlers

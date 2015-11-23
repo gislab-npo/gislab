@@ -13,7 +13,7 @@
     - { role: service-dns-test, tags: ['service-dns-test'] }
     - { role: service-ldap-test, tags: ['service-ldap-test'] }
     - { role: service-mail-test, tags: ['service-mail-test'] }
-    - { role: service-dhcp-test, tags: ['service-dhcp-test'] }
+    - { role: service-boot-test, tags: ['service-boot-test'] }
     - { role: service-default-web-test, tags: ['service-default-web-test'] }
     - { role: service-files-test, tags: ['service-files-test'] }
     - { role: service-chat-test, tags: ['service-chat-test'] }

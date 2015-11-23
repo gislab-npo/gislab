@@ -992,6 +992,13 @@
 - include: provider-aws.yml
   when: GISLAB_PROVIDER == 'aws'
 
+- name: Publish GIS.lab client build stamp file
+  file:
+    src: "{{ root_dir }}/image/gislab_desktop.buildstamp"
+    dest: /var/www/default/gislab_desktop.buildstamp
+    state: link
+    force: yes
+
 
 - meta: flush_handlers
 

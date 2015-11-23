@@ -21,7 +21,7 @@
     - { role: service-dns, tags: ['service-dns'] }
     - { role: service-ldap, tags: ['service-ldap'] }
     - { role: service-mail, tags: ['service-mail'] }
-    - { role: service-dhcp, tags: ['service-dhcp'] }
+    - { role: service-boot, tags: ['service-boot'] }
     - { role: service-default-web, tags: ['service-default-web'] }
     - { role: service-files, tags: ['service-files'] }
     - { role: service-chat, tags: ['service-chat'] }

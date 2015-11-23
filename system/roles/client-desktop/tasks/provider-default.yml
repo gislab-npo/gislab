@@ -10,49 +10,11 @@
     install_recommends: no
     state: latest
   with_items:
-    - tftpd-hpa
-    - nbd-server
-    - python-virtualenv
     - squashfs-tools
 
 
-# tftp
-- name: Create TFTP directory
-  file:
-    dest: /var/lib/tftpboot/gislab
-    state: directory
-    recurse: yes
-
-
-# nbd
-- name: Create NBD configuration directories
-  file:
-    dest: /etc/nbd-server/conf.d
-    state: directory
-    recurse: yes
-
-- name: Install NBD configuration files
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-  with_items:
-    - {
-        src: "nbd-server/config.j2",
-        dest: "/etc/nbd-server/config"
-      }
-    - {
-        src: "nbd-server/gislab.conf.j2",
-        dest: "/etc/nbd-server/conf.d/gislab.conf"
-      }
-
-- name: Install hosts.allow file - enable keepalive option for nbdrootd
-  template:
-    src: hosts.allow/hosts.allow.j2
-    dest: /etc/hosts.allow
-
-
-# PXE boot
-- name: Install syslinux files
+### PXE BOOT
+- name: Install PXE support files
   command: >
     cp
     {{ root_dir }}/root{{ item.src }}
@@ -78,7 +40,7 @@
     dest: "{{ root_dir }}/root/boot/pxelinux.cfg/default"
 
 
-# HTTP boot (alternative method using iPXE)
+### HTTP BOOT
 # To boot via HTTP, client machine must boot iPXE boot image first. This boot
 # image will launch HTTP boot. Prepared iPXE boot loader image file exists in
 # 'http-boot/gislab-bootloader.iso'.
@@ -98,66 +60,14 @@
         dest: "/var/www/default/initrd.img"
       }
 
-- name: Install HTTP boot service requirements in Python virtualenv
-  pip:
-    name: gunicorn
-    version: 19.1.1
-    virtualenv: "{{ root_dir }}/virtualenv/http-boot"
-    extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
-    virtualenv_site_packages: yes
-    state: present
-  notify:
-    - service gislab-http-boot restart
-
-- name: Create directory for HTTP boot script
-  file:
-    dest: "{{ root_dir }}/http-boot"
-    state: directory
-
-- name: Install HTTP boot script
-  copy:
-    src: static/http-boot/gislab-http-boot.py
-    dest: "{{ root_dir }}/http-boot/gislab-http-boot.py"
-  notify:
-    - service gislab-http-boot restart
-
-- name: Install HTTP boot service
-  template:
-    src: init/gislab-http-boot.conf.j2
-    dest: /etc/init/gislab-http-boot.conf
-  notify:
-    - service gislab-http-boot restart
-
-- name: Register HTTP boot service
-  file:
-    src: /lib/init/upstart-job
-    dest: /etc/init.d/gislab-http-boot
-    state: link
-  notify:
-    - service gislab-http-boot restart
-
 
 ### IMAGE
 - name: Build GIS.lab client image
   shell: gislab-client-image > /dev/null
   args:
     executable: /bin/bash
-
-- name: Publish GIS.lab client build stamp file
-  file:
-    src: "{{ root_dir }}/image/gislab_desktop.buildstamp"
-    dest: /var/www/default/gislab_desktop.buildstamp
-    state: link
-    force: yes
-
-
-# restart NBD server
-- name: Ensure that NBD server is up
-  # NBD server is sometimes down after running update
-  # (see: https://github.com/imincik/gis-lab/issues/327)
-  service:
-    name: nbd-server
-    state: started
+  notify:
+    - service nbd-server restart
 
 
 - meta: flush_handlers

@@ -20,5 +20,7 @@
   shell: gislab-client-image > /dev/null
   args:
     executable: /bin/bash
+  notify:
+    - service nbd-server restart
 
 # vim: set ts=8 sts=2 sw=2 et:
