@@ -24,7 +24,6 @@ do
         esac
 done
 shift $(($OPTIND - 1))
-if [ $# -eq 0 ]; then usage; fi
 
 ROLES=$1
 
@@ -39,6 +38,12 @@ ansible_cmd="ansible-playbook \
   --extra-vars={\"GISLAB_ADMIN_PASSWORD\":\"gislab\",\"GISLAB_SERVER_NETWORK_DEVICE\":\"eth1\"} \
   --verbose"
 
+if [ "$ROLES" != "" ]; then
+    tags="--tags installation-setup,$ROLES"
+else
+    tags=""
+fi
+
 
 ### MAIN SCRIPT
 PYTHONUNBUFFERED=1
@@ -52,10 +57,10 @@ ANSIBLE_SSH_ARGS='\
 
 # run roles
 if [ "$opt_tests_only" == "no" ]; then
-    $ansible_cmd --tags installation-setup,$ROLES system/gislab.yml
+    $ansible_cmd $tags system/gislab.yml
 fi
 
 # run tests for roles
-$ansible_cmd --tags installation-setup,$ROLES system/test.yml
+$ansible_cmd $tags system/test.yml
 
 # vim: set ts=8 sts=4 sw=4 et:
