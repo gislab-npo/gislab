@@ -1,15 +1,15 @@
 ---
 
 - name: Test downloading GIS.lab Mobile APK file
-  shell:
+  shell: >
     wget -q
     -O /tmp/gislab_mobile-{{ GISLAB_TEST_UNIQUE_STRING }}.apk http://server.gis.lab/gislab_mobile.apk
-    && unzip -l /tmp/gislab_mobile-{{ GISLAB_TEST_UNIQUE_STRING }}.apk
+    &&
+    unzip -l /tmp/gislab_mobile-{{ GISLAB_TEST_UNIQUE_STRING }}.apk
     | grep AndroidManifest.xml
     &&
     rm -f /tmp/gislab_mobile-{{ GISLAB_TEST_UNIQUE_STRING }}.apk
   ignore_errors: yes
   changed_when: False
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

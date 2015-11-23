@@ -1,14 +1,18 @@
 ---
 
 - name: Test downloading GIS.lab Web QGIS plugin
-  shell: wget -O /dev/null $(curl "http://qgis.gis.lab/plugins.xml" | grep "download_url" | sed -e 's/<[^>]*>//g')
+  shell: >
+    wget -O /dev/null $(curl "http://qgis.gis.lab/plugins.xml"
+    | grep "download_url"
+    | sed -e 's/<[^>]*>//g')
   ignore_errors: yes
   changed_when: False
 
 - name: Test if GIS.lab Web client is running with empty project
-  shell: curl -I "http://web.gis.lab" | grep "HTTP/1.1 200 OK"
+  shell: >
+    curl -I "http://web.gis.lab"
+    | grep "HTTP/1.1 200 OK"
   ignore_errors: yes
   changed_when: False
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:
