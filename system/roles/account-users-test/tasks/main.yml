@@ -1,3 +1,11 @@
 ---
 
+- name: Test that only one non-LDAP user account exists (provisioning user)
+  shell: >
+    awk -F':' '{ if($3 >= 1000 && $3 < 2000) print $0 }' /etc/passwd
+    | wc -l
+    | grep "^1$"
+  ignore_errors: yes
+  changed_when: False
+
 # vim: set ts=8 sts=2 sw=2 et:
