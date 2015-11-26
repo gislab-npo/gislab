@@ -345,10 +345,15 @@
     executable: /bin/bash
 
 
-# install VirtualBox Guest additions
+# Install VirtualBox Guest additions
 # Latest kernel version supported by VirtualBox Guest additions on Ubuntu 12.04
 # is version 3.8. For manual installation run following command:
 # $ dkms install -m virtualbox-guest/<vbox-version> -k <kernel-version>/<ARCH>
+
+# We always reinstall (--reinstall) packages to fix broken cross-compilation,
+# happening when modules are rebuild on system upgrade by DKMS trigger without
+# proper configuration of BUILD_TARGET_ARCH variable.
+
 - name: Install VirtualBox Guest additions
   shell: >
     if [ '{{ GISLAB_CLIENT_ARCHITECTURE }}' == 'amd64' ]; then
@@ -358,12 +363,19 @@
     fi
     &&
     chroot {{ root_dir }}/root
-    apt-get --no-install-recommends {{ apt_get_opts }} install {{ item }}
+    apt-get
+    --reinstall
+    --no-install-recommends {{ apt_get_opts }} install {{ item }}
   with_items:
     - virtualbox-guest-dkms virtualbox-guest-x11 virtualbox-guest-utils
   args:
     executable: /bin/bash
   when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
+
+- name: Remove local VirtualBox file sharing group (vboxsf)
+  shell: >
+    chroot {{ root_dir }}/root
+    groupdel vboxsf || true
 
 
 # remove not needed packages

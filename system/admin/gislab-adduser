@@ -105,6 +105,9 @@ gislab_info "Adding user account"
 # create LDAP account (without creating home directory - CREATEHOMES="no")
 ldapadduser $GISLAB_USER gislabusers
 
+# add user to VirtualBox file sharing group
+gislab-moduser -a vboxsf $GISLAB_USER
+
 # add user to supplementary group(s)
 if [ -n "$opt_groups" ]; then
     gislab-moduser -a $opt_groups $GISLAB_USER
