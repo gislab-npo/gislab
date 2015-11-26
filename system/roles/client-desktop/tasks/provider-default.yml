@@ -66,8 +66,6 @@
   shell: gislab-client-image > /dev/null
   args:
     executable: /bin/bash
-  notify:
-    - service nbd-server restart
 
 
 - meta: flush_handlers
