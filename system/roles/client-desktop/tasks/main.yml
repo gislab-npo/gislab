@@ -365,9 +365,7 @@
     chroot {{ root_dir }}/root
     apt-get
     --reinstall
-    --no-install-recommends {{ apt_get_opts }} install {{ item }}
-  with_items:
-    - virtualbox-guest-dkms virtualbox-guest-x11 virtualbox-guest-utils
+    --no-install-recommends {{ apt_get_opts }} install {{ packages_virtualbox|join(' ') }}
   args:
     executable: /bin/bash
   when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT

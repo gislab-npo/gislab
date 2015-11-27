@@ -13,6 +13,13 @@ packages_kernel:
   - linux-headers-generic-lts-raring
 
 
+packages_virtualbox:
+  # list of VirtualBox packages (installed without recommended packages)
+  - virtualbox-guest-dkms
+  - virtualbox-guest-x11
+  - virtualbox-guest-utils
+
+
 packages_base:
   # list of basic server packages (installed with recommended packages)
   - acpid
