@@ -5,9 +5,4 @@
     name: munin-node
     state: restarted
 
-- name: service nginx restart
-  service:
-    name: nginx
-    state: restarted
-
 # vim: set ts=8 sts=2 sw=2 et:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Send message to 'gislab' IRC chat room.
+Send message to '#gis.lab' IRC chat room.
 Requires to run script 'utils/join-gislab-network.py' first to get connection
 with server.
 
@@ -40,7 +40,7 @@ HOST="{0}.5".format(GISLAB_NETWORK)
 PORT=6667
 NICK=IDENT=os.environ['USER']
 REALNAME="script"
-CHANNEL="gislab"
+CHANNEL="gis.lab"
 
 s=socket.socket( socket.AF_INET, socket.SOCK_STREAM )
 s.connect((HOST, PORT))

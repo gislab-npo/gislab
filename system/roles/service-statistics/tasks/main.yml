@@ -77,24 +77,15 @@
   with_items:
     - /etc/cron.d/munin-node
   notify:
-    - service nginx restart
+    - service munin-node restart
 
 
-### NGINX
-- name: Create NGINX virtualhost stats.gis.lab
-  template:
-    src: nginx/site-stats.j2
-    dest: /etc/nginx/sites-available/stats
-  notify:
-    - service nginx restart
-
-- name: Activate NGINX virtualhost stats.gis.lab
+- name: Publish statistics
   file:
-    src: /etc/nginx/sites-available/stats
-    dest: /etc/nginx/sites-enabled/stats
+    src: /var/cache/munin/www
+    dest: /var/www/default/stats
     state: link
-  notify:
-    - service nginx restart
+    force: yes
 
 
 ### CRON
