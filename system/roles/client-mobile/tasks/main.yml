@@ -291,7 +291,7 @@
 - name: Install GIS.lab Mobile build script
   template:
     src: cordova-build.sh.j2
-    dest: {{ root_dir }}/root/build/cordova-build.sh
+    dest: "{{ root_dir }}/root/build/cordova-build.sh"
     mode: 0755
 
 - name: Build GIS.lab Mobile package
