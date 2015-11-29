@@ -1,8 +1,15 @@
 ---
 
+- name: Test downloading GIS.lab Web QGIS plugins configuration
+  shell: >
+    curl "http://server.gis.lab/qgis/plugins.xml"
+    | grep "<plugins>"
+  ignore_errors: yes
+  changed_when: False
+
 - name: Test downloading GIS.lab Web QGIS plugin
   shell: >
-    wget -O /dev/null $(curl "http://qgis.gis.lab/plugins.xml"
+    wget -O /dev/null $(curl "http://server.gis.lab/qgis/plugins.xml"
     | grep "download_url"
     | sed -e 's/<[^>]*>//g')
   ignore_errors: yes

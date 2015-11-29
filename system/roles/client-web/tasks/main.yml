@@ -18,7 +18,6 @@
     state: latest
   with_items:
     - gcc
-    - make
     - nginx
     - python-dateutil
     - python-dev
@@ -68,15 +67,9 @@
 
 
 ### GIS.lab Web INSTALLATION
-# TODO: try something more efficient (like rsync or copy only one file)
-- name: Copy GIS.lab Web installation to temporary directory on server
-  copy:
-    src: static/gislab-web
-    dest: "{{ GISLAB_PATH_TMP }}/"
-
 - name: Install GIS.lab Web with dependencies
   pip:
-    name: "{{ GISLAB_PATH_TMP }}/gislab-web"
+    name: "{{ gislab_packages_url }}/gislab-web-{{ gislab_web_version }}.tar.gz"
     virtualenv: "{{ root_dir }}/virtualenv/gislab-web"
     virtualenv_site_packages: yes
     extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
@@ -88,11 +81,14 @@
 ### GIS.lab Web PROJECT
 - name: Generate secret key (run only once)
   shell: >
-    python {{ GISLAB_PATH_TMP }}/gislab-web/utils/secret_key.py
+    source {{ root_dir }}/virtualenv/gislab-web/bin/activate
+    &&
+    python -c "from django.utils import crypto; print crypto.get_random_string(50)"
     > {{ GISLAB_PATH_SECRET }}/gislab-web_secret_key.txt
     &&
     chmod 600 {{ GISLAB_PATH_SECRET }}/gislab-web_secret_key.txt
   args:
+    executable: /bin/bash
     creates: "{{ GISLAB_PATH_SECRET }}/gislab-web_secret_key.txt"
 
 - name: Get secret key
@@ -111,7 +107,7 @@
     source {{ root_dir }}/virtualenv/gislab-web/bin/activate
     &&
     django-admin.py startproject
-    --template={{ GISLAB_PATH_TMP }}/gislab-web/webgis/conf/project_template/
+    --template="$(python -c "import webgis; print webgis.__path__[0] + '/conf/project_template/'")"
     djproject {{ root_dir }}/www
   args:
     executable: /bin/bash
@@ -223,56 +219,55 @@
 
 
 # QGIS PLUGIN INSTALLATION
-- name: Copy GIS.lab Web plugin installation to temporary directory on server
-  copy:
-    src: static/gislab-web-plugin
-    dest: "{{ GISLAB_PATH_TMP }}/"
-
-- name: Copy GIS.lab Web plugin metadata file to temporary dir on server
-  template:
-    src: gislab-web-plugin/metadata.txt.j2
-    dest: "{{ GISLAB_PATH_TMP }}/gislab-web-plugin/gislab_web/metadata.txt"
-
-
-- name: Build GIS.lab Web plugin package
-  shell: >
-    cd {{ GISLAB_PATH_TMP }}/gislab-web-plugin/gislab_web
-    &&
-    make zip
-
-- name: Create Web plugin directory
+- name: Create QGIS plugis directory
   file:
-    dest: "{{ root_dir }}/qgis-plugin"
+    dest: "{{ root_dir }}/qgis/plugins"
+    recurse: yes
     state: directory
 
-- name: Install GIS.lab Web plugin package
+- name: Download GIS.lab Web QGIS plugin
+  shell: >
+    wget {{ wget_opts }}
+    -O {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
+    {{ gislab_packages_url }}/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
+
+- name: Install GIS.lab Web QGIS plugin to repository
   shell: "{{ item }}"
   with_items:
-    - mv {{ GISLAB_PATH_TMP }}/gislab-web-plugin/gislab_web/gislab_web.zip
-         {{ root_dir }}/qgis-plugin/
-    - cp {{ GISLAB_PATH_TMP }}/gislab-web-plugin/gislab_web/icon.png
-         {{ root_dir }}/qgis-plugin/
+    - cp
+      {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
+      {{ root_dir }}/qgis/plugins/gislab_web.zip
+    - unzip
+      -f
+      -d {{ root_dir }}/qgis/plugins/
+      {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
+      gislab_web/icon.png
 
-- name: Install GIS.lab Web plugin repository file
+- name: Install GIS.lab Web QGIS plugins repository file
   template:
     src: gislab-web-plugin/plugins.xml.j2
-    dest: "{{ root_dir }}/qgis-plugin/plugins.xml"
+    dest: "{{ root_dir }}/qgis/plugins.xml"
 
 
-- name: Configure Nginx virtualhost qgis.gis.lab
-  template:
-    src: nginx/site-gislab-web-plugin.j2
-    dest: /etc/nginx/sites-available/gislab-web-plugin
-  notify:
-    - service nginx restart
-
-- name: Activate Nginx virtualhost qgis.gis.lab
+- name: Create directory for publishing of QGIS plugins repository
   file:
-    src: /etc/nginx/sites-available/gislab-web-plugin
-    dest: /etc/nginx/sites-enabled/gislab-web-plugin
+    dest: /var/www/default/qgis
+    recurse: yes
+    state: directory
+
+- name: Publish QGIS plugins repository
+  file:
+    src: "{{ root_dir }}/qgis/plugins.xml"
+    dest: /var/www/default/qgis/plugins.xml
+    force: yes
     state: link
-  notify:
-    - service nginx restart
+
+- name: Publish QGIS plugins
+  file:
+    src: "{{ root_dir }}/qgis/plugins"
+    dest: /var/www/default/qgis/plugins
+    force: yes
+    state: link
 
 
 # Logging

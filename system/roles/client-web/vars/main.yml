@@ -1,3 +1,18 @@
 ---
 
 root_dir: "{{ GISLAB_PATH_SYSTEM }}/clients/web"
+
+gislab_packages_url: http://imincik-software.s3.amazonaws.com
+
+gislab_web_version: 1.0.0
+gislab_web_qgis_version: 1.0.0
+
+
+wget_opts: "
+ --continue
+ --no-verbose
+ --retry-connrefused
+ --waitretry=1
+ --read-timeout=20
+ --timeout=15
+ --tries=0"

@@ -10,7 +10,6 @@
     - web
     - chat
     - stats
-    - qgis
   ignore_errors: yes
   changed_when: False
 

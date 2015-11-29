@@ -117,8 +117,10 @@
     state: directory
   with_items:
     - apt
+    - apk
     - tar
     - pip
+    - qgis
 
 
 ### APT
