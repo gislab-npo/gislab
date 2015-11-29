@@ -41,5 +41,4 @@ wget_opts: "
  --timeout=15
  --tries=0"
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:
