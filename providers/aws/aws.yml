@@ -1,56 +1,98 @@
 ---
 
+# AMAZON AWS PROVIDER.
+
+# Requirements:
+# * python-boto
+
+# Authentication with the AWS provider is handled by specifying access and
+# secret keys as ENV variables.
+# Example:
+#   export AWS_ACCESS_KEY_ID='AK123'
+#   export AWS_SECRET_ACCESS_KEY='abc123'
+
+
 - hosts: localhost
   connection: local
   gather_facts: False
 
 
-  tasks:
+  vars:
+    # Default configuration. Override using '--extra-vars' Ansible option.
+    # Example:
+    #   ansible-playbook
+    #     --extra-vars '{"GISLAB_AWS_SSH_KEY_PAIR":"sshkey",
+    #                    "GISLAB_AWS_SERVER_INSTANCE_TYPE":"m3.xlarge"}'
+    #     providers/aws/aws.yml
 
-    - name: Read default configuration file 'group_vars/all'
+
+    GISLAB_UNIQUE_ID: aws
+
+
+    # Name of the SSH key pair already created in AWS.
+    # This key will be used for accessing GIS.lab server.
+    # Example: id_amazon
+    GISLAB_AWS_SSH_KEY_PAIR:
+
+
+    ### LOCATION.
+    # For more information about EC2 locations see:
+    # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
+
+    # Region to run instance in.
+    # Supported regions:
+    # * eu-west-1
+    # * us-east-1, us-west-1, us-west-2
+    # * ap-northeast-1, ap-southeast-1, ap-southeast-2
+    # * sa-east-1
+    # Example: eu-west-1        - run instance in EU (Ireland) region
+    GISLAB_AWS_REGION: eu-west-1
+
+    # AWS availability zone
+    # Zone to run instance in (must be within region).
+    # Example: eu-west-1a       - run instance in eu-west-1a availability zone
+    GISLAB_AWS_AVAILABILITY_ZONE: eu-west-1a
+
+
+    ### INSTANCE TYPE.
+    # For list of instance types see: http://aws.amazon.com/ec2/instance-types/
+    # Recommended instance types:
+    # * m3.xlarge  - 4 x vCPU, 15 GB RAM
+    # * c3.2xlarge - 8 x vCPU, 15 GB RAM
+    GISLAB_AWS_SERVER_INSTANCE_TYPE: t2.micro
+
+
+  tasks:
+    - name: Read default GIS.lab configuration file
       include_vars: "../../system/group_vars/all"
 
-    - name: Read default configuration file for AWS
-      include_vars: "aws"
-
-    - name: Read host file 'system/host_vars/{{ GISLAB_UNIQUE_ID }}'
+    - name: Read host file
       include_vars: "../../system/host_vars/{{ GISLAB_UNIQUE_ID }}"
 
 
-    # Sanity checks
-    - name: Fail if GISLAB_SUITE is not set to server
-      fail: msg="Setting GISLAB_SUITE variable to server is required."
-      when: GISLAB_SUITE != 'server'
-
-    - name: Fail if AWS credentials are not defined
-      fail: msg="Setting GISLAB_AWS_ACCOUNT, GISLAB_AWS_ACCESS_KEY_ID, GISLAB_AWS_SECRET_KEY,
-                 GISLAB_AWS_CERTIFICATE and GISLAB_AWS_PRIVATE_KEY variables is required on AWS."
-      when: GISLAB_AWS_ACCOUNT|default(None) == None
-            or GISLAB_AWS_ACCESS_KEY_ID|default(None) == None
-            or GISLAB_AWS_SECRET_KEY|default(None) == None
-            or GISLAB_AWS_CERTIFICATE|default(None) == None
-            or GISLAB_AWS_PRIVATE_KEY|default(None) == None
-
-    - name: Fail if SSH key pair not defined
-      fail: msg="Setting GISLAB_AWS_SSH_KEY_PAIR variable is required on AWS."
+    ### SANITY CHECKS
+    - name: Check if SSH key pair is defined
+      fail:
+        msg: Setting GISLAB_AWS_SSH_KEY_PAIR variable is not defined
       when: GISLAB_AWS_SSH_KEY_PAIR|default(None) == None
 
-    - name: Fail if GISLAB_AWS_BUCKET not defined
-      fail: msg=" Setting GISLAB_AWS_BUCKET variable is required on AWS."
-      when: GISLAB_AWS_BUCKET|default(None) == None
 
-
+    ### NETWORK INIT
     - name: Create network
       local_action:
         module: ec2_vpc
-        state: present
-        resource_tags: { "Name": "GIS.lab ({{ GISLAB_NETWORK | cidr_block_from_network_16 }})" }
+        resource_tags: {
+            "Name": "GIS.lab ({{ GISLAB_NETWORK | cidr_block_from_network_16 }})"
+        }
         region: "{{ GISLAB_AWS_REGION }}"
         cidr_block: "{{ GISLAB_NETWORK | cidr_block_from_network_16 }}"
         subnets:
           - cidr: "{{ GISLAB_NETWORK }}.0/24"
             az: "{{ GISLAB_AWS_AVAILABILITY_ZONE }}"
-            resource_tags: { "Name": "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})", "GISLAB_UNIQUE_ID": "{{ GISLAB_UNIQUE_ID }}" }
+            resource_tags: {
+                            "Name": "GIS.lab ID: {{ GISLAB_UNIQUE_ID }}",
+                            "GISLAB_UNIQUE_ID": "{{ GISLAB_UNIQUE_ID }}"
+            }
         internet_gateway: True
         route_tables:
           - subnets:
@@ -58,13 +100,15 @@
             routes:
             - dest: 0.0.0.0/0
               gw: igw
+        state: present
       register: vpc
 
+    # TODO: allow all required ports (like 6700, ...)
     - name: Create security group
       local_action:
         module: ec2_group
-        name: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
-        description: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+        name: "GIS.lab ID: {{ GISLAB_UNIQUE_ID }}"
+        description: "GIS.lab ID: {{ GISLAB_UNIQUE_ID }}"
         region: "{{ GISLAB_AWS_REGION }}"
         vpc_id: "{{ vpc.vpc_id }}"
         rules:
@@ -87,10 +131,12 @@
           - proto: -1
             from_port: -1
             to_port: -1
-            group_name: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+            group_name: "GIS.lab ID: {{ GISLAB_UNIQUE_ID }}"
         state: present
 
-    - name: Get the Ubuntu Precise AMI
+
+    ### INSTANCE LAUNCH
+    - name: Get latest Ubuntu Precise AMI
       local_action:
         module: ec2_ami_search
         distro: ubuntu
@@ -101,7 +147,7 @@
         virt: hvm
       register: ubuntu_image
 
-    - name: Launch EC2 instance
+    - name: Launch instance
       local_action:
         module: ec2
         image: "{{ ubuntu_image.ami }}"
@@ -109,7 +155,7 @@
         keypair: "{{ GISLAB_AWS_SSH_KEY_PAIR }}"
         region: "{{ GISLAB_AWS_REGION }}"
         zone: "{{ GISLAB_AWS_AVAILABILITY_ZONE }}"
-        group: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+        group: "GIS.lab ID: {{ GISLAB_UNIQUE_ID }}"
         vpc_subnet_id: "{{ vpc.subnets[0].id }}"
         assign_public_ip: yes
         private_ip: "{{ GISLAB_NETWORK }}.5"
@@ -117,13 +163,13 @@
          - device_name: /dev/sda1
            volume_size: 20
            volume_type: gp2
-           delete_on_termination: false
+           delete_on_termination: true
          - device_name: /dev/sdb
            volume_size: 30
            volume_type: gp2
-           delete_on_termination: false
+           delete_on_termination: true
         instance_tags:
-          Name: "GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+          Name: "GIS.lab ID: {{ GISLAB_UNIQUE_ID }}"
           GISLAB_UNIQUE_ID: "{{ GISLAB_UNIQUE_ID }}"
         count: 1
         wait: True
@@ -131,7 +177,9 @@
       register: ec2
 
     - name: Add instance public IP to hosts group
-      add_host: name={{ item.public_ip }} groups=ec2_instances
+      add_host:
+        name: "{{ item.public_ip }}"
+        groups: ec2_instances
       with_items: ec2.instances
 
     - name: Wait until SSH is available
@@ -144,7 +192,7 @@
       with_items: ec2.instances
 
 
-# Mount storage device to /storage
+### POST-INIT TASKS
 - hosts: ec2_instances
   user: ubuntu
   sudo: yes
@@ -156,30 +204,33 @@
       shell: echo 'aws' > /etc/gislab_provider
 
     - name: Unmount /mnt
-      shell: "umount /mnt || true"
+      shell: umount /mnt || true
       args:
         executable: /bin/bash
 
     - name: Disable mount /mnt on boot
-      lineinfile: dest=/etc/fstab regexp=' /mnt ' state=absent
+      lineinfile:
+        dest: /etc/fstab
+        regexp: ' /mnt '
+        state: absent
 
     - name: Mount /storage on boot
-      lineinfile: dest=/etc/fstab line='/dev/xvdb  /storage  ext4  defaults,nobootwait  0  0'
+      lineinfile:
+        dest: /etc/fstab
+        line: '/dev/xvdb  /storage  ext4  defaults,nobootwait  0  0'
 
     - name: Create filesystem on storage device
       command: mkfs.ext4 -F /dev/xvdb
 
     - name: Mount storage device to /storage
-      mount: name=/storage src=/dev/xvdb fstype=ext4 state=mounted
+      mount:
+        name: /storage
+        src: /dev/xvdb
+        fstype: ext4
+        state: mounted
 
-
-- hosts: localhost
-  connection: local
-  gather_facts: False  
-
-
-  tasks:
     - name: Print AWS launch summary
-      local_action:
-        module: debug msg="Instance ID -> {{ ec2.instances[0].id }} | Inventory -> '{{ GISLAB_UNIQUE_ID }} ansible_ssh_host={{ ec2.instances[0].public_dns_name }} ansible_ssh_user=ubuntu'"
+      debug:
+        msg: "GIS.lab instance IP address: {{ hostvars.localhost.ec2.instances[0].public_ip }}"
 
+# vim: set ts=8 sts=2 sw=2 et:
