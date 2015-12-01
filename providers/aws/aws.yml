@@ -18,15 +18,15 @@
 
 
   vars:
-    # Default configuration. Override using '--extra-vars' Ansible option.
+    # Default configuration.
+    # Do not modify this file directly, rather create a new host configuration
+    # file and connect it by setting GISLAB_UNIQUE_ID variable using Ansible
+    # '--extra-vars' option.
+    #
     # Example:
     #   ansible-playbook
-    #     --extra-vars '{"GISLAB_AWS_SSH_KEY_PAIR":"sshkey",
-    #                    "GISLAB_AWS_SERVER_INSTANCE_TYPE":"m3.xlarge"}'
-    #     providers/aws/aws.yml
-
-
-    GISLAB_UNIQUE_ID: aws
+    #     --extra-vars '{"GISLAB_UNIQUE_ID":"aws"}'
+    #   providers/aws/aws.yml
 
 
     # Name of the SSH key pair already created in AWS.
@@ -103,7 +103,6 @@
         state: present
       register: vpc
 
-    # TODO: allow all required ports (like 6700, ...)
     - name: Create security group
       local_action:
         module: ec2_group
