@@ -17,8 +17,15 @@
 
 - name: Test if GIS.lab Web client is running with empty project
   shell: >
-    curl -I "http://web.gis.lab"
+    curl -k -I "https://web.gis.lab"
     | grep "HTTP/1.1 200 OK"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test GIS.lab Web API request
+  shell: >
+    curl -k "https://web.gis.lab/gislab_version.json"
+    | grep "GISLAB_UNIQUE_ID"
   ignore_errors: yes
   changed_when: False
 

@@ -3,9 +3,7 @@ upstream gislab-web {
 }
 
 server {
-    listen 80;
-    listen 443 ssl;
-    server_name web.*;
+    listen 443 ssl default_server;
     client_max_body_size 4G;
 
     ssl_certificate /etc/nginx/ssl/gislab-web.crt;
