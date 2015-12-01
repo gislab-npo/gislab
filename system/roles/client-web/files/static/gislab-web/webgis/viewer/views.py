@@ -99,7 +99,7 @@ def user_projects(request, username):
 
 	projects = [{
 		'title': _('Empty Project'),
-		'url': request.build_absolute_uri('/'),
+		'url': secure_url(request, '/')
 	}]
 	projects.extend(client.get_user_projects(request, username))
 	context = {

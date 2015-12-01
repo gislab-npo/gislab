@@ -65,9 +65,8 @@
 		};
 
 		GislabMobileClient.prototype.login = function(server, username, password) {
+			this.serverUrl = 'https://{0}'.format(server);
 			if (username && password) {
-				this._secure = true;
-				this.serverUrl = 'https://{0}'.format(server);
 				return this._deferredRequest({
 					url: '{0}/mobile/login/'.format(this.serverUrl),
 					method: 'post',
@@ -78,8 +77,6 @@
 					}
 				});
 			} else {
-				this._secure = false;
-				this.serverUrl = 'http://{0}'.format(server);
 				return $q.when();
 			}
 			/*
