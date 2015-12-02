@@ -12,4 +12,22 @@
   ignore_errors: yes
   changed_when: False
 
+- name: Test if kernel is downloadable via HTTP
+  shell: >
+    curl http://localhost:6700
+    | grep "[\s]*kernel"
+    | curl -I $(awk -F " " '{print $2}')
+    | grep "HTTP/1.1 200 OK"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if initrd is downloadable via HTTP
+  shell: >
+    curl http://localhost:6700
+    | grep "[\s]*initrd"
+    | curl -I $(awk -F " " '{print $2}')
+    | grep "HTTP/1.1 200 OK"
+  ignore_errors: yes
+  changed_when: False
+
 # vim: set ts=8 sts=2 sw=2 et:
