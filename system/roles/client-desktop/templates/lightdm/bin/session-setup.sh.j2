@@ -13,10 +13,10 @@ fi
 
 
 # restart machine if new client image is available
-GISLAB_CLIENT_IMAGE_VERSION_SERVER=$(curl http://server.gis.lab/gislab_desktop.buildstamp)
-GISLAB_CLIENT_IMAGE_VERSION_CLIENT=$(cat /etc/gislab_desktop.buildstamp)
+image_version_server=$(curl http://server.gis.lab/clients/desktop/gislab_desktop.buildstamp)
+image_version_client=$(cat /etc/gislab_desktop.buildstamp)
 
-if [ "$GISLAB_CLIENT_IMAGE_VERSION_SERVER" != "$GISLAB_CLIENT_IMAGE_VERSION_CLIENT" ]; then
+if [ "$image_version_server" != "$image_version_client" ]; then
     for i in $(seq 10 10 100); do
         echo $i;
         sleep 1;

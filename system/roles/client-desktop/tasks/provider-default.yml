@@ -53,11 +53,11 @@
   with_items:
     - {
         src: "/var/lib/tftpboot/gislab/vmlinuz",
-        dest: "/var/www/default/vmlinuz"
+        dest: "/var/www/default/clients/desktop/vmlinuz"
       }
     - {
         src: "/var/lib/tftpboot/gislab/initrd.img",
-        dest: "/var/www/default/initrd.img"
+        dest: "/var/www/default/clients/desktop/initrd.img"
       }
 
 

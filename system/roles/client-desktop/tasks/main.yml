@@ -995,6 +995,14 @@
     update-initramfs -u
 
 
+### PUBLISHING
+- name: Create directory for published files via HTTP
+  file:
+    dest: /var/www/default/clients/desktop
+    state: directory
+    recurse: yes
+
+
 ### IMAGE
 - include: provider-default.yml
   when: GISLAB_PROVIDER in ('default', 'gislab-unit')
@@ -1005,7 +1013,7 @@
 - name: Publish GIS.lab client build stamp file
   file:
     src: "{{ root_dir }}/image/gislab_desktop.buildstamp"
-    dest: /var/www/default/gislab_desktop.buildstamp
+    dest: /var/www/default/clients/desktop/gislab_desktop.buildstamp
     state: link
     force: yes
 
