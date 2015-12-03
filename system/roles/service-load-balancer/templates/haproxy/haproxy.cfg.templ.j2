@@ -23,13 +23,13 @@ listen server.gis.lab 0.0.0.0:1936
     stats realm Haproxy\ Statistics
     stats uri /
 
-listen ms.gis.lab 0.0.0.0:90
+listen server.gis.lab 0.0.0.0:90
     mode http
     stats enable
     stats hide-version
     stats uri /haproxy?stats
     stats refresh 3s
-    option httpchk GET /cgi-bin/qgis_mapserv.fcgi HTTP/1.1\r\nHost:\ ms.gis.lab
+    option httpchk GET /cgi-bin/qgis_mapserv.fcgi HTTP/1.1\r\nHost:\ server.gis.lab
     balance static-rr
     fullconn 150
     maxconn 1000

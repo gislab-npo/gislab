@@ -5,7 +5,6 @@
   with_items:
     - server
     - boot
-    - ms
     - web
   ignore_errors: yes
   changed_when: False
