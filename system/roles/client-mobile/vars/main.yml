@@ -2,43 +2,17 @@
 
 root_dir: "{{ GISLAB_PATH_SYSTEM }}/clients/mobile"
 
+gislab_packages_url: http://imincik-software.s3.amazonaws.com
 
-packages:
-  - ant
-  - expect
-  - openjdk-7-jdk
-
-
-# Android
-android_sdk_url_base: http://dl.google.com/android
-android_sdk_version: 24.1.2
-android_build_tools_version: 22.0.1
-android_api_version: 22
-android_root: /build/android-sdk-linux
-
-# NodeJS
-nodejs_url_base: http://nodejs.org/dist
-nodejs_version: 0.10.32
-nodejs_root: /build/nodejs
-
-# Cordova
-cordova_version: 5.1.1
-
-# GIS.lab Mobile
-gislab_mobile_root: /build/gislab-mobile
-
-
-apt_get_opts: "
- --assume-yes
- --force-yes"
+gislab_mobile_version: 0.1.0
 
 wget_opts: "
- --continue
- --no-verbose
- --retry-connrefused
- --waitretry=1
- --read-timeout=20
- --timeout=15
- --tries=0"
+  --continue
+  --no-verbose
+  --retry-connrefused
+  --waitretry=1
+  --read-timeout=20
+  --timeout=15
+  --tries=0"
 
 # vim: set ts=8 sts=2 sw=2 et:

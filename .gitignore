@@ -1,8 +1,11 @@
 TODO.txt
 tmp
-.vagrant/*
+.vagrant
 install.log
 http-boot/gislab-client-loader.iso
 system/host_vars/*
 inventories/*
 *.pyc
+*.apk
+*.zip
+*.tar.*
