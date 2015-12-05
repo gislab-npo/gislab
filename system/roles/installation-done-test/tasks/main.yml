@@ -1,4 +1,10 @@
 ---
+- name: Remove temporary directory for this test
+  file:
+    dest: "{{ GISLAB_PATH_TEST_TMP }}"
+    state: absent
+  ignore_errors: yes
+  changed_when: False
 
 - name: Send email notification to GIS.lab administrator
   shell: >

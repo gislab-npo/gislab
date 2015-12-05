@@ -39,7 +39,7 @@ ansible_cmd="ansible-playbook \
   --verbose"
 
 if [ "$ROLES" != "" ]; then
-    tags="--tags installation-setup,$ROLES"
+    tags="--tags installation-setup,$ROLES,installation-done"
 else
     tags=""
 fi

@@ -13,7 +13,7 @@
 
 - name: Prepare mount point for test NBD mount
   file:
-    path: /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount
+    path: "{{ GISLAB_PATH_TEST_TMP }}/nbd_mount"
     state: directory
   ignore_errors: yes
   changed_when: False
@@ -24,7 +24,7 @@
     &&
     nbd-client -name gislab {{ GISLAB_NETWORK }}.5 /dev/nbd0
     &&
-    mount /dev/nbd0 /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount
+    mount /dev/nbd0 {{ GISLAB_PATH_TEST_TMP }}/nbd_mount
   args:
     executable: /bin/bash
   ignore_errors: yes
@@ -32,7 +32,7 @@
 
 - name: Test to run command in NBD chroot
   shell: >
-    chroot /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount id
+    chroot {{ GISLAB_PATH_TEST_TMP }}/nbd_mount id
     | grep "uid=0(root) gid=0(root) groups=0(root)"
   args:
     executable: /bin/bash
@@ -41,7 +41,7 @@
 
 - name: Test if VirtualBox guest additions are installed
   shell: >
-    chroot /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount find /lib/modules
+    chroot {{ GISLAB_PATH_TEST_TMP }}/nbd_mount find /lib/modules
     | grep "vboxguest.ko"
   args:
     executable: /bin/bash
@@ -51,7 +51,7 @@
 
 - name: Umount NBD
   shell: >
-    umount /tmp/test_{{ GISLAB_TEST_UNIQUE_STRING }}_nbd_mount
+    umount {{ GISLAB_PATH_TEST_TMP }}/nbd_mount
     &&
     nbd-client -disconnect /dev/nbd0
   args:

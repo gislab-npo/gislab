@@ -12,4 +12,27 @@
   set_fact:
     GISLAB_TEST_UNIQUE_STRING: "{{ gislab_test_unique_string.stdout }}"
 
+
+# temporary variable valid only for Ansible during test
+- name: Set temporary directory for this test
+  set_fact:
+    GISLAB_PATH_TEST_TMP: /tmp/gislab-test-{{ GISLAB_TEST_UNIQUE_STRING }}
+
+
+### DIRECTORIES STRUCTURE
+- name: Create GIS.lab test directories structure
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  with_items:
+    - {
+        path: "{{ GISLAB_PATH_TEST_TMP }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+
 # vim: set ts=8 sts=2 sw=2 et:

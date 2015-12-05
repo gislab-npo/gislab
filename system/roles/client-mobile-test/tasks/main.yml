@@ -3,13 +3,11 @@
 - name: Test downloading GIS.lab Mobile APK file
   shell: >
     wget -q
-    -O /tmp/gislab-mobile-{{ GISLAB_TEST_UNIQUE_STRING }}.apk
+    -O {{ GISLAB_PATH_TEST_TMP }}/gislab-mobile.apk
     http://server.gis.lab/clients/mobile/gislab-mobile.apk
     &&
-    unzip -l /tmp/gislab-mobile-{{ GISLAB_TEST_UNIQUE_STRING }}.apk
+    unzip -l {{ GISLAB_PATH_TEST_TMP }}/gislab-mobile.apk
     | grep AndroidManifest.xml
-    &&
-    rm -f /tmp/gislab-mobile-{{ GISLAB_TEST_UNIQUE_STRING }}.apk
   ignore_errors: yes
   changed_when: False
 
