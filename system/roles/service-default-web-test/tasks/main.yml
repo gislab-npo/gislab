@@ -1,3 +1,10 @@
 ---
 
+- name: Test default web page
+  shell: >
+    curl http://localhost
+    | grep "Welcome to GIS.lab !"
+  ignore_errors: yes
+  changed_when: False
+
 # vim: set ts=8 sts=2 sw=2 et:
