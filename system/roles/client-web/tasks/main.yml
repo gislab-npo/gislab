@@ -249,23 +249,10 @@
     dest: "{{ root_dir }}/qgis/plugins.xml"
 
 
-- name: Create directory for publishing of QGIS plugins repository
-  file:
-    dest: /var/www/default/qgis
-    recurse: yes
-    state: directory
-
 - name: Publish QGIS plugins repository
   file:
-    src: "{{ root_dir }}/qgis/plugins.xml"
-    dest: /var/www/default/qgis/plugins.xml
-    force: yes
-    state: link
-
-- name: Publish QGIS plugins
-  file:
-    src: "{{ root_dir }}/qgis/plugins"
-    dest: /var/www/default/qgis/plugins
+    src: "{{ root_dir }}/qgis"
+    dest: /var/www/default/qgis
     force: yes
     state: link
 
