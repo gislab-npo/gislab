@@ -438,6 +438,13 @@
   changed_when: False
 
 
+# gislab-client-shell
+- name: Test running chroot detection command in desktop client's chroot
+  shell: gislab-client-shell ischroot
+  ignore_errors: yes
+  changed_when: False
+
+
 ### FINAL CLEANUP
 - name: Remove test users accounts
   shell: gislab-deluser -f "{{ item }}"

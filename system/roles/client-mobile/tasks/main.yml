@@ -24,6 +24,7 @@
     {{ root_dir }}/apk/gislab-mobile.apk
 
 
+### PUBLISHING
 - name: Create directory for publishing of GIS.lab Mobile installer
   file:
     dest: /var/www/default/clients/mobile
