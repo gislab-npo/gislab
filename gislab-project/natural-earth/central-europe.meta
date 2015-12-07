@@ -1,57 +1,33 @@
 {
-  "measure_ellipsoid": "WGS84", 
-  "use_mapcache": true, 
   "projection": {
+    "proj4": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs", 
     "code": "EPSG:3857", 
     "is_geographic": false
   }, 
-  "keyword_list": [
-    "europe"
+  "scales": [
+    18489298, 
+    9244649, 
+    4622324, 
+    2311162, 
+    1155581, 
+    577791, 
+    288895, 
+    144448, 
+    72224, 
+    36112, 
+    18056, 
+    9028, 
+    4514, 
+    2257
   ], 
-  "contact_mail": "ivan.mincik@gmail.com", 
-  "online_resource": "https://github.com/imincik/gis-lab/tree/version-0.5/user/data/natural-earth", 
-  "contact_organization": "GIS.lab", 
-  "position_precision": {
-    "automatic": true, 
-    "decimal_places": 2
-  }, 
-  "extent": [
-    651496.1919785641, 
-    5688462.821393402, 
-    2687603.8734734296, 
-    7374556.522260039
+  "abstract": "GIS.lab example project", 
+  "zoom_extent": [
+    187423.752, 
+    5646310.479, 
+    3151676.313, 
+    7416708.865
   ], 
   "fees": "Free", 
-  "canvas_color": "#ffffffff", 
-  "topics": [
-    {
-      "abstract": "Visegrad Four countries", 
-      "visible_overlays": [
-        "Places", 
-        "Roads", 
-        "Visegrad Four"
-      ], 
-      "title": "Visegrad Four"
-    }, 
-    {
-      "abstract": "Western Countries", 
-      "visible_overlays": [
-        "Places", 
-        "Roads", 
-        "Western Countries"
-      ], 
-      "title": "Western Countries"
-    }, 
-    {
-      "abstract": "Other Central European countries", 
-      "visible_overlays": [
-        "Places", 
-        "Roads", 
-        "Other"
-      ], 
-      "title": "Other Countries"
-    }
-  ], 
   "message": {
     "valid_until": "01.01.2099", 
     "text": "Welcome to GIS.lab example project ! Please note that print composer is not available for guest user."
@@ -61,13 +37,13 @@
       "layers": [
         {
           "attribution": {
-            "url": "", 
-            "title": "Places made with Natural Earth data."
+            "url": "http://www.naturalearthdata.com", 
+            "title": "Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com."
           }, 
           "projection": "EPSG:4326", 
           "labels": true, 
           "visible": true, 
-          "visibility_scale_min": -4.656612873077393e-10, 
+          "visibility_scale_min": 2257, 
           "extent": [
             683504.7942115112, 
             5780410.452177983, 
@@ -80,27 +56,23 @@
           "pk_attributes": [
             "PK_UID"
           ], 
-          "drawing_order": 0, 
+          "type": "vector", 
+          "drawing_order": 4, 
           "attributes": [
             {
               "alias": "Name", 
               "type": "TEXT", 
-              "name": "NAME"
-            }, 
-            {
-              "alias": "District", 
-              "type": "TEXT", 
-              "name": "ADM1NAME"
+              "name": "name"
             }, 
             {
               "alias": "Country", 
               "type": "TEXT", 
-              "name": "ADM0NAME"
+              "name": "adm0name"
             }, 
             {
-              "alias": "Time zone", 
+              "alias": "Timezone", 
               "type": "TEXT", 
-              "name": "TIMEZONE"
+              "name": "timezone"
             }
           ], 
           "hidden": false, 
@@ -115,13 +87,13 @@
         }, 
         {
           "attribution": {
-            "url": "", 
-            "title": "Roads made with Natural Earth data."
+            "url": "http://www.naturalearthdata.com", 
+            "title": "Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com."
           }, 
           "projection": "EPSG:4326", 
           "labels": false, 
           "visible": true, 
-          "visibility_scale_min": 0.0, 
+          "visibility_scale_min": 2257, 
           "extent": [
             675820.5426159283, 
             5706275.042890986, 
@@ -134,7 +106,8 @@
           "pk_attributes": [
             "PK_UID"
           ], 
-          "drawing_order": 1, 
+          "type": "vector", 
+          "drawing_order": 3, 
           "attributes": [
             {
               "alias": "Type", 
@@ -142,14 +115,14 @@
               "name": "type"
             }, 
             {
-              "alias": "Label", 
-              "type": "TEXT", 
-              "name": "label"
-            }, 
-            {
               "alias": "Length (km)", 
               "type": "INTEGER", 
               "name": "length_km"
+            }, 
+            {
+              "alias": "Label", 
+              "type": "TEXT", 
+              "name": "label"
             }
           ], 
           "hidden": false, 
@@ -158,7 +131,7 @@
           "queryable": true, 
           "metadata": {
             "keyword_list": "road, highway", 
-            "abstract": "The roads of central Europe", 
+            "abstract": "The roads of Central Europe", 
             "title": "Roads"
           }
         }
@@ -176,10 +149,10 @@
           "labels": true, 
           "visible": true, 
           "extent": [
-            651496.1919785641, 
-            5688462.821393402, 
+            1344309.8658659027, 
+            5738995.776810409, 
             2687603.8734734296, 
-            7374556.522260039
+            7330551.168008884
           ], 
           "geom_type": "POLYGON", 
           "name": "Visegrad Four", 
@@ -190,27 +163,38 @@
           "drawing_order": 2, 
           "attributes": [
             {
-              "alias": "Name", 
+              "alias": "Abbreviation", 
               "type": "TEXT", 
-              "name": "NAME"
+              "name": "adm0_a3"
             }, 
             {
-              "alias": "Subregion", 
+              "alias": "Name", 
               "type": "TEXT", 
-              "name": "SUBREGION"
+              "name": "name"
             }, 
             {
               "alias": "Population", 
               "type": "DOUBLE", 
-              "name": "POP_EST"
+              "name": "pop_est"
+            }, 
+            {
+              "alias": "GDP", 
+              "type": "DOUBLE", 
+              "name": "gdp_md_est"
+            }, 
+            {
+              "alias": "Subregion", 
+              "type": "TEXT", 
+              "name": "subregion"
             }
           ], 
           "hidden": false, 
           "provider_type": "spatialite", 
+          "type": "vector", 
           "queryable": true, 
           "metadata": {
             "keyword_list": "visegrad, czech, hungary, poland, slovakia", 
-            "abstract": "The Visegrad Four (also called the Visegrad Group, or V4) is an alliance of four Central European states \u2013 Czech Republic, Hungary, Poland and Slovakia \u2013 for the purposes of furthering their European integration as well as advancing their military, economic and energy cooperation with one another.", 
+            "abstract": "The Visegrad Four (also called the Visegrad Group, or V4) is an alliance of four Central European states Czech Republic, Hungary, Poland and Slovakia for the purposes of furthering their European integration as well as advancing their military, economic and energy cooperation with one another.", 
             "title": "Visegrad Four"
           }
         }, 
@@ -224,8 +208,8 @@
           "visible": true, 
           "extent": [
             651496.1919785641, 
-            5688462.821393402, 
-            2687603.8734734296, 
+            5751665.6308426475, 
+            1908944.2374130278, 
             7374556.522260039
           ], 
           "geom_type": "POLYGON", 
@@ -234,26 +218,37 @@
           "pk_attributes": [
             "PK_UID"
           ], 
-          "drawing_order": 3, 
+          "drawing_order": 1, 
           "attributes": [
+            {
+              "alias": "Abbreviation", 
+              "type": "TEXT", 
+              "name": "adm0_a3"
+            }, 
             {
               "alias": "Name", 
               "type": "TEXT", 
-              "name": "NAME"
-            }, 
-            {
-              "alias": "Subregion", 
-              "type": "TEXT", 
-              "name": "SUBREGION"
+              "name": "name"
             }, 
             {
               "alias": "Population", 
               "type": "DOUBLE", 
-              "name": "POP_EST"
+              "name": "pop_est"
+            }, 
+            {
+              "alias": "GDP", 
+              "type": "DOUBLE", 
+              "name": "gdp_md_est"
+            }, 
+            {
+              "alias": "Subregion", 
+              "type": "TEXT", 
+              "name": "subregion"
             }
           ], 
           "hidden": false, 
           "provider_type": "spatialite", 
+          "type": "vector", 
           "queryable": true, 
           "metadata": {
             "keyword_list": "western, austria, germany, liechtenstein, switzerland", 
@@ -270,10 +265,10 @@
           "labels": true, 
           "visible": true, 
           "extent": [
-            651496.1919785641, 
+            1487814.0790067913, 
             5688462.821393402, 
-            2687603.8734734296, 
-            7374556.522260039
+            1838474.9592886472, 
+            5919897.456979186
           ], 
           "geom_type": "POLYGON", 
           "name": "Other", 
@@ -281,30 +276,41 @@
           "pk_attributes": [
             "PK_UID"
           ], 
-          "drawing_order": 4, 
+          "drawing_order": 0, 
           "attributes": [
+            {
+              "alias": "Abbreviation", 
+              "type": "TEXT", 
+              "name": "adm0_a3"
+            }, 
             {
               "alias": "Name", 
               "type": "TEXT", 
-              "name": "NAME"
-            }, 
-            {
-              "alias": "Subregion", 
-              "type": "TEXT", 
-              "name": "SUBREGION"
+              "name": "name"
             }, 
             {
               "alias": "Population", 
               "type": "DOUBLE", 
-              "name": "POP_EST"
+              "name": "pop_est"
+            }, 
+            {
+              "alias": "GDP", 
+              "type": "DOUBLE", 
+              "name": "gdp_md_est"
+            }, 
+            {
+              "alias": "Subregion", 
+              "type": "TEXT", 
+              "name": "subregion"
             }
           ], 
           "hidden": false, 
           "provider_type": "spatialite", 
+          "type": "vector", 
           "queryable": true, 
           "metadata": {
             "keyword_list": "slovenia", 
-            "abstract": "The other countries of central Europe", 
+            "abstract": "The other countries of Central Europe", 
             "title": "Other Countries"
           }
         }
@@ -312,24 +318,88 @@
       "name": "Countries"
     }
   ], 
-  "composer_templates": [
+  "tile_resolutions": [
+    4891.9698095703125, 
+    2445.9849047851562, 
+    1222.9924523925781, 
+    611.4962261962891, 
+    305.74811309814453, 
+    152.87405654907226, 
+    76.43702827453613, 
+    38.218514137268066, 
+    19.109257068634033, 
+    9.554628534317017, 
+    4.777314267158508, 
+    2.388657133579254, 
+    1.194328566789627, 
+    0.5971642833948135
+  ], 
+  "gislab_user": "gislab", 
+  "title": "Countries of Central Europe", 
+  "authentication": "all", 
+  "units": "meters", 
+  "selection_color": "#ffff00ff", 
+  "contact_phone": "+421 999 123 456", 
+  "topics": [
     {
-      "width": 297.0, 
-      "map": {
-        "width": 276.0, 
-        "name": "map0", 
-        "height": 178.0
-      }, 
-      "labels": [
-        "gislab_project", 
-        "gislab_author", 
-        "gislab_copyrights", 
-        "gislab_contact", 
-        "Title"
+      "abstract": "Countries of Central Europe", 
+      "visible_overlays": [
+        "Places", 
+        "Roads", 
+        "Visegrad Four", 
+        "Western Countries", 
+        "Other"
       ], 
-      "name": "A4", 
-      "height": 210.0
+      "title": "Default topic"
     }, 
+    {
+      "abstract": "Countries of Visegrad Four", 
+      "visible_overlays": [
+        "Places", 
+        "Roads", 
+        "Visegrad Four"
+      ], 
+      "title": "Visegrad Four"
+    }, 
+    {
+      "abstract": "Countries of Western Europe", 
+      "visible_overlays": [
+        "Places", 
+        "Roads", 
+        "Western Countries"
+      ], 
+      "title": "Western Countries"
+    }, 
+    {
+      "abstract": "Other Central European countries", 
+      "visible_overlays": [
+        "Places", 
+        "Roads", 
+        "Other"
+      ], 
+      "title": "Other Countries"
+    }
+  ], 
+  "measure_ellipsoid": "WGS84", 
+  "use_mapcache": true, 
+  "keyword_list": [
+    "europe"
+  ], 
+  "contact_mail": "admin@gislab.io", 
+  "contact_organization": "GIS.lab", 
+  "position_precision": {
+    "automatic": true, 
+    "decimal_places": 2
+  }, 
+  "extent": [
+    651496.1919785641, 
+    5688462.821393402, 
+    2687603.8734734296, 
+    7374556.522260039
+  ], 
+  "online_resource": "http://web.gislab.io", 
+  "canvas_color": "#ffffffff", 
+  "composer_templates": [
     {
       "width": 420.0, 
       "map": {
@@ -346,28 +416,33 @@
       ], 
       "name": "A3", 
       "height": 297.0
+    }, 
+    {
+      "width": 297.0, 
+      "map": {
+        "width": 276.0, 
+        "name": "map0", 
+        "height": 178.0
+      }, 
+      "labels": [
+        "gislab_project", 
+        "gislab_author", 
+        "gislab_copyrights", 
+        "gislab_contact", 
+        "Title"
+      ], 
+      "name": "A4", 
+      "height": 210.0
     }
   ], 
-  "tile_resolutions": [
-    2445.9849047851562, 
-    1222.9924523925781, 
-    611.4962261962891, 
-    305.74811309814453
-  ], 
-  "gislab_user": "marcel", 
   "access_constrains": "Public", 
-  "zoom_extent": [
-    231620.827, 
-    5646310.479, 
-    3107479.238, 
-    7416708.865
-  ], 
-  "title": "Countries of Central Europe", 
+  "gislab_unique_id": "gislab_vagrant", 
+  "publish_date_unix": 1449524917, 
+  "publish_date": "Mon Dec  7 22:48:37 2015", 
+  "expiration": "01.01.2099", 
+  "gislab_version": "init-1916-g06489fb", 
+  "contact_person": "GIS.lab Developers", 
   "extent_buffer": 0.0, 
-  "gislab_unique_id": "gislab1", 
-  "publish_date_unix": 1411650729, 
-  "authentication": "all", 
-  "publish_date": "Thu Sep 25 15:12:09 2014", 
   "base_layers": [
     {
       "name": "BLANK", 
@@ -380,15 +455,25 @@
         7374556.522260039
       ], 
       "resolutions": [
+        4891.9698095703125, 
         2445.9849047851562, 
         1222.9924523925781, 
         611.4962261962891, 
-        305.74811309814453
+        305.74811309814453, 
+        152.87405654907226, 
+        76.43702827453613, 
+        38.218514137268066, 
+        19.109257068634033, 
+        9.554628534317017, 
+        4.777314267158508, 
+        2.388657133579254, 
+        1.194328566789627, 
+        0.5971642833948135
       ], 
       "type": "BLANK"
     }, 
     {
-      "max_zoom_level": 9, 
+      "max_zoom_level": 18, 
       "name": "OSM", 
       "title": "Open Street Map", 
       "visible": false, 
@@ -399,39 +484,23 @@
         5615981.3413867
       ], 
       "resolutions": [
+        4891.9698095703125, 
         2445.9849047851562, 
         1222.9924523925781, 
         611.4962261962891, 
-        305.74811309814453
+        305.74811309814453, 
+        152.87405654907226, 
+        76.43702827453613, 
+        38.218514137268066, 
+        19.109257068634033, 
+        9.554628534317017, 
+        4.777314267158508, 
+        2.388657133579254, 
+        1.194328566789627, 
+        0.5971642833948135
       ], 
       "type": "OSM", 
-      "min_zoom_level": 6
-    }, 
-    {
-      "max_zoom_level": 9, 
-      "name": "GHYBRID", 
-      "title": "Google Hybrid", 
-      "visible": false, 
-      "extent": [
-        -16319611.284727, 
-        -5615981.3413867, 
-        16319611.284727, 
-        5615981.3413867
-      ], 
-      "resolutions": [
-        2445.9849047851562, 
-        1222.9924523925781, 
-        611.4962261962891, 
-        305.74811309814453
-      ], 
-      "type": "google", 
-      "min_zoom_level": 6
+      "min_zoom_level": 5
     }
-  ], 
-  "gislab_version": "git:master~ca51c70", 
-  "units": "meters", 
-  "selection_color": "#ffff00ff", 
-  "contact_person": "Ivan Min\u010d\u00edk", 
-  "contact_phone": "+421 999 123 456", 
-  "abstract": "GIS.lab example project"
+  ]
 }
