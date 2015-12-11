@@ -2,7 +2,7 @@
 #
 ### INSTALLATION SETUP ###
 #
-# Set basic environment for installation.
+# Set basic environment. This role is common for installation and tests.
 
 
 ### SANITY CHECKS
@@ -33,14 +33,19 @@
   when: gislab_version_git_status.stdout != "GIT-NOT-AVAILABLE"
 
 
-- name: Generate unique string for this installation
+- name: Generate unique string for this installation or test
   shell: date +%s | md5sum | head -c 24
   register: gislab_install_unique_string
   changed_when: False
 
-- name: Set unique string for this installation
+- name: Set unique string for installation
   set_fact:
     GISLAB_INSTALL_UNIQUE_STRING: "{{ gislab_install_unique_string.stdout }}"
+
+- name: Set unique string for test run
+  set_fact:
+    GISLAB_TEST_UNIQUE_STRING: "{{ GISLAB_INSTALL_UNIQUE_STRING }}"
+
 
 - name: Detect GIS.lab unique ID
   set_fact:
@@ -167,10 +172,10 @@
     GISLAB_PATH_LOG: "{{ GISLAB_PATH_STORAGE }}/log"
 
 
-# temporary variable valid only for Ansible during installation or update
-- name: Set temporary directory for this installation
+# temporary variable valid only for Ansible
+- name: Set temporary directory for installation or test
   set_fact:
-    GISLAB_PATH_TMP: /tmp/gislab-install-{{ GISLAB_INSTALL_UNIQUE_STRING }}
+    GISLAB_PATH_TMP: /tmp/gislab-{{ GISLAB_INSTALL_UNIQUE_STRING }}
 
 
 ### DIRECTORIES STRUCTURE

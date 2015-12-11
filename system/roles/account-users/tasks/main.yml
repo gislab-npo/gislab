@@ -24,7 +24,8 @@
   # This task is performed only for accounts with ID in range 1000-1010.
   # GIS.lab user accounts IDs begin with 3000.
   shell: >
-    for userid in {1000..1010}; do username=$(getent passwd $userid | awk -F ':' '{print $1}');
+    for userid in {1000..1010}; do
+    username=$(getent passwd $userid | awk -F ':' '{print $1}');
     if [ "$username" != "" -a "$username" != "{{ GISLAB_PROVISIONING_USER }}" ]; then
     deluser --remove-home $username;
     fi;

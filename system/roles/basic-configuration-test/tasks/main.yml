@@ -357,7 +357,7 @@
 - name: Backup test user account
   shell: >
     gislab-backupuser
-    -d {{ GISLAB_PATH_TEST_TMP }}/backupuser
+    -d {{ GISLAB_PATH_TMP }}/backupuser
     test{{ GISLAB_TEST_UNIQUE_STRING }}
   ignore_errors: yes
   changed_when: False
@@ -368,7 +368,7 @@
     -f test{{ GISLAB_TEST_UNIQUE_STRING }}
     &&
     gislab-restoreuser
-    -f {{ GISLAB_PATH_TEST_TMP }}/backupuser/$(ls -1 {{ GISLAB_PATH_TEST_TMP }}/backupuser)
+    -f {{ GISLAB_PATH_TMP }}/backupuser/$(ls -1 {{ GISLAB_PATH_TMP }}/backupuser)
     test{{ GISLAB_TEST_UNIQUE_STRING }}
   ignore_errors: yes
   changed_when: False

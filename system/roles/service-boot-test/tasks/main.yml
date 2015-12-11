@@ -13,15 +13,17 @@
     state: latest
   with_items:
     - atftp
+    - nbd-client
   changed_when: False
 
 
+### PXE BOOT
 - name: Test downloading files needed for PXE boot from TFTP server
   shell: >
     atftp
     -g
     -r {{ item }}
-    -l {{ GISLAB_PATH_TEST_TMP }}/$(basename {{ item }})
+    -l {{ GISLAB_PATH_TMP }}/$(basename {{ item }})
     localhost 69
   with_items:
     - gislab/pxelinux.cfg/default
@@ -30,6 +32,8 @@
   ignore_errors: yes
   changed_when: False
 
+
+### HTTP BOOT
 - name: Test HTTP boot service
   shell: >
     curl http://localhost:6700/?ip=192.168.77.7
@@ -56,6 +60,46 @@
   changed_when: False
 
 
+### NBD
+- name: Prepare mount point for test NBD mount
+  file:
+    path: "{{ GISLAB_PATH_TMP }}/nbd_mount"
+    state: directory
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test NBD mount
+  shell: >
+    modprobe nbd
+    &&
+    nbd-client -name gislab {{ GISLAB_NETWORK }}.5 /dev/nbd0
+    &&
+    mount /dev/nbd0 {{ GISLAB_PATH_TMP }}/nbd_mount
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test to run command in NBD chroot
+  shell: >
+    chroot {{ GISLAB_PATH_TMP }}/nbd_mount id
+    | grep "uid=0(root) gid=0(root) groups=0(root)"
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+- name: Umount NBD
+  shell: >
+    umount {{ GISLAB_PATH_TMP }}/nbd_mount
+    &&
+    nbd-client -disconnect /dev/nbd0
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+
 - name: Uninstall packages for tests
   apt:
     pkg: "{{ item }}"
@@ -64,6 +108,7 @@
     state: absent
   with_items:
     - atftp
+    - nbd-client
   changed_when: False
 
 # vim: set ts=8 sts=2 sw=2 et:

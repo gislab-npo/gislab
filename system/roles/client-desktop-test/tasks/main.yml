@@ -1,73 +1,18 @@
 ---
 
-- name: Install packages for tests
-  apt:
-    pkg: "{{ item }}"
-    force: yes
-    install_recommends: no
-    state: latest
-  with_items:
-    - nbd-client
-  changed_when: False
-
-
-- name: Prepare mount point for test NBD mount
-  file:
-    path: "{{ GISLAB_PATH_TEST_TMP }}/nbd_mount"
-    state: directory
-  ignore_errors: yes
-  changed_when: False
-
-- name: Test NBD mount
+- name: Test client image file
   shell: >
-    modprobe nbd
-    &&
-    nbd-client -name gislab {{ GISLAB_NETWORK }}.5 /dev/nbd0
-    &&
-    mount /dev/nbd0 {{ GISLAB_PATH_TEST_TMP }}/nbd_mount
-  args:
-    executable: /bin/bash
-  ignore_errors: yes
-  changed_when: False
-
-- name: Test to run command in NBD chroot
-  shell: >
-    chroot {{ GISLAB_PATH_TEST_TMP }}/nbd_mount id
-    | grep "uid=0(root) gid=0(root) groups=0(root)"
-  args:
-    executable: /bin/bash
+    file {{ root_dir }}/image/gislab.img
+    | grep "Squashfs filesystem, little endian"
   ignore_errors: yes
   changed_when: False
 
 - name: Test if VirtualBox guest additions are installed
   shell: >
-    chroot {{ GISLAB_PATH_TEST_TMP }}/nbd_mount find /lib/modules
+    find {{ root_dir }}/root/lib/modules
     | grep "vboxguest.ko"
-  args:
-    executable: /bin/bash
   when: GISLAB_CLIENT_VIRTUALBOX_SUPPORT
   ignore_errors: yes
-  changed_when: False
-
-- name: Umount NBD
-  shell: >
-    umount {{ GISLAB_PATH_TEST_TMP }}/nbd_mount
-    &&
-    nbd-client -disconnect /dev/nbd0
-  args:
-    executable: /bin/bash
-  ignore_errors: yes
-  changed_when: False
-
-
-- name: Uninstall packages for tests
-  apt:
-    pkg: "{{ item }}"
-    force: yes
-    purge: yes
-    state: absent
-  with_items:
-    - nbd-client
   changed_when: False
 
 # vim: set ts=8 sts=2 sw=2 et:

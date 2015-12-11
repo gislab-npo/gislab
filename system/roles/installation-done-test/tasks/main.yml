@@ -1,17 +1,9 @@
 ---
+
 - name: Remove temporary directory for this test
   file:
-    dest: "{{ GISLAB_PATH_TEST_TMP }}"
+    dest: "{{ GISLAB_PATH_TMP }}"
     state: absent
-  ignore_errors: yes
-  changed_when: False
-
-- name: Send email notification to GIS.lab administrator
-  shell: >
-    echo -e 'Dear GIS.lab Administrator,\ntesting of your system is successfully done.'
-    | mail -s '[GIS.lab test: {{ GISLAB_TEST_UNIQUE_STRING }}]: Testing is done' root
-  args:
-    executable: /bin/bash
   ignore_errors: yes
   changed_when: False
 

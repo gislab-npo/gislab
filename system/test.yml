@@ -4,7 +4,7 @@
   sudo: yes
 
   roles:
-    - { role: installation-setup-test, tags: ['installation-setup'] }
+    - { role: installation-setup, tags: ['installation-setup'] }
     - { role: basic-configuration-test, tags: ['basic-configuration'] }
     - { role: account-users-test, tags: ['account-users'] }
     - { role: service-syslog-test, tags: ['service-syslog'] }

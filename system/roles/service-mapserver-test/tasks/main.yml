@@ -40,9 +40,9 @@
 - name: Test WMS GetMap request with example GIS.lab project
   shell: >
     curl "{{ mapserver_url }}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&MAP={{ qgs_project }}&LAYERS=Other,Western+Countries,Visegrad+Four,Roads,Places&SRS=EPSG:3857&WIDTH=1024&HEIGHT=768&TRANSPARENT=True&FORMAT=png&BBOX=651496.191979,5688462.82139,3156184.73448,7566979.22827"
-    > {{ GISLAB_PATH_TEST_TMP }}/mapserver_getmap.png
+    > {{ GISLAB_PATH_TMP }}/mapserver_getmap.png
     &&
-    file {{ GISLAB_PATH_TEST_TMP }}/mapserver_getmap.png
+    file {{ GISLAB_PATH_TMP }}/mapserver_getmap.png
     | grep "PNG image data, 1024 x 768, 8-bit/color RGBA, non-interlaced"
   ignore_errors: yes
   changed_when: False
@@ -50,9 +50,9 @@
 - name: Test WMS GetLegendGraphic request with example GIS.lab project
   shell: >
     curl "{{ mapserver_url }}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&MAP={{ qgs_project }}&LAYERS=Visegrad+Four&SRS=EPSG:3857&FORMAT=png&SCALE=1155581&LAYERFONTSIZE=8&LAYERFONTBOLD=true&SYMBOLHEIGHT=3&SYMBOLWIDTH=5&ITEMFONTSIZE=8&ICONLABELSPACE=5"
-    > {{ GISLAB_PATH_TEST_TMP }}/mapserver_getlegend.png
+    > {{ GISLAB_PATH_TMP }}/mapserver_getlegend.png
     &&
-    file {{ GISLAB_PATH_TEST_TMP }}/mapserver_getlegend.png
+    file {{ GISLAB_PATH_TMP }}/mapserver_getlegend.png
     | grep "PNG image data, 128 x 99, 8-bit/color RGB, non-interlaced"
   ignore_errors: yes
   changed_when: False

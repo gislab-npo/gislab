@@ -27,6 +27,7 @@
   args:
     executable: /bin/bash
 
+
 - name: Installation of GIS.lab is done
   shell: date -R
 

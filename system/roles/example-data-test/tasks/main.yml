@@ -1,3 +1,26 @@
 ---
 
+- name: Test if example GIS.lab data is installed
+  shell: >
+    file /storage/repository/gislab-project/natural-earth/natural-earth.sqlite
+    | grep "SQLite 3.x database"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if example GIS.lab project is installed
+  shell: >
+    file /storage/repository/gislab-project/natural-earth/{{ item.file }}
+    | grep "{{ item.type }}"
+  with_items:
+    - {
+        file: "central-europe.qgs",
+        type: "exported SGML document, ASCII text, with very long lines"
+    }
+    - {
+        file: "central-europe.meta",
+        type: "ASCII English text, with very long lines"
+    }
+  ignore_errors: yes
+  changed_when: False
+
 # vim: set ts=8 sts=2 sw=2 et:
