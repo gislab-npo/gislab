@@ -2,7 +2,7 @@ server.modules = ( )
 
 server.port                     = 91
 server.use-ipv6                 = "disable"
-server.document-root            = "/var/www/default"
+server.document-root            = "{{ GISLAB_PATH_WWW }}"
 server.pid-file                 = "/var/run/lighttpd.pid"
 server.username                 = "www-data"
 server.groupname                = "www-data"

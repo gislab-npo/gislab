@@ -27,14 +27,14 @@
 ### PUBLISHING
 - name: Create directory for publishing of GIS.lab Mobile installer
   file:
-    dest: /var/www/default/clients/mobile
+    dest: "{{ GISLAB_PATH_WWW }}/clients/mobile"
     recurse: yes
     state: directory
 
 - name: Publish GIS.lab Mobile installer
   file:
     src: "{{ root_dir }}/apk/gislab-mobile.apk"
-    dest: /var/www/default/clients/mobile/gislab-mobile.apk
+    dest: "{{ GISLAB_PATH_WWW }}/clients/mobile/gislab-mobile.apk"
     state: link
     force: yes
 

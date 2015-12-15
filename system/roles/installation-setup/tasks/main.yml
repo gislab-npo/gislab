@@ -172,6 +172,11 @@
     GISLAB_PATH_LOG: "{{ GISLAB_PATH_STORAGE }}/log"
 
 
+- name: Set GIS.lab default www root directory
+  set_fact:
+    GISLAB_PATH_WWW: "/var/www/default"
+
+
 # temporary variable valid only for Ansible
 - name: Set temporary directory for installation or test
   set_fact:
@@ -249,6 +254,12 @@
       }
     - {
         path: "{{ GISLAB_PATH_LOG }}",
+        owner: root,
+        group: root,
+        mode: "0755"
+      }
+    - {
+        path: "{{ GISLAB_PATH_WWW }}",
         owner: root,
         group: root,
         mode: "0755"

@@ -45,20 +45,15 @@
 
 
 ### WEB CONTENT
-- name: Create default web page root directory
-  file:
-    path: /var/www/default
-    state: directory
-
 - name: Install default web page content
   template:
     src: index.html
-    dest: /var/www/default/index.html
+    dest: "{{ GISLAB_PATH_WWW }}/index.html"
 
 - name: Add 'gislab_version' file to default web content
   file:
     src: /etc/gislab_version
-    dest: /var/www/default/gislab_version
+    dest: "{{ GISLAB_PATH_WWW }}/gislab_version"
     state: link
 
 

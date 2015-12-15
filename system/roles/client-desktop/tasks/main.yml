@@ -857,7 +857,7 @@
 - name: Copy default web page content from server
   command: >
     cp --parents
-    /var/www/default/index.html
+    {{ GISLAB_PATH_WWW }}/index.html
     {{ root_dir }}/root/
   when: GISLAB_SUITE in ('server', 'lab')
 
@@ -998,7 +998,7 @@
 ### PUBLISHING
 - name: Create directory for published files via HTTP
   file:
-    dest: /var/www/default/clients/desktop
+    dest: "{{ GISLAB_PATH_WWW }}/clients/desktop"
     state: directory
     recurse: yes
 
@@ -1013,7 +1013,7 @@
 - name: Publish GIS.lab client build stamp file
   file:
     src: "{{ root_dir }}/image/gislab_desktop.buildstamp"
-    dest: /var/www/default/clients/desktop/gislab_desktop.buildstamp
+    dest: "{{ GISLAB_PATH_WWW }}/clients/desktop/gislab_desktop.buildstamp"
     state: link
     force: yes
 

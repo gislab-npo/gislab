@@ -252,7 +252,7 @@
 - name: Publish QGIS plugins repository
   file:
     src: "{{ root_dir }}/qgis"
-    dest: /var/www/default/qgis
+    dest: "{{ GISLAB_PATH_WWW }}/qgis"
     force: yes
     state: link
 

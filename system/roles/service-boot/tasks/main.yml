@@ -172,7 +172,7 @@
 - name: Publish boot files via HTTP
   file:
     src: /var/lib/tftpboot/gislab
-    dest: /var/www/default/boot
+    dest: "{{ GISLAB_PATH_WWW }}/boot"
     state: link
     force: yes
 

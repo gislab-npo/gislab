@@ -83,7 +83,7 @@
 - name: Publish statistics
   file:
     src: /var/cache/munin/www
-    dest: /var/www/default/stats
+    dest: "{{ GISLAB_PATH_WWW }}/stats"
     state: link
     force: yes
 
