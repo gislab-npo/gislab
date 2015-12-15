@@ -26,6 +26,17 @@ gislab_info () {
 }
 
 
+gislab_success () {
+    # print success message
+    m=$(echo $1 | sed "s/\n//g")
+
+    tput bold
+    tput setaf 2
+    echo -e "${m}." | fold -s | sed "s/^/[GIS.lab]: /g"
+    tput sgr0
+}
+
+
 gislab_warning () {
     # print warning message
     m=$(echo $1 | sed "s/\n//g")

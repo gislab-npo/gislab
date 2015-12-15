@@ -136,6 +136,6 @@ echo "$buildstamp" > $bstamp_file_image
 
 
 ### CONFIRMATION MESSAGE
-gislab_info "Image was successfully created"
+gislab_success "Image was successfully created"
 
 # vim: set ts=8 sts=4 sw=4 et:

@@ -118,6 +118,6 @@ fi
 
 
 ### CONFIRMATION MESSAGE
-gislab_info "Account '$GISLAB_USER' was successfully deleted"
+gislab_success "Account '$GISLAB_USER' was successfully deleted"
 
 # vim: set ts=8 sts=4 sw=4 et:

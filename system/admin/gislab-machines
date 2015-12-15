@@ -115,7 +115,7 @@ elif [ "$opt_action" == "add" ]; then
     done
 
     service isc-dhcp-server restart
-    gislab_info "Machines added successfully"
+    gislab_success "Machines added successfully"
 
 # REMOVE
 elif [ "$opt_action" == "remove" ]; then
@@ -137,7 +137,7 @@ elif [ "$opt_action" == "remove" ]; then
     done
 
     service isc-dhcp-server restart
-    gislab_info "Machines removed successfully"
+    gislab_success "Machines removed successfully"
 fi
 
 # vim: set ts=8 sts=4 sw=4 et:

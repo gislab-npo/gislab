@@ -168,6 +168,6 @@ rm -rf $tmp_dir
 
 
 ### CONFIRMATION MESSAGE
-gislab_info "Account '$GISLAB_USER' restored from '$opt_backup_file'"
+gislab_success "Account '$GISLAB_USER' restored from '$opt_backup_file'"
 
 # vim: set ts=8 sts=4 sw=4 et:

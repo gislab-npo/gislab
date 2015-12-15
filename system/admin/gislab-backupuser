@@ -179,6 +179,6 @@ rm -rf $tmp_dir
 
 
 ### CONFIRMATION MESSAGE
-gislab_info "Backup of account '$GISLAB_USER' created in '$backup_file'"
+gislab_success "Backup of account '$GISLAB_USER' created in '$backup_file'"
 
 # vim: set ts=8 sts=4 sw=4 et:

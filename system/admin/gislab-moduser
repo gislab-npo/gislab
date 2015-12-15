@@ -283,48 +283,48 @@ EOL
 case "$opt_cmd" in
     add_to_group)
         add_user_to_group $GISLAB_USER $opt_groups
-        gislab_info "
+        gislab_success "
             User '$GISLAB_USER' was successfully added to
             group(s) '$opt_groups'
         "
     ;;
     delete_from_group)
         delete_user_from_group $GISLAB_USER $opt_groups
-        gislab_info "
+        gislab_success "
             User '$GISLAB_USER' was successfully deleted from
             group(s) '$opt_groups'
         "
     ;;
     enable_sudo)
         enable_sudo $GISLAB_USER
-        gislab_info "
+        gislab_success "
             User '$GISLAB_USER' was successfully
             added to the superuser's group
         "
     ;;
     disable_sudo)
         disable_sudo $GISLAB_USER
-        gislab_info "
+        gislab_success "
             User '$GISLAB_USER' was successfully deleted from superuser's group
         "
     ;;
     change_mail)
         change_user_mail $GISLAB_USER $opt_email
-        gislab_info "
+        gislab_success "
             User '$GISLAB_USER' email was successfully
             updated to '$opt_email'
         "
     ;;
     set_password)
         set_user_password $GISLAB_USER $opt_password
-        gislab_info "
+        gislab_success "
             Account '$GISLAB_USER' updated with password
             '$opt_password'
         "
     ;;
     change_description)
         change_user_description $GISLAB_USER "$opt_description"
-        gislab_info "
+        gislab_success "
             User '$GISLAB_USER' description was successfully updated
         "
     ;;

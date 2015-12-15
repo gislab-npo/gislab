@@ -69,6 +69,6 @@ ldapdeletegroup $GISLAB_GROUP
 
 
 ### CONFIRMATION MESSAGE
-gislab_info "Group '$GISLAB_GROUP' was successfully deleted"
+gislab_success "Group '$GISLAB_GROUP' was successfully deleted"
 
 # vim: set ts=8 sts=4 sw=4 et:

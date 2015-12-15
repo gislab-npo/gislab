@@ -66,6 +66,6 @@ fi
 
 
 ### CONFIRMATION MESSAGE
-gislab_info "GIS.lab system upgrade was successfully done"
+gislab_success "GIS.lab system upgrade was successfully done"
 
 # vim: set ts=8 sts=4 sw=4 et:
