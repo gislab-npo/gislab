@@ -76,6 +76,7 @@ gislab_serf_install () {
 
     SERF_INSTALL="yes"
     SERF_VERSION="$1"
+    SERF_URL="http://gislab-software.s3.amazonaws.com"
 
     # detect architecture
     if [ "$(getconf LONG_BIT)" == "32" ]; then
@@ -116,11 +117,13 @@ gislab_serf_install () {
             --timeout=15 \
             --tries=0 \
             --output-document=/storage/cache/packages/tar/${SERF_VERSION}_linux_${SERF_ARCH}.zip \
-        https://dl.bintray.com/mitchellh/serf/${SERF_VERSION}_linux_${SERF_ARCH}.zip
+        ${SERF_URL}/${SERF_VERSION}_linux_${SERF_ARCH}.zip
 
         # install Serf
         rm -f /usr/local/bin/serf
-        unzip -d /usr/local/bin /storage/cache/packages/tar/${SERF_VERSION}_linux_${SERF_ARCH}.zip
+        unzip \
+            -d /usr/local/bin \
+            /storage/cache/packages/tar/${SERF_VERSION}_linux_${SERF_ARCH}.zip
 
         chown root:gislabadmins /usr/local/bin/serf 2> /dev/null
         chmod 774 /usr/local/bin/serf

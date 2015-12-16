@@ -2,7 +2,7 @@
 
 root_dir: "{{ GISLAB_PATH_SYSTEM }}/clients/mobile"
 
-gislab_packages_url: http://imincik-software.s3.amazonaws.com
+gislab_packages_url: http://gislab-software.s3.amazonaws.com
 
 gislab_mobile_version: 0.1.0
 
