@@ -29,8 +29,5 @@ user nobody
 group nogroup
 persist-key
 persist-tun
-{% if not GISLAB_DEBUG_SERVICES %}
-verb 0
-{% else %}
-verb 3
-{% endif %}
+
+verb 0  # GISLAB_DEBUG: set this value to '3' for debug mode

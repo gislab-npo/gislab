@@ -9,12 +9,7 @@ GROUP=www-data
 DJANGO_SETTINGS_MODULE=djproject.settings
 DJANGO_WSGI_MODULE=djproject.wsgi
 NUM_WORKERS={{ ansible_processor_vcpus * 2 + 1 }}
-
-{% if GISLAB_DEBUG_SERVICES %}
-LOG_LEVEL=debug
-{% else %}
-LOG_LEVEL=error
-{% endif %}
+LOG_LEVEL=error # GISLAB_DEBUG: set this value to 'debug' for debug mode
 
 
 source $VIRTUALENV/bin/activate

@@ -15,10 +15,9 @@ static-file.exclude-extensions  = ( ".php", ".pl", ".fcgi" )
 # logging
 server.errorlog-use-syslog      = "enable"
 
-{% if GISLAB_DEBUG_SERVICES %}
-server.modules                  += ( "mod_accesslog" )
-accesslog.use-syslog            = "enable"
-{% endif %}
+# GISLAB_DEBUG: uncomment these lines for debug mode
+# server.modules                  += ( "mod_accesslog" )
+# accesslog.use-syslog            = "enable"
 
 
 include_shell "/usr/share/lighttpd/create-mime.assign.pl"

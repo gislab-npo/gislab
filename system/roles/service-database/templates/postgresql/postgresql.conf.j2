@@ -19,12 +19,11 @@ default_text_search_config = 'pg_catalog.english'
 log_destination = 'syslog'
 syslog_facility = 'LOCAL7'
 
-{% if not GISLAB_DEBUG_SERVICES %}
 log_min_messages = 'ERROR'
-{% else %}
-log_min_messages = 'DEBUG1'
-log_min_error_statement = 'DEBUG1'
-log_min_duration_statement = 0
-{% endif %}
+
+# GISLAB_DEBUG: uncomment these lines for debug mode
+# log_min_messages = 'DEBUG1'
+# log_min_error_statement = 'DEBUG1'
+# log_min_duration_statement = 0
 
 # configuration created by pgtune wizard will be placed below

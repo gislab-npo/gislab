@@ -20,11 +20,9 @@ http {
     # Logging Settings
     error_log {{ GISLAB_PATH_LOG }}/nginx-error.log;
 
-    {% if not GISLAB_DEBUG_SERVICES %}
-    access_log /dev/null;
-    {% else %}
-    access_log {{ GISLAB_PATH_LOG }}/nginx-access.log;
-    {% endif %}
+    access_log /dev/null; # GISLAB_DEBUG: set this value to
+                          # '{{ GISLAB_PATH_LOG }}/nginx-access.log'
+                          # for debug mode
 
     # Gzip Settings
     gzip on;

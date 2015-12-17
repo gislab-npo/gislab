@@ -16,9 +16,8 @@ $Umask 0022
 $PrivDropToUser syslog
 $PrivDropToGroup syslog
 
-{% if GISLAB_DEBUG_SERVICES %}
-$SystemLogRateLimitInterval 0
-{% endif %}
+# GISLAB_DEBUG: uncomment these lines for debug mode
+# $SystemLogRateLimitInterval 0
 
 $WorkDirectory /var/spool/rsyslog
 $IncludeConfig /etc/rsyslog.d/*.conf

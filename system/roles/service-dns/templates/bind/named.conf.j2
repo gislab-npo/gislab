@@ -19,9 +19,9 @@ logging {
         null;
     };
 
-{% if GISLAB_DEBUG_SERVICES %}
-    category queries {
-        default_syslog;
-    };
-{% endif %}
+# GISLAB_DEBUG: uncomment these lines for debug mode
+#   category queries {
+#       default_syslog;
+#   };
+
 };
