@@ -117,7 +117,7 @@ gislab_serf_install () {
             --timeout=15 \
             --tries=0 \
             --output-document=/storage/cache/packages/tar/${SERF_VERSION}_linux_${SERF_ARCH}.zip \
-        ${SERF_URL}/${SERF_VERSION}_linux_${SERF_ARCH}.zip
+        ${SERF_URL}/serf_${SERF_VERSION}_linux_${SERF_ARCH}.zip
 
         # install Serf
         rm -f /usr/local/bin/serf
