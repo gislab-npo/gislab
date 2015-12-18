@@ -33,3 +33,5 @@ script:
 
 after_failure:
   - sudo cat /var/log/syslog
+  - sudo iptables -L -n
+  - sudo ufw status verbose
