@@ -61,15 +61,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       if CONFIG['GISLAB_SERVER_MAC']
         server.vm.network "public_network",
           :mac => CONFIG['GISLAB_SERVER_MAC'],
-          bridge: "eth0"
+          bridge: "lxcbr0"
       else
         server.vm.network "public_network",
-          bridge: "eth0"
+          bridge: "lxcbr0"
       end
     else
       server.vm.network "public_network",
         ip: CONFIG['GISLAB_NETWORK'] + ".5",
-        bridge: "eth0"
+        bridge: "lxcbr0"
     end
 
     # VirtualBox configuration
