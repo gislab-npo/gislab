@@ -28,4 +28,8 @@ before_install:
 
 
 script:
-        - vagrant up
+  - vagrant up
+
+
+after_failure:
+  - cat $HOME/.VirtualBox/*.log
