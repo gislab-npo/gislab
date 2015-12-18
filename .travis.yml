@@ -32,4 +32,4 @@ script:
 
 
 after_failure:
-  - cat $HOME/.VirtualBox/*.log
+  - sudo cat /var/log/syslog
