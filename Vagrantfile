@@ -3,10 +3,11 @@
 
 require 'yaml'
 
-# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
-
 Vagrant.require_version ">= 1.7.0"
+
+BOX = "precise-canonical"
+BOX_URL = "http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box"
 
 CONFIG = Hash.new           # GIS.lab configuration
 CONFIG_VAGRANT = Hash.new   # GIS.lab configuration for Vagrant (passed as Ansible extra vars)
@@ -45,14 +46,11 @@ CONFIG_VAGRANT["GISLAB_SERVER_NETWORK_DEVICE"] = "eth1"
 
 # Vagrant provisioning
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box
-  # or
-  # http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box
-
   # fix for https://github.com/ansible/ansible/issues/8644
   ENV['PYTHONIOENCODING'] = "utf-8"
 
-  config.vm.box = "precise-canonical"
+  config.vm.box = BOX
+  config.vm.box_url = BOX_URL
   config.vm.synced_folder '.', '/vagrant', disabled: true
   config.ssh.forward_agent = true
 
