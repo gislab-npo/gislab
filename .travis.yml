@@ -28,6 +28,4 @@ before_install:
 
 
 script:
-  - sudo ip link set down eth0
-  - sudo ip link set down docker0
   - vagrant up
