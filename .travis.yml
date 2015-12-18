@@ -28,4 +28,4 @@ before_install:
 
 
 script:
-  - vagrant up
+        - vagrant up --debug
