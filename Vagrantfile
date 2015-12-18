@@ -70,6 +70,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       server.vm.network "public_network",
         ip: CONFIG['GISLAB_NETWORK'] + ".5",
         bridge: "eth0"
+    end
 
     # VirtualBox configuration
     server.vm.provider "virtualbox" do |vb, override|
