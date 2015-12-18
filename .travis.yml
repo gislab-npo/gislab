@@ -15,11 +15,11 @@ before_install:
   - wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -
   - sudo sh -c 'echo "deb http://download.virtualbox.org/virtualbox/debian trusty contrib" > /etc/apt/sources.list.d/virtualbox.list'
   - sudo apt-get update && sudo apt-get --assume-yes --force-yes install build-essential linux-headers-$(uname -r) dkms
-  - sudo apt-get --assume-yes --force-yes install virtualbox-4.3
+  - sudo apt-get --assume-yes --force-yes install virtualbox-5.0
 
   - wget https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb
   - sudo dpkg -i vagrant_1.7.4_x86_64.deb
-  - sudo apt-get --assume-yes --force-yes install
+  - sudo apt-get --fix-missing install
 
 
   # print memory utilization and running processes
@@ -28,4 +28,4 @@ before_install:
 
 
 script:
-        - vagrant up --debug
+        - vagrant up
