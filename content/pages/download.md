@@ -2,19 +2,15 @@ Title: Download
 Order: 30
 Slug: download
 
-GIS.lab is currently in intensive development phase. There are many features implemented in each new version. We are
-trying to do our best to keep development version usable and we recommend downloading latest development version
-from Git for any non-production usage.
+GIS.lab is currently in intensive development phase. For evaluation or testing,
+we recommend downloading latest development version.
 
-URL for downloading latest development version in ZIP file:
+Download latest development version from Git:
 ```
-http://github.com/imincik/gis-lab/archive/master.zip
-```
-
-Download latest development version using Git client:
-```
-$ git clone https://github.com/imincik/gis-lab.git
+$ git clone https://github.com/gislab-npo/gislab.git
 ```
 
-### Official GIS.lab releases
-* http://github.com/imincik/gis-lab/releases/latest
+Download latest development version in ZIP archive:
+```
+http://github.com/gislab-npo/gislab/archive/master.zip
+```

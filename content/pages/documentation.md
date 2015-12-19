@@ -1,3 +1,3 @@
 Title: Documentation
 Order: 20
-URL: http://github.com/imincik/gis-lab/wiki
+URL: http://github.com/gislab-npo/gislab/wiki
