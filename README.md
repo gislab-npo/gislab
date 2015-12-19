@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/imincik/gis-lab.svg?branch=master)]
-(https://travis-ci.org/imincik/gis-lab)
+[![Build Status](https://travis-ci.org/gislab-npo/gislab.svg?branch=master)]
+(https://travis-ci.org/gislab-npo/gislab)
 
 # GIS.lab - free geospatial infrastructure
- * project page : http://imincik.github.io/gis-lab
- * documentation: https://github.com/imincik/gis-lab/wiki
+ * project page : http://web.gislab.io
+ * documentation: https://github.com/gislab-npo/gislab/wiki
 
 ## Authors (alphabetical order)
  * Marcel Dancak, dancakm@gmail.com

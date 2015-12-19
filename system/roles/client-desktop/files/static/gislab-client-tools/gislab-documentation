@@ -3,7 +3,7 @@
 
 # TODO: uncomment lines below once documentation will be ready. Until then open wiki page which should be always valid
 # for development version
-firefox "https://github.com/imincik/gis-lab/wiki/GIS-Project" &
+firefox "https://github.com/gislab-npo/gislab/wiki/GIS-Project" &
 
 #source /etc/gislab_version
 #ROOT_URL="http://imincik.github.io/gis-lab-doc"

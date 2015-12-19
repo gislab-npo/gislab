@@ -366,8 +366,8 @@ class WebgisClient(object):
 
 		context['gislab_unique_id'] = GISLAB_VERSION.get('GISLAB_UNIQUE_ID', 'unknown')
 		context['gislab_version'] = GISLAB_VERSION.get('GISLAB_VERSION', 'unknown')
-		context['gislab_homepage'] = 'http://imincik.github.io/gis-lab'
-		context['gislab_documentation'] = 'https://github.com/imincik/gis-lab/wiki'
+		context['gislab_homepage'] = 'http://web.gislab.io'
+		context['gislab_documentation'] = 'https://github.com/gislab-npo/gislab/wiki'
 		return self.render(request, context)
 
 	def ows_request(self, request):
