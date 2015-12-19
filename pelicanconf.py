@@ -20,9 +20,9 @@ TRANSLATION_FEED_ATOM = None
 
 # Blogroll
 LINKS =  (
-	('Partners: GISMentors.eu', 'http://www.gismentors.eu'),
 	('Mailing list', 'http://lists.osgeo.org/cgi-bin/mailman/listinfo/gis.lab'),
 	('IRC', 'http://webchat.freenode.net/?channels=%23gis.lab&uio=d4'),
+	('GISMentors.eu', 'http://www.gismentors.eu'),
 )
 
 # Social widget
