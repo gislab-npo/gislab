@@ -1,0 +1,5 @@
+---
+
+root_dir: "{{ GISLAB_PATH_SYSTEM }}/clients/desktop"
+
+# vim: set ts=8 sts=2 sw=2 et:
