@@ -1,18 +1,15 @@
 ###### Main Ubuntu repositories
-deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ precise main universe multiverse
-deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ precise-updates main universe multiverse
+deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }} main universe multiverse
+deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-updates main universe multiverse
 
 ###### Ubuntu security updates
-deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ precise-security main universe multiverse
+deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-security main universe multiverse
 
 ###### Ubuntu partner repository
-deb http://archive.canonical.com/ubuntu precise partner
+deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
 
-#### GIS.lab general packages repository
-deb http://ppa.launchpad.net/imincik/general/ubuntu precise main
-
-#### GIS.lab GIS repository
-deb http://ppa.launchpad.net/imincik/gis/ubuntu precise main
+#### GIS.lab packages repository
+deb http://ppa.launchpad.net/gislab-npo/production/ubuntu {{ ansible_distribution_release }} main
 
 {% if GISLAB_APT_CUSTOM_REPOSITORIES %}
 #### Custom repositories
@@ -23,4 +20,4 @@ deb {{ repository }}
 
 # JOSM repository
 #### JOSM
-deb http://josm.openstreetmap.de/apt precise universe
+deb http://josm.openstreetmap.de/apt {{ ansible_distribution_release }} universe

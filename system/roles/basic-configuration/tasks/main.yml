@@ -133,9 +133,9 @@
     dest: /etc/apt/sources.list.d
     state: absent
 
-- name: Add imincik PPA signing key
+- name: Add GIS.lab PPA signing key
   apt_key:
-    data: "{{ lookup('file', 'static/ppa_imincik.key') }}"
+    data: "{{ lookup('file', 'static/ppa-gislab-npo.key') }}"
     state: present
 
 
