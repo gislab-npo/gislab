@@ -41,3 +41,4 @@ outages. It is also ideal system for __education__ or just for __Open Source tec
 * collaboration tools
 
 _Want to know more ? Request a_ [__free workshop__](pages/workshops) _from GIS.lab developers !_
+
