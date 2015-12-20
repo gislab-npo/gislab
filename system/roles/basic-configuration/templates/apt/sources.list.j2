@@ -1,15 +1,21 @@
-###### Main Ubuntu repositories
-deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }} main universe multiverse
-deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-updates main universe multiverse
+###### Ubuntu repositories
+deb {{ apt_mirror.stdout }} {{ ansible_distribution_release }} main universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }} main universe multiverse
 
-###### Ubuntu security updates
-deb http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-security main universe multiverse
+deb {{ apt_mirror.stdout }} {{ ansible_distribution_release }}-updates main universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-updates main universe multiverse
+
+deb {{ apt_mirror.stdout }} {{ ansible_distribution_release }}-security main universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-security main universe multiverse
 
 ###### Ubuntu partner repository
 deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
 
 #### GIS.lab packages repository
 deb http://ppa.launchpad.net/gislab-npo/production/ubuntu {{ ansible_distribution_release }} main
+
+#### JOSM repository
+deb http://josm.openstreetmap.de/apt {{ ansible_distribution_release }} universe
 
 {% if GISLAB_APT_CUSTOM_REPOSITORIES %}
 #### Custom repositories
@@ -18,6 +24,4 @@ deb {{ repository }}
 {% endfor %}
 {% endif %}
 
-# JOSM repository
-#### JOSM
-deb http://josm.openstreetmap.de/apt {{ ansible_distribution_release }} universe
+

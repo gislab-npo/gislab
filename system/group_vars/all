@@ -142,13 +142,6 @@ GISLAB_TIMEZONE: Europe/Bratislava
 # Change requires running upgrade.
 GISLAB_DNS_SERVERS:
 
-# Local country code of Ubuntu repository used to choose closest mirror.
-# For Amazon AWS provider use value <region-name>.ec2
-# Example: sk             - Slovak Ubuntu mirror
-# Example: eu-west-1.ec2  - AWS mirror running in eu-west-1 region
-# Change requires running upgrade.
-GISLAB_APT_REPOSITORY_COUNTRY_MIRROR: sk
-
 # URL of Debian/Ubuntu packages caching service (apt-cacher-ng).
 # Example: http://192.168.50.6:3142
 # Change requires running upgrade.

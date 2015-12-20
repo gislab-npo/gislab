@@ -14,7 +14,6 @@
       GISLAB_ADMIN_SURNAME="{{ GISLAB_ADMIN_SURNAME }}"
       GISLAB_APT_CUSTOM_REPOSITORIES="{% if GISLAB_APT_CUSTOM_REPOSITORIES %}{{ GISLAB_APT_CUSTOM_REPOSITORIES|join(",") }}{% else %}{% endif %}"
       GISLAB_APT_HTTP_PROXY="{{ GISLAB_APT_HTTP_PROXY }}"
-      GISLAB_APT_REPOSITORY_COUNTRY_MIRROR="{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}"
       GISLAB_CLIENT_ARCHITECTURE="{{ GISLAB_CLIENT_ARCHITECTURE }}"
       GISLAB_CLIENT_KEYBOARDS="{% if GISLAB_CLIENT_KEYBOARDS %}{{ GISLAB_CLIENT_KEYBOARDS|keyboard_layouts }}{% else %}{% endif %}"
       GISLAB_CLIENT_LANGUAGES="{% if GISLAB_CLIENT_LANGUAGES %}{{ GISLAB_CLIENT_LANGUAGES|join(",") }}{% else %}{% endif %}"
@@ -123,12 +122,7 @@
 
 
 ### APT
-- name: Configure apt repositories
-  template:
-    src: apt/sources.list.j2
-    dest: /etc/apt/sources.list
-
-- name: Remove possible third party apt repositories
+- name: Remove third party apt repositories
   file:
     dest: /etc/apt/sources.list.d
     state: absent
@@ -137,6 +131,17 @@
   apt_key:
     data: "{{ lookup('file', 'static/ppa-gislab-npo.key') }}"
     state: present
+
+- name: Get closest apt mirror based on geographic location
+  shell: >
+    curl "http://mirrors.ubuntu.com/mirrors.txt"
+    | head -1
+  register: apt_mirror
+
+- name: Configure apt repositories
+  template:
+    src: apt/sources.list.j2
+    dest: /etc/apt/sources.list
 
 
 - name: Configure Apt cache proxy server
