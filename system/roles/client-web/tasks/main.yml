@@ -238,10 +238,15 @@
       {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
       {{ root_dir }}/qgis/plugins/gislab_web.zip
     - unzip
-      -f
-      -d {{ root_dir }}/qgis/plugins/
+      -p
       {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
       gislab_web/icon.png
+      > {{ root_dir }}/qgis/plugins/gislab_web.png
+    - unzip
+      -p
+      {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
+      gislab_web/metadata.txt
+      > {{ root_dir }}/qgis/plugins/gislab_web.meta
 
 - name: Install GIS.lab Web QGIS plugins repository file
   template:
