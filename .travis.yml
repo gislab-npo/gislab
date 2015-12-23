@@ -34,3 +34,5 @@ after_failure:
   - sudo netstat -natup
   - sudo cat /var/log/syslog
   - find ~/VirtualBox\ VMs/ -name "*.log" -exec cat "{}" \;
+  - vagrant ssh-config > ssh_config
+  - ssh -F ssh_config gislab_vagrant "sudo cat /var/log/syslog"
