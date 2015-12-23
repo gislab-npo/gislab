@@ -32,6 +32,6 @@ script:
 
 
 after_failure:
+  - sudo netstat -natup
   - sudo cat /var/log/syslog
-  - sudo iptables -L -n
-  - sudo ufw status verbose
+  - find ~/VirtualBox\ VMs/ -name "*.log" -exec cat "{}" \;
