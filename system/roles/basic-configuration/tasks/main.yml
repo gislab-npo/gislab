@@ -14,6 +14,7 @@
       GISLAB_ADMIN_SURNAME="{{ GISLAB_ADMIN_SURNAME }}"
       GISLAB_APT_CUSTOM_REPOSITORIES="{% if GISLAB_APT_CUSTOM_REPOSITORIES %}{{ GISLAB_APT_CUSTOM_REPOSITORIES|join(",") }}{% else %}{% endif %}"
       GISLAB_APT_HTTP_PROXY="{{ GISLAB_APT_HTTP_PROXY }}"
+      GISLAB_APT_MIRROR="{{ GISLAB_APT_MIRROR }}"
       GISLAB_CLIENT_ARCHITECTURE="{{ GISLAB_CLIENT_ARCHITECTURE }}"
       GISLAB_CLIENT_KEYBOARDS="{% if GISLAB_CLIENT_KEYBOARDS %}{{ GISLAB_CLIENT_KEYBOARDS|keyboard_layouts }}{% else %}{% endif %}"
       GISLAB_CLIENT_LANGUAGES="{% if GISLAB_CLIENT_LANGUAGES %}{{ GISLAB_CLIENT_LANGUAGES|join(",") }}{% else %}{% endif %}"
@@ -131,12 +132,6 @@
   apt_key:
     data: "{{ lookup('file', 'static/ppa-gislab-npo.key') }}"
     state: present
-
-- name: Get closest apt mirror based on geographic location
-  shell: >
-    curl "http://mirrors.ubuntu.com/mirrors.txt"
-    | head -1
-  register: apt_mirror
 
 - name: Configure apt repositories
   template:

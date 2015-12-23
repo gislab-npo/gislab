@@ -98,6 +98,16 @@
   set_fact:
     GISLAB_NETWORK_SERVER_IP: "{{ GISLAB_NETWORK }}.5"
 
+- name: Detect closest apt mirror based on geographic location
+  shell: >
+    curl "http://mirrors.ubuntu.com/mirrors.txt"
+    | head -1
+  register: apt_mirror
+
+- name: Set apt mirror
+  set_fact:
+    GISLAB_APT_MIRROR: "{{ apt_mirror.stdout }}"
+
 
 ### CAPABILITIES
 # VPN

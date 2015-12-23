@@ -1,11 +1,11 @@
 ###### Ubuntu repositories
-deb {{ apt_mirror.stdout }} {{ ansible_distribution_release }} main universe multiverse
+deb {{ GISLAB_APT_MIRROR }} {{ ansible_distribution_release }} main universe multiverse
 deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }} main universe multiverse
 
-deb {{ apt_mirror.stdout }} {{ ansible_distribution_release }}-updates main universe multiverse
+deb {{ GISLAB_APT_MIRROR }} {{ ansible_distribution_release }}-updates main universe multiverse
 deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-updates main universe multiverse
 
-deb {{ apt_mirror.stdout }} {{ ansible_distribution_release }}-security main universe multiverse
+deb {{ GISLAB_APT_MIRROR }} {{ ansible_distribution_release }}-security main universe multiverse
 deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-security main universe multiverse
 
 ###### Ubuntu partner repository

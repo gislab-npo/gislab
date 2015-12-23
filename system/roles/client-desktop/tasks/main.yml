@@ -59,23 +59,15 @@
   register: debootstrap_status
   changed_when: False
 
-- name: Install base system (without apt proxy)
-  command: >
+- name: Install base system
+  shell: >
+    http_proxy="{{ GISLAB_APT_HTTP_PROXY }}"
     debootstrap
     --arch {{ GISLAB_CLIENT_ARCHITECTURE }}
     {{ ansible_distribution_release }}
     {{ root_dir }}/root
-    http://{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
-  when: not debootstrap_status.stat.exists and GISLAB_APT_HTTP_PROXY|default(None) == None
-
-- name: Install base system (with apt proxy)
-  command: >
-    debootstrap
-    --arch {{ GISLAB_CLIENT_ARCHITECTURE }}
-    {{ ansible_distribution_release }}
-    {{ root_dir }}/root
-    {{ GISLAB_APT_HTTP_PROXY }}/{{ GISLAB_APT_REPOSITORY_COUNTRY_MIRROR }}.archive.ubuntu.com/ubuntu/
-  when: not debootstrap_status.stat.exists and GISLAB_APT_HTTP_PROXY|default(None) != None
+    {{ GISLAB_APT_MIRROR }}
+  when: not debootstrap_status.stat.exists
 
 
 # locale
