@@ -27,7 +27,7 @@ before_install:
 
 
 script:
-  - echo "GISLAB_ADMIN_PASSWORD: gislab" > system/host_vars/gislab_vagrant
+  - "echo 'GISLAB_ADMIN_PASSWORD: gislab' > system/host_vars/gislab_vagrant"
   - vagrant up
 
 
