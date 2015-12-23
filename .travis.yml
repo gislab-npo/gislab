@@ -27,15 +27,5 @@ before_install:
 
 
 script:
-  - "echo 'GISLAB_ADMIN_PASSWORD: gislab' > system/host_vars/gislab_vagrant"
+  - "echo 'GISLAB_ADMIN_PASSWORD: gislab\nGISLAB_DEBUG_INSTALL: yes' > system/host_vars/gislab_vagrant"
   - vagrant up
-
-
-after_failure:
-  - dmesg
-  - sudo netstat -natup
-  - sudo cat /var/log/syslog
-  - find ~/VirtualBox\ VMs/ -name "*.log" -exec cat "{}" \;
-  - vagrant status
-  - vagrant ssh-config > ssh_config
-  - ssh -vv -F ssh_config gislab_vagrant "sudo cat /var/log/syslog"
