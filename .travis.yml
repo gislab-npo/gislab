@@ -1,94 +1,36 @@
 ---
 
-language: python
-python: "2.7"
+sudo: required
+dist: trusty
+language: generic
+
 
 before_install:
-  ### Clean Travis instance from not needed packages ###
-  - sudo apt-get purge --assume-yes --force-yes ^mysql.*$
-
-  ### Clean Travis instance from packages in conflict with GIS.lab ###
-  # PostgreSQL/PostGIS
-  - sudo apt-get purge --assume-yes --force-yes ^postgres.*$ ^libpq.*$ ^postgis.*$
-  - sudo rm -rf /var/lib/postgresql
-
-  # xvfb
-  - sudo rm -f /etc/init.d/xvfb
-
-  # remove no longer required packages
-  - sudo apt-get --assume-yes --force-yes autoremove
-
-
-  # print memory utilization and running processes
+  ### ENVIRONMENT
   - sudo free
   - sudo ps aux
 
+  ### OS
+  - sudo apt-get --assume-yes --force-yes install software-properties-common
+  - sudo apt-add-repository --yes ppa:ansible/ansible
+  - sudo apt-get update
+  - sudo apt-get --assume-yes --force-yes install ansible
 
-install:
-  # Install Apparmor, which is required by GIS.lab
-  - sudo apt-get install --assume-yes --force-yes apparmor
+  ### VIRTUALBOX
+  - wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -
+  - sudo sh -c 'echo "deb http://download.virtualbox.org/virtualbox/debian trusty contrib" > /etc/apt/sources.list.d/virtualbox.list'
+  - sudo apt-get update
+  - sudo apt-get --assume-yes --force-yes install build-essential linux-headers-$(uname -r) dkms
+  - sudo apt-get --assume-yes --force-yes install virtualbox-5.0
 
-  # Install Ansible
-  - sudo apt-get install --assume-yes --force-yes python-pip
-  - sudo pip install ansible
+  ### VAGRANT
+  - wget https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb
+  - sudo dpkg -i vagrant_1.7.4_x86_64.deb
+  - sudo apt-get --fix-missing install
 
-  # Install fake SSH key required by GIS.lab installer
-  - mkdir -p /home/travis/.ssh
-  - touch /home/travis/.ssh/authorized_keys
+    # use 32-bit, because running 64-bit OS is not supported in nested VM
+  - vagrant box add precise-canonical http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-i386-vagrant-disk1.box
 
 script:
-  # Run outside of Python virtual environment automatically provided by Travis
-  - deactivate
-
-  - "ansible-playbook
-      -i inventories/localhost
-      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab'
-      --syntax-check
-      system/gislab.yml"
-
-  # We are often building only 'server' suite. 'lab' suite is failing because
-  # of some Travis memory problems
-
-  # Installation
-  - "ansible-playbook
-      -i inventories/localhost
-      --extra-vars 'GISLAB_SUITE=lab GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
-      -vv system/gislab.yml
-      --connection=local
-      --sudo"
-
-#  - "ansible-playbook
-#      -i inventories/localhost
-#      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
-#      -vv system/test.yml
-#      --connection=local
-#      --sudo"
-
-
-#  # Upgrade
-#  - "ansible-playbook
-#      -i inventories/localhost
-#      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
-#      -vv system/gislab.yml
-#      --connection=local
-#      --sudo"
-#
-#  - "ansible-playbook
-#      -i inventories/localhost
-#      --extra-vars 'GISLAB_ADMIN_PASSWORD=gislab GISLAB_SERVER_NETWORK_DEVICE=venet0'
-#      -vv system/test.yml
-#      --connection=local
-#      --sudo"
-
-
-after_failure:
-  - cat /etc/gislab_version
-  - sudo tail -n 100 /storage/log/syslog
-
-
-notifications:
-  email:
-    recipients:
-      - ivan.mincik@gmail.com
-    on_success: change
-    on_failure: always
+  - "echo 'GISLAB_ADMIN_PASSWORD: gislab\nGISLAB_DEBUG_INSTALL: yes' > system/host_vars/gislab_vagrant"
+  - vagrant up
