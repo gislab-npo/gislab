@@ -6,7 +6,6 @@ language: generic
 
 
 before_install:
-
   - sudo apt-get --assume-yes --force-yes install software-properties-common
   - sudo apt-add-repository --yes ppa:ansible/ansible
   - sudo apt-get update
