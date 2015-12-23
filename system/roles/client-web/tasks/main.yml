@@ -27,6 +27,15 @@
     - pwgen
     - zip
 
+- name: Install 'gunicorn' package globally
+  # TODO: replace with installation from Ubuntu repository when upgrading to
+  # 16.04. Don't forget to remove 'python-pip' package if not needed anymore.
+  pip:
+    name: gunicorn
+    version: 19.1.1,<19.2
+    extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
+    state: present
+
 
 - name: Create GIS.lab Web client root directory
   file:
@@ -169,15 +178,6 @@
     - mkdir -p /etc/nginx/ssl
     - cp {{ GISLAB_PATH_SECRET }}/gislab-web.key /etc/nginx/ssl/gislab-web.key
     - cp {{ GISLAB_PATH_SECRET }}/gislab-web.crt /etc/nginx/ssl/gislab-web.crt
-
-
-- name: Install Gunicorn startup script
-  template:
-    src: gunicorn/gunicorn.sh.j2
-    dest: "{{ root_dir }}/www/gunicorn.sh"
-    mode: 0755
-  notify:
-    - service gislab-web restart
 
 
 - name: Configure Nginx virtualhost

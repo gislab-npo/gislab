@@ -5,9 +5,10 @@ respawn
 respawn limit 10 5
 
 script
-. {{ root_dir_boot }}/virtualenv/http-boot/bin/activate
 export PYTHONPATH={{ root_dir_boot }}/http
-{{ root_dir_boot }}/virtualenv/http-boot/bin/gunicorn \
+
+# GISLAB_DEBUG: set 'log-level' value to 'debug' for debug mode
+exec gunicorn \
   --name gislab-http-boot \
   --bind 0.0.0.0:6700 \
   --user www-data \

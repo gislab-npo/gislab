@@ -16,8 +16,17 @@
   with_items:
     - isc-dhcp-server
     - nbd-server
-    - python-virtualenv
+    - python-pip
     - tftpd-hpa
+
+- name: Install 'gunicorn' package globally
+  # TODO: replace with installation from Ubuntu repository when upgrading to
+  # 16.04. Don't forget to remove 'python-pip' package if not needed anymore.
+  pip:
+    name: gunicorn
+    version: 19.1.1,<19.2
+    extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
+    state: present
 
 
 ### DHCP SERVER
@@ -130,17 +139,6 @@
 
 
 ### HTTP BOOT
-- name: Install Python virtualenv for HTTP boot service
-  pip:
-    name: gunicorn
-    version: 19.1.1
-    virtualenv: "{{ root_dir_boot }}/virtualenv/http-boot"
-    extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
-    virtualenv_site_packages: yes
-    state: present
-  notify:
-    - service gislab-http-boot restart
-
 - name: Create directory for HTTP boot script
   file:
     dest: "{{ root_dir_boot }}/http"

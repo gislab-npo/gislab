@@ -3,4 +3,19 @@ start on runlevel [2345]
 stop on runlevel [06]
 respawn
 respawn limit 10 5
-exec {{ root_dir }}/www/gunicorn.sh
+
+script
+export PYTHONPATH={{ root_dir }}/www:{{ root_dir }}/virtualenv/gislab-web/lib/python2.7/site-packages
+export DJANGO_SETTINGS_MODULE=djproject.settings
+
+# GISLAB_DEBUG: set 'log-level' value to 'debug' for debug mode
+exec gunicorn \
+  --name gislab-web \
+  --workers {{ ansible_processor_vcpus * 2 + 1 }} \
+  --user www-data \
+  --group www-data \
+  --log-syslog \
+  --log-level error \
+  --bind unix:{{ root_dir }}/www/gunicorn.sock \
+  djproject.wsgi:application
+end script
