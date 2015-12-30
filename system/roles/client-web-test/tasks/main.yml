@@ -1,19 +1,23 @@
 ---
 
-- name: Test downloading GIS.lab Web QGIS plugins configuration
+- name: Test GIS.lab Web QGIS plugins repository
   shell: >
-    curl "http://server.gis.lab/qgis/plugins.xml"
-    | grep "<plugins>"
+    curl "http://server.gis.lab/qgis/gislab-web.xml"
+    | grep "xml version = '1.0' encoding = 'UTF-8'"
   ignore_errors: yes
   changed_when: False
 
-- name: Test downloading GIS.lab Web QGIS plugin
+- name: Test if QGIS plugin is downloadable from QGIS plugins repository
   shell: >
-    wget -O /dev/null $(curl "http://server.gis.lab/qgis/plugins.xml"
+    curl -I
+    $(curl "http://server.gis.lab/qgis/gislab-web.xml"
     | grep "download_url"
+    | head -n 1
     | sed -e 's/<[^>]*>//g')
+    | grep "Content-Type: application/zip"
   ignore_errors: yes
   changed_when: False
+
 
 - name: Test if GIS.lab Web client is running with empty project
   shell: >

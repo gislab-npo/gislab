@@ -232,26 +232,15 @@
     {{ gislab_packages_url }}/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
 
 - name: Install GIS.lab Web QGIS plugin to repository
-  shell: "{{ item }}"
-  with_items:
-    - cp
-      {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
-      {{ root_dir }}/qgis/plugins/gislab_web.zip
-    - unzip
-      -p
-      {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
-      gislab_web/icon.png
-      > {{ root_dir }}/qgis/plugins/gislab_web.png
-    - unzip
-      -p
-      {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
-      gislab_web/metadata.txt
-      > {{ root_dir }}/qgis/plugins/gislab_web.meta
+  shell: >
+    cp
+    {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
+    {{ root_dir }}/qgis/plugins/gislab_web.zip
 
 - name: Install GIS.lab Web QGIS plugins repository file
   template:
-    src: gislab-web-plugin/plugins.xml.j2
-    dest: "{{ root_dir }}/qgis/plugins.xml"
+    src: gislab-web-plugin/gislab-web.xml.j2
+    dest: "{{ root_dir }}/qgis/gislab-web.xml"
 
 
 - name: Publish QGIS plugins repository
