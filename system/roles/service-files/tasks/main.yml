@@ -43,6 +43,13 @@
     group: nogroup
     mode: 0775
 
+- name: Publish 'barrel' directory via HTTP
+  file:
+    src: "{{ GISLAB_PATH_STORAGE }}/barrel"
+    dest: "{{ GISLAB_PATH_WWW }}/barrel"
+    force: yes
+    state: link
+
 
 ### NFS CONFIGURATION
 - name: Configure NFS exports
