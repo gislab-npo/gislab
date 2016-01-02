@@ -16,8 +16,8 @@
 
 - name: Perform a test query
   shell: >
-    serf query test
-    | grep "Response from 'server.gis.lab': yes"
+    serf query uptime
+    | grep "Response from 'server.gis.lab':"
   ignore_errors: yes
   changed_when: False
 

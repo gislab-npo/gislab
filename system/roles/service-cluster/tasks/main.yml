@@ -32,7 +32,7 @@
   shell: >
     source {{ GISLAB_PATH_SYSTEM }}/functions.sh
     &&
-    gislab_serf_install 0.6.4
+    gislab_serf_install
   args:
     executable: /bin/bash
 

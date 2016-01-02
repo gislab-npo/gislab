@@ -17,7 +17,6 @@ exec serf agent \
     -event-handler "user:member-join-lb={{ root_dir }}/handlers/member-join-lb.sh" \
     -event-handler "user:adduser={{ root_dir }}/handlers/adduser.sh" \
     -event-handler "query:uptime=uptime" \
-    -event-handler "query:test=echo 'yes'" \
     -node="server.gis.lab" \
     -tag role=server \
     -log-level=err \

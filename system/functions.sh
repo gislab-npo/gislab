@@ -74,9 +74,9 @@ gislab_require_root () {
 gislab_serf_install () {
     # download and install Serf for GIS.lab cluster management
 
-    SERF_INSTALL="yes"
-    SERF_VERSION="$1"
+    SERF_VERSION="0.7.0"
     SERF_URL="http://gislab-software.s3.amazonaws.com"
+    SERF_INSTALL="yes"
 
     # detect architecture
     if [ "$(getconf LONG_BIT)" == "32" ]; then

@@ -15,7 +15,6 @@ exec serf agent \
     -event-handler "user:reboot={{ root_dir_cluster }}/handlers/reboot.sh" \
     -event-handler "user:shutdown={{ root_dir_cluster }}/handlers/shutdown.sh" \
     -event-handler "query:uptime=uptime" \
-    -event-handler "query:test=echo 'yes'" \
     -tag role=client \
     -log-level=err \
     -syslog
