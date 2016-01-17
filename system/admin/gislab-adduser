@@ -19,7 +19,10 @@ function usage() {
     -g first name (required)
     -l last name (required)
     -m email (required)
-    -p password (optional, default: automatically generated)
+    -p if this parameter is omitted, password will be automatically generated
+       if this parameter is used without argument, you will be asked for password
+       if this parameter is used with argument PASSWORD, password will be set to PASSWORD
+       NOTICE: this parameter MUST be used as a last option before username
     -d user description (optional)
     -s add user to superuser's group (optional)
     -a add user to supplementary group(s) separated by comma (optional)
@@ -30,13 +33,12 @@ function usage() {
 
 
 ### OPTIONS
-while getopts "a:d:g:l:m:p:sh" OPTION
+while getopts "a:d:g:l:m:psh" OPTION
 do
     case "$OPTION" in
         g) opt_given_name=$OPTARG ;;
         l) opt_surname=$OPTARG ;;
         m) opt_email=$OPTARG ;;
-        p) opt_password=$OPTARG ;;
         d) opt_description="$OPTARG" ;;
         s) opt_superuser=yes ;;
         a) opt_groups=$OPTARG ;;
@@ -44,8 +46,41 @@ do
         \?) exit 1 ;;
     esac
 done
-shift $(($OPTIND - 1))
-if [ $# -eq 0 ]; then usage; fi
+
+# get password option (if present)
+OPTIND=0
+while getopts ":a:d:g:l:m:p:sh" OPTION
+do
+    case "$OPTION" in
+       p) pass_opt_present=true ;;
+    esac
+done
+
+# if password option is present
+if [ -n "$pass_opt_present" ]; then
+    shift $(($OPTIND - 2))
+    if [ $# -eq 1 ]; then
+        # ... but password was not provided (ask for password later)
+        # the last parameter will be username
+        ask_pass=true
+    elif [ $# -eq 2 ]; then
+        # ... and password was provided
+        # the last but one paramter is password
+        # the last parameter is username
+        opt_password=$1
+        shift
+    else
+        # too much arguments
+        usage
+    fi
+else
+# password option is not present (password wil be generated)
+    shift $(($OPTIND - 1))
+    if [ $# -eq 0 ]; then
+        # too much arguments
+        usage
+    fi
+fi
 
 if [ -z "$opt_given_name" \
      -o -z "$opt_surname" \
@@ -143,6 +178,21 @@ if [ "$opt_superuser" == "yes" ]; then
 fi
 
 # set user password
+if [ -n "$ask_pass" ]; then
+    while true; do
+        read -s -p "New password:" password_1
+        echo
+        read -s -p "Retype password:" opt_password
+        if [ "$password_1" != "$opt_password" ]; then
+            echo "Passwords do not match."
+            unset $password_1
+            unset $opt_password
+        else
+            break
+        fi
+    done
+fi
+
 gislab-moduser -p $opt_password $GISLAB_USER
 
 
