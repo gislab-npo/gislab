@@ -85,6 +85,12 @@ while read line; do
     attr=$(echo $line | awk -F: '{ print $1 }')
     val=$(echo $line | sed 's/^[[:alnum:]]\+::\? //')
 
+    # check if value is base64 encoded (two colon after attribute name instead of one)
+    # and decode this value
+    if echo "$line" | grep -q '^[^ :]\+:: ' && [[ "$attr" != "userPassword" ]]; then
+        val="$(echo "$val" | base64 -d)"
+    fi
+
     case "$attr" in
         uid) user_orig="$val" ;;
         givenName) given_name="$val" ;;

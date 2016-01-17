@@ -83,7 +83,7 @@
 - name: Test if ordinary test user account exists in LDAP database
   shell: >
     ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
-    '(&(uid=test{{ GISLAB_TEST_UNIQUE_STRING }})(uidNumber>=3000)(gidNumber=3001)(homeDirectory=/mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }})(gecos=Test User)(description=Test user account))'
+    '(&(uid=test{{ GISLAB_TEST_UNIQUE_STRING }})(uidNumber>=3000)(gidNumber=3001)(homeDirectory=/mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }})(description=Test user account))'
     | grep test{{ GISLAB_TEST_UNIQUE_STRING }}
   ignore_errors: yes
   changed_when: False

@@ -127,9 +127,6 @@ givenName: $opt_given_name
 -
 add: mail
 mail: $opt_email
--
-add: gecos
-gecos: $GISLAB_USER_FULL_NAME
 EOL
 
 if [ -n "$opt_description" ]; then
