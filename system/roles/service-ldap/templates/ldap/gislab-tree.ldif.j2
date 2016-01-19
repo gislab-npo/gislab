@@ -6,6 +6,14 @@ dn: ou=Groups,dc=gis,dc=lab
 objectClass: organizationalUnit
 ou: groups
 
+dn: ou=Machines,dc=gis,dc=lab
+objectClass: organizationalUnit
+ou: machines
+
+dn: ou=MACs,ou=Machines,dc=gis,dc=lab
+objectClass: organizationalUnit
+ou: macs
+
 dn: ou=SUDOers,dc=gis,dc=lab
 objectClass: top
 objectClass: organizationalUnit
@@ -38,6 +46,14 @@ objectClass: virtualaccount
 cn: root
 mailacceptinggeneralid: root
 maildrop: {{ GISLAB_PROVISIONING_USER }}
+
+dn: cn=020000000000,ou=MACs,ou=Machines,dc=gis,dc=lab
+objectClass: top
+objectClass: device
+objectClass: ieee802Device
+cn: 020000000000
+macAddress: 02:00:00:00:00:00
+description: GIS.lab client default MAC address
 
 dn: cn=gislabadmins,ou=Groups,dc=gis,dc=lab
 objectClass: posixGroup

@@ -49,12 +49,18 @@ if [ $# -eq 0 -a "$opt_action" != "list" ]; then usage; fi
 
 ### VARIABLES
 policy_file=$GISLAB_PATH_SECRET/gislab_unknown_machines_policy.conf
-list_file=$GISLAB_PATH_SECRET/gislab_known_machines.txt
 dhcp_file=/etc/dhcp/gislab_known_machines.conf
 mac_rx="^[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}$"
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b "ou=MACs,ou=Machines,dc=gis,dc=lab""
+lda="ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab""
+ldd="ldapdelete -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab""
 
 
 ### FUNCTIONS
+function list_machines {
+    $lds macAddress | awk '/^macAddress:/ { print $2 }'
+}
+
 function known_machines_policy {
     # set known machines policy to 'allow' or 'deny'
 
@@ -67,11 +73,11 @@ function known_machines_policy {
 }
 
 function known_machines_dhcp_file {
-    # generate DHCP server configuration from MACs list file
+    # generate DHCP server configuration from MACs list in LDAP database
 
     echo -e "group {" > $dhcp_file    # opening bracket
 
-    for mac in $(cat $list_file); do
+    for mac in $(list_machines); do
         hostname=$(echo $mac | sed 's/://g')
         echo -e "\thost $hostname { hardware ethernet $mac; }" >> $dhcp_file
     done
@@ -85,7 +91,7 @@ function known_machines_dhcp_file {
 if [ "$opt_action" == "list" ]; then
     echo "Policy: $(cat $policy_file)"
     echo "Known machines:"
-    for mac in $(cat $list_file); do
+    for mac in $(list_machines); do
         echo -e "  * $mac"
     done
 
@@ -103,9 +109,22 @@ elif [ "$opt_action" == "add" ]; then
         else
             if [[ "$mac" =~ $mac_rx ]]; then
                 echo "Adding MAC address $mac"
-                # add records to MACs list file
-                sed -i "/^$mac/ d" $list_file # avoid duplicates
-                echo -e "$mac"  >> $list_file
+                # replace uppercase letters to lowercase
+                mac=$(echo $mac | tr '[:upper:]' '[:lower:]')
+                machine_cn=$(echo $mac | sed 's/://g')
+                # avoid duplicates
+                list_machines | grep -q "^$mac$" && continue
+
+                # add records to MACs list in LDAP database
+                $lda >/dev/null << EOL
+dn: cn=$machine_cn,ou=MACs,ou=Machines,dc=gis,dc=lab
+objectClass: top
+objectClass: device
+objectClass: ieee802Device
+cn: $machine_cn
+macAddress: $mac
+EOL
+
                 # generate known machines DHCP configuration file
                 known_machines_dhcp_file
             else
@@ -130,7 +149,16 @@ elif [ "$opt_action" == "remove" ]; then
         # remove MAC address
         else
             echo "Removing MAC $mac"
-            sed -i "/^$mac/ d" $list_file
+            # replace uppercase letters to lowercase
+            mac=$(echo $mac | tr '[:upper:]' '[:lower:]')
+            machine_cn=$(echo $mac | sed 's/://g')
+
+            # skip removing non existing machine
+            list_machines | grep -q "^$mac$" || continue
+
+            # remove records MACs list from LDAP database
+            $ldd "cn=$machine_cn,ou=MACs,ou=Machines,dc=gis,dc=lab" >/dev/null
+
             # generate known machines DHCP configuration file
             known_machines_dhcp_file
         fi
