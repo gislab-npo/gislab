@@ -45,7 +45,7 @@
     - name: Move temporary files to memory filesystem
       lineinfile: dest=/etc/fstab
                   state=present
-                  line='tmpfs /tmp  tmpfs  nodev,nosuid,noatime,mode=1777  0 0'
+                  line='tmpfs /tmp  tmpfs  rw,nodev,nosuid,noatime,mode=1777  0 0'
 
     - name: Adjust swappiness
       sysctl: name="{{ item.name }}" value="{{ item.value }}" state=present sysctl_set=yes
