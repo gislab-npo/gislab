@@ -130,7 +130,7 @@ cd $WORK_DIR
 #            -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
 #            -boot-info-table -iso-level 2 -r root/
 
-mkisofs -D -r \
+mkisofs || genisoimage -D -r \
     -V "GIS.lab Base System" \
     -cache-inodes \
     -J -l -b isolinux/isolinux.bin \
