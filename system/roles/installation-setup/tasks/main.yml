@@ -9,7 +9,7 @@
 - name: Check Ansible version (< 2)
   assert:
     that:
-      - ansible_version.major < 2
+      - ansible_version.major == 2
 
 - name: Check if server is running supported operating system
   assert:
