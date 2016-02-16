@@ -6,9 +6,6 @@ require 'yaml'
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.require_version ">= 1.7.0"
 
-BOX = "precise-canonical"
-BOX_URL = "http://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box"
-
 CONFIG = Hash.new           # GIS.lab configuration
 CONFIG_VAGRANT = Hash.new   # GIS.lab configuration for Vagrant (passed as Ansible extra vars)
 
@@ -33,6 +30,10 @@ if File.exist?('system/host_vars/gislab_vagrant')
   end
 end
 
+
+# Vagrant box
+BOX = "%s-canonical" % [CONFIG["GISLAB_UBUNTU_VERSION"]]
+BOX_URL = "https://cloud-images.ubuntu.com/%s/current/%s-server-cloudimg-amd64-vagrant.box" % [CONFIG["GISLAB_UBUNTU_VERSION"], CONFIG["GISLAB_UBUNTU_VERSION"]]
 
 # GIS.lab configuration for Vagrant
 # super user password

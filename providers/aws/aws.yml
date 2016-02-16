@@ -139,7 +139,7 @@
       local_action:
         module: ec2_ami_search
         distro: ubuntu
-        release: precise
+        release: xenial
         arch: amd64
         region: "{{ GISLAB_AWS_REGION }}"
         store: ebs

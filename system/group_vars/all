@@ -47,6 +47,10 @@
 #                               system/gislab.yml
 
 
+# Ubuntu version. GIS.lab supports only one Ubuntu version at time. Don't try to
+# change this value !
+GISLAB_UBUNTU_VERSION: xenial
+GISLAB_UBUNTU_VERSION_NUMBER: 16.04
 
 
 # *************************************************************************** #
@@ -150,7 +154,7 @@ GISLAB_APT_HTTP_PROXY:
 # List of additional Apt repositories, which will be used during the
 # installation.
 # Example:
-# - http://ppa.launchpad.net/my-ppa1/ubuntu precise main
+# - http://ppa.launchpad.net/my-ppa1/ubuntu xenial main
 # - http://dl.google.com/linux/earth/deb/ stable main
 # Change requires running upgrade.
 GISLAB_APT_CUSTOM_REPOSITORIES:
