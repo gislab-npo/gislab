@@ -15,7 +15,7 @@
   assert:
     that:
       - ansible_distribution == "Ubuntu"
-      - ansible_distribution_version in [ GISLAB_UBUNTU_VERSION_NUMBER, ]
+      - ansible_distribution_version == "{{ GISLAB_UBUNTU_VERSION_NUMBER }}"
 
 
 ### FACTS
