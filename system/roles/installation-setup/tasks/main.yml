@@ -21,13 +21,13 @@
 ### FACTS
 - name: Detect if it is possible to get GIS.lab version from Git
   local_action: shell git describe 2> /dev/null || echo "GIT-NOT-AVAILABLE"
-  sudo: no
+  become: no
   register: gislab_version_git_status
   changed_when: False
 
 - name: Detect GIS.lab version from Git
   local_action: shell git describe
-  sudo: no
+  become: no
   register: gislab_version
   when: gislab_version_git_status.stdout != "GIT-NOT-AVAILABLE"
 

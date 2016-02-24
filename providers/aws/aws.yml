@@ -194,7 +194,7 @@
 ### POST-INIT TASKS
 - hosts: ec2_instances
   user: ubuntu
-  sudo: yes
+  become: yes
   gather_facts: True
 
 

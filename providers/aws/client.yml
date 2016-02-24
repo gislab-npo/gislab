@@ -3,7 +3,7 @@
 # Bundle, upload, register and launch GIS.lab Desktop AWS client ###
 
 - hosts: all
-  sudo: yes
+  become: yes
 
   vars:
     GISLAB_ROOT: /opt/gislab
