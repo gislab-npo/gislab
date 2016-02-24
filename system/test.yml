@@ -1,7 +1,7 @@
 ---
 
 - hosts: all
-  sudo: yes
+  become: yes
 
   roles:
     - { role: installation-setup, tags: ['installation-setup'] }

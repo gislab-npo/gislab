@@ -1,7 +1,7 @@
 ---
 
 - hosts: all
-  sudo: yes
+  become: yes
 
   # https://github.com/ansible/ansible/issues/8644
   # fix: export PYTHONIOENCODING='utf-8'

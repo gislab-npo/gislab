@@ -63,7 +63,7 @@
     role_attr_flags: NOCREATEDB,NOCREATEROLE,NOSUPERUSER
     password: "{{ gislab_web_db_user_password.stdout }}"
     state: present
-  sudo_user: postgres
+  become_user: postgres
 
 - name: Grant privileges for user 'gislab_web'
   postgresql_privs:
@@ -72,7 +72,7 @@
     type: schema
     objs: public
     role: gislab_web
-  sudo_user: postgres
+  become_user: postgres
 
 
 ### GIS.lab Web INSTALLATION

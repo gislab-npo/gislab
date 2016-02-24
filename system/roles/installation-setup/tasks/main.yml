@@ -6,7 +6,7 @@
 
 
 ### SANITY CHECKS
-- name: Check Ansible version (< 2)
+- name: Check Ansible version (== 2)
   assert:
     that:
       - ansible_version.major == 2

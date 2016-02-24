@@ -129,14 +129,14 @@
     name: gislabadmins
     role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER,NOLOGIN
     state: present
-  sudo_user: postgres
+  become_user: postgres
 
 - name: Create database users group
   postgresql_user:
     name: gislabusers
     role_attr_flags: NOCREATEDB,NOCREATEROLE,NOSUPERUSER,NOLOGIN
     state: present
-  sudo_user: postgres
+  become_user: postgres
 
 
 # postgis template database
@@ -149,7 +149,7 @@
   postgresql_db:
     name: template_postgis
     state: absent
-  sudo_user: postgres
+  become_user: postgres
 
 - name: Create PostGIS template database
   postgresql_db:
@@ -157,7 +157,7 @@
     encoding: 'UTF-8'
     template: template0
     state: present
-  sudo_user: postgres
+  become_user: postgres
 
 - name: Add PostGIS support to PostGIS template database
   command: >
@@ -200,7 +200,7 @@
     name: gislab
     template: template_postgis
     state: present
-  sudo_user: postgres
+  become_user: postgres
 
 - name: Grant connection to 'gislab' database for 'gislabusers'
   command: >
