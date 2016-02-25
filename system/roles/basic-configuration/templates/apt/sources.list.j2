@@ -11,11 +11,12 @@ deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-securit
 ###### Ubuntu partner repository
 deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
 
+# FIXME: [16.04] enable repositories below
 #### GIS.lab packages repository
-deb http://ppa.launchpad.net/gislab-npo/production/ubuntu {{ ansible_distribution_release }} main
+# deb http://ppa.launchpad.net/gislab-npo/production/ubuntu {{ ansible_distribution_release }} main
 
-#### JOSM repository
-deb http://josm.openstreetmap.de/apt {{ ansible_distribution_release }} universe
+# #### JOSM repository
+# deb http://josm.openstreetmap.de/apt {{ ansible_distribution_release }} universe
 
 {% if GISLAB_APT_CUSTOM_REPOSITORIES %}
 #### Custom repositories
@@ -23,5 +24,3 @@ deb http://josm.openstreetmap.de/apt {{ ansible_distribution_release }} universe
 deb {{ repository }}
 {% endfor %}
 {% endif %}
-
-

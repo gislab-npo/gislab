@@ -13,12 +13,12 @@
 
   roles:
     - { role: installation-setup, tags: ['installation-setup'] }
-#    - { role: basic-configuration, tags: ['basic-configuration'] }
-#    - { role: account-users, tags: ['account-users'] }
-#    - { role: service-syslog, tags: ['service-syslog'] }
-#    - { role: service-logcheck, tags: ['service-logcheck'] }
-#    - { role: service-time, tags: ['service-time'] }
-#    - { role: service-dns, tags: ['service-dns'] }
+    - { role: basic-configuration, tags: ['basic-configuration'] }
+    - { role: account-users, tags: ['account-users'] }
+    - { role: service-syslog, tags: ['service-syslog'] }
+    - { role: service-logcheck, tags: ['service-logcheck'] }
+    - { role: service-time, tags: ['service-time'] }
+    - { role: service-dns, tags: ['service-dns'] }
 #    - { role: service-ldap, tags: ['service-ldap'] }
 #    - { role: service-mail, tags: ['service-mail'] }
 #    - { role: service-default-web, tags: ['service-default-web'] }
