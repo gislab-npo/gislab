@@ -2,7 +2,19 @@
 #
 ### INSTALLATION SETUP ###
 #
-# Set basic environment. This role is common for installation and tests.
+# Set basic environment. This role is used both for installation and tests.
+
+### PYTHON 2 INSTALLATION
+- name: Ensure Python 2 is installed before running Ansible modules
+  raw: >
+    export http_proxy="{{ GISLAB_APT_HTTP_PROXY }}"
+    &&
+    apt-get update --assume-yes
+    &&
+    apt-get install --assume-yes python-minimal
+
+- name: Gather Ansible facts
+  setup:
 
 
 ### SANITY CHECKS

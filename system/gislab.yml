@@ -2,9 +2,9 @@
 
 - hosts: all
   become: yes
+  gather_facts: false  # disable gathering Ansible facts until Python 2 is not
+                       # installed or Ansible comes with Python 3 support
 
-  # https://github.com/ansible/ansible/issues/8644
-  # fix: export PYTHONIOENCODING='utf-8'
   vars_prompt:
     - name: GISLAB_ADMIN_PASSWORD
       prompt: "\nEnter new password for GIS.lab administrator account 'gislab' or leave empty to keep current password"
