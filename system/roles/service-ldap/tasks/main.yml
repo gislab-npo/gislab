@@ -19,9 +19,11 @@
   # 'try_authtok' or remove it, otherwise it will be impossible to change user
   # password using 'passwd' command.
   with_items:
+    - auth-client-config
     - gnutls-bin
     - ldapscripts
     - libpam-cracklib
+    - libpam-ldap
     - ldap-utils
     - libnss-ldap
     - members
@@ -70,7 +72,7 @@
     &&
     ln -s {{ GISLAB_PATH_APPLICATIONS }}/ldap /var/lib/ldap
   args:
-    creates: "{{ GISLAB_PATH_APPLICATIONS }}/ldap/DB_CONFIG"
+    creates: "{{ GISLAB_PATH_APPLICATIONS }}/ldap/data.mdb"
 
 - name: Start LDAP service
   service:
@@ -147,7 +149,7 @@
 
 - name: Save LDAP admin password to LDAP db
   shell: >
-    printf 'dn: olcDatabase={1}hdb,cn=config\nreplace: olcRootPW\nolcRootPW:
+    printf 'dn: olcDatabase={1}mdb,cn=config\nreplace: olcRootPW\nolcRootPW:
     {{ ldap_admin_password_hash.stdout }}\n'
     | ldapmodify -Q -Y EXTERNAL -H ldapi:///
 
@@ -262,6 +264,15 @@
 
 
 # LDAP indexes
+- name: Load LDIF file for removing indexes
+  template:
+    src: ldap/remove-indexes.ldif.j2
+    dest: /tmp/ldap.ldif
+
+- name: Remove LDAP indexes
+  shell: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
+  when: ldap_db_status.stdout == "LDAP DB EMPTY"
+
 - name: Load LDAP indexes
   template:
     src: ldap/indexes.ldif.j2
@@ -308,21 +319,6 @@
         src: "ldapscripts/addgroup.template.j2",
         dest: "/etc/ldapscripts/addgroup.template"
       }
-
-- name: Load LDAP scripts runtime patch
-  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=719295
-  copy:
-    src: static/ldapscripts/runtime-fix.patch
-    dest: /tmp/runtime-fix.patch
-
-- name: Install LDAP scripts runtime patch (run only once)
-  shell: >
-    patch
-    /usr/share/ldapscripts/runtime
-    /tmp/runtime-fix.patch
-    &&
-    rm -f /tmp/runtime-fix.patch
-  when: ldap_db_status.stdout == "LDAP DB EMPTY"
 
 - name: Save LDAP admin password to LDAP scripts (run only once)
   shell: >
