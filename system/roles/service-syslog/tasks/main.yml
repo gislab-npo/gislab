@@ -20,6 +20,17 @@
     path: "{{ GISLAB_PATH_LOG }}"
     state: directory
 
+- name: Create empty log files with proper ownership and permissions
+  file:
+    path: "{{ item }}"
+    owner: syslog
+    group: adm
+    mode: 0640
+    state: touch
+  with_items:
+    - "{{ GISLAB_PATH_LOG }}/syslog"
+    - "{{ GISLAB_PATH_LOG }}/kern.log"
+
 - name: Install rsyslog configuration
   template:
     src: "{{ item.src }}"
@@ -46,7 +57,7 @@
 
 - name: Symlink syslog file to /var/log directory
   file:
-    src: /storage/log/syslog
+    src: "{{ GISLAB_PATH_LOG }}/syslog"
     dest: /var/log/syslog
     state: link
     force: yes
