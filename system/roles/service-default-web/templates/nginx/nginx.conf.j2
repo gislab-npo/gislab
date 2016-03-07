@@ -18,10 +18,10 @@ http {
     default_type application/octet-stream;
 
     # Logging Settings
-    error_log {{ GISLAB_PATH_LOG }}/nginx-error.log;
+    error_log syslog:server=localhost;
 
     access_log /dev/null; # GISLAB_DEBUG: set this value to
-                          # '{{ GISLAB_PATH_LOG }}/nginx-access.log'
+                          # 'syslog:server=localhost'
                           # for debug mode
 
     # Gzip Settings

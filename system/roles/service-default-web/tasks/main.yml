@@ -57,14 +57,6 @@
     state: link
 
 
-### LOGGING
-- name: Activate Nginx error logs checking
-  lineinfile:
-    dest: /etc/logcheck/logcheck.logfiles
-    line: "{{ GISLAB_PATH_LOG }}/nginx-error.log"
-    state: present
-
-
 ### EMAIL
 - name: Add service user mail alias
   lineinfile:
