@@ -20,8 +20,8 @@
     - { role: service-time, tags: ['service-time'] }
     - { role: service-dns, tags: ['service-dns'] }
     - { role: service-ldap, tags: ['service-ldap'] }
-#    - { role: service-mail, tags: ['service-mail'] }
-#    - { role: service-default-web, tags: ['service-default-web'] }
+    - { role: service-mail, tags: ['service-mail'] }
+    - { role: service-default-web, tags: ['service-default-web'] }
 #    - { role: service-boot, tags: ['service-boot'] }
 #    - { role: service-files, tags: ['service-files'] }
 #    - { role: service-chat, tags: ['service-chat'] }
