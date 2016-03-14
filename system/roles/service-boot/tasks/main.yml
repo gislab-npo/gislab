@@ -14,19 +14,10 @@
     install_recommends: no
     state: latest
   with_items:
+    - gunicorn
     - isc-dhcp-server
     - nbd-server
-    - python-pip
     - tftpd-hpa
-
-- name: Install 'gunicorn' package globally
-  # TODO: replace with installation from Ubuntu repository when upgrading to
-  # 16.04. Don't forget to remove 'python-pip' package if not needed anymore.
-  pip:
-    name: gunicorn
-    version: 19.1.1,<19.2
-    extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
-    state: present
 
 
 ### DHCP SERVER
@@ -145,22 +136,37 @@
     src: static/boot/gislab-http-boot.py
     dest: "{{ root_dir_boot }}/http/gislab-http-boot.py"
   notify:
-    - service gislab-http-boot restart
+    - service gislab-http-boot.service restart
 
 - name: Install HTTP boot service
   template:
-    src: init/gislab-http-boot.conf.j2
-    dest: /etc/init/gislab-http-boot.conf
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {
+        src: "systemd/gislab-http-boot.service.j2",
+        dest: "/etc/systemd/system/gislab-http-boot.service"
+      }
+    - {
+        src: "systemd/gislab-http-boot.socket.j2",
+        dest: "/etc/systemd/system/gislab-http-boot.socket"
+      }
+    - {
+        src: "systemd/gislab-http-boot.conf.j2",
+        dest: "/usr/lib/tmpfiles.d/gislab-http-boot.conf"
+      }
   notify:
-    - service gislab-http-boot restart
+    - service gislab-http-boot.service restart
 
 - name: Register HTTP boot service
-  file:
-    src: /lib/init/upstart-job
-    dest: /etc/init.d/gislab-http-boot
-    state: link
+  service:
+    name: "{{ item }}"
+    enabled: yes
+  with_items:
+    - gislab-http-boot.socket
+    - gislab-http-boot.service
   notify:
-    - service gislab-http-boot restart
+    - service gislab-http-boot.service restart
 
 
 - name: Publish boot files via HTTP

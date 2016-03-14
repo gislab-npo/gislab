@@ -1,0 +1,9 @@
+[Unit]
+Description=GIS.lab HTTP boot
+
+[Socket]
+ListenStream=/run/gislab-http-boot/socket
+ListenStream=0.0.0.0:6700
+
+[Install]
+WantedBy=sockets.target

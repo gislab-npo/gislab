@@ -22,7 +22,7 @@
     - { role: service-ldap, tags: ['service-ldap'] }
     - { role: service-mail, tags: ['service-mail'] }
     - { role: service-default-web, tags: ['service-default-web'] }
-#    - { role: service-boot, tags: ['service-boot'] }
+    - { role: service-boot, tags: ['service-boot'] }
 #    - { role: service-files, tags: ['service-files'] }
 #    - { role: service-chat, tags: ['service-chat'] }
 #    - { role: service-database, tags: ['service-database'] }

@@ -15,9 +15,9 @@
     name: nbd-server
     state: restarted
 
-- name: service gislab-http-boot restart
+- name: service gislab-http-boot.service restart
   service:
-    name: gislab-http-boot
+    name: gislab-http-boot.service
     state: restarted
 
 # vim: set ts=8 sts=2 sw=2 et:
