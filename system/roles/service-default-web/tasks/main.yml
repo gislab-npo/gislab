@@ -4,9 +4,7 @@
 #
 # Install web server and configure default web page content.
 #
-# Logging:
-#   production: /storage/log/nginx-error.log
-#   debug:      /storage/log/nginx-access.log, /storage/log/nginx-error.log
+# Logging: syslog
 
 
 - name: Install packages
