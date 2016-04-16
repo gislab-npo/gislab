@@ -136,7 +136,7 @@
     src: static/boot/gislab-http-boot.py
     dest: "{{ root_dir_boot }}/http/gislab-http-boot.py"
   notify:
-    - service gislab-http-boot.service restart
+    - service gislab-http-boot restart
 
 - name: Install HTTP boot service
   template:
@@ -156,7 +156,7 @@
         dest: "/usr/lib/tmpfiles.d/gislab-http-boot.conf"
       }
   notify:
-    - service gislab-http-boot.service restart
+    - service gislab-http-boot restart
 
 - name: Register HTTP boot service
   service:
@@ -166,7 +166,7 @@
     - gislab-http-boot.socket
     - gislab-http-boot.service
   notify:
-    - service gislab-http-boot.service restart
+    - service gislab-http-boot restart
 
 
 - name: Publish boot files via HTTP
