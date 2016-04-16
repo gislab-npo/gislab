@@ -24,7 +24,7 @@
     - { role: service-default-web, tags: ['service-default-web'] }
     - { role: service-boot, tags: ['service-boot'] }
     - { role: service-files, tags: ['service-files'] }
-#    - { role: service-chat, tags: ['service-chat'] }
+    - { role: service-chat, tags: ['service-chat'] }
 #    - { role: service-database, tags: ['service-database'] }
 #    - {
 #      role: service-mapserver,
