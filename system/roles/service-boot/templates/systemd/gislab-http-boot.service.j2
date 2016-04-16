@@ -5,7 +5,17 @@ After=network.target
 
 [Service]
 PIDFile=/run/gislab-http-boot/pid
-ExecStart=/bin/bash -c "PYTHONPATH={{ root_dir_boot }}/http gunicorn --name gislab-http-boot --user www-data --group www-data --workers 1 --log-syslog --log-level error --pid /run/gislab-http-boot/pid gislab-http-boot:application"
+
+ExecStart=/bin/bash -c "gunicorn --name gislab-http-boot \
+                                 --user www-data \
+                                 --group www-data \
+                                 --workers 1 \
+                                 --pythonpath {{ root_dir_boot }}/http \
+                                 --log-syslog \
+                                 --log-level error \
+                                 --pid /run/gislab-http-boot/pid \
+                                 gislab-http-boot:application"
+
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 PrivateTmp=true
