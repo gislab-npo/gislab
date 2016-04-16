@@ -64,7 +64,7 @@
     src: nfs/idmapd.conf.j2
     dest: /etc/idmapd.conf
   notify:
-    - service idmapd restart
+    - service nfs-kernel-server restart
 
 
 - meta: flush_handlers
