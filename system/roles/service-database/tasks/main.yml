@@ -15,10 +15,9 @@
     state: latest
   with_items:
     - libpq-dev
-    - pgtune
     - postgis
     - postgresql
-    - postgresql-9.1-postgis-2.1
+    - postgresql-9.5-postgis-2.2
     - postgresql-comparator
     - postgresql-contrib
     - python-psycopg2
@@ -108,19 +107,62 @@
   notify:
     - service postgresql restart
 
+# TODO
+# For simplicity i have used LDAP CA certificate and private key for signing
+# PostgreSQL certificate.
+# I propose to create global GIS.lab CA for signing all other certificates.
 
-# postgresql tuning
-- name: Fine tune database configuration
-  command: >
-    pgtune
-    -T Mixed
-    -c 200
-    -i /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
-    -o /etc/postgresql/{{ pg_version.stdout }}/main/postgresql.conf
+- name: Generate certificate and private key for encrypted PostgreSQL communication (run only once)
+  shell: "{{ item }}"
+  with_items:
+    - certtool --generate-privkey
+      --bits 2048
+      --outfile {{ GISLAB_PATH_SECRET }}/gislab_postgres_private_server_postgres_key.pem
+    - certtool
+      --generate-certificate
+      --load-privkey {{ GISLAB_PATH_SECRET }}/gislab_postgres_private_server_postgres_key.pem
+      --load-ca-certificate /etc/ssl/certs/cacert.pem
+      --load-ca-privkey /etc/ssl/private/cakey.pem
+      --template /etc/ssl/server.info
+      --outfile {{ GISLAB_PATH_SECRET }}/gislab_postgres_cert_server_postgres_cert.pem
+  args:
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_postgres_cert_server_postgres_cert.pem"
+
+- name: Install certificate and private key for encrypted PostgreSQL communication
+  shell: "{{ item }}"
+  with_items:
+    - cp
+      {{ GISLAB_PATH_SECRET }}/gislab_postgres_private_server_postgres_key.pem
+      /storage/applications/postgresql/server.key
+    - cp
+      {{ GISLAB_PATH_SECRET }}/gislab_postgres_cert_server_postgres_cert.pem
+      /storage/applications/postgresql/server.crt
   notify:
     - service postgresql restart
 
-- meta: flush_handlers
+- name: Change owner and mode of certificate and private key for encrypted PostgreSQL communication
+  file:
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: "{{ item.owner }}"
+  with_items:
+    - {
+        dest: /storage/applications/postgresql/server.key,
+        mode: "0600",
+        owner: postgres
+      }
+    - {
+        dest: /storage/applications/postgresql/server.crt,
+        mode: "0644",
+        owner: postgres
+      }
+  notify:
+    - service postgresql restart
+
+- name: Restart PostgreSQL service
+  service:
+    name: postgresql
+    state: restarted
 
 
 # user groups
