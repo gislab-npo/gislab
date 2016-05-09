@@ -26,11 +26,11 @@
     - { role: service-files, tags: ['service-files'] }
     - { role: service-chat, tags: ['service-chat'] }
     - { role: service-database, tags: ['service-database'] }
-#    - {
-#      role: service-mapserver,
-#      tags: ['service-mapserver'],
-#      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
-#    }
+    - {
+      role: service-mapserver,
+      tags: ['service-mapserver'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+    }
 #    - {
 #      role: service-load-balancer,
 #      tags: ['service-load-balancer'],
