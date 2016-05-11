@@ -33,7 +33,9 @@ end
 
 # Vagrant box
 BOX = "%s-canonical" % [CONFIG["GISLAB_UBUNTU_VERSION"]]
-BOX_URL = "https://cloud-images.ubuntu.com/%s/current/%s-server-cloudimg-amd64-vagrant.box" % [CONFIG["GISLAB_UBUNTU_VERSION"], CONFIG["GISLAB_UBUNTU_VERSION"]]
+### Disabled, see https://github.com/gislab-npo/gislab/issues/493
+### BOX_URL = "https://cloud-images.ubuntu.com/%s/current/%s-server-cloudimg-amd64-vagrant.box" % [CONFIG["GISLAB_UBUNTU_VERSION"], CONFIG["GISLAB_UBUNTU_VERSION"]]
+BOX_URL = "http://gislab-download.s3.amazonaws.com/%s-server-cloudimg-amd64-vagrant~imincik3.box" % [CONFIG["GISLAB_UBUNTU_VERSION"]]
 
 # GIS.lab configuration for Vagrant
 # super user password
