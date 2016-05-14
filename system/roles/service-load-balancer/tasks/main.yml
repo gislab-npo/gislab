@@ -24,11 +24,10 @@
   notify:
     - service haproxy restart
 
-- name: Install HAProxy init script
+- name: Install HAProxy systemd unit
   template:
-    src: init/haproxy.j2
-    dest: /etc/init.d/haproxy
-    mode: 0755
+    src: systemd/haproxy.service.j2
+    dest: /etc/systemd/system/haproxy.service
   notify:
     - service haproxy restart
 
@@ -39,6 +38,11 @@
   notify:
     - service haproxy restart
 
+# systemd daemon reloading not implemented yet (see https://github.com/ansible/ansible-modules-core/issues/191)
+- name: Reload systemd daemon
+  command: systemctl daemon-reload
+  notify:
+    - service haproxy restart
 
 - meta: flush_handlers
 

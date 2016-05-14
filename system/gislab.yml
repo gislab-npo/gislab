@@ -31,11 +31,11 @@
       tags: ['service-mapserver'],
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
     }
-#    - {
-#      role: service-load-balancer,
-#      tags: ['service-load-balancer'],
-#      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
-#    }
+    - {
+      role: service-load-balancer,
+      tags: ['service-load-balancer'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+    }
 #    - { role: service-statistics, tags: ['service-statistics'] }
 #    - { role: service-cluster, tags: ['service-cluster'] }
 #    - { role: service-jobs, tags: ['service-jobs'] }

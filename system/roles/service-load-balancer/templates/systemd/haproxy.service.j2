@@ -1,0 +1,36 @@
+[Unit]
+Description=HAProxy Load Balancer
+Documentation=man:haproxy(1)
+Documentation=file:/usr/share/doc/haproxy/configuration.txt.gz
+After=network.target syslog.service
+Wants=syslog.service
+
+[Service]
+Environment=SERF=/usr/local/bin/serf
+Environment='SERF_ARGS=members -status=alive -tag role=client -tag worker=yes'
+Environment=CONFIG=/etc/haproxy/haproxy.cfg
+EnvironmentFile=-/etc/default/haproxy
+
+ExecStartPre=/bin/bash -c "cat ${CONFIG}.templ > ${CONFIG}; \
+                           for c in $($SERF $SERF_ARGS | awk '{print $2}' | awk -F \":\" '{print $1}'); do \
+                               echo \"    + $c\"; \
+                               echo \"    server $c $c:91 check observe layer7  # autodetected by Serf\" >> ${CONFIG}; \
+                           done"
+
+ExecStartPre=/usr/sbin/haproxy -f ${CONFIG} -c -q
+ExecStart=/usr/sbin/haproxy-systemd-wrapper -f ${CONFIG} -p /run/haproxy.pid $EXTRAOPTS
+
+ExecReload=/bin/bash -c "cat ${CONFIG}.templ > ${CONFIG}; \
+                         for c in $($SERF $SERF_ARGS | awk '{print $2}' | awk -F \":\" '{print $1}'); do \
+                             echo \"    + $c\"; \
+                             echo \"    server $c $c:91 check observe layer7  # autodetected by Serf\" >> ${CONFIG}; \
+                         done"
+
+ExecReload=/usr/sbin/haproxy -c -f ${CONFIG}
+ExecReload=/bin/kill -USR2 $MAINPID
+KillMode=mixed
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
