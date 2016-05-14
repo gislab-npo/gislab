@@ -36,7 +36,7 @@
       tags: ['service-load-balancer'],
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
     }
-#    - { role: service-statistics, tags: ['service-statistics'] }
+    - { role: service-statistics, tags: ['service-statistics'] }
 #    - { role: service-cluster, tags: ['service-cluster'] }
 #    - { role: service-jobs, tags: ['service-jobs'] }
 #    - { role: service-connection-forwarding, tags: ['service-connection-forwarding'] }
