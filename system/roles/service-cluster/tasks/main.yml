@@ -14,8 +14,22 @@
     install_recommends: no
     state: latest
   with_items:
+    - serf
     - unzip
 
+
+- name: Allow manage cluster only to GIS.lab administrators
+  file:
+    path: /usr/bin/serf
+    owner: root
+    group: gislabadmins
+    mode: 0774
+
+- name: Create symlink 'gislab-cluster' to Serf binary
+  file:
+    src: /usr/bin/serf
+    dest: /usr/local/bin/gislab-cluster
+    state: link
 
 - name: Purge GIS.lab cluster installation directory
   file:
@@ -26,16 +40,6 @@
   file:
     path: "{{ root_dir }}"
     state: directory
-
-
-- name: Install Serf
-  shell: >
-    source {{ GISLAB_PATH_SYSTEM }}/functions.sh
-    &&
-    gislab_serf_install
-  args:
-    executable: /bin/bash
-
 
 - name: Generate encryption key (run only once)
   shell: >
@@ -61,10 +65,10 @@
   - service serf-agent restart
 
 
-- name: Install Serf agent init script
+- name: Install Serf agent systemd unit file
   template:
-    src: init/serf-agent.conf.j2
-    dest: /etc/init/serf-agent.conf
+    src: systemd/serf-agent.service.j2
+    dest: /etc/systemd/system/serf-agent.service
   notify:
   - service serf-agent restart
 

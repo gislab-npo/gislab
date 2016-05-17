@@ -1,0 +1,27 @@
+[Unit]
+Description=Start GIS.lab cluster Serf agent
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+
+ExecStart=serf agent \
+            -bind {{ GISLAB_NETWORK_SERVER_IP }} \
+            -keyring-file {{ GISLAB_PATH_SECRET }}/gislab_serf.key \
+            -event-handler "member-join={{ root_dir }}/handlers/member-join.sh" \
+            -event-handler "member-leave,member-failed={{ root_dir }}/handlers/member-leave.sh" \
+            -event-handler "user:member-join-lb={{ root_dir }}/handlers/member-join-lb.sh" \
+            -event-handler "user:adduser={{ root_dir }}/handlers/adduser.sh" \
+            -event-handler "query:uptime=uptime" \
+            -node="server.gis.lab" \
+            -tag role=server \
+            -log-level=err \
+            -syslog
+
+KillSignal=SIGINT
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

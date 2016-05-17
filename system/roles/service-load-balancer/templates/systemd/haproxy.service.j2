@@ -6,7 +6,7 @@ After=network.target syslog.service
 Wants=syslog.service
 
 [Service]
-Environment=SERF=/usr/local/bin/serf
+Environment=SERF=/usr/bin/serf
 Environment='SERF_ARGS=members -status=alive -tag role=client -tag worker=yes'
 Environment=CONFIG=/etc/haproxy/haproxy.cfg
 EnvironmentFile=-/etc/default/haproxy
