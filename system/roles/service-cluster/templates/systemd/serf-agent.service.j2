@@ -6,7 +6,7 @@ After=network.target
 [Service]
 Type=simple
 
-ExecStart=serf agent \
+ExecStart=/usr/bin/serf agent \
             -bind {{ GISLAB_NETWORK_SERVER_IP }} \
             -keyring-file {{ GISLAB_PATH_SECRET }}/gislab_serf.key \
             -event-handler "member-join={{ root_dir }}/handlers/member-join.sh" \
