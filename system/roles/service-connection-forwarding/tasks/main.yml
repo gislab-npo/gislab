@@ -7,16 +7,8 @@
 
 - name: Activate connection forwarding
   template:
-    src: init/gislab-connection-forwarding.conf.j2
-    dest: /etc/init/gislab-connection-forwarding.conf
-  notify:
-    - service gislab-connection-forwarding restart
-
-- name: Register connection forwarding service
-  file:
-    src: /lib/init/upstart-job
-    dest: /etc/init.d/gislab-connection-forwarding
-    state: link
+    src: systemd/gislab-connection-forwarding.service.j2
+    dest: /etc/systemd/system/gislab-connection-forwarding.service
   notify:
     - service gislab-connection-forwarding restart
 

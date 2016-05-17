@@ -1,0 +1,20 @@
+[Unit]
+Description=Internet connection forwarding
+DefaultDependencies=false
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/iptables --table nat --flush
+ExecStart=/sbin/sysctl -w net.ipv4.ip_forward=1
+
+ExecStart=/sbin/iptables --table nat --append POSTROUTING \
+                         --source {{ GISLAB_NETWORK }}.0/24 ! \
+                         --destination {{ GISLAB_NETWORK }}.0/24 --out-interface {{ GISLAB_SERVER_NETWORK_DEVICE }} \
+                         --jump MASQUERADE
+
+ExecStop=/sbin/sysctl -w net.ipv4.ip_forward=0
+ExecStop=/sbin/iptables --table nat --flush
+
+[Install]
+WantedBy=sysinit.target
