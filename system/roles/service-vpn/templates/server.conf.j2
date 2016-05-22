@@ -6,7 +6,7 @@ ca gislab_vpn_ca.crt
 cert gislab_vpn_server.crt
 key gislab_vpn_server.key
 tls-auth gislab_vpn_ta.key 0
-dh gislab_vpn_dh1024.pem
+dh gislab_vpn_dh2048.pem
 client-cert-not-required
 
 mode server
@@ -21,7 +21,7 @@ push "route {{ GISLAB_NETWORK }}.0 255.255.255.0 172.16.{{ GISLAB_NETWORK_AS_LIS
 push "dhcp-option DNS {{ GISLAB_NETWORK_SERVER_IP }}"
 push "dhcp-option DOMAIN gis.lab"
 
-plugin /usr/lib/openvpn/openvpn-auth-pam.so login
+plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so login
 
 keepalive 10 120
 comp-lzo

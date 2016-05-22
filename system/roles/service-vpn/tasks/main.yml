@@ -14,6 +14,7 @@
     install_recommends: no
     state: latest
   with_items:
+    - easy-rsa
     - openvpn
 
 
@@ -26,10 +27,15 @@
 - name: Copy 'easy-rsa' tools
   shell: >
     cp -pR
-    /usr/share/doc/openvpn/examples/easy-rsa/2.0/*
+    /usr/share/easy-rsa/*
     /etc/openvpn/easy-rsa/
   args:
     creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
+
+- name: Fix 'easy-rsa' tools
+  shell: >
+    sed -i 's/^subjectAltName=/#subjectAltName=/'
+    /etc/openvpn/easy-rsa/openssl-1.0.0.cnf
 
 - name: Create configuration file with filled certificate fields
   template:
@@ -85,8 +91,8 @@
         dest: 'gislab_vpn_ca.key'
       }
     - {
-        src: 'dh1024.pem',
-        dest: 'gislab_vpn_dh1024.pem'
+        src: 'dh2048.pem',
+        dest: 'gislab_vpn_dh2048.pem'
       }
     - {
         src: 'server.gis.lab.crt',
@@ -111,7 +117,7 @@
   with_items:
     - gislab_vpn_ca.crt
     - gislab_vpn_ca.key
-    - gislab_vpn_dh1024.pem
+    - gislab_vpn_dh2048.pem
     - gislab_vpn_server.crt
     - gislab_vpn_server.key
     - gislab_vpn_ta.key

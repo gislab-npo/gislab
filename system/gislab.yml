@@ -40,11 +40,11 @@
     - { role: service-cluster, tags: ['service-cluster'] }
     - { role: service-jobs, tags: ['service-jobs'] }
     - { role: service-connection-forwarding, tags: ['service-connection-forwarding'] }
-#    - {
-#      role: service-vpn,
-#      tags: ['service-vpn'],
-#      when: GISLAB_SERVER_CAPABILITY_VPN
-#    }
+    - {
+      role: service-vpn,
+      tags: ['service-vpn'],
+      when: GISLAB_SERVER_CAPABILITY_VPN
+    }
 #    - {
 #      role: client-web,
 #      tags: ['client-web'],
