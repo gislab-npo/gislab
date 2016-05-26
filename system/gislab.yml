@@ -57,9 +57,9 @@
       when: "'{{ GISLAB_SUITE }}' == 'lab' and GISLAB_CLIENT_MOBILE"
     }
     - { role: account-admin, tags: ['account-admin'] }
-#    - {
-#      role: example-data,
-#      tags: ['example-data'],
-#      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
-#    }
+    - {
+      role: example-data,
+      tags: ['example-data'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+    }
 #    - { role: installation-done, tags: ['installation-done'] }
