@@ -51,11 +51,11 @@
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
     }
 #    - { role: client-desktop, tags: ['client-desktop'] }
-#    - {
-#      role: client-mobile,
-#      tags: ['client-mobile'],
-#      when: "'{{ GISLAB_SUITE }}' == 'lab' and GISLAB_CLIENT_MOBILE"
-#    }
+    - {
+      role: client-mobile,
+      tags: ['client-mobile'],
+      when: "'{{ GISLAB_SUITE }}' == 'lab' and GISLAB_CLIENT_MOBILE"
+    }
 #    - { role: account-admin, tags: ['account-admin'] }
 #    - {
 #      role: example-data,
