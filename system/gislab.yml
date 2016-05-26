@@ -62,4 +62,4 @@
       tags: ['example-data'],
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
     }
-#    - { role: installation-done, tags: ['installation-done'] }
+    - { role: installation-done, tags: ['installation-done'] }
