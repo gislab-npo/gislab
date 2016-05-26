@@ -56,7 +56,7 @@
       tags: ['client-mobile'],
       when: "'{{ GISLAB_SUITE }}' == 'lab' and GISLAB_CLIENT_MOBILE"
     }
-#    - { role: account-admin, tags: ['account-admin'] }
+    - { role: account-admin, tags: ['account-admin'] }
 #    - {
 #      role: example-data,
 #      tags: ['example-data'],
