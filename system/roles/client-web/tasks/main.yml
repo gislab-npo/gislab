@@ -4,10 +4,7 @@
 #
 # Install and configure GIS.lab Web client.
 #
-# Logging:
-#   production: syslog, /storage/log/nginx-error.log
-#   debug:      /storage/log/nginx-access.log, /storage/log/nginx-error.log
-#               syslog
+# Logging: syslog
 
 
 - name: Install packages
@@ -21,20 +18,11 @@
     - nginx
     - python-dateutil
     - python-dev
-    - python-pip
     - python-psycopg2
     - python-virtualenv
     - pwgen
+    - virtualenv
     - zip
-
-- name: Install 'gunicorn' package globally
-  # TODO: replace with installation from Ubuntu repository when upgrading to
-  # 16.04. Don't forget to remove 'python-pip' package if not needed anymore.
-  pip:
-    name: gunicorn
-    version: 19.1.1,<19.2
-    extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
-    state: present
 
 
 - name: Create GIS.lab Web client root directory
@@ -81,7 +69,6 @@
     name: "{{ gislab_packages_url }}/gislab-web-{{ gislab_web_version }}.tar.gz"
     virtualenv: "{{ root_dir }}/virtualenv/gislab-web"
     virtualenv_site_packages: yes
-    extra_args: "--download-cache={{ GISLAB_PATH_CACHE }}/packages/pip"
     state: present
   notify:
     - service gislab-web restart
@@ -130,6 +117,11 @@
     dest: "{{ root_dir }}/www/djproject/settings_secret.py"
   notify:
     - service gislab-web restart
+
+- name: Set exec permission to 'manage.py'
+  file:
+    path: /opt/gislab/system/clients/web/www/manage.py
+    mode: 0755
 
 - name: Sync database
   django_manage:
@@ -198,19 +190,10 @@
 
 - name: Configure GIS.lab Web service
   template:
-    src: init/gislab-web.conf.j2
-    dest: /etc/init/gislab-web.conf
+    src: systemd/gislab-web.service.j2
+    dest: /etc/systemd/system/gislab-web.service
   notify:
     - service gislab-web restart
-
-- name: Register GIS.lab Web service
-  file:
-    src: /lib/init/upstart-job
-    dest: /etc/init.d/gislab-web
-    state: link
-  notify:
-    - service gislab-web restart
-
 
 - name: Activate cache cleaning
   template:
