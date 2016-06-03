@@ -56,6 +56,12 @@ if [ $(id -u) -ne 0 ]; then
     exit 1
 fi
 
+if ! which genisoimage >/dev/null; then
+    echo "Cannot find 'genisoimage' binary. Please install appropriate package."
+    exit 1
+fi
+
+
 # mount ISO image, check and keep it for rest of the script
 mkdir -p $MOUNT_DIR
 sudo mount -o loop $SRC_IMAGE $MOUNT_DIR
@@ -125,12 +131,7 @@ find -type f -print0 \
 
 cd $WORK_DIR
 
-# create output ISO image file
-#genisoimage -o gislab-base-system.iso -b isolinux/isolinux.bin \
-#            -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 \
-#            -boot-info-table -iso-level 2 -r root/
-
-mkisofs || genisoimage -D -r \
+genisoimage -D -r \
     -V "GIS.lab Base System" \
     -cache-inodes \
     -J -l -b isolinux/isolinux.bin \
