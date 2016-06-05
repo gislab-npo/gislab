@@ -25,6 +25,8 @@ d-i clock-setup/ntp boolean true
 
 
 ### Partitioning
+d-i preseed partman/umount_active boolean true
+d-i preseed preseed/early_command string umount /media || true
 d-i partman-auto/disk string /dev/sda
 d-i partman-auto/method string lvm
 d-i partman-auto/choose_recipe select boot-lvm

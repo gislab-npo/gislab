@@ -167,9 +167,9 @@ GISLAB_APT_CUSTOM_REPOSITORIES:
 # *************************************************************************** #
 
 # Network device of GIS.lab server dedicated for GIS.lab network.
-# Example: eth0
+# Example: eno1
 # Change requires running upgrade.
-GISLAB_SERVER_NETWORK_DEVICE: eth0
+GISLAB_SERVER_NETWORK_DEVICE: eno1
 
 
 # GIS.lab server is always trying to integrate itself to the connected local
