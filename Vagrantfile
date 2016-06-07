@@ -4,7 +4,7 @@
 require 'yaml'
 
 VAGRANTFILE_API_VERSION = "2"
-Vagrant.require_version ">= 1.7.0"
+Vagrant.require_version ">= 1.8.2dev" # change to 1.8.2 when this version will be release
 
 CONFIG = Hash.new           # GIS.lab configuration
 CONFIG_VAGRANT = Hash.new   # GIS.lab configuration for Vagrant (passed as Ansible extra vars)
@@ -33,7 +33,6 @@ end
 
 # Vagrant box
 BOX = "%s-canonical" % [CONFIG["GISLAB_UBUNTU_VERSION"]]
-### Currently broken, see https://github.com/gislab-npo/gislab/issues/493
 BOX_URL = "https://cloud-images.ubuntu.com/%s/current/%s-server-cloudimg-amd64-vagrant.box" % [CONFIG["GISLAB_UBUNTU_VERSION"], CONFIG["GISLAB_UBUNTU_VERSION"]]
 
 # GIS.lab configuration for Vagrant
