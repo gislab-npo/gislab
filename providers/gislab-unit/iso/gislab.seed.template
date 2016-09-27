@@ -69,14 +69,14 @@ d-i partman-auto/expert_recipe string                   \
             use_filesystem{ } filesystem{ ext4 }        \
             mountpoint{ / }                             \
         .                                               \
-        33000 100 33000 ext4                            \
+        209500 100 209500 ext4                          \
             $lvmok{ }                                   \
             lv_name{ storage }                          \
             method{ format } format{ }                  \
             use_filesystem{ } filesystem{ ext4 }        \
             mountpoint{ /storage }                      \
         .                                               \
-        4300 100 4300 linux-swap                        \
+        8300 100 8300 linux-swap                        \
             $lvmok{ }                                   \
             lv_name{ swap }                             \
             method{ swap } format{ }                    \

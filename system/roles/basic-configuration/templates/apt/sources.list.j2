@@ -15,7 +15,8 @@ deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partn
 deb http://ppa.launchpad.net/gislab-npo/production/ubuntu {{ ansible_distribution_release }} main
 
 #### JOSM repository
-deb http://josm.openstreetmap.de/apt {{ ansible_distribution_release }} universe
+#### Disabled, see https://github.com/gislab-npo/gislab/issues/501
+# deb http://josm.openstreetmap.de/apt {{ ansible_distribution_release }} universe
 
 {% if GISLAB_APT_CUSTOM_REPOSITORIES %}
 #### Custom repositories

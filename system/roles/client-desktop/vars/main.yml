@@ -197,7 +197,6 @@ packages_lab:
   - grass7
   - grass7-doc
   - ipython
-  - josm
   - pgadmin3
   - postgresql-client
   - postgresql-comparator
@@ -210,7 +209,8 @@ packages_lab:
   - spatialite-bin
   - spatialite-gui
   - sqlite3
-
+#### JOSM installation disabled, see https://github.com/gislab-npo/gislab/issues/501
+#  - josm
 
 packages_worker:
   # OWS worker packages
