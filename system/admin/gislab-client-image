@@ -94,10 +94,10 @@ else
     ### Build default GIS.lab client image ###
     # install boot files to TFTP server directory
     cp \
-        $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/lib/syslinux/pxelinux.0 \
+        $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/lib/PXELINUX/pxelinux.0 \
         $tftp_dir/pxelinux.0
     cp \
-        $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/lib/syslinux/gpxelinux.0 \
+        $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/lib/PXELINUX/pxelinux.0 \
         $tftp_dir/gpxelinux.0
 
     cp -a $GISLAB_PATH_SYSTEM/clients/desktop/root/boot/. $tftp_dir/

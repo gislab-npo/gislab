@@ -9,8 +9,8 @@ root_dir_cluster: "{{ GISLAB_PATH_SYSTEM }}/cluster"
 
 packages_kernel:
   # list of Linux kernel packages (installed without recommended packages)
-  - linux-image-generic-lts-raring
-  - linux-headers-generic-lts-raring
+  - linux-image-generic
+  - linux-headers-generic
 
 
 packages_virtualbox:
@@ -37,6 +37,7 @@ packages_base:
   - nbd-client
   - nfs-common
   - openssh-server
+  - pxelinux
   - rsyslog
   - syslinux-common
   - udhcpc
@@ -74,7 +75,6 @@ packages_desktop:
   - ibus
   - ibus-gtk
   - ibus-pinyin
-  - ibus-pinyin-db-android
   - ibus-table
   - im-switch
   - indicator-application-gtk2
@@ -82,12 +82,12 @@ packages_desktop:
   - inputattach
   - laptop-detect
   - libasound2-plugins
-  - libgd2-xpm
   - libnotify-bin
   - libpam-gnome-keyring
-  - libxp6
+  - libxfce4ui-utils
   - lightdm
   - lightdm-gtk-greeter
+  - lightdm-gtk-greeter-settings
   - nvidia-common
   - pavucontrol
   - pcmciautils
@@ -101,7 +101,6 @@ packages_desktop:
   - ttf-freefont
   - ttf-ubuntu-font-family
   - tumbler
-  - ubuntu-extras-keyring
   - wireless-tools
   - wpasupplicant
   - xcursor-themes
@@ -119,7 +118,6 @@ packages_desktop:
   - xfce4-settings
   - xfce4-taskmanager
   - xfce4-terminal
-  - xfce4-utils
   - xfce4-volumed
   - xfce4-xkb-plugin
   - xfdesktop4
@@ -139,13 +137,12 @@ packages_office:
   - cups
   - cups-bsd
   - cups-client
+  - cups-filters
   - evince
   - firefox
-  - firefox-gnome-support
   - flashplugin-installer
   - foomatic-db-compressed-ppds
   - foomatic-db-engine
-  - foomatic-filters
   - freerdp-x11
   - libfreerdp-plugins-standard
   - gcalctool
@@ -171,6 +168,7 @@ packages_office:
   - printer-driver-c2esp
   - printer-driver-foo2zjs
   - printer-driver-gutenprint
+  - printer-driver-hpcups
   - printer-driver-hpijs
   - printer-driver-min12xxw
   - printer-driver-pnm2ppa
@@ -185,7 +183,6 @@ packages_office:
   - sshfs
   - vim-gnome
   - vlc
-  - vlc-plugin-pulse
   - x11vnc
   - xtightvncviewer
 
