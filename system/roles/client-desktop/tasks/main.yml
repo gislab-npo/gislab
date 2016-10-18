@@ -186,7 +186,7 @@
     src: "{{ GISLAB_PATH_CACHE }}/packages/apt"
     opts: bind
     state: mounted
-
+    fstype: none
 
 # shared packages cache
 - name: Create mount point for shared packages cache
@@ -588,12 +588,8 @@
   args:
     creates: "{{ root_dir }}/root/sbin/gislab/reboot"
 
-# TODO: [WARNING]: Consider using file module with state=link rather than running ln
 - name: Re-create poweroff command as a symlink to moved reboot binary
-  command: >
-    ln -sf
-    reboot
-    {{ root_dir }}/root/sbin/gislab/poweroff
+  file: src=reboot dest="{{ root_dir }}/root/sbin/gislab/poweroff" state=link force=yes
 
 - name: Install custom reboot script
   copy:
