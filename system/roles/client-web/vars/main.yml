@@ -8,6 +8,7 @@ gislab_web_version: 1.0.2
 gislab_web_qgis_version: 1.0.0
 
 
+# TODO: should be removed when client-mobile will be updated
 wget_opts: "
  --continue
  --no-verbose

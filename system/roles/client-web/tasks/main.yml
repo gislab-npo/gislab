@@ -210,10 +210,10 @@
 
 # TODO: [WARNING]: Consider using get_url or uri module rather than running wget
 - name: Download GIS.lab Web QGIS plugin
-  shell: >
-    wget {{ wget_opts }}
-    -O {{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
-    {{ gislab_packages_url }}/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip
+  get_url:
+    url: "{{ gislab_packages_url }}/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip"
+    dest: "{{ GISLAB_PATH_CACHE }}/packages/qgis/gislab-web-qgis-{{ gislab_web_qgis_version }}.zip"
+    force: yes
 
 - name: Install GIS.lab Web QGIS plugin to repository
   shell: >
