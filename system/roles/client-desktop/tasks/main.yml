@@ -176,10 +176,9 @@
   command: cp -a /etc/apt {{ root_dir }}/root/etc/
 
 
-# TODO: [WARNING]: Consider using file module with state=absent rather than running rm
 - name: Remove debian packages cached during debootstrap
-  command: >
-    rm -f {{ root_dir }}/root/var/cache/apt/archives/*.deb
+  file: path="{{ root_dir }}/root/var/cache/apt/archives/*.deb" state=absent
+
 
 # TODO: [WARNING]: Consider using mount module rather than running mount
 - name: Activate shared apt cache
