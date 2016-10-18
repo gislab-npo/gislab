@@ -306,16 +306,13 @@
 
 
 # language support
-# TODO: [DEPRECATION WARNING]: Using bare variables is deprecated. Update your 
-# playbooks so that the environment value uses the full variable syntax 
-# ('{{GISLAB_CLIENT_LANGUAGES}}').
 - name: Install language support
   shell: >
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
     apt-get {{ apt_get_opts }} install $(check-language-support -l {{ item }})
-  with_items: GISLAB_CLIENT_LANGUAGES
+  with_items: "{{ GISLAB_CLIENT_LANGUAGES }}"
   when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
 
