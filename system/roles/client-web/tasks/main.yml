@@ -208,6 +208,7 @@
     recurse: yes
     state: directory
 
+# TODO: [WARNING]: Consider using get_url or uri module rather than running wget
 - name: Download GIS.lab Web QGIS plugin
   shell: >
     wget {{ wget_opts }}

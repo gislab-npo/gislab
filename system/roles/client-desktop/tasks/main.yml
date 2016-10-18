@@ -176,10 +176,12 @@
   command: cp -a /etc/apt {{ root_dir }}/root/etc/
 
 
+# TODO: [WARNING]: Consider using file module with state=absent rather than running rm
 - name: Remove debian packages cached during debootstrap
   command: >
     rm -f {{ root_dir }}/root/var/cache/apt/archives/*.deb
 
+# TODO: [WARNING]: Consider using mount module rather than running mount
 - name: Activate shared apt cache
   command: >
     mount -o bind
@@ -305,6 +307,9 @@
 
 
 # language support
+# TODO: [DEPRECATION WARNING]: Using bare variables is deprecated. Update your 
+# playbooks so that the environment value uses the full variable syntax 
+# ('{{GISLAB_CLIENT_LANGUAGES}}').
 - name: Install language support
   shell: >
     export DEBIAN_FRONTEND=noninteractive
@@ -584,6 +589,7 @@
   args:
     creates: "{{ root_dir }}/root/sbin/gislab/reboot"
 
+# TODO: [WARNING]: Consider using file module with state=link rather than running ln
 - name: Re-create poweroff command as a symlink to moved reboot binary
   command: >
     ln -sf

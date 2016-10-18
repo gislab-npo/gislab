@@ -32,6 +32,7 @@
 
 
 ### FACTS
+# TODO: [WARNING]: Consider using git module rather than running git
 - name: Detect if it is possible to get GIS.lab version from Git
   local_action: shell git describe 2> /dev/null || echo "GIT-NOT-AVAILABLE"
   become: no

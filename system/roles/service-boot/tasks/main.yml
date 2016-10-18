@@ -58,6 +58,7 @@
     src: dhcp/dhcpd.conf.templ.j2
     dest: /etc/dhcp/dhcpd.conf.templ
 
+# TODO: [WARNING]: Consider using template or lineinfile module rather than running
 - name: Install DHCP configuration with 'deny' unknown machines policy
   shell: >
     sed "s/{+ GISLAB_UNKNOWN_MACHINES_POLICY +}/deny/g"
@@ -68,6 +69,7 @@
   notify:
     - service isc-dhcp-server restart
 
+# TODO: [WARNING]: Consider using template or lineinfile module rather than running    
 - name: Install DHCP configuration with 'allow' unknown machines policy
   shell: >
     sed "s/{+ GISLAB_UNKNOWN_MACHINES_POLICY +}/allow/g"
