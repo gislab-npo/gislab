@@ -56,26 +56,22 @@
 - name: Install DHCP server configuration template
   template:
     src: dhcp/dhcpd.conf.templ.j2
-    dest: /etc/dhcp/dhcpd.conf.templ
+    dest: /etc/dhcp/dhcpd.conf
 
-# TODO: [WARNING]: Consider using template or lineinfile module rather than running
 - name: Install DHCP configuration with 'deny' unknown machines policy
-  shell: >
-    sed "s/{+ GISLAB_UNKNOWN_MACHINES_POLICY +}/deny/g"
-    /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
-  args:
-    executable: /bin/bash
+  replace:
+    dest: /etc/dhcp/dhcpd.conf
+    replace: 'deny'
+    regexp: '{\+ GISLAB_UNKNOWN_MACHINES_POLICY \+}'
   when: gislab_unknown_machines_policy.stdout == "deny"
   notify:
     - service isc-dhcp-server restart
 
-# TODO: [WARNING]: Consider using template or lineinfile module rather than running    
 - name: Install DHCP configuration with 'allow' unknown machines policy
-  shell: >
-    sed "s/{+ GISLAB_UNKNOWN_MACHINES_POLICY +}/allow/g"
-    /etc/dhcp/dhcpd.conf.templ > /etc/dhcp/dhcpd.conf
-  args:
-    executable: /bin/bash
+  replace:
+    dest: /etc/dhcp/dhcpd.conf
+    replace: 'allow'
+    regexp: '{\+ GISLAB_UNKNOWN_MACHINES_POLICY \+}'
   when: gislab_unknown_machines_policy.stdout == "allow"
   notify:
     - service isc-dhcp-server restart
