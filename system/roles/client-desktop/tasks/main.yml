@@ -180,12 +180,12 @@
   file: path="{{ root_dir }}/root/var/cache/apt/archives/*.deb" state=absent
 
 
-# TODO: [WARNING]: Consider using mount module rather than running mount
 - name: Activate shared apt cache
-  command: >
-    mount -o bind
-    {{ GISLAB_PATH_CACHE }}/packages/apt
-    {{ root_dir }}/root/var/cache/apt
+  mount:
+    name: "{{ root_dir }}/root/var/cache/apt"
+    src: "{{ GISLAB_PATH_CACHE }}/packages/apt"
+    opts: bind
+    state: mounted
 
 
 # shared packages cache
