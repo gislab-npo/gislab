@@ -99,6 +99,10 @@ else
     cp \
         $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/lib/PXELINUX/gpxelinux.0 \
         $tftp_dir/gpxelinux.0
+    # see https://bugs.launchpad.net/ubuntu/+source/syslinux/+bug/1577554
+    cp \
+        $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/lib/syslinux/modules/bios/ldlinux.c32 \
+        $tftp_dir/ldlinux.c32
 
     cp -a $GISLAB_PATH_SYSTEM/clients/desktop/root/boot/. $tftp_dir/
 
