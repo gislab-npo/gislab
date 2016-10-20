@@ -70,6 +70,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # VirtualBox configuration
     server.vm.provider "virtualbox" do |vb, override|
+      vb.name = "gislab-ubuntu-xenial-dev"
       vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY']]
       vb.customize ["modifyvm", :id, "--cpus", CONFIG['GISLAB_SERVER_CPUS']]
       vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
