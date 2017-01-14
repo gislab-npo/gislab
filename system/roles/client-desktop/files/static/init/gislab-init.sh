@@ -17,10 +17,29 @@ HOSTNAME="c${hostname_postfix}"
 echo "$HOSTNAME" > /etc/hostname
 hostname -b -F /etc/hostname
 
+# empty /etc/resolv.conf
+echo "# Automatically generated" >/etc/resolv.conf
+
+# configure network domain
+if [ -n "$DNSDOMAIN" ]; then
+    echo "domain $DNSDOMAIN" >>/etc/resolv.conf
+fi
+
+# configure search domain
+if [ -n "$SEARCH_DOMAIN" ]; then
+    echo "search $SEARCH_DOMAIN" >>/etc/resolv.conf
+fi
+
+# configure DNS servers
+if [ -n "$DNS_SERVER" ]; then
+    for dns_srv in $IPV4DNS0 $IPV4DNS1; do
+        echo "nameserver $dns_srv" >>/etc/resolv.conf
+    done
+fi
 
 # configure /etc/hosts
 cat <<EOF >>/etc/hosts
-$IPV4DNS0      server.gis.lab       server
+$ROOTSERVER    server.gis.lab      server
 $IPV4ADDR      $HOSTNAME.gis.lab   $HOSTNAME
 EOF
 

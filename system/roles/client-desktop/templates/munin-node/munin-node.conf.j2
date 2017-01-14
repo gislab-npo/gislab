@@ -1,6 +1,6 @@
 # "host_name" parameter is dynamically added by init script
 
-allow ^{{ GISLAB_NETWORK_SERVER_IP|replace(".", "\.") }}$
+cidr_allow 0.0.0.0/0
 host *
 port 4949
 background 1

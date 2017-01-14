@@ -26,6 +26,8 @@ packages_base:
   - acpi-support
   - apt-show-versions
   - bc
+  - busybox-initramfs=1:1.18.5-1ubuntu4
+  - busybox-static=1:1.18.5-1ubuntu4
   - curl
   - genisoimage
   - libnss-ldap
@@ -39,7 +41,7 @@ packages_base:
   - openssh-server
   - rsyslog
   - syslinux-common
-  - udhcpc
+  - udhcpc=1:1.18.5-1ubuntu4
   - unzip
   - zip
 
@@ -228,6 +230,7 @@ packages_remove:
   # the reason why package was installed.
   - network-manager
   - network-manager-pptp
+  - resolvconf
   - xscreensaver
 
 

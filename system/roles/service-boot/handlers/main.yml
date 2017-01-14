@@ -5,10 +5,11 @@
     name: apparmor
     state: restarted
 
-- name: service isc-dhcp-server restart
+- name: service isc-dhcp-server stop
   service:
     name: isc-dhcp-server
-    state: restarted
+    enabled: no
+    state: stopped
 
 - name: service nbd-server restart
   service:

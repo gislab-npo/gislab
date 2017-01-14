@@ -1,65 +1,26 @@
 # IP ranges of GIS.lab network
 # ----------------------------
 # 5         : server
-# 50 - 149  : GIS.lab clients
-# 150 - 250 : third party clients
+# 50 - 250  : clients
 
 
-# authoritative mode must be disabled, otherwise DHCP server in GIS.lab will interfere in communication of legitimate
-# DHCP server on the network with DHCPNAK messages
-not authoritative;
-
-# custom DHCP option to distinguish between multiple GIS.lab servers in LAN
-option gislab-unique-id code 224 = text;
+authoritative;
 
 log-facility local7;
-
-class "gislab-clients" {
-    match if option nis-domain = "{{ GISLAB_UNIQUE_ID }}";
-}
-
-class "third-party-clients" {
-    match if option nis-domain != "{{ GISLAB_UNIQUE_ID }}";
-}
 
 subnet {{ GISLAB_NETWORK }}.0 netmask 255.255.255.0 {
     next-server {{ GISLAB_NETWORK_SERVER_IP }};
     option routers {{ GISLAB_NETWORK_SERVER_IP }};
 
-    pool {
-        allow members of "gislab-clients";
-        deny members of "third-party-clients";
-        allow known-clients;
-        {+ GISLAB_UNKNOWN_MACHINES_POLICY +} unknown-clients;
-        range {{ GISLAB_NETWORK }}.50 {{ GISLAB_NETWORK }}.149;
-        # return specified DHCP options in offer
-        option dhcp-parameter-request-list 1,3,6,14,15,17,51,54,224;
-        option domain-name "gis.lab";
-        option domain-search "gis.lab";
-        option domain-name-servers {{ GISLAB_NETWORK_SERVER_IP }};
-        option broadcast-address {{ GISLAB_NETWORK }}.255;
-        option subnet-mask 255.255.255.0;
-        option gislab-unique-id "{{ GISLAB_UNIQUE_ID }}";
-        if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
-            filename "/gislab/pxelinux.0";
-        }
-    }
-
-    pool {
-        allow members of "third-party-clients";
-        deny members of "gislab-clients";
-        allow known-clients;
-        {+ GISLAB_UNKNOWN_MACHINES_POLICY +} unknown-clients;
-        range {{ GISLAB_NETWORK }}.150 {{ GISLAB_NETWORK }}.250;
-        option domain-name "gis.lab";
-        option domain-search "gis.lab";
-        option domain-name-servers {{ GISLAB_NETWORK_SERVER_IP }};
-        option broadcast-address {{ GISLAB_NETWORK }}.255;
-        option subnet-mask 255.255.255.0;
-        option gislab-unique-id "{{ GISLAB_UNIQUE_ID }}";
-        if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
-            filename "/gislab/pxelinux.0";
-        }
+    {+ GISLAB_UNKNOWN_MACHINES_POLICY +} unknown-clients;
+    range {{ GISLAB_NETWORK }}.50 {{ GISLAB_NETWORK }}.250;
+    option domain-name "gis.lab";
+    option domain-search "gis.lab";
+    option domain-name-servers {{ GISLAB_NETWORK_SERVER_IP }};
+    option broadcast-address {{ GISLAB_NETWORK }}.255;
+    option subnet-mask 255.255.255.0;
+    if substring( option vendor-class-identifier, 0, 9 ) = "PXEClient" {
+        filename "/gislab/pxelinux.0";
     }
 }
 
