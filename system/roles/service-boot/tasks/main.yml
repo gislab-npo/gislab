@@ -30,24 +30,6 @@
 
 
 ### DHCP SERVER
-- name: Detect network device used for GIS.lab network
-  shell: >
-    ip -oneline -family inet addr list
-    | grep '{{ GISLAB_NETWORK_SERVER_IP }}'
-    | awk '{print $2}'
-  args:
-    executable: /bin/bash
-  register: gislab_network_dhcp_device
-  changed_when: False
-
-- name: Activate network device for DHCP service
-  template:
-    src: dhcp/isc-dhcp-server.j2
-    dest: /etc/default/isc-dhcp-server
-  notify:
-    - service isc-dhcp-server restart
-
-
 - name: Set unknown machines policy to 'deny' if not set
   shell: echo 'deny' > {{ GISLAB_PATH_SECRET }}/gislab_unknown_machines_policy.conf
   args:
@@ -75,7 +57,7 @@
     executable: /bin/bash
   when: gislab_unknown_machines_policy.stdout == "deny"
   notify:
-    - service isc-dhcp-server restart
+    - service isc-dhcp-server stop
 
 - name: Install DHCP configuration with 'allow' unknown machines policy
   shell: >
@@ -85,7 +67,7 @@
     executable: /bin/bash
   when: gislab_unknown_machines_policy.stdout == "allow"
   notify:
-    - service isc-dhcp-server restart
+    - service isc-dhcp-server stop
 
 
 ### MAC ADDRESSES
@@ -113,7 +95,7 @@
       }
   when: not gislab_known_machines_status.stat.exists
   notify:
-    - service isc-dhcp-server restart
+    - service isc-dhcp-server stop
 
 
 ### PXE BOOT

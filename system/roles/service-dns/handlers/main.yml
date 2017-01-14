@@ -1,11 +1,9 @@
 ---
 
-- name: service bind9 restart
+- name: service bind9 stop
   service:
     name: bind9
-    state: restarted
-
-- name: resolvconf update
-  shell: resolvconf -u
+    enabled: no
+    state: stopped
 
 # vim: set ts=8 sts=2 sw=2 et:

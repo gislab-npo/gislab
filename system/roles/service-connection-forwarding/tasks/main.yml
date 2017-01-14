@@ -10,7 +10,7 @@
     src: init/gislab-connection-forwarding.conf.j2
     dest: /etc/init/gislab-connection-forwarding.conf
   notify:
-    - service gislab-connection-forwarding restart
+    - service gislab-connection-forwarding disable
 
 - name: Register connection forwarding service
   file:
@@ -18,7 +18,7 @@
     dest: /etc/init.d/gislab-connection-forwarding
     state: link
   notify:
-    - service gislab-connection-forwarding restart
+    - service gislab-connection-forwarding disable
 
 - meta: flush_handlers
 

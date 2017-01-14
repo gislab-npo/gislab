@@ -9,15 +9,24 @@ respawn limit 15 5
 kill timeout 90
 normal exit 0 TERM INT
 
-exec serf agent \
-    -bind {{ GISLAB_NETWORK_SERVER_IP }} \
-    -keyring-file {{ GISLAB_PATH_SECRET }}/gislab_serf.key \
-    -event-handler "member-join={{ root_dir }}/handlers/member-join.sh" \
-    -event-handler "member-leave,member-failed={{ root_dir }}/handlers/member-leave.sh" \
-    -event-handler "user:member-join-lb={{ root_dir }}/handlers/member-join-lb.sh" \
-    -event-handler "user:adduser={{ root_dir }}/handlers/adduser.sh" \
-    -event-handler "query:uptime=uptime" \
-    -node="server.gis.lab" \
-    -tag role=server \
-    -log-level=err \
-    -syslog
+script
+    if [ -n "$(ip a s 2>/dev/null | awk '/ {{ GISLAB_NETWORK_SERVER_IP }}\/24 / { print $2 }' 2>/dev/null)" ]; then
+        connect="-bind {{ GISLAB_NETWORK_SERVER_IP }}"
+    else
+        connect="$(ip r 2>/dev/null | awk '/^default / { print $5 }' 2>/dev/null)"
+        connect="-iface $connect"
+    fi
+
+    serf agent \
+        $connect \
+        -keyring-file {{ GISLAB_PATH_SECRET }}/gislab_serf.key \
+        -event-handler "member-join={{ root_dir }}/handlers/member-join.sh" \
+        -event-handler "member-leave,member-failed={{ root_dir }}/handlers/member-leave.sh" \
+        -event-handler "user:member-join-lb={{ root_dir }}/handlers/member-join-lb.sh" \
+        -event-handler "user:adduser={{ root_dir }}/handlers/adduser.sh" \
+        -event-handler "query:uptime=uptime" \
+        -node="server.gis.lab" \
+        -tag role=server \
+        -log-level=err \
+        -syslog
+end script

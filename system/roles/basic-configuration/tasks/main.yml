@@ -31,8 +31,6 @@
       GISLAB_SERVER_CAPABILITY_VPN="{{ GISLAB_SERVER_CAPABILITY_VPN }}"
       GISLAB_SERVER_EMAIL_RELAY_SERVER="{{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}"
       GISLAB_SERVER_GUI_CONSOLE="{{ GISLAB_SERVER_GUI_CONSOLE }}"
-      GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY }}"
-      GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS="{{ GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS }}"
       GISLAB_SERVER_NETWORK_DEVICE="{{ GISLAB_SERVER_NETWORK_DEVICE }}"
       GISLAB_SUITE="{{ GISLAB_SUITE }}"
       GISLAB_TIMEZONE="{{ GISLAB_TIMEZONE }}"
@@ -91,22 +89,10 @@
 
 
 ### NETWORKING
-- name: Install DHCP client configuration with fallback support
+- name: Install network configuration file
   template:
-    src: network/dhclient.conf.j2
-    dest: /etc/dhcp/dhclient.conf
-
-
-- name: Activate GIS.lab network IP address if not received from provider
-  command: >
-    ip addr add {{ GISLAB_NETWORK_SERVER_IP }}/24 dev {{ GISLAB_SERVER_NETWORK_DEVICE }}
-  when: GISLAB_NETWORK_SERVER_IP not in ansible_all_ipv4_addresses
-
-- name: Install GIS.lab network hook
-  template:
-    src: network/gislab.j2
-    dest: /etc/network/if-up.d/001gislab
-    mode: 0755
+    src: network/interfaces.j2
+    dest: /etc/network/interfaces
 
 
 ### PACKAGES CACHE
