@@ -84,20 +84,6 @@ GISLAB_SERVER_MEMORY: 1024
 # Change requires GIS.lab server restart.
 GISLAB_SERVER_CPUS: 1
 
-# Determines if Vagrant should try to integrate GIS.lab to the connected local
-# network via DHCP request. Allow integration only if GIS.lab machine is set in
-# bridge with active Ethernet network adapter on the host machine.
-# To enable connection from other networks (Internet), it is required to update
-# default gateway configuration by hand. It means dropping default gateway via
-# 'eth0' and setting default gateway via 'eth1' device.
-# Removing original default gateway: ip route del default via 10.0.2.2 dev eth0
-# Setting new default gateway: ip route add default via 192.168.151.254 dev eth1
-# Possible values are:
-# * no: do not try to integrate
-# * yes: try to integrate
-# Change requires running upgrade.
-GISLAB_SERVER_INTEGRATION: no
-
 # Set GIS.lab server MAC address.
 # Example: 080027C247F6
 # Change requires GIS.lab server restart and removing
@@ -133,11 +119,6 @@ GISLAB_SUITE: lab
 # Change requires GIS.lab re-installation.
 GISLAB_NETWORK: 192.168.50
 
-# Time zone. For list of time zones see:
-# http://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
-# Change requires running upgrade.
-GISLAB_TIMEZONE: Europe/Bratislava
-
 # List of additional DNS servers used with GIS.lab's internal DNS server
 # for resolving local DNS records in LAN.
 # Example:
@@ -145,6 +126,11 @@ GISLAB_TIMEZONE: Europe/Bratislava
 # - 192.168.0.9
 # Change requires running upgrade.
 GISLAB_DNS_SERVERS:
+
+# Time zone. For list of time zones see:
+# http://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
+# Change requires running upgrade.
+GISLAB_TIMEZONE: Europe/Bratislava
 
 # URL of Debian/Ubuntu packages caching service (apt-cacher-ng).
 # Example: http://192.168.50.6:3142
@@ -170,23 +156,6 @@ GISLAB_APT_CUSTOM_REPOSITORIES:
 # Example: eno1
 # Change requires running upgrade.
 GISLAB_SERVER_NETWORK_DEVICE: eno1
-
-
-# GIS.lab server is always trying to integrate itself to the connected local
-# network via DHCP request. If no DHCP response is received, fallback network
-# configuration is automatically set.
-
-# Fallback IP address, which will be assigned to GIS.lab server, when no IP
-# address is received from local network. Double check, that this IP address
-# doesn't already exist in the network to avoid IP conflict !
-# Example: 192.168.5.5
-GISLAB_SERVER_INTEGRATION_FALLBACK_IP_ADDRESS: 192.168.5.5
-
-# Fallback gateway, which will be used for communication with Internet, when
-# no gateway address is received from local network.
-# Example: 192.168.5.1
-GISLAB_SERVER_INTEGRATION_FALLBACK_GATEWAY: 192.168.5.1
-
 
 # Email account which will be used as a relay to send emails from GIS.lab.
 # SMTP server must support TLS encryption on port 587. If no account configured,

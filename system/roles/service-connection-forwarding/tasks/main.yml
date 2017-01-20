@@ -10,7 +10,7 @@
     src: systemd/gislab-connection-forwarding.service.j2
     dest: /etc/systemd/system/gislab-connection-forwarding.service
   notify:
-    - service gislab-connection-forwarding restart
+    - service gislab-connection-forwarding disable
 
 - meta: flush_handlers
 

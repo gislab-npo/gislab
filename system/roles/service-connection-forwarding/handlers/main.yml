@@ -1,9 +1,8 @@
 ---
 
-- name: service gislab-connection-forwarding restart
+- name: service gislab-connection-forwarding disable
   service:
     name: gislab-connection-forwarding
-    state: restarted
-    enabled: yes
+    enabled: no
 
 # vim: set ts=8 sts=2 sw=2 et:

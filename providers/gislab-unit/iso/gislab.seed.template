@@ -49,7 +49,7 @@ d-i partman-partitioning/confirm_write_new_label boolean true
 # - sda1 - /boot (230MB)
 # - sda2 - extended
 # - sda5 - VG vgmain
-#             - LV root (10GB)
+#             - LV root (20GB)
 #             - LV storage (30GB)
 #             - LV swap (4GB)
 #

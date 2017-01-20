@@ -48,7 +48,7 @@
         dest: "/etc/bind/db.192"
       }
   notify:
-    - service bind9 restart
+    - service bind9 stop
 
 - name: Install resolvconf configuration
   template:
@@ -56,15 +56,9 @@
     dest: "{{ item.dest }}"
   with_items:
     - {
-        src: "resolvconf/head.j2",
-        dest: "/etc/resolvconf/resolv.conf.d/head"
-      }
-    - {
         src: "resolvconf/tail.j2",
         dest: "/etc/resolvconf/resolv.conf.d/tail"
       }
-  notify:
-    - resolvconf update
 
 
 - meta: flush_handlers
