@@ -70,7 +70,38 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # VirtualBox configuration
     server.vm.provider "virtualbox" do |vb, override|
-      vb.name = "gislab-ubuntu-xenial-dev"
+      # TODO: vb name shouldn't be hardcoded
+      vb.name = "gislab-ubuntu-xenial-dev-dhcp"
+
+      # Xenial vagrant box disk size is too small, see https://bugs.launchpad.net/cloud-images/+bug/1580596
+      # Reported as #506
+      base_name = "ubuntu-xenial-16.04-cloudimg"
+      if !File.exist?("#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vdi")
+        vb.customize [
+          "clonehd", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vmdk",
+          "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vdi",
+          "--format", "VDI"
+        ]
+        vb.customize [
+          "modifyhd", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vdi",
+          "--resize", 40 * 1024
+        ]
+        vb.customize [
+          "storageattach", :id,
+          "--storagectl", "SCSI Controller",
+          "--port", "0",
+          "--device", "0",
+          "--type", "hdd",
+          "--nonrotational", "on",
+          "--medium", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vdi"
+        ]
+        vb.customize [
+          "closemedium",
+          "disk", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vmdk",
+          "--delete"
+        ]
+      end
+
       vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY']]
       vb.customize ["modifyvm", :id, "--cpus", CONFIG['GISLAB_SERVER_CPUS']]
       vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
