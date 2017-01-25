@@ -44,6 +44,7 @@ end
 # always force set network device for Vagrant to 'eth1'
 CONFIG_VAGRANT["GISLAB_SERVER_NETWORK_DEVICE"] = "eth1"
 
+TPATH = %x(VBoxManage list systemproperties | grep -i "default machine folder:" | cut -b 24- | awk '{gsub(/^ +| +$/,"")}1').strip
 
 # Vagrant provisioning
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -71,19 +72,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # VirtualBox configuration
     server.vm.provider "virtualbox" do |vb, override|
       # TODO: vb name shouldn't be hardcoded
-      vb.name = "gislab-ubuntu-xenial-dev-dhcp"
+      vb.name = "gislab-ubuntu-xenial-dev"
 
       # Xenial vagrant box disk size is too small, see https://bugs.launchpad.net/cloud-images/+bug/1580596
       # Reported as #506
       base_name = "ubuntu-xenial-16.04-cloudimg"
-      if !File.exist?("#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vdi")
+      if !File.exist?("#{TPATH}/#{vb.name}/#{base_name}.vdi")
         vb.customize [
-          "clonehd", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vmdk",
-          "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vdi",
+          "clonehd", "#{TPATH}/#{vb.name}/#{base_name}.vmdk",
+          "#{TPATH}/#{vb.name}/#{base_name}.vdi",
           "--format", "VDI"
         ]
         vb.customize [
-          "modifyhd", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vdi",
+          "modifyhd", "#{TPATH}/#{vb.name}/#{base_name}.vdi",
           "--resize", 40 * 1024
         ]
         vb.customize [
@@ -93,11 +94,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           "--device", "0",
           "--type", "hdd",
           "--nonrotational", "on",
-          "--medium", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vdi"
+          "--medium", "#{TPATH}/#{vb.name}/#{base_name}.vdi"
         ]
         vb.customize [
           "closemedium",
-          "disk", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/#{base_name}.vmdk",
+          "disk", "#{TPATH}/#{vb.name}/#{base_name}.vmdk",
           "--delete"
         ]
       end
