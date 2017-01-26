@@ -16,6 +16,7 @@ d-i mirror/country string ###COUNTRY_CODE###
 d-i mirror/http/hostname string archive.ubuntu.com
 d-i mirror/http/directory string /debian
 d-i mirror/suite string xenial
+d-i mirror/http/proxy string
 
 
 ### Clock and time zone setup
@@ -125,6 +126,8 @@ d-i grub-installer/with_other_os boolean false
 
 ### Custom commands
 d-i preseed/early_command string /cdrom/configure-apt-proxy.sh
+# This is necessary otherwise you will be prompted to umount /dev/sda. See Ubuntu bug #1347726
+d-i preseed/early_command string umount /media || true
 
 d-i preseed/late_command string \
 in-target sed -i 's/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/' /etc/sudoers; \
