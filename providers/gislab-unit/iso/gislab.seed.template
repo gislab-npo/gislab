@@ -122,6 +122,7 @@ d-i pkgsel/updatedb boolean false
 ### Boot loader installation
 d-i grub-installer/only_debian boolean true
 d-i grub-installer/with_other_os boolean false
+d-i grub-installer/bootdev string /dev/sda
 
 
 ### Custom commands
