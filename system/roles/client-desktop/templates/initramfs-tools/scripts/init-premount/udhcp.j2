@@ -33,12 +33,11 @@ prereqs()
     echo "$PREREQ"
 }
 
-case $1 in
-# get pre-requisites
-prereqs)
-    prereqs
-    exit 0
-    ;;
+case "$1" in
+    prereqs)
+        prereqs
+        exit 0
+        ;;
 esac
 
 # Exit if a GIS.lab boot was not requested
@@ -46,25 +45,41 @@ grep -Eqsw "init=/sbin/init-gislab" /proc/cmdline || exit 0
 
 bring_up_interfaces()
 {
-# Wait for the interfaces to become available
-# TODO: Find a better way. Setting PREREQs="udev", accessing /proc/net/dev,
-# calling ifconfig or ipconfig... something better than calling sleep
-while ! ip link show > /dev/null 2>&1; do
-    sleep 0.1
-done
-sleep 1
+    local i j
 
-interfaces=${interface:-$(ip -oneline link show | sed -n '/ether/s/[0-9 :]*\([^:]*\).*/\1/p')}
-if [ -z "$interfaces" ]; then
-    echo "No interfaces found! Aborting..."    1>&2
-    exit 1
-fi
+    # Wait for a network interface to become available
+    i=0
+    while i=$(($i+1)); do
+        if [ -n "$(ip -oneline link show | sed -n '/ether/s/[0-9 :]*\([^:]*\).*/\1/p')" ]; then
+            break
+        elif [ $i -ge 30 ]; then
+            # After a while, give a shell to the user in case he can fix it
+            panic "No network interfaces found"
+            i=0
+        else
+            sleep 1
+        fi
+    done
 
-# Bring up the interface(s)
-for i in $interfaces; do
-    ip link set $i up
-done
-sleep 0.1
+    # Wait for a network interface to be up
+    i=0
+    while i=$(($i+1)); do
+        # Bring up the interfaces. Note that more interfaces may become
+        # available progressively, so `ip link show` needs to be re-run.
+        for j in $(ip -oneline link show | sed -n '/ether/s/[0-9 :]*\([^:]*\).*/\1/p'); do
+            ip link set dev $j up
+        done
+        # Check if an interface is up
+        if ip -oneline link show up | grep -vw lo | grep -q LOWER_UP; then
+            break
+        elif [ $i -ge 30 ]; then
+            # After a while, give a shell to the user in case he can fix it
+            panic "No network interfaces are up"
+            i=0
+        else
+            sleep 1
+        fi
+    done
 }
 
 # Analyze whatever information was provided in the kernel command line
@@ -78,21 +93,23 @@ if [ -n "$BOOTIF" ]; then
     interface=$(ip -oneline link show | sed -n "/ether $mac"'/{s/[0-9 :]*\([^:]*\).*/\1/p;q};')
 fi
 
-# "ip" can be passed manually or by IPAPPEND 1/3
+# "IP" can be passed manually or by IPAPPEND 1/3
 # Form: ip=<client-ip>:<server-ip>:<gw-ip>:<netmask>:<hostname>:<device>:<autoconf>
 # http://www.kernel.org/doc/Documentation/filesystems/nfsroot.txt
-case "$ip" in
+# Older initramfs-tools set "ip", newer set "IP".
+IP=${IP:-$ip}
+case "$IP" in
     "")
         ;;
     # If the user just specified e.g. ip=dhcp
     off|static|none|rarp|bootp|dhcp|both|all)
-        autoconf="$ip"
+        autoconf="$IP"
         ;;
     *)
         local oldifs="${IFS-not set}"
         IFS=':'
         read ip tftp router subnet hostname new_interface new_autoconf<<EOF
-$ip
+$IP
 EOF
         test "$oldifs" = "not set" && unset IFS || IFS="$oldifs"
         # Prefer the interface specified by BOOTIF
@@ -135,10 +152,10 @@ echo '#!/bin/sh
 [ "$1" = "bound" ] || exit;
 
 echo "# This file contains whatever information was provided by the DHCP server" > /tmp/dhcp-info.conf
-for var in interface ip siaddr sname boot_file subnet timezone router \
-    timesvr namesvr dns logsvr cookiesvr lprsvr hostname bootsize domain \
-    swapsvr rootpath ipttl mtu broadcast ntpsrv wins lease dhcptype serverid \
-      message tftp bootfile; do
+for var in bootfile bootsize broadcast dns domain hostname ipttl lease lprsrv \
+    message msstaticroutes mtu nisdomain nissrv ntpsrv rootpath router routes \
+    search serverid sipsrv staticroutes subnet swapsrv tftp timezone wins wpad \
+    boot_file interface ip mask siaddr; do
         eval value=\"\$$var\"
         if [ -n "$value" ]; then
             echo $var="\"$value\"" >> /tmp/dhcp-info.conf
@@ -151,17 +168,20 @@ do_dhcp()
 {
 hostname_param=${hostname:+"-h $hostname"}
 ip_param=${ip:+"-r $ip"}
-# If a specific interface wasn't provided, try all of them
-# TODO: it would be nice if we could prefer the interface with the connected cable, though
-interfaces=${interface:-$interfaces}
+# If a specific interface wasn't provided, try all of the connected ones
+if [ -n "$interface" ]; then
+    interfaces=$interface
+else
+    interfaces=$(ip -oneline link show | grep LOWER_UP | sed -n '/ether/s/[0-9 :]*\([^:]*\).*/\1/p')
+fi
 
 # Clear screen when quiet to dampen some noise
 [ "$quiet" = "y" ] && clear
 
-[ "$quiet" != "y" ] && echo "DHCP request for $i..."
 while [ -z "$configured" ]; do
     for i in $interfaces; do    # Make a DHCP request for each interface
-        if udhcpc -n -C -s /tmp/dhcp-script.sh -i $i $hostname_param $ip_param >/dev/null 2>&1; then
+        [ "$quiet" != "y" ] && echo "DHCP request for $i..."
+        if udhcpc -n -C -O rootpath -s /tmp/dhcp-script.sh -i $i $hostname_param $ip_param >/dev/null 2>&1; then
             configured="true"
             break
         fi
@@ -191,6 +211,14 @@ boot_file=$bootfile
 tftp=${tftp:-$siaddr}
 tftp=${tftp:-$sname}
 tftp=${tftp:-$serverid}
+
+# Ensure a default rootpath if it doesn't exist
+if [ -z "$rootpath" ]; then
+    if [ -f /conf/arch.conf ]; then
+        rootpath=$(. /conf/arch.conf; echo "${DPKG_ARCH:+/opt/ltsp/$DPKG_ARCH}")
+    fi
+    rootpath=${rootpath:-/opt/ltsp/i386}
+fi
 }
 
 # Converts a decimal subnet mask to the bit count needed for the CIDR notation
@@ -230,6 +258,9 @@ fi
 
 export_configuration()
 {
+# Ensure that /run exists, otherwise older versions may fail.
+mkdir -p /run
+
 # dns and router may contain multiple values
 read dns0 dns1 rest_dns <<EOF
 $dns
@@ -246,25 +277,28 @@ IPV4DNS0='$dns0'
 IPV4DNS1='$dns1'
 HOSTNAME='$hostname'
 DNSDOMAIN='$domain'
-NISDOMAIN='$domain'
+NISDOMAIN='$nisdomain'
 ROOTSERVER='$tftp'
 ROOTPATH='$rootpath'
 filename='$bootfile'
 DNS_SERVER='$dns'
-SEARCH_DOMAIN='$domain'
-NTPSVR='$ntpsrv'
-TIMESVR='$timesvr'
+SEARCH_DOMAIN='$search'
+NTPSVR='$ntpsvr'
+TIMESVR='$ntpsvr'
 TIMEZONE='$timezone'
-LOGSVR='$logsvr'" > /tmp/net-$interface.conf
+SWAPSVR='$swapsvr'" > /run/net-$interface.conf
 
+# Also make a /tmp symlink for backwards compatibility
+ln -sf /run/net-$interface.conf /tmp/net-$interface.conf
 # Write the file that'll be sourced by the callee function run_scripts
 mkdir -p /conf
 # Only export the lines that have something after the =
-sed -n "/[^=]*=[' ]*$/!s/.*/export &/p" "/tmp/net-$interface.conf" > /conf/param.conf
+sed -n "/[^=]*=[' ]*$/!s/.*/export &/p" "/run/net-$interface.conf" > /conf/param.conf
 }
 
 # Main
 [ "$xtrace" = "udhcp" ] && set -x    # Provide a kernel parameter to enable tracing
+. /scripts/functions
 bring_up_interfaces
 process_kernel_parameters
 if dhcp_needed; then
@@ -275,5 +309,3 @@ fi
 sanitize_configuration
 apply_configuration
 export_configuration
-
-# TODO: replace DEVICE=eth0 with DEVICE=${DEVICE:-eth0} in local-top/nbd

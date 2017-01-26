@@ -906,12 +906,6 @@
     - /usr/share/initramfs-tools/scripts/init-premount
     - /usr/share/initramfs-tools/scripts/local-top
 
-- name: Configure initramfs-tools
-  template:
-    src: initramfs-tools/conf.d/gislab.j2
-    dest: "{{ root_dir }}/root/usr/share/initramfs-tools/conf.d/gislab"
-    mode: 0644
-
 - name: Install initramfs-tools hooks and scripts
   copy:
     src: "{{ item.src }}"
@@ -931,6 +925,11 @@
     - {
         src: "static/initramfs-tools/scripts/init-bottom/gislab",
         dest: "/usr/share/initramfs-tools/scripts/init-bottom/gislab",
+        mode: "0755"
+      }
+    - {
+        src: "static/initramfs-tools/scripts/local-top/nbd",
+        dest: "/usr/share/initramfs-tools/scripts/local-top/nbd",
         mode: "0755"
       }
     - {

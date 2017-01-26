@@ -1,10 +1,8 @@
 #!/bin/sh -e
 # initramfs hook for udhcpc
 
-MINKVER="2.6.17"
 PREREQ=""
 
-# Output pre-requisites
 prereqs()
 {
     echo "$PREREQ"
@@ -13,16 +11,23 @@ prereqs()
 case "$1" in
     prereqs)
         prereqs
-    exit 0
-    ;;
+        exit 0
+        ;;
 esac
-
 
 . /usr/share/initramfs-tools/hook-functions
 
 # Copy across the binaries
 if [ -x /sbin/udhcpc ]; then
-    copy_exec /sbin/udhcpc /sbin
+    # udhcpc is usually a symlink to /bin/busybox (-static),
+    # but recent initramfs-tools versions copy busybox (-initramfs) instead,
+    # which doesn't contain the udhcpc applet, and symlink udhcpc, breaking it.
+    # So explicitly copy /bin/busybox, bypassing that broken symlinking logic.
+    if [ -L /sbin/udhcpc ]; then
+        copy_exec "$(readlink /sbin/udhcpc)" /sbin/udhcpc
+    else
+        copy_exec /sbin/udhcpc /sbin
+    fi
 fi
 
 # vim: set ts=8 sts=4 sw=4 et:
