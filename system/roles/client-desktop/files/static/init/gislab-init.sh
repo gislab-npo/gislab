@@ -18,6 +18,7 @@ echo "$HOSTNAME" > /etc/hostname
 hostname -b -F /etc/hostname
 
 # empty /etc/resolv.conf
+rm -f /etc/resolv.conf
 echo "# Automatically generated" >/etc/resolv.conf
 
 # configure network domain
