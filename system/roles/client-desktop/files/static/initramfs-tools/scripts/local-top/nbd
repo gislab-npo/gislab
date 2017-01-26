@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+# This is original script from 'nbd-client' package in Xenial
+# including fix of Debian bug #840612.
+# See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=840612
+
 
 # We don't have any prerequisites
 case $1 in
