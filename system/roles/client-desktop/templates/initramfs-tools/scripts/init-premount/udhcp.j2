@@ -214,10 +214,7 @@ tftp=${tftp:-$serverid}
 
 # Ensure a default rootpath if it doesn't exist
 if [ -z "$rootpath" ]; then
-    if [ -f /conf/arch.conf ]; then
-        rootpath=$(. /conf/arch.conf; echo "${DPKG_ARCH:+/opt/ltsp/$DPKG_ARCH}")
-    fi
-    rootpath=${rootpath:-/opt/ltsp/i386}
+    rootpath=${rootpath:-:10809/gislab}
 fi
 }
 
