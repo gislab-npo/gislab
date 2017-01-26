@@ -31,14 +31,7 @@ test -z $GISLAB_BOOT && exit
 if ! chroot ${rootmnt} /usr/bin/test -w "/" ; then
     mkdir -p /rofs /cow
     mount -t tmpfs -o mode=0755 tmpfs /cow
-    if [ "$LTSP_NBD_TO_RAM" = "true" ]; then
-        umount ${rootmnt}
-        dd if=/dev/nbd0 of=/cow/.rofsimage.img bs=1024k
-        nbd-client -d /dev/nbd0
-        mount -o loop /cow/.rofsimage.img /rofs
-    else
-        mount -o move ${rootmnt} /rofs
-    fi
+    mount -o move ${rootmnt} /rofs
     if modprobe overlay; then
         UNION_TYPE=overlay
         UNION_OPTS="upperdir=/cow/up,lowerdir=/rofs,workdir=/cow/work"
