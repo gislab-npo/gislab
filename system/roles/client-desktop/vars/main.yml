@@ -41,6 +41,7 @@ packages_base:
   - openssh-server
   - pxelinux
   - rsyslog
+  - serf
   - syslinux-common
   - udhcpc
   - unzip

@@ -55,6 +55,9 @@ if [ -w "/etc/network/interfaces" ]; then
 fi
 
 
+# set network interface to which Serf agent will bind
+echo "IFACE=$DEVICE" >{{ root_dir_cluster }}/serf_bind_interface
+
 # set munin node name
 echo "host_name $(hostname)" >> /etc/munin/munin-node.conf
 

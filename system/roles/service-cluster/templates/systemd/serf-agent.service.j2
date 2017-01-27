@@ -7,7 +7,11 @@ After=network.target
 Type=simple
 
 ExecStart=/usr/bin/serf agent \
+            {% if GISLAB_NETWORK_SERVER_IP in ansible_all_ipv4_addresses %}
             -bind {{ GISLAB_NETWORK_SERVER_IP }} \
+            {% else %}
+            -iface {{ ansible_default_ipv4.interface }} \
+            {% endif %}
             -keyring-file {{ GISLAB_PATH_SECRET }}/gislab_serf.key \
             -event-handler "member-join={{ root_dir }}/handlers/member-join.sh" \
             -event-handler "member-leave,member-failed={{ root_dir }}/handlers/member-leave.sh" \

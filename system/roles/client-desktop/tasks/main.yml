@@ -759,15 +759,23 @@
     shutdown.sh
     {{ root_dir }}/root{{ root_dir_cluster }}/handlers/reboot.sh
 
-- name: Install Serf agent init script
+- name: Install Serf agent systemd unit file
   template:
-    src: init/serf-agent.conf.j2
-    dest: "{{ root_dir }}/root/etc/init/serf-agent.conf"
+    src: templates/systemd/serf-agent.service.j2
+    dest: "{{ root_dir }}/root/etc/systemd/system/serf-agent.service"
 
-- name: Install Serf join init script
+- name: Enable Serf agent systemd unit
+  command: >
+    chroot {{ root_dir }}/root systemctl enable serf-agent.service
+
+- name: Install Serf join systemd unit file
   template:
-    src: init/serf-join.conf.j2
-    dest: "{{ root_dir }}/root/etc/init/serf-join.conf"
+    src: systemd/serf-join.service.j2
+    dest: "{{ root_dir }}/root/etc/systemd/system/serf-join.service"
+
+- name: Enable Serf join systemd unit
+  command: >
+    chroot {{ root_dir }}/root systemctl enable serf-join.service
 
 
 # statistics
@@ -951,8 +959,8 @@
     mode: 0755
 
 - name: Install GIS.lab init script
-  copy:
-    src: static/init/gislab-init.sh
+  template:
+    src: init/gislab-init.sh.j2
     dest: "{{ root_dir }}/root{{ GISLAB_PATH_SYSTEM }}/gislab-init.sh"
     mode: 0755
 

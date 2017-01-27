@@ -1,0 +1,25 @@
+[Unit]
+Description=Start GIS.lab cluster Serf agent
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile={{ root_dir_cluster }}/serf_bind_interface
+
+ExecStart=/usr/bin/serf agent \
+            -iface ${IFACE} \
+            -keyring-file {{ GISLAB_PATH_SECRET }}/gislab_serf.key \
+            -event-handler "user:reboot={{ root_dir_cluster }}/handlers/reboot.sh" \
+            -event-handler "user:shutdown={{ root_dir_cluster }}/handlers/shutdown.sh" \
+            -event-handler "query:uptime=uptime" \
+            -tag role=client \
+            -log-level=err \
+            -syslog
+
+KillSignal=SIGINT
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

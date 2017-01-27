@@ -1,0 +1,24 @@
+[Unit]
+Description=Join a GIS.lab cluster
+Requires=serf-agent.service
+After=serf-agent.service
+
+[Service]
+Type=oneshot
+
+# Give an extra time for serf-agent service initialization
+ExecStartPre=/bin/sleep 3s
+ExecStart=/usr/bin/serf join server.gis.lab
+{% if GISLAB_SUITE in ('server', 'lab') %}
+ExecStartPost=/bin/sh -c \
+                "sleep 3; \
+                 if [ $(free -m | awk 'NR==2 {print $2}') -ge {{ GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY }} ]; then \
+                     serf event member-join-lb; \
+                     serf tags -set worker=yes; \
+                 else \
+                     logger -t serf \"Not enough memory to activate OWS worker\"; \
+                 fi"
+{% endif %}
+
+[Install]
+WantedBy=multi-user.target
