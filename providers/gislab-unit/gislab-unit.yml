@@ -85,8 +85,8 @@
 
     # Restart
     - name: Restart GIS.lab Unit machine
-      command: shutdown -r now "GIS.lab Unit pre-installation task done"
-      async: 0
+      shell: sleep 2 && shutdown -r now "GIS.lab Unit pre-installation task done"
+      async: 1
       poll: 0
       ignore_errors: true
 
