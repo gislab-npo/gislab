@@ -4,5 +4,5 @@
 
 set -e
 
-ethtool -K eth0 tso off
+ethtool -K {{ ansible_default_ipv4.interface }} tso off
 logger -t network "tcp-segmentation-offload has been disabled to prevent hanging of network adapter"
