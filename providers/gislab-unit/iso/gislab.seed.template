@@ -1,7 +1,7 @@
 #### Basic base system installation
 
 ### Network configuration
-d-i netcfg/choose_interface select eth0
+d-i netcfg/choose_interface select auto
 d-i netcfg/disable_autoconfig boolean false
 
 d-i netcfg/get_hostname string gislab
@@ -107,7 +107,7 @@ d-i apt-setup/local0/source boolean true
 
 ### Package selection
 tasksel tasksel/first multiselect server
-d-i base-installer/kernel/altmeta string lts-trusty
+#d-i base-installer/kernel/altmeta string lts-trusty
 d-i pkgsel/language-pack-patterns string
 d-i pkgsel/install-language-support boolean false
 d-i pkgsel/include string openssh-server python aptitude
@@ -124,6 +124,9 @@ d-i grub-installer/only_debian boolean true
 d-i grub-installer/with_other_os boolean false
 d-i grub-installer/bootdev string /dev/sda
 
+# unfortunately command bellow does not remove default kernel options,
+# it's done later by late_command
+# d-i debian-installer/add-kernel-opts string nomodeset
 
 ### Custom commands
 d-i preseed/early_command string /cdrom/configure-apt-proxy.sh
@@ -132,6 +135,8 @@ d-i preseed/early_command string umount /media || true
 
 d-i preseed/late_command string \
 in-target sed -i 's/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/' /etc/sudoers; \
+in-target sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT=\).*/\1\"nomodeset\"/g' /etc/default/grub; \
+in-target bash -c 'update-grub'; \
 in-target mkdir -p /home/ubuntu/.ssh; \
 cp /cdrom/ssh_key.pub /target/home/ubuntu/.ssh/authorized_keys; \
 in-target chown -R ubuntu:ubuntu /home/ubuntu/.ssh; \
