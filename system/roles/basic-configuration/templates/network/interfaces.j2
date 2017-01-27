@@ -3,8 +3,8 @@ auto lo
 iface lo inet loopback
 
 # Default GIS.lab server network configuration.
-auto enp0s3
-iface enp0s3 inet dhcp
+auto {{ ansible_default_ipv4.interface }}
+iface {{ ansible_default_ipv4.interface }} inet dhcp
 
 
 #auto eth0
