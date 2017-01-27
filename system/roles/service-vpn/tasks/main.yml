@@ -126,6 +126,13 @@
 
 
 ### CONFIGURATION
+- name: Install default OpenVPN configuration file
+  template:
+    src: openvpn.j2
+    dest: /etc/default/openvpn
+  notify:
+    - service openvpn restart
+
 - name: Install OpenVPN configuration file
   template:
     src: server.conf.j2
