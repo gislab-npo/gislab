@@ -364,6 +364,11 @@
     - apt-get --assume-yes purge {{ packages_remove|join(' ') }}
     - apt-get --assume-yes autoremove
 
+# fix resolv.conf (broken link after resolvconf package removal)
+- name: Copy resolv.conf from server
+  shell: >
+    cp --remove-destination --dereference
+    /etc/resolv.conf {{ root_dir }}/root/etc/resolv.conf
 
 ### CONFIGURATION
 # ssh
