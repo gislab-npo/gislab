@@ -136,7 +136,7 @@ d-i preseed/early_command string umount /media || true
 d-i preseed/late_command string \
 in-target sed -i 's/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/' /etc/sudoers; \
 in-target sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT=\).*/\1\"nomodeset\"/g' /etc/default/grub; \
-in-target bash -c 'update-grub'; \
+in-target update-grub; \
 in-target mkdir -p /home/ubuntu/.ssh; \
 cp /cdrom/ssh_key.pub /target/home/ubuntu/.ssh/authorized_keys; \
 in-target chown -R ubuntu:ubuntu /home/ubuntu/.ssh; \
