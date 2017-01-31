@@ -11,9 +11,8 @@ deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-securit
 ###### Ubuntu partner repository
 deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
 
-# FIXME: [16.04] enable repositories below
-#### GIS.lab packages repository
-# deb http://ppa.launchpad.net/gislab-npo/production/ubuntu {{ ansible_distribution_release }} main
+###### UbuntuGIS repository
+deb http://ppa.launchpad.net/ubuntugis/ubuntugis-unstable/ubuntu {{ ansible_distribution_release }} main
 
 #### JOSM repository
 #### Disabled, see https://github.com/gislab-npo/gislab/issues/501

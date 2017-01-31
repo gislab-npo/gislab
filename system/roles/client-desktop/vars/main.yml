@@ -194,8 +194,9 @@ packages_lab:
   # list of GIS.lab client GIS packages (installed without recommended packages)
   - gdal-bin
   - git
-  - grass7
-  - grass7-doc
+  - grass
+  - grass-doc
+  - grass-dev
   - ipython
   - pgadmin3
   - postgresql-client
