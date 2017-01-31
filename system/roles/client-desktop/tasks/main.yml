@@ -729,18 +729,6 @@
 
 
 ### CLUSTER
-# TODO: command not found (gislab_serf_install)
-# serf
-# - name: Install Serf
-#   shell: >
-#     chroot {{ root_dir }}/root
-#     /bin/bash -c
-#     "source {{ GISLAB_PATH_SYSTEM }}/functions.sh
-#     &&
-#     gislab_serf_install"
-#   args:
-#     executable: /bin/bash
-
 - name: Install Serf encryption key
   shell: >
     cp
