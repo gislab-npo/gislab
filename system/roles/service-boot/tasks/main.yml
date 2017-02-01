@@ -38,6 +38,11 @@
 - name: Install DHCP server configuration template
   template:
     src: dhcp/dhcpd.conf.templ.j2
+    dest: /etc/dhcp/dhcpd.conf.templ
+
+- name: Install DHCP server configuration file
+  template:
+    src: dhcp/dhcpd.conf.templ.j2
     dest: /etc/dhcp/dhcpd.conf
 
 - name: Install DHCP configuration with 'deny' unknown machines policy
