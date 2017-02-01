@@ -18,6 +18,7 @@
     - postgis
     - postgresql
     - postgresql-9.5-postgis-2.3
+    - postgresql-9.5-postgis-2.3-scripts
     - postgresql-comparator
     - postgresql-contrib
     - python-psycopg2
