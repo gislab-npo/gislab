@@ -6,8 +6,8 @@
 
 HAPROXY=/usr/sbin/haproxy
 
-if [ -f "$HAPROXY" ]; then
-    service haproxy reload
+if [ -x "$HAPROXY" ]; then
+    systemctl reload haproxy.service
 fi
 
 
