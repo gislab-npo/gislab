@@ -197,6 +197,7 @@ packages_lab:
   - grass
   - grass-doc
   - grass-dev
+  - python-pil
   - ipython
   - pgadmin3
   - postgresql-client
