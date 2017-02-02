@@ -6,8 +6,8 @@
 
 HAPROXY=/usr/sbin/haproxy
 
-if [ -f "$HAPROXY" ]; then
-    service haproxy reload
+if [ -x "$HAPROXY" ]; then
+    systemctl reload haproxy.service
 fi
 
 # vim: set ts=8 sts=4 sw=4 et:
