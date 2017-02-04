@@ -114,9 +114,9 @@
     dest: /etc/apt/sources.list.d
     state: absent
 
-- name: Add GIS.lab PPA signing key
+- name: Add UbuntuGIS PPA signing key
   apt_key:
-    data: "{{ lookup('file', 'static/ppa-gislab-npo.key') }}"
+    data: "{{ lookup('file', 'static/ppa-ubuntugis.key') }}"
     state: present
 
 - name: Configure apt repositories
