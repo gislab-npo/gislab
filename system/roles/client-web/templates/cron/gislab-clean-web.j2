@@ -1,4 +1,0 @@
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:{{ GISLAB_PATH_ADMIN }}
-MAILTO=root
-
-15 0    * * *  www-data  nice {{ root_dir }}/virtualenv/gislab-web/bin/python {{ root_dir }}/www/manage.py mapcache_clean > /dev/null
