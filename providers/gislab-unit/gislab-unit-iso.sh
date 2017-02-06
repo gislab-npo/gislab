@@ -11,6 +11,8 @@ function usage() {
     echo -e "\nOPTIONS
     -s country code used for choosing closest repository mirror (e.g. SK)
     -t timezone (e.g. Europe/Bratislava)
+    -d disk size in GB (valid options: 60, 120, 240, 480; default: 60)
+    -a swap size in GB (default: 4)
     -k SSH public key file, which will be used for GIS.lab installation or update
     -w working directory with enough disk space (2.5 x larger than ISO image size)
     -i Ubuntu Server installation ISO image file
@@ -21,10 +23,12 @@ function usage() {
 
 
 ### OPTIONS
-while getopts "s:t:i:w:k:h" OPTION; do
+while getopts "s:t:d:a:i:w:k:h" OPTION; do
     case "$OPTION" in
         s) COUNTRY_CODE="$OPTARG" ;;
         t) TIME_ZONE="$OPTARG" ;;
+        d) DISK_SIZEGB="$OPTARG" ;;
+        a) DISK_SIZE_SWAPGB="$OPTARG" ;;
         k) SSH_PUBLIC_KEY="$OPTARG" ;;
         w) WORK_DIR="$OPTARG"
            ROOT_DIR="$WORK_DIR/root" ;;
@@ -49,6 +53,30 @@ if [ -z "$COUNTRY_CODE" \
     -o -z "$WORK_DIR" \
     -o -z "$SSH_PUBLIC_KEY" ]; then
     usage
+fi
+if [ -z "$DISK_SIZEGB" ]; then
+    DISK_SIZEGB=60
+fi
+case "$DISK_SIZEGB" in
+    60) ;;
+    120) ;;
+    240) ;;
+    480) ;;
+    *) usage;;
+esac
+if [ -z "$DISK_SIZE_SWAPGB" ]; then
+    DISK_SIZE_SWAP=4300
+else
+    DISK_SIZE_SWAP=${DISK_SIZE_SWAPGB}300
+fi
+
+# boot: 230
+# root: 22000
+# free: 470
+DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-230-22000-$DISK_SIZE_SWAP))
+if [ $DISK_SIZE_STORAGE -lt 10000 ]; then
+    echo "Invalid disk configuration (storage must be at least the size of 10GB), please check -d and -a flags"
+    exit 1
 fi
 
 if [ $(id -u) -ne 0 ]; then
@@ -110,6 +138,8 @@ cp -f $SRC_DIR/iso/splash.pcx $ROOT_DIR/isolinux/splash.pcx
 cp $SRC_DIR/iso/gislab.seed.template $ROOT_DIR/preseed/gislab.seed
 sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/preseed/gislab.seed
 sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/preseed/gislab.seed
+sed -i "s;###DISK_SIZE_STORAGE###;$DISK_SIZE_STORAGE;" $ROOT_DIR/preseed/gislab.seed
+sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;" $ROOT_DIR/preseed/gislab.seed
 
 cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_key.pub
 

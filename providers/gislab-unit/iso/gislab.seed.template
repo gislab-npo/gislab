@@ -45,14 +45,14 @@ d-i partman-partitioning/confirm_write_new_label boolean true
 
 
 #
-# 60GB SSD partitioning
+# SSD partitioning
 #
 # - sda1 - /boot (230MB)
 # - sda2 - extended
 # - sda5 - VG vgmain
-#             - LV root (20GB)
-#             - LV storage (30GB)
-#             - LV swap (4GB)
+#             - LV root (22GB)
+#             - LV storage (see DISK_SIZE_STORAGE)
+#             - LV swap (see DISK_SIZE_SWAP)
 #
 
 d-i partman-auto/expert_recipe string                   \
@@ -70,14 +70,14 @@ d-i partman-auto/expert_recipe string                   \
             use_filesystem{ } filesystem{ ext4 }        \
             mountpoint{ / }                             \
         .                                               \
-        33000 100 33000 ext4                            \
+        ###DISK_SIZE_STORAGE### 100 ###DISK_SIZE_STORAGE### ext4 \
             $lvmok{ }                                   \
             lv_name{ storage }                          \
             method{ format } format{ }                  \
             use_filesystem{ } filesystem{ ext4 }        \
             mountpoint{ /storage }                      \
         .                                               \
-        4300 100 4300 linux-swap                        \
+        ###DISK_SIZE_SWAP### 100 ###DISK_SIZE_SWAP### linux-swap \
             $lvmok{ }                                   \
             lv_name{ swap }                             \
             method{ swap } format{ }                    \
