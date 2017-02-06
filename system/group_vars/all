@@ -220,7 +220,7 @@ GISLAB_CLIENT_KEYBOARDS:
 # * yes: enable VirtualBox support
 # * no: do not enable VirtualBox support
 # Change requires running upgrade.
-GISLAB_CLIENT_VIRTUALBOX_SUPPORT: yes
+GISLAB_CLIENT_VIRTUALBOX_SUPPORT: no
 
 # Minimal amount of memory in MB, which must be present on client machine to
 # enable it OWS cluster.

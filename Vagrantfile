@@ -71,6 +71,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # VirtualBox configuration
     server.vm.provider "virtualbox" do |vb, override|
+
+      # always set client virtualbox support
+      CONFIG['GISLAB_CLIENT_VIRTUALBOX_SUPPORT'] = 'yes'
+
       # TODO: vb name shouldn't be hardcoded
       vb.name = "gislab-ubuntu-xenial-dev"
 
