@@ -6,17 +6,3 @@ contact.admins.command mail -s "[GIS.lab ID: {{ GISLAB_UNIQUE_ID }}] ${var:graph
     address 127.0.0.1
     use_node_name yes
 
-[gis.lab;c3.gis.lab]
-    address {{ GISLAB_NETWORK }}.3
-    use_node_name yes
-
-[gis.lab;c4.gis.lab]
-    address {{ GISLAB_NETWORK }}.4
-    use_node_name yes
-
-{% for n in range(6,255) %}
-[gis.lab;c{{ n }}.gis.lab]
-    address {{ GISLAB_NETWORK }}.{{ n }}
-    use_node_name yes
-
-{% endfor %}
