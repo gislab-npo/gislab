@@ -22,6 +22,8 @@
     - postgresql-comparator
     - postgresql-contrib
     - python-psycopg2
+    - postgresql-9.5-pgrouting
+    - osm2pgrouting
 
 
 # version and paths detection
