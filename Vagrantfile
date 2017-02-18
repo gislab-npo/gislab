@@ -76,7 +76,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       CONFIG['GISLAB_CLIENT_VIRTUALBOX_SUPPORT'] = 'yes'
 
       # use unique name
-      vb.name = 'gislab_vagrant_' + Time.now.strftime("%y%m%d%H%M")
+      vb.name = 'gislab-vagrant-' + CONFIG["GISLAB_UBUNTU_VERSION"]
 
       # Xenial vagrant box disk size is too small, see https://bugs.launchpad.net/cloud-images/+bug/1580596
       # Reported as #506
