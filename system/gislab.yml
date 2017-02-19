@@ -45,17 +45,7 @@
       tags: ['service-vpn'],
       when: GISLAB_SERVER_CAPABILITY_VPN
     }
-    - {
-      role: client-web,
-      tags: ['client-web'],
-      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
-    }
     - { role: client-desktop, tags: ['client-desktop'] }
-    - {
-      role: client-mobile,
-      tags: ['client-mobile'],
-      when: "'{{ GISLAB_SUITE }}' == 'lab' and GISLAB_CLIENT_MOBILE"
-    }
     - { role: account-admin, tags: ['account-admin'] }
     - {
       role: example-data,
