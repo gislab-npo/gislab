@@ -12,7 +12,7 @@
   ignore_errors: yes
   changed_when: False
 
-- name: Publish GIS project in test user's publish dir
+- name: Publish GIS project in test user publish dir
   shell: >
     cp -a
     /mnt/repository/gislab-project/natural-earth
@@ -29,6 +29,8 @@
     | grep 'WMS_Capabilities .* version="1.3.0"'
   ignore_errors: yes
   changed_when: False
+  args:
+    warn: false
 
 - name: Test WMS GetCapabilies request with example GIS.lab project
   shell: >
@@ -36,6 +38,8 @@
     | grep 'WMS_Capabilities .* version="1.3.0"'
   ignore_errors: yes
   changed_when: False
+  args:
+    warn: false
 
 - name: Test WMS GetMap request with example GIS.lab project
   shell: >
@@ -46,6 +50,8 @@
     | grep "PNG image data, 1024 x 768, 8-bit/color RGBA, non-interlaced"
   ignore_errors: yes
   changed_when: False
+  args:
+    warn: false
 
 - name: Test WMS GetLegendGraphic request with example GIS.lab project
   shell: >
@@ -53,9 +59,11 @@
     > {{ GISLAB_PATH_TMP }}/mapserver_getlegend.png
     &&
     file {{ GISLAB_PATH_TMP }}/mapserver_getlegend.png
-    | grep "PNG image data, 128 x 99, 8-bit/color RGB, non-interlaced"
+    | grep "PNG image data, .*, 8-bit/color RGB, non-interlaced"
   ignore_errors: yes
   changed_when: False
+  args:
+    warn: false
 
 - name: Test WMS GetFeatureinfo request with example GIS.lab project
   shell: >
@@ -63,6 +71,8 @@
     | grep "<qgs:name>Presov</qgs:name>"
   ignore_errors: yes
   changed_when: False
+  args:
+    warn: false
 
 
 # WFS
@@ -73,6 +83,8 @@
     | grep 'WFS_Capabilities .* version="1.0.0"'
   ignore_errors: yes
   changed_when: False
+  args:
+    warn: false
 
 - name: Test WFS GetCapabilies request with example GIS.lab project
   shell: >
@@ -80,6 +92,8 @@
     | grep 'WFS_Capabilities .* version="1.0.0"'
   ignore_errors: yes
   changed_when: False
+  args:
+    warn: false
 
 - name: Test WFS DescribeFeatureType request with example GIS.lab project
   shell: >
@@ -87,6 +101,8 @@
     | grep 'element type="qgs:Visegrad_FourType"'
   ignore_errors: yes
   changed_when: False
+  args:
+    warn: false
 
 - name: Test WFS GetFeature request with example GIS.lab project
   shell: >
@@ -94,6 +110,8 @@
     | grep '<qgs:name>Slovakia</qgs:name>'
   ignore_errors: yes
   changed_when: False
+  args:
+    warn: false
 
 
 - name: Remove test user account used for mapserver service tests

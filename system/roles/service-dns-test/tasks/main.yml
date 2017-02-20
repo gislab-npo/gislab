@@ -4,8 +4,9 @@
   shell: ping -c 1 {{ item }}.gis.lab
   with_items:
     - server
-    - boot
-    - web
+# TBF:
+#    - boot
+#    - web
   ignore_errors: yes
   changed_when: False
 

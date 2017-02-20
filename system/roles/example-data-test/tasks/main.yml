@@ -14,11 +14,11 @@
   with_items:
     - {
         file: "central-europe.qgs",
-        type: "exported SGML document, ASCII text, with very long lines"
+        type: "HTML document, ASCII text, with very long lines"
     }
     - {
         file: "central-europe.meta",
-        type: "ASCII English text, with very long lines"
+        type: "ASCII text, with very long lines"
     }
   ignore_errors: yes
   changed_when: False

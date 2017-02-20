@@ -23,6 +23,7 @@
   ignore_errors: yes
   changed_when: False
 
+# TBF: not working
 - name: Test if email to root user was forwarded to test superuser
   shell: >
     sleep 2
