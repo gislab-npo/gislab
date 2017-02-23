@@ -212,8 +212,7 @@ packages_lab:
   - spatialite-bin
   - spatialite-gui
   - sqlite3
-#### JOSM installation disabled, see https://github.com/gislab-npo/gislab/issues/501
-#  - josm
+  - josm
 
 packages_worker:
   # OWS worker packages
