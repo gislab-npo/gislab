@@ -49,7 +49,7 @@ XfceHeading,
 
 .xfce4-panel .button {
     background-image: none;
-    background-color: @panel_fg_color; /* transparent; */
+    background-color: transparent;
     border-radius: 0;
     border-color: transparent;
     box-shadow: none;
