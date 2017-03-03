@@ -19,10 +19,10 @@ def application(environ, start_response):
         ip = "{0}.5".format(CONFIG['GISLAB_NETWORK'])
 
     response = """#!ipxe
-        kernel http://{0}/boot/vmlinuz ro root=/dev/nbd0 init=/sbin/init-gislab nbdroot={1}.5:gislab
+        kernel http://{0}/boot/vmlinuz ro root=/dev/nbd0 init=/sbin/init-gislab nbdroot=:10809/gislab
         initrd http://{0}/boot/initrd.img
         boot
-    """.format(ip, CONFIG['GISLAB_NETWORK'])
+    """.format(ip)
     response_headers = [('Content-type', 'text/plain'),
                         ('Content-Length', str(len(response)))]
 
