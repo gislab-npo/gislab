@@ -150,6 +150,7 @@ packages_office:
   - libfreerdp-plugins-standard
   - gcalctool
   - gdisk
+  - geany
   - gimp
   - gthumb
   - gtk-recordmydesktop
@@ -200,18 +201,24 @@ packages_lab:
   - python-pil
   - ipython
   - pgadmin3
+  - postgis
   - postgresql-client
   - postgresql-comparator
   - proj-bin
   - python-pysqlite2
+  - python-fiona
   - python-gdal
+  - python-owslib
   - python-qgis
+  - python-rasterio
+  - python-shapely
   - qgis
   - qgis-plugin-grass
   - qgit
   - spatialite-bin
   - spatialite-gui
   - sqlite3
+  - sqlitebrowser
   - josm
 
 packages_worker:
