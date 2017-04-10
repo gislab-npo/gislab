@@ -200,6 +200,9 @@ packages_lab:
   - grass-dev
   - python-pil
   - ipython
+  - monteverdi
+  - otb-bin
+  - otb-bin-qt
   - pgadmin3
   - postgis
   - postgresql-client
@@ -208,13 +211,16 @@ packages_lab:
   - python-pysqlite2
   - python-fiona
   - python-gdal
+  - python-otb
   - python-owslib
   - python-qgis
   - python-rasterio
+  - python-saga
   - python-shapely
   - qgis
   - qgis-plugin-grass
   - qgit
+  - saga
   - spatialite-bin
   - spatialite-gui
   - sqlite3
