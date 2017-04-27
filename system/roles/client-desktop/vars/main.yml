@@ -201,6 +201,8 @@ packages_lab:
   - python-pil
   - ipython
   - monteverdi
+  - osm2pgrouting
+  - osm2pgsql
   - otb-bin
   - otb-bin-qt
   - pgadmin3
