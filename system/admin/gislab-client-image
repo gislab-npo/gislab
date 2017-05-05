@@ -47,6 +47,7 @@ if [ -f "$GISLAB_PATH_SYSTEM/clients/desktop/root/proc/version" ]; then
         GIS.lab client chroot session is active.
         Exit from it before running this command
     "
+    exit 1
 fi
 
 
@@ -130,6 +131,7 @@ else
         gislab_error "
             'mksquashfs' failed to build the GIS.lab client image
         "
+        exit 1
     fi
 
     # place image to final destination

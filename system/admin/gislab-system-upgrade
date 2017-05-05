@@ -37,6 +37,7 @@ if [ -n "$clients" ]; then
     gislab_error "
         Some GIS.lab client machines are running. Can't perform upgrade
     "
+    exit 1
 fi
 
 

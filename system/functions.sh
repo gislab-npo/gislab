@@ -57,8 +57,6 @@ gislab_error () {
     tput setaf 1
     echo -e "${m}!" | fold -s | sed "s/^/[GIS.lab]: /g"
     tput sgr0
-
-    exit 1
 }
 
 

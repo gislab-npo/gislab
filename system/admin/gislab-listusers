@@ -42,6 +42,7 @@ if [ -n "$opt_group" ]; then
     # sanity checks
     if [ "$($lds "(&(objectClass=posixGroup)(cn=$opt_group))")" == "" ]; then
         gislab_error "Group '$opt_group' does not exists"
+        exit 1
     fi
 fi
 

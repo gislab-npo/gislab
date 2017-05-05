@@ -52,12 +52,14 @@ if [ ! -f "$GISLAB_PATH_SYSTEM/clients/desktop/root/etc/gislab_version" ]; then
         GIS.lab client chroot doesn't exist.
         GISLAB_SUITE must be set to 'lab' to build client image
     "
+    exit 1
 fi
 
 if [ -f "$GISLAB_PATH_SYSTEM/clients/desktop/root/proc/version" ]; then
     gislab_error "
         Only one active GIS.lab client chroot session is allowed
     "
+    exit 1
 fi
 
 

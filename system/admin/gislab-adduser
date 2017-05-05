@@ -99,19 +99,23 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 ### SANITY CHECKS
 if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" != "" ]; then
     gislab_error "User '$GISLAB_USER' already exists"
+    exit 1
 fi
 
 if ! [[ "$GISLAB_USER" =~ ^[a-z][a-z0-9_]*$ ]]; then
     gislab_error "Invalid characters in user name"
+    exit 1
 fi
 
 if ! [[ "$opt_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
     gislab_error "Invalid e-mail address format"
+    exit 1
 fi
 
 for g in $(echo $opt_groups | sed 's/,/ /g'); do
     if [ "$($lds "(&(objectClass=posixGroup)(cn=$g))")" == "" ]; then
         gislab_error "Group '$g' does not exists"
+        exit 1
     fi
 done
 

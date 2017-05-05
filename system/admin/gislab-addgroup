@@ -45,10 +45,12 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 ### SANITY CHECKS
 if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" != "" ]; then
     gislab_error "Group '$GISLAB_GROUP' already exists"
+    exit 1
 fi
 
 if ! [[ "$GISLAB_GROUP" =~ ^[a-z][a-z0-9_]*$ ]]; then
     gislab_error "Invalid characters in group name"
+    exit 1
 fi
 
 

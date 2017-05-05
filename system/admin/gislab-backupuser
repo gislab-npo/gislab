@@ -57,6 +57,7 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 ### SANITY CHECKS
 if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" == "" ]; then
     gislab_error "User '$GISLAB_USER' doesn't exists"
+    exit 1
 fi
 
 

@@ -51,10 +51,12 @@ lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
 ### SANITY CHECKS
 if [ ! -f "$opt_backup_file" ]; then
     gislab_error "Backup file does not exist"
+    exit 1
 fi
 
 if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" != "" ]; then
     gislab_error "User '$GISLAB_USER' already exists"
+    exit 1
 fi
 
 backup_version=$(tar --to-stdout -xf $opt_backup_file GISLAB_VERSION)
