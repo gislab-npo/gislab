@@ -1,0 +1,247 @@
+#!/bin/bash
+
+source /etc/gislab_version
+source $GISLAB_ROOT/system/functions.sh
+
+
+# require root privileges
+gislab_require_root
+
+
+### USAGE
+function usage() {
+    echo "USAGE: $(basename $0) [ -h ] [ COMMAND ]"
+    echo "Control GIS.lab network services."
+    echo -e "\nOPTIONS
+    -h display this help
+    "
+
+    echo -e "COMMAND
+    start   - start GIS.lab network services
+    stop    - stop GIS.lab network services
+    enable  - start GIS.lab network services on system boot
+    disable - stop GIS.lab network services on system boot 
+    status  - show GIS.lab network services status
+    "
+    exit 255
+}
+
+
+### OPTIONS
+while getopts "h" OPTION
+do
+        case "$OPTION" in
+            h) usage ;;
+            \?) exit 1;;
+        esac
+done
+
+
+### FUNCTIONS
+is_running() {
+    pidof $1 >/dev/null 2>&1
+    return $?
+}
+
+is_masquerade() {
+    iptables -t nat -nL | grep -q "MASQUERADE"
+    return $?
+}
+
+start_network() {
+    local retval=0
+
+    if `is_masquerade`; then
+        gislab_info "Connection forwarding service is running"
+    else
+        gislab_info "Starting connection forwarding service"
+        service gislab-connection-forwarding start
+        retval=$?
+    fi
+
+    if `is_running named`; then
+        gislab_info "DNS service is running"
+    else
+        gislab_info "Starting DNS service"
+        service bind9 start
+        retval=$(($retval + $?))
+    fi
+
+    if `is_running dhcpd`; then
+        gislab_info "DHCP service is running"
+    else
+        gislab_info "Starting DHCP service"
+        service isc-dhcp-server start
+        retval=$(($retval + $?))
+    fi
+
+    return $retval
+}
+
+stop_network() {
+    local retval=0
+
+    if `is_masquerade`; then
+        gislab_info "Stopping connection forwarding service"
+        service gislab-connection-forwarding stop
+        retval=$?
+    else
+        gislab_info "Connection forwarding service is stopped"
+    fi
+
+    if `is_running named`; then
+        gislab_info "Stopping DNS service"
+        service bind9 stop
+        retval=$(($retval + $?))
+    else
+        gislab_info "DNS service is stopped"
+    fi
+
+    if `is_running dhcpd`; then
+        gislab_info "Stopping DHCP service"
+        service isc-dhcp-server stop
+        retval=$(($retval + $?))
+    else
+        gislab_info "DHCP service is stopped"
+    fi
+
+    return $retval
+}
+
+enable_network() {
+    local retval=0
+
+    gislab_info "Enabling connection forwarding service"
+    rm -f /etc/init/gislab-connection-forwarding.override
+    retval=$?
+
+    gislab_info "Enabling DNS service"
+    update-rc.d bind9 enable >/dev/null
+    retval=$(($retval + $?))
+
+    gislab_info "Enabling DHCP service"
+    rm -f /etc/init/isc-dhcp-server.override
+    retval=$(($retval + $?))
+
+    return $retval
+}
+
+disable_network() {
+    local retval=0
+
+    gislab_info "Disabling connection forwarding service"
+    echo manual > /etc/init/gislab-connection-forwarding.override
+    retval=$?
+
+    gislab_info "Disabling DNS service"
+    update-rc.d bind9 disable >/dev/null
+    retval=$(($retval + $?))
+
+    gislab_info "Disabling DHCP service"
+    echo manual > /etc/init/isc-dhcp-server.override
+    retval=$(($retval + $?))
+
+    return $retval
+}
+
+# Is there a better way to get state of services?
+show_status() {
+    local state=""
+    local status=""
+
+    state=`cat /etc/init/gislab-connection-forwarding.override 2>/dev/null`
+
+    if [ "$state" = "manual" ]; then
+        state="disabled"
+    else
+        state="enabled"
+    fi
+
+    if `is_masquerade`; then
+        status="running"
+    else
+        status="stopped"
+    fi
+
+    gislab_info "Connection forwarding service is $state and $status"
+
+    if [ -h /etc/rc2.d/S*bind9 ]; then
+        state="enabled"
+    else
+        state="disabled"
+    fi
+
+    if `is_running named`; then
+        status="running"
+    else
+        status="stopped"
+    fi
+
+    gislab_info "DNS service is $state and $status"
+
+    state=`cat /etc/init/isc-dhcp-server.override 2>/dev/null`
+
+    if [ "$state" = "manual" ]; then
+        state="disabled"
+    else
+        state="enabled"
+    fi
+
+    if `is_running dhcpd`; then
+        status="running"
+    else
+        status="stopped"
+    fi
+
+    gislab_info "DHCP service is $state and $status"
+}
+
+
+command=$1
+
+case "$command" in
+    start)
+        start_network
+
+        if [ $? -eq 0 ]; then
+            gislab_success "Network services start successfully"
+        else
+           gislab_error "Network services start failed"
+        fi
+    ;;
+    stop)
+        stop_network
+
+        if [ $? -eq 0 ]; then
+            gislab_success "Network services stop successfully"
+        else
+           gislab_error "Network services stop failed"
+        fi
+    ;;
+    enable)
+        enable_network
+
+        if [ $? -eq 0 ]; then
+            gislab_success "Network services enabled successfully"
+        else
+           gislab_error "Network services enable failed"
+        fi
+    ;;
+    disable)
+        disable_network
+
+        if [ $? -eq 0 ]; then
+            gislab_success "Network services disabled successfully"
+        else
+            gislab_error "Network services disable failed"
+        fi
+    ;;
+    status)
+        show_status
+    ;;
+    *)
+        usage
+    ;;
+esac
+        
+# vim: set ts=8 sts=4 sw=4 et:
