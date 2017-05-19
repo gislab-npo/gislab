@@ -1,3 +1,19 @@
+Version 0.6.0
+=============
+The last version of GIS.lab based on Ubuntu 12.04 LTS (precise).
+
+Main features:
+
+* support third-party DHCP service (#505)
+* new admin command `gislab-network` to control network settings (#511)
+* outdated web and mobile clients removed (#509)
+
+Version 0.5.0
+=============
+
+Version 0.4.0
+=============
+
 Version 0.3.2
 =============
 Changes
