@@ -1,6 +1,3 @@
-[![Build Status](https://travis-ci.org/gislab-npo/gislab.svg?branch=master)]
-(https://travis-ci.org/gislab-npo/gislab)
-
 # GIS.lab - free geospatial infrastructure
  * project page : http://web.gislab.io
  * documentation: https://github.com/gislab-npo/gislab/wiki
