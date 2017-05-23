@@ -121,8 +121,8 @@ if ls $user_home_dir/.grass7 >/dev/null 2>&1; then
     tar -rf $home_backup_file $user_home_dir/.grass7
 fi
 
-if ls $user_home_dir/.grassdata >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.grassdata
+if ls $user_home_dir/grassdata >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/grassdata
 fi
 
 bzip2 $home_backup_file

@@ -194,7 +194,7 @@
     state: directory
   with_items:
     - "{{ root_dir }}/skel/.grass7"
-    - "{{ root_dir }}/skel/.grassdata"
+    - "{{ root_dir }}/skel/grassdata"
 
 - name: Install GRASS configuration
   template:
@@ -214,7 +214,7 @@
   with_items:
     - {
         src: static/grassdata/,
-        dest: "{{ root_dir }}/skel/.grassdata"
+        dest: "{{ root_dir }}/skel/grassdata"
       }
 
 
