@@ -1,0 +1,7 @@
+FROM gisquick/django:latest
+
+
+RUN pip3 install --no-cache-dir 'django-python3-ldap'
+
+
+COPY settings_custom.py /var/www/gisquick/djproject/settings_custom.py

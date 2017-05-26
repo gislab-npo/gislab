@@ -114,6 +114,12 @@
     dest: /etc/apt/sources.list.d
     state: absent
 
+# create a directory for third party apt repositories (docker)
+- file:
+    path: /etc/apt/sources.list.d
+    state: directory
+    mode: 0755
+
 - name: Add UbuntuGIS PPA signing key
   apt_key:
     data: "{{ lookup('file', 'static/ppa-ubuntugis.key') }}"

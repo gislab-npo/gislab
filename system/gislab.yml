@@ -52,4 +52,7 @@
       tags: ['example-data'],
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
     }
+    - { role: franklinkim.docker, tags: ['service-docker'] }
+    - { role: franklinkim.docker-compose, tags: ['service-docker'] }
+    - { role: service-gisquick, tags: ['service-gisquick'] }
     - { role: installation-done, tags: ['installation-done'] }

@@ -1,0 +1,69 @@
+---
+
+- name: add user ubuntu to the docker group to avoid type sudo for each docker command
+  user: name=ubuntu
+        groups=docker
+        append=yes
+
+
+# create a directory for gisquick media files
+- file:
+    path: /var/www/gisquick/media
+    state: directory
+    mode: 0755
+
+# create a directory for gisquick data (database)
+- file:
+    path: /var/www/gisquick/data
+    state: directory
+    mode: 0755
+
+
+- name: Generate self signed SSL certificate (run only once)
+  shell: >
+    openssl req -x509 -nodes -days 3650 -newkey rsa:2048
+    -keyout {{ GISLAB_PATH_SECRET }}/privkey.pem
+    -out {{ GISLAB_PATH_SECRET }}/fullchain.pem
+    -subj "/C=CZ/ST=Prague/L=Prague/O=Gisquick/OU=IT Department/CN=projects.gisquick.org"
+    &&
+    chmod 600 {{ GISLAB_PATH_SECRET }}/privkey.pem
+    &&
+    chmod 600 {{ GISLAB_PATH_SECRET }}/fullchain.pem
+  args:
+    executable: /bin/bash
+    creates: "{{ GISLAB_PATH_SECRET }}/fullchain.pem"
+
+- name: Install SSL certificate
+  shell: "{{ item }}"
+  with_items:
+    - mkdir -p /etc/letsencrypt/live/projects.gisquick.org/
+    - cp {{ GISLAB_PATH_SECRET }}/privkey.pem /etc/letsencrypt/live/projects.gisquick.org/privkey.pem
+    - cp {{ GISLAB_PATH_SECRET }}/fullchain.pem /etc/letsencrypt/live/projects.gisquick.org/fullchain.pem
+
+
+# create a directory for server app docker
+- file:
+    path: /home/ubuntu/docker/django
+    state: directory
+    mode: 0755
+
+- name: Create docker-compose configuration
+  template:
+    src: docker-compose.yml.j2
+    dest: /home/ubuntu/docker/docker-compose.yml
+
+- name: Create Dockerfile
+  template:
+    src: Dockerfile.j2
+    dest: /home/ubuntu/docker/django/Dockerfile
+
+- name: Create docker-compose configuration
+  template:
+    src: settings_custom.py.j2
+    dest: /home/ubuntu/docker/django/settings_custom.py
+
+
+- name: Build customized image with server (django) app
+  docker_image:
+     path: /home/ubuntu/docker/django
+     name: gislab/django
