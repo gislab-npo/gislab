@@ -1,6 +1,6 @@
 # GIS.lab - free geospatial infrastructure
  * project page : http://web.gislab.io
- * documentation: https://github.com/gislab-npo/gislab/wiki
+ * documentation: http://gislab.readthedocs.io
 
 ## Authors (alphabetical order)
  * Marcel Dancak, dancakm@gmail.com
