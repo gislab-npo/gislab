@@ -55,7 +55,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_url = BOX_URL
   config.vm.synced_folder '.', '/vagrant', disabled: true
   config.ssh.forward_agent = true
-
+  config.disksize.size = '40GB'
 
   # provisioning
   config.vm.define :gislab_vagrant do |server|
@@ -77,35 +77,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # use unique name
       vb.name = 'gislab-vagrant-' + CONFIG["GISLAB_UBUNTU_VERSION"]
-
-      # Xenial vagrant box disk size is too small, see https://bugs.launchpad.net/cloud-images/+bug/1580596
-      # Reported as #506
-      base_name = "ubuntu-xenial-16.04-cloudimg"
-      if !File.exist?("#{TPATH}/#{vb.name}/#{base_name}.vdi")
-        vb.customize [
-          "clonehd", "#{TPATH}/#{vb.name}/#{base_name}.vmdk",
-          "#{TPATH}/#{vb.name}/#{base_name}.vdi",
-          "--format", "VDI"
-        ]
-        vb.customize [
-          "modifyhd", "#{TPATH}/#{vb.name}/#{base_name}.vdi",
-          "--resize", 40 * 1024
-        ]
-        vb.customize [
-          "storageattach", :id,
-          "--storagectl", "SCSI",
-          "--port", "0",
-          "--device", "0",
-          "--type", "hdd",
-          "--nonrotational", "on",
-          "--medium", "#{TPATH}/#{vb.name}/#{base_name}.vdi"
-        ]
-        vb.customize [
-          "closemedium",
-          "disk", "#{TPATH}/#{vb.name}/#{base_name}.vmdk",
-          "--delete"
-        ]
-      end
 
       vb.customize ["modifyvm", :id, "--memory", CONFIG['GISLAB_SERVER_MEMORY']]
       vb.customize ["modifyvm", :id, "--cpus", CONFIG['GISLAB_SERVER_CPUS']]
