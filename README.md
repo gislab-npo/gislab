@@ -1,5 +1,5 @@
 # GIS.lab - free geospatial infrastructure
- * project page : http://web.gislab.io
+ * project page : http://gislab-npo.github.io/gislab/
  * documentation: http://gislab.readthedocs.io
 
 ## Authors (alphabetical order)
