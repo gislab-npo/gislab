@@ -47,9 +47,4 @@
     }
     - { role: client-desktop, tags: ['client-desktop'] }
     - { role: account-admin, tags: ['account-admin'] }
-    - {
-      role: example-data,
-      tags: ['example-data'],
-      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
-    }
     - { role: installation-done, tags: ['installation-done'] }

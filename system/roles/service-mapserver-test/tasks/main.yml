@@ -12,11 +12,37 @@
   ignore_errors: yes
   changed_when: False
 
-- name: Publish GIS project in test user publish dir
+- name: Download example GIS data
+  git:
+    repo: https://github.com/gislab-npo/gisquick
+    dest: /tmp/gisquick
+
+- name: Extract example GIS data
   shell: >
     cp -a
-    /mnt/repository/gislab-project/natural-earth
+    /tmp/gisquick/qgis/project/natural-earth
     /mnt/publish/test_mapserver_{{ GISLAB_TEST_UNIQUE_STRING }}/
+
+- name: Test if example GIS data is installed
+  shell: >
+    file /mnt/publish/test_mapserver_{{ GISLAB_TEST_UNIQUE_STRING }}/natural-earth/natural-earth.sqlite
+    | grep "SQLite 3.x database"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if example GIS project is installed
+  shell: >
+    file /mnt/publish/test_mapserver_{{ GISLAB_TEST_UNIQUE_STRING }}/natural-earth/{{ item.file }}
+    | grep "{{ item.type }}"
+  with_items:
+    - {
+        file: "central-europe.qgs",
+        type: "HTML document, ASCII text, with very long lines"
+    }
+    - {
+        file: "central-europe.meta",
+        type: "ASCII text, with very long lines"
+    }
   ignore_errors: yes
   changed_when: False
 
@@ -121,5 +147,10 @@
     test_mapserver_{{ GISLAB_TEST_UNIQUE_STRING }}
   ignore_errors: yes
   changed_when: False
+
+- name: Remove example GIS data
+  file:
+    state: absent
+    path: /tmp/gisquick
 
 # vim: set ts=8 sts=2 sw=2 et:
