@@ -10,3 +10,4 @@ inventories/*
 *.zip
 *.tar.*
 *.log
+*.retry
