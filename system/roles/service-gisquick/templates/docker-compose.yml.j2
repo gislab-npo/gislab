@@ -18,6 +18,7 @@ services:
     volumes:
       - /var/www/gisquick/media:/var/www/gisquick/media/
       - /var/www/gisquick/data/:/var/www/gisquick/data/
+      - /storage/publish:/publish/
     environment:
       - GUNICORN_ERRORLOG=-
       - GUNICORN_ACCESSLOG=-
