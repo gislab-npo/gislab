@@ -56,3 +56,5 @@
     - { role: franklinkim.docker-compose, tags: ['service-docker'] }
     - { role: service-gisquick, tags: ['service-gisquick'] }
     - { role: installation-done, tags: ['installation-done'] }
+  vars:
+    docker_pip_dependencies: []
