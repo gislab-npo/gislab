@@ -13,11 +13,10 @@ services:
     image: gislab/django
     links:
       - qgisserver
-    volumes_from:
-      - qgisserver
     volumes:
       - /var/www/gisquick/media:/var/www/gisquick/media/
       - /var/www/gisquick/data/:/var/www/gisquick/data/
+      - /storage/publish:/publish/
     environment:
       - GUNICORN_ERRORLOG=-
       - GUNICORN_ACCESSLOG=-
@@ -38,6 +37,8 @@ services:
       - /etc/letsencrypt/:/etc/letsencrypt/
     ports:
       - "9000:443"
+    environment:
+      - NGINX_HOST=server
     logging:
       driver: json-file
       options:

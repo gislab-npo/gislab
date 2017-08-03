@@ -24,7 +24,7 @@
     openssl req -x509 -nodes -days 3650 -newkey rsa:2048
     -keyout {{ GISLAB_PATH_SECRET }}/privkey.pem
     -out {{ GISLAB_PATH_SECRET }}/fullchain.pem
-    -subj "/C=CZ/ST=Prague/L=Prague/O=Gisquick/OU=IT Department/CN=projects.gisquick.org"
+    -subj "/C=CZ/ST=Prague/L=Prague/O=Gisquick/OU=IT Department/CN=server"
     &&
     chmod 600 {{ GISLAB_PATH_SECRET }}/privkey.pem
     &&
@@ -36,9 +36,9 @@
 - name: Install SSL certificate
   shell: "{{ item }}"
   with_items:
-    - mkdir -p /etc/letsencrypt/live/projects.gisquick.org/
-    - cp {{ GISLAB_PATH_SECRET }}/privkey.pem /etc/letsencrypt/live/projects.gisquick.org/privkey.pem
-    - cp {{ GISLAB_PATH_SECRET }}/fullchain.pem /etc/letsencrypt/live/projects.gisquick.org/fullchain.pem
+    - mkdir -p /etc/letsencrypt/live/server/
+    - cp {{ GISLAB_PATH_SECRET }}/privkey.pem /etc/letsencrypt/live/server/privkey.pem
+    - cp {{ GISLAB_PATH_SECRET }}/fullchain.pem /etc/letsencrypt/live/server/fullchain.pem
 
 
 # create a directory for server app docker

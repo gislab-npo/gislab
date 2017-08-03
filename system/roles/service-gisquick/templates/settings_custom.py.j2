@@ -8,8 +8,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DEBUG = False
 
-GISQUICK_PROJECT_ROOT = os.environ.get('PROJECT_ROOT', '/publish/')
-GISQUICK_MAPSERVER_URL = os.environ.get('MAPSERVER_URL', 'http://qgisserver:90/cgi-bin/qgis_mapserv.fcgi')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+GISQUICK_PROJECT_ROOT = '/publish/'
+GISQUICK_MAPSERVER_URL = 'http://qgisserver:90/cgi-bin/qgis_mapserv.fcgi'
+
 
 ### DATABASE
 DATABASES = {
@@ -24,14 +27,12 @@ INSTALLED_APPS = settings.INSTALLED_APPS + ('django_python3_ldap', )
 
 ### LDAP AUTHENTICATION ###
 AUTHENTICATION_BACKENDS = (
-    # 'django_auth_ldap.backend.LDAPBackend',
     'django_python3_ldap.auth.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
 
 LDAP_AUTH_URL = "ldap://{{ GISLAB_NETWORK_SERVER_IP }}:389"
-# LDAP_AUTH_URL = "ldap://:389"
 
 LDAP_AUTH_USE_TLS = True
 
