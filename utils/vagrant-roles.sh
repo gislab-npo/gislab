@@ -5,6 +5,7 @@ function usage() {
     echo "USAGE: $(basename $0) [OPTIONS] <role-name>,<role-name>,..."
     echo "Run requested GIS.lab roles only."
     echo -e "\nOPTIONS
+    -a run also tests for requested roles
     -t run only tests for requested roles (useful for tests development)
     -h display this help
     "
@@ -13,17 +14,24 @@ function usage() {
 
 
 ### OPTIONS
+opt_tests="no"
 opt_tests_only="no"
 
-while getopts "t" OPTION
+while getopts "ath" OPTION
 do
         case "$OPTION" in
+            a) opt_tests="yes" ;;
             t) opt_tests_only="yes" ;;
             h) usage ;;
             \?) exit 1;;
         esac
 done
 shift $(($OPTIND - 1))
+
+if [ "$opt_tests" == "yes" ] && [ "$opt_tests_only" == "yes" ]; then
+    echo "Options -a and -t are mutually exclusive"
+    exit 1
+fi
 
 ROLES=$1
 
@@ -61,6 +69,8 @@ if [ "$opt_tests_only" == "no" ]; then
 fi
 
 # run tests for roles
-$ansible_cmd $tags system/test.yml
+if [ "$opt_tests" == "yes" ] || [ "$opt_tests_only" == "yes" ]; then
+    $ansible_cmd $tags system/test.yml
+fi
 
 # vim: set ts=8 sts=4 sw=4 et:
