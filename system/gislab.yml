@@ -53,7 +53,11 @@
       when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
     }
     - { role: service-docker, tags: ['service-docker'] }
-    - { role: service-gisquick, tags: ['service-gisquick'] }
+    - {
+      role: service-gisquick,
+      tags: ['service-gisquick'],
+      when: GISLAB_CLIENT_WEB
+    }
     - { role: installation-done, tags: ['installation-done'] }
   vars:
     docker_pip_dependencies: []
