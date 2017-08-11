@@ -1,22 +1,23 @@
 ---
+#
+### Gisquick integration
+#
 
-- name: add user ubuntu to the docker group to avoid type sudo for each docker command
-  user: name=ubuntu
-        groups=docker
-        append=yes
+- name: Add provisioning user to the docker group
+  user:
+    name: "{{ GISLAB_PROVISIONING_USER }}"
+    groups: docker
+    append: yes
 
 
-# create a directory for gisquick media files
-- file:
-    path: /var/www/gisquick/media
+- name: Create Gisquick directories
+  file:
+    path: "{{ item }}"
     state: directory
     mode: 0755
-
-# create a directory for gisquick data (database)
-- file:
-    path: /var/www/gisquick/data
-    state: directory
-    mode: 0755
+  with_items:
+    - /var/www/gisquick/media
+    - /var/www/gisquick/data
 
 
 - name: Generate self signed SSL certificate (run only once)
@@ -41,29 +42,33 @@
     - cp {{ GISLAB_PATH_SECRET }}/fullchain.pem /etc/letsencrypt/live/server/fullchain.pem
 
 
-# create a directory for server app docker
-- file:
-    path: /home/ubuntu/docker/django
+- name: Create docker directories
+  file:
+    path: "{{ item }}"
     state: directory
     mode: 0755
+  with_items:
+    - "{{ docker_dir }}"
+    - "{{ docker_dir }}/gisquick"
+    - "{{ docker_dir }}/gisquick/django"
 
 - name: Create docker-compose configuration
   template:
     src: docker-compose.yml.j2
-    dest: /home/ubuntu/docker/docker-compose.yml
+    dest: "{{ docker_dir }}/gisquick/docker-compose.yml"
 
 - name: Create Dockerfile
   template:
     src: Dockerfile.j2
-    dest: /home/ubuntu/docker/django/Dockerfile
+    dest: "{{ docker_dir }}/gisquick/django/Dockerfile"
 
 - name: Create docker-compose configuration
   template:
     src: settings_custom.py.j2
-    dest: /home/ubuntu/docker/django/settings_custom.py
+    dest: "{{ docker_dir }}/gisquick/django/settings_custom.py"
 
 
 - name: Build customized image with server (django) app
   docker_image:
-     path: /home/ubuntu/docker/django
+     path: "{{docker_dir }}/gisquick/django"
      name: gislab/django

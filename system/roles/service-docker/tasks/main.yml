@@ -1,0 +1,11 @@
+---
+#
+### Docker integration
+#
+
+- name: Install docker packages
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - docker.io
+    - docker-compose
