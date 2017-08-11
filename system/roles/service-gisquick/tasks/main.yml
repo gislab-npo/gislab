@@ -72,3 +72,5 @@
   docker_image:
      path: "{{docker_dir }}/gisquick/django"
      name: gislab/django
+
+# vim: set ts=8 sts=2 sw=2 et:
