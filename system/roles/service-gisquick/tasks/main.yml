@@ -3,13 +3,6 @@
 ### Gisquick integration
 #
 
-- name: Add provisioning user to the docker group
-  user:
-    name: "{{ GISLAB_PROVISIONING_USER }}"
-    groups: docker
-    append: yes
-
-
 - name: Create Gisquick directories
   file:
     path: "{{ item }}"
@@ -48,7 +41,6 @@
     state: directory
     mode: 0755
   with_items:
-    - "{{ docker_dir }}"
     - "{{ docker_dir }}/gisquick"
     - "{{ docker_dir }}/gisquick/django"
 

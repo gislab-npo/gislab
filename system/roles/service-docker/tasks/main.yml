@@ -10,4 +10,18 @@
     - docker.io
     - docker-compose
 
+
+- name: Add provisioning user to the docker group
+  user:
+    name: "{{ GISLAB_PROVISIONING_USER }}"
+    groups: docker
+    append: yes
+
+
+- name: Create docker directory
+  file:
+    path: "{{ docker_dir }}"
+    state: directory
+    mode: 0755
+
 # vim: set ts=8 sts=2 sw=2 et:
