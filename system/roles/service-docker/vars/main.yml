@@ -1,5 +1,5 @@
 ---
 
-docker_dir: /opt/docker
+docker_dir: /opt/gislab/system/docker
 
 # vim: set ts=8 sts=2 sw=2 et:
