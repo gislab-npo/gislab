@@ -24,4 +24,11 @@
     state: directory
     mode: 0755
 
+
+- name: Install GIS.lab administrator tool
+  copy:
+    src: admin/
+    dest: "{{ GISLAB_PATH_ADMIN }}/"
+    mode: 0775
+
 # vim: set ts=8 sts=2 sw=2 et:
