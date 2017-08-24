@@ -16,10 +16,13 @@ usage(){
 
 count=$1
 for u in $(eval echo "{1..$count}"); do
-
-    gislab-deluser -f lab$u || true
-    gislab-adduser -g "User $u" -l "GIS.lab" -m lab$u@gis.lab -p lab lab$u
-
+    if [ $(vagrant status | grep -c gislab_vagrant) -eq 1 ]; then
+        vagrant ssh -c "sudo gislab-deluser -f lab$u || true"
+        vagrant ssh -c "sudo gislab-adduser -g \"User $u\" -l \"GIS.lab\" -m lab$u@gis.lab -p lab lab$u"
+    else
+        gislab-deluser -f lab$u || true
+        gislab-adduser -g "User $u" -l "GIS.lab" -m lab$u@gis.lab -p lab lab$u
+    fi
 done
 
 # vim: set ts=8 sts=4 sw=4 et:
