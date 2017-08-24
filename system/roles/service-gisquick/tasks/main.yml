@@ -65,13 +65,11 @@
      path: "{{ docker_dir }}/gisquick/django"
      name: gislab/django
 
-
-- name: Pulls docker images associated with a service
-  # docker_service:
-  #   project_src: "{{ docker_dir }}/gisquick"
-  #   pull: yes
-  shell: docker-compose pull --ignore-pull-failures
-  args:
-    chdir: "{{ docker_dir }}/gisquick"
+- name: Pull docker images associated with a service
+  docker_image:
+    name: "{{ item }}"
+  with_items:
+    - gisquick/qgis-server
+    - gisquick/nginx
 
 # vim: set ts=8 sts=2 sw=2 et:
