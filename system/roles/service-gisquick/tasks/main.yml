@@ -72,4 +72,8 @@
     - gisquick/qgis-server
     - gisquick/nginx
 
+- name: Start docker service
+  docker_service:
+    project_src: "{{ docker_dir }}/gisquick"
+
 # vim: set ts=8 sts=2 sw=2 et:
