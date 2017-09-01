@@ -56,7 +56,7 @@
     - {
       role: service-gisquick,
       tags: ['service-gisquick'],
-      when: GISLAB_CLIENT_WEB
+      when: GISLAB_GISQUICK_INTEGRATION
     }
     - { role: installation-done, tags: ['installation-done'] }
   vars:

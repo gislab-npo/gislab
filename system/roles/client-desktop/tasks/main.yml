@@ -980,7 +980,7 @@
   git:
     repo: https://github.com/gislab-npo/gisquick-qgis-plugin
     dest: "{{ root_dir }}/root/usr/share/qgis/python/plugins/gisquick"
-  when: GISLAB_CLIENT_WEB
+  when: GISLAB_GISQUICK_INTEGRATION
 
 
 ### IMAGE

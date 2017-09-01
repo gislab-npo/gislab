@@ -231,7 +231,7 @@ GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY: 2000
 # http://gisquick.org for more information about Gisquick.
 # * no:  do not enable web client interface
 # * yes: enable mobile web client interface
-GISLAB_CLIENT_WEB: no
+GISLAB_GISQUICK_INTEGRATION: no
 
 
 
