@@ -59,15 +59,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # provisioning
   config.vm.define :gislab_vagrant do |server|
-    if CONFIG['GISLAB_SERVER_INTEGRATION'] == true
-      if CONFIG['GISLAB_SERVER_MAC']
-        server.vm.network "public_network", :mac => CONFIG['GISLAB_SERVER_MAC']
-      else
-        server.vm.network "public_network"
-      end
-    else
-      server.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
-    end
+    server.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
 
     # VirtualBox configuration
     server.vm.provider "virtualbox" do |vb, override|
