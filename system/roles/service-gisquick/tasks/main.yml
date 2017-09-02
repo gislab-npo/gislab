@@ -1,0 +1,79 @@
+---
+#
+### Gisquick integration
+#
+
+- name: Create Gisquick directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - /var/www/gisquick/media
+    - /var/www/gisquick/data
+
+
+- name: Generate self signed SSL certificate (run only once)
+  shell: >
+    openssl req -x509 -nodes -days 3650 -newkey rsa:2048
+    -keyout {{ GISLAB_PATH_SECRET }}/privkey.pem
+    -out {{ GISLAB_PATH_SECRET }}/fullchain.pem
+    -subj "/C=CZ/ST=Prague/L=Prague/O=Gisquick/OU=IT Department/CN=server"
+    &&
+    chmod 600 {{ GISLAB_PATH_SECRET }}/privkey.pem
+    &&
+    chmod 600 {{ GISLAB_PATH_SECRET }}/fullchain.pem
+  args:
+    executable: /bin/bash
+    creates: "{{ GISLAB_PATH_SECRET }}/fullchain.pem"
+
+- name: Install SSL certificate
+  shell: "{{ item }}"
+  with_items:
+    - mkdir -p /etc/letsencrypt/live/server/
+    - cp {{ GISLAB_PATH_SECRET }}/privkey.pem /etc/letsencrypt/live/server/privkey.pem
+    - cp {{ GISLAB_PATH_SECRET }}/fullchain.pem /etc/letsencrypt/live/server/fullchain.pem
+
+
+- name: Create docker directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ docker_dir }}/gisquick"
+    - "{{ docker_dir }}/gisquick/django"
+
+- name: Create docker-compose configuration
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ docker_dir }}/gisquick/docker-compose.yml"
+
+- name: Create Dockerfile
+  template:
+    src: Dockerfile.j2
+    dest: "{{ docker_dir }}/gisquick/django/Dockerfile"
+
+- name: Create docker-compose configuration
+  template:
+    src: settings_custom.py.j2
+    dest: "{{ docker_dir }}/gisquick/django/settings_custom.py"
+
+
+- name: Build customized image with server (django) app
+  docker_image:
+     path: "{{ docker_dir }}/gisquick/django"
+     name: gislab/django
+
+- name: Pull docker images associated with a service
+  docker_image:
+    name: "{{ item }}"
+  with_items:
+    - gisquick/qgis-server
+    - gisquick/nginx
+
+- name: Start docker service
+  docker_service:
+    project_src: "{{ docker_dir }}/gisquick"
+
+# vim: set ts=8 sts=2 sw=2 et:

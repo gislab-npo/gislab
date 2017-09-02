@@ -47,4 +47,10 @@
     }
     - { role: client-desktop, tags: ['client-desktop'] }
     - { role: account-admin, tags: ['account-admin'] }
+    - { role: service-docker, tags: ['service-docker'] }
+    - {
+      role: service-gisquick,
+      tags: ['service-gisquick'],
+      when: GISLAB_GISQUICK_INTEGRATION
+    }
     - { role: installation-done, tags: ['installation-done'] }
