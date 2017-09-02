@@ -12,7 +12,7 @@ deb http://archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-securit
 deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
 
 ###### UbuntuGIS repository
-deb http://ppa.launchpad.net/ubuntugis/ubuntugis-unstable/ubuntu {{ ansible_distribution_release }} main
+deb http://ppa.launchpad.net/ubuntugis/ppa/ubuntu {{ ansible_distribution_release }} main
 
 {% if GISLAB_APT_CUSTOM_REPOSITORIES %}
 #### Custom repositories
