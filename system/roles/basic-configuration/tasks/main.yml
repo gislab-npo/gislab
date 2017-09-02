@@ -182,6 +182,7 @@
     state: latest
   with_items:
     - arp-scan
+    - emacs-nox
     - etherwake
     - ethtool
     - htop
