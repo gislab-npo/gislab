@@ -14,4 +14,4 @@
 
 ## License
 Unless stated otherwise, source code of this project is released under terms
-and conditions of GNU GPL version 3 (see LICENSE.md).
+and conditions of GNU GPL version 3 (see [LICENSE.md](LICENSE.md)).
