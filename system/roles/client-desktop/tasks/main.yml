@@ -976,7 +976,7 @@
     state: directory
     recurse: yes
 
-- name: Download Gisquick QGIS plugin
+- name: Install Gisquick QGIS plugin
   git:
     repo: https://github.com/gislab-npo/gisquick-qgis-plugin
     dest: "{{ root_dir }}/root/usr/share/qgis/python/plugins/gisquick"
