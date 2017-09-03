@@ -1,11 +1,10 @@
 #!/bin/bash
 # Open GIS.lab documentation
 
-source /etc/gislab_version
-ROOT_URL="http://gislab.readthedocs.io"
-LANGUAGE="en"
+#source /etc/gislab_version
+ROOT_URL="http://server/docs/gislab"
 
-firefox "$ROOT_URL/$LANGUAGE/latest" &
+firefox "$ROOT_URL" &
 
 # TODO: uncomment lines below once documentation will be finished and
 # localized. Until then latest English version should be always valid
