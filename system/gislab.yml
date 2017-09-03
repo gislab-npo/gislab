@@ -46,12 +46,12 @@
       when: GISLAB_SERVER_CAPABILITY_VPN
     }
     - { role: service-docs, tags: ['service-docs'] }
-    - { role: client-desktop, tags: ['client-desktop'] }
-    - { role: account-admin, tags: ['account-admin'] }
     - { role: service-docker, tags: ['service-docker'] }
     - {
       role: service-gisquick,
       tags: ['service-gisquick'],
       when: GISLAB_GISQUICK_INTEGRATION
     }
+    - { role: client-desktop, tags: ['client-desktop'] }
+    - { role: account-admin, tags: ['account-admin'] }
     - { role: installation-done, tags: ['installation-done'] }
