@@ -76,4 +76,21 @@
   docker_service:
     project_src: "{{ docker_dir }}/gisquick"
 
+
+- name: Download Gisquick documentation
+  git:
+    repo: https://github.com/gislab-npo/gisquick-doc.git
+    dest: "{{ docker_dir }}/gisquick/docs"
+
+- name: Build HTML documentation output
+  shell: make html
+  args:
+    chdir: "{{ docker_dir }}/gisquick/docs"
+
+- name: Add Gisquick documentation to default web content
+  file:
+    src: "{{ docker_dir }}/gisquick/docs/_build/html"
+    dest: "{{ GISLAB_PATH_WWW }}/docs/gisquick"
+    state: link
+
 # vim: set ts=8 sts=2 sw=2 et:
