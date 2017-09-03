@@ -1,6 +1,6 @@
 # GIS.lab - free geospatial infrastructure
 
-[GIS.lab logo](graphics/gislab_black.svg)
+[GIS.lab logo](https://raw.githubusercontent.com/gislab-npo/gislab/master/graphics/gislab_black.svg)
 
  * project page: http://gislab-npo.github.io/gislab
  * documentation: http://gislab.readthedocs.io
