@@ -11,3 +11,4 @@ inventories/*
 *.tar.*
 *.log
 *.retry
+*~
