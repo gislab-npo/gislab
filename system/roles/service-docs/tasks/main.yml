@@ -1,0 +1,43 @@
+---
+#
+###  BUILD DOCUMENTATION ###
+#
+# Download documentation, build HTML output and link to default web page content.
+#
+
+- name: Install packages
+  apt:
+    pkg: "{{ item }}"
+    force: yes
+    install_recommends: no
+    state: latest
+  with_items:
+    - make
+    - python-sphinx
+    - python-sphinx-rtd-theme
+
+
+- name: Download GIS.lab documentation
+  git:
+    repo: https://github.com/gislab-npo/gislab-doc.git
+    dest: "{{ docs_dir }}"
+
+- name: Build HTML documentation output
+  shell: make html
+  args:
+    chdir: "{{ docs_dir }}"
+
+
+- name: Create docs directory in default web content
+  file:
+    path: "{{ GISLAB_PATH_WWW }}/docs"
+    state: directory
+    mode: 0755
+
+- name: Add GIS.lab documentation to default web content
+  file:
+    src: "{{ docs_dir }}/_build/html"
+    dest: "{{ GISLAB_PATH_WWW }}/docs/gislab"
+    state: link
+
+# vim: set ts=8 sts=2 sw=2 et:
