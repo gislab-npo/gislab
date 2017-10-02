@@ -35,8 +35,9 @@ services:
       - django:ro
     volumes:
       - /etc/letsencrypt/:/etc/letsencrypt/
+      - /opt/gislab/system/docker/gisquick/nginx/gisquick.template:/etc/nginx/conf.d/gisquick.template
     ports:
-      - "9000:443"
+      - "9000:80"
     environment:
       - NGINX_HOST=server
     logging:

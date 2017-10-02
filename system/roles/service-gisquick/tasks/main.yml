@@ -43,6 +43,13 @@
   with_items:
     - "{{ docker_dir }}/gisquick"
     - "{{ docker_dir }}/gisquick/django"
+    - "{{ docker_dir }}/gisquick/nginx"
+
+- name: Install Gisquick nginx template
+  copy:
+    src: static/nginx/gisquick.template
+    dest: "{{ docker_dir }}/gisquick/nginx"
+    mode: 0664
 
 - name: Create docker-compose configuration
   template:
