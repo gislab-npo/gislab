@@ -24,6 +24,7 @@
     - python-psycopg2
     - postgresql-9.5-pgrouting
     - osm2pgrouting
+    - gdal-bin
 
 
 # version and paths detection
