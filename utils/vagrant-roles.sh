@@ -43,7 +43,6 @@ ansible_cmd="ansible-playbook \
   --connection=ssh \
   --limit=gislab_vagrant \
   --inventory-file=$(pwd)/.vagrant/provisioners/ansible/inventory \
-  --extra-vars={\"GISLAB_ADMIN_PASSWORD\":\"gislab\",\"GISLAB_SERVER_NETWORK_DEVICE\":\"eth1\"} \
   --verbose"
 
 if [ "$ROLES" != "" ]; then

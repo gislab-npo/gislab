@@ -41,8 +41,6 @@ if CONFIG.has_key? 'GISLAB_ADMIN_PASSWORD'
   CONFIG_VAGRANT["GISLAB_ADMIN_PASSWORD"] = CONFIG['GISLAB_ADMIN_PASSWORD']
 end
 
-# always force set network device for Vagrant to 'eth1'
-CONFIG_VAGRANT["GISLAB_SERVER_NETWORK_DEVICE"] = "eth1"
 
 TPATH = %x(VBoxManage list systemproperties | grep -i "default machine folder:" | cut -b 24- | awk '{gsub(/^ +| +$/,"")}1').strip
 

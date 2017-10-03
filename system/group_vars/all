@@ -146,11 +146,6 @@ GISLAB_APT_CUSTOM_REPOSITORIES:
 ############################### SERVER ########################################
 # *************************************************************************** #
 
-# Network device of GIS.lab server dedicated for GIS.lab network.
-# Example: eno1
-# Change requires running upgrade.
-GISLAB_SERVER_NETWORK_DEVICE: eno1
-
 # Email account which will be used as a relay to send emails from GIS.lab.
 # SMTP server must support TLS encryption on port 587. If no account configured,
 # email messages from GIS.lab will be delivered locally to Linux user on server
