@@ -41,9 +41,6 @@ if CONFIG.has_key? 'GISLAB_ADMIN_PASSWORD'
   CONFIG_VAGRANT["GISLAB_ADMIN_PASSWORD"] = CONFIG['GISLAB_ADMIN_PASSWORD']
 end
 
-
-TPATH = %x(VBoxManage list systemproperties | grep -i "default machine folder:" | cut -b 24- | awk '{gsub(/^ +| +$/,"")}1').strip
-
 # Vagrant provisioning
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # fix for https://github.com/ansible/ansible/issues/8644
