@@ -238,7 +238,7 @@
   shell: >
     DEBIAN_FRONTEND=noninteractive
     SUDO_FORCE_REMOVE=yes
-    apt-get -y install sudo-ldap
+    apt -y install sudo-ldap
   notify:
     - service slapd restart
 

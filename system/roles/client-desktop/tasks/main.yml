@@ -214,7 +214,7 @@
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
-    apt-get {{ apt_get_opts }} update
+    apt {{ apt_get_opts }} update
   args:
     executable: /bin/bash
 
@@ -223,7 +223,7 @@
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
-    apt-get {{ apt_get_opts }} dist-upgrade
+    apt {{ apt_get_opts }} dist-upgrade
   args:
     executable: /bin/bash
 
@@ -234,7 +234,7 @@
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
-    apt-get {{ apt_get_opts }} install ubuntu-standard
+    apt {{ apt_get_opts }} install ubuntu-standard
   args:
     executable: /bin/bash
 
@@ -243,7 +243,7 @@
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
-    apt-get {{ apt_get_opts }} install {{ packages_base|join(' ') }}
+    apt {{ apt_get_opts }} install {{ packages_base|join(' ') }}
   args:
     executable: /bin/bash
 
@@ -252,7 +252,7 @@
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
-    apt-get {{ apt_get_opts }} install {{ packages_desktop|join(' ') }}
+    apt {{ apt_get_opts }} install {{ packages_desktop|join(' ') }}
   args:
     executable: /bin/bash
   when: GISLAB_SUITE in ('office', 'lab')
@@ -262,7 +262,7 @@
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
-    apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_office|join(' ') }}
+    apt --no-install-recommends {{ apt_get_opts }} install {{ packages_office|join(' ') }}
   args:
     executable: /bin/bash
   when: GISLAB_SUITE in ('office', 'lab')
@@ -272,7 +272,7 @@
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
-    apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_lab|join(' ') }}
+    apt --no-install-recommends {{ apt_get_opts }} install {{ packages_lab|join(' ') }}
   args:
     executable: /bin/bash
   when: GISLAB_SUITE == 'lab'
@@ -282,7 +282,7 @@
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
-    apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_worker|join(' ') }}
+    apt --no-install-recommends {{ apt_get_opts }} install {{ packages_worker|join(' ') }}
   args:
     executable: /bin/bash
   when: GISLAB_SUITE in ('server', 'lab')
@@ -294,7 +294,7 @@
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
-    apt-get {{ apt_get_opts }} install $(check-language-support -l {{ item }})
+    apt {{ apt_get_opts }} install $(check-language-support -l {{ item }})
   with_items: "{{ GISLAB_CLIENT_LANGUAGES }}"
   when: GISLAB_SUITE in ('office', 'lab') and GISLAB_CLIENT_LANGUAGES|default(None) != None
 
@@ -316,7 +316,7 @@
     export DEBIAN_FRONTEND=noninteractive
     &&
     chroot {{ root_dir }}/root
-    apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_kernel|join(' ') }}
+    apt --no-install-recommends {{ apt_get_opts }} install {{ packages_kernel|join(' ') }}
   args:
     executable: /bin/bash
 
@@ -339,7 +339,7 @@
     fi
     &&
     chroot {{ root_dir }}/root
-    apt-get
+    apt
     --reinstall
     --no-install-recommends {{ apt_get_opts }} install {{ packages_virtualbox|join(' ') }}
   args:
@@ -361,8 +361,8 @@
   args:
     executable: /bin/bash
   with_items:
-    - apt-get --assume-yes purge {{ packages_remove|join(' ') }}
-    - apt-get --assume-yes autoremove
+    - apt --assume-yes purge {{ packages_remove|join(' ') }}
+    - apt --assume-yes autoremove
 
 # fix resolv.conf (broken link after resolvconf package removal)
 - name: Copy resolv.conf from server
@@ -429,7 +429,7 @@
     export SUDO_FORCE_REMOVE=yes
     &&
     chroot {{ root_dir }}/root
-    apt-get --no-install-recommends {{ apt_get_opts }} install sudo-ldap
+    apt --no-install-recommends {{ apt_get_opts }} install sudo-ldap
   args:
     executable: /bin/bash
 
