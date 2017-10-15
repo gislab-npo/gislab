@@ -2,7 +2,12 @@
 # Open GIS.lab documentation
 
 #source /etc/gislab_version
-ROOT_URL="http://server/docs/gislab"
+if [ -z "$1" ]; then
+    html="gislab"
+else
+    html="$1"
+fi
+ROOT_URL="http://server/docs/${html}"
 
 firefox "$ROOT_URL" &
 

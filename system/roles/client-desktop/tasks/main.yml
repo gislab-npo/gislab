@@ -982,6 +982,12 @@
     dest: "{{ root_dir }}/root/usr/share/qgis/python/plugins/gisquick"
   when: GISLAB_GISQUICK_INTEGRATION
 
+- name: Install Gisquick applications files
+  copy:
+    src: static/desktop/menu/applications/gisquick
+    dest: "{{ root_dir }}/root/usr/share/applications/"
+  when: GISLAB_GISQUICK_INTEGRATION
+
 
 ### IMAGE
 - include: provider-default.yml
