@@ -207,6 +207,7 @@ packages_lab:
   - otb-bin-qt
   - pgadmin3
   - postgis
+  - postgis-doc
   - postgresql-client
   - postgresql-comparator
   - proj-bin
