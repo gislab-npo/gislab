@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=GIS.lab Desktop
-Comment=GIS project creation, data processing, analysis and project publishing
+Comment=QGIS: GIS project creation, data processing, analysis and project publishing
 Exec=qgis
 Icon=qgis
 Path=
@@ -10,4 +10,4 @@ Terminal=false
 Categories=Gislab;
 StartupNotify=false
 Name[sk]=GIS.lab Desktop
-Comment[sk]=Tvorba projektov GIS, spracovanie dát, analýzy a publikovanie projektov
+Comment[sk]=QGIS: Tvorba projektov GIS, spracovanie dát, analýzy a publikovanie projektov

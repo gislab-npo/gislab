@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=GIS.lab Web
+Comment=Gisquick: GIS project publishing platform
+Exec=/usr/bin/firefox http://server:9000
+Icon=gislab-web
+Path=
+Terminal=false
+Categories=Gislab;
+StartupNotify=false
