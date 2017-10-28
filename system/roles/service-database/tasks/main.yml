@@ -95,6 +95,20 @@
   notify:
     - service postgresql restart
 
+- name: Create PostgreSQL conf.d directory
+  file:
+    name: "{{ postgresql_conf_directory }}/main/conf.d"
+    state: directory
+
+- name: Tune PostgreSQL configuration
+  postgresql_tune:
+    db_version: "{{ postgresql_version }}"
+    db_type: "{{ postgresql_tune_db_type }}"
+    total_memory: "{{ postgresql_tune_total_memory }}"
+    postgresql_file: "{{ postgresql_conf_directory }}/main/conf.d/99-postgresql-tune.conf"
+    max_connections: "{{ postgresql_tune_connections }}"
+    sysctl_file: "{{ postgresql_sysctl_conf }}"
+
 - name: Configure PostgreSQL access policy
   template:
     src: "{{ item.src }}"
