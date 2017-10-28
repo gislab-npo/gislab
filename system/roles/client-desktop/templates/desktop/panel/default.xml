@@ -16,9 +16,9 @@
         <value type="int" value="12"/>
         <value type="int" value="8"/>
 {% if GISLAB_SUITE == 'lab' %}
-        <value type="int" value="20"/>
-        <value type="int" value="19"/>
         <value type="int" value="9"/>
+        <value type="int" value="19"/>
+	<value type="int" value="20"/>
 {% endif %}
         <value type="int" value="15"/>
         <value type="int" value="26"/>
