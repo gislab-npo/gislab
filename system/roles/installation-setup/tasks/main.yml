@@ -47,7 +47,7 @@
 
 - name: Set GIS.lab version from Git
   set_fact:
-    GISLAB_VERSION: "{{ gislab_version.stdout }}"
+    GISLAB_VERSION: "{{ GISLAB_VERSION }} ({{ gislab_version.stdout }})"
   when: gislab_version_git_status.stdout != "GIT-NOT-AVAILABLE"
 
 
