@@ -15,14 +15,14 @@ VGA=$(lspci | grep "VGA compatible controller" | sed "s/^.*://")
 ETHERNET=$(lspci | grep "Ethernet controller" | sed "s/^.*://")
 
 INTERFACE=$(ip route | grep default | cut -d " " -f5)
-INTERFACE_MAC=$(/sbin/ifconfig | grep ${INTERFACE} | cut -f11 -d" ")
+INTERFACE_MAC=$(/sbin/ifconfig | grep ${INTERFACE} | head -n1 | cut -f9 -d" ")
 INTERFACE_IP=$(/sbin/ifconfig ${INTERFACE} | grep inet | cut -f2 -d":" | cut -f1 -d" ")
 
-QGIS_VERSION=$(dpkg-query -W --showformat '${version}' qgis)
-GRASS_VERSION=$(dpkg-query -W --showformat '${version}' grass7)
+QGIS_VERSION=$(dpkg-query -W --showformat '${version}' qgis | cut -d'+' -f1)
+GRASS_VERSION=$(dpkg-query -W --showformat '${version}' grass | cut -d'-' -f1)
+POSTGIS_VERSION=$(dpkg-query -W --showformat '${version}' postgis | cut -d'+' -f1)
 
-
-INFO="
+INFO="\n
 GIS.lab ID: $GISLAB_UNIQUE_ID\n
 GIS.lab VERSION: $GISLAB_VERSION\n
 \n
@@ -45,7 +45,8 @@ NETWORK\n
 \n
 SOFTWARE\n
 + QGIS: $QGIS_VERSION\n
-+ GRASS: $GRASS_VERSION\n
++ GRASS GIS: $GRASS_VERSION\n
++ PostGIS: $POSTGIS_VERSION\n
 \n
 This report was generated on $(date).
 "
