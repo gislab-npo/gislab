@@ -70,10 +70,10 @@ else
     DISK_SIZE_SWAP=${DISK_SIZE_SWAPGB}300
 fi
 
-# boot: 230
-# root: 22000
+# boot: 530
+# root: 27000
 # free: 470
-DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-230-22000-$DISK_SIZE_SWAP))
+DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-530-27000-$DISK_SIZE_SWAP))
 if [ $DISK_SIZE_STORAGE -lt 10000 ]; then
     echo "Invalid disk configuration (storage must be at least the size of 10GB), please check -d and -a flags"
     exit 1
