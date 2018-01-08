@@ -100,4 +100,21 @@
     dest: "{{ GISLAB_PATH_WWW }}/docs/gisquick"
     state: link
 
+
+- name: Download sample GIS project
+  git:
+    repo: https://github.com/gislab-npo/gisquick
+    dest: /tmp/gisquick
+
+- name: Create directory for sample GIS project
+  file:
+    path: /mnt/repository/gislab-project
+    state: directory
+
+- name: Extract sample GIS project
+  command: cp -r /tmp/gisquick/qgis/project/natural-earth natural-earth
+  args:
+    chdir: /mnt/repository/gislab-project
+    creates: /mnt/repository/gislab-project/natural-earth
+
 # vim: set ts=8 sts=2 sw=2 et:
