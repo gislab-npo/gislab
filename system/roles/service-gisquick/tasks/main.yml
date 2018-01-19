@@ -52,24 +52,20 @@
     mode: 0664
 
 - name: Create docker-compose configuration
-  template:
-    src: docker-compose.yml.j2
+  copy:
+    src: static/docker-compose.yml
     dest: "{{ docker_dir }}/gisquick/docker-compose.yml"
 
-- name: Create Dockerfile
-  template:
-    src: Dockerfile.j2
-    dest: "{{ docker_dir }}/gisquick/django/Dockerfile"
-
-- name: Create docker-compose configuration
-  template:
-    src: "{{ item }}.j2"
+- name: Create django configuration
+  copy:
+    src: "static/django/{{ item }}"
     dest: "{{ docker_dir }}/gisquick/django/{{ item }}"
   with_items:
+    - Dockerfile
     - settings_custom.py
     - urls_custom.py
 
-- name: Build customized image with server (django) app
+- name: Build customized django image
   docker_image:
      path: "{{ docker_dir }}/gisquick/django"
      name: gislab/django
