@@ -63,9 +63,11 @@
 
 - name: Create docker-compose configuration
   template:
-    src: settings_custom.py.j2
-    dest: "{{ docker_dir }}/gisquick/django/settings_custom.py"
-
+    src: "{{ item }}.j2"
+    dest: "{{ docker_dir }}/gisquick/django/{{ item }}"
+  with_items:
+    - settings_custom.py
+    - urls_custom.py
 
 - name: Build customized image with server (django) app
   docker_image:
