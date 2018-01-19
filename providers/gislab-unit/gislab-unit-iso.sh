@@ -11,7 +11,7 @@ function usage() {
     echo -e "\nOPTIONS
     -s country code used for choosing closest repository mirror (e.g. SK)
     -t timezone (e.g. Europe/Bratislava)
-    -d disk size in GB (valid options: 60, 120, 240, 480; default: 60)
+    -d disk size in GB (recommended options: 60, 120, 240, 480; default: 60)
     -a swap size in GB (default: 4)
     -k SSH public key file, which will be used for GIS.lab installation or update
     -w working directory with enough disk space (2.5 x larger than ISO image size)
@@ -57,13 +57,6 @@ fi
 if [ -z "$DISK_SIZEGB" ]; then
     DISK_SIZEGB=60
 fi
-case "$DISK_SIZEGB" in
-    60) ;;
-    120) ;;
-    240) ;;
-    480) ;;
-    *) usage;;
-esac
 if [ -z "$DISK_SIZE_SWAPGB" ]; then
     DISK_SIZE_SWAP=4300
 else
@@ -74,8 +67,8 @@ fi
 # root: 27000
 # free: 470
 DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-530-27000-$DISK_SIZE_SWAP))
-if [ $DISK_SIZE_STORAGE -lt 10000 ]; then
-    echo "Invalid disk configuration (storage must be at least the size of 10GB), please check -d and -a flags"
+if [ $DISK_SIZE_STORAGE -lt 20000 ]; then
+    echo "Invalid disk configuration (storage must be at least the size of 20GB), please check -d and -a flags"
     exit 1
 fi
 
