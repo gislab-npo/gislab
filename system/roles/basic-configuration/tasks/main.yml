@@ -113,10 +113,11 @@
     dest: /etc/apt/sources.list.d
     state: absent
 
-- name: Add UbuntuGIS PPA signing key
-  apt_key:
-    data: "{{ lookup('file', 'static/ppa-ubuntugis.key') }}"
-    state: present
+# Enable when UbuntuGIS will provide packages for Bionic
+# - name: Add UbuntuGIS PPA signing key
+#   apt_key:
+#     data: "{{ lookup('file', 'static/ppa-ubuntugis.key') }}"
+#     state: present
 
 - name: Configure apt repositories
   template:
