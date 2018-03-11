@@ -1,7 +1,7 @@
 data_directory = '{{ GISLAB_PATH_APPLICATIONS }}/postgresql'
-hba_file = '/etc/postgresql/9.5/main/pg_hba.conf'
-ident_file = '/etc/postgresql/9.5/main/pg_ident.conf'
-external_pid_file = '/var/run/postgresql/9.5-main.pid'
+hba_file = '/etc/postgresql/{{ pg_version.stdout }}/main/pg_hba.conf'
+ident_file = '/etc/postgresql/{{ pg_version.stdout }}/main/pg_ident.conf'
+external_pid_file = '/var/run/postgresql/{{ pg_version.stdout }}-main.pid'
 listen_addresses = '*'
 port = 5432
 unix_socket_directories = '/var/run/postgresql'
