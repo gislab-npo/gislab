@@ -51,17 +51,8 @@
 # update apparmor
 - name: Allow access for slapd to storage directory
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-  with_items:
-    - {
-        src: "apparmor/usr.sbin.slapd.j2",
-        dest: "/etc/apparmor.d/local/usr.sbin.slapd"
-      }
-    - {
-        src: "apparmor/usr.sbin.named.j2",
-        dest: "/etc/apparmor.d/local/usr.sbin.named"
-      }
+    src: apparmor/usr.sbin.slapd.j2
+    dest: /etc/apparmor.d/local/usr.sbin.slapd
 
 - name: Reload apparmor service
   service:
