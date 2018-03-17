@@ -8,6 +8,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DEBUG = False
 
+ROOT_URLCONF='djproject.urls_custom'
+
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 GISQUICK_PROJECT_ROOT = '/publish/'

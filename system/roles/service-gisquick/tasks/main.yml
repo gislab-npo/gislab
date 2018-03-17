@@ -52,22 +52,20 @@
     mode: 0664
 
 - name: Create docker-compose configuration
-  template:
-    src: docker-compose.yml.j2
+  copy:
+    src: static/docker-compose.yml
     dest: "{{ docker_dir }}/gisquick/docker-compose.yml"
 
-- name: Create Dockerfile
-  template:
-    src: Dockerfile.j2
-    dest: "{{ docker_dir }}/gisquick/django/Dockerfile"
+- name: Create django configuration
+  copy:
+    src: "static/django/{{ item }}"
+    dest: "{{ docker_dir }}/gisquick/django/{{ item }}"
+  with_items:
+    - Dockerfile
+    - settings_custom.py
+    - urls_custom.py
 
-- name: Create docker-compose configuration
-  template:
-    src: settings_custom.py.j2
-    dest: "{{ docker_dir }}/gisquick/django/settings_custom.py"
-
-
-- name: Build customized image with server (django) app
+- name: Build customized django image
   docker_image:
      path: "{{ docker_dir }}/gisquick/django"
      name: gislab/django
@@ -99,5 +97,22 @@
     src: "{{ docker_dir }}/gisquick/docs/_build/html"
     dest: "{{ GISLAB_PATH_WWW }}/docs/gisquick"
     state: link
+
+
+- name: Download sample GIS project
+  git:
+    repo: https://github.com/gislab-npo/gisquick
+    dest: /tmp/gisquick
+
+- name: Create directory for sample GIS project
+  file:
+    path: /mnt/repository/gislab-project
+    state: directory
+
+- name: Extract sample GIS project
+  command: cp -r /tmp/gisquick/qgis/project/natural-earth natural-earth
+  args:
+    chdir: /mnt/repository/gislab-project
+    creates: /mnt/repository/gislab-project/natural-earth
 
 # vim: set ts=8 sts=2 sw=2 et:

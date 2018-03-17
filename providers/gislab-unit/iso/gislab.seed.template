@@ -47,7 +47,7 @@ d-i partman-partitioning/confirm_write_new_label boolean true
 #
 # SSD partitioning
 #
-# - sda1 - /boot (230MB)
+# - sda1 - /boot (530MB)
 # - sda2 - extended
 # - sda5 - VG vgmain
 #             - LV root (22GB)
@@ -57,13 +57,13 @@ d-i partman-partitioning/confirm_write_new_label boolean true
 
 d-i partman-auto/expert_recipe string                   \
     boot-lvm ::                                         \
-        230 100 230 ext4                                \
+        530 100 530 ext4                                \
             $primary{ } $bootable{ }                    \
             method{ format } format{ }                  \
             use_filesystem{ } filesystem{ ext4 }        \
             mountpoint{ /boot }                         \
         .                                               \
-        22000 100 22000 ext4                            \
+        27000 100 27000 ext4                            \
             $lvmok{ }                                   \
             lv_name{ root }                             \
             method{ format } format{ }                  \
