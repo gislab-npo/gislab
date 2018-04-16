@@ -193,6 +193,7 @@
     - tmux
     - vim
     - bash-completion
+    - zip
 
 
 ### MOUNT POINTS
