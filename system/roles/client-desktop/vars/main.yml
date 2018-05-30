@@ -31,7 +31,7 @@ packages_base:
   - curl
   - genisoimage
   - libnss-ldap
-#  - libpam-ck-connector
+  - libpam-ck-connector
   - libpam-cracklib
   - libsasl2-modules
   - mkelfimage
@@ -63,12 +63,12 @@ packages_desktop:
   - fonts-liberation
   - fonts-opensymbol
   - ghostscript-x
-#  - gstreamer1.0-gnomevfs
-  - gstreamer1.0-plugins-base
-  - gstreamer1.0-plugins-base-apps
-  - gstreamer1.0-plugins-good
-  - gstreamer1.0-pulseaudio
-  - gstreamer1.0-tools
+  - gstreamer0.10-gnomevfs
+  - gstreamer0.10-plugins-base
+  - gstreamer0.10-plugins-base-apps
+  - gstreamer0.10-plugins-good
+  - gstreamer0.10-pulseaudio
+  - gstreamer0.10-tools
   - gtk2-engines
   - gtk2-engines-pixbuf
   - gvfs
@@ -148,7 +148,7 @@ packages_office:
   - foomatic-db-engine
   - freerdp-x11
   - libfreerdp-plugins-standard
-  - gnome-calculator
+  - gcalctool
   - gdisk
   - geany
   - gimp
@@ -250,7 +250,7 @@ packages_remove:
   - resolvconf
   - xscreensaver
 
-# -o Dpkg::Options::="--force-confold" ???
+
 apt_get_opts: "--assume-yes --force-yes"
 
 # vim: set ts=8 sts=2 sw=2 et:
