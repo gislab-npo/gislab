@@ -99,7 +99,6 @@ packages_desktop:
   - thunar-archive-plugin
   - thunar-media-tags-plugin
   - ttf-dejavu-core
-  - ttf-freefont
   - ttf-ubuntu-font-family
   - tumbler
   - wireless-tools
