@@ -88,7 +88,7 @@ mkdir -p $MOUNT_DIR
 sudo mount -o loop $SRC_IMAGE $MOUNT_DIR
 
 if [ ! -f "$MOUNT_DIR/install/vmlinuz" ]; then
-    echo "Invalid Ubuntu ISO image file. Ubuntu 12.04 Server ISO is required."
+    echo "Invalid Ubuntu ISO image file. Ubuntu 18.04 Server ISO is required."
     umount $MOUNT_DIR
     exit 1
 fi
