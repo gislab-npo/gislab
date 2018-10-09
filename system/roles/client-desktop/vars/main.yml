@@ -198,7 +198,6 @@ packages_lab:
   - grass
   - grass-doc
   - grass-dev
-  - python-pil
   - ipython
   - monteverdi
   - osm2pgrouting
@@ -216,6 +215,8 @@ packages_lab:
   - python-gdal
   - python-otb
   - python-owslib
+  - python-pandas
+  - python-pil
   - python-qgis
   - python-rasterio
   - python-saga
@@ -230,6 +231,11 @@ packages_lab:
   - sqlite3
   - sqlitebrowser
   - josm
+
+packages_lab_pip:
+  # list of GIS.lab client GIS PIP packages
+  - sentinelsat
+  - pymodis
 
 packages_worker:
   # OWS worker packages
