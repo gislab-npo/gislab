@@ -273,6 +273,9 @@
     &&
     chroot {{ root_dir }}/root
     apt --no-install-recommends {{ apt_get_opts }} install {{ packages_lab|join(' ') }}
+    &&
+    chroot {{ root_dir }}/root
+    pip install {{ packages_lab_pip|join(' ') }}
   args:
     executable: /bin/bash
   when: GISLAB_SUITE == 'lab'
