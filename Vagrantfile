@@ -54,7 +54,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # provisioning
   config.vm.define :gislab_vagrant do |server|
-    server.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
+    server.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5", bridge: "eno1"
 
     # VirtualBox configuration
     server.vm.provider "virtualbox" do |vb, override|

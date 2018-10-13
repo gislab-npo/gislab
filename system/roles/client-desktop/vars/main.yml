@@ -210,13 +210,14 @@ packages_lab:
   - postgresql-client
   - postgresql-comparator
   - proj-bin
-  - python-pysqlite2
   - python-fiona
   - python-gdal
   - python-otb
   - python-owslib
   - python-pandas
   - python-pil
+  - python-pip
+  - python-pysqlite2
   - python-qgis
   - python-rasterio
   - python-saga
