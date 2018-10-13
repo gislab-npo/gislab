@@ -243,6 +243,8 @@ packages_remove:
   # the reason why package was installed.
   - network-manager
   - network-manager-pptp
+  - nplan
+  - netplan.io
   - resolvconf
   - xscreensaver
 
