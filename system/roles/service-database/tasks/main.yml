@@ -17,12 +17,12 @@
     - libpq-dev
     - postgis
     - postgresql
-    - postgresql-9.5-postgis-2.3
-    - postgresql-9.5-postgis-2.3-scripts
+    - postgresql-10-postgis-2.4
+    - postgresql-10-postgis-2.4-scripts
     - postgresql-comparator
     - postgresql-contrib
     - python-psycopg2
-    - postgresql-9.5-pgrouting
+    - postgresql-10-pgrouting
     - osm2pgrouting
     - gdal-bin
 
@@ -32,7 +32,7 @@
   shell: >
     pg_config --version
     | awk -F ' ' '{print $2}'
-    | awk -F '.' '{print $1 "." $2}'
+    | awk -F '.' '{print $1}'
   register: pg_version
   changed_when: False
 
@@ -221,16 +221,12 @@
 
 - name: Add PostGIS support to PostGIS template database
   command: >
-    psql -U postgres -d template_postgis
-    -f {{ pg_sharedir.stdout }}/contrib/template-postgis.sql
+    psql -U postgres -d template_postgis -c "CREATE EXTENSION postgis"
 
-- name: Add PostgreSQL Comparator support to PostGIS template database
-  command: >
-    psql -U postgres -d template_postgis -f {{ pg_sharedir.stdout }}"{{ item }}"
-  with_items:
-    - /contrib/pgc_checksum.sql
-    - /contrib/pgc_casts.sql
-    - /contrib/xor_aggregate.sql
+# TODO
+# - name: Add PostgreSQL Comparator support to PostGIS template database
+#   command: >
+#     psql -U postgres -d template_postgis -c "CREATE EXTENSION pgcmp"
 
 - name: Add History Audit support to PostGIS template database (run SELECT audit.audit_table('<schema>.<table>'); to enable)
   command: >

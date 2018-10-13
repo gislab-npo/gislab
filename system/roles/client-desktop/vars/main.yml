@@ -31,7 +31,6 @@ packages_base:
   - curl
   - genisoimage
   - libnss-ldap
-  - libpam-ck-connector
   - libpam-cracklib
   - libsasl2-modules
   - mkelfimage
@@ -63,12 +62,11 @@ packages_desktop:
   - fonts-liberation
   - fonts-opensymbol
   - ghostscript-x
-  - gstreamer0.10-gnomevfs
-  - gstreamer0.10-plugins-base
-  - gstreamer0.10-plugins-base-apps
-  - gstreamer0.10-plugins-good
-  - gstreamer0.10-pulseaudio
-  - gstreamer0.10-tools
+  - gstreamer1.0-plugins-base
+  - gstreamer1.0-plugins-base-apps
+  - gstreamer1.0-plugins-good
+  - gstreamer1.0-pulseaudio
+  - gstreamer1.0-tools
   - gtk2-engines
   - gtk2-engines-pixbuf
   - gvfs
@@ -101,7 +99,6 @@ packages_desktop:
   - thunar-archive-plugin
   - thunar-media-tags-plugin
   - ttf-dejavu-core
-  - ttf-freefont
   - ttf-ubuntu-font-family
   - tumbler
   - wireless-tools
@@ -148,7 +145,7 @@ packages_office:
   - foomatic-db-engine
   - freerdp-x11
   - libfreerdp-plugins-standard
-  - gcalctool
+  - gnome-calculator
   - gdisk
   - geany
   - gimp
@@ -254,10 +251,12 @@ packages_remove:
   # the reason why package was installed.
   - network-manager
   - network-manager-pptp
+  - nplan
+  - netplan.io
   - resolvconf
   - xscreensaver
 
-
+# -o Dpkg::Options::="--force-confold" ???
 apt_get_opts: "--assume-yes --force-yes"
 
 # vim: set ts=8 sts=2 sw=2 et:

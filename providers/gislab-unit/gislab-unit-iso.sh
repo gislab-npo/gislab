@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Download Ubuntu Server AMD64 image from http://cdimage.ubuntu.com/releases/bionic/release/
+
 set -e
 
 
@@ -88,7 +90,7 @@ mkdir -p $MOUNT_DIR
 sudo mount -o loop $SRC_IMAGE $MOUNT_DIR
 
 if [ ! -f "$MOUNT_DIR/install/vmlinuz" ]; then
-    echo "Invalid Ubuntu ISO image file. Ubuntu 16.04 Server ISO is required."
+    echo "Invalid Ubuntu ISO image file. Ubuntu 18.04 Server ISO is required."
     umount $MOUNT_DIR
     exit 1
 fi
@@ -141,8 +143,8 @@ chmod 0755 $ROOT_DIR/configure-apt-proxy.sh
 
 
 # change ISO image name
-sed -i "s/Ubuntu-Server/GIS.lab Base System ($ISO_ID)/" $ROOT_DIR/README.diskdefines
-sed -i "s/Ubuntu-Server/GIS.lab Base System ($ISO_ID)/" $ROOT_DIR/.disk/info
+sed -i "s/^#define DISKNAME.*/#define DISKNAME GIS.lab Base System ($ISO_ID)/" $ROOT_DIR/README.diskdefines
+echo "GIS.lab Base System ($ISO_ID)" > $ROOT_DIR/.disk/info
 
 rm -f $ROOT_DIR/isolinux/boot.cat
 
@@ -154,11 +156,11 @@ find -type f -print0 \
 
 cd $WORK_DIR
 
-genisoimage -D -r \
-    -V "GIS.lab Base System" \
-    -cache-inodes \
-    -J -l -b isolinux/isolinux.bin \
-    -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table \
+genisoimage \
+    -D -r -V "GIS.lab Base System" \
+    -cache-inodes -J -l \
+    -b isolinux/isolinux.bin -c isolinux/boot.cat \
+    -no-emul-boot -boot-load-size 4 -boot-info-table \
     -o gislab-base-system-${ISO_ID}.iso root/
 
 # create meta file

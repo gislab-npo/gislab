@@ -7,6 +7,6 @@ Encoding=UTF-8
 [X-GNOME-Metatheme]
 GtkTheme=Greybird
 MetacityTheme=Greybird
-IconTheme=elementary-xfce-dark
-CursorTheme=DMZ-White
+IconTheme=Adwaita
+CursorTheme=Adwaita
 ButtonLayout=:minimize,maximize,close

@@ -33,9 +33,11 @@
     creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
 - name: Fix 'easy-rsa' tools
+  # see https://bugs.launchpad.net/ubuntu/+source/easy-rsa/+bug/1756310
   shell: >
     sed -i 's/^subjectAltName=/#subjectAltName=/'
-    /etc/openvpn/easy-rsa/openssl-1.0.0.cnf
+    /etc/openvpn/easy-rsa/openssl-1.0.0.cnf &&
+    cp /etc/openvpn/easy-rsa/openssl-1.0.0.cnf /etc/openvpn/easy-rsa/openssl.cnf
 
 - name: Create configuration file with filled certificate fields
   template:

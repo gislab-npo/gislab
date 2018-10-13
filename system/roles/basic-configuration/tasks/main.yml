@@ -182,18 +182,19 @@
     state: latest
   with_items:
     - arp-scan
+    - bash-completion
     - emacs-nox
     - etherwake
     - ethtool
     - htop
+    - ifupdown2
     - iotop
     - mc
     - pwgen
     - pssh
     - tmux
+    - ubuntu-fan
     - vim
-    - bash-completion
-    - zip
 
 
 ### MOUNT POINTS
