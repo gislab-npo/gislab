@@ -38,10 +38,10 @@ ROLES=$1
 
 ### VARIABLES
 ansible_cmd="ansible-playbook \
-  --private-key=$(pwd)/.vagrant/machines/gislab_vagrant_bionic/virtualbox/private_key \
+  --private-key=$(pwd)/.vagrant/machines/gislab_vagrant_xenial/virtualbox/private_key \
   --user=vagrant \
   --connection=ssh \
-  --limit=gislab_vagrant_bionic \
+  --limit=gislab_vagrant_xenial \
   --inventory-file=$(pwd)/.vagrant/provisioners/ansible/inventory \
   --verbose"
 
