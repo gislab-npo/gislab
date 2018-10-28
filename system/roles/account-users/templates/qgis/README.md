@@ -25,7 +25,7 @@ favourites=/mnt/home/{+ GISLAB_USER +}/.grassdata, /mnt/home/{+ GISLAB_USER +}/P
 
 [GRASS]
 gidbase\custom=true
-gidbase\customDir=/usr/lib/grass72
+gidbase\customDir=/usr/lib/grass74
 lastGisdbase=/mnt/home/{+ GISLAB_USER +}/.grassdata
 windows\tools\geometry=@ByteArray(\x1\xd9\xd0\xcb\0\x1\0\0\0\0\b\x9d\0\0\0\x91\0\0\n\xee\0\0\x3\x18\0\0\b\x9d\0\0\0\x91\0\0\n\xee\0\0\x3\x18\0\0\0\0\0\0)
 ```
