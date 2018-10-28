@@ -993,12 +993,10 @@
 
 
 ### IMAGE
-# replace by include_task in Ansible 2.4+
-- include: provider-default.yml
+- include_tasks: provider-default.yml
   when: GISLAB_PROVIDER in ('default', 'gislab-unit')
 
-# replace by include_task in Ansible 2.4+
-- include: provider-aws.yml
+- include_tasks: provider-aws.yml
   when: GISLAB_PROVIDER == 'aws'
 
 - name: Publish GIS.lab client build stamp file
