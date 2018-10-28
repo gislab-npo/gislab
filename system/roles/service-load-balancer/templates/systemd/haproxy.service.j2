@@ -17,8 +17,7 @@ ExecStartPre=/bin/bash -c "cat ${CONFIG}.templ > ${CONFIG}; \
                                echo \"    server $c $c:91 check observe layer7  # autodetected by Serf\" >> ${CONFIG}; \
                            done"
 
-ExecStartPre=/usr/sbin/haproxy -f ${CONFIG} -c -q
-ExecStart=/usr/sbin/haproxy-systemd-wrapper -f ${CONFIG} -p /run/haproxy.pid $EXTRAOPTS
+ExecStart=/usr/sbin/haproxy -Ws -f ${CONFIG} -p /run/haproxy.pid $EXTRAOPTS
 
 ExecReload=/bin/bash -c "cat ${CONFIG}.templ > ${CONFIG}; \
                          for c in $($SERF $SERF_ARGS | awk '{print $2}' | awk -F \":\" '{print $1}'); do \
