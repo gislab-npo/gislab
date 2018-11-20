@@ -219,6 +219,7 @@ packages_lab:
   - python-rasterio
   - python-saga
   - python-shapely
+  - python-sklearn
   - pyqt4-dev-tools
   - qgis
   - qgis-plugin-grass
