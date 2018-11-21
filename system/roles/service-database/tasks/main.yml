@@ -17,8 +17,8 @@
     - libpq-dev
     - postgis
     - postgresql
-    - postgresql-10-postgis-2.4
-    - postgresql-10-postgis-2.4-scripts
+    - postgresql-10-postgis-2.5
+    - postgresql-10-postgis-2.5-scripts
     - postgresql-comparator
     - postgresql-contrib
     - python-psycopg2
