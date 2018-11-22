@@ -196,6 +196,7 @@ packages_lab:
   - grass-doc
   - grass-dev
   - ipython
+  - ipython3
   - monteverdi
   - osm2pgrouting
   - osm2pgsql
@@ -208,19 +209,30 @@ packages_lab:
   - postgresql-comparator
   - proj-bin
   - python-fiona
+  - python3-fiona
   - python-gdal
+  - python3-gdal
   - python-otb
+  - python3-otb
   - python-owslib
+  - python3-owslib
   - python-pandas
+  - python3-pandas
   - python-pil
+  - python3-pil
   - python-pip
+  - python3-pip
   - python-pyproj
+  - python3-pyproj
   - python-pysqlite2
   - python-qgis
   - python-rasterio
+  - python3-rasterio
   - python-saga
   - python-shapely
+  - python3-shapely
   - python-sklearn
+  - python3-sklearn
   - pyqt4-dev-tools
   - qgis
   - qgis-plugin-grass
