@@ -229,6 +229,8 @@ packages_lab:
   - python-rasterio
   - python3-rasterio
   - python-saga
+  - python-setuptools
+  - python3-setuptools
   - python-shapely
   - python3-shapely
   - python-sklearn
