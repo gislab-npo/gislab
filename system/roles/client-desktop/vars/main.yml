@@ -214,6 +214,7 @@ packages_lab:
   - python-pandas
   - python-pil
   - python-pip
+  - python-pyproj
   - python-pysqlite2
   - python-qgis
   - python-rasterio
