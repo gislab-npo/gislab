@@ -27,12 +27,20 @@
     executable: /bin/bash
     creates: "{{ GISLAB_PATH_SECRET }}/fullchain.pem"
 
-- name: Install SSL certificate
-  shell: "{{ item }}"
+- name: Create directory for SSL certificates
+  file:
+    path: /etc/letsencrypt/live/server/
+    state: directory
+    mode: 0755
+
+- name: Install SSL certificates
+  copy:
+    src: "{{ GISLAB_PATH_SECRET }}/{{ item }}"
+    dest: "/etc/letsencrypt/live/server/{{ item }}"
+    remote_src: yes
   with_items:
-    - mkdir -p /etc/letsencrypt/live/server/
-    - cp {{ GISLAB_PATH_SECRET }}/privkey.pem /etc/letsencrypt/live/server/privkey.pem
-    - cp {{ GISLAB_PATH_SECRET }}/fullchain.pem /etc/letsencrypt/live/server/fullchain.pem
+    - privkey.pem 
+    - fullchain.pem
 
 
 - name: Create docker directories

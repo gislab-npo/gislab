@@ -156,15 +156,14 @@
 
 - name: Remove not needed packages installed by default
   apt:
-    pkg: "{{ item }}"
+    name:
+      - landscape-client
+      - landscape-common
     state: absent
-  with_items:
-    - landscape-client
-    - landscape-common
 
 - name: Install aptitude which is required for running system upgrade
   apt:
-    pkg: aptitude
+    name: aptitude
     force: yes
     install_recommends: no
     state: latest
@@ -176,25 +175,24 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+      - arp-scan
+      - bash-completion
+      - emacs-nox
+      - etherwake
+      - ethtool
+      - htop
+      - ifupdown2
+      - iotop
+      - mc
+      - pwgen
+      - pssh
+      - tmux
+      - ubuntu-fan
+      - vim
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - arp-scan
-    - bash-completion
-    - emacs-nox
-    - etherwake
-    - ethtool
-    - htop
-    - ifupdown2
-    - iotop
-    - mc
-    - pwgen
-    - pssh
-    - tmux
-    - ubuntu-fan
-    - vim
 
 
 ### MOUNT POINTS
@@ -263,6 +261,8 @@
     - /etc/update-motd.d/*-help-text
     - /etc/update-motd.d/*-cloudguest
     - /etc/update-motd.d/*-release-upgrade
+  args:
+    warn: False
 
 - name: Update MOTD
   command: run-parts /etc/update-motd.d

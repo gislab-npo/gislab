@@ -9,7 +9,19 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+      - auth-client-config
+      - gnutls-bin
+      - ldapscripts
+      - libpam-cracklib
+      - libpam-ldap
+      - ldap-utils
+      - libnss-ldap
+      - members
+      - pwgen
+      - python-ldap
+      - slapd
+      - ssl-cert
     force: yes
     install_recommends: no
     state: latest
@@ -18,19 +30,6 @@
   # installed, change 'use_authtok' option in /etc/pam.d/common-password to
   # 'try_authtok' or remove it, otherwise it will be impossible to change user
   # password using 'passwd' command.
-  with_items:
-    - auth-client-config
-    - gnutls-bin
-    - ldapscripts
-    - libpam-cracklib
-    - libpam-ldap
-    - ldap-utils
-    - libnss-ldap
-    - members
-    - pwgen
-    - python-ldap
-    - slapd
-    - ssl-cert
 
 
 - name: Add 'openldap' user to 'ssl-cert' group
@@ -192,6 +191,8 @@
     - chmod o-r /etc/ssl/private/server_slapd_key.pem
   notify:
     - service slapd restart
+  args:
+    warn: False
 
 - name: Configure server
   template:

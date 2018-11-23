@@ -9,13 +9,12 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+      - easy-rsa
+      - openvpn
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - easy-rsa
-    - openvpn
 
 
 ### CERTIFICATES AND KEYS
@@ -32,12 +31,19 @@
   args:
     creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
+- name: Disable subjectAltName
+  lineinfile:
+    path: /etc/openvpn/easy-rsa/openssl-1.0.0.cnf
+    regexp: '^subjectAltName=(.*)'
+    line: '#subjectAltName=\1'
+    backrefs: yes
+
 - name: Fix 'easy-rsa' tools
-  # see https://bugs.launchpad.net/ubuntu/+source/easy-rsa/+bug/1756310
-  shell: >
-    sed -i 's/^subjectAltName=/#subjectAltName=/'
-    /etc/openvpn/easy-rsa/openssl-1.0.0.cnf &&
-    cp /etc/openvpn/easy-rsa/openssl-1.0.0.cnf /etc/openvpn/easy-rsa/openssl.cnf
+    # see https://bugs.launchpad.net/ubuntu/+source/easy-rsa/+bug/1756310
+  copy:
+    src: /etc/openvpn/easy-rsa/openssl-1.0.0.cnf
+    dest: /etc/openvpn/easy-rsa/openssl.cnf
+    remote_src: yes
 
 - name: Create configuration file with filled certificate fields
   template:

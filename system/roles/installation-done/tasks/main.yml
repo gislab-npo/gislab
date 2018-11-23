@@ -7,7 +7,11 @@
 
 
 - name: Disable Apt cache proxy server
-  shell: sed -i "s/^/# /g" /etc/apt/apt.conf.d/02proxy
+  lineinfile:
+    path: /etc/apt/apt.conf.d/02proxy
+    regexp: '^(.*)'
+    line: '#\1'
+    backrefs: yes
 
 - name: Remove temporary directory for this installation
   file:

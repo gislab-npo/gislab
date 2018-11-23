@@ -9,13 +9,12 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+      - bind9
+      - resolvconf
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - bind9
-    - resolvconf
 
 
 - name: Install DNS server configuration

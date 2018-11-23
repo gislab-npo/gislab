@@ -7,12 +7,11 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+      - logcheck
+      - logcheck-database
     force: yes
     install_recommends: no
-  with_items:
-    - logcheck
-    - logcheck-database
 
 
 - name: Configure logcheck

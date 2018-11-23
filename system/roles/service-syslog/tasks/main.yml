@@ -7,12 +7,10 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name: rsyslog
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - rsyslog
 
 
 - name: Create directory for storing log files

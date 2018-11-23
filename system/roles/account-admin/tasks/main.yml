@@ -14,7 +14,7 @@
   changed_when: False
 
 
-- name: Create GIS.lab administrator user account 'gislab' if doesn't exist
+- name: Create GIS.lab administrator user account 'gislab' if does not exist
   shell: >
     gislab-adduser
     -s
@@ -24,16 +24,24 @@
     gislab
   when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
 
-- name: Install public SSH key for GIS.lab administrator user account 'gislab'
-  shell: "{{ item }}"
-  with_items:
-    - mkdir -p {{ GISLAB_PATH_HOME }}/gislab/.ssh
-    - cp -a
-      /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys
-      {{ GISLAB_PATH_HOME }}/gislab/.ssh/authorized_keys
-    - chmod 700 {{ GISLAB_PATH_HOME }}/gislab/.ssh
-    - chmod 600 {{ GISLAB_PATH_HOME }}/gislab/.ssh/authorized_keys
-    - chown -R gislab:gislabusers {{ GISLAB_PATH_HOME }}/gislab/.ssh
+
+- name: Create SSH directory for GIS.lab administrator user account
+  file:
+    path: "{{ GISLAB_PATH_HOME }}/gislab/.ssh"
+    owner: gislab
+    group: gislabusers
+    mode: 0700
+    state: directory
+  when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
+
+- name: Install public SSH key for GIS.lab administrator user account
+  copy:
+    src: "/home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys"
+    dest: "{{ GISLAB_PATH_HOME }}/gislab/.ssh/"
+    remote_src: yes
+    owner: gislab
+    group: gislabusers
+    mode: 0600
   when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
 
 

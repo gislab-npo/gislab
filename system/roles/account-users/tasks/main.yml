@@ -9,15 +9,13 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name: pwgen
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - pwgen
 
 
-- name: Remove user accounts which doesn't belong to GIS.lab users
+- name: Remove user accounts which does not belong to GIS.lab users
   # Reason of deleting these users is a fact, that some OS images are
   # containing multiple user accounts for provisioning (for example both
   # vagrant and ubuntu) and leaving them can cause security problem.
@@ -224,6 +222,7 @@
     dest: "{{ item.dest }}"
     state: link
     force: yes
+    follow: no
   with_items:
     - {
         src: /mnt/repository,
@@ -244,10 +243,11 @@
     dest: "{{ root_dir }}/skel/Booster"
     state: link
     force: yes
+    follow: no
 
 
 ### STORAGE
-- name: Create home storage for user's accounts
+- name: Create home storage for user\'s accounts
   file:
     path: "{{ GISLAB_PATH_HOME }}"
     state: directory

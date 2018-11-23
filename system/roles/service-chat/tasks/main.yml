@@ -7,13 +7,12 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+      - ircd-hybrid
+      - irssi
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - ircd-hybrid
-    - irssi
 
 
 - name: Configure IRC server

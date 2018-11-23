@@ -9,22 +9,21 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+      - libpq-dev
+      - postgis
+      - postgresql
+      - postgresql-10-postgis-2.5
+      - postgresql-10-postgis-2.5-scripts
+      - postgresql-comparator
+      - postgresql-contrib
+      - python-psycopg2
+      - postgresql-10-pgrouting
+      - osm2pgrouting
+      - gdal-bin
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - libpq-dev
-    - postgis
-    - postgresql
-    - postgresql-10-postgis-2.5
-    - postgresql-10-postgis-2.5-scripts
-    - postgresql-comparator
-    - postgresql-contrib
-    - python-psycopg2
-    - postgresql-10-pgrouting
-    - osm2pgrouting
-    - gdal-bin
 
 
 # version and paths detection

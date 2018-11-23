@@ -9,13 +9,12 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+      - serf
+      - unzip
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - serf
-    - unzip
 
 
 - name: Allow manage cluster only to GIS.lab administrators

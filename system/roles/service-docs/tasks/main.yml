@@ -7,14 +7,13 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+      - make
+      - python-sphinx
+      - python-sphinx-rtd-theme
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - make
-    - python-sphinx
-    - python-sphinx-rtd-theme
 
 
 - name: Download GIS.lab documentation

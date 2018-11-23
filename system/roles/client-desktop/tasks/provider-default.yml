@@ -5,12 +5,10 @@
 
 - name: Install packages (default provider)
   apt:
-    pkg: "{{ item }}"
+    name: squashfs-tools
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - squashfs-tools
 
 
 ### IMAGE

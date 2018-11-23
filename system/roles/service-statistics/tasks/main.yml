@@ -7,13 +7,13 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+    - munin
+    - munin-node
+    - munin-plugins-extra
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - munin
-    - munin-node
 
 
 ### MUNIN
@@ -49,33 +49,36 @@
   notify:
     - service munin-node restart
 
+- name: Remove existing Munin plugins
+  shell: rm -f /etc/munin/plugins/*
+
 - name: Enable only required Munin plugins
-  shell: "{{ item }}"
+  file:
+    src: "/usr/share/munin/plugins/{{ item }}"
+    dest: "/etc/munin/plugins/{{ item }}"
+    state: link
   with_items:
-    - rm -f /etc/munin/plugins/*
-    - ln -fs /usr/share/munin/plugins/cpu /etc/munin/plugins/cpu
-    - ln -fs /usr/share/munin/plugins/cpu_by_process /etc/munin/plugins/cpu_by_process
-    - ln -fs /usr/share/munin/plugins/df /etc/munin/plugins/df
-    - ln -fs /usr/share/munin/plugins/diskstats /etc/munin/plugins/diskstats
-    - ln -fs /usr/share/munin/plugins/iostat /etc/munin/plugins/iostat
-    - ln -fs /usr/share/munin/plugins/iostat_ios /etc/munin/plugins/iostat_ios
-    - ln -fs /usr/share/munin/plugins/load /etc/munin/plugins/load
-    - ln -fs /usr/share/munin/plugins/memory /etc/munin/plugins/memory
-    - ln -fs /usr/share/munin/plugins/multips_memory /etc/munin/plugins/multips_memory
-    - ln -fs /usr/share/munin/plugins/processes /etc/munin/plugins/processes
-    - ln -fs /usr/share/munin/plugins/swap /etc/munin/plugins/swap
-    - ln -fs /usr/share/munin/plugins/uptime /etc/munin/plugins/uptime
-    - ln -fs /usr/share/munin/plugins/vmstat /etc/munin/plugins/vmstat
+    - cpu
+    - cpu_by_process
+    - df
+    - diskstats
+    - iostat
+    - iostat_ios
+    - load
+    - memory
+    - multips_memory
+    - processes
+    - swap
+    - uptime
+    - vmstat
   notify:
     - service munin-node restart
 
 
 - name: Remove unnecessary Munin configuration
   file:
-    path: "{{ item }}"
+    path: /etc/cron.d/munin-node
     state: absent
-  with_items:
-    - /etc/cron.d/munin-node
   notify:
     - service munin-node restart
 

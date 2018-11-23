@@ -11,14 +11,13 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name:
+      - lighttpd
+      - qgis-mapserver
+      - xvfb
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - lighttpd
-    - qgis-mapserver
-    - xvfb
 
 
 # Xvfb

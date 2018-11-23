@@ -7,12 +7,10 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name: nfs-kernel-server
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - nfs-kernel-server
 
 
 ### SHARED DIRECTORIES

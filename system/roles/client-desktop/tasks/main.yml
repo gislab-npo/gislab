@@ -9,12 +9,10 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name: debootstrap
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - debootstrap
 
 
 - name: Create GIS.lab Desktop client root directory
@@ -165,7 +163,7 @@
 
 - name: Activate shared apt cache
   mount:
-    name: "{{ root_dir }}/root/var/cache/apt"
+    path: "{{ root_dir }}/root/var/cache/apt"
     src: "{{ GISLAB_PATH_CACHE }}/packages/apt"
     opts: bind
     state: mounted
@@ -179,11 +177,12 @@
     recurse: yes
 
 - name: Activate shared packages cache
-  command: >
-    mount -o bind
-    {{ GISLAB_PATH_CACHE }}/packages
-    {{ root_dir }}/root{{ GISLAB_PATH_CACHE }}/packages
-
+  mount:
+    path: "{{ root_dir }}/root{{ GISLAB_PATH_CACHE }}/packages"
+    src: "{{ GISLAB_PATH_CACHE }}/packages"
+    opts: bind
+    state: mounted
+    fstype: none
 
 # daemons handling
 - name: Backup original 'start-stop-daemon' binary

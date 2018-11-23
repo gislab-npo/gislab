@@ -7,12 +7,10 @@
 
 - name: Install packages
   apt:
-    pkg: "{{ item }}"
+    name: ntp
     force: yes
     install_recommends: no
     state: latest
-  with_items:
-    - ntp
 
 
 - name: NTP server configuration

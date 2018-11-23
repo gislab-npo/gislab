@@ -5,10 +5,9 @@
 
 - name: Install docker packages
   apt:
-    name: "{{ item }}"
-  with_items:
-    - docker.io
-    - docker-compose
+    name:
+      - docker.io
+      - docker-compose
 
 
 - name: Add provisioning user to the docker group
