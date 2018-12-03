@@ -79,7 +79,7 @@ if [ -f $user_home_dir/.config/user-dirs.dirs ]; then
     exclude=" --exclude=$user_home_dir/$(basename $XDG_DOWNLOAD_DIR)"
 fi
 
-tar -cf $home_backup_file \
+tar -cPf $home_backup_file \
     --exclude="$user_home_dir/.*" \
     --exclude=$user_home_dir/Barrel \
     --exclude=$user_home_dir/Booster \
@@ -89,81 +89,55 @@ tar -cf $home_backup_file \
     $user_home_dir
 
 if ls $user_home_dir/.config/user-dirs.* >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.config/user-dirs.*
+    tar -rPf $home_backup_file $user_home_dir/.config/user-dirs.*
 fi
 
 # .gislab directory
-tar -rf $home_backup_file \
+tar -rPf $home_backup_file \
     --exclude=$user_home_dir/.gislab/session.lock $user_home_dir/.gislab
 
 # BASH
 if ls $user_home_dir/.bash_history >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.bash_history
+    tar -rPf $home_backup_file $user_home_dir/.bash_history
 fi
 
 # FIREFOX
 if ls $user_home_dir/.mozilla/firefox/*.default >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.mozilla/firefox/profiles.ini
-    tar -rf $home_backup_file $user_home_dir/.mozilla/firefox/*.default
+    tar -rPf $home_backup_file $user_home_dir/.mozilla/firefox/profiles.ini
+    tar -rPf $home_backup_file $user_home_dir/.mozilla/firefox/*.default
 fi
 
 # QGIS
 if ls $user_home_dir/.config/QGIS/QGIS2.conf >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.config/QGIS/QGIS2.conf
+    tar -rPf $home_backup_file $user_home_dir/.config/QGIS/QGIS2.conf
 fi
 
 if ls $user_home_dir/.qgis2/*.db >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.qgis2/*.db
+    tar -rPf $home_backup_file $user_home_dir/.qgis2/*.db
 fi
 
 # GRASS
 if ls $user_home_dir/.grass7 >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.grass7
+    tar -rPf $home_backup_file $user_home_dir/.grass7
 fi
 
 if ls $user_home_dir/.grassdata >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.grassdata
+    tar -rPf $home_backup_file $user_home_dir/.grassdata
 fi
 
 bzip2 $home_backup_file
 
 
 # PUBLISHED PROJECTS
-tar -cjf $publish_backup_file /storage/publish/$GISLAB_USER
+tar -cjPf $publish_backup_file /storage/publish/$GISLAB_USER
 
 
 # DATABASE DATA
 cd $tmp_dir # leave root's home dir before sudo to postgres
 
-psql -U postgres -d gislab \
-    -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball;" > /dev/null
-psql -U postgres -d gislab \
-    -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing;" > /dev/null
-
-# include data from GIS.lab Web client only if client is installed
-ball_exist_sql="SELECT 1
-                    FROM information_schema.tables
-                    WHERE table_name = 'storage_ball';"
-
-if [[ $(psql -U postgres -d gislab -tAc "$ball_exist_sql") == "1" ]]; then
-    psql -U postgres -d gislab \
-        -c "CREATE TABLE ${GISLAB_USER}.gislab_ball AS
-                SELECT * FROM storage_ball
-                WHERE \"user\" = '$GISLAB_USER';"
-    psql -U postgres -d gislab \
-        -c "CREATE TABLE ${GISLAB_USER}.gislab_drawing AS
-                SELECT * FROM storage_drawing
-                WHERE \"user\" = '$GISLAB_USER';"
-fi
-
 # backup
 pg_dump -U postgres \
     -Fc --schema=$GISLAB_USER gislab > $db_backup_file
-
-psql -U postgres -d gislab \
-    -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball;" > /dev/null
-psql -U postgres -d gislab \
-    -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing;" > /dev/null
 
 
 # LDAP DATA
