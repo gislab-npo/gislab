@@ -44,22 +44,22 @@ fi
 ### MAIN SCRIPT
 # upgrade server packages
 gislab_info "Upgrading server packages ..."
-apt --assume-yes --force-yes update
-apt --assume-yes --force-yes dist-upgrade
-apt --assume-yes --force-yes autoremove
+apt --assume-yes update
+apt --assume-yes dist-upgrade
+apt --assume-yes autoremove
 
 
 # upgrade client packages
 gislab_info "Upgrading client packages ..."
 
 # detect if there are any upgradeable packages before running upgrade
-gislab-client-shell apt --assume-yes --force-yes update
+gislab-client-shell apt --assume-yes update
 
 packages="$(gislab-client-shell apt-show-versions -u -b 2>/dev/null)"
 if [ -n "$packages" ]; then
     # upgrade client chroot
-    gislab-client-shell apt --assume-yes --force-yes dist-upgrade
-    gislab-client-shell apt --assume-yes --force-yes autoremove
+    gislab-client-shell apt --assume-yes dist-upgrade
+    gislab-client-shell apt --assume-yes autoremove
 
     # rebuild client image
     gislab-client-image
