@@ -74,11 +74,13 @@ mkdir -p $tmp_dir
 
 
 # untar backup file
-tar -C $tmp_dir -xf $opt_backup_file
+tar -C $tmp_dir -xPf $opt_backup_file
 cd $tmp_dir
 
 for file in *.bz2; do
-    tar -xjf $file
+    dir=$(basename ${file%%.tar.bz2})
+    mkdir -p $dir
+    tar -C $tmp_dir/$dir -xjf $file
 done
 
 
@@ -124,10 +126,10 @@ gislab_info "Original password restored from backup"
 
 
 # HOME DATA
-rsync -a storage/home/$user_orig/ $GISLAB_PATH_HOME/$GISLAB_USER/
+rsync -a home/$user_orig/ $GISLAB_PATH_HOME/$GISLAB_USER/
 
-if [ -f storage/home/$user_orig/.config/user-dirs.dirs ]; then
-    source storage/home/$user_orig/.config/user-dirs.dirs
+if [ -f home/$user_orig/.config/user-dirs.dirs ]; then
+    source home/$user_orig/.config/user-dirs.dirs
     mkdir -p $GISLAB_PATH_HOME/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR)
 fi
 
@@ -135,40 +137,12 @@ chown -R $GISLAB_USER:gislabusers $GISLAB_PATH_HOME/$GISLAB_USER
 
 
 # PUBLISHED DATA
-rsync -a storage/publish/$user_orig/ /storage/publish/$GISLAB_USER/
-chown -R $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
+rsync -a publish/$user_orig/ $GISLAB_PATH_PUBLISH/$GISLAB_USER/
+chown -R $GISLAB_USER:www-data $GISLAB_PATH_PUBLISH/$GISLAB_USER
 
 
 # DATABASE DATA
 pg_restore -U postgres -d gislab -n $GISLAB_USER postgresql.dump
-
-# restore data from GIS.lab Web client only if installed and data is present
-# in backup
-ball_exist_src_sql="SELECT 1 FROM information_schema.tables WHERE
-                        table_schema = '${GISLAB_USER}'
-                        AND table_name = 'gislab_ball'"
-ball_exist_dest_sql="SELECT 1 FROM information_schema.tables WHERE
-                        table_name = 'storage_ball'"
-
-if [ "$(psql -U postgres -d gislab -tAc "$ball_exist_src_sql")" == "1" ]; then
-    if [ "$(psql -U postgres -d gislab -tAc "$ball_exist_dest_sql")" == "1" ]; then
-        psql -U postgres -d gislab \
-            -c "INSERT INTO storage_ball
-                    SELECT * FROM ${GISLAB_USER}.gislab_ball;"
-        psql -U postgres -d gislab \
-            -c "INSERT INTO storage_drawing
-                    SELECT * FROM ${GISLAB_USER}.gislab_drawing;"
-    else
-        gislab_warning "
-            GIS.lab Web client is not installed. Skipping data restore
-        "
-    fi
-fi
-
-psql -U postgres -d gislab \
-    -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball" > /dev/null
-psql -U postgres -d gislab \
-    -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing" > /dev/null
 
 
 # clean up

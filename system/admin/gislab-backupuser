@@ -40,7 +40,7 @@ GISLAB_USER=$1
 
 
 ### VARIABLES
-user_home_dir=$GISLAB_PATH_HOME/$GISLAB_USER
+user_home_dir=$GISLAB_USER
 
 date=$(date '+%Y-%m-%d:%H-%M-%S')
 tmp_dir=${opt_backup_dir}/${GISLAB_USER}-${date}.backup
@@ -73,13 +73,15 @@ echo $GISLAB_VERSION > $tmp_dir/GISLAB_VERSION
 
 
 # HOME DIRECTORY
+cd $GISLAB_PATH_HOME
+
 # load home directory names from XDG
 if [ -f $user_home_dir/.config/user-dirs.dirs ]; then
     source $user_home_dir/.config/user-dirs.dirs
     exclude=" --exclude=$user_home_dir/$(basename $XDG_DOWNLOAD_DIR)"
 fi
 
-tar -cPf $home_backup_file \
+tar -C $GISLAB_PATH_HOME -cf $home_backup_file \
     --exclude="$user_home_dir/.*" \
     --exclude=$user_home_dir/Barrel \
     --exclude=$user_home_dir/Booster \
@@ -89,47 +91,48 @@ tar -cPf $home_backup_file \
     $user_home_dir
 
 if ls $user_home_dir/.config/user-dirs.* >/dev/null 2>&1; then
-    tar -rPf $home_backup_file $user_home_dir/.config/user-dirs.*
+    tar -rf $home_backup_file $user_home_dir/.config/user-dirs.*
 fi
 
 # .gislab directory
-tar -rPf $home_backup_file \
-    --exclude=$user_home_dir/.gislab/session.lock $user_home_dir/.gislab
+tar -rf $home_backup_file \
+    --exclude=$user_home_dir/.gislab/session.lock \
+    $user_home_dir/.gislab
 
 # BASH
 if ls $user_home_dir/.bash_history >/dev/null 2>&1; then
-    tar -rPf $home_backup_file $user_home_dir/.bash_history
+    tar -rf $home_backup_file $user_home_dir/.bash_history
 fi
 
 # FIREFOX
 if ls $user_home_dir/.mozilla/firefox/*.default >/dev/null 2>&1; then
-    tar -rPf $home_backup_file $user_home_dir/.mozilla/firefox/profiles.ini
-    tar -rPf $home_backup_file $user_home_dir/.mozilla/firefox/*.default
+    tar -rf $home_backup_file $user_home_dir/.mozilla/firefox/profiles.ini
+    tar -rf $home_backup_file $user_home_dir/.mozilla/firefox/*.default
 fi
 
 # QGIS
 if ls $user_home_dir/.config/QGIS/QGIS2.conf >/dev/null 2>&1; then
-    tar -rPf $home_backup_file $user_home_dir/.config/QGIS/QGIS2.conf
+    tar -rf $home_backup_file $user_home_dir/.config/QGIS/QGIS2.conf
 fi
 
 if ls $user_home_dir/.qgis2/*.db >/dev/null 2>&1; then
-    tar -rPf $home_backup_file $user_home_dir/.qgis2/*.db
+    tar -rf $home_backup_file $user_home_dir/.qgis2/*.db
 fi
 
 # GRASS
 if ls $user_home_dir/.grass7 >/dev/null 2>&1; then
-    tar -rPf $home_backup_file $user_home_dir/.grass7
+    tar -rf $home_backup_file $user_home_dir/.grass7
 fi
 
 if ls $user_home_dir/.grassdata >/dev/null 2>&1; then
-    tar -rPf $home_backup_file $user_home_dir/.grassdata
+    tar -rf $home_backup_file $user_home_dir/.grassdata
 fi
 
 bzip2 $home_backup_file
 
 
 # PUBLISHED PROJECTS
-tar -cjPf $publish_backup_file /storage/publish/$GISLAB_USER
+tar -C $GISLAB_PATH_PUBLISH -cjf $publish_backup_file $GISLAB_USER
 
 
 # DATABASE DATA
