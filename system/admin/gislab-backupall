@@ -17,6 +17,7 @@ function usage() {
     echo "Backup all GIS.lab user's accounts and system files."
     echo -e "\nOPTIONS
     -d backup directory (optional, default: /storage/backup)
+    -g backup only members of group
     -h display this help
     "
     exit 255
@@ -26,10 +27,11 @@ function usage() {
 ### OPTIONS
 opt_backup_dir="$GISLAB_PATH_BACKUP"
 
-while getopts "d:h" OPTION
+while getopts "d:g:h" OPTION
 do
     case "$OPTION" in
         d) opt_backup_dir="$OPTARG" ;;
+        g) opt_group="$OPTARG" ;;
         h) usage ;;
         \?) exit 1 ;;
     esac
@@ -40,8 +42,11 @@ done
 date=$(date '+%Y-%m-%d:%H-%M-%S')
 tmp_dir=${opt_backup_dir}/${GISLAB_UNIQUE_ID}-${date}.backup
 system_backup_file=$opt_backup_dir/$GISLAB_UNIQUE_ID-$date.tar
-lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
-
+if [ -n "$opt_group" ]; then
+    listusers="gislab-listusers -g $opt_group"
+else
+    listusers="gislab-listusers"
+fi
 
 ## MAIN SCRIPT
 mkdir -p $opt_backup_dir
@@ -51,9 +56,8 @@ mkdir -p $tmp_dir
 
 
 # backup all user accounts
-for user in \
-        $($lds "(objectClass=posixAccount)" uid \
-        | awk '/^uid: / { print $2 }'); do
+for user in $($listusers | awk '/^uid: / { print $2 }'); do
+    gislab_info "Processing '$user' user.."
     gislab-backupuser -d $opt_backup_dir $user
 done
 
