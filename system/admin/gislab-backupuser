@@ -42,7 +42,7 @@ GISLAB_USER=$1
 ### VARIABLES
 user_home_dir=$GISLAB_USER
 
-date=$(date '+%Y-%m-%d:%H-%M-%S')
+date=$(date '+%Y-%m-%d-%H-%M-%S')
 tmp_dir=${opt_backup_dir}/${GISLAB_USER}-${date}.backup
 
 home_backup_file=$tmp_dir/home.tar
