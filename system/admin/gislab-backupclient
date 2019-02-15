@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -e
+
+source /etc/gislab_version
+source $GISLAB_ROOT/system/functions.sh
+
+
+# require root privileges
+gislab_require_root
+
+
+### USAGE
+function usage() {
+    echo "USAGE: $(basename $0)"
+    echo "Backup GIS.lab client's root and image."
+    echo -e "\nOPTIONS
+    -d backup directory (optional, default: /storage/backup)
+    -h display this help
+    "
+    exit 255
+}
+
+
+### OPTIONS
+opt_backup_dir="$GISLAB_PATH_BACKUP"
+
+while getopts "d:h" OPTION
+do
+    case "$OPTION" in
+        d) opt_backup_dir="$OPTARG" ;;
+        h) usage ;;
+        \?) exit 1 ;;
+    esac
+done
+
+### VARIABLES
+date=$(date '+%Y-%m-%d-%H-%M-%S')
+
+# backup client root
+backup_root=${opt_backup_dir}/client-desktop-root-${date}.tar.bz2
+gislab_info "Processing client's root..."
+tar -C / -cjf $backup_root opt/gislab/system/clients/desktop/root
+gislab_success "Backup of client root created in '$backup_root'"
+
+# backup client image
+gislab_info "Processing client's image..."
+backup_image=${opt_backup_dir}/client-desktop-image-${date}
+cp -a /opt/gislab/system/clients/desktop/image \
+   $backup_image
+gislab_success "Backup of client image created in '$backup_image'"
+
+### CONFIRMATION MESSAGE
+
+# vim: set ts=8 sts=4 sw=4 et:
