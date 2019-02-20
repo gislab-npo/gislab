@@ -44,6 +44,22 @@
     mode: 0600
   when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
 
+# note: openssh_keypair is new in Ansible 2.8+
+- name: Generate OpenSSH private and public keys for GIS.lab administrator user account
+  shell: >
+    ssh-keygen
+    -t rsa
+    -f "{{ GISLAB_PATH_HOME }}/gislab/.ssh/id_rsa"
+    -P ''
+  when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
+
+# note: assume to replace code below by authorized_key + remote file
+- name: Update authorized key to include self-generated OpenSSH key
+  shell: >
+    cat "{{ GISLAB_PATH_HOME }}/gislab/.ssh/id_rsa.pub" >>
+    "{{ GISLAB_PATH_HOME }}/gislab/.ssh/authorized_keys"
+  when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
+
 
 - name: Update password of GIS.lab administrator user account 'gislab'
   shell: >
