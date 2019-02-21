@@ -190,6 +190,7 @@
       - tmux
       - ubuntu-fan
       - vim
+      - zip
     force: yes
     install_recommends: no
     state: latest
