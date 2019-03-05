@@ -225,7 +225,7 @@ packages_lab:
   - python-pyproj
   - python3-pyproj
   - python-pysqlite2
-  - python-qgis
+  - python3-qgis
   - python-rasterio
   - python3-rasterio
   - python-saga
@@ -255,7 +255,7 @@ packages_worker:
   # OWS worker packages
   - lighttpd
   - python-gdal
-  - python-qgis
+  - python3-qgis
   - qgis
   - qgis-server
   - xvfb
