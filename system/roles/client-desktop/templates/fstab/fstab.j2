@@ -1,6 +1,6 @@
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 proc            /proc           proc    nodev,noexec,nosuid              0   0
-tmpfs           /mnt/booster    tmpfs   defaults,noatime,noexec,size=50% 0   0
+tmpfs           /mnt/booster    tmpfs   defaults,noatime,exec,size=50%   0   0
 
 # NFS
 server.gis.lab:{{ GISLAB_PATH_HOME }}                /mnt/home        nfs  defaults  0  0
