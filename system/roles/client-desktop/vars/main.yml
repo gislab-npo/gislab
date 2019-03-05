@@ -257,7 +257,7 @@ packages_worker:
   - python-gdal
   - python-qgis
   - qgis
-  - qgis-mapserver
+  - qgis-server
   - xvfb
 
 
