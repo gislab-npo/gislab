@@ -235,7 +235,6 @@ packages_lab:
   - python3-shapely
   - python-sklearn
   - python3-sklearn
-  - pyqt4-dev-tools
   - pyqt5-dev-tools
   - qgis
   - qgis-plugin-grass
