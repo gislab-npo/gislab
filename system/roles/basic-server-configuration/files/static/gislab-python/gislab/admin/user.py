@@ -38,7 +38,7 @@ class GISLabUser(object):
 			"""
 			type.__init__(cls, name, bases, d)
 			
-			cls._hooks = os.path.join('/', 'opt', 'gislab', 'system', 'account', 'hooks')
+			cls._hooks = os.path.join('/', 'opt', 'gislab', 'system', 'accounts', 'hooks')
 
 			cls.ldap = None
 			
@@ -48,7 +48,7 @@ class GISLabUser(object):
 				cls.ldap = ldap.initialize('ldapi:///')
 				cls.ldap.protocol_version = ldap.VERSION3
 				cls.ldap.simple_bind_s('cn=admin,{0}'.format(cls.ldap_base),
-						       open('/etc/gislab/gislab_ldap_admin_password.txt').read().rstrip('\n'))
+						       open('/opt/gislab/secret/gislab_ldap_admin_password.txt').read().rstrip('\n'))
 				if cls.ldap is None:
 					raise GISLabAdminError()
 			except ldap.LDAPError as e:
