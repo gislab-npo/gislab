@@ -1,1 +1,0 @@
-gislab-unit ansible_ssh_host=<gislab-unit-ip-address> ansible_ssh_user=ubuntu

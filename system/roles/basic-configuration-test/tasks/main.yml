@@ -1,0 +1,462 @@
+---
+
+- name: Get value of GISLAB_ROOT variable
+  shell: echo $GISLAB_ROOT
+  register: test_gislab_root
+  changed_when: False
+
+- name: Test value of GISLAB_ROOT variable
+  assert:
+    that:
+      test_gislab_root.stdout == '/opt/gislab'
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Get GIS.lab server FQDN
+  shell: hostname --fqdn
+  register: test_server_hostname
+  changed_when: False
+
+- name: Test GIS.lab server FQDN
+  assert:
+    that:
+      test_server_hostname.stdout == 'server.gis.lab'
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Test if GIS.lab server network IP address is assigned
+  shell: ip addr show | grep "inet {{ GISLAB_NETWORK }}.5/24"
+  ignore_errors: yes
+  changed_when: False
+
+
+### ADMIN TOOLS
+- name: Test if GIS.lab administrator tools are on path
+  shell: which gislab-help
+  ignore_errors: yes
+  changed_when: False
+
+
+### gislab-addgroup
+- name: Create test user group
+  shell: >
+    gislab-addgroup
+    -d "Test user group"
+    testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if test user group exists in LDAP database
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    '(&(cn=testgroup{{ GISLAB_TEST_UNIQUE_STRING }})(gidNumber>=3000)(description=Test user group))'
+    | grep testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if creating existing group will be correctly denied
+  shell: >
+    gislab-addgroup
+    -d "Test user group"
+    testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+    | grep "Group 'testgroup{{ GISLAB_TEST_UNIQUE_STRING }}' already exists"
+  ignore_errors: yes
+  changed_when: False
+
+
+### gislab-adduser
+# ordinary user account
+- name: Create ordinary test user account
+  shell: >
+    gislab-adduser
+    -g Test
+    -l User
+    -d "Test user account"
+    -m test{{ GISLAB_TEST_UNIQUE_STRING }}@gis.lab
+    -p {{ GISLAB_TEST_UNIQUE_STRING }}
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if ordinary test user account exists in LDAP database
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    '(&(uid=test{{ GISLAB_TEST_UNIQUE_STRING }})(uidNumber>=3000)(gidNumber=3001)(homeDirectory=/mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }})(description=Test user account))'
+    | grep test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if creating existing user account will be correctly denied
+  shell: >
+    gislab-adduser
+    -g Test
+    -l User
+    -d "Test user account"
+    -m test{{ GISLAB_TEST_UNIQUE_STRING }}@gis.lab
+    -p {{ GISLAB_TEST_UNIQUE_STRING }}
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+    | grep "User 'test{{ GISLAB_TEST_UNIQUE_STRING }}' already exists"
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Get info on home directory of ordinary test user
+  stat:
+    path: /mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }}
+  register: test_user_home_dir
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if home directory of ordinary test user exists and is a directory
+  assert:
+    that:
+      test_user_home_dir.stat.isdir is defined
+      and
+      test_user_home_dir.stat.isdir
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Test if ordinary test user account exists in PostgreSQL
+  shell: >
+    psql
+    -U postgres
+    -tAc "SELECT 1 FROM pg_roles WHERE rolname='test{{ GISLAB_TEST_UNIQUE_STRING }}'"
+    | grep 1
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if PostgreSQL ordinary test user is a member of gislabusers group
+  shell: >
+    psql
+    -U postgres
+    -tAc "SELECT string_agg(rolname, ',')
+    FROM pg_user JOIN pg_auth_members
+    ON (pg_user.usesysid=pg_auth_members.member)
+    JOIN pg_roles ON (pg_roles.oid=pg_auth_members.roleid)
+    WHERE pg_user.usename='test{{ GISLAB_TEST_UNIQUE_STRING }}'"
+    | grep gislabusers
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if PostgreSQL schema exists for ordinary test user
+  shell: >
+    psql
+    -U postgres
+    -d gislab
+    -tAc "SELECT 1
+    FROM information_schema.schemata
+    WHERE schema_name='test{{ GISLAB_TEST_UNIQUE_STRING }}'"
+    | grep 1
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Get info on publish directory of ordinary test user
+  stat:
+    path: /storage/publish/test{{ GISLAB_TEST_UNIQUE_STRING }}
+  register: test_user_publish_dir
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Test if publish directory of ordinary test user exists and is a directory
+  assert:
+    that:
+      test_user_publish_dir.stat.isdir is defined
+      and
+      test_user_publish_dir.stat.isdir
+  ignore_errors: yes
+  changed_when: False
+
+
+# superuser account
+- name: Create superuser test user account
+  shell: >
+    gislab-adduser
+    -s
+    -g Test
+    -l SuperUser
+    -d "Test superuser account"
+    -m testsu{{ GISLAB_TEST_UNIQUE_STRING }}@gis.lab
+    -p {{ GISLAB_TEST_UNIQUE_STRING }}
+    testsu{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if test superuser is member of GIS.lab gislabadmins group
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    '(&(objectClass=posixGroup)(cn=gislabadmins)(gidNumber=3000)(memberUid=testsu{{ GISLAB_TEST_UNIQUE_STRING }}))'
+    | grep testsu{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if PostgreSQL test superuser is a member of gislabadmins group
+  shell: >
+    psql
+    -U postgres
+    -tAc "SELECT 1
+    FROM pg_user
+    JOIN pg_auth_members ON (pg_user.usesysid=pg_auth_members.member)
+    JOIN pg_roles ON (pg_roles.oid=pg_auth_members.roleid)
+    WHERE pg_user.usename='testsu{{ GISLAB_TEST_UNIQUE_STRING }}'
+    AND rolname='gislabadmins'"
+    | grep 1
+  ignore_errors: yes
+  changed_when: False
+
+
+### gislab-moduser
+# password
+- name: Change password of ordinary test user
+  shell: >
+    gislab-moduser
+    -p test
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Change password of ordinary test user to previous value
+  # must use /bin/bash, otherwise 'echo -e' was not working
+  shell: >
+    echo -e "test\n{{ GISLAB_TEST_UNIQUE_STRING }}\n{{ GISLAB_TEST_UNIQUE_STRING }}"
+    | passwd test{{ GISLAB_TEST_UNIQUE_STRING }}
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+
+# groups
+- name: Add ordinary user to supplementary test user group
+  shell: >
+    gislab-moduser
+    -a testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if ordinary user is member of test user group
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "(&(objectClass=posixGroup)(cn=testgroup{{ GISLAB_TEST_UNIQUE_STRING }})(memberUid=test{{ GISLAB_TEST_UNIQUE_STRING }}))"
+    | grep '^memberUid: test{{ GISLAB_TEST_UNIQUE_STRING }}$'
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Remove ordinary user from supplementary test user group
+  shell: >
+    gislab-moduser
+    -A testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if ordinary user was removed from supplementary test user group
+  shell: >
+    ! ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "(&(objectClass=posixGroup)(cn=testgroup{{ GISLAB_TEST_UNIQUE_STRING }})(memberUid=test{{ GISLAB_TEST_UNIQUE_STRING }}))"
+    | grep '^memberUid: test{{ GISLAB_TEST_UNIQUE_STRING }}$'
+  ignore_errors: yes
+  changed_when: False
+
+
+# superuser's group
+- name: Add ordinary user to superuser's group
+  shell: >
+    gislab-moduser -s test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if ordinary user was added to superuser's group
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=test{{ GISLAB_TEST_UNIQUE_STRING }}))"
+    | grep '^memberUid: test{{ GISLAB_TEST_UNIQUE_STRING }}'
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if adding ordinary user again to superuser's group will be correctly denied
+  shell: >
+    gislab-moduser -s test{{ GISLAB_TEST_UNIQUE_STRING }}
+    | grep "User 'test{{ GISLAB_TEST_UNIQUE_STRING }}' is already member of a superuser's group"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Remove ordinary user from superuser's group
+  shell: >
+    gislab-moduser -S test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if removing ordinary user again from superuser's group will be correctly denied
+  shell: >
+    gislab-moduser -S test{{ GISLAB_TEST_UNIQUE_STRING }}
+    | grep "User 'test{{ GISLAB_TEST_UNIQUE_STRING }}' is not a member of a superuser's group"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if ordinary user was removed from superuser's group
+  shell: >
+    ! ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=test{{ GISLAB_TEST_UNIQUE_STRING }}))"
+    | grep '^memberUid: test{{ GISLAB_TEST_UNIQUE_STRING }}'
+  ignore_errors: yes
+  changed_when: False
+
+
+# email
+- name: Change user email
+  shell: >
+    gislab-moduser
+    -m test{{ GISLAB_TEST_UNIQUE_STRING }}@test.lab
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if user email has been changed
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "uid=test{{ GISLAB_TEST_UNIQUE_STRING }}" mail
+    | grep -q 'test{{ GISLAB_TEST_UNIQUE_STRING }}@test.lab'
+  ignore_errors: yes
+  changed_when: False
+
+
+# description
+- name: Change ordinary user description
+  shell: >
+    gislab-moduser
+    -d "Test user account {{ GISLAB_TEST_UNIQUE_STRING }}"
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if user description has been changed
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    "(&(objectClass=posixAccount)(uid=test{{ GISLAB_TEST_UNIQUE_STRING }}))" description
+    | grep '^description: Test user account {{ GISLAB_TEST_UNIQUE_STRING }}$'
+  ignore_errors: yes
+  changed_when: False
+
+
+### gislab-backupuser|restoreuser
+- name: Create test files in user's directories
+  shell: touch {{ item }}
+  with_items:
+    - /mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }}/test.txt
+    - /mnt/publish/test{{ GISLAB_TEST_UNIQUE_STRING }}/test.txt
+  ignore_errors: yes
+  changed_when: False
+
+- name: Backup test user account
+  shell: >
+    gislab-backupuser
+    -d {{ GISLAB_PATH_TMP }}/backupuser
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Restore test user account
+  shell: >
+    gislab-deluser
+    -f test{{ GISLAB_TEST_UNIQUE_STRING }}
+    &&
+    gislab-restoreuser
+    -f {{ GISLAB_PATH_TMP }}/backupuser/$(ls -1 {{ GISLAB_PATH_TMP }}/backupuser)
+    test{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if test user's file data is restored
+  shell: file {{ item }}
+  with_items:
+    - /mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }}/.config/QGIS/QGIS2.conf
+    - /mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }}/.grass7
+    - /mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }}/test.txt
+    - /mnt/publish/test{{ GISLAB_TEST_UNIQUE_STRING }}/test.txt
+  ignore_errors: yes
+  changed_when: False
+
+
+### gislab-listusers|groups
+- name: Test 'gislab-listusers' admin tool
+  shell: >
+    gislab-listusers
+    | grep 'dn: uid=test{{ GISLAB_TEST_UNIQUE_STRING }},ou=People,dc=gis,dc=lab'
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test 'gislab-listgroups' admin tool
+  shell: >
+    gislab-listgroups
+    | grep 'dn: cn=testgroup{{ GISLAB_TEST_UNIQUE_STRING }},ou=Groups,dc=gis,dc=lab'
+  ignore_errors: yes
+  changed_when: False
+
+
+### gislab-machines
+- name: Add machines
+  shell: >
+    gislab-machines
+    -a 08:00:27:19:fc:b3,08:00:27:da:db:07
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test if machines are correctly added
+  shell: grep "{{ item }}" /etc/dhcp/gislab_known_machines.conf
+  with_items:
+    - "hardware ethernet 08:00:27:19:fc:b3;"
+    - "hardware ethernet 08:00:27:da:db:07;"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Remove machines
+  shell: >
+    gislab-machines
+    -r 08:00:27:19:fc:b3,08:00:27:da:db:07
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Test if invalid MAC address correctly denied
+  shell: >
+    gislab-machines
+    -a {{ item }}
+    | grep "Invalid MAC format ({{ item }})."
+  with_items:
+    - 08-00-27-19-fc-b3
+    - 08002719fcb3
+    - 08:00:27:19:fc
+    - 08:00:27:19:fc:b3:b3
+  ignore_errors: yes
+  changed_when: False
+
+
+# gislab-client-shell
+- name: Test running chroot detection command in desktop client's chroot
+  shell: gislab-client-shell ischroot
+  ignore_errors: yes
+  changed_when: False
+
+
+### FINAL CLEANUP
+- name: Remove test users accounts
+  shell: gislab-deluser -f "{{ item }}"
+  with_items:
+    - test{{ GISLAB_TEST_UNIQUE_STRING }}
+    - testsu{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+- name: Remove test user group
+  shell: gislab-delgroup -f testgroup{{ GISLAB_TEST_UNIQUE_STRING }}
+  ignore_errors: yes
+  changed_when: False
+
+# vim: set ts=8 sts=2 sw=2 et:

@@ -1,19 +1,21 @@
 #!/bin/bash
 # Open GIS.lab documentation
 
-# TODO: uncomment lines below once documentation will be ready. Until then open wiki page which should be always valid
-# for development version
-firefox "https://github.com/imincik/gis-lab/wiki/GIS-Project" &
-
 #source /etc/gislab_version
-#ROOT_URL="http://imincik.github.io/gis-lab-doc"
-#LANGUAGE="en"
+if [ -z "$1" ]; then
+    html="gislab"
+else
+    html="$1"
+fi
+ROOT_URL="http://server/docs/${html}"
 
-#if [[ "$GISLAB_VERSION" =~ ^dev.* ]]; then
-#	firefox "$ROOT_URL/dev/$LANGUAGE/docs/$1" &
-#else
-#	VERSION=$(echo $GISLAB_VERSION | awk -F '.' '{print $1 "." $2}')
-#	firefox "$ROOT_URL/$VERSION/$LANGUAGE/docs/$1" &
-#fi
+firefox "$ROOT_URL" &
+
+# TODO: uncomment lines below once documentation will be finished and
+# localized. Until then latest English version should be always valid
+# if [[ "$GISLAB_VERSION" =~ ^dev.* ]]; then firefox
+# "$ROOT_URL/$LANGUAGE/latest" & else VERSION=$(echo $GISLAB_VERSION |
+# awk -F '.' '{print $1 "." $2}') firefox
+# "$ROOT_URL/$LANGUAGE/$VERSION" & fi
 
 # vim: set ts=4 sts=4 sw=4 noet:

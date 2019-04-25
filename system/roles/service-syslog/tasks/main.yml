@@ -6,33 +6,67 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
-  with_items:
-    - rsyslog
+  apt:
+    name: rsyslog
+    force: yes
+    install_recommends: no
+    state: latest
 
 
 - name: Create directory for storing log files
-  file: path=/storage/log state=directory owner=root group=root
+  file:
+    path: "{{ GISLAB_PATH_LOG }}"
+    state: directory
+
+- name: Create empty log files with proper ownership and permissions
+  file:
+    path: "{{ item }}"
+    owner: syslog
+    group: adm
+    mode: 0640
+    state: touch
+  with_items:
+    - "{{ GISLAB_PATH_LOG }}/syslog"
+    - "{{ GISLAB_PATH_LOG }}/kern.log"
 
 - name: Install rsyslog configuration
-  template: src={{ item.src }} dest={{ item.dest }}
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - { src: 'rsyslog/rsyslog.conf.j2', dest: '/etc/rsyslog.conf' }
-    - { src: 'rsyslog/50-default.conf.j2', dest: '/etc/rsyslog.d/50-default.conf' }
+    - {
+        src: 'rsyslog/rsyslog.conf.j2',
+        dest: '/etc/rsyslog.conf'
+      }
+    - {
+        src: 'rsyslog/50-default.conf.j2',
+        dest: '/etc/rsyslog.d/50-default.conf'
+      }
   notify:
     - service rsyslog restart
 
 - name: Remove old log files
-  file: path="{{ item }}" state=absent
+  file:
+    path: "{{ item }}"
+    state: absent
   with_items:
     - /var/log/syslog
     - /var/log/kern.log
 
+- name: Symlink syslog file to /var/log directory
+  file:
+    src: "{{ GISLAB_PATH_LOG }}/syslog"
+    dest: /var/log/syslog
+    state: link
+    force: yes
+
 
 - name: Install logrotate configuration
-  template: src=logrotate/rsyslog.j2 dest=/etc/logrotate.d/rsyslog
+  template:
+    src: logrotate/rsyslog.j2
+    dest: /etc/logrotate.d/rsyslog
 
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

@@ -1,0 +1,197 @@
+#!/bin/bash
+
+source /etc/gislab_version
+source $GISLAB_ROOT/system/functions.sh
+
+
+# require root privileges
+gislab_require_root
+
+
+### USAGE
+function usage() {
+    echo "USAGE: $(basename $0) [ -h ] [ COMMAND ]"
+    echo "Control GIS.lab network services."
+    echo -e "\nOPTIONS
+    -h display this help
+    "
+
+    echo -e "COMMAND
+    start   - start GIS.lab network services
+    stop    - stop GIS.lab network services
+    enable  - start GIS.lab network services on system boot
+    disable - stop GIS.lab network services on system boot 
+    status  - show GIS.lab network services status
+    "
+    exit 255
+}
+
+
+### OPTIONS
+while getopts "h" OPTION
+do
+        case "$OPTION" in
+            h) usage ;;
+            \?) exit 1;;
+        esac
+done
+
+
+### FUNCTIONS
+start_network() {
+    local retval=0
+
+    gislab_info "Starting connection forwarding service"
+    systemctl start gislab-connection-forwarding.service
+    retval=$?
+
+    gislab_info "Starting DNS service"
+    systemctl start bind9.service
+    sleep .5
+    systemctl --quiet is-active bind9.service
+    retval=$(($retval + $?))
+
+    gislab_info "Starting DHCP service"
+    systemctl start isc-dhcp-server.service
+    sleep .5
+    systemctl --quiet is-active isc-dhcp-server.service
+    retval=$(($retval + $?))
+
+    return $retval
+}
+
+stop_network() {
+    local retval=0
+
+    gislab_info "Stopping DHCP service"
+    systemctl stop isc-dhcp-server.service
+    retval=$?
+
+    gislab_info "Stopping DNS service"
+    systemctl stop bind9.service
+    retval=$(($retval + $?))
+
+    gislab_info "Stopping connection forwarding service"
+    systemctl stop gislab-connection-forwarding.service
+    retval=$(($retval + $?))
+
+    return $retval
+}
+
+enable_network() {
+    local retval=0
+
+    gislab_info "Enabling connection forwarding service"
+    systemctl enable gislab-connection-forwarding.service
+    retval=$?
+
+    gislab_info "Enabling DNS service"
+    systemctl enable bind9.service
+    retval=$(($retval + $?))
+
+    gislab_info "Enabling DHCP service"
+    systemctl enable isc-dhcp-server.service
+    retval=$(($retval + $?))
+
+    return $retval
+}
+
+disable_network() {
+    local retval=0
+
+    gislab_info "Disabling connection forwarding service"
+    systemctl disable gislab-connection-forwarding.service
+    retval=$?
+
+    gislab_info "Disabling DNS service"
+    systemctl disable bind9.service
+    retval=$(($retval + $?))
+
+    gislab_info "Disabling DHCP service"
+    systemctl disable isc-dhcp-server.service
+    retval=$(($retval + $?))
+
+    return $retval
+}
+
+show_status() {
+    local state=""
+    local status=""
+
+    state=`systemctl is-enabled gislab-connection-forwarding.service 2>&1`
+    status=`systemctl is-active gislab-connection-forwarding.service 2>&1`
+
+    if [ "$status" = "inactive" -o "$status" = "active" ]; then
+        gislab_info "Connection forwarding service is $state and $status"
+    else
+        gislab_error "Connection forwarding service is $state and $status"
+    fi
+
+    state=`systemctl is-enabled bind9.service 2>&1`
+    status=`systemctl is-active bind9.service 2>&1`
+
+    if [ "$status" = "inactive" -o "$status" = "active" ]; then
+        gislab_info "DNS service is $state and $status"
+    else
+        gislab_error "DNS service is $state and $status"
+    fi
+
+    state=`systemctl is-enabled isc-dhcp-server.service  2>&1`
+    status=`systemctl is-active isc-dhcp-server.service  2>&1`
+
+    if [ "$status" = "inactive" -o "$status" = "active" ]; then
+        gislab_info "DHCP service is $state and $status"
+    else
+        gislab_error "DHCP service is $state and $status"
+    fi
+}
+
+
+command=$1
+
+case "$command" in
+    start)
+        start_network
+
+        if [ $? -eq 0 ]; then
+            gislab_success "Network services start successfully"
+        else
+           gislab_error "Network services start failed"
+        fi
+    ;;
+    stop)
+        stop_network
+
+        if [ $? -eq 0 ]; then
+            gislab_success "Network services stop successfully"
+        else
+           gislab_error "Network services stop failed"
+        fi
+    ;;
+    enable)
+        enable_network
+
+        if [ $? -eq 0 ]; then
+            gislab_success "Network services enabled successfully"
+        else
+           gislab_error "Network services enable failed"
+        fi
+    ;;
+    disable)
+        disable_network
+
+        if [ $? -eq 0 ]; then
+            gislab_success "Network services disabled successfully"
+        else
+            gislab_error "Network services disable failed"
+        fi
+    ;;
+    status)
+        show_status
+    ;;
+    *)
+        usage
+    ;;
+esac
+        
+# vim: set ts=8 sts=4 sw=4 et:

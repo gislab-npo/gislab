@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e
+
+source /etc/gislab_version
+source $GISLAB_ROOT/system/functions.sh
+
+
+# require root privileges
+gislab_require_root
+
+
+### USAGE
+function usage() {
+    echo "USAGE: $(basename $0) [OPTIONS]"
+    echo "List GIS.lab groups."
+    echo -e "\nOPTIONS
+    -h display this help
+    "
+    exit 255
+}
+
+
+### OPTIONS
+while getopts "h" OPTION
+do
+        case "$OPTION" in
+            h) usage ;;
+            \?) exit 1;;
+        esac
+done
+
+
+### MAIN SCRIPT
+# list GIS.lab groups
+lsldap -g
+
+# vim: set ts=8 sts=4 sw=4 et:

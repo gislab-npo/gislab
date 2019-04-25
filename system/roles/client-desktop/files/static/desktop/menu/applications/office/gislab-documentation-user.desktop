@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=User Manual
-Comment=GIS.lab user manual
-Exec=/usr/local/bin/gislab-documentation user_manual
+Name=GIS.lab User Manual
+Comment=GIS.lab user manual documentation
+Exec=/usr/local/bin/gislab-documentation gislab/client-layout/index.html
 Icon=
 Path=
 Terminal=false

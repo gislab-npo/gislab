@@ -1,0 +1,6 @@
+---
+
+docker_dir: /opt/gislab/system/docker
+docker_pip_dependencies: []
+
+# vim: set ts=8 sts=2 sw=2 et:

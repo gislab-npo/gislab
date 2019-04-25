@@ -1,0 +1,4 @@
+---
+
+mapserver_url: http://server.gis.lab:91/cgi-bin/qgis_mapserv.fcgi
+qgs_project: test_mapserver_{{ GISLAB_TEST_UNIQUE_STRING }}/natural-earth/central-europe.qgs

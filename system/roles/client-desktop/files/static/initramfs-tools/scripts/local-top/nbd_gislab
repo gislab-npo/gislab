@@ -1,9 +1,32 @@
 #!/bin/sh
 
+PREREQ="nbd"
+
+prereqs()
+{
+    echo "$PREREQ"
+}
+
+case "$1" in
+    prereqs)
+        prereqs
+        exit 0
+        ;;
+esac
+
 # Work around LP bug #696435
 if [ "$ROOT" = /dev/nbd0 ] && [ -z "$FSTYPE" ]; then
     FSTYPE=$(blkid -s TYPE -o value "${ROOT}")
-    if [ -n "$FSTYPE" ]; then
-        echo "FSTYPE='$FSTYPE'" > /conf/param.conf
+    if [ -n "$FSTYPE" ] && [ -d /lib/udev/rules.d ]; then
+        cat >> /lib/udev/rules.d/60-persistent-storage-nbd.rules <<EOF
+KERNEL=="nbd0", ENV{ID_FS_TYPE}="$FSTYPE"
+EOF
+        udevadm control --reload
+        udevadm trigger --sysname-match nbd0
     fi
+fi
+
+# Disable resume on GIS.lab clients to avoid 5 sec delay
+if grep -qs "init=/sbin/init-gislab" /proc/cmdline; then
+    echo "resume=" >> /conf/param.conf
 fi

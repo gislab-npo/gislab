@@ -4,37 +4,62 @@
 #
 # Install and configure GIS.lab's internal DNS records 'gis.lab'.
 #
-# Logging: /storage/log/syslog
+# Logging: syslog
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
-  with_items:
-    - bind9
-    - resolvconf
+  apt:
+    name:
+      - bind9
+      - resolvconf
+    force: yes
+    install_recommends: no
+    state: latest
 
 
-- name: Install Bind server configuration
-  template: src={{ item.src }} dest={{ item.dest }}
+- name: Install DNS server configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - { src: "bind/bind9.j2", dest: "/etc/default/bind9" }
-    - { src: "bind/named.conf.j2", dest: "/etc/bind/named.conf" }
-    - { src: "bind/named.conf.options.j2", dest: "/etc/bind/named.conf.options" }
-    - { src: "bind/named.conf.local.j2", dest: "/etc/bind/named.conf.local" }
-    - { src: "bind/db.gis.lab.j2", dest: "/etc/bind/db.gis.lab" }
-    - { src: "bind/db.192.j2", dest: "/etc/bind/db.192" }
+    - {
+        src: "bind/bind9.j2",
+        dest: "/etc/default/bind9"
+      }
+    - {
+        src: "bind/named.conf.j2",
+        dest: "/etc/bind/named.conf"
+      }
+    - {
+        src: "bind/named.conf.options.j2",
+        dest: "/etc/bind/named.conf.options"
+      }
+    - {
+        src: "bind/named.conf.local.j2",
+        dest: "/etc/bind/named.conf.local"
+      }
+    - {
+        src: "bind/db.gis.lab.j2",
+        dest: "/etc/bind/db.gis.lab"
+      }
+    - {
+        src: "bind/db.192.j2",
+        dest: "/etc/bind/db.192"
+      }
   notify:
-    - service bind9 restart
+    - service bind9 stop
 
 - name: Install resolvconf configuration
-  template: src={{ item.src }} dest={{ item.dest }}
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - { src: "resolvconf/head.j2 ", dest: "/etc/resolvconf/resolv.conf.d/head" }
-    - { src: "resolvconf/tail.j2 ", dest: "/etc/resolvconf/resolv.conf.d/tail" }
-  notify:
-    - resolvconf update
+    - {
+        src: "resolvconf/tail.j2",
+        dest: "/etc/resolvconf/resolv.conf.d/tail"
+      }
 
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

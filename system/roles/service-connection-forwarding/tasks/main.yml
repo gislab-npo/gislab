@@ -2,15 +2,16 @@
 #
 ### CONNECTION FORWARDING ###
 #
-# Activate Internet connection routing from GIS.lab network
+# Activate connection forwarding for all GIS.lab network members
 
 
-- name: Enable IP forwarding for client machines after each server start
-  template: src=init/connection-forwarding.conf.j2 dest=/etc/init/connection-forwarding.conf
+- name: Activate connection forwarding
+  template:
+    src: systemd/gislab-connection-forwarding.service.j2
+    dest: /etc/systemd/system/gislab-connection-forwarding.service
   notify:
-    - service connection-forwarding restart
-
+    - service gislab-connection-forwarding disable
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

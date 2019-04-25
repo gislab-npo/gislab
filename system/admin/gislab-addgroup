@@ -1,0 +1,76 @@
+#!/bin/bash
+
+set -e
+
+source /etc/gislab_version
+source $GISLAB_ROOT/system/functions.sh
+
+
+# require root privileges
+gislab_require_root
+
+
+### USAGE
+function usage() {
+    echo "USAGE: $(basename $0) [OPTIONS] group"
+    echo "Create GIS.lab group."
+    echo "Group name can contain only lower case digits and numbers."
+    echo -e "\nOPTIONS
+    -d group description (optional)
+    -h display this help
+    "
+    exit 255
+}
+
+
+### OPTIONS
+while getopts "d:h" OPTION
+do
+    case "$OPTION" in
+        d) opt_description="$OPTARG" ;;
+        h) usage ;;
+        \?) exit 1 ;;
+    esac
+done
+shift $(($OPTIND - 1))
+if [ $# -eq 0 ]; then usage; fi
+
+GISLAB_GROUP=$1
+
+
+### VARIABLES
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
+
+### SANITY CHECKS
+if [ "$($lds "(&(objectClass=posixGroup)(cn=$GISLAB_GROUP))")" != "" ]; then
+    gislab_error "Group '$GISLAB_GROUP' already exists"
+    exit 1
+fi
+
+if ! [[ "$GISLAB_GROUP" =~ ^[a-z][a-z0-9_]*$ ]]; then
+    gislab_error "Invalid characters in group name"
+    exit 1
+fi
+
+
+### MAIN SCRIPT
+# LDAP
+gislab_info "Adding group"
+
+# create LDAP group
+ldapaddgroup $GISLAB_GROUP
+
+if [ -n "$opt_description" ]; then
+    ldapmodifygroup $GISLAB_GROUP > /dev/null << EOL
+changetype: modify
+add: description
+description: $opt_description
+EOL
+fi
+
+
+### CONFIRMATION MESSAGE
+gislab_success "Group '$GISLAB_GROUP' was successfully created"
+
+# vim: set ts=8 sts=4 sw=4 et:

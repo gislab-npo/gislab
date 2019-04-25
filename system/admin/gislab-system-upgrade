@@ -5,59 +5,68 @@ set -e
 source /etc/gislab_version
 source $GISLAB_ROOT/system/functions.sh
 
+
 # require root privileges
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
-	echo "USAGE: $(basename $0)"
-	echo "Upgrade GIS.lab system."
-	echo -e "\nOPTIONS
-	-h  display this help
-	"
-	exit 255
+    echo "USAGE: $(basename $0)"
+    echo "Upgrade GIS.lab system."
+    echo -e "\nOPTIONS
+    -h  display this help
+    "
+    exit 255
 }
 
-# options
+
+### OPTIONS
 while getopts "h" OPTION
 do
-	case "$OPTION" in
-		h) usage ;;
-		\?) exit 255 ;;
-	esac
+    case "$OPTION" in
+        h) usage ;;
+        \?) exit 255 ;;
+    esac
 done
 
 
-RUNNING_CLIENTS="$(gislab-cluster members -status=alive -tag role=client)"
-if [ -n "$RUNNING_CLIENTS" ]; then
-	gislab_print_error "Some GIS.lab client machines are running. Can't perform upgrade"
+### SANITY CHECKS
+clients="$(gislab-cluster members -status=alive -tag role=client)"
+if [ -n "$clients" ]; then
+    gislab_error "
+        Some GIS.lab client machines are running. Can't perform upgrade
+    "
+    exit 1
 fi
 
 
+### MAIN SCRIPT
 # upgrade server packages
-gislab_print_info "Upgrading server packages ..."
-apt-get --assume-yes --force-yes update
-apt-get --assume-yes --force-yes dist-upgrade
-apt-get --assume-yes --force-yes autoremove
+gislab_info "Upgrading server packages ..."
+apt --assume-yes update
+apt --assume-yes dist-upgrade
+apt --assume-yes autoremove
 
 
 # upgrade client packages
-gislab_print_info "Upgrading client packages ..."
+gislab_info "Upgrading client packages ..."
 
 # detect if there are any upgradeable packages before running upgrade
-gislab-client-shell apt-get --assume-yes --force-yes update
+gislab-client-shell apt --assume-yes update
 
-UPGRADEABLE_PACKAGES="$(gislab-client-shell apt-show-versions -u -b 2>/dev/null)"
-if [ -n "$UPGRADEABLE_PACKAGES" ]; then
-	# upgrade client chroot
-	gislab-client-shell apt-get --assume-yes --force-yes dist-upgrade
-	gislab-client-shell apt-get --assume-yes --force-yes autoremove
+packages="$(gislab-client-shell apt-show-versions -u -b 2>/dev/null)"
+if [ -n "$packages" ]; then
+    # upgrade client chroot
+    gislab-client-shell apt --assume-yes dist-upgrade
+    gislab-client-shell apt --assume-yes autoremove
 
-	# rebuild client image
-	gislab-client-image
+    # rebuild client image
+    gislab-client-image
 fi
 
 
-# done
-gislab_print_info "GIS.lab system upgrade was sucessfully done"
+### CONFIRMATION MESSAGE
+gislab_success "GIS.lab system upgrade was successfully done"
+
+# vim: set ts=8 sts=4 sw=4 et:

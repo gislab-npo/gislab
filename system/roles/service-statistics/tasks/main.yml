@@ -6,82 +6,115 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
-  with_items:
+  apt:
+    name:
     - munin
     - munin-node
+    - munin-plugins-extra
+    force: yes
+    install_recommends: no
+    state: latest
 
 
-# Munin
+### MUNIN
 - name: Configure Munin master
-  template: src=munin/munin.conf.j2 dest=/etc/munin/munin.conf
+  template:
+    src: munin/munin.conf.j2
+    dest: /etc/munin/munin.conf
   notify:
     - service munin-node restart
 
 - name: Configure Munin node
-  template: src={{ item.src }} dest={{ item.dest }}
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - { src: "munin/munin-node.conf.j2", dest: "/etc/munin/munin-node.conf" }
-    - { src: "munin/munin-node.j2", dest: "/etc/munin/plugin-conf.d/munin-node" }
+    - {
+        src: "munin/munin-node.conf.j2",
+        dest: "/etc/munin/munin-node.conf"
+      }
+    - {
+        src: "munin/munin-node.j2",
+        dest: "/etc/munin/plugin-conf.d/munin-node"
+      }
   notify:
     - service munin-node restart
 
 
-# Munin plugins
+### MUNIN PLUGINS
 - name: Install custom Munin plugins
-  copy: src=static/munin-plugins/ dest=/usr/share/munin/plugins
+  copy:
+    src: static/munin-plugins/
+    dest: /usr/share/munin/plugins
   notify:
     - service munin-node restart
+
+- name: Remove existing Munin plugins
+  shell: rm -f /etc/munin/plugins/*
 
 - name: Enable only required Munin plugins
-  shell: "{{ item }}"
+  file:
+    src: "/usr/share/munin/plugins/{{ item }}"
+    dest: "/etc/munin/plugins/{{ item }}"
+    state: link
   with_items:
-    - rm -f /etc/munin/plugins/*
-    - ln -fs /usr/share/munin/plugins/cpu /etc/munin/plugins/cpu
-    - ln -fs /usr/share/munin/plugins/cpu_by_process /etc/munin/plugins/cpu_by_process
-    - ln -fs /usr/share/munin/plugins/df /etc/munin/plugins/df
-    - ln -fs /usr/share/munin/plugins/diskstats /etc/munin/plugins/diskstats
-    - ln -fs /usr/share/munin/plugins/iostat /etc/munin/plugins/iostat
-    - ln -fs /usr/share/munin/plugins/iostat_ios /etc/munin/plugins/iostat_ios
-    - ln -fs /usr/share/munin/plugins/load /etc/munin/plugins/load
-    - ln -fs /usr/share/munin/plugins/memory /etc/munin/plugins/memory
-    - ln -fs /usr/share/munin/plugins/multips_memory /etc/munin/plugins/multips_memory
-    - ln -fs /usr/share/munin/plugins/processes /etc/munin/plugins/processes
-    - ln -fs /usr/share/munin/plugins/swap /etc/munin/plugins/swap
-    - ln -fs /usr/share/munin/plugins/uptime /etc/munin/plugins/uptime
-    - ln -fs /usr/share/munin/plugins/vmstat /etc/munin/plugins/vmstat
+    - cpu
+    - cpu_by_process
+    - df
+    - diskstats
+    - iostat
+    - iostat_ios
+    - load
+    - memory
+    - multips_memory
+    - processes
+    - swap
+    - uptime
+    - vmstat
   notify:
     - service munin-node restart
 
 
 - name: Remove unnecessary Munin configuration
-  file: path={{ item }} state=absent
-  with_items:
-    - /etc/cron.d/munin-node
+  file:
+    path: /etc/cron.d/munin-node
+    state: absent
   notify:
-    - service nginx restart
+    - service munin-node restart
 
 
-# Nginx
-- name: Create NGINX virtualhost stats.gis.lab
-  template: src=nginx/site-stats.j2 dest=/etc/nginx/sites-available/stats
-  notify:
-    - service nginx restart
-
-- name: Activate NGINX virtualhost stats.gis.lab
-  file: src=/etc/nginx/sites-available/stats dest=/etc/nginx/sites-enabled/stats state=link
-  notify:
-    - service nginx restart
+- name: Publish statistics
+  file:
+    src: /var/cache/munin/www
+    dest: "{{ GISLAB_PATH_WWW }}/stats"
+    state: link
+    force: yes
 
 
-# Cron
+### CRON
+- name: Create directory for Munin script
+  file:
+    path: "{{ GISLAB_PATH_SYSTEM }}/stats"
+    state: directory
+
+- name: Install Munin statistics update script
+  template:
+    src: munin/update-stats.sh.j2
+    dest: "{{ GISLAB_PATH_SYSTEM }}/stats/update-stats.sh"
+    mode: 0755
+
 - name: Activate Munin cron job
-  template: src=cron/munin.j2 dest=/etc/cron.d/munin
+  template:
+    src: cron/munin.j2
+    dest: /etc/cron.d/munin
 
 
-# Email
+### EMAIL
 - name: Add service user mail alias
-  lineinfile: "dest=/etc/aliases line='munin: root' state=present"
+  lineinfile:
+    dest: /etc/aliases
+    line: "munin: root"
+    state: present
 
 - name: Activate new mail alias
   command: newaliases
@@ -89,4 +122,4 @@
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

@@ -1,0 +1,295 @@
+---
+#
+### BASIC SERVER CONFIGURATION ###
+#
+# Run basic server configuration.
+
+
+### CONFIGURATION
+- name: Create '/etc/gislab_version' file
+  copy:
+    content: |
+      GISLAB_ADMIN_EMAIL="{{ GISLAB_ADMIN_EMAIL }}"
+      GISLAB_ADMIN_FIRST_NAME="{{ GISLAB_ADMIN_FIRST_NAME }}"
+      GISLAB_ADMIN_SURNAME="{{ GISLAB_ADMIN_SURNAME }}"
+      GISLAB_APT_CUSTOM_REPOSITORIES="{% if GISLAB_APT_CUSTOM_REPOSITORIES %}{{ GISLAB_APT_CUSTOM_REPOSITORIES|join(",") }}{% else %}{% endif %}"
+      GISLAB_APT_HTTP_PROXY="{{ GISLAB_APT_HTTP_PROXY }}"
+      GISLAB_APT_MIRROR="{{ GISLAB_APT_MIRROR }}"
+      GISLAB_CLIENT_ARCHITECTURE="{{ GISLAB_CLIENT_ARCHITECTURE }}"
+      GISLAB_CLIENT_KEYBOARDS="{% if GISLAB_CLIENT_KEYBOARDS %}{{ GISLAB_CLIENT_KEYBOARDS|keyboard_layouts }}{% else %}{% endif %}"
+      GISLAB_CLIENT_LANGUAGES="{% if GISLAB_CLIENT_LANGUAGES %}{{ GISLAB_CLIENT_LANGUAGES|join(",") }}{% else %}{% endif %}"
+      GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY="{{ GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY }}"
+      GISLAB_CLIENT_VIRTUALBOX_SUPPORT="{{ GISLAB_CLIENT_VIRTUALBOX_SUPPORT }}"
+      GISLAB_DEBUG_INSTALL="{{ GISLAB_DEBUG_INSTALL }}"
+      GISLAB_DNS_SERVERS="{{ GISLAB_DNS_SERVERS }}"
+      GISLAB_INSTALL_DATETIME="{{ GISLAB_INSTALL_DATETIME }}"
+      GISLAB_NETWORK="{{ GISLAB_NETWORK }}"
+      GISLAB_NETWORK_SERVER_IP="{{ GISLAB_NETWORK_SERVER_IP }}"
+      GISLAB_PROVISIONING_USER="{{ GISLAB_PROVISIONING_USER }}"
+      GISLAB_ROOT="{{ GISLAB_ROOT }}"
+      GISLAB_SERVER_ARCHITECTURE="{{ GISLAB_SERVER_ARCHITECTURE }}"
+      GISLAB_SERVER_CAPABILITY_VPN="{{ GISLAB_SERVER_CAPABILITY_VPN }}"
+      GISLAB_SERVER_EMAIL_RELAY_SERVER="{{ GISLAB_SERVER_EMAIL_RELAY_SERVER }}"
+      GISLAB_SERVER_GUI_CONSOLE="{{ GISLAB_SERVER_GUI_CONSOLE }}"
+      GISLAB_SUITE="{{ GISLAB_SUITE }}"
+      GISLAB_TIMEZONE="{{ GISLAB_TIMEZONE }}"
+      GISLAB_UNIQUE_ID="{{ GISLAB_UNIQUE_ID }}"
+      GISLAB_VERSION="{{ GISLAB_VERSION }}"
+    dest: /etc/gislab_version
+
+
+### BASIC SERVER CONFIGURATION
+- name: Set system wide environment variables
+  template:
+    src: environment.j2
+    dest: /etc/environment
+
+
+- name: Set hostname
+  hostname:
+    name: server
+
+- name: Update hosts file
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+  notify:
+    - service rsyslog restart
+
+
+- name: Generate en_US.UTF-8 locale
+  # we don't use 'locale_gen' here, because it fails with travis-ci
+  # (https://github.com/ansible/ansible/issues/7289)
+  # locale_gen: name=en_US.UTF-8 state=present
+  command: /usr/sbin/locale-gen en_US.UTF-8
+
+- name: Set en_US.UTF-8 locale
+  command: >
+    /usr/sbin/update-locale
+    LANG=en_US.UTF-8
+    LC_ALL=en_US.UTF-8
+    LANGUAGE=en
+
+- name: Set timezone
+  template:
+    src: timezone.j2
+    dest: /etc/timezone
+  notify:
+    - reconfigure timezone
+
+
+- name: Set local aliases table
+  template:
+    src: aliases.j2
+    dest: /etc/aliases
+
+
+- meta: flush_handlers
+
+
+### NETWORKING
+- name: Install network configuration file
+  template:
+    src: network/interfaces.j2
+    dest: /etc/network/interfaces
+
+
+### PACKAGES CACHE
+- name: Create directories for non-debian packages cache
+  file:
+    path: "{{ GISLAB_PATH_CACHE }}/packages/{{ item }}"
+    state: directory
+  with_items:
+    - apt
+    - apk
+    - tar
+    - pip
+    - qgis
+
+
+### APT
+- name: Remove third party apt repositories
+  file:
+    dest: /etc/apt/sources.list.d
+    state: absent
+
+- name: Add GIS.lab PPA signing key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 851ACD2441E31BA5D303F304AA6C9487559C7A48
+    state: present
+
+- name: Configure apt repositories
+  template:
+    src: apt/sources.list.j2
+    dest: /etc/apt/sources.list
+
+
+- name: Configure Apt cache proxy server
+  template:
+    src: apt/02proxy.j2
+    dest: /etc/apt/apt.conf.d/02proxy
+
+- name: Move apt cache to storage directory
+  shell: >
+    mv -f
+    /var/cache/apt/*
+    {{ GISLAB_PATH_CACHE }}/packages/apt/
+  args:
+    creates: "{{ GISLAB_PATH_CACHE }}/packages/apt/pkgcache.bin"
+
+- name: Deactivate original apt cache
+  file:
+    dest: /var/cache/apt
+    state: absent
+
+- name: Activate shared apt cache
+  file:
+    src: "{{ GISLAB_PATH_CACHE }}/packages/apt"
+    dest: /var/cache/apt
+    state: link
+
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Remove not needed packages installed by default
+  apt:
+    name:
+      - landscape-client
+      - landscape-common
+    state: absent
+
+- name: Install aptitude which is required for running system upgrade
+  apt:
+    name: aptitude
+    force: yes
+    install_recommends: no
+    state: latest
+
+- name: Upgrade system
+  apt:
+    upgrade: full
+    force: yes
+
+- name: Install packages
+  apt:
+    name:
+      - arp-scan
+      - bash-completion
+      - emacs-nox
+      - etherwake
+      - ethtool
+      - htop
+      - ifupdown2
+      - iotop
+      - mc
+      - pwgen
+      - pssh
+      - tmux
+      - ubuntu-fan
+      - vim
+      - zip
+    force: yes
+    install_recommends: no
+    state: latest
+
+
+### MOUNT POINTS
+- name: Configure universal mount directory
+  lineinfile:
+    dest: /etc/fstab
+    line: "{{ GISLAB_PATH_STORAGE }}  /mnt  none  bind  0  0"
+    state: present
+
+- name: Mount universal directory
+  mount:
+    name: /mnt
+    src: "{{ GISLAB_PATH_STORAGE }}"
+    fstype: none
+    opts: bind
+    state: mounted
+
+
+### ADMIN TOOLS
+- name: Install GIS.lab shell functions library
+  copy:
+    src: functions.sh
+    dest: "{{ GISLAB_PATH_SYSTEM }}/functions.sh"
+    mode: 0644
+
+- name: Install GIS.lab administrator tools
+  copy:
+    src: admin/
+    dest: "{{ GISLAB_PATH_ADMIN }}/"
+    mode: 0775
+
+- name: Add GIS.lab administrator tools on path
+  lineinfile:
+    dest: /etc/profile
+    line: "PATH=$PATH:{{ GISLAB_PATH_ADMIN }}"
+    state: present
+
+### EXPERIMENTAL PYTHON LIB
+
+- name: Re-create Python virtual environment for GIS.lab Python library
+  shell: rm -rf /usr/local/python-virtualenvs/gislab-python
+    && virtualenv --clear --quiet --system-site-packages /usr/local/python-virtualenvs/gislab-python
+
+- name: Copy GIS.lab Python Library installation to temporary directory on server
+  copy: src=static/gislab-python dest={{ GISLAB_INSTALL_TMP_ROOT }}/
+
+- name: Install GIS.lab Python Library requirements
+  pip: requirements={{ GISLAB_INSTALL_TMP_ROOT }}/gislab-python/requirements.txt
+       virtualenv=/usr/local/python-virtualenvs/gislab-python
+       extra_args="--download-cache=/var/cache/pip"
+       virtualenv_site_packages=yes
+       state=present
+
+- name: Install GIS.lab Python Library
+  shell: source /usr/local/python-virtualenvs/gislab-python/bin/activate
+    && pip install {{ GISLAB_INSTALL_TMP_ROOT }}/gislab-python
+  args:
+    executable: /bin/bash
+
+### SSH
+- name: Configure SSH server
+  template:
+    src: ssh/sshd_config.j2
+    dest: /etc/ssh/sshd_config
+  notify:
+    - service ssh restart
+
+
+### SHELL
+- name: Configure shell prompt system wide
+  lineinfile:
+    dest: /etc/profile
+    regexp: "^PS1=.*h.GIS.lab(.*).*$"
+    line: 'PS1="\[$(tput bold)\]\u@\h.GIS.lab({{ GISLAB_UNIQUE_ID }}):\w\\$\[$(tput sgr0)\] "'
+    state: present
+
+
+### MOTD
+- name: Set MOTD header
+  template:
+    src: motd/00-header.j2
+    dest: /etc/update-motd.d/00-header
+
+- name: Remove not needed MOTD messages
+  shell: rm -f {{ item }}
+  with_items:
+    - /etc/update-motd.d/*-help-text
+    - /etc/update-motd.d/*-cloudguest
+    - /etc/update-motd.d/*-release-upgrade
+  args:
+    warn: False
+
+- name: Update MOTD
+  command: run-parts /etc/update-motd.d
+
+
+- meta: flush_handlers
+
+# vim: set ts=8 sts=2 sw=2 et:

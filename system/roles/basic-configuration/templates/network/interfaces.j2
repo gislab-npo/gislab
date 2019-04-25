@@ -1,0 +1,25 @@
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# Default GIS.lab server network configuration.
+auto {{ ansible_default_ipv4.interface }}
+iface {{ ansible_default_ipv4.interface }} inet dhcp
+
+# Example of static GIS.lab server network configuration.
+#auto {{ ansible_default_ipv4.interface }}
+#iface {{ ansible_default_ipv4.interface }} inet static
+#    address {{ GISLAB_NETWORK_SERVER_IP }}
+#    netmask 255.255.255.0
+#    network {{ GISLAB_NETWORK }}.0
+#    broadcast {{ GISLAB_NETWORK }}.255
+
+# Another example of static GIS.lab server network configuration.
+#auto {{ ansible_default_ipv4.interface }}
+#iface {{ ansible_default_ipv4.interface }} inet static
+#    address 10.0.1.5
+#    netmask 255.255.255.0
+#    network 10.0.1.0
+#    broadcast 10.0.1.255
+#    gateway 10.0.1.1
+#    dns-nameservers 127.0.0.1

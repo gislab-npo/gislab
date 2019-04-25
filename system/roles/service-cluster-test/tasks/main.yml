@@ -1,19 +1,24 @@
 ---
 
 - name: Test if Serf agent is running
-  shell: serf info
+  shell: >
+    serf info
+    | grep "name = server.gis.lab"
   ignore_errors: yes
   changed_when: False
 
 - name: Test Serf cluster reachability
-  shell: serf reachability
+  shell: >
+    serf reachability
+    | grep "Successfully contacted all live nodes"
   ignore_errors: yes
   changed_when: False
 
 - name: Perform a test query
-  shell: serf query test
+  shell: >
+    serf query uptime
+    | grep "Response from 'server.gis.lab':"
   ignore_errors: yes
   changed_when: False
 
-  
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

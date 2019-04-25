@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Gisquick User Manual
+Comment=Gisquick publishing user manual documentation
+Exec=/usr/local/bin/gislab-documentation gisquick/user-manual/project-publishing.html
+Icon=
+Path=
+Terminal=false
+Categories=Gislab-documentation;
+StartupNotify=false

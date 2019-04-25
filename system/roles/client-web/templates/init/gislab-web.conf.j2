@@ -1,6 +1,0 @@
-description "GIS.lab Web"
-start on runlevel [2345]
-stop on runlevel [06]
-respawn
-respawn limit 10 5
-exec {{ GISLAB_INSTALL_CLIENTS_ROOT }}/web/gunicorn.sh

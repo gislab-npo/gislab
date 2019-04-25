@@ -1,10 +1,23 @@
 #!/bin/sh
-#
+
+PREREQ=""
+
+prereqs()
+{
+    echo "$PREREQ"
+}
+
+case "$1" in
+    prereqs)
+        prereqs
+        exit 0
+        ;;
+esac
 
 for x in $(cat /proc/cmdline); do
     case "$x" in
-	init=/sbin/init-gislab)
-	    GISLAB_BOOT=true
+        init=/sbin/init-gislab)
+            GISLAB_BOOT=true
             break
             ;;
     esac
@@ -19,27 +32,33 @@ if ! chroot ${rootmnt} /usr/bin/test -w "/" ; then
     mkdir -p /rofs /cow
     mount -t tmpfs -o mode=0755 tmpfs /cow
     mount -o move ${rootmnt} /rofs
-    # detect which unionfs to use
-    while read x ; do
-        for y in $x ; do
-            case $y in
-                aufs) 
-                    UNION_TYPE=aufs
-                    UNION_OPTS="dirs=/cow=rw:/rofs=ro"
-                    ;;
-                overlayfs) 
-                    UNION_TYPE=overlayfs
-                    UNION_OPTS="upperdir=/cow,lowerdir=/rofs"
-                    ;;
-            esac
-        done
-    done < /proc/filesystems    
+    if modprobe overlay; then
+        UNION_TYPE=overlay
+        UNION_OPTS="upperdir=/cow/up,lowerdir=/rofs,workdir=/cow/work"
+        mkdir -p /cow/up /cow/work
+    elif modprobe overlayfs; then
+        UNION_TYPE=overlayfs
+        UNION_OPTS="upperdir=/cow,lowerdir=/rofs"
+    elif modprobe aufs; then
+        UNION_TYPE=aufs
+        UNION_OPTS="dirs=/cow=rw:/rofs=ro"
+    else
+        . /scripts/functions
+        panic "Could not load neither overlayfs nor aufs."
+    fi
     mount -t ${UNION_TYPE} -o ${UNION_OPTS} ${UNION_TYPE} ${rootmnt}
     for dir in /rofs /cow ; do
         mkdir -p ${rootmnt}${dir}
-    	mount -o move ${dir} ${rootmnt}${dir}
+        mount -o move ${dir} ${rootmnt}${dir}
     done
 fi
 
-mkdir -p "$rootmnt/var/cache/gislab"
-cp /tmp/net-*.conf "$rootmnt/var/cache/gislab/"
+# Copy networking configuration to the root file system
+mkdir -p "$rootmnt/var/cache/gislab/"
+for netconf in /tmp/net-*.conf /run/net-*.conf; do
+    if [ -f "$netconf" ]; then
+        cp "$netconf" "$rootmnt/var/cache/gislab/"
+    fi
+done
+
+# vim: set ts=8 sts=4 sw=4 et:

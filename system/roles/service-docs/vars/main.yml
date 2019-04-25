@@ -1,0 +1,5 @@
+---
+
+docs_dir: "{{ GISLAB_ROOT }}/system/docs"
+
+# vim: set ts=8 sts=2 sw=2 et:

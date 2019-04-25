@@ -4,31 +4,44 @@
 #
 # Install OWS services load balancer.
 #
-# Logging: /storage/log/syslog
+# Logging: syslog
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
-  with_items:
-    - haproxy
+  apt:
+    name: haproxy
+    force: yes
+    install_recommends: no
+    state: latest
 
 
 - name: Activate HAProxy server
-  template: src=haproxy/haproxy.j2 dest=/etc/default/haproxy
+  template:
+    src: haproxy/haproxy.j2
+    dest: /etc/default/haproxy
   notify:
     - service haproxy restart
 
-- name: Install HAProxy init script
-  template: src=init/haproxy.j2 dest=/etc/init.d/haproxy mode=0755
+- name: Install HAProxy systemd unit
+  template:
+    src: systemd/haproxy.service.j2
+    dest: /etc/systemd/system/haproxy.service
   notify:
     - service haproxy restart
 
 - name: Install HAProxy configuration template
-  template: src=haproxy/haproxy.cfg.templ.j2 dest=/etc/haproxy/haproxy.cfg.templ
+  template:
+    src: haproxy/haproxy.cfg.templ.j2
+    dest: /etc/haproxy/haproxy.cfg.templ
   notify:
     - service haproxy restart
 
+# systemd daemon reloading not implemented yet (see https://github.com/ansible/ansible-modules-core/issues/191)
+- name: Reload systemd daemon
+  command: systemctl daemon-reload
+  notify:
+    - service haproxy restart
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

@@ -1,10 +1,10 @@
-data_directory = '/storage/applications/postgresql'
-hba_file = '/etc/postgresql/9.1/main/pg_hba.conf'
-ident_file = '/etc/postgresql/9.1/main/pg_ident.conf'
-external_pid_file = '/var/run/postgresql/9.1-main.pid'
+data_directory = '{{ GISLAB_PATH_APPLICATIONS }}/postgresql'
+hba_file = '/etc/postgresql/{{ pg_version.stdout }}/main/pg_hba.conf'
+ident_file = '/etc/postgresql/{{ pg_version.stdout }}/main/pg_ident.conf'
+external_pid_file = '/var/run/postgresql/{{ pg_version.stdout }}-main.pid'
 listen_addresses = '*'
 port = 5432
-unix_socket_directory = '/var/run/postgresql'
+unix_socket_directories = '/var/run/postgresql'
 ssl = true
 log_line_prefix = '%t '
 search_path = '"$user",public'
@@ -19,12 +19,12 @@ default_text_search_config = 'pg_catalog.english'
 log_destination = 'syslog'
 syslog_facility = 'LOCAL7'
 
-{% if not GISLAB_DEBUG_SERVICES %}
 log_min_messages = 'ERROR'
-{% else %}
-log_min_messages = 'DEBUG1'
-log_min_error_statement = 'DEBUG1'
-log_min_duration_statement = 0
-{% endif %}
+
+# GISLAB_DEBUG: uncomment these lines for debug mode
+# log_min_messages = 'DEBUG1'
+# log_min_error_statement = 'DEBUG1'
+# log_min_duration_statement = 0
 
 # configuration created by pgtune wizard will be placed below
+include_dir = 'conf.d'

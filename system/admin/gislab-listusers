@@ -1,0 +1,64 @@
+#!/bin/bash
+
+set -e
+
+source /etc/gislab_version
+source $GISLAB_ROOT/system/functions.sh
+
+
+# require root privileges
+gislab_require_root
+
+
+### USAGE
+function usage() {
+    echo "USAGE: $(basename $0) [OPTIONS]"
+    echo "List GIS.lab users."
+    echo -e "\nOPTIONS
+    -g list only members of group
+    -h display this help
+    "
+    exit 255
+}
+
+
+### OPTIONS
+while getopts "g:h" OPTION
+do
+        case "$OPTION" in
+            g) opt_group=$OPTARG ;;
+            h) usage ;;
+            \?) exit 1;;
+        esac
+done
+
+
+### VARIABLES
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
+
+### SANITY CHECKS
+if [ -n "$opt_group" ]; then
+    # sanity checks
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=$opt_group))")" == "" ]; then
+        gislab_error "Group '$opt_group' does not exists"
+        exit 1
+    fi
+fi
+
+
+### MAIN SCRIPT
+if [ -n "$opt_group" ]; then
+    # list users belonging to group
+    for user in \
+            $($lds "(&(objectClass=posixGroup)(cn=$opt_group))" memberUid \
+            | grep -v "^dn:" \
+            | awk -F ":" '{print $2}'); do
+        $lds "(&(objectClass=posixAccount)(uid=$user))"
+    done
+else
+    # list all users
+    lsldap -u
+fi
+
+# vim: set ts=8 sts=4 sw=4 et:

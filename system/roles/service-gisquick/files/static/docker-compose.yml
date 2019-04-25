@@ -1,0 +1,45 @@
+version: "2"
+services:
+  qgisserver:
+    restart: always
+    image: gisquick/qgis-server
+    volumes:
+      - /storage/publish:/publish/:ro
+    ports:
+      - "9090:90"
+
+  django:
+    restart: always
+    image: gislab/django
+    links:
+      - qgisserver
+    volumes:
+      - /var/www/gisquick/media:/var/www/gisquick/media/
+      - /var/www/gisquick/data/:/var/www/gisquick/data/
+      - /storage/publish:/publish/
+    environment:
+      - GUNICORN_ERRORLOG=-
+      - GUNICORN_ACCESSLOG=-
+    logging:
+      driver: syslog
+      options:
+        tag: "gisquick"
+
+  nginx:
+    restart: unless-stopped
+    image: gisquick/nginx
+    links:
+      - django
+    volumes_from:
+      - django:ro
+    volumes:
+      - /etc/letsencrypt/:/etc/letsencrypt/
+      - /opt/gislab/system/docker/gisquick/nginx/gisquick.template:/etc/nginx/conf.d/gisquick.template
+    ports:
+      - "9000:80"
+    environment:
+      - NGINX_HOST=server
+    logging:
+      driver: syslog
+      options:
+        tag: "gisquick"

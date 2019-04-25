@@ -4,24 +4,32 @@
 #
 # Install and configure authentication server.
 #
-# Logging: /storage/log/syslog
+# Logging: syslog
 
 
 - name: Install packages
-  apt: pkg={{ item }} force=yes install_recommends=no state=latest
-  # libpam-cracklib is improving strength of user passwords. It is also responsible for setting of PAM 'authtok'.
-  # If libpam-cracklib is not installed, change 'use_authtok' option in /etc/pam.d/common-password to 'try_authtok'
-  # or remove it, otherwise it will be impossible to change user password using 'passwd' command.
-  with_items:
-    - gnutls-bin
-    - ldapscripts
-    - libpam-cracklib
-    - ldap-utils
-    - libnss-ldap
-    - pwgen
-    - python-ldap
-    - slapd
-    - ssl-cert
+  apt:
+    name:
+      - auth-client-config
+      - gnutls-bin
+      - ldapscripts
+      - libpam-cracklib
+      - libpam-ldap
+      - ldap-utils
+      - libnss-ldap
+      - members
+      - pwgen
+      - python-ldap
+      - slapd
+      - ssl-cert
+    force: yes
+    install_recommends: no
+    state: latest
+  # libpam-cracklib is improving strength of user passwords. It is also
+  # responsible for setting of PAM 'authtok'. If libpam-cracklib is not
+  # installed, change 'use_authtok' option in /etc/pam.d/common-password to
+  # 'try_authtok' or remove it, otherwise it will be impossible to change user
+  # password using 'passwd' command.
 
 
 - name: Add 'openldap' user to 'ssl-cert' group
@@ -29,36 +37,53 @@
 
 
 - name: Detect if LDAP is installed
-  shell: "ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// '(o=gis.lab)' 2>/dev/null || echo 'LDAP DB EMPTY'"
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// '(o=gis.lab)' 2>/dev/null
+    || echo 'LDAP DB EMPTY'
   args:
     executable: /bin/bash
   register: ldap_db_status
   changed_when: False
 
 
-# Move LDAP database to /storage
-- name: Allow access for slapd to /storage directory
-  template: src=apparmor/usr.sbin.slapd.j2 dest=/etc/apparmor.d/local/usr.sbin.slapd
+### LDAP STORAGE
+# update apparmor
+- name: Allow access for slapd to storage directory
+  template:
+    src: apparmor/usr.sbin.slapd.j2
+    dest: /etc/apparmor.d/local/usr.sbin.slapd
 
 - name: Reload apparmor service
-  service: name=apparmor state=reloaded
+  service:
+    name: apparmor
+    state: reloaded
 
 
+# move ldap to storage
 - name: Stop LDAP database
-  service: name=slapd state=stopped
+  service:
+    name: slapd
+    state: stopped
 
-- name: Move LDAP database to /storage directory (run only once)
-  shell: mv -f /var/lib/ldap /storage/applications/
-    && ln -s /storage/applications/ldap /var/lib/ldap
+- name: Move LDAP database to storage directory (run only once)
+  shell: >
+    mv -f /var/lib/ldap {{ GISLAB_PATH_APPLICATIONS }}/
+    &&
+    ln -s {{ GISLAB_PATH_APPLICATIONS }}/ldap /var/lib/ldap
   args:
-    creates: /storage/applications/ldap/DB_CONFIG
+    creates: "{{ GISLAB_PATH_APPLICATIONS }}/ldap/data.mdb"
 
 - name: Start LDAP service
-  service: name=slapd state=started
+  service:
+    name: slapd
+    state: started
 
 
+# load new configuration
 - name: Load LDAP database storage directory configuration (run only once)
-  template: src=ldap/change_ldap_directory.ldif.j2 dest=/tmp/ldap.ldif
+  template:
+    src: ldap/change_ldap_directory.ldif.j2
+    dest: /tmp/ldap.ldif
   when: ldap_db_status.stdout == "LDAP DB EMPTY"
 
 - name: Install LDAP database storage directory configuration (run only once)
@@ -66,106 +91,140 @@
   when: ldap_db_status.stdout == "LDAP DB EMPTY"
 
 
+# remove old storage directory
 - name: Remove old LDAP database storage directory
-  file: dest=/var/lib/ldap state=absent
+  file:
+    dest: /var/lib/ldap
+    state: absent
 
 
-# PAM
-- name: Configure PAM to use Unix and LDAP authentication 
+### PAM
+- name: Configure PAM to use Unix and LDAP authentication
   shell: DEBIAN_FRONTEND=noninteractive {{ item }}
   with_items:
     - "pam-auth-update --force"
     - "auth-client-config -t nss -p lac_ldap"
 
 - name: Configure PAM to use LDAP
-  template: src=ldap/ldap-pam.conf.j2 dest=/etc/ldap.conf
+  template:
+    src: ldap/ldap-pam.conf.j2
+    dest: /etc/ldap.conf
 
 
 - name: LDAP clients configuration
 # configure base DN and URI and disable certificates verification
-  template: src=ldap/ldap.conf.j2 dest=/etc/ldap/ldap.conf
+  template:
+    src: ldap/ldap.conf.j2
+    dest: /etc/ldap/ldap.conf
   notify:
     - service slapd restart
 
 - name: Configure nsswitch
-  template: src=ldap/nsswitch.conf.j2 dest=/etc/nsswitch.conf
+  template:
+    src: ldap/nsswitch.conf.j2
+    dest: /etc/nsswitch.conf
   notify:
     - service slapd restart
 
 
 # LDAP admin credentials
 - name: Generate LDAP admin password (run only once)
-  shell: pwgen -s -N 1 10 > /etc/gislab/gislab_ldap_admin_password.txt && chmod 600 /etc/gislab/gislab_ldap_admin_password.txt
+  shell: >
+    pwgen -s -N 1 10 > {{ GISLAB_PATH_SECRET }}/gislab_ldap_admin_password.txt
+    &&
+    chmod 600 {{ GISLAB_PATH_SECRET }}/gislab_ldap_admin_password.txt
   args:
-    creates: /etc/gislab/gislab_ldap_admin_password.txt
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_ldap_admin_password.txt"
 
 - name: Get LDAP admin password
-  shell: cat /etc/gislab/gislab_ldap_admin_password.txt
-  register: gislab_ldap_admin_password
+  shell: cat {{ GISLAB_PATH_SECRET }}/gislab_ldap_admin_password.txt
+  register: ldap_admin_password
   changed_when: False
 
 - name: Generate hash of LDAP admin password
-  shell: slappasswd -s {{ gislab_ldap_admin_password.stdout }} -h {SSHA}
-  register: gislab_ldap_admin_password_hash
+  shell: slappasswd -s {{ ldap_admin_password.stdout }} -h {SSHA}
+  register: ldap_admin_password_hash
   changed_when: False
 
 - name: Save LDAP admin password to LDAP db
-  shell: "printf 'dn: olcDatabase={1}hdb,cn=config\nreplace: olcRootPW\nolcRootPW: {{ gislab_ldap_admin_password_hash.stdout }}\n'| ldapmodify -Q -Y EXTERNAL -H ldapi:///"
+  shell: >
+    printf 'dn: olcDatabase={1}mdb,cn=config\nreplace: olcRootPW\nolcRootPW:
+    {{ ldap_admin_password_hash.stdout }}\n'
+    | ldapmodify -Q -Y EXTERNAL -H ldapi:///
 
 
-# SSL
+### SSL
 - name: Configure certificate authority
-  template: src=ssl/ca.info.j2 dest=/etc/ssl/ca.info
+  template:
+    src: ssl/ca.info.j2
+    dest: /etc/ssl/ca.info
 
 
 - name: Generate self signed certificates and private key for encrypted LDAP communication (run only once)
   shell: "{{ item }}"
   with_items:
-    - certtool --generate-privkey > /etc/gislab/gislab_ldap_private_cakey.pem
+    - certtool --generate-privkey > {{ GISLAB_PATH_SECRET }}/gislab_ldap_private_cakey.pem
     - certtool --generate-self-signed
-      --load-privkey /etc/gislab/gislab_ldap_private_cakey.pem
+      --load-privkey {{ GISLAB_PATH_SECRET }}/gislab_ldap_private_cakey.pem
       --template /etc/ssl/ca.info
-      --outfile /etc/gislab/gislab_ldap_cert_cacert.pem
+      --outfile {{ GISLAB_PATH_SECRET }}/gislab_ldap_cert_cacert.pem
     - certtool --generate-privkey
       --bits 1024
-      --outfile /etc/gislab/gislab_ldap_private_server_slapd_key.pem
+      --outfile {{ GISLAB_PATH_SECRET }}/gislab_ldap_private_server_slapd_key.pem
   args:
-    creates: /etc/gislab/gislab_ldap_private_server_slapd_key.pem
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_ldap_private_server_slapd_key.pem"
 
 - name: Install self signed certificates and private key for encrypted LDAP communication
   shell: "{{ item }}"
   with_items:
-    - cp /etc/gislab/gislab_ldap_private_cakey.pem /etc/ssl/private/cakey.pem
-    - cp /etc/gislab/gislab_ldap_cert_cacert.pem /etc/ssl/certs/cacert.pem
-    - cp /etc/gislab/gislab_ldap_private_server_slapd_key.pem /etc/ssl/private/server_slapd_key.pem
+    - cp
+      {{ GISLAB_PATH_SECRET }}/gislab_ldap_private_cakey.pem
+      /etc/ssl/private/cakey.pem
+    - cp
+      {{ GISLAB_PATH_SECRET }}/gislab_ldap_cert_cacert.pem
+      /etc/ssl/certs/cacert.pem
+    - cp
+      {{ GISLAB_PATH_SECRET }}/gislab_ldap_private_server_slapd_key.pem
+      /etc/ssl/private/server_slapd_key.pem
     - chgrp ssl-cert /etc/ssl/private/server_slapd_key.pem
     - chmod g+r /etc/ssl/private/server_slapd_key.pem
     - chmod o-r /etc/ssl/private/server_slapd_key.pem
   notify:
     - service slapd restart
+  args:
+    warn: False
 
 - name: Configure server
-  template: src=ssl/server.info.j2 dest=/etc/ssl/server.info
+  template:
+    src: ssl/server.info.j2
+    dest: /etc/ssl/server.info
 
 
 - name: Generate certificate for encrypted LDAP communication (run only once)
-  shell: certtool --generate-certificate
-         --load-privkey /etc/ssl/private/server_slapd_key.pem
-         --load-ca-certificate /etc/ssl/certs/cacert.pem
-         --load-ca-privkey /etc/ssl/private/cakey.pem
-         --template /etc/ssl/server.info
-         --outfile /etc/gislab/gislab_ldap_cert_server_slapd_cert.pem
+  shell: >
+    certtool
+    --generate-certificate
+    --load-privkey /etc/ssl/private/server_slapd_key.pem
+    --load-ca-certificate /etc/ssl/certs/cacert.pem
+    --load-ca-privkey /etc/ssl/private/cakey.pem
+    --template /etc/ssl/server.info
+    --outfile {{ GISLAB_PATH_SECRET }}/gislab_ldap_cert_server_slapd_cert.pem
   args:
-    creates: /etc/gislab/gislab_ldap_cert_server_slapd_cert.pem
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_ldap_cert_server_slapd_cert.pem"
 
 - name: Install certificate for encrypted LDAP communication
-  shell: cp /etc/gislab/gislab_ldap_cert_server_slapd_cert.pem /etc/ssl/certs/server_slapd_cert.pem
+  shell: >
+    cp
+    {{ GISLAB_PATH_SECRET }}/gislab_ldap_cert_server_slapd_cert.pem
+    /etc/ssl/certs/server_slapd_cert.pem
   notify:
     - service slapd restart
 
 
 - name: Load TLS certificates configuration
-  template: src=ldap/tls-certificates.ldif.j2 dest=/tmp/ldap.ldif
+  template:
+    src: ldap/tls-certificates.ldif.j2
+    dest: /tmp/ldap.ldif
 
 - name: Install TLS certificates configuration (run only once)
   shell: ldapmodify -Q -Y EXTERNAL -H ldapi:// -f /tmp/ldap.ldif
@@ -174,14 +233,20 @@
     - service slapd restart
 
 
+### LDAP
 # LDAP sudo
 - name: Install LDAP sudo support
-  shell: DEBIAN_FRONTEND=noninteractive SUDO_FORCE_REMOVE=yes apt-get -y install sudo-ldap
+  shell: >
+    DEBIAN_FRONTEND=noninteractive
+    SUDO_FORCE_REMOVE=yes
+    apt -y install sudo-ldap
   notify:
     - service slapd restart
 
 - name: Load sudo LDAP schema
-  template: src=ldap/sudo-schema.ldif.j2 dest=/tmp/ldap.ldif
+  template:
+    src: ldap/sudo-schema.ldif.j2
+    dest: /tmp/ldap.ldif
 
 - name: Install sudo LDAP schema (run only once)
   shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
@@ -190,7 +255,9 @@
 
 # LDAP Postfix schema
 - name: Load Postfix LDAP schema
-  template: src=ldap/postfix-schema.ldif.j2 dest=/tmp/ldap.ldif
+  template:
+    src: ldap/postfix-schema.ldif.j2
+    dest: /tmp/ldap.ldif
 
 - name: Install Postfix LDAP schema (run only once)
   shell: ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
@@ -198,8 +265,19 @@
 
 
 # LDAP indexes
+- name: Load LDIF file for removing indexes
+  template:
+    src: ldap/remove-indexes.ldif.j2
+    dest: /tmp/ldap.ldif
+
+- name: Remove LDAP indexes
+  shell: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
+  when: ldap_db_status.stdout == "LDAP DB EMPTY"
+
 - name: Load LDAP indexes
-  template: src=ldap/indexes.ldif.j2 dest=/tmp/ldap.ldif
+  template:
+    src: ldap/indexes.ldif.j2
+    dest: /tmp/ldap.ldif
 
 - name: Install LDAP indexes (run only once)
   shell: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
@@ -208,10 +286,16 @@
 
 # GIS.lab LDAP tree
 - name: Load GIS.lab LDAP tree
-  template: src=ldap/gislab-tree.ldif.j2 dest=/tmp/ldap.ldif
+  template:
+    src: ldap/gislab-tree.ldif.j2
+    dest: /tmp/ldap.ldif
 
 - name: Install GIS.lab LDAP tree (run only once)
-  shell: 'ldapadd -Z -w {{ gislab_ldap_admin_password.stdout }} -D "cn=admin,dc=gis,dc=lab" -f /tmp/ldap.ldif'
+  shell: >
+    ldapadd -Z
+    -w {{ ldap_admin_password.stdout }}
+    -D "cn=admin,dc=gis,dc=lab"
+    -f /tmp/ldap.ldif
   when: ldap_db_status.stdout == "LDAP DB EMPTY"
 
 - meta: flush_handlers
@@ -219,35 +303,45 @@
 
 # LDAPscripts
 - name: Configure LDAP scripts
-  template: src=ldapscripts/ldapscripts.conf.j2 dest=/etc/ldapscripts/ldapscripts.conf
+  template:
+    src: ldapscripts/ldapscripts.conf.j2
+    dest: /etc/ldapscripts/ldapscripts.conf
 
 - name: Install LDAP scripts user's and group's templates
-  template: src={{ item.src }} dest={{ item.dest }}
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - { src: "ldapscripts/adduser.template.j2", dest: "/etc/ldapscripts/adduser.template" }
-    - { src: "ldapscripts/addgroup.template.j2", dest: "/etc/ldapscripts/addgroup.template" }
-
-- name: Load LDAP scripts runtime patch (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=719295)
-  copy: src=static/ldapscripts/runtime-fix.patch dest=/tmp/runtime-fix.patch
-
-- name: Install LDAP scripts runtime patch (run only once)
-  shell: patch /usr/share/ldapscripts/runtime /tmp/runtime-fix.patch; rm -f /tmp/runtime-fix.patch
-  when: ldap_db_status.stdout == "LDAP DB EMPTY"
+    - {
+        src: "ldapscripts/adduser.template.j2",
+        dest: "/etc/ldapscripts/adduser.template"
+      }
+    - {
+        src: "ldapscripts/addgroup.template.j2",
+        dest: "/etc/ldapscripts/addgroup.template"
+      }
 
 - name: Save LDAP admin password to LDAP scripts (run only once)
-  shell: printf "{{ gislab_ldap_admin_password.stdout }}" > /etc/ldapscripts/ldapscripts.passwd && chmod 0600 /etc/ldapscripts/ldapscripts.passwd
+  shell: >
+    printf "{{ ldap_admin_password.stdout }}"> /etc/ldapscripts/ldapscripts.passwd
+    &&
+    chmod 0600 /etc/ldapscripts/ldapscripts.passwd
 
 
-# Logging
+### LOGGING
 - name: Load LDAP logging configuration
-  template: src=ldap/logging.ldif.j2 dest=/tmp/ldap.ldif
+  template:
+    src: ldap/logging.ldif.j2
+    dest: /tmp/ldap.ldif
 
 - name: Install LDAP logging configuration
   shell: ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f /tmp/ldap.ldif
 
 
-# The end
+### THE END
 - name: Remove temporary 'ldif' file
-  file: path=/tmp/ldap.ldif state=absent
+  file:
+    path: /tmp/ldap.ldif
+    state: absent
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

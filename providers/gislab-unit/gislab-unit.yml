@@ -5,15 +5,33 @@
 
 
 - hosts: all
-  sudo: yes
+  become: yes
+  gather_facts: false  # disable gathering Ansible facts until Python 2 is not
+                       # installed or Ansible comes with Python 3 support
 
 
   tasks:
+    - name: Ensure Python 2 is installed before running Ansible modules
+      raw: >
+        apt update --assume-yes
+        &&
+        apt install --assume-yes python-minimal
+
+    - name: Gather Ansible facts
+      setup:
+
     - name: Set GIS.lab provider
       shell: echo 'gislab-unit' > /etc/gislab_provider
 
 
     # Operating system upgrade
+    - name: Install aptitude which is required for running system upgrade
+      apt:
+        pkg: aptitude
+        force: yes
+        install_recommends: no
+        state: latest
+
     - name: Clean the contents of /var/lib/apt/lists
       shell: "{{ item }}"
       with_items:
@@ -45,7 +63,7 @@
     - name: Move temporary files to memory filesystem
       lineinfile: dest=/etc/fstab
                   state=present
-                  line='tmpfs /tmp  tmpfs  nodev,nosuid,noatime,mode=1777  0 0'
+                  line='tmpfs /tmp  tmpfs  rw,nodev,nosuid,noatime,mode=1777  0 0'
 
     - name: Adjust swappiness
       sysctl: name="{{ item.name }}" value="{{ item.value }}" state=present sysctl_set=yes
@@ -85,8 +103,8 @@
 
     # Restart
     - name: Restart GIS.lab Unit machine
-      command: shutdown -r now "GIS.lab Unit pre-installation task done"
-      async: 0
+      shell: sleep 2 && shutdown -r now "GIS.lab Unit pre-installation task done"
+      async: 1
       poll: 0
       ignore_errors: true
 

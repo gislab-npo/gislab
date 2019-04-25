@@ -1,0 +1,5 @@
+default gislab
+
+label gislab
+kernel vmlinuz
+append ro initrd=initrd.img root=/dev/nbd0 init=/sbin/init-gislab nbdroot=:10809/gislab

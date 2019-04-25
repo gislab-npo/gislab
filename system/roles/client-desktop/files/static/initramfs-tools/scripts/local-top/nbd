@@ -1,0 +1,112 @@
+#!/bin/sh
+#
+# This is original script from 'nbd-client' package in Xenial
+# including fix of Debian bug #840612.
+# See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=840612
+
+
+# We don't have any prerequisites
+case $1 in
+prereqs)
+	exit 0
+	;;
+esac
+
+for x in $(cat /proc/cmdline); do
+	case "$x" in
+		nbddev=*)
+			nbddev="${x#nbddev=}"
+			;;
+		nbdroot=*)
+			nbdroot="${x#nbdroot=}"
+			;;
+		root=/dev/nbd*)
+			nbddev="${x#root=}"
+			;;
+	esac
+done
+
+# if nbd root is not requested exit early and silently
+if [ -z "$nbdroot" ] && [ -z "$nbddev" ]
+then
+	exit 0
+fi
+
+. /scripts/functions
+
+log_begin_msg "Setting up nbd-client"
+
+modprobe nbd
+wait_for_udev
+configure_networking
+
+# Support setting stuff using DHCP by overloading 'option root-path'
+case "$nbdroot" in
+	''|dhcp)
+		nbdroot=$ROOTPATH
+		;;
+esac
+
+nbdrootdev="$nbddev"
+nbdbasedev="${nbddev#/dev/}"
+
+case "$nbdroot" in
+	*,*,*)
+		nbdsrv="${nbdroot%%,*}"
+		nbdpath="${nbdroot%,*}"
+		nbdpath="${nbdpath##*,}"
+		# root= parameter overrides three-option nbdroot= parameter
+		if [ -z "$nbdrootdev" ]
+		then
+			nbdbasedev="${nbdroot##*,}"
+			nbdrootdev=/dev/$nbdbasedev
+		fi
+		;;
+	*,*)
+		nbdsrv="${nbdroot%,*}"
+		nbdport="${nbdroot#*,}"
+		;;
+	\[*\]*)
+		# [ipv6]:port/path
+		nbdsrv=${nbdroot%\]*}
+		nbdsrv=${nbdsrv#\[}
+		nbdportpath=${nbdroot#\[$nbdsrv\]}
+		nbdportpath=${nbdportpath#:}
+		nbdport=${nbdportpath%%/*}
+		nbdpath=${nbdportpath#$nbdport}
+		;;
+	*)
+		# ipv4:port/path
+		nbdsrv=${nbdroot%%[:/]*}
+		nbdportpath=${nbdroot#$nbdsrv}
+		nbdportpath=${nbdportpath#:}
+		nbdport=${nbdportpath%%/*}
+		nbdpath=${nbdportpath#$nbdport/}
+		;;
+esac
+
+nbdrootdev=${nbdrootdev%p*}
+nbdbasedev=${nbdbasedev%p*}
+# If host is omitted, use ROOTSERVER from DHCP.
+case "$nbdsrv" in
+	''|dhcp)
+		nbdsrv=$ROOTSERVER
+		;;
+esac
+
+if [ -z "$nbdsrv" ] || [ -z "$nbdrootdev" ] || [ -z "$nbdpath" ]
+then
+	log_failure_msg "Insufficient information to set up nbd, quitting (nbdroot=$nbdroot, host=$nbdsrv, name=$nbdpath, port=$nbdport, nbd-device=$nbdrootdev)"
+	exit 0
+fi
+
+# Support defining an alternate launch script with env variable NBDCLIENT.
+NBDCLIENT=${NBDCLIENT:-/sbin/nbd-client}
+$NBDCLIENT $nbdsrv -N $nbdpath $nbdport $nbdrootdev -swap -persist -systemd-mark
+
+# This should be removed once the cfq scheduler no longer deadlocks nbd
+# devices
+if grep -q '\[cfq\]' /sys/block/$nbdbasedev/queue/scheduler
+then
+	echo deadline > /sys/block/$nbdbasedev/queue/scheduler
+fi

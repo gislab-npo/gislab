@@ -5,42 +5,57 @@
 # Install and configure OWS server (mapserver).
 #
 # Logging:
-#   production: /storage/log/syslog
-#   debug:      /storage/log/syslog
+#   production: syslog
+#   debug:      syslog
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
-  with_items:
-    - lighttpd
-    - qgis-mapserver
-    - xvfb
+  apt:
+    name:
+      - lighttpd
+      - qgis-mapserver
+      - xvfb
+    force: yes
+    install_recommends: no
+    state: latest
 
 
 # Xvfb
-# In order to enable more advanced print capabilities in QGIS, we need to launch fake X server needed by Qt libs
+# In order to enable more advanced print capabilities in QGIS, we need to launch
+# fake X server needed by Qt libs
 # see: http://hub.qgis.org/issues/9295 and http://www.itopen.it/2014/03/13/qgis-server-setup-notes
 - name: Configure Xvfb service
-  template: src=init/xvfb.conf.j2 dest=/etc/init/xvfb.conf
+  template:
+    src: systemd/xvfb.service.j2
+    dest: /etc/systemd/system/xvfb.service
   notify:
     - service xvfb restart
 
 - name: Activate Xvfb service
-  file: src=/lib/init/upstart-job dest=/etc/init.d/xvfb state=link
+  service:
+    name: xvfb.service
+    enabled: yes
   notify:
     - service xvfb restart
 
 
 - name: Install Lighttpd configuration
-  template: src={{ item.src }} dest={{ item.dest }}
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - { src: lighttpd/lighttpd.conf.j2, dest: /etc/lighttpd/lighttpd.conf }
-    - { src: lighttpd/10-fastcgi.conf.j2, dest: /etc/lighttpd/conf-enabled/10-fastcgi.conf }
+    - {
+        src: lighttpd/lighttpd.conf.j2,
+        dest: /etc/lighttpd/lighttpd.conf
+      }
+    - {
+        src: lighttpd/10-fastcgi.conf.j2,
+        dest: /etc/lighttpd/conf-enabled/10-fastcgi.conf
+      }
   notify:
     - service lighttpd restart
 
 
 - meta: flush_handlers
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

@@ -1,7 +1,8 @@
 ---
 
 - name: Create test superuser account for mail service tests
-  shell: gislab-adduser
+  shell: >
+    gislab-adduser
     -s
     -g Test
     -l User
@@ -14,25 +15,31 @@
 
 
 - name: Send a test email to root user
-  shell: "echo -e 'This is a test message sent by GIS.lab test {{ GISLAB_TEST_UNIQUE_STRING }}'
-    | mail -s '[GIS.lab test: {{ GISLAB_TEST_UNIQUE_STRING }}]: Test message' root"
+  shell: >
+    echo -e 'This is a test message sent by GIS.lab test {{ GISLAB_TEST_UNIQUE_STRING }}'
+    | mail -s '[GIS.lab test: {{ GISLAB_TEST_UNIQUE_STRING }}]: Test message' root
   args:
     executable: /bin/bash
   ignore_errors: yes
   changed_when: False
 
+# TBF: not working
 - name: Test if email to root user was forwarded to test superuser
-  shell: sleep 2
-    && grep -r "This is a test message sent by GIS.lab test {{ GISLAB_TEST_UNIQUE_STRING }}"
-       /mnt/home/test_mail_{{ GISLAB_TEST_UNIQUE_STRING }}/Mail/new
+  shell: >
+    sleep 2
+    &&
+    grep -r "This is a test message sent by GIS.lab test {{ GISLAB_TEST_UNIQUE_STRING }}"
+    /mnt/home/test_mail_{{ GISLAB_TEST_UNIQUE_STRING }}/Mail/new
   ignore_errors: yes
   changed_when: False
 
 
 - name: Remove test user account used for mail service tests
-  shell: gislab-deluser -f test_mail_{{ GISLAB_TEST_UNIQUE_STRING }}
+  shell: >
+    gislab-deluser
+    -f
+    test_mail_{{ GISLAB_TEST_UNIQUE_STRING }}
   ignore_errors: yes
   changed_when: False
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

@@ -1,86 +1,118 @@
 #!/bin/bash
-# GIS.lab user account hook for completing account creation once it is created in LDAP database.
+# GIS.lab user account hook for completing account creation once it is created
+# in LDAP database.
 #
 # USAGE: adduser.sh [GISLAB_USER]
 
 source /etc/gislab_version
+source $GISLAB_ROOT/system/functions.sh
 
 
-# read GISLAB_USER from script parameter if given
+### OPTIONS
 if [ "$1" != "" ]; then
-	GISLAB_USER=$1
+    GISLAB_USER=$1
 fi
 
 
-# sanity check
-if [ "$(ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// "(uid=$GISLAB_USER)")" == "" ]; then
-	echo "User '$GISLAB_USER' doesn't exist in LDAP database !"
-	exit 1
+### VARIABLES
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
+
+### SANITY CHECKS
+if [ "$($lds "(uid=$GISLAB_USER)")" == "" ]; then
+    echo "User '$GISLAB_USER' doesn't exist in LDAP database !"
 fi
 
 
-### HOME DIRECTORY
+### MAIN SCRIPT
+# HOME DIRECTORY
 # create home directory
-cp -pR $GISLAB_ROOT/system/accounts/skel /storage/home/$GISLAB_USER
+cp -pR $GISLAB_PATH_SYSTEM/accounts/skel $GISLAB_PATH_HOME/$GISLAB_USER
 
 # copy custom files
-rsync -a $GISLAB_ROOT/custom/accounts/files/ /storage/home/$GISLAB_USER
+rsync -a $GISLAB_PATH_CUSTOM/accounts/files/ $GISLAB_PATH_HOME/$GISLAB_USER
 
-chown -R $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER
-chmod 0700 /storage/home/$GISLAB_USER
+chown -R $GISLAB_USER:gislabusers $GISLAB_PATH_HOME/$GISLAB_USER
+chmod 0700 $GISLAB_PATH_HOME/$GISLAB_USER
 
 # process template variables
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER +}/$GISLAB_USER/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_GIVEN_NAME +}/$GISLAB_USER_GIVEN_NAME/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_SURNAME +}/$GISLAB_USER_SURNAME/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_EMAIL +}/$GISLAB_USER_EMAIL/g" "{}" \;
-find /storage/home/$GISLAB_USER -type f -exec sed -i "s/{+ GISLAB_USER_DESCRIPTION +}/$GISLAB_USER_DESCRIPTION/g" "{}" \;
+find $GISLAB_PATH_HOME/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER +}/$GISLAB_USER/g" "{}" \;
+
+find $GISLAB_PATH_HOME/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER_GIVEN_NAME +}/$GISLAB_USER_GIVEN_NAME/g" "{}" \;
+
+find $GISLAB_PATH_HOME/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER_SURNAME +}/$GISLAB_USER_SURNAME/g" "{}" \;
+
+find $GISLAB_PATH_HOME/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER_EMAIL +}/$GISLAB_USER_EMAIL/g" "{}" \;
+
+find $GISLAB_PATH_HOME/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER_DESCRIPTION +}/$GISLAB_USER_DESCRIPTION/g" "{}" \;
+
+find $GISLAB_PATH_HOME/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER_SUPERUSER +}/$GISLAB_USER_SUPERUSER/g" "{}" \;
+
+find $GISLAB_PATH_HOME/$GISLAB_USER \
+    -type f \
+    -exec sed -i "s/{+ GISLAB_USER_GROUPS +}/$GISLAB_USER_GROUPS/g" "{}" \;
 
 # create ~/.gislab directory
-mkdir -p /storage/home/$GISLAB_USER/.gislab
-chmod 700 /storage/home/$GISLAB_USER/.gislab
-chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab
+mkdir -p $GISLAB_PATH_HOME/$GISLAB_USER/.gislab
+chmod 700 $GISLAB_PATH_HOME/$GISLAB_USER/.gislab
+chown $GISLAB_USER:gislabusers $GISLAB_PATH_HOME/$GISLAB_USER/.gislab
 
 
-### POSTGRESQL
+# POSTGRESQL
 # create PostgreSQL user account
 createuser -U postgres --no-superuser --no-createdb --no-createrole $GISLAB_USER
 psql -U postgres -c "GRANT gislabusers TO $GISLAB_USER;"
 psql -U postgres -d gislab -c "CREATE SCHEMA AUTHORIZATION $GISLAB_USER;"
 
 # add user to the database superusers group if creating superuser account
-id $GISLAB_USER | grep gislabadmins &> /dev/null && SUDO=yes || SUDO=no
-if [ "$SUDO" == "yes" ]; then
-	psql -U postgres -c "GRANT gislabadmins TO $GISLAB_USER;"
+id $GISLAB_USER | grep gislabadmins &> /dev/null && sudo=yes || sudo=no
+if [ "$sudo" == "yes" ]; then
+    psql -U postgres -c "GRANT gislabadmins TO $GISLAB_USER;"
 fi
 
 
-### PUBLISH DIRECTORY
+# PUBLISH DIRECTORY
 # create publish directory
 mkdir -p /storage/publish/$GISLAB_USER # NFS directory
 chown $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
 chmod 750 /storage/publish/$GISLAB_USER
 
 
-### VPN
+# VPN
 # place VPN configuration and certificates to ~/.gislab directory
 if [ -d "/etc/openvpn" ]; then
-	mkdir -p /storage/home/$GISLAB_USER/.gislab
+    mkdir -p $GISLAB_PATH_HOME/$GISLAB_USER/.gislab
 
-	tar -C /etc \
-		-czf /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz \
-		--transform s/^openvpn/$GISLAB_UNIQUE_ID-vpn/ \
-		openvpn/gislab_vpn_ca.crt \
-		openvpn/gislab_vpn_ta.key \
-		openvpn/client.conf
+    tar -C /etc \
+        -czf $GISLAB_PATH_HOME/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz \
+        --transform s/^openvpn/$GISLAB_UNIQUE_ID-vpn/ \
+        openvpn/gislab_vpn_ca.crt \
+        openvpn/gislab_vpn_ta.key \
+        openvpn/client.conf
 
-	chown $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
-	chmod 0600 /storage/home/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
+    chown \
+        $GISLAB_USER:gislabusers \
+        $GISLAB_PATH_HOME/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
+
+    chmod \
+        0600 \
+        $GISLAB_PATH_HOME/$GISLAB_USER/.gislab/$GISLAB_UNIQUE_ID-vpn.tar.gz
 fi
 
 
 ### DONE
-echo "$(date +%Y-%m-%d-%H:%M:%S)" > /storage/home/$GISLAB_USER/.gislab/account.done
+echo "$(date +%Y-%m-%d-%H:%M:%S)" > $GISLAB_PATH_HOME/$GISLAB_USER/.gislab/account.done
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

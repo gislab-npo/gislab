@@ -10,83 +10,147 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
-	echo "USAGE: $(basename $0) [OPTIONS] username"
-	echo "Create GIS.lab user account. User name can contain only lower case digits and numbers."
-	echo -e "\nOPTIONS
-	-g first name (required)
-	-l last name (required)
-	-m email (required)
-	-p password (optional, default: automatically generated)
-	-d user description (optional)
-	-s add user to superuser's group (optional)
-	-h display this help
-	"
-	exit 255
+    echo "USAGE: $(basename $0) [OPTIONS] username"
+    echo "Create GIS.lab user account."
+    echo "User name can contain only lower case digits and numbers."
+    echo -e "\nOPTIONS
+    -g first name (required)
+    -l last name (required)
+    -m email (required)
+    -p if this parameter is omitted, password will be automatically generated
+       if this parameter is used without argument, you will be asked for password
+       if this parameter is used with argument PASSWORD, password will be set to PASSWORD
+       NOTICE: this parameter MUST be used as a last option before username
+    -d user description (optional)
+    -s add user to superuser's group (optional)
+    -a add user to supplementary group(s) separated by comma (optional)
+    -h display this help
+    "
+    exit 255
 }
 
 
-# options
-GISLAB_USER_PASSWORD=$(pwgen -1 -n 8) # generate password, can be overridden by '-p' option 
-
-while getopts "d:g:l:m:p:sh" OPTION
+### OPTIONS
+while getopts "a:d:g:l:m:psh" OPTION
 do
-        case "$OPTION" in
-			g) GISLAB_USER_GIVEN_NAME=$OPTARG ;;
-			l) GISLAB_USER_SURNAME=$OPTARG ;;
-			m) GISLAB_USER_EMAIL=$OPTARG ;;
-			p) GISLAB_USER_PASSWORD=$OPTARG ;;
-			d) GISLAB_USER_DESCRIPTION="$OPTARG" ;;
-			s) SUDO=yes ;;
-			h) usage ;;
-			\?) exit 1 ;;
-        esac
+    case "$OPTION" in
+        g) opt_given_name=$OPTARG ;;
+        l) opt_surname=$OPTARG ;;
+        m) opt_email=$OPTARG ;;
+        d) opt_description="$OPTARG" ;;
+        s) opt_superuser=yes ;;
+        a) opt_groups=$OPTARG ;;
+        h) usage ;;
+        \?) exit 1 ;;
+    esac
 done
-shift $(($OPTIND - 1))
-if [ $# -eq 0 ]; then usage; fi
 
-if [ -z "$GISLAB_USER_GIVEN_NAME" -o -z "$GISLAB_USER_SURNAME" -o -z "$GISLAB_USER_EMAIL" ]; then
-	usage
+# get password option (if present)
+OPTIND=0
+while getopts ":a:d:g:l:m:p:sh" OPTION
+do
+    case "$OPTION" in
+       p) pass_opt_present=true ;;
+    esac
+done
+
+# if password option is present
+if [ -n "$pass_opt_present" ]; then
+    shift $(($OPTIND - 2))
+    if [ $# -eq 1 ]; then
+        # ... but password was not provided (ask for password later)
+        # the last parameter will be username
+        ask_pass=true
+    elif [ $# -eq 2 ]; then
+        # ... and password was provided
+        # the last but one paramter is password
+        # the last parameter is username
+        opt_password=$1
+        shift
+    else
+        # too much arguments
+        usage
+    fi
+else
+# password option is not present (password wil be generated)
+    shift $(($OPTIND - 1))
+    if [ $# -eq 0 ]; then
+        # too much arguments
+        usage
+    fi
+fi
+
+if [ -z "$opt_given_name" \
+     -o -z "$opt_surname" \
+     -o -z "$opt_email" ]; then
+    usage
 fi
 
 GISLAB_USER=$1
-GISLAB_USER_FULL_NAME="$GISLAB_USER_GIVEN_NAME $GISLAB_USER_SURNAME"
+GISLAB_USER_FULL_NAME="$opt_given_name $opt_surname"
 
 
-# sanity checks
-if id -u $GISLAB_USER > /dev/null 2>&1; then
-	gislab_print_error "User '$GISLAB_USER' already exists"
-	exit 1
+### VARIABLES
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
+
+### SANITY CHECKS
+if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" != "" ]; then
+    gislab_error "User '$GISLAB_USER' already exists"
+    exit 1
 fi
 
 if ! [[ "$GISLAB_USER" =~ ^[a-z][a-z0-9_]*$ ]]; then
-	gislab_print_error "Invalid characters in user name"
-	exit 1
+    gislab_error "Invalid characters in user name"
+    exit 1
 fi
 
-if ! [[ "$GISLAB_USER_EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
-	gislab_print_error "Invalid e-mail address format"
-	exit 1
+if ! [[ "$opt_email" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
+    gislab_error "Invalid e-mail address format"
+    exit 1
 fi
 
+for g in $(echo $opt_groups | sed 's/,/ /g'); do
+    if [ "$($lds "(&(objectClass=posixGroup)(cn=$g))")" == "" ]; then
+        gislab_error "Group '$g' does not exists"
+        exit 1
+    fi
+done
 
+
+### MAIN SCRIPT
 # export variables
-export GISLAB_USER GISLAB_USER_GIVEN_NAME GISLAB_USER_SURNAME GISLAB_USER_EMAIL GISLAB_USER_DESCRIPTION
+export GISLAB_USER
+export GISLAB_USER_GIVEN_NAME=$opt_given_name
+export GISLAB_USER_SURNAME=$opt_surname
+export GISLAB_USER_EMAIL=$opt_email
+export GISLAB_USER_DESCRIPTION=$opt_description
+export GISLAB_USER_SUPERUSER=$opt_superuser
+export GISLAB_USER_GROUPS=$opt_groups
 
 
 # execute before-add hooks
-if [ -d $GISLAB_ROOT/custom/accounts/before-add ]; then
-	gislab_print_info "Running 'before-add' account hooks"
-	run-parts $GISLAB_ROOT/custom/accounts/before-add || true
+if [ -d $GISLAB_PATH_CUSTOM/accounts/before-add ]; then
+    gislab_info "Running 'before-add' account hooks"
+    run-parts $GISLAB_PATH_CUSTOM/accounts/before-add || true
 fi
 
 
-### LDAP
-gislab_print_info "Adding user account"
+# LDAP
+gislab_info "Adding user account"
 
 # create LDAP account (without creating home directory - CREATEHOMES="no")
 ldapadduser $GISLAB_USER gislabusers
+
+# add user to VirtualBox file sharing group
+gislab-moduser -a vboxsf $GISLAB_USER
+
+# add user to supplementary group(s)
+if [ -n "$opt_groups" ]; then
+    gislab-moduser -a $opt_groups $GISLAB_USER
+fi
 
 # add LDAP user attributes
 ldapmodifyuser $GISLAB_USER > /dev/null << EOL
@@ -95,63 +159,59 @@ replace: cn
 cn: $GISLAB_USER_FULL_NAME
 -
 replace: sn
-sn: $GISLAB_USER_SURNAME
+sn: $opt_surname
 -
 add: givenName
-givenName: $GISLAB_USER_GIVEN_NAME
+givenName: $opt_given_name
 -
 add: mail
-mail: $GISLAB_USER_EMAIL
--
-add: gecos
-gecos: $GISLAB_USER_FULL_NAME
+mail: $opt_email
 EOL
 
-if [ -n "$GISLAB_USER_DESCRIPTION" ]; then
-	ldapmodifyuser $GISLAB_USER > /dev/null << EOL
+if [ -n "$opt_description" ]; then
+    ldapmodifyuser $GISLAB_USER > /dev/null << EOL
 changetype: modify
 add: description
-description: $GISLAB_USER_DESCRIPTION
+description: $opt_description
 EOL
 fi
 
 # allow sudo for user if creating superuser account
-if [ "$SUDO" == "yes" ]; then
-	ldapaddusertogroup $GISLAB_USER gislabadmins
-fi
-
-# forward system mails to user if creating superuser account
-# perform only if this email does not already exist in 'maildrop' (other user account
-# can be possibly created with same email address)
-ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
-maildrop_exists=$($ldapsearch_cmd -b "cn=root,ou=MailAliases,dc=gis,dc=lab" "(maildrop=$GISLAB_USER_EMAIL)" 2>/dev/null)
-
-if [ "$SUDO" == "yes" -a -f /etc/postfix/sasl_passwd -a -z "$maildrop_exists" ]; then
-	ldapadd -Z -y /etc/ldapscripts/ldapscripts.passwd -D "cn=admin,dc=gis,dc=lab" > /dev/null << EOL
-dn: cn=root,ou=MailAliases,dc=gis,dc=lab
-changetype: modify
-add: maildrop
-maildrop: $GISLAB_USER_EMAIL
-EOL
+if [ "$opt_superuser" == "yes" ]; then
+    gislab-moduser -s $GISLAB_USER
 fi
 
 # set user password
-gislab-password -p $GISLAB_USER_PASSWORD $GISLAB_USER
+if [ -n "$ask_pass" ]; then
+    while true; do
+        read -s -p "New password:" password_1
+        echo
+        read -s -p "Retype password:" opt_password
+        if [ "$password_1" != "$opt_password" ]; then
+            echo "Passwords do not match."
+            unset $password_1
+            unset $opt_password
+        else
+            break
+        fi
+    done
+fi
+
+gislab-moduser -p $opt_password $GISLAB_USER
 
 
 # run adduser hook
-$GISLAB_ROOT/system/accounts/hooks/adduser.sh $GISLAB_USER
+$GISLAB_PATH_SYSTEM/accounts/hooks/adduser.sh $GISLAB_USER
 
 
 # execute after-add hooks
-if [ -d $GISLAB_ROOT/custom/accounts/after-add ]; then
-	gislab_print_info "Running 'after-add' account hooks"
-	run-parts $GISLAB_ROOT/custom/accounts/after-add || true
+if [ -d $GISLAB_PATH_CUSTOM/accounts/after-add ]; then
+    gislab_info "Running 'after-add' account hooks"
+    run-parts $GISLAB_PATH_CUSTOM/accounts/after-add || true
 fi
 
 
-# final message
-gislab_print_info "Account '$GISLAB_USER' was successfully added with password '$GISLAB_USER_PASSWORD'"
+### CONFIRMATION MESSAGE
+gislab_success "Account '$GISLAB_USER' was successfully created"
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

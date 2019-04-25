@@ -2,7 +2,8 @@
 #
 ### ADMINISTRATOR USER ACCOUNT ###
 #
-# Create or update GIS.lab administrator user account 'gislab' with given or random password.
+# Create or update GIS.lab administrator user account 'gislab' with given or
+# random password.
 
 
 - name: Detect if GIS.lab administrator user account is already created
@@ -13,8 +14,9 @@
   changed_when: False
 
 
-- name: Create GIS.lab administrator user account 'gislab' if doesn't exist
-  shell: gislab-adduser
+- name: Create GIS.lab administrator user account 'gislab' if does not exist
+  shell: >
+    gislab-adduser
     -s
     -g "{{ GISLAB_ADMIN_FIRST_NAME }}"
     -l "{{ GISLAB_ADMIN_SURNAME }} ({{ GISLAB_UNIQUE_ID }})"
@@ -22,22 +24,48 @@
     gislab
   when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
 
-- name: Install public SSH key for GIS.lab administrator user account 'gislab'
-  shell: "{{ item }}"
-  with_items:
-    - mkdir -p /storage/home/gislab/.ssh
-    - cp -a /home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys /storage/home/gislab/.ssh/authorized_keys
-    - chmod 700 /storage/home/gislab/.ssh
-    - chmod 600 /storage/home/gislab/.ssh/authorized_keys
-    - "chown -R gislab:gislabusers /storage/home/gislab/.ssh"
+
+- name: Create SSH directory for GIS.lab administrator user account
+  file:
+    path: "{{ GISLAB_PATH_HOME }}/gislab/.ssh"
+    owner: gislab
+    group: gislabusers
+    mode: 0700
+    state: directory
+  when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
+
+- name: Install public SSH key for GIS.lab administrator user account
+  copy:
+    src: "/home/{{ GISLAB_PROVISIONING_USER }}/.ssh/authorized_keys"
+    dest: "{{ GISLAB_PATH_HOME }}/gislab/.ssh/"
+    remote_src: yes
+    owner: gislab
+    group: gislabusers
+    mode: 0600
+  when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
+
+# note: openssh_keypair is new in Ansible 2.8+
+- name: Generate OpenSSH private and public keys for GIS.lab administrator user account
+  shell: >
+    ssh-keygen
+    -t rsa
+    -f "{{ GISLAB_PATH_HOME }}/gislab/.ssh/id_rsa"
+    -P ''
+  when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
+
+# note: assume to replace code below by authorized_key + remote file
+- name: Update authorized key to include self-generated OpenSSH key
+  shell: >
+    cat "{{ GISLAB_PATH_HOME }}/gislab/.ssh/id_rsa.pub" >>
+    "{{ GISLAB_PATH_HOME }}/gislab/.ssh/authorized_keys"
   when: admin_account_status.stdout == 'GISLAB-DOES-NOT-EXIST'
 
 
 - name: Update password of GIS.lab administrator user account 'gislab'
-  shell: gislab-password
+  shell: >
+    gislab-moduser
     -p "{{ GISLAB_ADMIN_PASSWORD }}"
     gislab
   when: GISLAB_ADMIN_PASSWORD != ""
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

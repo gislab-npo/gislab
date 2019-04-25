@@ -1,13 +1,17 @@
 ---
 
 - name: Send a test message to syslog
-  shell: logger -t test This is a test message sent by GIS.lab test {{ GISLAB_TEST_UNIQUE_STRING }}
+  shell: >
+    logger
+    -t test
+    "This is a test message sent by GIS.lab test {{ GISLAB_TEST_UNIQUE_STRING }}"
   changed_when: False
 
 - name: Test if message was written to log file
-  shell: grep "This is a test message sent by GIS.lab test {{ GISLAB_TEST_UNIQUE_STRING }}" /storage/log/syslog
+  shell: >
+    grep "This is a test message sent by GIS.lab test {{ GISLAB_TEST_UNIQUE_STRING }}"
+    /storage/log/syslog
   ignore_errors: yes
   changed_when: False
 
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

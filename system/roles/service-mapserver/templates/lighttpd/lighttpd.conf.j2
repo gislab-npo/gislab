@@ -1,24 +1,23 @@
 server.modules = ( )
 
-server.port			= 91
-server.use-ipv6			= "disable"
-server.document-root		= "/var/www/default"
-server.pid-file			= "/var/run/lighttpd.pid"
-server.username			= "www-data"
-server.groupname		= "www-data"
-server.upload-dirs		= ( "/var/cache/lighttpd/uploads" )
+server.port                     = 91
+server.use-ipv6                 = "disable"
+server.document-root            = "{{ GISLAB_PATH_WWW }}"
+server.pid-file                 = "/var/run/lighttpd.pid"
+server.username                 = "www-data"
+server.groupname                = "www-data"
+server.upload-dirs              = ( "/var/cache/lighttpd/uploads" )
 
-index-file.names		= ( "index.html" )
-static-file.exclude-extensions	= ( ".php", ".pl", ".fcgi" )
+index-file.names                = ( "index.html" )
+static-file.exclude-extensions  = ( ".php", ".pl", ".fcgi" )
 
 
 # logging
-server.errorlog-use-syslog	= "enable"
+server.errorlog-use-syslog      = "enable"
 
-{% if GISLAB_DEBUG_SERVICES %}
-server.modules			+= ( "mod_accesslog" )
-accesslog.use-syslog		= "enable"
-{% endif %}
+# GISLAB_DEBUG: uncomment these lines for debug mode
+# server.modules                  += ( "mod_accesslog" )
+# accesslog.use-syslog            = "enable"
 
 
 include_shell "/usr/share/lighttpd/create-mime.assign.pl"

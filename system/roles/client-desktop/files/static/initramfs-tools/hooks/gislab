@@ -1,10 +1,8 @@
 #!/bin/sh -e
 # initramfs hook for nbd
 
-MINKVER="2.6.17"
 PREREQ=""
 
-# Output pre-requisites
 prereqs()
 {
     echo "$PREREQ"
@@ -14,17 +12,27 @@ case "$1" in
     prereqs)
         prereqs
         exit 0
-    ;;
+        ;;
 esac
-
 
 . /usr/share/initramfs-tools/hook-functions
 
 # make sure all our modules are there
-force_load nbd
-force_load squashfs
-force_load overlayfs
-force_load aufs
+manual_add_modules nbd
+manual_add_modules squashfs
+manual_add_modules overlay
+manual_add_modules overlayfs
+manual_add_modules aufs
+manual_add_modules aoe
+auto_add_modules net
 
-# Copy across the binary
+# Copy across the binaries
 copy_exec /sbin/nbd-client /sbin
+copy_exec /sbin/blkid /sbin
+
+# Cleanup empty ROOT= string if written in conf/param.conf
+if [ -e "$DESTDIR/conf/param.conf" ]; then
+    sed "/^ROOT=\"\"$/d" -i $DESTDIR/conf/param.conf
+fi
+
+# vim: set ts=8 sts=4 sw=4 et:

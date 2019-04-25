@@ -1,5 +1,5 @@
 serverinfo {
-    name = "chat.gis.lab";
+    name = "server.gis.lab";
     description = "GIS.lab IRC server";
     network_name = "GIS.lab";
     network_desc = "GIS.lab";
@@ -14,8 +14,8 @@ admin {
 };
 
 listen {
-	host = "0.0.0.0";
-	port = 6665 .. 6669;
+    host = "0.0.0.0";
+    port = 6665 .. 6669;
 };
 
 log {
@@ -23,170 +23,170 @@ log {
 };
 
 class {
-	name = "users";
-	ping_time = 2 minutes;
-	number_per_ip = 2;
-	max_number = 100;
-	sendq = 100 kbytes;
+    name = "users";
+    ping_time = 2 minutes;
+    number_per_ip = 2;
+    max_number = 100;
+    sendq = 100 kbytes;
 };
 
 class {
-	name = "restricted";
-	ping_time = 1 minute 30 seconds;
-	number_per_ip = 1;
-	max_number = 100;
-	sendq = 60kb;
+    name = "restricted";
+    ping_time = 1 minute 30 seconds;
+    number_per_ip = 1;
+    max_number = 100;
+    sendq = 60kb;
 };
 
 class {
-	name = "opers";
-	ping_time = 5 minutes;
-	number_per_ip = 10;
-	max_number = 100;
-	sendq = 100kbytes;
+    name = "opers";
+    ping_time = 5 minutes;
+    number_per_ip = 10;
+    max_number = 100;
+    sendq = 100kbytes;
 };
 
 class {
-	name = "server";
-	ping_time = 5 minutes;
-	connectfreq = 5 minutes;
-	max_number = 1;
-	sendq=2 megabytes;
+    name = "server";
+    ping_time = 5 minutes;
+    connectfreq = 5 minutes;
+    max_number = 1;
+    sendq=2 megabytes;
 };
 
 auth {
-	user = "*@127.0.0.1";
-	spoof = "i.love.debian.org";
-	spoof_notice = yes;
-	exceed_limit = yes;
-	kline_exempt = yes;
-	gline_exempt = yes;
-	no_tilde = yes;
-	class = "opers";
+    user = "*@127.0.0.1";
+    spoof = "i.love.debian.org";
+    spoof_notice = yes;
+    exceed_limit = yes;
+    kline_exempt = yes;
+    gline_exempt = yes;
+    no_tilde = yes;
+    class = "opers";
 };
 
 auth {
-	user = "*@*";
-	class = "users";
-	have_ident = no;
+    user = "*@*";
+    class = "users";
+    have_ident = no;
 };
 
 operator {
-	name = "root";
-	user = "root@127.0.0.1";
-	password = "ToJx.IEPqjiVg";
-	class = "opers";
-	global_kill = yes;
-	remote = yes;
-	kline = yes;
-	unkline = yes;
-	gline = yes;
-	die = yes;
-	rehash = yes;
-	nick_changes = yes;
-	admin = yes;
+    name = "root";
+    user = "root@127.0.0.1";
+    password = "ToJx.IEPqjiVg";
+    class = "opers";
+    global_kill = yes;
+    remote = yes;
+    kline = yes;
+    unkline = yes;
+    gline = yes;
+    die = yes;
+    rehash = yes;
+    nick_changes = yes;
+    admin = yes;
 };
 
 shared {
-	name = "hybrid7.debian.local";
-	user = "root@localhost";
+    name = "hybrid7.debian.local";
+    user = "root@localhost";
 };
 
 deny {
-	ip = "10.0.1.0/24";
-	reason = "Reconnecting vhosted bots";
+    ip = "10.0.1.0/24";
+    reason = "Reconnecting vhosted bots";
 };
 
 exempt {
-	ip = "192.168.0.0/16";
+    ip = "192.168.0.0/16";
 };
 
 resv {
-	reason = "There are no services on this network";
-	nick = "nickserv";
-	nick = "chanserv";
-	channel = "#services";
-	reason = "Clone bots";
-	nick = "clone*";
+    reason = "There are no services on this network";
+    nick = "nickserv";
+    nick = "chanserv";
+    channel = "#services";
+    reason = "Clone bots";
+    nick = "clone*";
 };
 
 channel {
-	use_invex = yes;
-	use_except = yes;
-	use_knock = yes;
-	knock_delay = 5 minutes;
-	knock_delay_channel = 1 minute;
-	max_chans_per_user = 15;
-	quiet_on_ban = yes;
-	max_bans = 25;
-	default_split_user_count = 0;
-	default_split_server_count = 0;
-	no_create_on_split = no;
-	no_join_on_split = no;
-	disable_local_channels = no;
+    use_invex = yes;
+    use_except = yes;
+    use_knock = yes;
+    knock_delay = 5 minutes;
+    knock_delay_channel = 1 minute;
+    max_chans_per_user = 15;
+    quiet_on_ban = yes;
+    max_bans = 25;
+    default_split_user_count = 0;
+    default_split_server_count = 0;
+    no_create_on_split = no;
+    no_join_on_split = no;
+    disable_local_channels = no;
 };
 
 serverhide {
-	flatten_links = no;
-	links_delay = 5 minutes;
-	hidden = no;
-	disable_hidden = no;
-	hide_servers = no;
+    flatten_links = no;
+    links_delay = 5 minutes;
+    hidden = no;
+    disable_hidden = no;
+    hide_servers = no;
 };
 
 general {
-	oper_pass_resv = yes;
-	disable_remote_commands = no;
+    oper_pass_resv = yes;
+    disable_remote_commands = no;
         default_floodcount = 10;
-	failed_oper_notice = yes;
-	dots_in_ident=2;
+    failed_oper_notice = yes;
+    dots_in_ident=2;
         dot_in_ip6_addr = yes;
-	min_nonwildcard = 4;
-	max_accept = 20;
-	anti_nick_flood = yes;
-	max_nick_time = 20 seconds;
-	max_nick_changes = 5;
+    min_nonwildcard = 4;
+    max_accept = 20;
+    anti_nick_flood = yes;
+    max_nick_time = 20 seconds;
+    max_nick_changes = 5;
         anti_spam_exit_message_time = 0 minutes;
-	ts_warn_delta = 30 seconds;
-	ts_max_delta = 5 minutes;
-	kline_with_reason = yes;
-	warn_no_nline = yes;
-	stats_o_oper_only=yes;
-	stats_P_oper_only=no;
-	stats_i_oper_only=masked;
-	stats_k_oper_only=masked;
-	caller_id_wait = 1 minute;
-	pace_wait_simple = 1 second;
-	pace_wait = 10 seconds;
-	short_motd = no;
-	ping_cookie = no;
-	no_oper_flood = yes;
-	true_no_oper_flood = yes;
+    ts_warn_delta = 30 seconds;
+    ts_max_delta = 5 minutes;
+    kline_with_reason = yes;
+    warn_no_nline = yes;
+    stats_o_oper_only=yes;
+    stats_P_oper_only=no;
+    stats_i_oper_only=masked;
+    stats_k_oper_only=masked;
+    caller_id_wait = 1 minute;
+    pace_wait_simple = 1 second;
+    pace_wait = 10 seconds;
+    short_motd = no;
+    ping_cookie = no;
+    no_oper_flood = yes;
+    true_no_oper_flood = yes;
         idletime = 0;
-	max_targets = 4;
-	client_flood = 20;
-	message_locale = "standard";
-	oper_only_umodes = bots, cconn, debug, full, skill, nchange, 
+    max_targets = 4;
+    client_flood = 20;
+    message_locale = "standard";
+    oper_only_umodes = bots, cconn, debug, full, skill, nchange, 
                      rej, spy, external, operwall, locops, unauth;
-	oper_umodes = locops, servnotice, operwall, wallop;
-	default_cipher_preference = "BF/128";
-	throttle_time = 10;
+    oper_umodes = locops, servnotice, operwall, wallop;
+    default_cipher_preference = "BF/128";
+    throttle_time = 10;
 };
 
 glines {
-	enable = yes;
-	duration = 1 day;
-	logging = reject, block;
-	user = "god@I.still.hate.packets";
-	name = "hades.arpa";
-	action = reject, block;
-	user = "god@*";
-	name = "*";
-	action = block;
+    enable = yes;
+    duration = 1 day;
+    logging = reject, block;
+    user = "god@I.still.hate.packets";
+    name = "hades.arpa";
+    action = reject, block;
+    user = "god@*";
+    name = "*";
+    action = block;
 };
 
 modules {
-	path = "/usr/lib/ircd-hybrid/modules";
-	path = "/usr/lib/ircd-hybrid/modules/autoload";
-	module = "m_tburst.so";
+    path = "/usr/lib/ircd-hybrid/modules";
+    path = "/usr/lib/ircd-hybrid/modules/autoload";
+    module = "m_tburst.so";
 };

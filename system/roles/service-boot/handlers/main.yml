@@ -1,0 +1,24 @@
+---
+
+- name: service apparmor restart
+  service:
+    name: apparmor
+    state: restarted
+
+- name: service isc-dhcp-server stop
+  service:
+    name: isc-dhcp-server
+    enabled: no
+    state: stopped
+
+- name: service nbd-server restart
+  service:
+    name: nbd-server
+    state: restarted
+
+- name: service gislab-http-boot restart
+  service:
+    name: gislab-http-boot
+    state: restarted
+
+# vim: set ts=8 sts=2 sw=2 et:

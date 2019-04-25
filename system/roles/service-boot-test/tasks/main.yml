@@ -1,0 +1,120 @@
+---
+
+# I was trying to test DHCP server using udhcpc client and dhcping. It seems,
+# that both can't work when client and server is the same machine:
+# * $ busybox udhcpc -i eth1 -s /tmp/test.sh
+# * $ dhcping -V -c 192.168.15.5 -s 192.168.15.5
+
+- name: Install packages for tests
+  apt:
+    pkg: "{{ item }}"
+    force: yes
+    install_recommends: no
+    state: latest
+  with_items:
+    - atftp
+    - nbd-client
+  changed_when: False
+
+
+### PXE BOOT
+- name: Test downloading files needed for PXE boot from TFTP server
+  shell: >
+    atftp
+    -g
+    -r {{ item }}
+    -l {{ GISLAB_PATH_TMP }}/$(basename {{ item }})
+    localhost 69
+  with_items:
+    - gislab/pxelinux.cfg/default
+    - gislab/vmlinuz
+    - gislab/initrd.img
+  ignore_errors: yes
+  changed_when: False
+
+
+### HTTP BOOT
+- name: Test HTTP boot service
+  shell: >
+    curl http://localhost:6700/?ip=192.168.77.7
+    | grep "kernel http://192.168.77.7/boot/vmlinuz"
+  ignore_errors: yes
+  changed_when: False
+  args:
+    warn: false
+
+- name: Test if kernel is downloadable via HTTP
+  shell: >
+    curl http://localhost:6700
+    | grep "[\s]*kernel"
+    | curl -I $(awk -F " " '{print $2}')
+    | grep "Content-Type: application/octet-stream"
+  ignore_errors: yes
+  changed_when: False
+  args:
+    warn: false
+
+- name: Test if initrd is downloadable via HTTP
+  shell: >
+    curl http://localhost:6700
+    | grep "[\s]*initrd"
+    | curl -I $(awk -F " " '{print $2}')
+    | grep "Content-Type: application/octet-stream"
+  ignore_errors: yes
+  changed_when: False
+  args:
+    warn: false
+
+
+### NBD
+- name: Prepare mount point for test NBD mount
+  file:
+    path: "{{ GISLAB_PATH_TMP }}/nbd_mount"
+    state: directory
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test NBD mount
+  shell: >
+    modprobe nbd
+    &&
+    nbd-client -name gislab {{ GISLAB_NETWORK }}.5 /dev/nbd0
+    &&
+    mount /dev/nbd0 {{ GISLAB_PATH_TMP }}/nbd_mount
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+- name: Test to run command in NBD chroot
+  shell: >
+    chroot {{ GISLAB_PATH_TMP }}/nbd_mount id
+    | grep "uid=0(root) gid=0(root) groups=0(root)"
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+- name: Umount NBD
+  shell: >
+    umount {{ GISLAB_PATH_TMP }}/nbd_mount
+    &&
+    nbd-client -disconnect /dev/nbd0
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+  changed_when: False
+
+
+- name: Uninstall packages for tests
+  apt:
+    pkg: "{{ item }}"
+    force: yes
+    purge: yes
+    state: absent
+  with_items:
+    - atftp
+    - nbd-client
+  changed_when: False
+
+# vim: set ts=8 sts=2 sw=2 et:

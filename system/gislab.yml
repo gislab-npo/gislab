@@ -1,5 +1,57 @@
 ---
 
-# $ ansible-playbook --inventory=gislab-unit.inventory --private-key=<private-SSH-key-file> system/gislab.yml
+- hosts: all
+  become: yes
+  gather_facts: false  # disable gathering Ansible facts until Python 2 is not
+                       # installed or Ansible comes with Python 3 support
 
-  - include: system.yml
+  vars_prompt:
+    - name: GISLAB_ADMIN_PASSWORD
+      prompt: "\nEnter new password for GIS.lab administrator account 'gislab' or leave empty to keep current password"
+      private: yes
+      confirm: yes
+
+  roles:
+    - { role: installation-setup, tags: ['installation-setup'] }
+    - { role: basic-configuration, tags: ['basic-configuration'] }
+    - { role: account-users, tags: ['account-users'] }
+    - { role: service-syslog, tags: ['service-syslog'] }
+    - { role: service-logcheck, tags: ['service-logcheck'] }
+    - { role: service-time, tags: ['service-time'] }
+    - { role: service-dns, tags: ['service-dns'] }
+    - { role: service-ldap, tags: ['service-ldap'] }
+    - { role: service-mail, tags: ['service-mail'] }
+    - { role: service-default-web, tags: ['service-default-web'] }
+    - { role: service-boot, tags: ['service-boot'] }
+    - { role: service-files, tags: ['service-files'] }
+    - { role: service-chat, tags: ['service-chat'] }
+    - { role: service-database, tags: ['service-database'] }
+    - {
+      role: service-mapserver,
+      tags: ['service-mapserver'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+    }
+    - {
+      role: service-load-balancer,
+      tags: ['service-load-balancer'],
+      when: "'{{ GISLAB_SUITE }}' in ('server', 'lab')"
+    }
+    - { role: service-statistics, tags: ['service-statistics'] }
+    - { role: service-cluster, tags: ['service-cluster'] }
+    - { role: service-jobs, tags: ['service-jobs'] }
+    - { role: service-connection-forwarding, tags: ['service-connection-forwarding'] }
+    - {
+      role: service-vpn,
+      tags: ['service-vpn'],
+      when: GISLAB_SERVER_CAPABILITY_VPN
+    }
+    - { role: service-docs, tags: ['service-docs'] }
+    - { role: service-docker, tags: ['service-docker'] }
+    - {
+      role: service-gisquick,
+      tags: ['service-gisquick'],
+      when: GISLAB_GISQUICK_INTEGRATION
+    }
+    - { role: client-desktop, tags: ['client-desktop'] }
+    - { role: account-admin, tags: ['account-admin'] }
+    - { role: installation-done, tags: ['installation-done'] }

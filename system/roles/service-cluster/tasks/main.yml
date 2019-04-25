@@ -4,51 +4,74 @@
 #
 # Install GIS.lab clustering support.
 #
-# Logging: /storage/log/syslog
+# Logging: syslog
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
-  with_items:
-    - unzip
+  apt:
+    name:
+      - serf
+      - unzip
+    force: yes
+    install_recommends: no
+    state: latest
 
 
-- name: Install Serf
-  shell: source {{ GISLAB_ROOT }}/system/functions.sh && gislab_serf_install 0.6.4
-  args:
-    executable: /bin/bash
+- name: Allow manage cluster only to GIS.lab administrators
+  file:
+    path: /usr/bin/serf
+    owner: root
+    group: gislabadmins
+    mode: 0774
 
-
-- name: Generate encryption key (run only once)
-  shell: echo -e "[\"$(serf keygen)\"]" > /etc/gislab/gislab_serf.key
-    && chmod 600 /etc/gislab/gislab_serf.key
-  args:
-    executable: /bin/bash
-    creates: /etc/gislab/gislab_serf.key
-
+- name: Create symlink 'gislab-cluster' to Serf binary
+  file:
+    src: /usr/bin/serf
+    dest: /usr/local/bin/gislab-cluster
+    state: link
 
 - name: Purge GIS.lab cluster installation directory
-  file: dest={{ GISLAB_INSTALL_CLUSTER_ROOT }} state=absent
+  file:
+    dest: "{{ root_dir }}"
+    state: absent
 
 - name: Prepare directory for cluster installation
-  file: path={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers state=directory
+  file:
+    path: "{{ root_dir }}"
+    state: directory
+
+- name: Generate encryption key (run only once)
+  shell: >
+    echo -e "[\"$(serf keygen)\"]" > {{ GISLAB_PATH_SECRET }}/gislab_serf.key
+    &&
+    chmod 600 {{ GISLAB_PATH_SECRET }}/gislab_serf.key
+  args:
+    executable: /bin/bash
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_serf.key"
 
 
 - name: Prepare directory for cluster handlers
-  file: path={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers state=directory
+  file:
+    path: "{{ root_dir }}/handlers"
+    state: directory
 
-- name: Install Serf handlers scripts 
-  copy: src=static/serf/ dest={{ GISLAB_INSTALL_CLUSTER_ROOT }}/handlers mode=0774
+- name: Install Serf handlers scripts
+  copy:
+    src: static/serf/
+    dest: "{{ root_dir }}/handlers"
+    mode: 0774
   notify:
   - service serf-agent restart
 
 
-- name: Install Serf agent init script
-  template: src=init/serf-agent.conf.j2 dest=/etc/init/serf-agent.conf
+- name: Install Serf agent systemd unit file
+  template:
+    src: systemd/serf-agent.service.j2
+    dest: /etc/systemd/system/serf-agent.service
   notify:
   - service serf-agent restart
 
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

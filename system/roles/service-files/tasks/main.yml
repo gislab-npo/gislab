@@ -6,42 +6,65 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
-  with_items:
-    - nfs-kernel-server
+  apt:
+    name: nfs-kernel-server
+    force: yes
+    install_recommends: no
+    state: latest
 
 
-# Shared directories
-- name: Create 'repository' mount directory (readable for all, writable only for gislabadmins)
-  file: path=/storage/repository state=directory owner=root group=gislabadmins mode=0775
+### SHARED DIRECTORIES
+# repository - readable for all, writable only for gislabadmins
+- name: Create 'repository' mount directory
+  file:
+    path: "{{ GISLAB_PATH_STORAGE }}/repository"
+    state: directory
+    owner: root
+    group: gislabadmins
+    mode: 0775
 
-- name: Create 'barrel' mount directory (readable and writable for all gislabusers)
-  file: path=/storage/barrel state=directory owner=root group=nogroup mode=0775
+# publish - readable for file owners and www-data, writable for file owners
+- name: Create 'publish' mount directory
+  file:
+    path: "{{ GISLAB_PATH_STORAGE }}/publish"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
 
-- name: Create 'publish' mount directory (readable for file owners and www-data, writable for file owners)
-  file: path=/storage/publish state=directory owner=root group=root mode=0755
+# barrel - readable and writable for all gislabusers
+- name: Create 'barrel' mount directory
+  file:
+    path: "{{ GISLAB_PATH_STORAGE }}/barrel"
+    state: directory
+    owner: root
+    group: nogroup
+    mode: 0775
+
+- name: Publish 'barrel' directory via HTTP
+  file:
+    src: "{{ GISLAB_PATH_STORAGE }}/barrel"
+    dest: "{{ GISLAB_PATH_WWW }}/barrel"
+    force: yes
+    state: link
 
 
-# NFS configuration
+### NFS CONFIGURATION
 - name: Configure NFS exports
-  template: src=nfs/exports.j2 dest=/etc/exports
+  template:
+    src: nfs/exports.j2
+    dest: /etc/exports
   notify:
     - service nfs-kernel-server restart
 
 - name: Configure user IDs mapping
-  template: src=nfs/idmapd.conf.j2 dest=/etc/idmapd.conf
+  template:
+    src: nfs/idmapd.conf.j2
+    dest: /etc/idmapd.conf
   notify:
-    - service idmapd restart
-
-
-# Bind mount
-- name: Configure to mount shares also to /mnt directory to keep the same paths as on clients
-  lineinfile: dest=/etc/fstab line="/storage  /mnt  none  bind  0  0" state=present
-
-- name: Mount /mnt
-  mount: name=/mnt src=/storage fstype=none opts=bind state=mounted
+    - service nfs-kernel-server restart
 
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

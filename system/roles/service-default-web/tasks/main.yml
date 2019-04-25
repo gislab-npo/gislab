@@ -4,51 +4,61 @@
 #
 # Install web server and configure default web page content.
 #
-# Logging:
-#   production: /storage/log/nginx-error.log
-#   debug:      /storage/log/nginx-access.log /storage/log/nginx-error.log
+# Logging: syslog
 
 
 - name: Install packages
-  apt: pkg={{ item }} force=yes install_recommends=no state=latest
-  with_items:
-    - nginx
+  apt:
+    name: nginx
+    force: yes
+    install_recommends: no
+    state: latest
 
 
-# Nginx
+### NGINX
 - name: Configure Nginx
-  template: src={{ item.src }} dest={{ item.dest }}
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - { src: "nginx/nginx.conf.j2 ", dest: "/etc/nginx/nginx.conf" }
-    - { src: "nginx/proxy-parameters.j2 ", dest: "/etc/nginx/proxy-parameters" }
+    - {
+        src: "nginx/nginx.conf.j2",
+        dest: "/etc/nginx/nginx.conf"
+      }
+    - {
+        src: "nginx/proxy-parameters.j2",
+        dest: "/etc/nginx/proxy-parameters"
+      }
   notify:
     - service nginx restart
 
 - name: Configure default Nginx virtualhost
-  template: src=nginx/site-default.j2 dest=/etc/nginx/sites-available/default
+  template:
+    src: nginx/site-default.j2
+    dest: /etc/nginx/sites-available/default
   notify:
     - service nginx restart
 
 
-# Default web content
-- name: Create default web page root directory
-  file: path=/var/www/default state=directory
-
+### WEB CONTENT
 - name: Install default web page content
-  template: src=index.html dest=/var/www/default/index.html
+  template:
+    src: index.html
+    dest: "{{ GISLAB_PATH_WWW }}/index.html"
 
 - name: Add 'gislab_version' file to default web content
-  file: src=/etc/gislab_version dest=/var/www/default/gislab_version owner=root group=root state=link
+  file:
+    src: /etc/gislab_version
+    dest: "{{ GISLAB_PATH_WWW }}/gislab_version"
+    state: link
 
 
-# Logging
-- name: Activate Nginx error logs checking
-  lineinfile: dest=/etc/logcheck/logcheck.logfiles line="/storage/log/nginx-error.log" state=present
-
-
-# Email
+### EMAIL
 - name: Add service user mail alias
-  lineinfile: "dest=/etc/aliases line='www-data: root' state=present"
+  lineinfile:
+    dest: /etc/aliases
+    line: "www-data: root"
+    state: present
 
 - name: Activate new mail alias
   command: newaliases
@@ -56,4 +66,4 @@
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

@@ -6,17 +6,21 @@
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
-  with_items:
-    - ntp
+  apt:
+    name: ntp
+    force: yes
+    install_recommends: no
+    state: latest
 
 
 - name: NTP server configuration
-  template: src=ntp/ntp.conf.j2 dest=/etc/ntp.conf
+  template:
+    src: ntp/ntp.conf.j2
+    dest: /etc/ntp.conf
   notify:
     - service ntp restart
 
 
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

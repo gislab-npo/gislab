@@ -1,0 +1,10 @@
+dn: olcDatabase={1}mdb,cn=config
+changetype: modify
+delete: olcDbIndex
+olcDbIndex: cn,uid eq
+-
+delete: olcDbIndex
+olcDbIndex: uidNumber,gidNumber eq
+-
+delete: olcDbIndex
+olcDbIndex: member,memberUid eq

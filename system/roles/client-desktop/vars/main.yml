@@ -1,25 +1,36 @@
 ---
 
+root_dir: "{{ GISLAB_PATH_SYSTEM }}/clients/desktop"
+root_dir_cluster: "{{ GISLAB_PATH_SYSTEM }}/cluster"
+
+
 # get list of Ubuntu installer tasks: $ tasksel --list-tasks
-# get list of packages included in task: $ tasksel --task-packages <task> 
+# get list of packages included in task: $ tasksel --task-packages <task>
 
-
-GISLAB_CLIENT_INSTALL_PACKAGES_KERNEL:
+packages_kernel:
   # list of Linux kernel packages (installed without recommended packages)
-  - linux-image-generic-lts-raring
-  - linux-headers-generic-lts-raring
+  - linux-image-generic
+  - linux-headers-generic
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_BASE:
+packages_virtualbox:
+  # list of VirtualBox packages (installed without recommended packages)
+  - virtualbox-guest-utils
+  - virtualbox-guest-dkms
+  - virtualbox-guest-x11
+
+
+packages_base:
   # list of basic server packages (installed with recommended packages)
   - acpid
   - acpi-support
   - apt-show-versions
   - bc
+  - busybox-initramfs
+  - busybox-static
   - curl
   - genisoimage
   - libnss-ldap
-  - libpam-ck-connector
   - libpam-cracklib
   - libsasl2-modules
   - mkelfimage
@@ -27,14 +38,16 @@ GISLAB_CLIENT_INSTALL_PACKAGES_BASE:
   - nbd-client
   - nfs-common
   - openssh-server
+  - pxelinux
   - rsyslog
+  - serf
   - syslinux-common
   - udhcpc
   - unzip
   - zip
-  
 
-GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
+
+packages_desktop:
   # list of basic desktop packages (installed with recommended packages)
   - alsa-base
   - alsa-utils
@@ -49,12 +62,11 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - fonts-liberation
   - fonts-opensymbol
   - ghostscript-x
-  - gstreamer0.10-gnomevfs
-  - gstreamer0.10-plugins-base
-  - gstreamer0.10-plugins-base-apps
-  - gstreamer0.10-plugins-good
-  - gstreamer0.10-pulseaudio
-  - gstreamer0.10-tools
+  - gstreamer1.0-plugins-base
+  - gstreamer1.0-plugins-base-apps
+  - gstreamer1.0-plugins-good
+  - gstreamer1.0-pulseaudio
+  - gstreamer1.0-tools
   - gtk2-engines
   - gtk2-engines-pixbuf
   - gvfs
@@ -64,7 +76,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - ibus
   - ibus-gtk
   - ibus-pinyin
-  - ibus-pinyin-db-android
   - ibus-table
   - im-switch
   - indicator-application-gtk2
@@ -72,12 +83,12 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - inputattach
   - laptop-detect
   - libasound2-plugins
-  - libgd2-xpm
   - libnotify-bin
   - libpam-gnome-keyring
-  - libxp6
+  - libxfce4ui-utils
   - lightdm
   - lightdm-gtk-greeter
+  - lightdm-gtk-greeter-settings
   - nvidia-common
   - pavucontrol
   - pcmciautils
@@ -88,10 +99,8 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - thunar-archive-plugin
   - thunar-media-tags-plugin
   - ttf-dejavu-core
-  - ttf-freefont
   - ttf-ubuntu-font-family
   - tumbler
-  - ubuntu-extras-keyring
   - wireless-tools
   - wpasupplicant
   - xcursor-themes
@@ -109,7 +118,6 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - xfce4-settings
   - xfce4-taskmanager
   - xfce4-terminal
-  - xfce4-utils
   - xfce4-volumed
   - xfce4-xkb-plugin
   - xfdesktop4
@@ -123,23 +131,23 @@ GISLAB_CLIENT_INSTALL_PACKAGES_DESKTOP:
   - zenity
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
+packages_office:
   # list of default office packages (installed without recommended packages)
   - conky-std
   - cups
   - cups-bsd
   - cups-client
+  - cups-filters
   - evince
   - firefox
-  - firefox-gnome-support
   - flashplugin-installer
   - foomatic-db-compressed-ppds
   - foomatic-db-engine
-  - foomatic-filters
   - freerdp-x11
   - libfreerdp-plugins-standard
-  - gcalctool
+  - gnome-calculator
   - gdisk
+  - geany
   - gimp
   - gthumb
   - gtk-recordmydesktop
@@ -161,6 +169,7 @@ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   - printer-driver-c2esp
   - printer-driver-foo2zjs
   - printer-driver-gutenprint
+  - printer-driver-hpcups
   - printer-driver-hpijs
   - printer-driver-min12xxw
   - printer-driver-pnm2ppa
@@ -175,54 +184,95 @@ GISLAB_CLIENT_INSTALL_PACKAGES_OFFICE:
   - sshfs
   - vim-gnome
   - vlc
-  - vlc-plugin-pulse
   - x11vnc
   - xtightvncviewer
 
 
-GISLAB_CLIENT_INSTALL_PACKAGES_LAB:
+packages_lab:
   # list of GIS.lab client GIS packages (installed without recommended packages)
   - gdal-bin
   - git
-  - grass7
-  - grass7-doc
+  - grass
+  - grass-doc
+  - grass-dev
   - ipython
-  - josm
+  - ipython3
+  - monteverdi
+  - osm2pgrouting
+  - osm2pgsql
+  - otb-bin
+  - otb-bin-qt
   - pgadmin3
+  - postgis
+  - postgis-doc
   - postgresql-client
   - postgresql-comparator
   - proj-bin
-  - python-pysqlite2
+  - python-fiona
+  - python3-fiona
   - python-gdal
-  - python-qgis
+  - python3-gdal
+  - python-otb
+  - python3-otb
+  - python-owslib
+  - python3-owslib
+  - python-pandas
+  - python3-pandas
+  - python-pil
+  - python3-pil
+  - python-pip
+  - python3-pip
+  - python-pyproj
+  - python3-pyproj
+  - python-pysqlite2
+  - python3-qgis
+  - python-rasterio
+  - python3-rasterio
+  - python-saga
+  - python-setuptools
+  - python3-setuptools
+  - python-shapely
+  - python3-shapely
+  - python-sklearn
+  - python3-sklearn
+  - pyqt5-dev-tools
   - qgis
+  - qgis-plugin-grass
   - qgit
+  - saga
   - spatialite-bin
   - spatialite-gui
   - sqlite3
+  - sqlitebrowser
+  - josm
 
+packages_lab_pip:
+  # list of GIS.lab client GIS PIP packages
+  - sentinelsat
+  - pymodis
 
-GISLAB_CLIENT_INSTALL_PACKAGES_WORKER:
+packages_worker:
   # OWS worker packages
   - lighttpd
   - python-gdal
-  - python-qgis
+  - python3-qgis
   - qgis
-  - qgis-mapserver
+  - qgis-server
   - xvfb
 
 
-GISLAB_CLIENT_REMOVE_PACKAGES:
-  # List of packages which have been installed automatically as dependency but we don't want them to be installed.
-  # Run  '$ aptitude why <package>' find out the reason why package was installed.
+packages_remove:
+  # List of packages which have been installed automatically as dependency but
+  # we don't want them to be installed. Run  '$ aptitude why <package>' find out
+  # the reason why package was installed.
   - network-manager
   - network-manager-pptp
+  - nplan
+  - netplan.io
+  - resolvconf
   - xscreensaver
 
+# -o Dpkg::Options::="--force-confold" ???
+apt_get_opts: "--assume-yes --force-yes"
 
-apt_get_opts: "
- --assume-yes
- --force-yes"
-
-
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

@@ -6,6 +6,14 @@ dn: ou=Groups,dc=gis,dc=lab
 objectClass: organizationalUnit
 ou: groups
 
+dn: ou=Machines,dc=gis,dc=lab
+objectClass: organizationalUnit
+ou: machines
+
+dn: ou=MACs,ou=Machines,dc=gis,dc=lab
+objectClass: organizationalUnit
+ou: macs
+
 dn: ou=SUDOers,dc=gis,dc=lab
 objectClass: top
 objectClass: organizationalUnit
@@ -17,7 +25,7 @@ objectClass: sudoRole
 cn: defaults
 description: Default sudoOption's go here
 sudoOption: env_reset
-sudoOption: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:{{ GISLAB_ROOT }}/admin:"
+sudoOption: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:{{ GISLAB_PATH_ADMIN }}:"
 
 dn: cn=%gislabadmins,ou=SUDOers,dc=gis,dc=lab
 objectClass: top
@@ -39,6 +47,14 @@ cn: root
 mailacceptinggeneralid: root
 maildrop: {{ GISLAB_PROVISIONING_USER }}
 
+dn: cn=020000000000,ou=MACs,ou=Machines,dc=gis,dc=lab
+objectClass: top
+objectClass: device
+objectClass: ieee802Device
+cn: 020000000000
+macAddress: 02:00:00:00:00:00
+description: GIS.lab client default MAC address
+
 dn: cn=gislabadmins,ou=Groups,dc=gis,dc=lab
 objectClass: posixGroup
 cn: gislabadmins
@@ -50,3 +66,9 @@ objectClass: posixGroup
 cn: gislabusers
 gidNumber: 3001
 description: GIS.lab Users Group
+
+dn: cn=vboxsf,ou=Groups,dc=gis,dc=lab
+objectClass: posixGroup
+cn: vboxsf
+gidNumber: 3100
+description: VirtualBox File Sharing Group

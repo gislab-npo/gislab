@@ -10,147 +10,146 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
-	echo "USAGE: $(basename $0) [OPTIONS] username"
-	echo "Restore GIS.lab user account from backup archive."
-	echo -e "\nOPTIONS
-	-f  backup archive file to restore account from
-	-h  display this help"
-	exit 255
+    echo "USAGE: $(basename $0) [OPTIONS] username"
+    echo "Restore GIS.lab user account from backup archive."
+    echo -e "\nOPTIONS
+    -f  backup archive file to restore account from
+    -h  display this help"
+    exit 255
 }
 
 
-# options
+### OPTIONS
 while getopts "b:f:h" OPTION
 do
-        case "$OPTION" in
-			f) BACKUP_FILE="$OPTARG" ;;
-			h) usage ;;
-			\?) exit 1 ;;
-        esac
+    case "$OPTION" in
+        f) opt_backup_file="$OPTARG" ;;
+        h) usage ;;
+        \?) exit 1 ;;
+    esac
 done
 shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; fi
 
-if [ -z "$BACKUP_FILE" ]; then
-	usage
+if [ -z "$opt_backup_file" ]; then
+    usage
 fi
 
 GISLAB_USER=$1
 
 
-# sanity checks
-if [ ! -f "$BACKUP_FILE" ]; then
-	gislab_print_error "Backup file does not exist"
-	exit 1
+### VARIABLES
+date=$(date '+%Y-%m-%d:%H-%M-%S')
+backup_dir="$GISLAB_PATH_BACKUP"
+tmp_dir=$backup_dir/${GISLAB_USER}-${date}.restore
+
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
+
+### SANITY CHECKS
+if [ ! -f "$opt_backup_file" ]; then
+    gislab_error "Backup file does not exist"
+    exit 1
 fi
 
-if id $GISLAB_USER >/dev/null 2>&1; then
-	gislab_print_error "User account '$GISLAB_USER' already exist. Remove it first"
-	exit 1
+if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" != "" ]; then
+    gislab_error "User '$GISLAB_USER' already exists"
+    exit 1
 fi
 
-BACKUP_VERSION=$(tar --to-stdout -xf $BACKUP_FILE GISLAB_VERSION)
-if [ "$BACKUP_VERSION" != "$GISLAB_VERSION" ]; then
-	gislab_print_warning "Backup source version doesn't match target version ('$BACKUP_VERSION' != '$GISLAB_VERSION')"
+backup_version=$(tar --to-stdout -xf $opt_backup_file GISLAB_VERSION)
+if [ "$backup_version" != "$GISLAB_VERSION" ]; then
+    gislab_warning "
+        Backup source version doesn't match target version
+        ('$backup_version' != '$GISLAB_VERSION')
+    "
 fi
 
 
-# populate variables and prepare directories structure
-DATE=$(date '+%Y-%m-%d:%H-%M-%S')
-
-BACKUP_DIR=/storage/backup
-TEMP_BACKUP_DIR=$BACKUP_DIR/${GISLAB_USER}-${DATE}.restore
-mkdir -p $TEMP_BACKUP_DIR
+### MAIN SCRIPT
+# prepare directories structure
+mkdir -p $tmp_dir
 
 
 # untar backup file
-tar -C $TEMP_BACKUP_DIR -xf $BACKUP_FILE
-cd $TEMP_BACKUP_DIR
+tar -C $tmp_dir -xPf $opt_backup_file
+cd $tmp_dir
 
 for file in *.bz2; do
-	tar -xjf $file
+    dir=$(basename ${file%%.tar.bz2})
+    mkdir -p $dir
+    tar -C $tmp_dir/$dir -xjf $file
 done
 
 
 # get user LDAP attributes from backup
 while read line; do
-	ATTR=$(echo $line | awk -F: '{ print $1 }')
-	VAL=$(echo $line | sed 's/^[[:alnum:]]\+::\? //')
+    attr=$(echo $line | awk -F: '{ print $1 }')
+    val=$(echo $line | sed 's/^[[:alnum:]]\+::\? //')
 
-		case "$ATTR" in
-			uid) GISLAB_USER_ORIG="$VAL" ;;
-			givenName) GISLAB_USER_GIVEN_NAME="$VAL" ;;
-			sn) GISLAB_USER_SURNAME="$VAL" ;;
-			mail) GISLAB_USER_EMAIL="$VAL" ;;
-			description) GISLAB_USER_DESCRIPTION="$VAL" ;;
-			userPassword) GISLAB_USER_PASS_CRYPT="$VAL" ;;
-			\#superuser) SUDO_OPT="-s" ;;
-		esac
+    # check if value is base64 encoded (two colon after attribute name instead of one)
+    # and decode this value
+    if echo "$line" | grep -q '^[^ :]\+:: ' && [[ "$attr" != "userPassword" ]]; then
+        val="$(echo "$val" | base64 -d)"
+    fi
+
+    case "$attr" in
+        uid) user_orig="$val" ;;
+        givenName) given_name="$val" ;;
+        sn) surname="$val" ;;
+        mail) email="$val" ;;
+        description) description="$val" ;;
+        userPassword) password_crypt="$val" ;;
+        \#superuser) superuser="-s" ;;
+    esac
 done < ldap.dump
 
 
 # create user account
-gislab-adduser	-g "$GISLAB_USER_GIVEN_NAME" \
-				-l "$GISLAB_USER_SURNAME" \
-				-m "$GISLAB_USER_EMAIL" \
-				-d "$GISLAB_USER_DESCRIPTION" \
-				$SUDO_OPT \
-				$GISLAB_USER
+gislab-adduser -g "$given_name" \
+               -l "$surname" \
+               -m "$email" \
+               -d "$description" \
+               $superuser \
+               $GISLAB_USER
 
 
 # PASSWORD
 ldapmodifyuser $GISLAB_USER > /dev/null << EOL
 changetype: modify
 replace: userPassword
-userPassword:: $GISLAB_USER_PASS_CRYPT
+userPassword:: $password_crypt
 EOL
-gislab_print_info "Original password restored from backup"
+gislab_info "Original password restored from backup"
 
 
 # HOME DATA
-rsync -a storage/home/$GISLAB_USER_ORIG/ /storage/home/$GISLAB_USER/
+rsync -a home/$user_orig/ $GISLAB_PATH_HOME/$GISLAB_USER/
 
-if [ -f storage/home/$GISLAB_USER_ORIG/.config/user-dirs.dirs ]; then
-	source storage/home/$GISLAB_USER_ORIG/.config/user-dirs.dirs
-	mkdir -p /storage/home/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR)
+if [ -f home/$user_orig/.config/user-dirs.dirs ]; then
+    source home/$user_orig/.config/user-dirs.dirs
+    mkdir -p $GISLAB_PATH_HOME/$GISLAB_USER/$(basename $XDG_DOWNLOAD_DIR)
 fi
 
-chown -R $GISLAB_USER:gislabusers /storage/home/$GISLAB_USER
+chown -R $GISLAB_USER:gislabusers $GISLAB_PATH_HOME/$GISLAB_USER
 
 
 # PUBLISHED DATA
-rsync -a storage/publish/$GISLAB_USER_ORIG/ /storage/publish/$GISLAB_USER/
-chown -R $GISLAB_USER:www-data /storage/publish/$GISLAB_USER
+rsync -a publish/$user_orig/ $GISLAB_PATH_PUBLISH/$GISLAB_USER/
+chown -R $GISLAB_USER:www-data $GISLAB_PATH_PUBLISH/$GISLAB_USER
 
 
 # DATABASE DATA
 pg_restore -U postgres -d gislab -n $GISLAB_USER postgresql.dump
 
-# restore data from GIS.lab Web client only if installed and data is present in backup
-ball_exist_src_sql="SELECT 1 FROM information_schema.tables WHERE
-						table_schema = '${GISLAB_USER}'
-						AND table_name = 'gislab_ball'"
-ball_exist_dest_sql="SELECT 1 FROM information_schema.tables WHERE table_name = 'storage_ball'"
-if [ "$(psql -U postgres -d gislab -tAc "$ball_exist_src_sql")" == "1" ]; then
-	if [ "$(psql -U postgres -d gislab -tAc "$ball_exist_dest_sql")" == "1" ]; then
-		psql -U postgres -d gislab -c "INSERT INTO storage_ball SELECT * FROM ${GISLAB_USER}.gislab_ball;"
-		psql -U postgres -d gislab -c "INSERT INTO storage_drawing SELECT * FROM ${GISLAB_USER}.gislab_drawing;"
-	else
-		gislab_print_warning "GIS.lab Web client is not installed. Skipping data restore"
-	fi
-fi
-
-psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball" > /dev/null
-psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing" > /dev/null
-
 
 # clean up
-rm -rf $TEMP_BACKUP_DIR
+rm -rf $tmp_dir
 
 
-gislab_print_info "Account '$GISLAB_USER' restored from '$BACKUP_FILE'"
+### CONFIRMATION MESSAGE
+gislab_success "Account '$GISLAB_USER' restored from '$opt_backup_file'"
 
-
-# vim: set ts=4 sts=4 sw=4 noet:
+# vim: set ts=8 sts=4 sw=4 et:

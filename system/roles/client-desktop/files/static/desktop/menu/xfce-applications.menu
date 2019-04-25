@@ -74,7 +74,7 @@
             <Or>
                 <Filename>xfce4-about.desktop</Filename>
                 <Filename>catfish.desktop</Filename>
-		<Filename>xfce4-appfinder.desktop</Filename>
+                <Filename>xfce4-appfinder.desktop</Filename>
                 <Category>Settings</Category>
                 <Category>System</Category>
             </Or>

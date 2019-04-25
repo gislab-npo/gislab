@@ -1,3 +1,11 @@
 ---
 
-# vim:ft=ansible:
+- name: Test if administrator user account 'gislab' exists
+  shell: >
+    ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///
+    '(&(uid=gislab)(uidNumber=3000)(gidNumber=3001)(homeDirectory=/mnt/home/gislab))'
+    | grep "^uid: gislab$"
+  ignore_errors: yes
+  changed_when: False
+
+# vim: set ts=8 sts=2 sw=2 et:

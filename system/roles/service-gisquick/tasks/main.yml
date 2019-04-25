@@ -1,0 +1,126 @@
+---
+#
+### Gisquick integration
+#
+
+- name: Create Gisquick directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - /var/www/gisquick/media
+    - /var/www/gisquick/data
+
+
+- name: Generate self signed SSL certificate (run only once)
+  shell: >
+    openssl req -x509 -nodes -days 3650 -newkey rsa:2048
+    -keyout {{ GISLAB_PATH_SECRET }}/privkey.pem
+    -out {{ GISLAB_PATH_SECRET }}/fullchain.pem
+    -subj "/C=CZ/ST=Prague/L=Prague/O=Gisquick/OU=IT Department/CN=server"
+    &&
+    chmod 600 {{ GISLAB_PATH_SECRET }}/privkey.pem
+    &&
+    chmod 600 {{ GISLAB_PATH_SECRET }}/fullchain.pem
+  args:
+    executable: /bin/bash
+    creates: "{{ GISLAB_PATH_SECRET }}/fullchain.pem"
+
+- name: Create directory for SSL certificates
+  file:
+    path: /etc/letsencrypt/live/server/
+    state: directory
+    mode: 0755
+
+- name: Install SSL certificates
+  copy:
+    src: "{{ GISLAB_PATH_SECRET }}/{{ item }}"
+    dest: "/etc/letsencrypt/live/server/{{ item }}"
+    remote_src: yes
+  with_items:
+    - privkey.pem 
+    - fullchain.pem
+
+
+- name: Create docker directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ docker_dir }}/gisquick"
+    - "{{ docker_dir }}/gisquick/django"
+    - "{{ docker_dir }}/gisquick/nginx"
+
+- name: Install Gisquick nginx template
+  copy:
+    src: static/nginx/gisquick.template
+    dest: "{{ docker_dir }}/gisquick/nginx"
+    mode: 0664
+
+- name: Create docker-compose configuration
+  copy:
+    src: static/docker-compose.yml
+    dest: "{{ docker_dir }}/gisquick/docker-compose.yml"
+
+- name: Create django configuration
+  copy:
+    src: "static/django/{{ item }}"
+    dest: "{{ docker_dir }}/gisquick/django/{{ item }}"
+  with_items:
+    - Dockerfile
+    - settings_custom.py
+    - urls_custom.py
+
+- name: Build customized django image
+  docker_image:
+     path: "{{ docker_dir }}/gisquick/django"
+     name: gislab/django
+
+- name: Pull docker images associated with a service
+  docker_image:
+    name: "{{ item }}"
+  with_items:
+    - gisquick/qgis-server
+    - gisquick/nginx
+
+- name: Start docker service
+  docker_service:
+    project_src: "{{ docker_dir }}/gisquick"
+
+
+- name: Download Gisquick documentation
+  git:
+    repo: https://github.com/gislab-npo/gisquick-doc.git
+    dest: "{{ docker_dir }}/gisquick/docs"
+
+- name: Build HTML documentation output
+  shell: make html
+  args:
+    chdir: "{{ docker_dir }}/gisquick/docs"
+
+- name: Add Gisquick documentation to default web content
+  file:
+    src: "{{ docker_dir }}/gisquick/docs/_build/html"
+    dest: "{{ GISLAB_PATH_WWW }}/docs/gisquick"
+    state: link
+
+
+- name: Download sample GIS project
+  git:
+    repo: https://github.com/gislab-npo/gisquick
+    dest: /tmp/gisquick
+
+- name: Create directory for sample GIS project
+  file:
+    path: /mnt/repository/gislab-project
+    state: directory
+
+- name: Extract sample GIS project
+  command: cp -r /tmp/gisquick/qgis/project/natural-earth natural-earth
+  args:
+    chdir: /mnt/repository/gislab-project
+    creates: /mnt/repository/gislab-project/natural-earth
+
+# vim: set ts=8 sts=2 sw=2 et:

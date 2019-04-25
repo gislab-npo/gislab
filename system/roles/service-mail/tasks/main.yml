@@ -4,40 +4,51 @@
 #
 # Install and configure email server.
 #
-# Logging: /storage/log/syslog
+# Logging: syslog
 
 
 - name: Install packages
-  apt: pkg={{item}} force=yes install_recommends=no state=latest
-  with_items:
-    - bsd-mailx
-    - mutt
-    - postfix
-    - postfix-ldap
-    - sasl2-bin
+  apt:
+    name:
+      - bsd-mailx
+      - mutt
+      - postfix
+      - postfix-ldap
+      - sasl2-bin
+    force: yes
+    install_recommends: no
+    state: latest
 
 
-# Postfix configuration
+### POSTFIX
 - name: Install main Postfix configuration file
-  template: src=postfix/main.cf.j2 dest=/etc/postfix/main.cf
+  template:
+    src: postfix/main.cf.j2
+    dest: /etc/postfix/main.cf
   notify:
     - service postfix restart
 
 - name: Install local LDAP aliases search table
-  template: src=postfix/ldap-aliases.cf.j2 dest=/etc/postfix/ldap-aliases.cf
+  template:
+    src: postfix/ldap-aliases.cf.j2
+    dest: /etc/postfix/ldap-aliases.cf
   notify:
     - service postfix restart
 
 
-# Relay server
+### RELAY SERVER
 - name: Remove existing SMTP relay server credentials
-  command: rm -f {{ item }}
+  file:
+    path: "{{ item }}"
+    state: absent
   with_items:
     - /etc/postfix/sasl_passwd
     - /etc/postfix/sasl_passwd.db
 
 - name: Set SMTP relay server credentials if available
-  template: src=postfix/sasl_passwd.j2 dest=/etc/postfix/sasl_passwd
+  template:
+    src: postfix/sasl_passwd.j2
+    dest: /etc/postfix/sasl_passwd
   when: GISLAB_SERVER_EMAIL_RELAY_LOGIN|default(None) != None
         and GISLAB_SERVER_EMAIL_RELAY_PASSWORD|default(None) != None
         and GISLAB_SERVER_EMAIL_RELAY_SERVER|default(None) != None
@@ -52,14 +63,20 @@
         and GISLAB_SERVER_EMAIL_RELAY_SERVER|default(None) != None
 
 
-# Email aliases
+### EMAIL ALIASES
 - name: Add service user mail alias
-  lineinfile: "dest=/etc/aliases line='postmaster: root' state=present"
+  lineinfile:
+    dest: /etc/aliases
+    line: "postmaster: root"
+    state: present
 
 - name: Activate new mail alias
   command: newaliases
 
 
+- name: Setup correct hostname for outgoing emails generated localy
+  shell: echo "server.gis.lab" > /etc/mailname
+
 - meta: flush_handlers
 
-# vim:ft=ansible:
+# vim: set ts=8 sts=2 sw=2 et:

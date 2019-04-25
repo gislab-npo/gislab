@@ -15,4 +15,4 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON topology.layer TO PUBLIC;
 GRANT SELECT, UPDATE, INSERT, DELETE ON topology.topology TO PUBLIC;
 
 
--- vim: set ts=2 sts=2 sw=2 noet:
+-- vim: set ts=2 sts=2 sw=2 et:

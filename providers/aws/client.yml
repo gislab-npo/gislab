@@ -1,0 +1,188 @@
+---
+
+# Bundle, upload, register and launch GIS.lab Desktop AWS client ###
+
+- hosts: all
+  become: yes
+
+  vars:
+    GISLAB_ROOT: /opt/gislab
+    AWS_CREDENTIALS_DIR: "{{ GISLAB_ROOT }}/system/clients/desktop/aws-credentials"
+    MANIFEST: "{{ GISLAB_ROOT }}/system/clients/desktop/image/gislab-aws-client.manifest.xml"
+
+  tasks:
+    - name: Read default configuration file 'group_vars/all'
+      include_vars: "../../system/group_vars/all"
+
+    - name: Read default configuration file for AWS
+      include_vars: "aws"
+          
+    - name: Read host file 'system/host_vars/{{ GISLAB_UNIQUE_ID }}'
+      include_vars: "../../system/host_vars/{{ GISLAB_UNIQUE_ID }}"
+
+    - name: Install packages
+      apt: pkg={{ item }} force=yes install_recommends=no state=latest
+      with_items:
+        - ec2-ami-tools
+        - ec2-api-tools
+
+
+    # Sanity check
+    - name: Checking if GIS.lab AWS client image exists
+      stat: path={{ GISLAB_ROOT }}/system/clients/desktop/image/gislab.img get_md5=no
+      register: image
+
+    - name: Fail if GIS.lab AWS client image does not exist
+      fail: msg="GIS.lab AWS client image does not exist. Run 'gislab-client-image' command."
+      when: image.stat.exists == False
+
+
+    - name: Set appropriate form of client architecture for AMI/API tools
+      shell: 'if [ "{{ GISLAB_CLIENT_ARCHITECTURE }}" == "amd64" ]; then echo x86_64; else echo i386; fi'
+      args:
+        executable: /bin/bash
+      register: GISLAB_AWS_CLIENT_ARCHITECTURE
+
+    - name: Create temporary directory for AWS credentials
+      file: dest={{ AWS_CREDENTIALS_DIR }} state=directory
+
+    - name: Set safe permissions for AWS credentials directory
+      file: path={{ AWS_CREDENTIALS_DIR }} state=directory owner=root group=root mode=0700
+
+    - name: Copy AWS certificate and private key to AWS credentials directory
+      copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0400
+      with_items:
+        - { src: "{{ GISLAB_AWS_CERTIFICATE }}", dest: "{{ AWS_CREDENTIALS_DIR }}/aws_certificate.crt" }
+        - { src: "{{ GISLAB_AWS_PRIVATE_KEY }}", dest: "{{ AWS_CREDENTIALS_DIR }}/aws_private_key.key" }
+
+
+    # Bundle image
+    - name: Bundle GIS.lab client image
+      shell: "ec2-bundle-image --privatekey {{ AWS_CREDENTIALS_DIR }}/aws_private_key.key
+                               --cert {{ AWS_CREDENTIALS_DIR }}/aws_certificate.crt
+                               --user {{ GISLAB_AWS_ACCOUNT }}
+                               --image {{ GISLAB_ROOT }}/system/clients/desktop/image/gislab.img
+                               --destination {{ GISLAB_ROOT }}/system/clients/desktop/image
+                               --arch {{ GISLAB_AWS_CLIENT_ARCHITECTURE.stdout }}
+                               --prefix gislab-aws-client"
+
+    # Upload image to Amazon S3
+    - name: Upload GIS.lab AWS client to Amazon S3
+      shell: "ec2-upload-bundle --access-key {{ GISLAB_AWS_ACCESS_KEY_ID }}
+                                  --secret-key {{ GISLAB_AWS_SECRET_KEY }}
+                                  --bucket {{ GISLAB_AWS_BUCKET }}/{{ GISLAB_UNIQUE_ID }}
+                                  --manifest {{ MANIFEST }}
+                                  --location {{ GISLAB_AWS_REGION }}
+                                  --retry"
+
+    # Get PV-GRUB AKI ID
+    - name: Get kernel AKI ID for GIS.lab client AMI
+      shell: "set -o pipefail;
+              ec2-describe-images --private-key {{ AWS_CREDENTIALS_DIR }}/aws_private_key.key
+                                  --cert {{ AWS_CREDENTIALS_DIR }}/aws_certificate.crt
+                                  --region {{ GISLAB_AWS_REGION }}
+                                  --owner amazon
+                                  --show-empty-fields
+                                  --hide-tags
+                                  --filter 'name=pv-grub-hd0_*.gz'
+                                  --filter 'architecture={{ GISLAB_AWS_CLIENT_ARCHITECTURE.stdout }}' |
+              head -1 | awk '{ print $2 }'"
+      args:
+        executable: /bin/bash
+      register: aki_id
+
+    # Register image and get GIS.lab desktop client image AMI ID
+    - name: Register GIS.lab desktop client AMI
+      shell: "set -o pipefail;
+              ec2-register --private-key {{ AWS_CREDENTIALS_DIR }}/aws_private_key.key
+                           --cert {{ AWS_CREDENTIALS_DIR }}/aws_certificate.crt
+                           --region {{ GISLAB_AWS_REGION }}
+                           {{ GISLAB_AWS_BUCKET }}/{{ GISLAB_UNIQUE_ID }}/gislab-aws-client.manifest.xml
+                           --name 'GIS.lab-AWS-Client-{{ GISLAB_UNIQUE_ID }}'
+                           --description 'GIS.lab AWS client AMI (ID: {{ GISLAB_UNIQUE_ID }})'
+                           --architecture {{ GISLAB_AWS_CLIENT_ARCHITECTURE.stdout }}
+                           --kernel {{ aki_id.stdout }} |
+              awk '{ print $2}'"
+      args:
+        executable: /bin/bash
+      register: ami_id
+
+    # Get Security Group ID
+    - name: Get Security Group ID
+      shell: "set -o pipefail;
+              ec2-describe-group --private-key {{ AWS_CREDENTIALS_DIR }}/aws_private_key.key
+                                 --cert {{ AWS_CREDENTIALS_DIR }}/aws_certificate.crt
+                                 --region {{ GISLAB_AWS_REGION }}
+                                 --show-empty-fields
+                                 --hide-tags |
+              grep ^GROUP |
+              grep 'ID: {{ GISLAB_UNIQUE_ID }}' |
+              awk '{ print $2 }'"
+      args:
+        executable: /bin/bash
+      register: sg_id
+
+    # Get subnet ID
+    - name: Get VPC subnet ID
+      shell: "set -o pipefail;
+              ec2-describe-subnets --private-key {{ AWS_CREDENTIALS_DIR }}/aws_private_key.key
+                                   --cert {{ AWS_CREDENTIALS_DIR }}/aws_certificate.crt
+                                   --region {{ GISLAB_AWS_REGION }}
+                                   --show-empty-fields
+                                   --hide-tags
+                                   --filter 'tag:GISLAB_UNIQUE_ID={{ GISLAB_UNIQUE_ID }}' |
+              awk '{ print $2 }'"
+      args:
+        executable: /bin/bash
+      register: subnet_id
+
+    # Wait for AMI
+    - name: Wait until GIS.lab client AMI is available
+      shell: "while true; do
+                  ec2-describe-images --private-key {{ AWS_CREDENTIALS_DIR }}/aws_private_key.key
+                                      --cert {{ AWS_CREDENTIALS_DIR }}/aws_certificate.crt
+                                      --region {{ GISLAB_AWS_REGION }}
+                                      {{ ami_id.stdout }} >/dev/null 2>&1 && break;
+              done"
+      args:
+        executable: /bin/bash
+
+    # Launch GIS.lab clients
+    - name: Launching GIS.lab clients
+      shell: "set -o pipefail;
+              ec2-run-instances --private-key {{ AWS_CREDENTIALS_DIR }}/aws_private_key.key
+                                --cert {{ AWS_CREDENTIALS_DIR }}/aws_certificate.crt
+                                --region {{ GISLAB_AWS_REGION }}
+                                --availability-zone {{ GISLAB_AWS_AVAILABILITY_ZONE }}
+                                {{ ami_id.stdout }}
+                                --key "{{ GISLAB_AWS_SSH_KEY_PAIR }}"
+                                --group {{ sg_id.stdout }}
+                                --subnet {{ subnet_id.stdout }}
+                                --instance-initiated-shutdown-behavior terminate
+                                --instance-type m1.small
+                                --instance-count {{ GISLAB_AWS_CLIENTS_COUNT }} |
+              awk '/^INSTANCE/ { print $2 }' |
+              tr '\n' ' '"
+      args:
+        executable: /bin/bash
+      register: instances_id
+
+    # Add tags
+    - name: Add tags to GIS.lab client instances
+      shell: 'ec2-create-tags {{ instances_id.stdout }}
+                              --private-key {{ AWS_CREDENTIALS_DIR }}/aws_private_key.key   
+                              --cert {{ AWS_CREDENTIALS_DIR }}/aws_certificate.crt
+                              --region {{ GISLAB_AWS_REGION }}
+                              --tag "Name=GIS.lab (ID: {{ GISLAB_UNIQUE_ID }})"
+                              --tag "GISLAB_UNIQUE_ID={{ GISLAB_UNIQUE_ID }}"'
+
+
+    # Clean up
+    - name: Remove AWS certificate and private key
+      file: path={{ AWS_CREDENTIALS_DIR }} state=absent
+
+    - name: Remove bundled GIS.lab client image
+      file: path={{ GISLAB_ROOT }}/system/clients/desktop/image state=absent
+
+
+# vim:ft=ansible:

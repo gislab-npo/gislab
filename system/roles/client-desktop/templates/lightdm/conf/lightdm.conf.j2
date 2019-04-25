@@ -1,7 +1,7 @@
-[SeatDefaults]
+[Seat:*]
 greeter-session=lightdm-gtk-greeter
 user-session=xubuntu
 allow-guest=false
 greeter-hide-users=false
-session-setup-script=/opt/gislab/system/session/hooks/session-setup.sh
-session-cleanup-script=/opt/gislab/system/session/hooks/session-cleanup.sh
+session-setup-script={{ GISLAB_PATH_SYSTEM }}/session/hooks/session-setup.sh
+session-cleanup-script={{ GISLAB_PATH_SYSTEM }}/session/hooks/session-cleanup.sh

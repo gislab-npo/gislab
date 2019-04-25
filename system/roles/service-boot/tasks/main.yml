@@ -1,0 +1,196 @@
+---
+#
+### BOOT SERVICE ###
+#
+# Install and configure DHCP, TFTP, NBD server and PXE and HTTP boot service.
+#
+# Logging: syslog
+
+
+- name: Install packages
+  apt:
+    name:
+    - gunicorn
+    - isc-dhcp-server
+    - nbd-server
+    - tftpd-hpa
+    force: yes
+    install_recommends: no
+    state: latest
+
+
+### DHCP SERVER
+- name: Set unknown machines policy to 'deny' if not set
+  shell: echo 'deny' > {{ GISLAB_PATH_SECRET }}/gislab_unknown_machines_policy.conf
+  args:
+    executable: /bin/bash
+    creates: "{{ GISLAB_PATH_SECRET }}/gislab_unknown_machines_policy.conf"
+
+- name: Detect unknown machines policy
+  shell: cat {{ GISLAB_PATH_SECRET }}/gislab_unknown_machines_policy.conf
+  args:
+    executable: /bin/bash
+  register: gislab_unknown_machines_policy
+  changed_when: False
+
+
+- name: Install DHCP server configuration template
+  template:
+    src: dhcp/dhcpd.conf.templ.j2
+    dest: /etc/dhcp/dhcpd.conf.templ
+
+- name: Install DHCP server configuration file
+  template:
+    src: dhcp/dhcpd.conf.templ.j2
+    dest: /etc/dhcp/dhcpd.conf
+
+- name: Install DHCP configuration with 'deny' unknown machines policy
+  replace:
+    dest: /etc/dhcp/dhcpd.conf
+    replace: 'deny'
+    regexp: '{\+ GISLAB_UNKNOWN_MACHINES_POLICY \+}'
+  when: gislab_unknown_machines_policy.stdout == "deny"
+  notify:
+    - service isc-dhcp-server stop
+
+- name: Install DHCP configuration with 'allow' unknown machines policy
+  replace:
+    dest: /etc/dhcp/dhcpd.conf
+    replace: 'allow'
+    regexp: '{\+ GISLAB_UNKNOWN_MACHINES_POLICY \+}'
+  when: gislab_unknown_machines_policy.stdout == "allow"
+  notify:
+    - service isc-dhcp-server stop
+
+
+### MAC ADDRESSES
+- name: Allow including known machines file (/etc/dhcp/gislab_known_machines.conf)
+  template:
+    src: apparmor/usr.sbin.dhcpd.j2
+    dest: /etc/apparmor.d/local/usr.sbin.dhcpd
+  notify:
+    - service apparmor restart
+
+- name: Detect if known machines file is created
+  stat:
+    path: "{{ GISLAB_PATH_SECRET }}/gislab_known_machines.txt"
+  register: gislab_known_machines_status
+  changed_when: False
+
+- name: Create empty known machines files if not created
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {
+        src: dhcp/dhcpd-known-machines.conf.j2,
+        dest: /etc/dhcp/gislab_known_machines.conf
+      }
+  when: not gislab_known_machines_status.stat.exists
+  notify:
+    - service isc-dhcp-server stop
+
+
+### PXE BOOT
+- name: Create GIS.lab TFTP directory
+  file:
+    dest: /var/lib/tftpboot/gislab
+    state: directory
+    recurse: yes
+
+- name: Create PXE boot directory
+  file:
+    dest: /var/lib/tftpboot/gislab/pxelinux.cfg
+    state: directory
+
+- name: Install PXE configuration file
+  template:
+    src: pxe-boot/gislab.j2
+    dest: /var/lib/tftpboot/gislab/pxelinux.cfg/default
+
+
+### HTTP BOOT
+- name: Create directory for HTTP boot script
+  file:
+    dest: "{{ root_dir_boot }}/http"
+    state: directory
+
+- name: Install HTTP boot script
+  copy:
+    src: static/boot/gislab-http-boot.py
+    dest: "{{ root_dir_boot }}/http/gislab-http-boot.py"
+  notify:
+    - service gislab-http-boot restart
+
+- name: Install HTTP boot service
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {
+        src: "systemd/gislab-http-boot.service.j2",
+        dest: "/etc/systemd/system/gislab-http-boot.service"
+      }
+    - {
+        src: "systemd/gislab-http-boot.socket.j2",
+        dest: "/etc/systemd/system/gislab-http-boot.socket"
+      }
+    - {
+        src: "systemd/gislab-http-boot.conf.j2",
+        dest: "/usr/lib/tmpfiles.d/gislab-http-boot.conf"
+      }
+  notify:
+    - service gislab-http-boot restart
+
+- name: Register HTTP boot service
+  service:
+    name: "{{ item }}"
+    enabled: yes
+  with_items:
+    - gislab-http-boot.socket
+    - gislab-http-boot.service
+  notify:
+    - service gislab-http-boot restart
+
+
+- name: Publish boot files via HTTP
+  file:
+    src: /var/lib/tftpboot/gislab
+    dest: "{{ GISLAB_PATH_WWW }}/boot"
+    state: link
+    force: yes
+
+
+### NBD
+- name: Create NBD configuration directories
+  file:
+    dest: /etc/nbd-server/conf.d
+    state: directory
+    recurse: yes
+
+- name: Install NBD configuration files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {
+        src: "nbd-server/config.j2",
+        dest: "/etc/nbd-server/config"
+      }
+    - {
+        src: "nbd-server/gislab.conf.j2",
+        dest: "/etc/nbd-server/conf.d/gislab.conf"
+      }
+  notify:
+    - service nbd-server restart
+
+- name: Enable keepalive option for nbdrootd
+  lineinfile:
+    dest: /etc/hosts.allow
+    line: "nbdrootd: ALL: keepalive"
+    state: present
+
+
+- meta: flush_handlers
+
+# vim: set ts=8 sts=2 sw=2 et:

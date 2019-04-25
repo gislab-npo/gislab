@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=GIS.lab Processing
+Comment=GRASS GIS: GIS data processing and analysis
+Exec=grass
+Icon=grass
+Terminal=true
+Categories=Gislab;

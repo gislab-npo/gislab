@@ -10,28 +10,28 @@ source $GISLAB_ROOT/system/functions.sh
 gislab_require_root
 
 
-# usage
+### USAGE
 function usage() {
-	echo "USAGE: $(basename $0) username"
-	echo "Backup GIS.lab user account."
-	echo -e "\nOPTIONS
-	-d backup directory (optional, default: /storage/backup)
-	-h display this help
-	"
-	exit 255
+    echo "USAGE: $(basename $0) username"
+    echo "Backup GIS.lab user account."
+    echo -e "\nOPTIONS
+    -d backup directory (optional, default: /storage/backup)
+    -h display this help
+    "
+    exit 255
 }
 
 
-# options
-BACKUP_DIR=/storage/backup
+### OPTIONS
+opt_backup_dir="$GISLAB_PATH_BACKUP"
 
 while getopts "d:h" OPTION
 do
-	case "$OPTION" in
-		d) BACKUP_DIR="$OPTARG" ;;
-		h) usage ;;
-		\?) exit 1 ;;
-	esac
+    case "$OPTION" in
+        d) opt_backup_dir="$OPTARG" ;;
+        h) usage ;;
+        \?) exit 1 ;;
+    esac
 done
 shift $(($OPTIND - 1))
 if [ $# -eq 0 ]; then usage; fi
@@ -39,129 +39,124 @@ if [ $# -eq 0 ]; then usage; fi
 GISLAB_USER=$1
 
 
-# sanity checks
-if ! id $GISLAB_USER >/dev/null 2>&1; then
-	gislab_print_error "GIS.lab user '$GISLAB_USER' does not exists"
-	exit 1
+### VARIABLES
+user_home_dir=$GISLAB_USER
+
+date=$(date '+%Y-%m-%d-%H-%M-%S')
+tmp_dir=${opt_backup_dir}/${GISLAB_USER}-${date}.backup
+
+home_backup_file=$tmp_dir/home.tar
+publish_backup_file=$tmp_dir/publish.tar.bz2
+db_backup_file=$tmp_dir/postgresql.dump
+ldap_backup_file=$tmp_dir/ldap.dump
+backup_file=$opt_backup_dir/$GISLAB_UNIQUE_ID-$GISLAB_USER-$date.tar
+
+lds="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
+
+
+### SANITY CHECKS
+if [ "$($lds "(&(objectClass=posixAccount)(uid=$GISLAB_USER))")" == "" ]; then
+    gislab_error "User '$GISLAB_USER' doesn't exists"
+    exit 1
 fi
 
 
-# populate variables and prepare directories structure
-GISLAB_USER_HOME=/storage/home/$GISLAB_USER
+### MAIN SCRIPT
+mkdir -p $opt_backup_dir
+chmod 700 $opt_backup_dir
 
-DATE=$(date '+%Y-%m-%d:%H-%M-%S')
-TEMP_BACKUP_DIR=${BACKUP_DIR}/${GISLAB_USER}-${DATE}.backup
-
-HOME_BACKUP_FILE=$TEMP_BACKUP_DIR/home.tar
-PUBLISH_BACKUP_FILE=$TEMP_BACKUP_DIR/publish.tar.bz2
-DB_BACKUP_FILE=$TEMP_BACKUP_DIR/postgresql.dump
-LDAP_BACKUP_FILE=$TEMP_BACKUP_DIR/ldap.dump
-BACKUP_FILE=$BACKUP_DIR/$GISLAB_UNIQUE_ID-$GISLAB_USER-$DATE.tar
-
-mkdir -p $BACKUP_DIR
-chmod 700 $BACKUP_DIR
-
-mkdir -p $TEMP_BACKUP_DIR
+mkdir -p $tmp_dir
 
 
 # GIS.lab VERSION
-echo $GISLAB_VERSION > $TEMP_BACKUP_DIR/GISLAB_VERSION
+echo $GISLAB_VERSION > $tmp_dir/GISLAB_VERSION
 
 
 # HOME DIRECTORY
+cd $GISLAB_PATH_HOME
+
 # load home directory names from XDG
-if [ -f $GISLAB_USER_HOME/.config/user-dirs.dirs ]; then
-	source $GISLAB_USER_HOME/.config/user-dirs.dirs
-	EXCLUDE=" --exclude=$GISLAB_USER_HOME/$(basename $XDG_DOWNLOAD_DIR)"
+if [ -f $user_home_dir/.config/user-dirs.dirs ]; then
+    source $user_home_dir/.config/user-dirs.dirs
+    exclude=" --exclude=$user_home_dir/$(basename $XDG_DOWNLOAD_DIR)"
 fi
 
-tar -cf $HOME_BACKUP_FILE \
-	--exclude="$GISLAB_USER_HOME/.*" \
-	--exclude=$GISLAB_USER_HOME/Barrel \
-	--exclude=$GISLAB_USER_HOME/Booster \
-	--exclude=$GISLAB_USER_HOME/Publish \
-	--exclude=$GISLAB_USER_HOME/Repository \
-	$EXCLUDE \
-	$GISLAB_USER_HOME
+tar -C $GISLAB_PATH_HOME -cf $home_backup_file \
+    --exclude="$user_home_dir/.*" \
+    --exclude=$user_home_dir/Barrel \
+    --exclude=$user_home_dir/Booster \
+    --exclude=$user_home_dir/Publish \
+    --exclude=$user_home_dir/Repository \
+    $exclude \
+    $user_home_dir
 
-if ls $GISLAB_USER_HOME/.config/user-dirs.* >/dev/null 2>&1; then
-	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.config/user-dirs.*
+if ls $user_home_dir/.config/user-dirs.* >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/.config/user-dirs.*
 fi
 
 # .gislab directory
-tar -rf $HOME_BACKUP_FILE --exclude=$GISLAB_USER_HOME/.gislab/session.lock $GISLAB_USER_HOME/.gislab
+tar -rf $home_backup_file \
+    --exclude=$user_home_dir/.gislab/session.lock \
+    $user_home_dir/.gislab
 
 # BASH
-if ls $GISLAB_USER_HOME/.bash_history >/dev/null 2>&1; then
-	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.bash_history
+if ls $user_home_dir/.bash_history >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/.bash_history
 fi
 
 # FIREFOX
-if ls $GISLAB_USER_HOME/.mozilla/firefox/*.default >/dev/null 2>&1; then
-	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.mozilla/firefox/profiles.ini
-	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.mozilla/firefox/*.default
+if ls $user_home_dir/.mozilla/firefox/*.default >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/.mozilla/firefox/profiles.ini
+    tar -rf $home_backup_file $user_home_dir/.mozilla/firefox/*.default
 fi
 
 # QGIS
-if ls $GISLAB_USER_HOME/.config/QGIS/QGIS2.conf >/dev/null 2>&1; then
-	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.config/QGIS/QGIS2.conf
+if ls $user_home_dir/.config/QGIS/QGIS2.conf >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/.config/QGIS/QGIS2.conf
 fi
 
-if ls $GISLAB_USER_HOME/.qgis2/*.db >/dev/null 2>&1; then
-	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.qgis2/*.db
+if ls $user_home_dir/.qgis2/*.db >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/.qgis2/*.db
 fi
 
 # GRASS
-if ls $GISLAB_USER_HOME/.grass7 >/dev/null 2>&1; then
-	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.grass7
+if ls $user_home_dir/.grass7 >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/.grass7
 fi
 
-if ls $GISLAB_USER_HOME/.grassdata >/dev/null 2>&1; then
-	tar -rf $HOME_BACKUP_FILE $GISLAB_USER_HOME/.grassdata
+if ls $user_home_dir/.grassdata >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/.grassdata
 fi
 
-bzip2 $HOME_BACKUP_FILE
+bzip2 $home_backup_file
 
 
 # PUBLISHED PROJECTS
-tar -cjf $PUBLISH_BACKUP_FILE /storage/publish/$GISLAB_USER
+tar -C $GISLAB_PATH_PUBLISH -cjf $publish_backup_file $GISLAB_USER
 
 
 # DATABASE DATA
-cd $TEMP_BACKUP_DIR # leave root's home dir before sudo to postgres
+cd $tmp_dir # leave root's home dir before sudo to postgres
 
-psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball;" > /dev/null
-psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing;" > /dev/null
-
-# include data from GIS.lab Web client only if client is installed
-ball_exist_sql="SELECT 1 FROM information_schema.tables WHERE table_name = 'storage_ball'"
-if [[ $(psql -U postgres -d gislab -tAc "$ball_exist_sql") == "1" ]]; then
-	psql -U postgres -d gislab \
-		-c "CREATE TABLE ${GISLAB_USER}.gislab_ball AS SELECT * FROM storage_ball WHERE \"user\" = '$GISLAB_USER';"
-	psql -U postgres -d gislab \
-		-c "CREATE TABLE ${GISLAB_USER}.gislab_drawing AS SELECT * FROM storage_drawing WHERE \"user\" = '$GISLAB_USER';"
-fi
-
-pg_dump -U postgres -Fc --schema=$GISLAB_USER gislab > $DB_BACKUP_FILE # perform backup
-psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_ball;" > /dev/null
-psql -U postgres -d gislab -c "DROP TABLE IF EXISTS ${GISLAB_USER}.gislab_drawing;" > /dev/null
+# backup
+pg_dump -U postgres \
+    -Fc --schema=$GISLAB_USER gislab > $db_backup_file
 
 
 # LDAP DATA
-ldapsearch_cmd="ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:///"
-ldapfinger -u $GISLAB_USER > $LDAP_BACKUP_FILE
-if [ "$($ldapsearch_cmd "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$GISLAB_USER))")" != "" ]; then
-	echo "#superuser" >> $LDAP_BACKUP_FILE  # superuser permissions
+ldapfinger -u $GISLAB_USER > $ldap_backup_file
+if [ "$($lds "(&(objectClass=posixGroup)(cn=gislabadmins)(memberUid=$GISLAB_USER))")" != "" ]; then
+    echo "#superuser" >> $ldap_backup_file  # superuser permissions
 fi
 
 # create backup file and clean up
-tar -C $TEMP_BACKUP_DIR -cf $BACKUP_FILE *
-chmod 400 $BACKUP_FILE
+tar -C $tmp_dir -cf $backup_file *
+chmod 400 $backup_file
 
-rm -rf $TEMP_BACKUP_DIR
-
-
-gislab_print_info "Backup of account '$GISLAB_USER' created in '$BACKUP_FILE' ($(du -h $BACKUP_FILE | awk '{print $1}'))"
+rm -rf $tmp_dir
 
 
-# vim: set ts=4 sts=4 sw=4 noet:
+### CONFIRMATION MESSAGE
+gislab_success "Backup of account '$GISLAB_USER' created in '$backup_file'"
+
+# vim: set ts=8 sts=4 sw=4 et:

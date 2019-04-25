@@ -11,14 +11,11 @@ server 3.ubuntu.pool.ntp.org
 # Use Ubuntu's ntp server as a fallback.
 server ntp.ubuntu.com
 
-# Restrict access to all by default
-restrict default ignore
+# Allow access to all by default
+restrict default kod notrap nomodify nopeer
 
 # Allow unrestricted access for local users
 restrict 127.0.0.1
-
-# Allow access for GIS.lab network
-restrict {{ GISLAB_NETWORK }}.0 mask 255.255.255.0 nomodify nopeer notrap
 
 # Set higher stratum
 server 127.127.1.0

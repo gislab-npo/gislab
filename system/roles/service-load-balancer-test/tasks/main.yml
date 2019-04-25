@@ -1,3 +1,12 @@
 ---
 
-# vim:ft=ansible:
+- name: Test if load balancer web interface is running
+  shell: >
+    curl -I "http://server.gis.lab:1936"
+    | grep "HTTP/1.* 200 OK"
+  ignore_errors: yes
+  changed_when: False
+  args:
+    warn: false
+
+# vim: set ts=8 sts=2 sw=2 et:

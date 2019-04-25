@@ -1,0 +1,16 @@
+---
+
+- name: service rsyslog restart
+  service:
+    name: rsyslog
+    state: restarted
+
+- name: service ssh restart
+  service:
+    name: ssh
+    state: restarted
+
+- name: reconfigure timezone
+  command: dpkg-reconfigure --frontend noninteractive tzdata
+
+# vim: set ts=8 sts=2 sw=2 et:
