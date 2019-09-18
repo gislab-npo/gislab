@@ -63,7 +63,7 @@ d-i partman-auto/expert_recipe string                   \
             use_filesystem{ } filesystem{ ext4 }        \
             mountpoint{ /boot }                         \
         .                                               \
-        27000 100 27000 ext4                            \
+        37000 100 37000 ext4                            \
             $lvmok{ }                                   \
             lv_name{ root }                             \
             method{ format } format{ }                  \

@@ -66,9 +66,9 @@ else
 fi
 
 # boot: 530
-# root: 27000
+# root: 37000
 # free: 470
-DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-530-27000-$DISK_SIZE_SWAP))
+DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-530-37000-$DISK_SIZE_SWAP))
 if [ $DISK_SIZE_STORAGE -lt 20000 ]; then
     echo "Invalid disk configuration (storage must be at least the size of 20GB), please check -d and -a flags"
     exit 1
