@@ -13,12 +13,12 @@
       - libpq-dev
       - postgis
       - postgresql
-      - postgresql-10-postgis-2.5
-      - postgresql-10-postgis-2.5-scripts
+      - "postgresql-{{ postgresql_version }}-postgis-{{ postgis_version }}"
+      - "postgresql-{{ postgresql_version }}-postgis-{{ postgis_version }}-scripts"
       - postgresql-comparator
       - postgresql-contrib
       - python-psycopg2
-      - postgresql-10-pgrouting
+      - postgresql-{{ postgresql_version }}-pgrouting
       - osm2pgrouting
       - gdal-bin
     force: yes
