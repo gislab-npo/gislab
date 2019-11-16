@@ -985,6 +985,7 @@
   git:
     repo: https://github.com/gislab-npo/gisquick-qgis-plugin
     dest: "{{ root_dir }}/root/usr/share/qgis/python/plugins/gisquick"
+    version: release-2_0
   when: GISLAB_GISQUICK_INTEGRATION
 
 - name: Install Gisquick applications files
