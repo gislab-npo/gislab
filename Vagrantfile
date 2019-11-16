@@ -48,12 +48,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = BOX
   config.vm.box_url = BOX_URL
-  config.vm.synced_folder '.', '/vagrant', disabled: true
+  config.vm.synced_folder '.', '/vagrant', disabled: false
   config.ssh.forward_agent = true
   config.disksize.size = '40GB'
 
   # provisioning
-  config.vm.define :gislab_vagrant_bionic do |server|
+  config.vm.define :gislab_vagrant_dev do |server|
     server.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
 
     # VirtualBox configuration
