@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Download Ubuntu Server AMD64 image from http://cdimage.ubuntu.com/releases/bionic/release/
 
 set -e
 
