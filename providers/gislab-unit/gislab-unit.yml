@@ -13,9 +13,9 @@
   tasks:
     - name: Ensure Python 2 is installed before running Ansible modules
       raw: >
-        apt update --assume-yes
+        apt-get update --assume-yes
         &&
-        apt install --assume-yes python-minimal
+        apt-get install --assume-yes python-minimal
 
     - name: Gather Ansible facts
       setup:

@@ -9,9 +9,9 @@
   raw: >
     export http_proxy="{{ GISLAB_APT_HTTP_PROXY }}"
     &&
-    apt update --assume-yes
+    apt-get update --assume-yes
     &&
-    apt install --assume-yes python3-minimal
+    apt-get install --assume-yes python3-minimal
 
 - name: Gather Ansible facts
   setup:
