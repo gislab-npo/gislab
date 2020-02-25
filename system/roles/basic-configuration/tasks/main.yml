@@ -153,6 +153,7 @@
 - name: Update apt cache
   apt:
     update_cache: yes
+    force_apt_get: yes
 
 - name: Remove not needed packages installed by default
   apt:
@@ -160,13 +161,7 @@
       - landscape-client
       - landscape-common
     state: absent
-
-- name: Install aptitude which is required for running system upgrade
-  apt:
-    name: aptitude
-    force: yes
-    install_recommends: no
-    state: latest
+    force_apt_get: yes
 
 - name: Upgrade system
   apt:

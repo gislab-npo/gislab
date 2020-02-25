@@ -50,7 +50,7 @@
 # Ubuntu version. GIS.lab supports only one Ubuntu version at time. Don't try to
 # change this value !
 GISLAB_UBUNTU_VERSION: eoan
-GISLAB_UBUNTU_VERSION_NUMBER: 19.10
+GISLAB_UBUNTU_VERSION_NUMBER: '19.10'
 
 
 # *************************************************************************** #
