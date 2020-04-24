@@ -177,11 +177,11 @@
       - etherwake
       - ethtool
       - htop
-      - ifupdown2
       - iotop
       - mc
       - pwgen
       - pssh
+      - sendmail
       - tmux
       - ubuntu-fan
       - vim
