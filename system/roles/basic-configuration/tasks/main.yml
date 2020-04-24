@@ -178,10 +178,10 @@
       - ethtool
       - htop
       - iotop
+      - mailutils
       - mc
       - pwgen
       - pssh
-      - sendmail
       - tmux
       - ubuntu-fan
       - vim
