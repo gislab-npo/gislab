@@ -47,7 +47,7 @@
         dest: "/etc/bind/db.192"
       }
   notify:
-    - service bind9 stop
+    - service named stop
 
 - name: Install resolvconf configuration
   template:
