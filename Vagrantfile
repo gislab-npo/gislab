@@ -77,6 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # installation
     server.vm.provision "install", type: "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
       ansible.playbook = "system/gislab.yml"
 
       # verbosity
