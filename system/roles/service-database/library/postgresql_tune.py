@@ -268,7 +268,7 @@ def postgres_settings(
           unit = "kB"
         return "{0}{1}".format(int(value), unit)
 
-    return { k: format_value(k, v) for k, v in config.iteritems() }
+    return { k: format_value(k, v) for k, v in config.items() }
 
 
 def kernel_settings(db_version, os_type, db_type, total_memory):
@@ -285,7 +285,7 @@ def kernel_settings(db_version, os_type, db_type, total_memory):
 
 
 def format_config(config):
-    return "\n".join(["{0} = {1}".format(k, v) for k, v in config.iteritems()])
+    return "\n".join(["{0} = {1}".format(k, v) for k, v in config.items()])
 
 
 def tune(data):

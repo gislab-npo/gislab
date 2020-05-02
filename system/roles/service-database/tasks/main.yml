@@ -17,7 +17,7 @@
       - "postgresql-{{ postgresql_version }}-postgis-{{ postgis_version }}-scripts"
       - postgresql-comparator
       - postgresql-contrib
-      - python-psycopg2
+      - python3-psycopg2
       - postgresql-{{ postgresql_version }}-pgrouting
       - osm2pgrouting
       - gdal-bin

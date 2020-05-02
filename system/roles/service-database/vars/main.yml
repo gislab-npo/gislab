@@ -1,12 +1,12 @@
 ---
 
-postgresql_version: 10
+postgresql_version: 12
 postgresql_conf_directory: "/etc/postgresql/{{ postgresql_version }}"
 postgresql_tune_db_type: dw
 postgresql_tune_total_memory: "{{ ansible_memtotal_mb }}MB"
 postgresql_tune_connections: 250
 postgresql_sysctl_conf: /etc/sysctl.d/99-postgresql-tune.conf
 
-postgis_version: 2.5
+postgis_version: 3
 
 # vim: set ts=8 sts=2 sw=2 et:
