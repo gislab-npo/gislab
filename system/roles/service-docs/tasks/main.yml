@@ -9,8 +9,8 @@
   apt:
     name:
       - make
-      - python-sphinx
-      - python-sphinx-rtd-theme
+      - python3-sphinx
+      - python3-sphinx-rtd-theme
     force: yes
     install_recommends: no
     state: latest
