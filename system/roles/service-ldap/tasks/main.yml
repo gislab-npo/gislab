@@ -10,7 +10,6 @@
 - name: Install packages
   apt:
     name:
-      - auth-client-config
       - gnutls-bin
       - ldapscripts
       - libpam-cracklib
@@ -19,7 +18,7 @@
       - libnss-ldap
       - members
       - pwgen
-      - python-ldap
+      - python3-ldap
       - slapd
       - ssl-cert
     force: yes
@@ -100,10 +99,7 @@
 
 ### PAM
 - name: Configure PAM to use Unix and LDAP authentication
-  shell: DEBIAN_FRONTEND=noninteractive {{ item }}
-  with_items:
-    - "pam-auth-update --force"
-    - "auth-client-config -t nss -p lac_ldap"
+  shell: DEBIAN_FRONTEND=noninteractive pam-auth-update --force
 
 - name: Configure PAM to use LDAP
   template:
