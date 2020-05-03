@@ -64,12 +64,12 @@ ANSIBLE_SSH_ARGS='\
 
 # run roles
 if [ "$opt_tests_only" == "no" ]; then
-    $ansible_cmd $tags system/gislab.yml
+    $ansible_cmd -e GISLAB_ADMIN_PASSWORD= $tags system/gislab.yml
 fi
 
 # run tests for roles
 if [ "$opt_tests" == "yes" ] || [ "$opt_tests_only" == "yes" ]; then
-    $ansible_cmd $tags system/test.yml
+    $ansible_cmd -e GISLAB_ADMIN_PASSWORD= $tags system/test.yml
 fi
 
 # vim: set ts=8 sts=4 sw=4 et:
