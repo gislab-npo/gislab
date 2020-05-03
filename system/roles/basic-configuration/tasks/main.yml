@@ -88,10 +88,10 @@
 
 
 ### NETWORKING
-- name: Install network configuration file
+- name: Install netplan configuration file
   template:
-    src: network/interfaces.j2
-    dest: /etc/network/interfaces
+    src: netplan/50-gislab.j2
+    dest: /etc/netplan/50-gislab.yaml
 
 
 ### PACKAGES CACHE

@@ -1,10 +1,19 @@
 # The loopback network interface
-auto lo
-iface lo inet loopback
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    lo:
+      match:
+        name: lo
 
 # Default GIS.lab server network configuration.
-auto {{ ansible_default_ipv4.interface }}
-iface {{ ansible_default_ipv4.interface }} inet dhcp
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    {{ ansible_default_ipv4.interface }}:
+      dhcp4: true
 
 # Example of static GIS.lab server network configuration.
 #auto {{ ansible_default_ipv4.interface }}
