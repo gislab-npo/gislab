@@ -99,8 +99,8 @@
 
 - name: Configure loopback network interface
   template:
-    src: network/interfaces.j2
-    dest: "{{ root_dir }}/root/etc/network/interfaces"
+    src: netplan/50-gislab.j2
+    dest: "{{ root_dir }}/root/etc/netplan/50-gislab.yaml"
 
 
 # fstab
@@ -274,9 +274,6 @@
     apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_lab|join(' ') }}
     &&
     chroot {{ root_dir }}/root
-    pip install {{ packages_lab_pip|join(' ') }}
-    &&
-    chroot {{ root_dir }}/root
     pip3 install {{ packages_lab_pip|join(' ') }}
   args:
     executable: /bin/bash
@@ -406,7 +403,7 @@
   shell: >
     export DEBIAN_FRONTEND=noninteractive
     &&
-    chroot {{ root_dir }}/root {{ item }} pam-auth-update --force
+    chroot {{ root_dir }}/root pam-auth-update --force
   args:
     executable: /bin/bash
 
