@@ -195,7 +195,6 @@ packages_lab:
   - grass
   - grass-doc
   - grass-dev
-  - ipython
   - ipython3
   - monteverdi
   - osm2pgrouting
@@ -208,32 +207,18 @@ packages_lab:
   - postgresql-client
   - postgresql-comparator
   - proj-bin
-  - python-fiona
   - python3-fiona
-  - python-gdal
   - python3-gdal
-  - python-otb
-  - python3-otb
-  - python-owslib
   - python3-owslib
-  - python-pandas
   - python3-pandas
-  - python-pil
   - python3-pil
-  - python-pip
   - python3-pip
-  - python-pyproj
   - python3-pyproj
-  - python-pysqlite2
   - python3-qgis
-  - python-rasterio
   - python3-rasterio
-  - python-saga
-  - python-setuptools
+  - python3-saga
   - python3-setuptools
-  - python-shapely
   - python3-shapely
-  - python-sklearn
   - python3-sklearn
   - pyqt5-dev-tools
   - qgis
@@ -254,7 +239,7 @@ packages_lab_pip:
 packages_worker:
   # OWS worker packages
   - lighttpd
-  - python-gdal
+  - python3-gdal
   - python3-qgis
   - qgis
   - qgis-server

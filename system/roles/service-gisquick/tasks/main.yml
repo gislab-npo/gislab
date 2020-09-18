@@ -94,6 +94,7 @@
   git:
     repo: https://github.com/gislab-npo/gisquick-doc.git
     dest: "{{ docker_dir }}/gisquick/docs"
+    version: release-1_x
 
 - name: Build HTML documentation output
   shell: make html
