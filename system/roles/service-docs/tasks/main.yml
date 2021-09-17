@@ -15,6 +15,10 @@
     install_recommends: no
     state: latest
 
+- name: Install Python packages
+  pip:
+    name:
+      - sphinxcontrib-images
 
 - name: Download GIS.lab documentation
   git:
