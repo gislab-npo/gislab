@@ -11,7 +11,7 @@
     &&
     apt-get update --assume-yes
     &&
-    apt-get install --assume-yes python3-minimal
+    apt-get install --assume-yes python3-minimal python3-pip
 
 - name: Gather Ansible facts
   setup:
