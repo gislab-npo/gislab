@@ -231,7 +231,7 @@ GISLAB_GISQUICK_INTEGRATION: yes
 # Possible values are:
 # * no:  do not enable debug mode
 # * yes: enable debug mode
-GISLAB_DEBUG_INSTALL: no
+GISLAB_DEBUG_INSTALL: yes
 
 # Run tests after installation is finished.
 # # Possible values are:
