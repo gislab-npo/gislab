@@ -50,7 +50,7 @@ d-i partman-partitioning/confirm_write_new_label boolean true
 # - sda1 - /boot (530MB)
 # - sda2 - extended
 # - sda5 - VG vgmain
-#             - LV root (22GB)
+#             - LV root (see DISK_SIZE_ROOT)
 #             - LV storage (see DISK_SIZE_STORAGE)
 #             - LV swap (see DISK_SIZE_SWAP)
 #
@@ -63,7 +63,7 @@ d-i partman-auto/expert_recipe string                   \
             use_filesystem{ } filesystem{ ext4 }        \
             mountpoint{ /boot }                         \
         .                                               \
-        37000 100 37000 ext4                            \
+        ###DISK_SIZE_ROOT### 100 ###DISK_SIZE_ROOT### ext4      \
             $lvmok{ }                                   \
             lv_name{ root }                             \
             method{ format } format{ }                  \

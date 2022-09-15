@@ -13,7 +13,7 @@ function usage() {
     echo -e "\nOPTIONS
     -s country code used for choosing closest repository mirror (e.g. SK)
     -t timezone (e.g. Europe/Bratislava)
-    -d disk size in GB (recommended options: 60, 120, 240, 480; default: 60)
+    -d disk size in GB
     -a swap size in GB (default: 4)
     -k SSH public key file, which will be used for GIS.lab installation or update
     -w working directory with enough disk space (2.5 x larger than ISO image size)
@@ -53,11 +53,9 @@ if [ -z "$COUNTRY_CODE" \
     -o -z "$TIME_ZONE" \
     -o -z "$SRC_IMAGE" \
     -o -z "$WORK_DIR" \
-    -o -z "$SSH_PUBLIC_KEY" ]; then
+    -o -z "$SSH_PUBLIC_KEY" \
+    -o -z "$DISK_SIZEGB" ]; then
     usage
-fi
-if [ -z "$DISK_SIZEGB" ]; then
-    DISK_SIZEGB=60
 fi
 if [ -z "$DISK_SIZE_SWAPGB" ]; then
     DISK_SIZE_SWAP=4300
@@ -66,9 +64,10 @@ else
 fi
 
 # boot: 530
-# root: 37000
+# root: 44000
 # free: 470
-DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-530-37000-$DISK_SIZE_SWAP))
+DISK_SIZE_ROOT=44000
+DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-530-$DISK_SIZE_ROOT-$DISK_SIZE_SWAP))
 if [ $DISK_SIZE_STORAGE -lt 20000 ]; then
     echo "Invalid disk configuration (storage must be at least the size of 20GB), please check -d and -a flags"
     exit 1
@@ -133,8 +132,9 @@ cp -f $SRC_DIR/iso/splash.pcx $ROOT_DIR/isolinux/splash.pcx
 cp $SRC_DIR/iso/gislab.seed.template $ROOT_DIR/preseed/gislab.seed
 sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/preseed/gislab.seed
 sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###DISK_SIZE_STORAGE###;$DISK_SIZE_STORAGE;" $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;" $ROOT_DIR/preseed/gislab.seed
+sed -i "s;###DISK_SIZE_ROOT###;$DISK_SIZE_ROOT;g" $ROOT_DIR/preseed/gislab.seed
+sed -i "s;###DISK_SIZE_STORAGE###;$DISK_SIZE_STORAGE;g" $ROOT_DIR/preseed/gislab.seed
+sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;g" $ROOT_DIR/preseed/gislab.seed
 
 cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_key.pub
 
