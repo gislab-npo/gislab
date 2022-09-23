@@ -86,7 +86,7 @@
     - gisquick/nginx
 
 - name: Start docker service
-  docker_service:
+  docker_compose:
     project_src: "{{ docker_dir }}/gisquick"
 
 
