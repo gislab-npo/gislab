@@ -6,16 +6,14 @@
 
 - hosts: all
   become: yes
-  gather_facts: false  # disable gathering Ansible facts until Python 2 is not
-                       # installed or Ansible comes with Python 3 support
-
+  gather_facts: true
 
   tasks:
-    - name: Ensure Python 2 is installed before running Ansible modules
+    - name: Ensure Python 3 is installed before running Ansible modules
       raw: >
         apt-get update --assume-yes
         &&
-        apt-get install --assume-yes python-minimal
+        apt-get install --assume-yes python3-minimal
 
     - name: Gather Ansible facts
       setup:

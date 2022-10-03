@@ -180,6 +180,7 @@
       - iotop
       - mailutils
       - mc
+      - python3-pip
       - pwgen
       - pssh
       - tmux
