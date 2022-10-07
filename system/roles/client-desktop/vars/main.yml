@@ -59,8 +59,10 @@ packages_desktop:
   - dmz-cursor-theme
   - doc-base
   - file-roller
+  - fonts-dejavu
   - fonts-liberation
   - fonts-opensymbol
+  - fonts-ubuntu
   - ghostscript-x
   - gstreamer1.0-plugins-base
   - gstreamer1.0-plugins-base-apps
@@ -72,7 +74,6 @@ packages_desktop:
   - gvfs
   - gvfs-backends
   - gvfs-fuse
-  - gvfs-bin
   - ibus
   - ibus-gtk
   - ibus-pinyin
@@ -97,8 +98,6 @@ packages_desktop:
   - thunar-volman
   - thunar-archive-plugin
   - thunar-media-tags-plugin
-  - ttf-dejavu-core
-  - ttf-ubuntu-font-family
   - tumbler
   - wireless-tools
   - wpasupplicant
@@ -139,7 +138,6 @@ packages_office:
   - cups-filters
   - evince
   - firefox
-  - flashplugin-installer
   - foomatic-db-compressed-ppds
   - foomatic-db-engine
   - freerdp2-x11
@@ -178,7 +176,7 @@ packages_office:
   - printer-driver-splix
   - pssh
   - rst2pdf
-  - system-config-printer-gnome
+  - system-config-printer
   - sshfs
   - vim-gtk
   - vlc
@@ -199,7 +197,8 @@ packages_lab:
   - osm2pgsql
   - otb-bin
   - otb-bin-qt
-  - pgadmin3
+  - otb-qgis
+  - phppgadmin
   - postgis
   - postgis-doc
   - postgresql-client
@@ -207,7 +206,6 @@ packages_lab:
   - proj-bin
   - python3-fiona
   - python3-gdal
-#  - python3-otb
   - python3-owslib
   - python3-pandas
   - python3-pil
