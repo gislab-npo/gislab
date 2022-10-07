@@ -218,7 +218,7 @@ GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY: 2000
 # See http://gisquick.org.
 # * no:  do not integrate Gisquick
 # * yes: integrate Gisquick
-GISLAB_GISQUICK_INTEGRATION: yes
+GISLAB_GISQUICK_INTEGRATION: no
 
 
 
