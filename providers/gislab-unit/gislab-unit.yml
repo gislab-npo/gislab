@@ -9,15 +9,6 @@
   gather_facts: true
 
   tasks:
-    - name: Ensure Python 3 is installed before running Ansible modules
-      raw: >
-        apt-get update --assume-yes
-        &&
-        apt-get install --assume-yes python3-minimal
-
-    - name: Gather Ansible facts
-      setup:
-
     - name: Set GIS.lab provider
       shell: echo 'gislab-unit' > /etc/gislab_provider
 
