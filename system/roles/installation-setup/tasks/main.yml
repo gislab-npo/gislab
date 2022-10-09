@@ -4,6 +4,7 @@
 #
 # Set basic environment. This role is used both for installation and tests.
 
+
 ### SANITY CHECKS
 - name: Check Ansible version (>= 2.8)
   assert:
