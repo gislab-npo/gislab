@@ -208,6 +208,7 @@ packages_lab:
   - python3-gdal
   - python3-owslib
   - python3-pandas
+  - python3-geopandas
   - python3-pil
   - python3-pip
   - python3-pyproj
