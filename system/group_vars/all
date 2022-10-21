@@ -78,11 +78,11 @@ GISLAB_ADMIN_EMAIL: gislab@gis.lab
 
 # Server memory size in MB.
 # Change requires GIS.lab server restart.
-GISLAB_SERVER_MEMORY: 1024
+GISLAB_SERVER_MEMORY: 8192
 
 # Server number of CPUs.
 # Change requires GIS.lab server restart.
-GISLAB_SERVER_CPUS: 1
+GISLAB_SERVER_CPUS: 4
 
 # Determines if GIS.lab server should start with GUI console. This is useful to
 # gain more control with server boot process.
