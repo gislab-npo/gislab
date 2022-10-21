@@ -256,6 +256,31 @@
     executable: /bin/bash
   when: GISLAB_SUITE in ('office', 'lab')
 
+- name: Add Mozilla team PPA
+  shell: >
+    export DEBIAN_FRONTEND=noninteractive
+    &&
+    chroot {{ root_dir }}/root
+    add-apt-repository -y ppa:mozillateam/ppa
+  args:
+    executable: /bin/bash
+  when: GISLAB_SUITE in ('office', 'lab')
+
+- name: Configure Mozilla team PPA
+  copy:
+    src: "static/mozilla/{{ item.src }}"
+    dest: "/etc/apt/{{ item.dest }}"
+  with_items:
+    - {
+        src: "preferences",
+        dest: "preferences.d/mozilla-firefox"
+      }
+    - {
+        src: "upgrades",
+        dest: "apt.conf.d/51unattended-upgrades-firefox"
+      }
+
+
 - name: Install GIS.lab client office packages
   shell: >
     export DEBIAN_FRONTEND=noninteractive

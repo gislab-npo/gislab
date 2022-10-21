@@ -42,6 +42,7 @@ packages_base:
   - pxelinux
   - rsyslog
   - serf
+  - software-properties-common
   - syslinux-common
   - udhcpc
   - unzip

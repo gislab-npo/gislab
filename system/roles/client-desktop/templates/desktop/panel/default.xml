@@ -80,12 +80,12 @@
     </property>
     <property name="plugin-5" type="string" value="launcher">
       <property name="items" type="array">
-        <value type="string" value="leafpad.desktop"/>
+        <value type="string" value="geany.desktop"/>
       </property>
     </property>
     <property name="plugin-6" type="string" value="launcher">
       <property name="items" type="array">
-        <value type="string" value="exo-terminal-emulator.desktop"/>
+        <value type="string" value="xfce4-terminal-emulator.desktop"/>
       </property>
     </property>
     <property name="plugin-7" type="string" value="separator"/>
