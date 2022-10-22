@@ -1,0 +1,46 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    realname: GIS.lab Administrator
+    username: ubuntu
+    # echo ubuntu | mkpasswd -m sha-512 -s
+    password: $6$P2oifKGZMFgA2/Rk$g8lNsdAIb1EegiGetrGU4UsunWYqHFq6Udgg0WiKRQkz.8XDDSmoRxy5gqpfHcHisGgV.jhQs3BjgeztDYqi/1
+    hostname: gislab
+  apt:
+    primary:
+    - arches:
+      - default
+      uri: http://###COUNTRY_CODE###.archive.ubuntu.com/ubuntu
+  debconf-selections: |
+    tasksel tasksel/first multiselect server
+    popularity-contest popularity-contest/participate boolean false
+  keyboard:
+    layout: us
+  network:
+    ethernets:
+      any:
+        match:
+          name: en*
+    version: 2
+  storage:
+    layout:
+      name: lvm
+    swap:
+      size: 0    
+    config:
+      - type: disk
+        id: disk0
+        path: /dev/sda
+        grub_device: true
+      - type: partition
+        id: boot-partition
+        device: root-disk
+        size: 530M
+      - type: partition
+        id: root-partition
+        size: ###DISK_SIZE_ROOT###
+      - type: partition
+        id: data-partition
+        device: root-disk
+        size: -1

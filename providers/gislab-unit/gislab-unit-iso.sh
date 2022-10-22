@@ -1,5 +1,6 @@
-#!/bin/bash
+#!/bin/bash -x
 
+# https://askubuntu.com/questions/1231796/remove-ubuntu-20-04-try-install-screen/1231801#1231801
 
 set -e
 
@@ -87,8 +88,8 @@ fi
 mkdir -p $MOUNT_DIR
 sudo mount -o loop $SRC_IMAGE $MOUNT_DIR
 
-if [ ! -f "$MOUNT_DIR/install/vmlinuz" ]; then
-    echo "Invalid Ubuntu ISO image file. Ubuntu 18.04 Server ISO is required."
+if [ ! -d "$MOUNT_DIR/dists/jammy" ]; then
+    echo "Invalid Ubuntu ISO image file. Ubuntu 22.04 Server ISO is required."
     umount $MOUNT_DIR
     exit 1
 fi
@@ -121,20 +122,24 @@ cd $ROOT_DIR
 
 
 # boot options
-sed -i 's/^timeout.*/timeout 50/' $ROOT_DIR/isolinux/isolinux.cfg
-cp -f $SRC_DIR/iso/menu.cfg $ROOT_DIR/isolinux/menu.cfg
-cp -f $SRC_DIR/iso/txt.cfg $ROOT_DIR/isolinux/txt.cfg
-cp -f $SRC_DIR/iso/splash.pcx $ROOT_DIR/isolinux/splash.pcx
+sed -i 's/timeout.*/timeout=0/' $ROOT_DIR/boot/grub/grub.cfg
+#?cp -f $SRC_DIR/iso/menu.cfg $ROOT_DIR/isolinux/menu.cfg
+#?cp -f $SRC_DIR/iso/txt.cfg $ROOT_DIR/isolinux/txt.cfg
+#?cp -f $SRC_DIR/iso/splash.pcx $ROOT_DIR/isolinux/splash.pcx
 
 
 # generate preseed file
-cp $SRC_DIR/iso/gislab.seed.template $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###DISK_SIZE_ROOT###;$DISK_SIZE_ROOT;g" $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###DISK_SIZE_STORAGE###;$DISK_SIZE_STORAGE;g" $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;g" $ROOT_DIR/preseed/gislab.seed
-
+mkdir $ROOT_DIR/gislab
+cp $SRC_DIR/iso/gislab-autoinstall.yaml.template $ROOT_DIR/gislab/user-data
+touch $ROOT_DIR/gislab/meta-data
+sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/gislab/user-data
+#?sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/preseed/gislab.seed
+sed -i "s;###DISK_SIZE_ROOT###;$DISK_SIZE_ROOT;g" $ROOT_DIR/gislab/user-data
+#?sed -i "s;###DISK_SIZE_STORAGE###;$DISK_SIZE_STORAGE;g" $ROOT_DIR/preseed/gislab.seed
+#?sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;g" $ROOT_DIR/preseed/gislab.seed
+sed -i -e 's,---, autoinstall "ds=nocloud-net;s=file:///cdrom/gislab/"  ---,g' $ROOT_DIR/boot/grub/grub.cfg
+sed -i -e 's,---, autoinstall "ds=nocloud-net;s=file:///cdrom/gislab/"  ---,g' $ROOT_DIR/boot/grub/loopback.cfg
+        
 cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_key.pub
 
 cp $SRC_DIR/iso/configure-apt-proxy.sh $ROOT_DIR/configure-apt-proxy.sh
@@ -142,23 +147,23 @@ chmod 0755 $ROOT_DIR/configure-apt-proxy.sh
 
 
 # change ISO image name
-sed -i "s/^#define DISKNAME.*/#define DISKNAME GIS.lab Base System ($ISO_ID)/" $ROOT_DIR/README.diskdefines
+#?sed -i "s/^#define DISKNAME.*/#define DISKNAME GIS.lab Base System ($ISO_ID)/" $ROOT_DIR/README.diskdefines
 echo "GIS.lab Base System ($ISO_ID)" > $ROOT_DIR/.disk/info
 
-rm -f $ROOT_DIR/isolinux/boot.cat
+rm -f $ROOT_DIR/boot.catalog
 
 # update md5sum file
 rm -f $ROOT_DIR/md5sum.txt
 find -type f -print0 \
     | xargs -0 md5sum \
-    | grep -v 'isolinux/boot.cat' > $ROOT_DIR/md5sum.txt
+    | grep -v 'boot.catalog' > $ROOT_DIR/md5sum.txt
 
 cd $WORK_DIR
 
 genisoimage \
     -D -r -V "GIS.lab Base System" \
     -cache-inodes -J -l \
-    -b isolinux/isolinux.bin -c isolinux/boot.cat \
+    -b boot/grub/i386-pc/eltorito.img -c boot.catalog \
     -no-emul-boot -boot-load-size 4 -boot-info-table \
     -o gislab-base-system-${ISO_ID}.iso root/
 
