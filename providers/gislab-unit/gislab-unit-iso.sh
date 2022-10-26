@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # https://askubuntu.com/questions/1231796/remove-ubuntu-20-04-try-install-screen/1231801#1231801
 
