@@ -39,8 +39,20 @@ autoinstall:
         size: 530M
       - type: partition
         id: root-partition
-        size: ###DISK_SIZE_ROOT###
+        size: ###DISK_SIZE_ROOT###M
       - type: partition
-        id: data-partition
+        id: storage-partition
         device: root-disk
         size: -1
+  user-data:
+    timezone: ###TIME_ZONE###
+    disable_root: false
+  late-commands:
+    - mkdir -p /target/home/ubuntu/.ssh
+    - cp /cdrom/ssh_key.pub /target/home/ubuntu/.ssh/authorized_keys
+    - curtin in-target --target=/target chown -R ubuntu:ubuntu /target/home/ubuntu/.ssh
+    - curtin in-target --target=/target chmod 0700 /target/home/ubuntu/.ssh
+    - curtin in-target --target=/target chmod 0600 /target/home/ubuntu/.ssh/authorized_keys
+    - 'sed -i "s/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/" /target/etc/sudoers'
+    - 'sed -i "s/\(GRUB_CMDLINE_LINUX_DEFAULT=\).*/\1\"nomodeset\"/g" /etc/default/grub'
+    - curtin in-target --target=/target -- update-grub

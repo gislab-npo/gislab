@@ -1,20 +1,18 @@
 #### Basic base system installation
 
 ### Network configuration
-#?d-i netcfg/choose_interface select auto -> network
-#?d-i netcfg/disable_autoconfig boolean false -> network
-
-#?d-i netcfg/get_hostname string gislab -> hostname
+d-i netcfg/choose_interface select auto
+d-i netcfg/disable_autoconfig boolean false
+# d-i netcfg/get_hostname string gislab
 d-i netcfg/get_domain string unassigned-domain
-
 d-i hw-detect/load_firmware boolean false
 
 
 ### Mirror settings
-#d-i mirror/protocol select http
-#d-i mirror/country string ###COUNTRY_CODE###
-#d-i mirror/http/hostname string archive.ubuntu.com
-#?d-i mirror/http/directory string /debian
+d-i mirror/protocol select http
+d-i mirror/country string ###COUNTRY_CODE###
+d-i mirror/http/hostname string archive.ubuntu.com
+d-i mirror/http/directory string /debian
 d-i mirror/suite string jammy
 d-i mirror/http/proxy string
 
@@ -89,7 +87,7 @@ d-i partman-auto/expert_recipe string                   \
 #d-i passwd/username string ubuntu
 #d-i passwd/user-password password ubuntu
 #d-i passwd/user-password-again password ubuntu
-d-i user-setup/allow-password-weak boolean true
+#d-i user-setup/allow-password-weak boolean true
 d-i user-setup/encrypt-home boolean false
 
 

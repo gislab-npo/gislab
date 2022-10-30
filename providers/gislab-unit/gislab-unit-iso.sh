@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# https://askubuntu.com/questions/1231796/remove-ubuntu-20-04-try-install-screen/1231801#1231801
-
 set -e
 
 
@@ -66,9 +64,11 @@ fi
 # boot: 530
 # root: 44000
 # free: 470
-DISK_SIZE_ROOT=44000
+#DISK_SIZE_ROOT=44000
+DISK_SIZE_ROOT=7000
 DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-530-$DISK_SIZE_ROOT-$DISK_SIZE_SWAP))
-if [ $DISK_SIZE_STORAGE -lt 20000 ]; then
+#if [ $DISK_SIZE_STORAGE -lt 20000 ]; then
+if [ $DISK_SIZE_STORAGE -lt 2000 ]; then
     echo "Invalid disk configuration (storage must be at least the size of 20GB), please check -d and -a flags"
     exit 1
 fi
@@ -78,8 +78,8 @@ if [ $(id -u) -ne 0 ]; then
     exit 1
 fi
 
-if ! which genisoimage >/dev/null; then
-    echo "Cannot find 'genisoimage' binary. Please install appropriate package."
+if ! which xorriso >/dev/null; then
+    echo "Cannot find 'xorriso' binary. Please install appropriate package."
     exit 1
 fi
 
@@ -133,7 +133,7 @@ mkdir $ROOT_DIR/gislab
 cp $SRC_DIR/iso/gislab-autoinstall.yaml.template $ROOT_DIR/gislab/user-data
 touch $ROOT_DIR/gislab/meta-data
 sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/gislab/user-data
-#?sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/preseed/gislab.seed
+sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/gislab/user-data
 sed -i "s;###DISK_SIZE_ROOT###;$DISK_SIZE_ROOT;g" $ROOT_DIR/gislab/user-data
 #?sed -i "s;###DISK_SIZE_STORAGE###;$DISK_SIZE_STORAGE;g" $ROOT_DIR/preseed/gislab.seed
 #?sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;g" $ROOT_DIR/preseed/gislab.seed
@@ -160,12 +160,30 @@ find -type f -print0 \
 
 cd $WORK_DIR
 
-genisoimage \
-    -D -r -V "GIS.lab Base System" \
-    -cache-inodes -J -l \
-    -b boot/grub/i386-pc/eltorito.img -c boot.catalog \
-    -no-emul-boot -boot-load-size 4 -boot-info-table \
-    -o gislab-base-system-${ISO_ID}.iso root/
+# taken from https://askubuntu.com/questions/1403546/ubuntu-22-04-build-iso-both-mbr-and-efi
+#  extract the MBR template for --grub2-mbr
+#  we only need the x86 code. All partition stuff will be newly created.
+dd if=$SRC_IMAGE bs=1 count=432 of=root/boot_hybrid.img
+#  the EFI partition is not a data file inside the ISO any more.
+#  7129428d-7137923d : 7137923 - 7129428 + 1 = 8496
+dd if=$SRC_IMAGE bs=512 skip=2871452 count=8496 of=root/efi.img
+#  pack ISO...
+xorriso -as mkisofs -r \
+        -V 'GIS.lab Base System (EFIBIOS)' \
+        -o gislab-base-system-${ISO_ID}.iso \
+        --grub2-mbr root/boot_hybrid.img \
+        -partition_offset 16 \
+        --mbr-force-bootable \
+        -append_partition 2 28732ac11ff8d211ba4b00a0c93ec93b root/efi.img \
+        -appended_part_as_gpt \
+        -iso_mbr_part_type a2a0d0ebe5b9334487c068b6b72699c7 \
+        -c '/boot.catalog' \
+        -b '/boot/grub/i386-pc/eltorito.img' \
+        -no-emul-boot -boot-load-size 4 -boot-info-table --grub2-boot-info \
+        -eltorito-alt-boot \
+        -e '--interval:appended_partition_2:::' \
+        -no-emul-boot \
+        root/
 
 # create meta file
 cat << EOF >> $WORK_DIR/gislab-base-system-${ISO_ID}.meta
