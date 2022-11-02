@@ -42,7 +42,8 @@ done
 ### VARIABLES
 SRC_DIR="$(dirname $(readlink -f $0))"
 MOUNT_DIR="/tmp/gislab-base-system-iso-mnt"
-ISO_ID=$(pwgen -n 8 1)
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+ISO_ID=`(cd $SCRIPT_DIR/../.. ; grep ^GISLAB_VERSION system/roles/installation-setup/vars/main.yml | cut -d':' -f 2 | sed -e "s/^ \{1,\}//")`
 DATE=$(date '+%Y-%m-%d-%H:%M:%S')
 
 
