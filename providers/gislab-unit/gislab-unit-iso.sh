@@ -43,7 +43,7 @@ done
 SRC_DIR="$(dirname $(readlink -f $0))"
 MOUNT_DIR="/tmp/gislab-base-system-iso-mnt"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-ISO_ID=`(cd $SCRIPT_DIR/../.. ; grep ^GISLAB_VERSION system/roles/installation-setup/vars/main.yml | cut -d':' -f 2 | sed -e "s/^ \{1,\}//")`
+ISO_ID=v`(cd $SCRIPT_DIR/../.. ; grep ^GISLAB_VERSION system/roles/installation-setup/vars/main.yml | cut -d':' -f 2 | sed -e "s/^ \{1,\}//")`
 DATE=$(date '+%Y-%m-%d-%H:%M:%S')
 
 
@@ -162,8 +162,7 @@ find -type f -print0 \
 cd $WORK_DIR
 
 # taken from https://askubuntu.com/questions/1403546/ubuntu-22-04-build-iso-both-mbr-and-efi
-#  extract the MBR template for --grub2-mbr
-#  we only need the x86 code. All partition stuff will be newly created.
+#  extract the MBR template for --grub2-mbr (x86 code)
 dd if=$SRC_IMAGE bs=1 count=432 of=root/boot_hybrid.img
 #  the EFI partition is not a data file inside the ISO any more.
 #  7129428d-7137923d : 7137923 - 7129428 + 1 = 8496
