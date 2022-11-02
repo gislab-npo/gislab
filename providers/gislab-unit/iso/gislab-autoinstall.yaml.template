@@ -47,12 +47,21 @@ autoinstall:
   user-data:
     timezone: ###TIME_ZONE###
     disable_root: false
+    write_files:
+      - path: /run/tmpfiles.d/authorized_keys.sh
+        permissions: root
+        owner: root
+        content: |
+          mkdir -p /home/ubuntu/.ssh
+          chmod 0700 /home/ubuntu/.ssh
+          cp /root/ssh_key.pub /home/ubuntu/.ssh/authorized_keys
+          chmod 0600 /home/ubuntu/.ssh/authorized_keys
+          chown -R ubuntu:ubuntu /home/ubuntu/.ssh
+    runcmd:
+      - /bin/bash /run/tmpfiles.d/authorized_keys.sh
+
   late-commands:
-    - mkdir -p /target/home/ubuntu/.ssh
-    - cp /cdrom/ssh_key.pub /target/home/ubuntu/.ssh/authorized_keys
-    - curtin in-target --target=/target chown -R ubuntu:ubuntu /target/home/ubuntu/.ssh
-    - curtin in-target --target=/target chmod 0700 /target/home/ubuntu/.ssh
-    - curtin in-target --target=/target chmod 0600 /target/home/ubuntu/.ssh/authorized_keys
+    - cp /cdrom/ssh_key.pub /target/root/
     - 'sed -i "s/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/" /target/etc/sudoers'
     - 'sed -i "s/\(GRUB_CMDLINE_LINUX_DEFAULT=\).*/\1\"nomodeset\"/g" /etc/default/grub'
     - curtin in-target --target=/target -- update-grub
