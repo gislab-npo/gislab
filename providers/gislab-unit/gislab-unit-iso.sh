@@ -62,13 +62,11 @@ else
     DISK_SIZE_SWAP=${DISK_SIZE_SWAPGB}300
 fi
 
-# boot: 530
-# root: 44000
-# free: 470
 DISK_SIZE_ROOT=30000
+# boot: 530
+# free: 470
 DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-530-$DISK_SIZE_ROOT-$DISK_SIZE_SWAP))
-#if [ $DISK_SIZE_STORAGE -lt 20000 ]; then
-if [ $DISK_SIZE_STORAGE -lt 2000 ]; then
+if [ $DISK_SIZE_STORAGE -lt 20000 ]; then
     echo "Invalid disk configuration (storage must be at least the size of 20GB), please check -d and -a flags"
     exit 1
 fi
@@ -136,7 +134,7 @@ sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/gislab/user-data
 sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/gislab/user-data
 sed -i "s;###DISK_SIZE_ROOT###;$DISK_SIZE_ROOT;g" $ROOT_DIR/gislab/user-data
 #?sed -i "s;###DISK_SIZE_STORAGE###;$DISK_SIZE_STORAGE;g" $ROOT_DIR/preseed/gislab.seed
-#?sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;g" $ROOT_DIR/preseed/gislab.seed
+sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;g" $ROOT_DIR/gislab/user-data
 sed -i -e 's,---, autoinstall "ds=nocloud-net;s=file:///cdrom/gislab/"  ---,g' $ROOT_DIR/boot/grub/grub.cfg
 sed -i -e 's,---, autoinstall "ds=nocloud-net;s=file:///cdrom/gislab/"  ---,g' $ROOT_DIR/boot/grub/loopback.cfg
         

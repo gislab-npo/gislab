@@ -12,38 +12,113 @@ autoinstall:
     - arches:
       - default
       uri: http://###COUNTRY_CODE###.archive.ubuntu.com/ubuntu
-  debconf-selections: |
-    tasksel tasksel/first multiselect server
-    popularity-contest popularity-contest/participate boolean false
-  keyboard:
-    layout: us
-  network:
-    ethernets:
-      any:
-        match:
-          name: en*
-    version: 2
-  storage:
-    layout:
-      name: lvm
-    swap:
-      size: 0    
-    config:
-      - type: disk
-        id: disk0
-        path: /dev/sda
-        grub_device: true
-      - type: partition
-        id: boot-partition
-        device: root-disk
-        size: 530M
-      - type: partition
-        id: root-partition
-        size: ###DISK_SIZE_ROOT###M
-      - type: partition
-        id: storage-partition
-        device: root-disk
-        size: -1
+storage:
+  version: 1
+  config:
+    - id: disk0
+      type: disk
+      ptable: msdos
+      match:
+        size: largest 
+      name: main_disk
+      wipe: superblock
+      grub_device: true
+    - id: disk0-part1
+      type: partition
+      number: 1
+      size: 30GB
+      device: disk0
+      flag: boot
+    - id: disk0-part2
+      type: partition
+      number: 2
+      size: 10GB
+      device: disk0
+    - id: disk0-part1-format-root
+      type: format
+      fstype: ext4
+      volume: disk0-part1
+    - id: disk0-part2-format-home
+      type: format
+      fstype: ext4
+      volume: disk0-part2
+    - id: disk0-part1-mount-root
+      type: mount
+      path: /
+      device: disk0-part1-format-root
+    - id: disk0-part2-mount-home
+      type: mount
+      path: /home
+      device: disk0-part2-format-home
+      
+#     version: 1
+#     layout:
+#       name: direct
+#     grub:
+#       install_devices:
+#         - ssd0-boot
+#     swap:
+# #      size: ###DISK_SIZE_SWAP###MB
+#     config:
+#       - id: ssd0 
+#         type: disk
+#         match:
+#           size: largest 
+#         ptable: gpt
+#         wipe: superblock
+#       - id: ssd0-esp 
+#         type: partition
+#         device: ssd0
+#         size: 512MB
+#         flag: boot 
+#       - id: ssd0-boot
+#         type: partition
+#         device: ssd0
+#         size: 512MB
+#       - id: ssd0-root
+#         type: partition
+#         device: ssd0
+#         size: ###DISK_SIZE_ROOT###MB
+#       - id: ssd0-storage
+#         type: partition
+#         device: ssd0
+#         size: -1 
+#       - id: ssd0-esp-fs 
+#         type: format
+#         volume: ssd0-esp
+#         fstype: fat32
+#         label: ESP
+#       - id: ssd0-boot-fs
+#         type: format
+#         volume: ssd0-boot
+#         fstype: ext4
+#         label: BOOT
+#       - id: ssd0-root-fs
+#         type: format
+#         volume: ssd0-root
+#         fstype: ext4
+#         label: ROOT
+#       - id: ssd0-storage-fs
+#         type: format
+#         volume: ssd0-storage
+#         fstype: ext4
+#         label: STORAGE
+#       - id: ssd0-esp-mount
+#         type: mount
+#         device: ssd0-esp-fs
+#         path: /boot/efi
+#       - id: ssd0-boot-mount
+#         type: mount
+#         device: ssd0-boot-fs
+#         path: /boot
+#       - id: ssd0-root-mount
+#         type: mount
+#         device: ssd0-root-fs
+#         path: /
+#       - id: ssd0-storage-mount
+#         type: mount
+#         device: ssd0-storage-fs
+#         path: /storage
   user-data:
     timezone: ###TIME_ZONE###
     disable_root: false
