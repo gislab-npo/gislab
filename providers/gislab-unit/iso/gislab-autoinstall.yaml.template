@@ -89,6 +89,9 @@ autoinstall:
   user-data:
     timezone: ###TIME_ZONE###
     disable_root: false
+    power_state:
+      mode: poweroff
+      condition: true
     write_files:
       - path: /run/tmpfiles.d/authorized_keys.sh
         permissions: root
