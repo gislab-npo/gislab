@@ -17,10 +17,8 @@ autoinstall:
     - type: disk
       id: disk
       grub_device: false      
-      name: ''
       match:
         size: largest
-      preserve: false
       ptable: gpt
       wipe: superblock
     - type: partition
@@ -29,64 +27,47 @@ autoinstall:
       flag: boot
       grub_device: true
       number: 1
-      preserve: false
       size: 1100M
-      wipe: superblock
     - type: partition
       id: partition-boot      
       device: disk
-      flag: ''
       number: 2
-      preserve: false
       size: 2000M
-      wipe: superblock
     - type: partition
       id: partition-lvm      
       device: disk
-      flag: ''
       number: 3
-      preserve: false
       size: -1
-      wipe: superblock
     - devices:
       - partition-lvm
       type: lvm_volgroup      
       id: lvm_volgroup
-      name: ubuntu-vg
-      preserve: false
+      name: gislab-vg
     - type: lvm_partition
       id: lvm_partition-root
       name: root
-      preserve: false
       size: ###DISK_SIZE_ROOT###M
       volgroup: lvm_volgroup
-      wipe: superblock
     - type: lvm_partition
       id: lvm_partition-storage
       name: storage
-      preserve: false
       size: -1
       volgroup: lvm_volgroup
-      wipe: superblock
     - type: format
       id: format-efi      
       fstype: fat32
-      preserve: false
       volume: partition-efi
     - type: format
       id: format-boot      
       fstype: ext4
-      preserve: false
       volume: partition-boot
     - type: format
       fstype: ext4
       id: format-root
-      preserve: false
       volume: lvm_partition-root
     - type: format
       id: format-storage
       fstype: ext4
-      preserve: false
       volume: lvm_partition-storage
     - type: mount
       id: mount-efi      
