@@ -12,113 +12,100 @@ autoinstall:
     - arches:
       - default
       uri: http://###COUNTRY_CODE###.archive.ubuntu.com/ubuntu
-storage:
-  version: 1
-  config:
-    - id: disk0
+  storage:
+    config:
+    - grub_device: false
+      id: disk-nvme0n1
+      name: ''
+      path: /dev/nvme0n1
+      preserve: false
+      ptable: gpt
+      serial: PC711_NVMe_SK_hynix_256GB____CJA7N583313807J1G
       type: disk
-      ptable: msdos
-      match:
-        size: largest 
-      name: main_disk
       wipe: superblock
-      grub_device: true
-    - id: disk0-part1
-      type: partition
-      number: 1
-      size: 30GB
-      device: disk0
+      wwn: eui.ace42e0015d8da282ee4ac0000000001
+    - device: disk-nvme0n1
       flag: boot
-    - id: disk0-part2
+      grub_device: true
+      id: partition-0
+      number: 1
+      preserve: false
+      size: 1100M
       type: partition
+      wipe: superblock
+    - fstype: fat32
+      id: format-0
+      preserve: false
+      type: format
+      volume: partition-0
+    - device: disk-nvme0n1
+      flag: ''
+      id: partition-1
       number: 2
-      size: 10GB
-      device: disk0
-    - id: disk0-part1-format-root
+      preserve: false
+      size: 2000M
+      type: partition
+      wipe: superblock
+    - fstype: ext4
+      id: format-1
+      preserve: false
       type: format
-      fstype: ext4
-      volume: disk0-part1
-    - id: disk0-part2-format-home
+      volume: partition-1
+    - device: disk-nvme0n1
+      flag: ''
+      id: partition-2
+      number: 3
+      preserve: false
+      size: -1
+      type: partition
+      wipe: superblock
+    - devices:
+      - partition-2
+      id: lvm_volgroup-0
+      name: ubuntu-vg
+      preserve: false
+      type: lvm_volgroup
+    - id: lvm_partition-0
+      name: ubuntu-lv
+      preserve: false
+      size: ###DISK_SIZE_ROOT###M
+      type: lvm_partition
+      volgroup: lvm_volgroup-0
+      wipe: superblock
+    - id: lvm_partition-1
+      name: ubuntu-lv-storage
+      preserve: false
+      size: -1
+      type: lvm_partition
+      volgroup: lvm_volgroup-0
+      wipe: superblock
+    - fstype: ext4
+      id: format-2
+      preserve: false
       type: format
-      fstype: ext4
-      volume: disk0-part2
-    - id: disk0-part1-mount-root
+      volume: lvm_partition-0
+    - fstype: ext4
+      id: format-3
+      preserve: false
+      type: format
+      volume: lvm_partition-1
+    - device: format-3
+      id: mount-3
+      path: /storage
       type: mount
+    - device: format-2
+      id: mount-2
       path: /
-      device: disk0-part1-format-root
-    - id: disk0-part2-mount-home
       type: mount
-      path: /home
-      device: disk0-part2-format-home
-      
-#     version: 1
-#     layout:
-#       name: direct
-#     grub:
-#       install_devices:
-#         - ssd0-boot
-#     swap:
-# #      size: ###DISK_SIZE_SWAP###MB
-#     config:
-#       - id: ssd0 
-#         type: disk
-#         match:
-#           size: largest 
-#         ptable: gpt
-#         wipe: superblock
-#       - id: ssd0-esp 
-#         type: partition
-#         device: ssd0
-#         size: 512MB
-#         flag: boot 
-#       - id: ssd0-boot
-#         type: partition
-#         device: ssd0
-#         size: 512MB
-#       - id: ssd0-root
-#         type: partition
-#         device: ssd0
-#         size: ###DISK_SIZE_ROOT###MB
-#       - id: ssd0-storage
-#         type: partition
-#         device: ssd0
-#         size: -1 
-#       - id: ssd0-esp-fs 
-#         type: format
-#         volume: ssd0-esp
-#         fstype: fat32
-#         label: ESP
-#       - id: ssd0-boot-fs
-#         type: format
-#         volume: ssd0-boot
-#         fstype: ext4
-#         label: BOOT
-#       - id: ssd0-root-fs
-#         type: format
-#         volume: ssd0-root
-#         fstype: ext4
-#         label: ROOT
-#       - id: ssd0-storage-fs
-#         type: format
-#         volume: ssd0-storage
-#         fstype: ext4
-#         label: STORAGE
-#       - id: ssd0-esp-mount
-#         type: mount
-#         device: ssd0-esp-fs
-#         path: /boot/efi
-#       - id: ssd0-boot-mount
-#         type: mount
-#         device: ssd0-boot-fs
-#         path: /boot
-#       - id: ssd0-root-mount
-#         type: mount
-#         device: ssd0-root-fs
-#         path: /
-#       - id: ssd0-storage-mount
-#         type: mount
-#         device: ssd0-storage-fs
-#         path: /storage
+    - device: format-1
+      id: mount-1
+      path: /boot
+      type: mount
+    - device: format-0
+      id: mount-0
+      path: /boot/efi
+      type: mount
+    version: 1
   user-data:
     timezone: ###TIME_ZONE###
     disable_root: false
@@ -134,7 +121,6 @@ storage:
           chown -R ubuntu:ubuntu /home/ubuntu/.ssh
     runcmd:
       - /bin/bash /run/tmpfiles.d/authorized_keys.sh
-
   late-commands:
     - cp /cdrom/ssh_key.pub /target/root/
     - 'sed -i "s/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/" /target/etc/sudoers'
