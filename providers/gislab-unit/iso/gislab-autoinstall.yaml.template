@@ -18,12 +18,11 @@ autoinstall:
       id: disk
       grub_device: false      
       name: ''
-      path: /dev/nvme0n1
+      match:
+        size: largest
       preserve: false
       ptable: gpt
-      serial: PC711_NVMe_SK_hynix_256GB____CJA7N583313807J1G
       wipe: superblock
-      wwn: eui.ace42e0015d8da282ee4ac0000000001
     - type: partition
       id: partition-efi      
       device: disk
