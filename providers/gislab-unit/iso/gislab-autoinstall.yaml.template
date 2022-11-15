@@ -14,97 +14,97 @@ autoinstall:
       uri: http://###COUNTRY_CODE###.archive.ubuntu.com/ubuntu
   storage:
     config:
-    - grub_device: false
-      id: disk-nvme0n1
+    - type: disk
+      id: disk
+      grub_device: false      
       name: ''
       path: /dev/nvme0n1
       preserve: false
       ptable: gpt
       serial: PC711_NVMe_SK_hynix_256GB____CJA7N583313807J1G
-      type: disk
       wipe: superblock
       wwn: eui.ace42e0015d8da282ee4ac0000000001
-    - device: disk-nvme0n1
+    - type: partition
+      id: partition-efi      
+      device: disk
       flag: boot
       grub_device: true
-      id: partition-0
       number: 1
       preserve: false
       size: 1100M
-      type: partition
       wipe: superblock
-    - fstype: fat32
-      id: format-0
-      preserve: false
-      type: format
-      volume: partition-0
-    - device: disk-nvme0n1
+    - type: partition
+      id: partition-boot      
+      device: disk
       flag: ''
-      id: partition-1
       number: 2
       preserve: false
       size: 2000M
-      type: partition
       wipe: superblock
-    - fstype: ext4
-      id: format-1
-      preserve: false
-      type: format
-      volume: partition-1
-    - device: disk-nvme0n1
+    - type: partition
+      id: partition-lvm      
+      device: disk
       flag: ''
-      id: partition-2
       number: 3
       preserve: false
       size: -1
-      type: partition
       wipe: superblock
     - devices:
-      - partition-2
-      id: lvm_volgroup-0
+      - partition-lvm
+      type: lvm_volgroup      
+      id: lvm_volgroup
       name: ubuntu-vg
       preserve: false
-      type: lvm_volgroup
-    - id: lvm_partition-0
-      name: ubuntu-lv
+    - type: lvm_partition
+      id: lvm_partition-root
+      name: root
       preserve: false
       size: ###DISK_SIZE_ROOT###M
-      type: lvm_partition
-      volgroup: lvm_volgroup-0
+      volgroup: lvm_volgroup
       wipe: superblock
-    - id: lvm_partition-1
-      name: ubuntu-lv-storage
+    - type: lvm_partition
+      id: lvm_partition-storage
+      name: storage
       preserve: false
       size: -1
-      type: lvm_partition
-      volgroup: lvm_volgroup-0
+      volgroup: lvm_volgroup
       wipe: superblock
-    - fstype: ext4
-      id: format-2
+    - type: format
+      id: format-efi      
+      fstype: fat32
       preserve: false
-      type: format
-      volume: lvm_partition-0
-    - fstype: ext4
-      id: format-3
+      volume: partition-efi
+    - type: format
+      id: format-boot      
+      fstype: ext4
       preserve: false
-      type: format
-      volume: lvm_partition-1
-    - device: format-3
-      id: mount-3
-      path: /storage
-      type: mount
-    - device: format-2
-      id: mount-2
-      path: /
-      type: mount
-    - device: format-1
-      id: mount-1
-      path: /boot
-      type: mount
-    - device: format-0
-      id: mount-0
+      volume: partition-boot
+    - type: format
+      fstype: ext4
+      id: format-root
+      preserve: false
+      volume: lvm_partition-root
+    - type: format
+      id: format-storage
+      fstype: ext4
+      preserve: false
+      volume: lvm_partition-storage
+    - type: mount
+      id: mount-efi      
+      device: format-efi
       path: /boot/efi
-      type: mount
+    - type: mount
+      id: mount-boot
+      device: format-boot
+      path: /boot
+    - type: mount
+      id: mount-root
+      device: format-root      
+      path: /
+    - type: mount
+      id: mount-storage
+      device: format-storage
+      path: /storage
     version: 1
   user-data:
     timezone: ###TIME_ZONE###
