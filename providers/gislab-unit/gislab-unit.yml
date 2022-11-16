@@ -22,10 +22,17 @@
         state: latest
 
     - name: Clean the contents of /var/lib/apt/lists
-      shell: "{{ item }}"
+      file:
+        path: /var/lib/apt/lists
+        state: absent
+
+    - name: Restoring /var/lib/apt/lists
+      file:
+        path: "{{ item }}"
+        state: directory
       with_items:
-        - rm -f /var/lib/apt/lists/* || true
-        - rm -f /var/lib/apt/lists/partial/* || true
+        - /var/lib/apt/lists
+        - /var/lib/apt/lists/partial
 
     - name: Upgrade system
       apt: upgrade=full force=yes update_cache=yes
