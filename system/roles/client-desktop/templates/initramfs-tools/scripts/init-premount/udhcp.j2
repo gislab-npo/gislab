@@ -178,11 +178,11 @@ fi
 # Clear screen when quiet to dampen some noise
 [ "$quiet" = "y" ] && clear
 
-udhcpc_gislab_version=`echo $GISLAB_VERSION | cut -d' ' -f1`
+$gislab_version=`echo $GISLAB_VERSION | cut -d' ' -f1`
 while [ -z "$configured" ]; do
     for i in $interfaces; do    # Make a DHCP request for each interface
         [ "$quiet" != "y" ] && echo "DHCP request for $i..."
-        if udhcpc -V "GIS.lab v${udhcpc_gislab_version}" -n -C -O rootpath -s /tmp/dhcp-script.sh -i $i $hostname_param $ip_param >/dev/null 2>&1; then
+        if udhcpc -V "GIS.lab v${gislab_version}" -n -C -O rootpath -s /tmp/dhcp-script.sh -i $i $hostname_param $ip_param >/dev/null 2>&1; then
             configured="true"
             break
         fi
