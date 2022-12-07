@@ -181,7 +181,7 @@ fi
 while [ -z "$configured" ]; do
     for i in $interfaces; do    # Make a DHCP request for each interface
         [ "$quiet" != "y" ] && echo "DHCP request for $i..."
-        if udhcpc -V "GIS.lab v0.9" -n -C -O rootpath -s /tmp/dhcp-script.sh -i $i $hostname_param $ip_param >/dev/null 2>&1; then
+        if udhcpc -n -C -O rootpath -s /tmp/dhcp-script.sh -i $i $hostname_param $ip_param >/dev/null 2>&1; then
             configured="true"
             break
         fi
