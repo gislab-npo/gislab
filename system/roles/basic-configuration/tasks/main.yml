@@ -173,6 +173,7 @@
     name:
       - arp-scan
       - bash-completion
+      - bzip2
       - emacs-nox
       - etherwake
       - ethtool
