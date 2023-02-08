@@ -6,20 +6,9 @@
 
 - hosts: all
   become: yes
-  gather_facts: false  # disable gathering Ansible facts until Python 2 is not
-                       # installed or Ansible comes with Python 3 support
-
+  gather_facts: true
 
   tasks:
-    - name: Ensure Python 2 is installed before running Ansible modules
-      raw: >
-        apt-get update --assume-yes
-        &&
-        apt-get install --assume-yes python-minimal
-
-    - name: Gather Ansible facts
-      setup:
-
     - name: Set GIS.lab provider
       shell: echo 'gislab-unit' > /etc/gislab_provider
 
@@ -33,10 +22,17 @@
         state: latest
 
     - name: Clean the contents of /var/lib/apt/lists
-      shell: "{{ item }}"
+      file:
+        path: /var/lib/apt/lists
+        state: absent
+
+    - name: Restoring /var/lib/apt/lists
+      file:
+        path: "{{ item }}"
+        state: directory
       with_items:
-        - rm -f /var/lib/apt/lists/* || true
-        - rm -f /var/lib/apt/lists/partial/* || true
+        - /var/lib/apt/lists
+        - /var/lib/apt/lists/partial
 
     - name: Upgrade system
       apt: upgrade=full force=yes update_cache=yes

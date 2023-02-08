@@ -7,7 +7,7 @@ cert gislab_vpn_server.crt
 key gislab_vpn_server.key
 tls-auth gislab_vpn_ta.key 0
 dh gislab_vpn_dh2048.pem
-client-cert-not-required
+verify-client-cert none
 
 mode server
 tls-server

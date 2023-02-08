@@ -1,8 +1,8 @@
 ---
 
-- name: service bind9 stop
+- name: service named stop
   service:
-    name: bind9
+    name: named
     enabled: no
     state: stopped
 

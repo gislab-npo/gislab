@@ -3,12 +3,21 @@
 ### Docker integration
 #
 
-- name: Install docker packages
-  apt:
-    name:
-      - docker.io
-      - docker-compose
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
 
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu jammy stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: true
 
 - name: Add provisioning user to the docker group
   user:

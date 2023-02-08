@@ -49,8 +49,8 @@
 
 # Ubuntu version. GIS.lab supports only one Ubuntu version at time. Don't try to
 # change this value !
-GISLAB_UBUNTU_VERSION: bionic
-GISLAB_UBUNTU_VERSION_NUMBER: 18.04
+GISLAB_UBUNTU_VERSION: jammy
+GISLAB_UBUNTU_VERSION_NUMBER: 22.04
 
 
 # *************************************************************************** #
@@ -78,11 +78,11 @@ GISLAB_ADMIN_EMAIL: gislab@gis.lab
 
 # Server memory size in MB.
 # Change requires GIS.lab server restart.
-GISLAB_SERVER_MEMORY: 1024
+GISLAB_SERVER_MEMORY: 8192
 
 # Server number of CPUs.
 # Change requires GIS.lab server restart.
-GISLAB_SERVER_CPUS: 1
+GISLAB_SERVER_CPUS: 4
 
 # Determines if GIS.lab server should start with GUI console. This is useful to
 # gain more control with server boot process.
@@ -175,11 +175,9 @@ GISLAB_SERVER_EMAIL_RELAY_PASSWORD:
 
 # GIS.lab client architecture.
 # Possible values are:
-# * i386:  use this if you are working in mixed environment containing older
-#          and new machines
 # * amd64: use this only if all client machines are capable to run 64 bit OS
 #          (including virtual clients)
-GISLAB_CLIENT_ARCHITECTURE: i386
+GISLAB_CLIENT_ARCHITECTURE: amd64
 
 # List of country codes for languages which will be installed for beside
 # English language.
@@ -220,7 +218,7 @@ GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY: 2000
 # See http://gisquick.org.
 # * no:  do not integrate Gisquick
 # * yes: integrate Gisquick
-GISLAB_GISQUICK_INTEGRATION: yes
+GISLAB_GISQUICK_INTEGRATION: no
 
 
 
@@ -233,7 +231,7 @@ GISLAB_GISQUICK_INTEGRATION: yes
 # Possible values are:
 # * no:  do not enable debug mode
 # * yes: enable debug mode
-GISLAB_DEBUG_INSTALL: no
+GISLAB_DEBUG_INSTALL: yes
 
 # Run tests after installation is finished.
 # # Possible values are:

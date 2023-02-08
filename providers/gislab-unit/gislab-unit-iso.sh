@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Download Ubuntu Server AMD64 image from http://cdimage.ubuntu.com/releases/bionic/release/
-
 set -e
 
 
@@ -44,7 +42,8 @@ done
 ### VARIABLES
 SRC_DIR="$(dirname $(readlink -f $0))"
 MOUNT_DIR="/tmp/gislab-base-system-iso-mnt"
-ISO_ID=$(pwgen -n 8 1)
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+ISO_ID=v`(cd $SCRIPT_DIR/../.. ; grep ^GISLAB_VERSION system/roles/installation-setup/vars/main.yml | cut -d':' -f 2 | sed -e "s/^ \{1,\}//")`
 DATE=$(date '+%Y-%m-%d-%H:%M:%S')
 
 
@@ -63,10 +62,9 @@ else
     DISK_SIZE_SWAP=${DISK_SIZE_SWAPGB}300
 fi
 
+DISK_SIZE_ROOT=45000
 # boot: 530
-# root: 44000
 # free: 470
-DISK_SIZE_ROOT=44000
 DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-530-$DISK_SIZE_ROOT-$DISK_SIZE_SWAP))
 if [ $DISK_SIZE_STORAGE -lt 20000 ]; then
     echo "Invalid disk configuration (storage must be at least the size of 20GB), please check -d and -a flags"
@@ -78,8 +76,8 @@ if [ $(id -u) -ne 0 ]; then
     exit 1
 fi
 
-if ! which genisoimage >/dev/null; then
-    echo "Cannot find 'genisoimage' binary. Please install appropriate package."
+if ! which xorriso >/dev/null; then
+    echo "Cannot find 'xorriso' binary. Please install appropriate package."
     exit 1
 fi
 
@@ -88,8 +86,8 @@ fi
 mkdir -p $MOUNT_DIR
 sudo mount -o loop $SRC_IMAGE $MOUNT_DIR
 
-if [ ! -f "$MOUNT_DIR/install/vmlinuz" ]; then
-    echo "Invalid Ubuntu ISO image file. Ubuntu 18.04 Server ISO is required."
+if [ ! -d "$MOUNT_DIR/dists/jammy" ]; then
+    echo "Invalid Ubuntu ISO image file. Ubuntu 22.04 Server ISO is required."
     umount $MOUNT_DIR
     exit 1
 fi
@@ -122,20 +120,20 @@ cd $ROOT_DIR
 
 
 # boot options
-sed -i 's/^timeout.*/timeout 50/' $ROOT_DIR/isolinux/isolinux.cfg
-cp -f $SRC_DIR/iso/menu.cfg $ROOT_DIR/isolinux/menu.cfg
-cp -f $SRC_DIR/iso/txt.cfg $ROOT_DIR/isolinux/txt.cfg
-cp -f $SRC_DIR/iso/splash.pcx $ROOT_DIR/isolinux/splash.pcx
+sed -i 's/timeout.*/timeout=0/' $ROOT_DIR/boot/grub/grub.cfg
 
 
 # generate preseed file
-cp $SRC_DIR/iso/gislab.seed.template $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###DISK_SIZE_ROOT###;$DISK_SIZE_ROOT;g" $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###DISK_SIZE_STORAGE###;$DISK_SIZE_STORAGE;g" $ROOT_DIR/preseed/gislab.seed
-sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;g" $ROOT_DIR/preseed/gislab.seed
-
+mkdir $ROOT_DIR/gislab
+cp $SRC_DIR/iso/gislab-autoinstall.yaml.template $ROOT_DIR/gislab/user-data
+touch $ROOT_DIR/gislab/meta-data
+sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/gislab/user-data
+sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/gislab/user-data
+sed -i "s;###DISK_SIZE_ROOT###;$DISK_SIZE_ROOT;g" $ROOT_DIR/gislab/user-data
+sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;g" $ROOT_DIR/gislab/user-data
+sed -i -e 's,---, autoinstall "ds=nocloud-net;s=file:///cdrom/gislab/"  ---,g' $ROOT_DIR/boot/grub/grub.cfg
+sed -i -e 's,---, autoinstall "ds=nocloud-net;s=file:///cdrom/gislab/"  ---,g' $ROOT_DIR/boot/grub/loopback.cfg
+        
 cp $SSH_PUBLIC_KEY $ROOT_DIR/ssh_key.pub
 
 cp $SRC_DIR/iso/configure-apt-proxy.sh $ROOT_DIR/configure-apt-proxy.sh
@@ -143,25 +141,41 @@ chmod 0755 $ROOT_DIR/configure-apt-proxy.sh
 
 
 # change ISO image name
-sed -i "s/^#define DISKNAME.*/#define DISKNAME GIS.lab Base System ($ISO_ID)/" $ROOT_DIR/README.diskdefines
 echo "GIS.lab Base System ($ISO_ID)" > $ROOT_DIR/.disk/info
 
-rm -f $ROOT_DIR/isolinux/boot.cat
+rm -f $ROOT_DIR/boot.catalog
 
 # update md5sum file
 rm -f $ROOT_DIR/md5sum.txt
 find -type f -print0 \
     | xargs -0 md5sum \
-    | grep -v 'isolinux/boot.cat' > $ROOT_DIR/md5sum.txt
+    | grep -v 'boot.catalog' > $ROOT_DIR/md5sum.txt
 
 cd $WORK_DIR
 
-genisoimage \
-    -D -r -V "GIS.lab Base System" \
-    -cache-inodes -J -l \
-    -b isolinux/isolinux.bin -c isolinux/boot.cat \
-    -no-emul-boot -boot-load-size 4 -boot-info-table \
-    -o gislab-base-system-${ISO_ID}.iso root/
+# taken from https://askubuntu.com/questions/1403546/ubuntu-22-04-build-iso-both-mbr-and-efi
+#  extract the MBR template for --grub2-mbr (x86 code)
+dd if=$SRC_IMAGE bs=1 count=432 of=root/boot_hybrid.img
+#  the EFI partition is not a data file inside the ISO any more.
+#  7129428d-7137923d : 7137923 - 7129428 + 1 = 8496
+dd if=$SRC_IMAGE bs=512 skip=2871452 count=8496 of=root/efi.img
+#  pack ISO...
+xorriso -as mkisofs -r \
+        -V 'GIS.lab Base System (EFIBIOS)' \
+        -o gislab-base-system-${ISO_ID}.iso \
+        --grub2-mbr root/boot_hybrid.img \
+        -partition_offset 16 \
+        --mbr-force-bootable \
+        -append_partition 2 28732ac11ff8d211ba4b00a0c93ec93b root/efi.img \
+        -appended_part_as_gpt \
+        -iso_mbr_part_type a2a0d0ebe5b9334487c068b6b72699c7 \
+        -c '/boot.catalog' \
+        -b '/boot/grub/i386-pc/eltorito.img' \
+        -no-emul-boot -boot-load-size 4 -boot-info-table --grub2-boot-info \
+        -eltorito-alt-boot \
+        -e '--interval:appended_partition_2:::' \
+        -no-emul-boot \
+        root/
 
 # create meta file
 cat << EOF >> $WORK_DIR/gislab-base-system-${ISO_ID}.meta

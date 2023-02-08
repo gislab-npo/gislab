@@ -38,10 +38,10 @@ ROLES=$1
 
 ### VARIABLES
 ansible_cmd="ansible-playbook \
-  --private-key=$(pwd)/.vagrant/machines/gislab_vagrant_bionic/virtualbox/private_key \
+  --private-key=$(pwd)/.vagrant/machines/gislab_vagrant_jammy/virtualbox/private_key \
   --user=vagrant \
   --connection=ssh \
-  --limit=gislab_vagrant_bionic \
+  --limit=gislab_vagrant_jammy \
   --inventory-file=$(pwd)/.vagrant/provisioners/ansible/inventory \
   --verbose"
 
@@ -64,12 +64,12 @@ ANSIBLE_SSH_ARGS='\
 
 # run roles
 if [ "$opt_tests_only" == "no" ]; then
-    $ansible_cmd $tags system/gislab.yml
+    $ansible_cmd -e GISLAB_ADMIN_PASSWORD= $tags system/gislab.yml
 fi
 
 # run tests for roles
 if [ "$opt_tests" == "yes" ] || [ "$opt_tests_only" == "yes" ]; then
-    $ansible_cmd $tags system/test.yml
+    $ansible_cmd -e GISLAB_ADMIN_PASSWORD= $tags system/test.yml
 fi
 
 # vim: set ts=8 sts=4 sw=4 et:

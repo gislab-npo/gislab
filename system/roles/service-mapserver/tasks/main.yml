@@ -13,7 +13,7 @@
   apt:
     name:
       - lighttpd
-      - qgis-mapserver
+      - qgis-server
       - xvfb
     force: yes
     install_recommends: no

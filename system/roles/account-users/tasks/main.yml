@@ -143,25 +143,12 @@
       }
 
 
-- name: Install PGAdmin configuration
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-  with_items:
-    - {
-        src: pgadmin3/pgadmin3.j2,
-        dest: "{{ root_dir }}/skel/.pgadmin3"
-      }
-
-
 - name: Prepare QGIS directories
   file:
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ root_dir }}/skel/.config/QGIS"
-    - "{{ root_dir }}/skel/.qgis2"
-    - "{{ root_dir }}/skel/.qgis2/composer_templates"
+    - "{{ root_dir }}/skel/.local/share/QGIS/QGIS3/profiles/default/QGIS"
 
 - name: Install QGIS configuration
   template:
@@ -169,30 +156,17 @@
     dest: "{{ item.dest }}"
   with_items:
     - {
-        src: qgis/QGIS2.conf.j2,
-        dest: "{{ root_dir }}/skel/.config/QGIS/QGIS2.conf"
+        src: qgis/QGIS3.conf.j2,
+        dest: "{{ root_dir }}/skel/.local/share/QGIS/QGIS3/profiles/default/QGIS/QGIS3.ini"
       }
-    - {
-        src: qgis/composer_templates/north-arrow.svg.j2,
-        dest: "{{ root_dir }}/skel/.qgis2/composer_templates/north-arrow.svg"
-      }
-    - {
-        src: qgis/composer_templates/print-template-a4.qpt.j2,
-        dest: "{{ root_dir }}/skel/.qgis2/composer_templates/print-template-a4.qpt"
-      }
-    - {
-        src: qgis/composer_templates/print-template-a3.qpt.j2,
-        dest: "{{ root_dir }}/skel/.qgis2/composer_templates/print-template-a3.qpt"
-      }
-
 
 - name: Prepare GRASS directories
   file:
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ root_dir }}/skel/.grass7"
-    - "{{ root_dir }}/skel/.grassdata"
+    - "{{ root_dir }}/skel/.grass8"
+    - "{{ root_dir }}/skel/Data/grassdata"
 
 - name: Install GRASS configuration
   template:
@@ -201,7 +175,7 @@
   with_items:
     - {
         src: grass/rc.j2,
-        dest: "{{ root_dir }}/skel/.grass7/rc"
+        dest: "{{ root_dir }}/skel/.grass8/rc"
       }
 
 - name: Install GRASS locations
@@ -212,7 +186,7 @@
   with_items:
     - {
         src: static/grassdata/,
-        dest: "{{ root_dir }}/skel/.grassdata"
+        dest: "{{ root_dir }}/skel/Data/grassdata"
       }
 
 

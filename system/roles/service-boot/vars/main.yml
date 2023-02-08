@@ -2,3 +2,4 @@
 
 root_dir_boot: "{{ GISLAB_PATH_SYSTEM }}/boot"
 root_dir_client_desktop: "{{ GISLAB_PATH_SYSTEM }}/clients/desktop"
+tftp_dir_boot: /srv/tftp/

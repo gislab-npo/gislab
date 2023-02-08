@@ -3,7 +3,7 @@
 # AMAZON AWS PROVIDER.
 
 # Requirements:
-# * python-boto
+# * python3-boto
 
 # Authentication with the AWS provider is handled by specifying access and
 # secret keys as ENV variables.

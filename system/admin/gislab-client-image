@@ -38,7 +38,7 @@ buildstamp=$(date +%s)
 bstamp_file_image=$GISLAB_PATH_SYSTEM/clients/desktop/image/gislab_desktop.buildstamp
 bstamp_file_root=$GISLAB_PATH_SYSTEM/clients/desktop/root/etc/gislab_desktop.buildstamp
 mnt_dir="$GISLAB_PATH_SYSTEM/clients/desktop/mnt-$GISLAB_INSTALL_UNIQUE_STRING"
-tftp_dir=/var/lib/tftpboot/gislab
+tftp_dir=/srv/tftp/gislab
 
 
 ### SANITY CHECKS
@@ -98,8 +98,8 @@ else
         $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/lib/PXELINUX/pxelinux.0 \
         $tftp_dir/pxelinux.0
     cp \
-        $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/lib/PXELINUX/gpxelinux.0 \
-        $tftp_dir/gpxelinux.0
+        $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/lib/PXELINUX/lpxelinux.0 \
+        $tftp_dir/lpxelinux.0
     # see https://bugs.launchpad.net/ubuntu/+source/syslinux/+bug/1577554
     cp \
         $GISLAB_PATH_SYSTEM/clients/desktop/root/usr/lib/syslinux/modules/bios/ldlinux.c32 \

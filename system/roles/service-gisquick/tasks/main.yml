@@ -75,12 +75,15 @@
 
 - name: Build customized django image
   docker_image:
-     path: "{{ docker_dir }}/gisquick/django"
-     name: gislab/django
-
+    build:
+      path: "{{ docker_dir }}/gisquick/django"
+    name: gislab/django
+    source: build
+     
 - name: Pull docker images associated with a service
   docker_image:
     name: "{{ item }}"
+    source: pull
   with_items:
     - gisquick/qgis-server
     - gisquick/nginx
@@ -92,7 +95,7 @@
 
 - name: Download Gisquick documentation
   git:
-    repo: https://github.com/gislab-npo/gisquick-doc.git
+    repo: https://github.com/gisquick/gisquick-doc.git
     dest: "{{ docker_dir }}/gisquick/docs"
 
 - name: Build HTML documentation output
@@ -109,7 +112,7 @@
 
 - name: Download sample GIS project
   git:
-    repo: https://github.com/gislab-npo/gisquick
+    repo: https://github.com/gisquick/gisquick
     dest: /tmp/gisquick
 
 - name: Create directory for sample GIS project

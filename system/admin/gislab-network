@@ -46,9 +46,9 @@ start_network() {
     retval=$?
 
     gislab_info "Starting DNS service"
-    systemctl start bind9.service
+    systemctl start named.service
     sleep .5
-    systemctl --quiet is-active bind9.service
+    systemctl --quiet is-active named.service
     retval=$(($retval + $?))
 
     gislab_info "Starting DHCP service"
@@ -68,7 +68,7 @@ stop_network() {
     retval=$?
 
     gislab_info "Stopping DNS service"
-    systemctl stop bind9.service
+    systemctl stop named.service
     retval=$(($retval + $?))
 
     gislab_info "Stopping connection forwarding service"
@@ -86,7 +86,7 @@ enable_network() {
     retval=$?
 
     gislab_info "Enabling DNS service"
-    systemctl enable bind9.service
+    systemctl enable named.service
     retval=$(($retval + $?))
 
     gislab_info "Enabling DHCP service"
@@ -104,7 +104,7 @@ disable_network() {
     retval=$?
 
     gislab_info "Disabling DNS service"
-    systemctl disable bind9.service
+    systemctl disable named.service
     retval=$(($retval + $?))
 
     gislab_info "Disabling DHCP service"
@@ -127,8 +127,8 @@ show_status() {
         gislab_error "Connection forwarding service is $state and $status"
     fi
 
-    state=`systemctl is-enabled bind9.service 2>&1`
-    status=`systemctl is-active bind9.service 2>&1`
+    state=`systemctl is-enabled named.service 2>&1`
+    status=`systemctl is-active named.service 2>&1`
 
     if [ "$status" = "inactive" -o "$status" = "active" ]; then
         gislab_info "DNS service is $state and $status"

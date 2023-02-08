@@ -23,8 +23,8 @@
     dest: "{{ item.dest }}"
   with_items:
     - {
-        src: "bind/bind9.j2",
-        dest: "/etc/default/bind9"
+        src: "bind/named.j2",
+        dest: "/etc/default/named"
       }
     - {
         src: "bind/named.conf.j2",
@@ -47,7 +47,7 @@
         dest: "/etc/bind/db.192"
       }
   notify:
-    - service bind9 stop
+    - service named stop
 
 - name: Install resolvconf configuration
   template:

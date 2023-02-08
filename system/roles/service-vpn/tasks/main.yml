@@ -31,48 +31,40 @@
   args:
     creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
-- name: Disable subjectAltName
-  lineinfile:
-    path: /etc/openvpn/easy-rsa/openssl-1.0.0.cnf
-    regexp: '^subjectAltName=(.*)'
-    line: '#subjectAltName=\1'
-    backrefs: yes
-
-- name: Fix 'easy-rsa' tools
-    # see https://bugs.launchpad.net/ubuntu/+source/easy-rsa/+bug/1756310
-  copy:
-    src: /etc/openvpn/easy-rsa/openssl-1.0.0.cnf
-    dest: /etc/openvpn/easy-rsa/openssl.cnf
-    remote_src: yes
-
 - name: Create configuration file with filled certificate fields
   template:
     src: vars.j2
     dest: /etc/openvpn/easy-rsa/vars
 
 - name: Remove old keys
-  shell: source ./vars && ./clean-all
+  shell: ./easyrsa init-pki
   args:
     chdir: /etc/openvpn/easy-rsa/
     executable: /bin/bash
     creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
+  environment:
+    EASYRSA_BATCH: 1
 
 - name: Generate CA certificate
-  shell: source ./vars && ./pkitool --initca
+  shell: ./easyrsa build-ca nopass
   args:
     chdir: /etc/openvpn/easy-rsa/
     executable: /bin/bash
     creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
+  environment:
+    EASYRSA_BATCH: 1
 
 - name: Generate server certificate and private key
-  shell: source ./vars && ./pkitool --server server.gis.lab
+  shell: ./easyrsa build-server-full server.gis.lab nopass
   args:
     chdir: /etc/openvpn/easy-rsa/
     executable: /bin/bash
     creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
+  environment:
+    EASYRSA_BATCH: 1
 
 - name: Generate Diffie Hellman Parameters
-  shell: source ./vars && ./build-dh
+  shell: ./easyrsa gen-dh
   args:
     chdir: /etc/openvpn/easy-rsa/
     executable: /bin/bash
@@ -81,13 +73,13 @@
 - name: Generate private key for HMAC authentication
   shell: openvpn --genkey --secret ta.key
   args:
-    chdir: /etc/openvpn/easy-rsa/keys/
+    chdir: /etc/openvpn/easy-rsa/pki
     creates: "{{ GISLAB_PATH_SECRET }}/gislab_vpn_ta.key"
 
 - name: Copy certificates and keys to secret directory
   shell: >
     cp
-    /etc/openvpn/easy-rsa/keys/{{ item.src }}
+    /etc/openvpn/easy-rsa/pki/{{ item.src }}
     {{ GISLAB_PATH_SECRET }}/{{ item.dest }}
   with_items:
     - {
@@ -95,19 +87,19 @@
         dest: 'gislab_vpn_ca.crt'
       }
     - {
-        src: 'ca.key',
+        src: 'private/ca.key',
         dest: 'gislab_vpn_ca.key'
       }
     - {
-        src: 'dh2048.pem',
+        src: 'dh.pem',
         dest: 'gislab_vpn_dh2048.pem'
       }
     - {
-        src: 'server.gis.lab.crt',
+        src: 'issued/server.gis.lab.crt',
         dest: 'gislab_vpn_server.crt'
       }
     - {
-        src: 'server.gis.lab.key',
+        src: 'private/server.gis.lab.key',
         dest: 'gislab_vpn_server.key'
       }
     - {

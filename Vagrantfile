@@ -4,7 +4,7 @@
 require 'yaml'
 
 VAGRANTFILE_API_VERSION = "2"
-Vagrant.require_version ">= 1.8.2"
+Vagrant.require_version ">= 2.2.0"
 
 CONFIG = Hash.new           # GIS.lab configuration
 CONFIG_VAGRANT = Hash.new   # GIS.lab configuration for Vagrant (passed as Ansible extra vars)
@@ -53,7 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.disksize.size = '40GB'
 
   # provisioning
-  config.vm.define :gislab_vagrant_bionic do |server|
+  config.vm.define :gislab_vagrant_jammy do |server|
     server.vm.network "public_network", ip: CONFIG['GISLAB_NETWORK'] + ".5"
 
     # VirtualBox configuration
@@ -77,6 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # installation
     server.vm.provision "install", type: "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
       ansible.playbook = "system/gislab.yml"
 
       # verbosity

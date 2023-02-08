@@ -94,19 +94,19 @@
 ### PXE BOOT
 - name: Create GIS.lab TFTP directory
   file:
-    dest: /var/lib/tftpboot/gislab
+    dest: "{{ tftp_dir_boot }}/gislab"
     state: directory
     recurse: yes
 
 - name: Create PXE boot directory
   file:
-    dest: /var/lib/tftpboot/gislab/pxelinux.cfg
+    dest: "{{ tftp_dir_boot }}/gislab/pxelinux.cfg"
     state: directory
 
 - name: Install PXE configuration file
   template:
     src: pxe-boot/gislab.j2
-    dest: /var/lib/tftpboot/gislab/pxelinux.cfg/default
+    dest: "{{ tftp_dir_boot }}/gislab/pxelinux.cfg/default"
 
 
 ### HTTP BOOT
@@ -155,7 +155,7 @@
 
 - name: Publish boot files via HTTP
   file:
-    src: /var/lib/tftpboot/gislab
+    src: "{{ tftp_dir_boot }}/gislab"
     dest: "{{ GISLAB_PATH_WWW }}/boot"
     state: link
     force: yes

@@ -99,8 +99,8 @@
 
 - name: Configure loopback network interface
   template:
-    src: network/interfaces.j2
-    dest: "{{ root_dir }}/root/etc/network/interfaces"
+    src: netplan/50-gislab.j2
+    dest: "{{ root_dir }}/root/etc/netplan/50-gislab.yaml"
 
 
 # fstab
@@ -256,6 +256,31 @@
     executable: /bin/bash
   when: GISLAB_SUITE in ('office', 'lab')
 
+- name: Add Mozilla team PPA
+  shell: >
+    export DEBIAN_FRONTEND=noninteractive
+    &&
+    chroot {{ root_dir }}/root
+    add-apt-repository -y ppa:mozillateam/ppa
+  args:
+    executable: /bin/bash
+  when: GISLAB_SUITE in ('office', 'lab')
+
+- name: Configure Mozilla team PPA
+  copy:
+    src: "static/mozilla/{{ item.src }}"
+    dest: "/etc/apt/{{ item.dest }}"
+  with_items:
+    - {
+        src: "preferences",
+        dest: "preferences.d/mozilla-firefox"
+      }
+    - {
+        src: "upgrades",
+        dest: "apt.conf.d/51unattended-upgrades-firefox"
+      }
+
+
 - name: Install GIS.lab client office packages
   shell: >
     export DEBIAN_FRONTEND=noninteractive
@@ -272,9 +297,6 @@
     &&
     chroot {{ root_dir }}/root
     apt-get --no-install-recommends {{ apt_get_opts }} install {{ packages_lab|join(' ') }}
-    &&
-    chroot {{ root_dir }}/root
-    pip install {{ packages_lab_pip|join(' ') }}
     &&
     chroot {{ root_dir }}/root
     pip3 install {{ packages_lab_pip|join(' ') }}
@@ -406,10 +428,7 @@
   shell: >
     export DEBIAN_FRONTEND=noninteractive
     &&
-    chroot {{ root_dir }}/root {{ item }}
-  with_items:
-    - pam-auth-update --force
-    - auth-client-config -t nss -p lac_ldap
+    chroot {{ root_dir }}/root pam-auth-update --force
   args:
     executable: /bin/bash
 

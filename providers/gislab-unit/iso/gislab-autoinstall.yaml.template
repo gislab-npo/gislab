@@ -1,0 +1,111 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    realname: GIS.lab Administrator
+    username: ubuntu
+    # echo ubuntu | mkpasswd -m sha-512 -s
+    password: $6$P2oifKGZMFgA2/Rk$g8lNsdAIb1EegiGetrGU4UsunWYqHFq6Udgg0WiKRQkz.8XDDSmoRxy5gqpfHcHisGgV.jhQs3BjgeztDYqi/1
+    hostname: gislab
+  apt:
+    primary:
+    - arches:
+      - default
+      uri: http://###COUNTRY_CODE###.archive.ubuntu.com/ubuntu
+  storage:
+    config:
+    - type: disk
+      id: disk
+      grub_device: false      
+      match:
+        size: largest
+      ptable: gpt
+      wipe: superblock
+    - type: partition
+      id: partition-efi      
+      device: disk
+      flag: boot
+      grub_device: true
+      number: 1
+      size: 1100M
+    - type: partition
+      id: partition-boot      
+      device: disk
+      number: 2
+      size: 2000M
+    - type: partition
+      id: partition-lvm      
+      device: disk
+      number: 3
+      size: -1
+    - devices:
+      - partition-lvm
+      type: lvm_volgroup      
+      id: lvm_volgroup
+      name: gislab-vg
+    - type: lvm_partition
+      id: lvm_partition-root
+      name: root
+      size: ###DISK_SIZE_ROOT###M
+      volgroup: lvm_volgroup
+    - type: lvm_partition
+      id: lvm_partition-storage
+      name: storage
+      size: -1
+      volgroup: lvm_volgroup
+    - type: format
+      id: format-efi      
+      fstype: fat32
+      volume: partition-efi
+    - type: format
+      id: format-boot      
+      fstype: ext4
+      volume: partition-boot
+    - type: format
+      fstype: ext4
+      id: format-root
+      volume: lvm_partition-root
+    - type: format
+      id: format-storage
+      fstype: ext4
+      volume: lvm_partition-storage
+    - type: mount
+      id: mount-efi      
+      device: format-efi
+      path: /boot/efi
+    - type: mount
+      id: mount-boot
+      device: format-boot
+      path: /boot
+    - type: mount
+      id: mount-root
+      device: format-root      
+      path: /
+    - type: mount
+      id: mount-storage
+      device: format-storage
+      path: /storage
+    version: 1
+  user-data:
+    timezone: ###TIME_ZONE###
+    disable_root: false
+    power_state:
+      mode: poweroff
+      condition: true
+    write_files:
+      - path: /run/tmpfiles.d/authorized_keys.sh
+        permissions: root
+        owner: root
+        content: |
+          mkdir -p /home/ubuntu/.ssh
+          chmod 0700 /home/ubuntu/.ssh
+          cp /root/ssh_key.pub /home/ubuntu/.ssh/authorized_keys
+          chmod 0600 /home/ubuntu/.ssh/authorized_keys
+          chown -R ubuntu:ubuntu /home/ubuntu/.ssh
+    runcmd:
+      - /bin/bash /run/tmpfiles.d/authorized_keys.sh
+  late-commands:
+    - cp /cdrom/ssh_key.pub /target/root/
+    - 'sed -i "s/%sudo.*/%sudo	ALL=(ALL)NOPASSWD: ALL/" /target/etc/sudoers'
+    - 'sed -i "s/\(GRUB_CMDLINE_LINUX_DEFAULT=\).*/\1\"nomodeset\"/g" /etc/default/grub'
+    - curtin in-target --target=/target -- update-grub

@@ -30,6 +30,7 @@ packages_base:
   - busybox-static
   - curl
   - genisoimage
+  - initramfs-tools
   - libnss-ldap
   - libpam-cracklib
   - libsasl2-modules
@@ -41,11 +42,11 @@ packages_base:
   - pxelinux
   - rsyslog
   - serf
+  - software-properties-common
   - syslinux-common
   - udhcpc
   - unzip
   - zip
-
 
 packages_desktop:
   # list of basic desktop packages (installed with recommended packages)
@@ -59,8 +60,10 @@ packages_desktop:
   - dmz-cursor-theme
   - doc-base
   - file-roller
+  - fonts-dejavu
   - fonts-liberation
   - fonts-opensymbol
+  - fonts-ubuntu
   - ghostscript-x
   - gstreamer1.0-plugins-base
   - gstreamer1.0-plugins-base-apps
@@ -72,14 +75,13 @@ packages_desktop:
   - gvfs
   - gvfs-backends
   - gvfs-fuse
-  - gvfs-bin
   - ibus
   - ibus-gtk
   - ibus-pinyin
   - ibus-table
   - im-switch
-  - indicator-application-gtk2
-  - indicator-sound-gtk2
+  - indicator-application
+  - indicator-sound
   - inputattach
   - laptop-detect
   - libasound2-plugins
@@ -93,13 +95,10 @@ packages_desktop:
   - pavucontrol
   - pcmciautils
   - policykit-desktop-privileges
-  - rarian-compat
   - thunar
   - thunar-volman
   - thunar-archive-plugin
   - thunar-media-tags-plugin
-  - ttf-dejavu-core
-  - ttf-ubuntu-font-family
   - tumbler
   - wireless-tools
   - wpasupplicant
@@ -140,22 +139,21 @@ packages_office:
   - cups-filters
   - evince
   - firefox
-  - flashplugin-installer
   - foomatic-db-compressed-ppds
   - foomatic-db-engine
-  - freerdp-x11
-  - libfreerdp-plugins-standard
+  - freerdp2-x11
+  - libfreerdp-client2-2
   - gnome-calculator
   - gdisk
   - geany
   - gimp
   - gthumb
-  - gtk-recordmydesktop
+  - recordmydesktop
   - htop
   - hplip
   - imagemagick
   - inkscape
-  - leafpad
+  - mousepad
   - keepassx
   - libreoffice
   - libreoffice-calc
@@ -165,7 +163,6 @@ packages_office:
   - mutt
   - openprinting-ppds
   - pidgin
-  - pidgin-libnotify
   - printer-driver-c2esp
   - printer-driver-foo2zjs
   - printer-driver-gutenprint
@@ -180,9 +177,9 @@ packages_office:
   - printer-driver-splix
   - pssh
   - rst2pdf
-  - system-config-printer-gnome
+  - system-config-printer
   - sshfs
-  - vim-gnome
+  - vim-gtk
   - vlc
   - x11vnc
   - xtightvncviewer
@@ -195,45 +192,32 @@ packages_lab:
   - grass
   - grass-doc
   - grass-dev
-  - ipython
   - ipython3
   - monteverdi
   - osm2pgrouting
   - osm2pgsql
   - otb-bin
   - otb-bin-qt
-  - pgadmin3
+  - otb-qgis
+  - phppgadmin
   - postgis
   - postgis-doc
   - postgresql-client
   - postgresql-comparator
   - proj-bin
-  - python-fiona
   - python3-fiona
-  - python-gdal
   - python3-gdal
-  - python-otb
-  - python3-otb
-  - python-owslib
   - python3-owslib
-  - python-pandas
   - python3-pandas
-  - python-pil
+  - python3-geopandas
   - python3-pil
-  - python-pip
   - python3-pip
-  - python-pyproj
   - python3-pyproj
-  - python-pysqlite2
   - python3-qgis
-  - python-rasterio
   - python3-rasterio
-  - python-saga
-  - python-setuptools
+  - python3-saga
   - python3-setuptools
-  - python-shapely
   - python3-shapely
-  - python-sklearn
   - python3-sklearn
   - pyqt5-dev-tools
   - qgis
@@ -254,7 +238,7 @@ packages_lab_pip:
 packages_worker:
   # OWS worker packages
   - lighttpd
-  - python-gdal
+  - python3-gdal
   - python3-qgis
   - qgis
   - qgis-server
