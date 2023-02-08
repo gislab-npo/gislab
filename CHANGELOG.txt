@@ -1,6 +1,18 @@
+Version 0.9.0
+=============
+GIS.lab based on Ubuntu 22.04 LTS.
+
+Version 0.8.0
+=============
+GIS.lab based on Ubuntu 18.04 LTS.
+
+Version 0.7.0
+=============
+GIS.lab based on Ubuntu 16.04 LTS.
+
 Version 0.6.0
 =============
-The last version of GIS.lab based on Ubuntu 12.04 LTS (precise).
+GIS.lab based on Ubuntu 12.04 LTS.
 
 Main features:
 
