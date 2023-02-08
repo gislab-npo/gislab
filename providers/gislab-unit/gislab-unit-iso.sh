@@ -121,9 +121,6 @@ cd $ROOT_DIR
 
 # boot options
 sed -i 's/timeout.*/timeout=0/' $ROOT_DIR/boot/grub/grub.cfg
-#?cp -f $SRC_DIR/iso/menu.cfg $ROOT_DIR/isolinux/menu.cfg
-#?cp -f $SRC_DIR/iso/txt.cfg $ROOT_DIR/isolinux/txt.cfg
-#?cp -f $SRC_DIR/iso/splash.pcx $ROOT_DIR/isolinux/splash.pcx
 
 
 # generate preseed file
@@ -133,7 +130,6 @@ touch $ROOT_DIR/gislab/meta-data
 sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/gislab/user-data
 sed -i "s;###TIME_ZONE###;$TIME_ZONE;" $ROOT_DIR/gislab/user-data
 sed -i "s;###DISK_SIZE_ROOT###;$DISK_SIZE_ROOT;g" $ROOT_DIR/gislab/user-data
-#?sed -i "s;###DISK_SIZE_STORAGE###;$DISK_SIZE_STORAGE;g" $ROOT_DIR/preseed/gislab.seed
 sed -i "s;###DISK_SIZE_SWAP###;$DISK_SIZE_SWAP;g" $ROOT_DIR/gislab/user-data
 sed -i -e 's,---, autoinstall "ds=nocloud-net;s=file:///cdrom/gislab/"  ---,g' $ROOT_DIR/boot/grub/grub.cfg
 sed -i -e 's,---, autoinstall "ds=nocloud-net;s=file:///cdrom/gislab/"  ---,g' $ROOT_DIR/boot/grub/loopback.cfg
@@ -145,7 +141,6 @@ chmod 0755 $ROOT_DIR/configure-apt-proxy.sh
 
 
 # change ISO image name
-#?sed -i "s/^#define DISKNAME.*/#define DISKNAME GIS.lab Base System ($ISO_ID)/" $ROOT_DIR/README.diskdefines
 echo "GIS.lab Base System ($ISO_ID)" > $ROOT_DIR/.disk/info
 
 rm -f $ROOT_DIR/boot.catalog
