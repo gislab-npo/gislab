@@ -269,7 +269,7 @@
 - name: Configure Mozilla team PPA
   copy:
     src: "static/mozilla/{{ item.src }}"
-    dest: "/etc/apt/{{ item.dest }}"
+    dest: "{{ root_dir }}/root/etc/apt/{{ item.dest }}"
   with_items:
     - {
         src: "preferences",
@@ -279,6 +279,7 @@
         src: "upgrades",
         dest: "apt.conf.d/51unattended-upgrades-firefox"
       }
+  when: GISLAB_SUITE in ('office', 'lab')
 
 
 - name: Install GIS.lab client office packages
