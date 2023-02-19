@@ -139,6 +139,11 @@ GISLAB_APT_HTTP_PROXY:
 # Change requires running upgrade.
 GISLAB_APT_CUSTOM_REPOSITORIES:
 
+# Integrate Gisquick publishing platform as a Docker service.
+# See http://gisquick.org.
+# * no:  do not integrate Gisquick
+# * yes: integrate Gisquick
+GISLAB_GISQUICK_INTEGRATION: no
 
 
 
@@ -214,11 +219,8 @@ GISLAB_CLIENT_VIRTUALBOX_SUPPORT: no
 # Change requires running upgrade.
 GISLAB_CLIENT_OWS_WORKER_MIN_MEMORY: 2000
 
-# Integrate Gisquick publishing platform as a Docker service.
-# See http://gisquick.org.
-# * no:  do not integrate Gisquick
-# * yes: integrate Gisquick
-GISLAB_GISQUICK_INTEGRATION: no
+# Install proprietary NVIDIA graphics driver.
+GISLAB_CLIENT_NVIDIA_GRAPHICS_DRIVER: no
 
 
 

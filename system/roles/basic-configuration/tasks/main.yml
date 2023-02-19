@@ -184,6 +184,7 @@
       - python3-pip
       - pwgen
       - pssh
+      - software-properties-common
       - tmux
       - ubuntu-fan
       - vim

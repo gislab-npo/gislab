@@ -91,7 +91,6 @@ packages_desktop:
   - lightdm
   - lightdm-gtk-greeter
   - lightdm-gtk-greeter-settings
-  - nvidia-common
   - pavucontrol
   - pcmciautils
   - policykit-desktop-privileges
@@ -126,6 +125,7 @@ packages_desktop:
   - xterm
   - xubuntu-artwork
   - xubuntu-default-settings
+  - ubuntu-drivers-common
   - xul-ext-ubufox
   - zenity
 
@@ -255,6 +255,8 @@ packages_remove:
   - netplan.io
   - resolvconf
   - xscreensaver
+
+nvidia_driver_version: 525
 
 # -o Dpkg::Options::="--force-confold" ???
 apt_get_opts: "--assume-yes --force-yes"
