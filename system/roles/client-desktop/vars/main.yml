@@ -258,6 +258,8 @@ packages_remove:
 
 nvidia_driver_version: 525
 
+pycharm_version: 2022.3.2
+
 # -o Dpkg::Options::="--force-confold" ???
 apt_get_opts: "--assume-yes --force-yes"
 

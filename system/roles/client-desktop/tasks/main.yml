@@ -324,6 +324,21 @@
     executable: /bin/bash
   when: GISLAB_SUITE == 'lab'
 
+- name: Install PyCharm IDE
+  unarchive:
+    src: "https://download.jetbrains.com/python/pycharm-community-{{ pycharm_version }}.tar.gz"
+    dest: "{{ root_dir }}/root/opt/"
+    remote_src: yes
+  when: GISLAB_SUITE == 'lab'
+
+- name: Create PyCharm version-independent executable
+  file:
+    src: "/opt/pycharm-community-{{ pycharm_version }}/bin/pycharm.sh"
+    dest: "{{ root_dir }}/root/usr/local/bin/pycharm"
+    state: link
+    force: yes
+  when: GISLAB_SUITE == 'lab'
+
 - name: Install OWS worker packages
   shell: >
     export DEBIAN_FRONTEND=noninteractive
