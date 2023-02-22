@@ -376,8 +376,8 @@
 - name: Test if test user's file data is restored
   shell: file {{ item }}
   with_items:
-    - /mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }}/.config/QGIS/QGIS2.conf
-    - /mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }}/.grass7
+    - /mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }}/.local/share/QGIS/QGIS3/profiles/default/QGIS/QGIS3.ini
+    - /mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }}/.grass8
     - /mnt/home/test{{ GISLAB_TEST_UNIQUE_STRING }}/test.txt
     - /mnt/publish/test{{ GISLAB_TEST_UNIQUE_STRING }}/test.txt
   ignore_errors: yes

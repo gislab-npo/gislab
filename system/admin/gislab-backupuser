@@ -111,21 +111,17 @@ if ls $user_home_dir/.mozilla/firefox/*.default >/dev/null 2>&1; then
 fi
 
 # QGIS
-if ls $user_home_dir/.config/QGIS/QGIS2.conf >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.config/QGIS/QGIS2.conf
-fi
-
-if ls $user_home_dir/.qgis2/*.db >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.qgis2/*.db
+if ls $user_home_dir/.local/share/QGIS/QGIS3 >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/.local/share/QGIS/QGIS3/
 fi
 
 # GRASS
-if ls $user_home_dir/.grass7 >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.grass7
+if ls $user_home_dir/.grass8 >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/.grass8
 fi
 
-if ls $user_home_dir/.grassdata >/dev/null 2>&1; then
-    tar -rf $home_backup_file $user_home_dir/.grassdata
+if ls $user_home_dir/grassdata >/dev/null 2>&1; then
+    tar -rf $home_backup_file $user_home_dir/grassdata
 fi
 
 bzip2 $home_backup_file
