@@ -255,13 +255,13 @@
     dest: /etc/update-motd.d/00-header
 
 - name: Remove not needed MOTD messages
-  shell: rm -f {{ item }}
-  with_items:
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_fileglob:
     - /etc/update-motd.d/*-help-text
     - /etc/update-motd.d/*-cloudguest
     - /etc/update-motd.d/*-release-upgrade
-  args:
-    warn: False
 
 - name: Update MOTD
   command: run-parts /etc/update-motd.d
