@@ -124,7 +124,7 @@ sed -i 's/timeout.*/timeout=0/' $ROOT_DIR/boot/grub/grub.cfg
 
 
 # generate preseed file
-mkdir $ROOT_DIR/gislab
+mkdir -p $ROOT_DIR/gislab
 cp $SRC_DIR/iso/gislab-autoinstall.yaml.template $ROOT_DIR/gislab/user-data
 touch $ROOT_DIR/gislab/meta-data
 sed -i "s;###COUNTRY_CODE###;$COUNTRY_CODE;" $ROOT_DIR/gislab/user-data
