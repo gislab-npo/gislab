@@ -62,7 +62,7 @@ else
     DISK_SIZE_SWAP=${DISK_SIZE_SWAPGB}300
 fi
 
-DISK_SIZE_ROOT=45000
+DISK_SIZE_ROOT=60000
 # boot: 530
 # free: 470
 DISK_SIZE_STORAGE=$(($DISK_SIZEGB*1000-470-530-$DISK_SIZE_ROOT-$DISK_SIZE_SWAP))
@@ -161,7 +161,7 @@ dd if=$SRC_IMAGE bs=1 count=432 of=root/boot_hybrid.img
 dd if=$SRC_IMAGE bs=512 skip=2871452 count=8496 of=root/efi.img
 #  pack ISO...
 xorriso -as mkisofs -r \
-        -V 'GIS.lab Base System (EFIBIOS)' \
+        -V 'GIS.lab Base System' \
         -o gislab-base-system-${ISO_ID}.iso \
         --grub2-mbr root/boot_hybrid.img \
         -partition_offset 16 \
