@@ -40,8 +40,6 @@
     | grep "kernel http://192.168.77.7/boot/vmlinuz"
   ignore_errors: yes
   changed_when: False
-  args:
-    warn: false
 
 - name: Test if kernel is downloadable via HTTP
   shell: >
@@ -51,8 +49,6 @@
     | grep "Content-Type: application/octet-stream"
   ignore_errors: yes
   changed_when: False
-  args:
-    warn: false
 
 - name: Test if initrd is downloadable via HTTP
   shell: >
@@ -62,8 +58,6 @@
     | grep "Content-Type: application/octet-stream"
   ignore_errors: yes
   changed_when: False
-  args:
-    warn: false
 
 
 ### NBD

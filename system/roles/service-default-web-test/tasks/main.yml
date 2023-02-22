@@ -6,7 +6,5 @@
     | grep "Welcome to GIS.lab !"
   ignore_errors: yes
   changed_when: False
-  args:
-    warn: false
 
 # vim: set ts=8 sts=2 sw=2 et:

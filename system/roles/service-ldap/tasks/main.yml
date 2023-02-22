@@ -187,8 +187,6 @@
     - chmod o-r /etc/ssl/private/server_slapd_key.pem
   notify:
     - service slapd restart
-  args:
-    warn: False
 
 - name: Configure server
   template:
