@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=GIS.lab IDE
+Comment=PyCharm: integrated development environment (IDE) used for programming in Python
+Exec=pycharm
+Icon=pycharm
+Path=
+Terminal=false
+Categories=Gislab;
+StartupNotify=false
