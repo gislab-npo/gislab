@@ -17,6 +17,11 @@
     install_recommends: no
     state: latest
 
+- name: Install LDAP Authenticator Plugin for JupyterHub
+  pip:
+    name:
+      - jupyterhub-ldapauthenticator
+
 - name: Configure JupyterHub service
   template:
     src: "{{ item.src }}"
