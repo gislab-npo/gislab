@@ -9,7 +9,7 @@
 #   debug:      syslog
 
 
-- name: Install packages
+- name: Install JupyterHub
   apt:
     name:
       - jupyterhub
@@ -20,7 +20,7 @@
 - name: Install LDAP Authenticator Plugin for JupyterHub
   pip:
     name:
-      - jupyterhub-ldapauthenticator
+      - jupyterhub-ldapauthenticator==1.0
 
 - name: Configure JupyterHub service
   template:
