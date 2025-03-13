@@ -9,11 +9,12 @@
 #   debug:      syslog
 
 
-- name: Install JupyterHub
+- name: Install JupyterHub and dependecies
   apt:
     name:
       - jupyterhub
       - grass
+      - grass-dev
     force: yes
     install_recommends: no
     state: latest
@@ -28,10 +29,14 @@
   include_vars:
     file: /usr/share/jupyter/kernels/python3/kernel.json
     name: imported_var
+
+- name: Detect GRASS version
+  shell: echo "8.4.0" | awk -F. '{print $1 $2}'
+  register: grass_version
       
 - name: Update Python kernel configuration
   set_fact:
-    imported_var: "{{ imported_var | default([]) | combine({ 'env': {'PYTHONPATH': '${PYTHONPATH}:/usr/lib/grass{{ grass_version }}/etc/python/'}}) }}"
+    imported_var: "{{ imported_var | default([]) | combine({ 'env': {'PYTHONPATH': '${PYTHONPATH}:/usr/lib/grass{{ grass_version.stdout }}/etc/python/'}}) }}"
 
 - name: Write Python kernel configuration
   copy: 
