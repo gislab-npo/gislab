@@ -191,6 +191,7 @@ packages_lab:
   - grass-doc
   - grass-dev
   - ipython3
+  - jupyter-notebook
   - monteverdi
   - osm2pgrouting
   - osm2pgsql
