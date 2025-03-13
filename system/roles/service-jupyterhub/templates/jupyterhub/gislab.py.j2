@@ -1,4 +1,4 @@
-c.JupyterHub.bind_url = 'http://:{{ jupyterhub_port }}'
+c.JupyterHub.port = {{ jupyterhub_port }}
 c.JupyterHub.authenticator_class = 'ldapauthenticator.LDAPAuthenticator'
 c.LDAPAuthenticator.server_address = 'ldapi:///var/run/slapd/ldapi'
 c.LDAPAuthenticator.use_ssl = False
