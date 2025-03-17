@@ -32,9 +32,15 @@
       - jupyterhub-ldapauthenticator==1.0
     break_system_packages: yes
 
+- name: Fetch Python kernel configuration
+  fetch:
+    src: /usr/share/jupyter/kernels/python3/kernel.json
+    dest: /tmp/kernel.json
+    flat: yes
+
 - name: Load Python kernel configuration
   include_vars:
-    file: /usr/share/jupyter/kernels/python3/kernel.json
+    file: /tmp/kernel.json
     name: imported_var
 
 - name: Detect GRASS version
