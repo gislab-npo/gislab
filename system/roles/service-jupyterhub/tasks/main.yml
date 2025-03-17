@@ -9,12 +9,19 @@
 #   debug:      syslog
 
 
-- name: Install JupyterHub and dependecies
+- name: Install JupyterHub
   apt:
     name:
       - jupyterhub
       - grass
       - grass-dev
+    force: yes
+    install_recommends: no
+    state: latest
+
+- name: Install dependecies
+  apt:
+    name: "{{ jupyterhub_packages }}"
     force: yes
     install_recommends: no
     state: latest

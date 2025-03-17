@@ -1,3 +1,16 @@
 ---
 
 jupyterhub_port: 8000
+
+jupyterhub_packages:
+  - grass
+  - grass-dev
+  - eodag
+  - python3-fiona
+  - python3-pandas
+  - python3-geopandas
+  - python3-numpy
+  - python3-shapely
+  - python3-pyproj
+  - python3-rasterio
+  - python3-matplotlib
