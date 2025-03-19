@@ -21,18 +21,18 @@ autoinstall:
         size: largest
       ptable: gpt
       wipe: superblock
-    - type: partition
-      id: partition-efi      
-      device: disk
-      flag: boot
-      grub_device: true
-      number: 1
-      size: 1100M
-    - type: partition
-      id: partition-boot      
-      device: disk
-      number: 2
-      size: 2000M
+    # - type: partition
+    #   id: partition-efi      
+    #   device: disk
+    #   flag: boot
+    #   grub_device: true
+    #   number: 1
+    #   size: 1100M
+    # - type: partition
+    #   id: partition-boot      
+    #   device: disk
+    #   number: 2
+    #   size: 2000M
     - type: partition
       id: partition-lvm      
       device: disk
@@ -53,14 +53,14 @@ autoinstall:
       name: storage
       size: -1
       volgroup: lvm_volgroup
-    - type: format
-      id: format-efi      
-      fstype: fat32
-      volume: partition-efi
-    - type: format
-      id: format-boot      
-      fstype: ext4
-      volume: partition-boot
+    # - type: format
+    #   id: format-efi      
+    #   fstype: fat32
+    #   volume: partition-efi
+    # - type: format
+    #   id: format-boot      
+    #   fstype: ext4
+    #   volume: partition-boot
     - type: format
       fstype: ext4
       id: format-root
@@ -69,14 +69,14 @@ autoinstall:
       id: format-storage
       fstype: ext4
       volume: lvm_partition-storage
-    - type: mount
-      id: mount-efi      
-      device: format-efi
-      path: /boot/efi
-    - type: mount
-      id: mount-boot
-      device: format-boot
-      path: /boot
+    # - type: mount
+    #   id: mount-efi      
+    #   device: format-efi
+    #   path: /boot/efi
+    # - type: mount
+    #   id: mount-boot
+    #   device: format-boot
+    #   path: /boot
     - type: mount
       id: mount-root
       device: format-root      
