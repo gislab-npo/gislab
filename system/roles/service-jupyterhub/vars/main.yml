@@ -10,6 +10,7 @@ jupyterhub_packages:
   - python3-folium
   - python3-pandas
   - python3-geopandas
+  - python3-mapclassify
   - python3-numpy
   - python3-shapely
   - python3-pyproj
