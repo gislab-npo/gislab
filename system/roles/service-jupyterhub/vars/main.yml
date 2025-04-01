@@ -6,6 +6,7 @@ jupyterhub_packages:
   - grass
   - grass-dev
   - eodag
+  - python3-branca
   - python3-fiona
   - python3-folium
   - python3-pandas
