@@ -9,11 +9,12 @@ jupyterhub_packages:
   - python3-branca
   - python3-fiona
   - python3-folium
-  - python3-pandas
+  - python3-ipywidgets
   - python3-geopandas
   - python3-mapclassify
+  - python3-matplotlib
   - python3-numpy
   - python3-shapely
+  - python3-pandas
   - python3-pyproj
   - python3-rasterio
-  - python3-matplotlib
