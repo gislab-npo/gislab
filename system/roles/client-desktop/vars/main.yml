@@ -198,6 +198,7 @@ packages_lab:
   - otb-bin
   - otb-bin-qt
   - otb-qgis
+  - pdal
   - phppgadmin
   - postgis
   - postgis-doc
