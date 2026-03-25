@@ -198,6 +198,7 @@ packages_lab:
   - otb-bin
   - otb-bin-qt
   - otb-qgis
+  - pdal
   - phppgadmin
   - postgis
   - postgis-doc
@@ -218,6 +219,7 @@ packages_lab:
   - python3-setuptools
   - python3-shapely
   - python3-sklearn
+  - python3-slugify # pymodis dep
   - pyqt5-dev-tools
   - qgis
   - qgis-plugin-grass
