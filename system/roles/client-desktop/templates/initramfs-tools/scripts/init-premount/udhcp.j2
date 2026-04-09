@@ -283,7 +283,8 @@ SEARCH_DOMAIN='$search'
 NTPSVR='$ntpsvr'
 TIMESVR='$ntpsvr'
 TIMEZONE='$timezone'
-SWAPSVR='$swapsvr'" > /run/net-$interface.conf
+SWAPSVR='$swapsvr'
+PROTO='dhcp'" > /run/net-$interface.conf
 
 # Also make a /tmp symlink for backwards compatibility
 ln -sf /run/net-$interface.conf /tmp/net-$interface.conf
@@ -291,6 +292,8 @@ ln -sf /run/net-$interface.conf /tmp/net-$interface.conf
 mkdir -p /conf
 # Only export the lines that have something after the =
 sed -n "/[^=]*=[' ]*$/!s/.*/export &/p" "/run/net-$interface.conf" > /conf/param.conf
+echo "export IP='done'" >> /conf/param.conf  # do not call 70-net-conf
+echo "export IP6='done'" >> /conf/param.conf
 }
 
 # Main
